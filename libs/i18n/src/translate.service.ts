@@ -1,6 +1,6 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ILocaleCode } from '@picsa/data/deployments';
+import type { ILocaleCode } from '@picsa/data/deployments';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()

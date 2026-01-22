@@ -108,12 +108,16 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": [],
-    "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"],
+    "default": ["{projectRoot}/**/*"],
+    "production": ["default", "!{projectRoot}/.eslintrc.json"],
     "supabaseConfig": [
       "!{workspaceRoot}/libs/environments/src/supabase/supabase.config.json",
       {

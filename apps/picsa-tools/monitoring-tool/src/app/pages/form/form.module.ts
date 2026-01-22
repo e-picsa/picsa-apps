@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { MonitoringToolComponentsModule } from '../../components/monitoring-tool-components.module';

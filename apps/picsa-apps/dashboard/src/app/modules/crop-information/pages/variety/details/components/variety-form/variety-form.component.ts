@@ -1,6 +1,4 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
-import { ChangeDetectionStrategy, Component, effect, inject,input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CROPS_DATA } from '@picsa/data';

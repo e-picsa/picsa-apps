@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject,OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogService } from '@picsa/shared/features';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 
 import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { PicsaTranslateService } from '@picsa/shared/modules/translate';
+import { PicsaTranslateService } from '@picsa/i18n';
 
 @Component({
   selector: 'climate-tool',

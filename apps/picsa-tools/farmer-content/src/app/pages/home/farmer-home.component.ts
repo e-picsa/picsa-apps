@@ -4,9 +4,9 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FARMER_CONTENT_DATA } from '@picsa/data';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut } from '@picsa/shared/animations';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 @Component({
   selector: 'farmer-home',

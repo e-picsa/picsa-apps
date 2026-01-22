@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,12 +13,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { AlertBoxComponent } from '@picsa/components/src';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IProbabilityTableMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
 import { ICropName } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
-import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
 
+import { ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
 import { CropInformationService, ICropData, ICropDataDownscaledWaterRequirements } from '../../../../../services';
 import { CropProbabilityLanguageSelectComponent } from '../language-select/language-select.component';
 

@@ -13,9 +13,9 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
 
-import { PicsaTranslateModule } from '../../modules';
 import { generateID } from '../../services/core/db/db.service';
 
 type Segment = {

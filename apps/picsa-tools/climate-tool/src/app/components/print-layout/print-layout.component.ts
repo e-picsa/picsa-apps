@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject,input, OnDestroy, OnInit } from '@angular/core';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { ChangeDetectionStrategy, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 

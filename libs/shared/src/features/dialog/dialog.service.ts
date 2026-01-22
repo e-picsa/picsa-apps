@@ -1,7 +1,7 @@
-import { inject,Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PicsaTranslateService } from '@picsa/i18n';
 
-import { PicsaTranslateService } from '../../modules/translate/translate.service';
 import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
 import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
 

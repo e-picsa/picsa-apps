@@ -1,0 +1,24 @@
+{
+  "name": "i18n-gen",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/i18n-gen/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx ./src/generate.ts",
+        "cwd": "libs/i18n-gen"
+      },
+      "outputs": ["{workspaceRoot}/libx/i18n-gen/generated"]
+    },
+    "spellcheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cspell libs/i18n-gen/templates/_template.json"
+      },
+      "outputs": ["{workspaceRoot}/libx/i18n-gen/generated"]
+    }
+  }
+}

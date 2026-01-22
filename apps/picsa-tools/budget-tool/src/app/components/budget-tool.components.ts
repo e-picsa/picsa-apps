@@ -5,8 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
-import { PicsaDbModule, PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 
 import { BudgetMaterialModule } from '../material.module';

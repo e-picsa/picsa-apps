@@ -4,7 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatOption, MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { DeploymentDashboardService } from '../../../../../../../modules/deployment/deployment.service';
 

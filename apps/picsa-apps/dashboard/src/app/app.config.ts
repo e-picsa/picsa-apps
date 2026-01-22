@@ -3,7 +3,7 @@ import { ApplicationConfig, ErrorHandler, importProvidersFrom, provideZonelessCh
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { appRoutes } from './app.routes';

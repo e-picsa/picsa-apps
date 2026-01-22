@@ -11,8 +11,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { MONTH_DATA } from '@picsa/data';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';

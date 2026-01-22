@@ -1,9 +1,9 @@
-import { Component, computed, EventEmitter, inject,input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { IResourceLink } from '../../../schemas';
 import { ResourceShareComponent } from '../../resource-share/resource-share.component';

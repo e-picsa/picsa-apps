@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { SeasonalCalendarToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';

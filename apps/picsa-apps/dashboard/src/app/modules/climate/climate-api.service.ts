@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
+import type { ClimateApi } from '@picsa/server-types';
 import createClient from 'openapi-fetch';
 import { BehaviorSubject, Subject } from 'rxjs';
-
-import { paths } from './types/api';
 
 const API_ENDPOINT = 'https://api.epicsa.idems.international';
 // const API_ENDPOINT = 'http://localhost:8000';
 
 /** Type-safe http client with added support for callbacks */
-export type IApiClient = ReturnType<typeof createClient<paths>> & { $: Subject<Response | undefined> };
+export type IApiClient = ReturnType<typeof createClient<ClimateApi.paths>> & { $: Subject<Response | undefined> };
 
 /**
  * Service to interact with external PICSA Climate API
@@ -71,7 +70,7 @@ export class ClimateApiService {
         return errorRes;
       }
     };
-    const baseClient = createClient<paths>({ baseUrl: API_ENDPOINT, mode: 'cors', fetch: customFetch });
+    const baseClient = createClient<ClimateApi.paths>({ baseUrl: API_ENDPOINT, mode: 'cors', fetch: customFetch });
     const client: IApiClient = { ...baseClient, $ };
     this.observableClients[clientId] = client;
     return client;

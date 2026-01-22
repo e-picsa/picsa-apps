@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, effect, inject,input, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, effect, inject, input, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { PicsaTranslateModule } from '../../../../modules/translate';
 import { PicsaDialogService } from '../../../dialog';
 import { PhotoService } from '../../photo.service';
 import { IPhotoEntry } from '../../schema';

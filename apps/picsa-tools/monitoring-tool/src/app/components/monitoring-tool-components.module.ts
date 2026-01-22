@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { AccessCodeDialogComponent } from './access-code-dialog/access-code-dialog.component';

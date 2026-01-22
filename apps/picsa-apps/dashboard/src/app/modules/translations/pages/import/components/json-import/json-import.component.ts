@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,7 +10,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
-import type { ITranslationEntry } from '@picsa/i18n/src/types';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
@@ -22,9 +20,19 @@ import { TranslationDashboardService } from '../../../../translations.service';
 
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
-interface ITranslationImportEntry extends ITranslationEntry {
+interface ITranslationFileEntry {
+  /** case-sensitive string representation for translation */
+  text: string;
+  /** associated tool for context */
+  tool: string;
+  /** additional context related to tool */
+  context?: string;
+}
+
+interface ITranslationImportEntry extends ITranslationFileEntry {
   id: string;
 }
+
 enum ImportActions {
   skip = 'skip',
   add = 'add',
@@ -121,13 +129,13 @@ export class TranslationsJSONImportComponent {
    * what database actions are required for each when comparing to values
    * that already exist on server (i.e. update, skip, archive, restore)
    */
-  private async prepareSourceActions(entries: ITranslationEntry[]) {
+  private async prepareSourceActions(entries: ITranslationFileEntry[]) {
     if (!Array.isArray(entries)) {
       this.uppy.cancelAll();
       console.error(entries);
       throw new Error('Data is not formatted correctly');
     }
-    const localHashmap: Record<string, ITranslationEntry> = {};
+    const localHashmap: Record<string, ITranslationFileEntry> = {};
     for (const entry of entries) {
       const id = this.service.generateTranslationID(entry as ITranslationRow);
       localHashmap[id] = entry;
@@ -141,7 +149,7 @@ export class TranslationsJSONImportComponent {
   }
 
   /** Compare local translation import with server and generate action summary */
-  private generateSourceSummary(local: Record<string, ITranslationEntry>, server: Record<string, ITranslationRow>) {
+  private generateSourceSummary(local: Record<string, ITranslationFileEntry>, server: Record<string, ITranslationRow>) {
     const summary: ImportActionSummary = { add: [], restore: [], archive: [], skip: [] };
     for (const [id, entry] of Object.entries(local)) {
       const serverEntry = server[id];

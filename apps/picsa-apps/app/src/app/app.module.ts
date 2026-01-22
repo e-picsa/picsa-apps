@@ -4,15 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaAnimationsModule } from '@picsa/shared/features';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
-import {
-  PicsaDb_V2_Module,
-  PicsaDbModule,
-  PicsaDeepLinksModule,
-  PicsaNativeModule,
-  PicsaTranslateModule,
-} from '@picsa/shared/modules';
+import { PicsaDb_V2_Module, PicsaDbModule, PicsaDeepLinksModule, PicsaNativeModule } from '@picsa/shared/modules';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { MobxAngularModule } from 'mobx-angular';
 

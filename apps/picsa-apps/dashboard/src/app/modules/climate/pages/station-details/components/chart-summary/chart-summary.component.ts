@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
-/* eslint-disable @nx/enforce-module-boundaries */
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import { IChartMeta, IStationData } from '@picsa/models/src';

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components/src';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { MobxAngularModule } from 'mobx-angular';
 
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';

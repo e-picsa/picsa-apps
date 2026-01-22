@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { inject,Injectable, ModuleWithProviders, NgModule } from '@angular/core';
+import { inject, Injectable, ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { DataIconRegistry, IconPackName } from '@picsa/data/iconRegistry';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PICSA_FORM_COMPONENTS } from './components';
 

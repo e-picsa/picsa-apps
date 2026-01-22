@@ -1,6 +1,6 @@
-import { inject,ModuleWithProviders, NgModule } from '@angular/core';
+import { inject, ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { PicsaTranslateService } from '@picsa/shared/modules';
+import { PicsaTranslateService } from '@picsa/i18n';
 import { registerEmbeddedRoutes } from '@picsa/utils/angular';
 
 import { AppComponentEmbedded } from './app.component';

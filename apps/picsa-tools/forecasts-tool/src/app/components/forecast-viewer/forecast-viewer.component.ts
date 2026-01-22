@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject,input, OnDestroy, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, OnDestroy, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PdfViewerComponent } from '@picsa/shared/features';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { RxDocument } from 'rxdb';
 

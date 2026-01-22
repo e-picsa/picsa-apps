@@ -4,8 +4,8 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { PicsaTranslateModule } from '../../modules';
 import { PicsaLoadingComponent } from '../loading/loading';
 import { PicsaActionDialog, PicsaDialogComponent, PicsaSelectDialog } from './components/dialog';
 import { PicsaDialogService } from './dialog.service';

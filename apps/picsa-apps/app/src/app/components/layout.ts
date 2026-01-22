@@ -19,8 +19,8 @@ import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/rout
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src/version';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { filter, map } from 'rxjs';
 
 @Component({

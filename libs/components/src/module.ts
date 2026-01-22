@@ -13,7 +13,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent } from '@picsa/configuration';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { BackButton } from './components/back-button.component';

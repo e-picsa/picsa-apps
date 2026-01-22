@@ -1,5 +1,4 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-import { effect, inject,Injectable } from '@angular/core';
+import { effect, inject, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';

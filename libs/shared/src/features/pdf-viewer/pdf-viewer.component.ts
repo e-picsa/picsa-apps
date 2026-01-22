@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject,Input, signal, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, signal, ViewEncapsulation } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
-import { PicsaTranslateModule } from '../../modules';
 import { PicsaPDFViewerService } from './pdf-viewer.service';
 
 @Component({

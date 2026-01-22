@@ -1,8 +1,8 @@
-import { Component, inject,Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { PicsaTranslateModule } from '../../../modules/translate';
 import { TourService } from './tour.service';
 
 /**
