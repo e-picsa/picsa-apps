@@ -1,1 +1,2 @@
-export * from './lib/i18n/i18n.component';
+export * from './translate.module';
+export * from './translate.service';
