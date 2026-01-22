@@ -27,7 +27,7 @@
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset && yarn build --skip-nx-cache",
-    "i18n": "nx run i18n:build && nx run i18n:spellcheck",
+    "i18n:gen": "nx run i18n-gen:build && nx run i18n-gen:spellcheck",
     "scripts": "nx run picsa-scripts:exec --scriptName",
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
     "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
