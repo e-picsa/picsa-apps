@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject,input, model, output, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, model, output, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { BudgetToolComponentsModule } from '../../../components/budget-tool.components';
 import { BudgetMaterialModule } from '../../../material.module';

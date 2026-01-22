@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Route, RouterModule } from '@angular/router';
 // import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { OptionToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';

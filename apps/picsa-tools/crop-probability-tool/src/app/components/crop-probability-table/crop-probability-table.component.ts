@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '../../models';

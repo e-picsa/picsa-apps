@@ -1,6 +1,6 @@
-import { Component, computed, inject,input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { PicsaTranslateModule } from '../../../../modules';
 import { PhotoService } from '../../photo.service';
 import { PhotoViewComponent } from '../photo-view/photo-view.component';
 

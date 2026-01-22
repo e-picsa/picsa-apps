@@ -13,7 +13,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { arrayToHashmapArray } from '@picsa/utils';
 import { map } from 'rxjs';
 

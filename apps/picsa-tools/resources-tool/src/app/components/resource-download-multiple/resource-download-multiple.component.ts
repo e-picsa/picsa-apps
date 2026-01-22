@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, signal } fro
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxDocument } from 'rxdb';
 

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { AutofocusDirective } from '@picsa/shared/directives';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js';
 import { Subject, takeUntil } from 'rxjs';
 

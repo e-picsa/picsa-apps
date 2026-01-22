@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { IResourceFile } from '../../schemas';
 

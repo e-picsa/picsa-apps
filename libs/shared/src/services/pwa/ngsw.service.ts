@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
-
-import { PicsaTranslateService } from '../../modules';
+import { PicsaTranslateService } from '@picsa/i18n';
 
 /**
  * @deprecated
