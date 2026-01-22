@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaChartComponent, PicsaDialogsModule } from '@picsa/shared/features';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { PicsaSharedPipesModule } from '@picsa/shared/pipes';
 
 import { ClimateChartLayoutComponent } from './chart-layout/chart-layout';

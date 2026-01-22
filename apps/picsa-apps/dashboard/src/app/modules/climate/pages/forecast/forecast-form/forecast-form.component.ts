@@ -3,7 +3,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LOCALES_DATA } from '@picsa/data';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { DBToFormBuilderType } from '@picsa/forms';
 import { FileDropFile, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 

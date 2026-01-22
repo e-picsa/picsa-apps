@@ -17,8 +17,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ILocaleCode, ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
+import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 import { IResourceFile } from '@picsa/resources/schemas';
-import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 
 import { LOCALISED_MANUALS, PICSA_MANUAL_CONTENTS } from '../../data';
 import { IManualPeriodEntryLocalised, IManualStepLocalised, IManualVariant } from '../../models';

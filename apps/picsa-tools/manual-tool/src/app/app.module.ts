@@ -1,8 +1,8 @@
-import { inject,NgModule } from '@angular/core';
+import { inject, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
+import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';

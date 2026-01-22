@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { inject,Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
+import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
-import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';
 import { _wait } from '@picsa/utils';
 import { DataPoint } from 'c3';

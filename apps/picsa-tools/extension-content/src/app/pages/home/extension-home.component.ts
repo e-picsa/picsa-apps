@@ -8,8 +8,8 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/src/version';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { TourService } from '@picsa/shared/services/core/tour';
 
 import { ExtensionToolkitMaterialModule } from '../../material.module';
