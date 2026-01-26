@@ -19,6 +19,12 @@ declare global {
        * Navigates to a specific URL ensuring WebView context
        * @param url The URL to navigate to
        */
+      appNavigateTo: (url: string) => Promise<void>;
+
+      /**
+       * @deprecated This will call wdio in-built navigateTo which
+       * requires fully qualified url. Use `appNavigateTo` instead
+       */
       navigateTo: (url: string) => Promise<void>;
     }
   }

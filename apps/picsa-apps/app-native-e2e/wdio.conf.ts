@@ -64,9 +64,9 @@ export const config: Options.Testrunner = {
     timeout: isCI ? 300000 : 60000,
   },
   before: async function () {
-    const { switchToWebView, navigateTo } = await import('./src/utils/wdio-commands');
+    const { switchToWebView, appNavigateTo } = await import('./src/utils/wdio-commands');
     browser.addCommand('switchToWebView', switchToWebView);
-    browser.addCommand('navigateTo', navigateTo);
+    browser.addCommand('appNavigateTo', appNavigateTo);
     const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
     browser.addCommand('loadPicsaConfig', loadPicsaConfig);
     setupScreenshotsFolder();

@@ -48,8 +48,13 @@ export async function setLocalStorage(data: Record<string, unknown>, shouldReloa
  * Navigates to a specific URL ensuring WebView context
  * @param url The URL to navigate to
  */
-export async function navigateTo(url: string) {
+export async function appNavigateTo(path: string) {
+  console.log('navigating to', path);
   // Ensure we are in webview
   await browser.switchToWebView();
-  await browser.url(url);
+
+  // Use JS to navigate, letting the webview handle the relative path and base url resolution
+  await browser.execute((targetUrl: string) => {
+    window.location.assign(`/${targetUrl}`);
+  }, path);
 }
