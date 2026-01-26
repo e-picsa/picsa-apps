@@ -13,42 +13,65 @@ describe('Video Player', () => {
     // 1. Load app and set override
     await browser.loadPicsaConfig('farmer_zm');
 
-    // // 2. Read dummy video as base64
-    // const localVideoPath = join(__dirname, '../fixtures/dummy-video.mp4');
-    // const videoBase64 = fs.readFileSync(localVideoPath, { encoding: 'base64' });
-
-    // // Set local storage to mock the video download
-    // await setLocalStorage({
-    //   E2E_HTTP_MOCKS: JSON.stringify({
-    //     matches: [
-    //       {
-    //         // Match any mp4 request or specific url
-    //         // Adjust regex as needed to match the production URL the app uses
-    //         urlRegex: '.mp4',
-    //         method: 'GET',
-    //         response: {
-    //           bodyBase64: videoBase64,
-    //           status: 200,
-    //         },
-    //       },
-    //     ],
-    //   }),
-    // });
-
     // 3. Navigate to a page with video
     await browser.appNavigateTo('farmer/intro');
+
+    await setupMockVideo();
 
     const dlButton = await $('resource-download');
     await expect(dlButton).toExist();
     await dlButton.click();
 
-    // Wait for video player to be visible
-    const videoPlayer = $('picsa-video-player');
-    await expect(videoPlayer).toExist();
-    await videoPlayer.waitForExist({ timeout: 10000 });
+    const playButton = await $('.play-button');
+    await expect(playButton).toExist();
 
-    // 4. Verify playback
-    // Take screenshot to verify video is loaded
-    await takeScreenshot('video-player-loaded');
+    // Capture current package to verify context switch
+    const appPackage = await browser.getCurrentPackage();
+
+    await playButton.click();
+
+    // Wait for the external video player to launch (package/activity change)
+    await browser.waitUntil(
+      async () => {
+        const currentPackage = await browser.getCurrentPackage();
+        return currentPackage !== appPackage;
+      },
+      {
+        timeout: 10000,
+        timeoutMsg: 'Expected external Android native video player to launch',
+      },
+    );
+
+    // Go back to the app to confirm we can return
+    await browser.back();
+    await expect(playButton).toExist();
+
+    // 4. Verify playback (screenshot might capturing the player if we didn't go back, but here we capture state after return)
+    // taking a screenshot of the play button page
+    await takeScreenshot('video-return-to-app');
   });
 });
+
+async function setupMockVideo() {
+  // 2. Read dummy video as base64
+  const localVideoPath = join(__dirname, '../fixtures/dummy-video.mp4');
+  const videoBase64 = fs.readFileSync(localVideoPath, { encoding: 'base64' });
+
+  // Set local storage to mock the video download
+  await setLocalStorage({
+    E2E_HTTP_MOCKS: JSON.stringify({
+      matches: [
+        {
+          // Match any mp4 request or specific url
+          // Adjust regex as needed to match the production URL the app uses
+          urlRegex: '.mp4',
+          method: 'GET',
+          response: {
+            bodyBase64: videoBase64,
+            status: 200,
+          },
+        },
+      ],
+    }),
+  });
+}
