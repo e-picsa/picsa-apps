@@ -4,7 +4,7 @@ $height: 40px;
   display: flex;
 }
 button.refresh-button {
-  --mdc-outlined-button-container-height: #{$height};
+  --mat-outlined-button-container-height: #{$height};
   --mat-outlined-button-horizontal-padding: 0;
 }
 
@@ -30,5 +30,5 @@ button.refresh-button {
 }
 
 // mat-progress-spinner.mat-white {
-//   --mdc-circular-progress-active-indicator-color: white;
+//   --mat-progress-spinner-active-indicator-color: white;
 // }

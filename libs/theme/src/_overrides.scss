@@ -1,9 +1,9 @@
 // fix height styles lost since angular/material 17 updates
 // NOTE - these may have been fixed since inclusion of `mat.all-component-bases`
 body {
-  --mdc-protected-button-container-height: 36px;
-  --mdc-outlined-button-container-height: 36px;
-  --mdc-filled-button-container-height: 36px;
+  --mat-protected-button-container-height: 36px;
+  --mat-outlined-button-container-height: 36px;
+  --mat-filled-button-container-height: 36px;
   --mat-stepper-header-height: 72px;
 }
 
@@ -182,7 +182,6 @@ mat-tab-group.no-header {
 }
 
 mat-progress-spinner[data-style-variant='white'] {
-  --mdc-circular-progress-active-indicator-color: white !important;
   --mat-progress-spinner-active-indicator-color: white !important;
 }
 
@@ -224,4 +223,9 @@ Intro.JS Tour
 .introjs-tooltipReferenceLayer {
   max-height: 100vh;
   max-width: 100vw;
+}
+
+// App global overrides
+mat-nav-list {
+  --mat-list-item-one-line-container-height: 48px;
 }
