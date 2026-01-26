@@ -20,13 +20,11 @@
     },
     "build-debug-apk": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
       "cache": true,
-      "outputs": [
-        "{projectRoot}/android/app/build/outputs/apk/debug/app-debug.apk"
-      ],
+      "inputs": ["{projectRoot}/android/app/src/main/assets/public/**/*"],
+      "outputs": ["{projectRoot}/android/app/build/outputs/apk/debug/app-debug.apk"],
       "options": {
-        "command":  "gradlew assembleDebug",
+        "command": "gradlew assembleDebug",
         "cwd": "apps/picsa-apps/app-native/android"
       }
     },

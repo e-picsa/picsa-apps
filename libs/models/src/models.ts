@@ -38,4 +38,6 @@ export interface IEnvironment {
   production: boolean;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
+  /** Enable custom service replacement for e2e tests */
+  useMockServices?: boolean;
 }

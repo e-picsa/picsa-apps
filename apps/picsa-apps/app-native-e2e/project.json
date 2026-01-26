@@ -14,10 +14,9 @@
         "cwd": "apps/picsa-apps/app-native-e2e"
       },
       "dependsOn": [
-        {
-          "target": "build-debug-apk",
-          "projects": ["picsa-apps-app-native"]
-        }
+        { "target": "build:production,e2e", "projects": ["picsa-apps-app"] },
+        { "target": "build", "projects": ["picsa-apps-app-native"] },
+        { "target": "build-debug-apk", "projects": ["picsa-apps-app-native"] }
       ]
     },
     "lint": {

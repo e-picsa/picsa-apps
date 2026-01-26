@@ -8,6 +8,7 @@ import PRODUCTION_ENVIRONMENT from './environment.prod';
 const ENVIRONMENT: IEnvironment = {
   ...PRODUCTION_ENVIRONMENT,
   production: false,
+  useMockServices: false,
 };
 
 export default ENVIRONMENT;

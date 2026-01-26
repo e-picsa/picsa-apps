@@ -197,6 +197,14 @@
           ],
           "namedChunks": true,
           "sourceMap": true
+        },
+        "e2e": {
+          "fileReplacements": [
+            {
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.e2e.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"
