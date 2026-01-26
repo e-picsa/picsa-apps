@@ -181,6 +181,11 @@ mat-tab-group.no-header {
   }
 }
 
+mat-progress-spinner[data-style-variant='white'] {
+  --mdc-circular-progress-active-indicator-color: white !important;
+  --mat-progress-spinner-active-indicator-color: white !important;
+}
+
 table.mat-mdc-table .mat-mdc-cell {
   @apply px-1 sm:px-4;
 }
