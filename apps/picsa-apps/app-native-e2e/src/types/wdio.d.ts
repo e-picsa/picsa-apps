@@ -14,6 +14,12 @@ declare global {
        * Switch to the WebView context of the hybrid app.
        */
       switchToWebView: () => Promise<void>;
+
+      /**
+       * Navigates to a specific URL ensuring WebView context
+       * @param url The URL to navigate to
+       */
+      navigateTo: (url: string) => Promise<void>;
     }
   }
 }

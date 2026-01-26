@@ -43,3 +43,13 @@ export async function setLocalStorage(data: Record<string, unknown>, shouldReloa
     await browser.pause(TIMEOUTS.RELOAD_WAIT);
   }
 }
+
+/**
+ * Navigates to a specific URL ensuring WebView context
+ * @param url The URL to navigate to
+ */
+export async function navigateTo(url: string) {
+  // Ensure we are in webview
+  await browser.switchToWebView();
+  await browser.url(url);
+}
