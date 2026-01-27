@@ -1,12 +1,14 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaAnimationsModule } from '@picsa/shared/features';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
+import { MockHttpInterceptor } from '@picsa/shared/mocks/mock-http.interceptor';
 import { PicsaDb_V2_Module, PicsaDbModule, PicsaDeepLinksModule, PicsaNativeModule } from '@picsa/shared/modules';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { MobxAngularModule } from 'mobx-angular';
@@ -37,7 +39,14 @@ import { AppLayoutComponent } from './components/layout';
     AppLayoutComponent,
     AppRoutingModule,
   ],
-  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }, provideHttpClient(withInterceptorsFromDi())],
+  providers: [
+    { provide: ErrorHandler, useClass: ErrorHandlerService },
+    provideHttpClient(withInterceptorsFromDi()),
+    // Mocks used in e2e tests
+    ...(ENVIRONMENT.useMockServices
+      ? [{ provide: HTTP_INTERCEPTORS, useClass: MockHttpInterceptor, multi: true }]
+      : []),
+  ],
 })
 export class AppModule {}
 

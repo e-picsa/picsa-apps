@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals';
 import type { Options } from '@wdio/types';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, statSync } from 'fs';
 import { emptyDirSync } from 'fs-extra';
 import path from 'path';
 
@@ -30,12 +30,20 @@ export const config: Options.Testrunner = {
       'appium:automationName': 'UiAutomator2',
       'appium:app': apkPath,
       'appium:autoGrantPermissions': true,
+      'appium:enforceAppInstall': true,
       'appium:newCommandTimeout': 240,
       // Longer AVD launch timeout for CI
       'appium:avdLaunchTimeout': isCI ? 180000 : 60000,
       'appium:avdReadyTimeout': isCI ? 180000 : 60000,
     },
   ],
+  onPrepare: function () {
+    if (existsSync(apkPath)) {
+      const { mtime } = statSync(apkPath);
+      console.log(`\n\n🔹 Using APK: ${apkPath}`);
+      console.log(`🔹 APK Last Modified: ${mtime}\n\n`);
+    }
+  },
   maxInstances: 1,
   logLevel: 'info',
   bail: 0,
@@ -64,8 +72,9 @@ export const config: Options.Testrunner = {
     timeout: isCI ? 300000 : 60000,
   },
   before: async function () {
-    const { switchToWebView } = await import('./src/utils/wdio-commands');
+    const { switchToWebView, appNavigateTo } = await import('./src/utils/wdio-commands');
     browser.addCommand('switchToWebView', switchToWebView);
+    browser.addCommand('appNavigateTo', appNavigateTo);
     const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
     browser.addCommand('loadPicsaConfig', loadPicsaConfig);
     setupScreenshotsFolder();

@@ -66,5 +66,6 @@ yarn wdio run wdio.conf.ts
 You can build it explicitly:
 
 ```bash
-nx run picsa-apps-app-native:build-debug-apk
+yarn nx run picsa-apps-app:build:e2e
+yarn nx run picsa-apps-app-native:build-debug-apk
 ```
