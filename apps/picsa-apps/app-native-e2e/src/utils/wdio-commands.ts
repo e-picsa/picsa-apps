@@ -1,26 +1,27 @@
+import type { Context } from '@wdio/protocols';
+
 import { TIMEOUTS } from '../constants';
 
 /**
  * Switches the driver context to the WebView.
  */
 export async function switchToWebView() {
-  // Wait for the webview context to be available
-  await browser.waitUntil(
-    async () => {
-      const contexts = await browser.getContexts();
-      return contexts.length > 1;
-    },
-    { timeout: TIMEOUTS.WEBVIEW_WAIT, timeoutMsg: 'Webview context was not found. App might not have loaded.' },
-  );
+  const current = await driver.getContext();
+  const contextId = getContextId(current);
+  if (contextId.includes('WEBVIEW')) return;
 
-  const contexts = await browser.getContexts();
-  const webviewContext = contexts.find((c) => typeof c === 'string' && c.toUpperCase().includes('WEBVIEW'));
+  await driver.waitUntil(async () => {
+    const contexts = await driver.getContexts();
+    return contexts.some((c) => getContextId(c).includes('WEBVIEW'));
+  });
 
-  if (webviewContext) {
-    await browser.switchContext(webviewContext as string);
-  } else {
-    throw new Error('Could not find WebView context');
-  }
+  const contexts = await driver.getContexts();
+  const webview = contexts.find((c) => typeof c === 'string' && c.includes('WEBVIEW'));
+  await driver.switchContext(webview as string);
+}
+
+function getContextId(context: Context): string {
+  return typeof context === 'string' ? context : context.id;
 }
 
 /**
