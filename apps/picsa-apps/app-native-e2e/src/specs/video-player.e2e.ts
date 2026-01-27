@@ -9,6 +9,9 @@ import { setLocalStorage } from '../utils/wdio-commands';
  * yarn wdio run wdio.conf.ts --spec src/specs/video-player.e2e.ts
  */
 describe('Video Player', () => {
+  before(async function () {
+    await browser.switchToWebView();
+  });
   it('should play videos using local override', async () => {
     await setupMockVideo();
     await browser.appNavigateTo('farmer/intro');

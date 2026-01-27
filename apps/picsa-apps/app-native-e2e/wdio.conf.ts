@@ -81,6 +81,19 @@ export const config: Options.Testrunner = {
     await browser.switchToWebView();
     await browser.loadPicsaConfig('farmer_zm');
   },
+  beforeTest: async function (test, context) {
+    const { isLegacyDevice } = await import('./src/utils/version-utils');
+    const isRestricted = await isLegacyDevice();
+    const isCompatibilityTest = test.parent.includes('Compatibility Check');
+
+    if (isRestricted && !isCompatibilityTest) {
+      console.log(`[BeforeTest] Skipping "${test.title}" on restricted device`);
+      (test as any).skip();
+    } else if (!isRestricted && isCompatibilityTest) {
+      console.log(`[BeforeTest] Skipping "${test.title}" on supported device`);
+      (test as any).skip();
+    }
+  },
   afterTest: async function (test, context, { passed }) {
     const screenshotName = `${passed ? 'passed' : 'failed'}_${test.title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}.png`;
     const filePath = path.join(PATHS.SCREENSHOTS, screenshotName);

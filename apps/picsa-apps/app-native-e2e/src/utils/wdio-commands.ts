@@ -55,4 +55,6 @@ export async function appNavigateTo(path: string) {
   await browser.execute((targetUrl: string) => {
     window.location.assign(`/${targetUrl}`);
   }, path);
+  // Give UI time to settle after navigation
+  await browser.pause(2000);
 }
