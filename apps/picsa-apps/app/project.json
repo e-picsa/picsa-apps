@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig"],
+      "inputs": ["default", "supabaseConfig", "environmentConfig"],
       "allowedCommonJsDependencies": ["*"],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
@@ -204,7 +204,9 @@
               "replace": "libs/environments/src/environment.ts",
               "with": "libs/environments/src/environment.e2e.ts"
             }
-          ]
+          ],
+          "namedChunks": true,
+          "sourceMap": true
         }
       },
       "defaultConfiguration": "production"
