@@ -77,23 +77,12 @@ export const config: Options.Testrunner = {
     browser.addCommand('appNavigateTo', appNavigateTo);
     const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
     browser.addCommand('loadPicsaConfig', loadPicsaConfig);
+
     setupScreenshotsFolder();
     await browser.switchToWebView();
     await browser.loadPicsaConfig('farmer_zm');
   },
-  beforeTest: async function (test) {
-    const { isLegacyDevice } = await import('./src/utils/version-utils');
-    const isLegacy = await isLegacyDevice();
-    const isCompatibilityTest = test.parent.includes('Compatibility Check');
 
-    if (isLegacy && !isCompatibilityTest) {
-      console.log(`[BeforeTest] Skipping "${test.title}" on legacy device`);
-      (test as any).skip();
-    } else if (!isLegacy && isCompatibilityTest) {
-      console.log(`[BeforeTest] Skipping "${test.title}" on supported device`);
-      (test as any).skip();
-    }
-  },
   afterTest: async function (test, context, { passed }) {
     const screenshotName = `${passed ? 'passed' : 'failed'}_${test.title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}.png`;
     const filePath = path.join(PATHS.SCREENSHOTS, screenshotName);
