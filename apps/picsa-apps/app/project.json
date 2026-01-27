@@ -206,7 +206,14 @@
             }
           ],
           "namedChunks": true,
-          "sourceMap": true
+          "sourceMap": true,
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/picsa-apps/app-native-e2e/src/fixtures/assets",
+              "output": "assets/"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"

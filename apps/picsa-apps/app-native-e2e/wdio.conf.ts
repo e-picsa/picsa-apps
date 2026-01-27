@@ -81,15 +81,15 @@ export const config: Options.Testrunner = {
     await browser.switchToWebView();
     await browser.loadPicsaConfig('farmer_zm');
   },
-  beforeTest: async function (test, context) {
+  beforeTest: async function (test) {
     const { isLegacyDevice } = await import('./src/utils/version-utils');
-    const isRestricted = await isLegacyDevice();
+    const isLegacy = await isLegacyDevice();
     const isCompatibilityTest = test.parent.includes('Compatibility Check');
 
-    if (isRestricted && !isCompatibilityTest) {
-      console.log(`[BeforeTest] Skipping "${test.title}" on restricted device`);
+    if (isLegacy && !isCompatibilityTest) {
+      console.log(`[BeforeTest] Skipping "${test.title}" on legacy device`);
       (test as any).skip();
-    } else if (!isRestricted && isCompatibilityTest) {
+    } else if (!isLegacy && isCompatibilityTest) {
       console.log(`[BeforeTest] Skipping "${test.title}" on supported device`);
       (test as any).skip();
     }

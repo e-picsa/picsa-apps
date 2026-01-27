@@ -1,9 +1,12 @@
 import { browser } from '@wdio/globals';
 
+import { skipOnModernDevices } from '../utils/version-utils';
+
 describe('Compatibility Check', () => {
   before(async function () {
     // Ensure we are in the webview context
     await browser.switchToWebView();
+    skipOnModernDevices(this);
   });
 
   it('should display the update prompt on restricted devices', async () => {

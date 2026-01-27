@@ -1,10 +1,12 @@
 import { $, expect } from '@wdio/globals';
 
 import { takeScreenshot } from '../utils/driver-utils';
+import { skipOnLegacyDevices } from '../utils/version-utils';
 
 describe('PICSA Native App - Home', () => {
   before(async function () {
     await browser.switchToWebView();
+    skipOnLegacyDevices(this);
   });
   it('should load initial state from fixtures', async () => {
     // Before hook in setup should have populated localstorage state

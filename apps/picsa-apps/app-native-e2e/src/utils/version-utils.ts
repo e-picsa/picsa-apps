@@ -94,13 +94,13 @@ export async function isLegacyDevice(): Promise<boolean> {
 }
 
 /**
- * Mocha helper to skip tests on restricted devices
+ * Mocha helper to skip tests on legacy devices
  * Use this for functional tests that should NOT run on old devices
  */
-export async function skipOnRestrictedDevice(context: Mocha.Context) {
-  const restricted = await isLegacyDevice();
-  if (restricted) {
-    console.log('Skipping test on restricted device');
+export async function skipOnLegacyDevices(context: Mocha.Context) {
+  const legacy = await isLegacyDevice();
+  if (legacy) {
+    console.log('Skipping test on legacy device');
     context.skip();
   }
 }
@@ -109,9 +109,9 @@ export async function skipOnRestrictedDevice(context: Mocha.Context) {
  * Mocha helper to skip tests on supported devices
  * Use this for the compatibility prompt test which should ONLY run on old devices
  */
-export async function skipOnSupportedDevice(context: Mocha.Context) {
-  const restricted = await isLegacyDevice();
-  if (!restricted) {
+export async function skipOnModernDevices(context: Mocha.Context) {
+  const legacy = await isLegacyDevice();
+  if (!legacy) {
     console.log('Skipping compatibility test on supported device');
     context.skip();
   }
