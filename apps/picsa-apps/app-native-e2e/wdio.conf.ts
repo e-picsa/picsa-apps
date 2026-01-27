@@ -81,6 +81,11 @@ export const config: Options.Testrunner = {
     await browser.switchToWebView();
     await browser.loadPicsaConfig('farmer_zm');
   },
+  afterTest: async function (test, context, { passed }) {
+    const screenshotName = `${passed ? 'passed' : 'failed'}_${test.title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}.png`;
+    const filePath = path.join(PATHS.SCREENSHOTS, screenshotName);
+    await browser.saveScreenshot(filePath);
+  },
 };
 
 function setupScreenshotsFolder() {

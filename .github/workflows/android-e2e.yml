@@ -1,14 +1,14 @@
+# Run E2E tests against a matrix of android devices
+#
+# Android API Mapping
+# API:      23  26  28  29  30  31  33  34  36
+# Android:  6   8   9   10  11  12  13  14  16
+
 name: Android E2E Tests
 
 on:
   pull_request:
   workflow_dispatch:
-    inputs:
-      api-level:
-        description: "Android API level for emulator"
-        required: false
-        default: 34
-        type: number
 
 jobs:
   build:
@@ -27,7 +27,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [31, 33, 34]
+        # API:      31  33  34  36
+        # Android:  12  13  14  16
+        api-level: [31, 33, 34, 36] # <-- Common Device Testing
+        # api-level: [23, 26, 28, 29] <-- Legacy Device Testing
     env:
       API_LEVEL: ${{ matrix.api-level }}
     steps:

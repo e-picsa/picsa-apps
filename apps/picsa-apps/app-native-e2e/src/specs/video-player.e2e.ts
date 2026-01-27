@@ -10,12 +10,11 @@ import { setLocalStorage } from '../utils/wdio-commands';
  */
 describe('Video Player', () => {
   it('should play videos using local override', async () => {
+    await setupMockVideo();
     await browser.appNavigateTo('farmer/intro');
 
-    await setupMockVideo();
-
     const downloadButton = await $('.download-button-inner');
-    await expect(downloadButton).toExist();
+    await expect(downloadButton).toExist({ wait: 15000 });
     await downloadButton.waitForClickable({ timeout: 5000, interval: 1000 });
     await downloadButton.click();
 
