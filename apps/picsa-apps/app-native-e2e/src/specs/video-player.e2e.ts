@@ -10,10 +10,6 @@ import { setLocalStorage } from '../utils/wdio-commands';
  */
 describe('Video Player', () => {
   it('should play videos using local override', async () => {
-    // 1. Load app and set override
-    await browser.loadPicsaConfig('farmer_zm');
-
-    // 3. Navigate to a page with video
     await browser.appNavigateTo('farmer/intro');
 
     await setupMockVideo();

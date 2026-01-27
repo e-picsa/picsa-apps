@@ -78,6 +78,8 @@ export const config: Options.Testrunner = {
     const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
     browser.addCommand('loadPicsaConfig', loadPicsaConfig);
     setupScreenshotsFolder();
+    await browser.switchToWebView();
+    await browser.loadPicsaConfig('farmer_zm');
   },
 };
 

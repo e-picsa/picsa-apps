@@ -4,6 +4,7 @@ import { TIMEOUTS } from '../constants';
 
 /**
  * Switches the driver context to the WebView.
+ * NOTE - this is automatically called during before hook
  */
 export async function switchToWebView() {
   const current = await driver.getContext();
@@ -16,8 +17,8 @@ export async function switchToWebView() {
   });
 
   const contexts = await driver.getContexts();
-  const webview = contexts.find((c) => typeof c === 'string' && c.includes('WEBVIEW'));
-  await driver.switchContext(webview as string);
+  const webview = contexts.find((c) => getContextId(c).toUpperCase().includes('WEBVIEW'));
+  await driver.switchContext(getContextId(webview));
 }
 
 function getContextId(context: Context): string {
@@ -28,9 +29,6 @@ function getContextId(context: Context): string {
  * Set localstorage key-value pairs
  */
 export async function setLocalStorage(data: Record<string, unknown>, shouldReload = true) {
-  // Ensure we are in webview
-  await browser.switchToWebView();
-
   await browser.execute((state: Record<string, unknown>) => {
     Object.keys(state).forEach((key) => {
       const value = state[key];
@@ -53,10 +51,6 @@ export async function setLocalStorage(data: Record<string, unknown>, shouldReloa
  * @param url The URL to navigate to
  */
 export async function appNavigateTo(path: string) {
-  console.log('navigating to', path);
-  // Ensure we are in webview
-  await browser.switchToWebView();
-
   // Use JS to navigate, letting the webview handle the relative path and base url resolution
   await browser.execute((targetUrl: string) => {
     window.location.assign(`/${targetUrl}`);
