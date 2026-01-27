@@ -29,12 +29,10 @@
         "cwd": "apps/picsa-apps/app-native",
       },
     },
+    // NOTE - do not cache as can make ongoing debugging difficult (+gradle caches)
     "build-debug-apk": {
       "executor": "nx:run-commands",
-      "cache": true,
       "dependsOn": ["sync"],
-      "inputs": ["{projectRoot}/android/app/src/main/assets/public/**/*"],
-      "outputs": ["{projectRoot}/android/app/build/outputs/apk/debug/app-debug.apk"],
       "options": {
         "command": "gradlew assembleDebug",
         "cwd": "apps/picsa-apps/app-native/android",

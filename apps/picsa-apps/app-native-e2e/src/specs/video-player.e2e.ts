@@ -18,12 +18,14 @@ describe('Video Player', () => {
 
     await setupMockVideo();
 
-    const dlButton = await $('resource-download');
-    await expect(dlButton).toExist();
-    await dlButton.click();
+    const downloadButtons = await $$('.download-button-inner');
+    await expect(downloadButtons).toBeElementsArrayOfSize({
+      gte: 1,
+    });
+    await downloadButtons[0].click();
 
     const playButton = await $('.play-button');
-    await expect(playButton).toExist();
+    await expect(playButton).toExist({ wait: 10 * 1000 });
 
     // Capture current package to verify context switch
     const appPackage = await browser.getCurrentPackage();
@@ -64,11 +66,15 @@ async function setupMockVideo() {
         {
           // Match any mp4 request or specific url
           // Adjust regex as needed to match the production URL the app uses
-          urlRegex: '.mp4',
+          urlRegex: '\\.mp4',
           method: 'GET',
           response: {
             bodyBase64: videoBase64,
             status: 200,
+            headers: {
+              'Content-Type': 'video/mp4',
+              'Content-Length': String(fs.statSync(localVideoPath).size),
+            },
           },
         },
       ],
