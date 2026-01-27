@@ -7,7 +7,7 @@ import GROUPS from './groups';
 const e2eEnvironment: IEnvironment = {
   firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
-  production: true,
+  production: false,
   useMockServices: true, // <--- main change to allow selective service replacements in app.module.ts
 };
 

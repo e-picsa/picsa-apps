@@ -126,7 +126,8 @@
       {
         "env": "SUPABASE_ANON_KEY"
       }
-    ]
+    ],
+    "environmentConfig": ["{workspaceRoot}/libs/environments/src/**/*.ts"]
   },
   "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
   "useInferencePlugins": false,

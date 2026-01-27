@@ -40,7 +40,10 @@ export async function setLocalStorage(data: Record<string, unknown>, shouldReloa
 
   if (shouldReload) {
     await browser.execute(() => window.location.reload());
-    await browser.pause(TIMEOUTS.RELOAD_WAIT);
+    await browser.waitUntil(async () => await browser.execute(() => document.readyState === 'complete'), {
+      timeout: TIMEOUTS.WEBVIEW_WAIT,
+      timeoutMsg: 'Page did not reload in time',
+    });
   }
 }
 
