@@ -7,6 +7,10 @@ on:
         description: "Build type: debug or release"
         required: true
         type: string
+      configuration:
+        description: "Nx build configuration (e.g. production, e2e)"
+        type: string
+        default: "production"
     outputs:
       artifact-name:
         description: "Name of the uploaded artifact"
@@ -64,7 +68,7 @@ jobs:
           echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
 
       - name: Build App
-        run: yarn nx run picsa-apps-app-native:build
+        run: yarn nx run picsa-apps-app:build:${{ inputs.configuration }}
 
       - name: Verify supabase config in built output
         run: |
