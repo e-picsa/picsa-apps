@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -33,17 +33,17 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'dashboard-sign-in-dialog',
+  selector: 'dashboard-sign-in',
   imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
-  templateUrl: 'sign-in-dialog.component.html',
-  styleUrl: 'sign-in-dialog.component.scss',
+  templateUrl: 'sign-in.component.html',
+  styleUrl: 'sign-in.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupabaseSignInDialogComponent {
+export class DashboardSignInDialogComponent {
   private notificationService = inject(PicsaNotificationService);
   private supabaseAuthService = inject(SupabaseAuthService);
 
-  public title = 'Sign In';
+  public title = signal('Sign In');
   public template: 'signIn' | 'register' | 'reset' = 'signIn';
 
   errorMatcher = new showErrorAfterInteraction();
@@ -53,23 +53,21 @@ export class SupabaseSignInDialogComponent {
     password: new FormControl('', Validators.required),
   });
 
-  private readonly dialogRef = inject(MatDialogRef<SupabaseSignInDialogComponent>);
-
   public enableResetMode() {
     this.template = 'reset';
-    this.title = 'Reset Password';
+    this.title.set('Reset Password');
     this.form.removeControl('passwordConfirm');
   }
 
   public enableSignInMode() {
     this.template = 'signIn';
-    this.title = 'Sign In';
+    this.title.set('Sign In');
     this.form.removeControl('passwordConfirm');
   }
 
   public enableRegisterMode() {
     this.template = 'register';
-    this.title = 'Register';
+    this.title.set('Register');
     this.form.addControl(
       'passwordConfirm',
       new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch]),
@@ -84,8 +82,6 @@ export class SupabaseSignInDialogComponent {
     if (error) {
       this.form.enable();
       throw new Error(error.message);
-    } else {
-      this.dialogRef.close();
     }
   }
   public async handleRegister() {
@@ -95,8 +91,6 @@ export class SupabaseSignInDialogComponent {
     if (error) {
       this.form.enable();
       throw new Error(error.message);
-    } else {
-      this.dialogRef.close();
     }
   }
   public async handleReset() {
@@ -108,7 +102,6 @@ export class SupabaseSignInDialogComponent {
       throw new Error(error.message);
     } else {
       this.notificationService.showSuccessNotification(`Reset email sent, please check your inbox`, { duration: 5000 });
-      this.dialogRef.close();
     }
   }
 }

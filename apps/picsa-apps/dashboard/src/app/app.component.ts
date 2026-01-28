@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject,signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -8,6 +9,8 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
+import { DashboardSignInDialogComponent } from './modules/auth/pages/sign-in/sign-in.component';
+import { DashboardAuthService } from './modules/auth/services/auth.service';
 import { DeploymentSelectComponent } from './modules/deployment/components';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
@@ -16,10 +19,12 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
   imports: [
     NgTemplateOutlet,
     RouterModule,
+    MatProgressSpinnerModule,
     DashboardMaterialModule,
     DeploymentSelectComponent,
     ProfileMenuComponent,
     AuthRoleRequiredDirective,
+    DashboardSignInDialogComponent,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
@@ -29,6 +34,7 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
 export class AppComponent implements AfterViewInit {
   supabaseService = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
+  public authService = inject(DashboardAuthService);
 
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
@@ -50,7 +56,13 @@ export class AppComponent implements AfterViewInit {
     // eagerly initialise supabase and deployment services to ensure available
     // NOTE - do not include any services here that depend on an active deployment (could be undefined)
     await this.supabaseService.ready();
-    await this.deploymentService.ready();
+    // Also wait for auth service to be ready (which waits for supabase client)
+    // Though initComplete is purely a local signal. Auth service has its own wait.
+    // Wait, the plan says "Update initialization logic to wait for auth check".
+    // `authService.init()` awaits `supabaseAuthService.ready()` which waits for `register$`.
+    // It does NOT wait for `isAuthChecked` to be true. `isAuthChecked` becomes true asynchronously on auth state change.
+    // So we just need to ensure services are ready. The template handles `isAuthChecked`.
+    await this.authService.ready();
     this.initComplete.set(true);
   }
 }

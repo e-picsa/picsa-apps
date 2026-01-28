@@ -1,3 +1,11 @@
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; // Full height
+  background-color: #f5f5f5; // Light background
+}
+
 mat-dialog-content {
   width: 300px;
 }
