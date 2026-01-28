@@ -1,29 +1,4 @@
-import type { Context } from '@wdio/protocols';
-
 import { TIMEOUTS } from '../constants';
-
-/**
- * Switches the driver context to the WebView.
- * NOTE - this is automatically called during before hook
- */
-export async function switchToWebView() {
-  const current = await driver.getContext();
-  const contextId = getContextId(current);
-  if (contextId.includes('WEBVIEW')) return;
-
-  await driver.waitUntil(async () => {
-    const contexts = await driver.getContexts();
-    return contexts.some((c) => getContextId(c).includes('WEBVIEW'));
-  });
-
-  const contexts = await driver.getContexts();
-  const webview = contexts.find((c) => getContextId(c).toUpperCase().includes('WEBVIEW'));
-  await driver.switchContext(getContextId(webview));
-}
-
-function getContextId(context: Context): string {
-  return typeof context === 'string' ? context : context.id;
-}
 
 /**
  * Set localstorage key-value pairs

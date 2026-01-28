@@ -8,7 +8,6 @@ import { skipOnLegacyDevices } from '../utils/version-utils';
  */
 describe('Video Player', () => {
   before(async function () {
-    await browser.switchToWebView();
     skipOnLegacyDevices(this);
   });
   it('should play videos using local override', async () => {

@@ -3,9 +3,11 @@ import { $, expect } from '@wdio/globals';
 import { takeScreenshot } from '../utils/driver-utils';
 import { skipOnLegacyDevices } from '../utils/version-utils';
 
+/**
+ * yarn wdio run wdio.conf.ts --spec src/specs/home-page.e2e.ts
+ */
 describe('PICSA Native App - Home', () => {
   before(async function () {
-    await browser.switchToWebView();
     skipOnLegacyDevices(this);
   });
   it('should load initial state from fixtures', async () => {
