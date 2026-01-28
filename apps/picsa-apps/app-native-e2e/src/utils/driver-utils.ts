@@ -22,8 +22,8 @@ export async function switchToContext(context: 'WEBVIEW' | 'NATIVE_APP') {
   });
 
   const contexts = await driver.getContexts();
-  const webview = contexts.find((c) => getContextId(c).toUpperCase().includes(context));
-  await driver.switchContext(getContextId(webview));
+  const targetContext = contexts.find((c) => getContextId(c).toUpperCase().includes(context));
+  await driver.switchContext(getContextId(targetContext));
 }
 
 /**
