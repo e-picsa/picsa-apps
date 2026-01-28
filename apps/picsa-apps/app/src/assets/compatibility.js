@@ -56,7 +56,7 @@ function checkCompatibility() {
       } else {
         renderUpdatePrompt(
           'Android Webview',
-          'https://play.google.com/store/apps/details?id=com.google.android.webview',
+          'https://play.google.com/store/apps/details?id=com.google.android.webview'
         );
       }
     }
