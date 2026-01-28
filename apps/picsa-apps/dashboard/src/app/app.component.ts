@@ -9,10 +9,10 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
-import { DashboardSignInDialogComponent } from './modules/auth/pages/sign-in/sign-in.component';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
 import { DeploymentSelectComponent } from './modules/deployment/components';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
+import { LandingPageComponent } from './modules/landing/landing.component';
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
 
 @Component({
@@ -24,7 +24,7 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
     DeploymentSelectComponent,
     ProfileMenuComponent,
     AuthRoleRequiredDirective,
-    DashboardSignInDialogComponent,
+    LandingPageComponent,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',

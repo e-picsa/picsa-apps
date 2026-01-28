@@ -1,0 +1,122 @@
+<div class="landing-background">
+  <img src="assets/cover.jpg" alt="Background" class="cover-image" />
+  <div class="overlay"></div>
+</div>
+
+<div class="landing-container">
+  <!-- Transparent Header -->
+  <mat-toolbar class="landing-toolbar">
+    <div class="logo-container">
+      <img src="assets/picsa-logo.svg" alt="PICSA Logo" class="picsa-logo" />
+    </div>
+    <span class="spacer"></span>
+    <img src="assets/uor-logo.svg" alt="University of Reading" class="uor-logo" />
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <!-- Hero Text -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h2>Welcome to PICSA Dashboard</h2>
+        <h1>Empowering Agricultural Extension Services.</h1>
+        <p class="subtitle">
+          Efficiently manage and deploy vital content to the PICSA Farmers and Extension Mobile App.
+        </p>
+        <p class="subtitle">Serving MET and Government Extension Services globally.</p>
+      </div>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="sign-in-section">
+      <mat-card class="auth-card">
+        <mat-card-header class="auth-header">
+          <mat-card-title>Access Your Admin Account</mat-card-title>
+        </mat-card-header>
+
+        <mat-tab-group animationDuration="0ms" class="auth-tabs">
+          <!-- Login Tab -->
+          <mat-tab label="Login">
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" autocomplete="email" />
+                <mat-error>Valid email is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" autocomplete="current-password" />
+                <mat-error>Password is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-button type="button" class="forgot-password">Forgot Password?</button>
+              </div>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="submit-btn"
+                type="submit"
+                [disabled]="loginForm.invalid || loginForm.disabled"
+              >
+                Login
+              </button>
+            </form>
+          </mat-tab>
+
+          <!-- Register Tab -->
+          <mat-tab label="Register">
+            <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="fullName" autocomplete="name" />
+                <mat-error>Name is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Organization</mat-label>
+                <input matInput formControlName="organization" autocomplete="organization" />
+                <mat-error>Organization is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" autocomplete="email" />
+                <mat-error>Valid email is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" autocomplete="new-password" />
+                <mat-error>Password is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Repeat Password</mat-label>
+                <input matInput formControlName="passwordConfirm" type="password" autocomplete="new-password" />
+                <mat-error>Passwords must match</mat-error>
+              </mat-form-field>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="submit-btn"
+                type="submit"
+                [disabled]="registerForm.invalid || registerForm.disabled"
+              >
+                Register
+              </button>
+            </form>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="landing-footer">
+    <div class="version-info">PICSA Dashboard v{{ appVersion }} | Developed for University of Reading, UK</div>
+  </div>
+</div>
