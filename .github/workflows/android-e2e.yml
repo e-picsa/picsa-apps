@@ -7,7 +7,6 @@
 name: Android E2E Tests
 
 on:
-  pull_request:
   workflow_dispatch:
 
 # Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
@@ -34,10 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # API:      31  33  34  36
-        # Android:  12  13  14  16
-        api-level: [31, 33, 34, 36] # <-- Common Device Testing
-        # api-level: [23, 26, 28, 29] <-- Legacy Device Testing
+        api-level: [23, 31, 34, 36]
     env:
       API_LEVEL: ${{ matrix.api-level }}
     steps:
@@ -102,7 +98,7 @@ jobs:
         with:
           name: e2e-screenshots-android-${{ matrix.api-level }}
           path: apps/picsa-apps/app-native-e2e/screenshots
-          retention-days: 14
+          retention-days: 1
           if-no-files-found: ignore
 
   report:
@@ -117,8 +113,9 @@ jobs:
           pattern: e2e-screenshots-android-*
           merge-multiple: false
 
-      - name: Generate Summary
+      - name: Combine and Rename Screenshots
         run: |
+          mkdir -p combined-screenshots
           echo "# E2E Test Screenshots Summary" >> $GITHUB_STEP_SUMMARY
 
           for dir in screenshots/e2e-screenshots-android-*; do
@@ -126,13 +123,14 @@ jobs:
               api_level=$(basename "$dir" | sed 's/e2e-screenshots-android-//')
               echo "## Android API Level $api_level" >> $GITHUB_STEP_SUMMARY
               
-              # List files in the directory
               file_count=$(ls -1 "$dir" | wc -l)
               if [ "$file_count" -gt 0 ]; then
                 echo "Found $file_count screenshots:" >> $GITHUB_STEP_SUMMARY
                 echo "" >> $GITHUB_STEP_SUMMARY
                 for file in "$dir"/*; do
                   filename=$(basename "$file")
+                  # Copy and rename file to combined directory
+                  cp "$file" "combined-screenshots/api-${api_level}_${filename}"
                   echo "- $filename" >> $GITHUB_STEP_SUMMARY
                 done
               else
@@ -141,3 +139,11 @@ jobs:
               echo "" >> $GITHUB_STEP_SUMMARY
             fi
           done
+
+      - name: Upload Combined Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-android-e2e-screenshots
+          path: combined-screenshots
+          retention-days: 14
+          if-no-files-found: ignore
