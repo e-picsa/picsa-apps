@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -16,7 +16,7 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
   styleUrls: ['./deployment-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DeploymentSelectComponent implements OnInit {
+export class DeploymentSelectComponent {
   service = inject(DeploymentDashboardService);
   private authService = inject(DashboardAuthService);
 
@@ -29,11 +29,6 @@ export class DeploymentSelectComponent implements OnInit {
     }
     return [];
   });
-
-  async ngOnInit() {
-    await this.service.ready();
-    await this.authService.ready();
-  }
 
   /** Filter list of all deployments to only include those which are public or where user has auth roles */
   private getUserDeployments(user: IAuthUser, deployments: IDeploymentRow[]) {

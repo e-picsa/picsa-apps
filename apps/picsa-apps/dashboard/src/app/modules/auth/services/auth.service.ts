@@ -1,4 +1,4 @@
-import { computed, inject,Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import {
   IAuthRole,
@@ -19,6 +19,7 @@ export class DashboardAuthService extends PicsaAsyncService {
   private supabaseAuthService = inject(SupabaseAuthService);
 
   public authUser = this.supabaseAuthService.authUser;
+  public isAuthChecked = this.supabaseAuthService.isAuthChecked;
 
   public readonly authRoles = computed<IAuthRole[]>(() => {
     const deployment = this.deploymentService.activeDeployment();
@@ -28,7 +29,6 @@ export class DashboardAuthService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseAuthService.ready();
-    await this.deploymentService.ready();
   }
 
   private getAuthRoles(deployment: IDeploymentRow | null, user: IAuthUser | undefined) {

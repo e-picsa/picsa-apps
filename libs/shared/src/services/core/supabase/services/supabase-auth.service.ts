@@ -41,6 +41,9 @@ export class SupabaseAuthService extends PicsaAsyncService {
     },
   });
 
+  /** Track if initial auth check has completed */
+  public isAuthChecked = signal(false);
+
   /** Track parent supabase client registration */
   private register$ = new Subject<SupabaseClient>();
 
@@ -181,10 +184,11 @@ export class SupabaseAuthService extends PicsaAsyncService {
     // Subscribe to authenticated user changes
     this.auth.onAuthStateChange((_event, session) => {
       console.log(`[AUTH] ${_event}`);
+      // Ensure we mark auth as checked on any event (including INITIAL_SESSION)
+      this.isAuthChecked.set(true);
+
       const user = session?.user as IAuthUser;
       if (session) {
-        // ignore INITIAL_SESSION as also 'SIGNED_IN' event will be triggered
-        if (_event === 'INITIAL_SESSION') return;
         const { picsa_roles } = jwtDecode(session.access_token) as ICustomAuthJWTPayload;
         user.picsa_roles = picsa_roles || {};
 

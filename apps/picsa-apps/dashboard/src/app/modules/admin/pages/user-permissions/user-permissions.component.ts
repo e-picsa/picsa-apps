@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
-  OnInit,
   signal,
   TemplateRef,
   viewChild,
@@ -31,7 +31,7 @@ interface IUserWithRoles extends IAuthUser {
   styleUrl: './user-permissions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminUserPermissionsComponent implements OnInit {
+export class AdminUserPermissionsComponent {
   dialog = inject(MatDialog);
   private supabase = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
@@ -73,11 +73,15 @@ export class AdminUserPermissionsComponent implements OnInit {
     return this.deploymentService.activeDeployment().id;
   }
 
-  async ngOnInit() {
-    await this.supabase.ready();
-    await this.deploymentService.ready();
-    this.refreshData();
+  constructor() {
+    effect(() => {
+      const { activeDeployment } = this.deploymentService;
+      if (activeDeployment()) {
+        this.refreshData();
+      }
+    });
   }
+
   private refreshData() {
     this.listAuthUsers();
     this.listUserRoles();

@@ -1,15 +1,16 @@
-import { computed, inject,Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 import { filter, firstValueFrom, map } from 'rxjs';
 
 import { IDeploymentRow } from './types';
 
 @Injectable({ providedIn: 'root' })
-export class DeploymentDashboardService extends PicsaAsyncService {
+export class DeploymentDashboardService {
   private supabaseService = inject(SupabaseService);
+  private supabaseAuthService = inject(SupabaseAuthService);
 
   public readonly deployments = signal<IDeploymentRow[]>([]);
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
@@ -31,10 +32,14 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     return this.supabaseService.db.table('deployments');
   }
 
-  public override async init() {
-    await this.supabaseService.ready();
-    await this.listDeployments();
-    this.loadStoredDeployment();
+  constructor() {
+    effect(async () => {
+      const authUser = this.supabaseAuthService.authUser();
+      if (authUser) {
+        await this.listDeployments();
+        this.loadStoredDeployment();
+      }
+    });
   }
 
   public async setActiveDeployment(id: string, opts = { forceReload: true }) {
