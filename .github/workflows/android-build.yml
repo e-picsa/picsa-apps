@@ -11,6 +11,10 @@ on:
         description: "Nx build configuration (e.g. production, e2e)"
         type: string
         default: "production"
+      post-build-command:
+        description: "Optional command to run after web build, before capacitor sync"
+        type: string
+        default: ""
     outputs:
       artifact-name:
         description: "Name of the uploaded artifact"
@@ -80,6 +84,10 @@ jobs:
           fi
           echo "✅ Found supabase config in build output"
           cat "$CONFIG_FILE"
+
+      - name: Run post-build command
+        if: inputs.post-build-command != ''
+        run: ${{ inputs.post-build-command }}
 
       - name: Sync Capacitor
         run: npx cap sync

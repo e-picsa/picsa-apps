@@ -5,6 +5,18 @@
   "sourceRoot": "apps/picsa-apps/app-native-e2e/src",
   "tags": [],
   "targets": {
+    // Build web app, copy mock fixtures and compile apk
+    "prepare": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run picsa-apps-app:build:e2e",
+          "node -e \"require('fs').cpSync('apps/picsa-apps/app-native-e2e/src/fixtures/assets', 'dist/apps/picsa-apps/app/assets', {recursive: true})\"",
+          "nx run picsa-apps-app-native:build-debug-apk"
+        ],
+        "parallel": false
+      }
+    },
     "e2e": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -12,11 +24,7 @@
       "options": {
         "command": "wdio run wdio.conf.ts",
         "cwd": "apps/picsa-apps/app-native-e2e"
-      },
-      "dependsOn": [
-        { "target": "build:e2e", "projects": ["picsa-apps-app"] },
-        { "target": "build-debug-apk", "projects": ["picsa-apps-app-native"] }
-      ]
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
