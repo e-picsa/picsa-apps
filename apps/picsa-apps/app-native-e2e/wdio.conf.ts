@@ -5,6 +5,7 @@ import { emptyDirSync } from 'fs-extra';
 import path from 'path';
 
 import { PATHS } from './src/constants';
+import { switchToContext } from './src/utils/driver-utils';
 
 const isCI = !!process.env.CI;
 
@@ -72,12 +73,21 @@ export const config: Options.Testrunner = {
     timeout: isCI ? 300000 : 60000,
   },
   before: async function () {
-    const { switchToWebView, appNavigateTo } = await import('./src/utils/wdio-commands');
-    browser.addCommand('switchToWebView', switchToWebView);
+    const { appNavigateTo } = await import('./src/utils/wdio-commands');
     browser.addCommand('appNavigateTo', appNavigateTo);
     const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
     browser.addCommand('loadPicsaConfig', loadPicsaConfig);
+
     setupScreenshotsFolder();
+    await switchToContext('WEBVIEW');
+    await browser.loadPicsaConfig('farmer_zm');
+  },
+
+  afterTest: async function (test, context, { passed }) {
+    const { takeScreenshot } = await import('./src/utils/driver-utils');
+    const screenshotName = `${passed ? 'passed' : 'failed'}_${test.title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}.png`;
+    const filePath = path.join(PATHS.SCREENSHOTS, screenshotName);
+    await takeScreenshot(filePath);
   },
 };
 

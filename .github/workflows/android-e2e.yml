@@ -1,20 +1,27 @@
+# Run E2E tests against a matrix of android devices
+#
+# Android API Mapping
+# API:      23  26  28  29  30  31  33  34  36
+# Android:  6   8   9   10  11  12  13  14  16
+
 name: Android E2E Tests
 
 on:
-  # pull_request:
   workflow_dispatch:
-    inputs:
-      api-level:
-        description: "Android API level for emulator"
-        required: false
-        default: 34
-        type: number
+
+# Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
+concurrency:
+  group: app-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     uses: ./.github/workflows/android-build.yml
     with:
       build-type: debug
+      configuration: e2e
+      # Manually populate mock fixtures
+      post-build-command: cp -r apps/picsa-apps/app-native-e2e/src/fixtures/assets/* dist/apps/picsa-apps/app/assets/
     secrets:
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -22,9 +29,13 @@ jobs:
   e2e:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [23, 31, 34, 36]
     env:
-      API_LEVEL: ${{ inputs.api-level || 34 }}
+      API_LEVEL: ${{ matrix.api-level }}
     steps:
       - uses: actions/checkout@v6
 
@@ -56,13 +67,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}
+          key: avd-${{ matrix.api-level }}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ env.API_LEVEL }}
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -72,7 +83,7 @@ jobs:
       - name: Run Appium tests on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ env.API_LEVEL }}
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           profile: pixel_6
           emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect
@@ -85,7 +96,54 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-screenshots-${{ github.run_id }}
+          name: e2e-screenshots-android-${{ matrix.api-level }}
           path: apps/picsa-apps/app-native-e2e/screenshots
+          retention-days: 1
+          if-no-files-found: ignore
+
+  report:
+    needs: e2e
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all screenshots
+        uses: actions/download-artifact@v4
+        with:
+          path: screenshots
+          pattern: e2e-screenshots-android-*
+          merge-multiple: false
+
+      - name: Combine and Rename Screenshots
+        run: |
+          mkdir -p combined-screenshots
+          echo "# E2E Test Screenshots Summary" >> $GITHUB_STEP_SUMMARY
+
+          for dir in screenshots/e2e-screenshots-android-*; do
+            if [ -d "$dir" ]; then
+              api_level=$(basename "$dir" | sed 's/e2e-screenshots-android-//')
+              echo "## Android API Level $api_level" >> $GITHUB_STEP_SUMMARY
+              
+              file_count=$(ls -1 "$dir" | wc -l)
+              if [ "$file_count" -gt 0 ]; then
+                echo "Found $file_count screenshots:" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                for file in "$dir"/*; do
+                  filename=$(basename "$file")
+                  # Copy and rename file to combined directory
+                  cp "$file" "combined-screenshots/api-${api_level}_${filename}"
+                  echo "- $filename" >> $GITHUB_STEP_SUMMARY
+                done
+              else
+                echo "No screenshots found." >> $GITHUB_STEP_SUMMARY
+              fi
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Upload Combined Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-android-e2e-screenshots
+          path: combined-screenshots
           retention-days: 14
           if-no-files-found: ignore
