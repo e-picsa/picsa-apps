@@ -10,6 +10,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
+concurrency:
+  group: app-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     uses: ./.github/workflows/android-build.yml

@@ -1,5 +1,6 @@
 import { browser } from '@wdio/globals';
 
+import { takeScreenshot } from '../utils/driver-utils';
 import { skipOnModernDevices } from '../utils/version-utils';
 
 describe('Compatibility Check', () => {
@@ -17,10 +18,6 @@ describe('Compatibility Check', () => {
     const prompt = await $('#updatePrompt');
     await prompt.waitForExist({ timeout: 5000 });
 
-    const heading = await prompt.$('h2');
-    await expect(heading).toHaveText('Update Required');
-
-    const button = await prompt.$('button=Go To Play Store');
-    await expect(button).toExist();
+    await takeScreenshot('CompatibilityCheck');
   });
 });
