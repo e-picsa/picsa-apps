@@ -9,7 +9,7 @@ The architecture consists of a "Super App" (`apps/picsa-apps/app`) that acts as 
 > **Use Yarn for all commands.**
 > Always prefix `nx` commands with `yarn`, e.g., `yarn nx build`.
 
-## detailed Context
+## Detailed Context
 
 Please refer to the following files in `.gemini/` for deep context:
 
