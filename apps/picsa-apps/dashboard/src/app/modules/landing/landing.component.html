@@ -67,7 +67,11 @@
   </div>
 
   <!-- Footer -->
-  <div class="p-4 text-center text-white text-xs shrink-0 bg-[#222]">
-    <div class="opacity-70">PICSA Dashboard v{{ appVersion }} | Developed for University of Reading, UK</div>
-  </div>
+  <footer class="flex items-center p-2 md:p-4 gap-1 md:gap-2">
+    <div class="flex-1 min-w-32">
+      <span>PICSA Dashboard v{{ appVersion }}</span>
+    </div>
+    <a matButton routerLink="/privacy-policy" class="ml-auto text-xs">Privacy Policy</a>
+    <a matButton routerLink="/terms-of-service" class="text-xs">Terms of Service</a>
+  </footer>
 </div>

@@ -10,6 +10,16 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/resources/resources.module').then((m) => m.ResourcesPageModule),
   },
   {
+    path: 'privacy-policy',
+    loadComponent: () =>
+      import('./modules/legal/privacy-policy/privacy-policy.component').then((m) => m.PrivacyPolicyComponent),
+  },
+  {
+    path: 'terms-of-service',
+    loadComponent: () =>
+      import('./modules/legal/terms-of-service/terms-of-service.component').then((m) => m.TermsOfServiceComponent),
+  },
+  {
     path: 'climate',
     loadChildren: () => import('./modules/climate/climate.module').then((m) => m.ClimateModule),
   },

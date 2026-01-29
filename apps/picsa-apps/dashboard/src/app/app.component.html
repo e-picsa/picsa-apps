@@ -77,9 +77,12 @@
         </mat-sidenav-content>
       </mat-sidenav-container>
     } @else {
-      <!-- Landing page -->
-      <!-- Landing page -->
-      <dashboard-landing-page class="flex-1" />
+      <!-- Landing page or Public Route -->
+      @if (isPublicPage()) {
+        <router-outlet></router-outlet>
+      } @else {
+        <dashboard-landing-page class="flex-1" />
+      }
     }
   } @else {
     <div class="loading-overlay">
