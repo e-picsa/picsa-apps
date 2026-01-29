@@ -79,8 +79,12 @@ export class SupabaseAuthService extends PicsaAsyncService {
     return this.auth.signInWithPassword({ email, password });
   }
 
-  public async signUpUser(email: string, password: string) {
-    return this.auth.signUp({ email, password });
+  public async signUpUser(email: string, password: string, data?: object) {
+    return this.auth.signUp({
+      email,
+      password,
+      options: data ? { data } : undefined,
+    });
   }
 
   public async resetEmailPassword(email: string) {

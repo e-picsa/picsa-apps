@@ -1,0 +1,77 @@
+<mat-tab-group animationDuration="0ms" class="custom-auth-tabs">
+  <!-- Login Tab -->
+  <mat-tab label="Login">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="flex flex-col gap-3">
+      <mat-form-field appearance="outline" class="mt-1">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="email" />
+        <mat-error>Valid email is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" autocomplete="current-password" />
+        <mat-error>Password is required</mat-error>
+      </mat-form-field>
+
+      <div class="flex justify-end mb-2">
+        <button mat-button type="button" class="text-sm !text-primary">Forgot Password?</button>
+      </div>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="!h-12 !text-lg w-full"
+        type="submit"
+        [disabled]="loginForm.invalid || loginForm.disabled"
+      >
+        Login
+      </button>
+    </form>
+  </mat-tab>
+
+  <!-- Register Tab -->
+  <mat-tab label="Register">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="flex flex-col gap-3">
+      <mat-form-field appearance="outline" class="mt-1">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullName" autocomplete="name" />
+        <mat-error>Name is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Organization</mat-label>
+        <input matInput formControlName="organization" autocomplete="organization" />
+        <mat-error>Organization is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="email" />
+        <mat-error>Valid email is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" autocomplete="new-password" />
+        <mat-error>Password is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Repeat Password</mat-label>
+        <input matInput formControlName="passwordConfirm" type="password" autocomplete="new-password" />
+        <mat-error>Passwords must match</mat-error>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="!h-12 !text-lg w-full"
+        type="submit"
+        [disabled]="registerForm.invalid || registerForm.disabled"
+      >
+        Register
+      </button>
+    </form>
+  </mat-tab>
+</mat-tab-group>

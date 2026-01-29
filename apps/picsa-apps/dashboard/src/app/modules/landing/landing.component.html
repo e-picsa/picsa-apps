@@ -1,122 +1,51 @@
-<div class="landing-background">
-  <img src="assets/cover.jpg" alt="Background" class="cover-image" />
-  <div class="overlay"></div>
+<div class="img-container">
+  <img src="assets/cover.jpg" alt="Background" class="w-full h-full object-cover contrast-[0.2]" />
 </div>
 
-<div class="landing-container">
+<div class="flex-1 flex flex-col h-full z-10 relative">
   <!-- Transparent Header -->
-  <mat-toolbar class="landing-toolbar">
-    <div class="logo-container">
-      <img src="assets/picsa-logo.svg" alt="PICSA Logo" class="picsa-logo" />
+  <mat-toolbar class="!bg-transparent text-white px-4 !h-[80px] flex justify-between items-center shrink-0">
+    <div class="flex items-center gap-3">
+      <img src="assets/picsa-logo.svg" alt="PICSA Logo" class="h-10" />
     </div>
-    <span class="spacer"></span>
-    <img src="assets/uor-logo.svg" alt="University of Reading" class="uor-logo" />
+    <span class="flex-1"></span>
+    <img src="assets/uor-logo.svg" alt="University of Reading" class="h-10" />
   </mat-toolbar>
 
   <!-- Main Content -->
-  <div class="content-wrapper">
+  <div class="flex-1 flex flex-col md:flex-row m-auto w-full max-w-screen-md p-8 overflow-y-auto items-center md:px-16">
     <!-- Hero Text -->
-    <div class="hero-section">
-      <div class="hero-content">
-        <h2>Welcome to PICSA Dashboard</h2>
-        <h1>Empowering Agricultural Extension Services.</h1>
-        <p class="subtitle">
-          Efficiently manage and deploy vital content to the PICSA Farmers and Extension Mobile App.
+    <div class="text-left mb-8 w-full max-w-md drop-shadow-md md:mb-0 md:pr-8">
+      <div>
+        <h1>E-PICSA App Dashboard</h1>
+        <p class="text-xl leading-relaxed mb-8 opacity-90">
+          Efficiently manage and deploy content for the E-PICSA Farmers and Extension Mobile App.
         </p>
-        <p class="subtitle">Serving MET and Government Extension Services globally.</p>
+        <a
+          href="https://research.reading.ac.uk/picsa/"
+          target="_blank"
+          rel="noopener noreferrer"
+          mat-stroked-button
+          class="!text-white !border-white !text-lg !px-6 !py-4"
+        >
+          Learn More about PICSA
+        </a>
       </div>
     </div>
 
     <!-- Auth Card -->
-    <div class="sign-in-section">
-      <mat-card class="auth-card">
-        <mat-card-header class="auth-header">
-          <mat-card-title>Access Your Admin Account</mat-card-title>
+    <div class="w-96">
+      <mat-card class="!bg-white !text-black rounded-lg overflow-hidden w-full shadow-2xl">
+        <mat-card-header class="bg-primary text-white p-4 flex justify-center">
+          <mat-card-title class="!text-xl !font-normal !mb-0">Access Your Account</mat-card-title>
         </mat-card-header>
-
-        <mat-tab-group animationDuration="0ms" class="auth-tabs">
-          <!-- Login Tab -->
-          <mat-tab label="Login">
-            <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Email</mat-label>
-                <input matInput formControlName="email" type="email" autocomplete="email" />
-                <mat-error>Valid email is required</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Password</mat-label>
-                <input matInput formControlName="password" type="password" autocomplete="current-password" />
-                <mat-error>Password is required</mat-error>
-              </mat-form-field>
-
-              <div class="form-actions">
-                <button mat-button type="button" class="forgot-password">Forgot Password?</button>
-              </div>
-
-              <button
-                mat-flat-button
-                color="primary"
-                class="submit-btn"
-                type="submit"
-                [disabled]="loginForm.invalid || loginForm.disabled"
-              >
-                Login
-              </button>
-            </form>
-          </mat-tab>
-
-          <!-- Register Tab -->
-          <mat-tab label="Register">
-            <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Full Name</mat-label>
-                <input matInput formControlName="fullName" autocomplete="name" />
-                <mat-error>Name is required</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Organization</mat-label>
-                <input matInput formControlName="organization" autocomplete="organization" />
-                <mat-error>Organization is required</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Email</mat-label>
-                <input matInput formControlName="email" type="email" autocomplete="email" />
-                <mat-error>Valid email is required</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Password</mat-label>
-                <input matInput formControlName="password" type="password" autocomplete="new-password" />
-                <mat-error>Password is required</mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Repeat Password</mat-label>
-                <input matInput formControlName="passwordConfirm" type="password" autocomplete="new-password" />
-                <mat-error>Passwords must match</mat-error>
-              </mat-form-field>
-
-              <button
-                mat-flat-button
-                color="primary"
-                class="submit-btn"
-                type="submit"
-                [disabled]="registerForm.invalid || registerForm.disabled"
-              >
-                Register
-              </button>
-            </form>
-          </mat-tab>
-        </mat-tab-group>
+        <dashboard-sign-in />
       </mat-card>
     </div>
   </div>
 
   <!-- Footer -->
-  <div class="landing-footer">
-    <div class="version-info">PICSA Dashboard v{{ appVersion }} | Developed for University of Reading, UK</div>
+  <div class="p-4 text-center text-white text-xs shrink-0" style="background-color: #222">
+    <div class="opacity-70">PICSA Dashboard v{{ appVersion }} | Developed for University of Reading, UK</div>
   </div>
 </div>
