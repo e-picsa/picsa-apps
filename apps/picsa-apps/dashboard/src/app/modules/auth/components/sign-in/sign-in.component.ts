@@ -98,4 +98,20 @@ export class DashboardSignInComponent {
       this.registerForm.enable();
     }
   }
+  async onForgotPassword() {
+    const emailControl = this.loginForm.get('email');
+    if (emailControl?.invalid || !emailControl?.value) {
+      emailControl?.markAsTouched();
+      this.notificationService.showErrorNotification('Please enter a valid email address to reset password');
+      return;
+    }
+
+    const { error } = await this.supabaseAuthService.resetEmailPassword(emailControl.value);
+
+    if (error) {
+      this.notificationService.showErrorNotification(error.message);
+    } else {
+      this.notificationService.showSuccessNotification('Password reset instructions sent to your email');
+    }
+  }
 }
