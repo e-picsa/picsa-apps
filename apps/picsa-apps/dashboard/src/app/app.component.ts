@@ -8,7 +8,7 @@ import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { filter, map } from 'rxjs/operators';
 
-import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
+import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS, PUBLIC_PAGES } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
@@ -48,7 +48,9 @@ export class AppComponent implements AfterViewInit {
   public isPublicPage = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      map((e) => e.urlAfterRedirects.includes('privacy-policy') || e.urlAfterRedirects.includes('terms-of-service')),
+      map((e) => {
+        return PUBLIC_PAGES.includes(e.urlAfterRedirects.replace('/', ''));
+      }),
     ),
     { initialValue: false },
   );

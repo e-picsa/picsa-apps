@@ -116,3 +116,5 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
     roleRequired: 'deployments.admin',
   },
 ];
+
+export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service'];
