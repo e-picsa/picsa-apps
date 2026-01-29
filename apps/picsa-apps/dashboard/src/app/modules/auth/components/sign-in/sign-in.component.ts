@@ -17,10 +17,6 @@ import { PICSAFormValidators } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
-export interface ISignInDialogData {
-  authService: SupabaseAuthService;
-}
-
 /**
  * Implement custom error handler to only display if control is dirty, touched, or submitted.
  * https://material.angular.io/components/input/overview#changing-when-error-messages-are-shown
