@@ -1,4 +1,4 @@
-import { ClimateApi } from '@picsa/server-types';
+import type * as ClimateApi from '../../types/climate-api.types';
 import type { Database } from '../../types/db.types.ts';
 
 // climate

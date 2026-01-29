@@ -7,8 +7,6 @@ import { RouterModule } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
-import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component';
-
 @Component({
   selector: 'dashboard-profile-menu',
   imports: [MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
@@ -29,8 +27,5 @@ export class ProfileMenuComponent implements AfterViewInit {
   }
   public signOut() {
     console.log('signing out');
-  }
-  public promptSignIn() {
-    this.dialog.open(SupabaseSignInDialogComponent);
   }
 }
