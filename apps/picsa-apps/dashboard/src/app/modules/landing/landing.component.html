@@ -13,56 +13,58 @@
   </mat-toolbar>
 
   <!-- Main Content -->
-  <div
-    class="flex-1 flex flex-col md:flex-row md:justify-between m-auto w-full max-w-screen-md p-8 overflow-y-auto items-center md:px-16"
-  >
-    <!-- Hero Text -->
-    <div class="text-left mb-8 w-full max-w-md drop-shadow-md md:mb-0 md:pr-8 text-white">
-      <div class="mb-10">
-        <h1 class="text-5xl font-light mb-4 tracking-tight">E-PICSA Dashboard</h1>
-        <p class="text-xl leading-relaxed opacity-90 font-light">
-          Manage and deploy content for the E-PICSA Mobile App.
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-8">
-        <!-- Mobile App Section -->
-        <div class="flex flex-col gap-3">
-          <span class="text-sm uppercase tracking-wider font-semibold opacity-80">Download the Mobile App</span>
-          <a
-            href="https://play.google.com/store/apps/details?id=io.picsa.extension&hl=en_CA"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:opacity-80 transition-opacity w-fit"
-          >
-            <img src="assets/mat-icons/play_store.svg" alt="Get it on Google Play" class="h-[50px]" />
-          </a>
+  <div class="flex-1 w-full overflow-y-auto flex flex-col">
+    <div
+      class="w-full max-w-screen-md mx-auto p-8 flex flex-col md:flex-row md:justify-between items-center md:px-16 my-auto"
+    >
+      <!-- Hero Text -->
+      <div class="text-left mb-8 w-full max-w-md drop-shadow-md md:mb-0 md:pr-8 text-white">
+        <div class="mb-10">
+          <h1 class="text-5xl font-light mb-4 tracking-tight px-0">E-PICSA Dashboard</h1>
+          <p class="text-xl leading-relaxed opacity-90 font-light">
+            Manage and deploy content for the E-PICSA Mobile App.
+          </p>
         </div>
 
-        <!-- Links -->
-        <div class="flex flex-col gap-3">
-          <span class="text-sm uppercase tracking-wider font-semibold opacity-80">Resources</span>
-          <a
-            href="https://research.reading.ac.uk/picsa/"
-            target="_blank"
-            rel="noopener noreferrer"
-            mat-stroked-button
-            class="!text-white !border-white/40 !w-fit hover:!bg-white/10"
-          >
-            Learn More about PICSA
-          </a>
+        <div class="flex flex-col gap-8">
+          <!-- Mobile App Section -->
+          <div class="flex flex-col gap-3">
+            <span class="text-sm uppercase tracking-wider font-semibold opacity-80">Download the Mobile App</span>
+            <a
+              href="https://play.google.com/store/apps/details?id=io.picsa.extension&hl=en_CA"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:opacity-80 transition-opacity w-fit"
+            >
+              <img src="assets/mat-icons/play_store.svg" alt="Get it on Google Play" class="h-[50px]" />
+            </a>
+          </div>
+
+          <!-- Links -->
+          <div class="flex flex-col gap-3">
+            <span class="text-sm uppercase tracking-wider font-semibold opacity-80">Resources</span>
+            <a
+              href="https://research.reading.ac.uk/picsa/"
+              target="_blank"
+              rel="noopener noreferrer"
+              matButton="filled"
+              class="p-4 w-fit"
+            >
+              Learn More about PICSA
+            </a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Auth Card -->
-    <div class="w-96">
-      <mat-card class="!bg-white !text-black rounded-lg overflow-hidden w-full shadow-2xl">
-        <mat-card-header class="bg-primary text-white p-4 flex justify-center">
-          <mat-card-title class="!text-xl !font-normal !mb-0">Access Your Account</mat-card-title>
-        </mat-card-header>
-        <dashboard-sign-in />
-      </mat-card>
+      <!-- Auth Card -->
+      <div class="w-96">
+        <mat-card class="!bg-white !text-black rounded-lg overflow-hidden w-full shadow-2xl">
+          <mat-card-header class="bg-primary text-white p-4 flex justify-center">
+            <mat-card-title class="!text-xl !font-normal !mb-0">Access Your Account</mat-card-title>
+          </mat-card-header>
+          <dashboard-sign-in />
+        </mat-card>
+      </div>
     </div>
   </div>
 
