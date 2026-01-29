@@ -6,7 +6,7 @@
       <dashboard-deployment-item
         (click)="deploymentService.setActiveDeployment(deployment.id)"
         [deployment]="deployment"
-        [attr.data-active]="deployment.id === deploymentService.activeDeployment()?.id"
+        [attr.data-active]="deployment.id === deploymentService.activeDeployment().id"
       />
     }
   </div>
@@ -34,4 +34,42 @@
       }
     </table>
   }
+
+  <h2 class="mt-16">Account Management</h2>
+
+  <div class="border border-solid border-[#deb1b1] p-6">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold text-gray-900">Request Data Export</div>
+          <div class="text-sm text-gray-600">Receive a copy of your personal data attached to this account.</div>
+        </div>
+        <a
+          mat-button
+          color="accent"
+          href="mailto:apps@c2dev.co.uk?subject=GDPR%20Data%20Export%20Request&body=I%20would%20like%20to%20request%20a%20copy%20of%20all%20personal%20data%20associated%20with%20my%20account."
+        >
+          <mat-icon>download</mat-icon>
+          Request Data
+        </a>
+      </div>
+
+      <div class="h-px bg-red-200"></div>
+
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold text-red-700">Delete Account</div>
+          <div class="text-sm text-gray-600">Permanently delete your account and all associated personal data.</div>
+        </div>
+        <a
+          mat-button
+          color="warn"
+          href="mailto:apps@c2dev.co.uk?subject=Account%20Deletion%20Request&body=I%20would%20like%20to%20request%20the%20permanent%20deletion%20of%20my%20account%20and%20all%20associated%20personal%20data.%20I%20understand%20this%20action%20cannot%20be%20undone."
+        >
+          <mat-icon>delete_forever</mat-icon>
+          Delete Account
+        </a>
+      </div>
+    </div>
+  </div>
 </div>

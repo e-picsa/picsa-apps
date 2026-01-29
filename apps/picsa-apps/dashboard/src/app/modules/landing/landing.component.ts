@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 import { APP_VERSION } from '@picsa/environments/src/version';
 
 import { DashboardSignInComponent } from '../auth/components/sign-in/sign-in.component';
@@ -10,7 +11,14 @@ import { DashboardSignInComponent } from '../auth/components/sign-in/sign-in.com
 @Component({
   selector: 'dashboard-landing-page',
   standalone: true,
-  imports: [ReactiveFormsModule, DashboardSignInComponent, MatCardModule, MatToolbarModule, MatButtonModule],
+  imports: [
+    ReactiveFormsModule,
+    DashboardSignInComponent,
+    MatCardModule,
+    MatToolbarModule,
+    MatButtonModule,
+    RouterLink,
+  ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

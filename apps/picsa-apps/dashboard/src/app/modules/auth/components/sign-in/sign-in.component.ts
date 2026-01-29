@@ -13,6 +13,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
+import { RouterModule } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
@@ -30,7 +31,15 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-sign-in',
-  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatTabsModule, ReactiveFormsModule],
+  imports: [
+    RouterModule,
+    FormsModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTabsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: 'sign-in.component.html',
   styleUrl: 'sign-in.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

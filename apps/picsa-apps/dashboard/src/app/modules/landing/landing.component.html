@@ -9,7 +9,7 @@
       <img src="assets/picsa-logo.svg" alt="PICSA Logo" class="h-10" />
     </div>
     <span class="flex-1"></span>
-    <img src="assets/uor-logo.svg" alt="University of Reading" class="h-10" />
+    <!-- <img src="assets/uor-logo.svg" alt="University of Reading" class="h-10" /> -->
   </mat-toolbar>
 
   <!-- Main Content -->
@@ -67,7 +67,11 @@
   </div>
 
   <!-- Footer -->
-  <div class="p-4 text-center text-white text-xs shrink-0 bg-[#222]">
-    <div class="opacity-70">PICSA Dashboard v{{ appVersion }} | Developed for University of Reading, UK</div>
-  </div>
+  <footer class="flex items-center p-2 md:p-4 gap-1 md:gap-2">
+    <div class="flex-1 min-w-32 mr-auto">
+      <span>PICSA Dashboard v{{ appVersion }}</span>
+    </div>
+    <a matButton routerLink="/privacy-policy">Privacy Policy</a>
+    <a matButton routerLink="/terms-of-service">Terms of Service</a>
+  </footer>
 </div>

@@ -1,12 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { filter, map } from 'rxjs/operators';
 
-import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
+import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS, PUBLIC_PAGES } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
@@ -35,11 +37,23 @@ export class AppComponent implements AfterViewInit {
   supabaseService = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
   public authService = inject(DashboardAuthService);
+  private router = inject(Router);
 
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
   adminLinks = ADMIN_NAV_LINKS;
   appVersion = APP_VERSION;
+
+  /** Track public pages for unauthenticated user access */
+  public isPublicPage = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => {
+        return PUBLIC_PAGES.includes(e.urlAfterRedirects.replace('/', ''));
+      }),
+    ),
+    { initialValue: false },
+  );
 
   public deployment = this.deploymentService.activeDeployment;
 
