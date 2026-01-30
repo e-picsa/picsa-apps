@@ -1,4 +1,4 @@
-import { Database } from '../../../types/db.types.ts';
+import type { Database } from '../../../types/db.types.ts';
 import { getServiceRoleClient } from '../../_shared/client.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import type { IAdminListUserRolesResponse } from './types.ts';
