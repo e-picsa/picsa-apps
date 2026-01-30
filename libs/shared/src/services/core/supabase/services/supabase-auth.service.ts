@@ -1,9 +1,8 @@
 import { DOCUMENT } from '@angular/common';
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
-import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { firstValueFrom, Subject } from 'rxjs';
 
@@ -40,6 +39,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
       return diff.updated_at && Object.keys(diff).length === 1;
     },
   });
+  public authUserId = computed(() => this.authUser()?.id);
 
   /** Track if initial auth check has completed */
   public isAuthChecked = signal(false);
@@ -47,7 +47,11 @@ export class SupabaseAuthService extends PicsaAsyncService {
   /** Track parent supabase client registration */
   private register$ = new Subject<SupabaseClient>();
 
-  private auth: SupabaseAuthClient;
+  private client: SupabaseClient;
+
+  private get auth() {
+    return this.client.auth;
+  }
 
   constructor() {
     super();
@@ -70,7 +74,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
-    this.auth = client.auth;
+    this.client = client;
     this.register$.next(client);
     this.register$.complete();
   }
