@@ -18,5 +18,7 @@
       }
     }
   </div>
-  <dashboard-footer class="z-10" />
+  @if (shouldShowFooter()) {
+    <dashboard-footer class="z-10" />
+  }
 </div>

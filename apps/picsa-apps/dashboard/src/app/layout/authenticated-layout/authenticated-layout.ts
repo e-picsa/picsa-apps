@@ -9,11 +9,13 @@ import { DashboardMaterialModule } from '../../material.module';
 import { AuthRoleRequiredDirective } from '../../modules/auth';
 import { DeploymentSelectComponent } from '../../modules/deployment/components';
 import { ProfileMenuComponent } from '../../modules/profile/components/profile-menu/profile-menu.component';
+import { DashboardFooterComponent } from '../footer/footer.component';
 
 @Component({
   imports: [
     NgTemplateOutlet,
     RouterModule,
+    DashboardFooterComponent,
     MatProgressSpinnerModule,
     DashboardMaterialModule,
     DeploymentSelectComponent,

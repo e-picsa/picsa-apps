@@ -65,6 +65,7 @@ export class AppComponent implements AfterViewInit {
     }
     return 'landing';
   });
+  public shouldShowFooter = computed(() => !['authenticated', 'loading'].includes(this.viewState()));
 
   constructor() {
     const dialogService = inject(PicsaDialogService);

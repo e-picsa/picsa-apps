@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { APP_VERSION } from '@picsa/environments/src/version';
@@ -12,4 +12,6 @@ import { APP_VERSION } from '@picsa/environments/src/version';
 })
 export class DashboardFooterComponent {
   public appVersion = APP_VERSION;
+  /** Adjust style when displaying in sidebar area */
+  public isSidebar = input<boolean>();
 }

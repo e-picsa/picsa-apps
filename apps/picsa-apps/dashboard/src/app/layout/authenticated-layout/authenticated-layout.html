@@ -8,7 +8,7 @@
 
 <mat-sidenav-container style="flex: 1">
   <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
-    <mat-nav-list style="width: 256px">
+    <mat-nav-list class="w-64 flex-1">
       @for (link of navLinks; track link.href) { @if (link.children) {
       <!-- Nested nav items -->
       <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive" *roleRequired="link.roleRequired">
@@ -40,8 +40,10 @@
         <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
       </a>
       } }
-      <mat-divider style="margin-top: auto"></mat-divider>
-      <div mat-subheader *roleRequired="'deployments.admin'">Admin</div>
+    </mat-nav-list>
+    <mat-nav-list class="w-64 mt-auto" *roleRequired="'deployments.admin'">
+      <mat-divider></mat-divider>
+      <div mat-subheader>Admin</div>
       <mat-divider></mat-divider>
       @for (link of adminLinks; track link.href) {
       <a
@@ -55,7 +57,7 @@
       }
     </mat-nav-list>
     <mat-divider></mat-divider>
-    <div class="text-sm px-2 opacity-50 text-center">v{{ appVersion }}</div>
+    <dashboard-footer [isSidebar]="true" class="w-64" />
   </mat-sidenav>
   <mat-sidenav-content>
     <router-outlet></router-outlet>
