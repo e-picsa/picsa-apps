@@ -105,7 +105,10 @@ export class SupabaseAuthService extends PicsaAsyncService {
   }
 
   public async signOut() {
-    return this.auth.signOut();
+    this.auth.signOut();
+    // Clear anything persisted to storage
+    localStorage.clear();
+    sessionStorage.clear();
   }
 
   /**

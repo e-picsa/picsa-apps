@@ -1,40 +1,41 @@
-import { computed, inject, Injectable } from '@angular/core';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import {
-  IAuthRole,
-  IAuthUser,
-  SupabaseAuthService,
-} from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
-
-import { DeploymentDashboardService } from '../../deployment/deployment.service';
-import { IDeploymentRow } from '../../deployment/types';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { IAuthRole, SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 /**
  * Authentication and user permission handling
  * Adapts Supabase auth to include deployment-specific user role-based-access controls
  */
 @Injectable({ providedIn: 'root' })
-export class DashboardAuthService extends PicsaAsyncService {
-  private deploymentService = inject(DeploymentDashboardService);
+export class DashboardAuthService {
   private supabaseAuthService = inject(SupabaseAuthService);
+  private activeDeploymentId = signal<string | undefined>(undefined);
 
   public authUser = this.supabaseAuthService.authUser;
+
+  /** Auth roles for all deployments */
+  public rolesByDeploymentId = computed(() => this.authUser()?.picsa_roles);
+
+  public authUserId = computed(() => this.supabaseAuthService.authUser()?.id);
   public isAuthChecked = this.supabaseAuthService.isAuthChecked;
 
+  /** Active auth roles for current deployment **/
   public readonly authRoles = computed<IAuthRole[]>(() => {
-    const deployment = this.deploymentService.activeDeployment();
-    const user = this.supabaseAuthService.authUser();
-    return this.getAuthRoles(deployment, user);
+    const deploymentId = this.activeDeploymentId();
+    const rolesByDeploymentId = this.rolesByDeploymentId();
+    if (deploymentId && rolesByDeploymentId) {
+      const authRoles: IAuthRole[] = rolesByDeploymentId[deploymentId] || [];
+      return this.assignImplicitRoles(authRoles);
+    }
+    return [];
   });
 
-  public override async init() {
-    await this.supabaseAuthService.ready();
+  public refreshAuthRoles(deploymentId: string) {
+    if (deploymentId !== this.activeDeploymentId()) {
+      this.activeDeploymentId.set(deploymentId);
+    }
   }
 
-  private getAuthRoles(deployment: IDeploymentRow | null, user: IAuthUser | undefined) {
-    if (!deployment) return [];
-    if (!user) return [];
-    const authRoles = user.picsa_roles[deployment.id] || [];
+  private assignImplicitRoles(authRoles: IAuthRole[]) {
     // assign default roles to all deployments
     let globalRole: IAuthRole = 'viewer';
     if (authRoles.includes('author')) globalRole = 'author';

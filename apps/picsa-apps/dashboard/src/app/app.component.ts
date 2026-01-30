@@ -1,32 +1,31 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { filter, map } from 'rxjs/operators';
 
-import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS, PUBLIC_PAGES } from './data';
+import { PUBLIC_PAGES } from './data';
+import { AuthenticatedLayoutComponent } from './layout/authenticated-layout/authenticated-layout';
+import { DeploymentSelectLayoutComponent } from './layout/deployment-select/deployment-select.component';
+import { DashboardFooterComponent } from './layout/footer/footer.component';
+import { LandingPageComponent } from './layout/landing/landing.component';
 import { DashboardMaterialModule } from './material.module';
-import { AuthRoleRequiredDirective } from './modules/auth';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
-import { DeploymentSelectComponent } from './modules/deployment/components';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
-import { LandingPageComponent } from './modules/landing/landing.component';
-import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
+
+type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deployment-select';
 
 @Component({
   imports: [
-    NgTemplateOutlet,
     RouterModule,
     MatProgressSpinnerModule,
     DashboardMaterialModule,
-    DeploymentSelectComponent,
-    ProfileMenuComponent,
-    AuthRoleRequiredDirective,
+    DeploymentSelectLayoutComponent,
+    DashboardFooterComponent,
     LandingPageComponent,
+    AuthenticatedLayoutComponent,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
@@ -34,18 +33,13 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit {
-  supabaseService = inject(SupabaseService);
+  private supabaseService = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
-  public authService = inject(DashboardAuthService);
+  private authService = inject(DashboardAuthService);
   private router = inject(Router);
 
-  title = 'picsa-apps-dashboard';
-  navLinks = DASHBOARD_NAV_LINKS;
-  adminLinks = ADMIN_NAV_LINKS;
-  appVersion = APP_VERSION;
-
   /** Track public pages for unauthenticated user access */
-  public isPublicPage = toSignal(
+  private isPublicPage = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       map((e) => {
@@ -55,13 +49,25 @@ export class AppComponent implements AfterViewInit {
     { initialValue: false },
   );
 
-  public deployment = this.deploymentService.activeDeployment;
+  public viewState = computed<ViewState>(() => {
+    // Show public pages immediately
+    if (this.isPublicPage()) return 'public';
+    // Landing page bypass (skip loading if no data stored at all)
+    if (!this.authService.authUser() && localStorage.length === 0) {
+      return 'landing';
+    }
+    // Loading
+    if (!this.deploymentService.isDeploymentChecked() || !this.authService.isAuthChecked()) return 'loading';
 
-  public initComplete = signal(false);
+    if (this.authService.authUser()) {
+      if (!this.deploymentService.activeDeployment()) return 'deployment-select';
+      return 'authenticated';
+    }
+    return 'landing';
+  });
 
   constructor() {
     const dialogService = inject(PicsaDialogService);
-
     // HACK - disable translation in dialog to prevent loading extension app config service theme
     dialogService.useTranslation = false;
   }
@@ -70,13 +76,5 @@ export class AppComponent implements AfterViewInit {
     // eagerly initialise supabase and deployment services to ensure available
     // NOTE - do not include any services here that depend on an active deployment (could be undefined)
     await this.supabaseService.ready();
-    // Also wait for auth service to be ready (which waits for supabase client)
-    // Though initComplete is purely a local signal. Auth service has its own wait.
-    // Wait, the plan says "Update initialization logic to wait for auth check".
-    // `authService.init()` awaits `supabaseAuthService.ready()` which waits for `register$`.
-    // It does NOT wait for `isAuthChecked` to be true. `isAuthChecked` becomes true asynchronously on auth state change.
-    // So we just need to ensure services are ready. The template handles `isAuthChecked`.
-    await this.authService.ready();
-    this.initComplete.set(true);
   }
 }

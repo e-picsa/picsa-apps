@@ -15,8 +15,8 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserProfileComponent {
-  authService = inject(DashboardAuthService);
-  deploymentService = inject(DeploymentDashboardService);
+  public authService = inject(DashboardAuthService);
+  public deploymentService = inject(DeploymentDashboardService);
 
   public authRoleLevels = ['viewer', 'author', 'admin'];
   public authRoleFeatures: string[] = [];

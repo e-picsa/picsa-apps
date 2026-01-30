@@ -1,13 +1,6 @@
 :host {
-  display: contents;
+  display: block;
 }
-.img-container {
-  @apply absolute overflow-hidden h-full w-full;
-}
-h1 {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
 footer {
   background-color: #222;
   color: rgba(255, 255, 255, 0.7);
