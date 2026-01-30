@@ -112,11 +112,11 @@ TO authenticated USING (true) WITH CHECK (true);
 
 -- Anonymous - read-only
 REVOKE ALL ON TABLE public.forecasts FROM anon;
-GRANT SELECT ON TABLE public.forecasts TO authenticated;
+GRANT SELECT ON TABLE public.forecasts TO anon;
 
 CREATE POLICY "forecasts:read:anon" ON public.forecasts
 FOR ALL
-TO authenticated USING (true) WITH CHECK (true);
+TO anon USING (true) WITH CHECK (true);
 
 ---------------- User Roles   ---------------------------------------
 -- Accessed via cloud functions, revoke all other access 

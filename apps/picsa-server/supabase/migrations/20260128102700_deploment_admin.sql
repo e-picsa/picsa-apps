@@ -1,15 +1,4 @@
 alter table public.deployments drop column variant;
-alter table public.deployments add column "created_at" timestamp with time zone not null default now();
-alter table public.deployments add column "updated_at" timestamp with time zone not null default now();
-
-SELECT audit.enable_table_audit(
-    'public',                -- schema
-    'climate_station_data',  -- table
-    'station_id',            -- PK column
-    ARRAY['updated_at']      -- excluded columns (ignored in diffs)
-);
-
--- Permissions
 
 -- Table-level Permissions
 GRANT ALL ON TABLE public.deployments to supabase_auth_admin;
