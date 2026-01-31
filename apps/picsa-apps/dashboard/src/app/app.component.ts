@@ -56,14 +56,15 @@ export class AppComponent implements AfterViewInit {
     if (!this.authService.authUser() && localStorage.length === 0) {
       return 'landing';
     }
-    // Loading
-    if (!this.deploymentService.isDeploymentChecked() || !this.authService.isAuthChecked()) return 'loading';
 
     if (this.authService.authUser()) {
+      if (!this.deploymentService.isDeploymentChecked()) return 'loading';
       if (!this.deploymentService.activeDeployment()) return 'deployment-select';
       return 'authenticated';
+    } else {
+      if (!this.authService.isAuthChecked()) return 'loading';
+      return 'landing';
     }
-    return 'landing';
   });
   public shouldShowFooter = computed(() => !['authenticated', 'loading'].includes(this.viewState()));
 

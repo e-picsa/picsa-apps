@@ -4,9 +4,7 @@ import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { firstValueFrom, Subject } from 'rxjs';
 
-import { PicsaAsyncService } from '../../../asyncService.service';
 import { ErrorHandlerService } from '../../error-handler.service';
 import { PicsaNotificationService } from '../../notification.service';
 
@@ -26,7 +24,7 @@ interface ICustomAuthJWTPayload extends JwtPayload {
  * Requires parent service to initialise with main supabase client
  */
 @Injectable({ providedIn: 'root' })
-export class SupabaseAuthService extends PicsaAsyncService {
+export class SupabaseAuthService {
   private document = inject<Document>(DOCUMENT);
   private notificationService = inject(PicsaNotificationService);
   private errorService = inject(ErrorHandlerService);
@@ -44,9 +42,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
   /** Track if initial auth check has completed */
   public isAuthChecked = signal(false);
 
-  /** Track parent supabase client registration */
-  private register$ = new Subject<SupabaseClient>();
-
   private client: SupabaseClient;
 
   private get auth() {
@@ -54,7 +49,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
   }
 
   constructor() {
-    super();
     effect(() => {
       const user = this.authUser();
       // Log user for prod debugging
@@ -64,19 +58,10 @@ export class SupabaseAuthService extends PicsaAsyncService {
     });
   }
 
-  public override async init(): Promise<void> {
-    // wait for service to have supabase client registered (done when main client initialised)
-    if (!this.auth) {
-      await firstValueFrom(this.register$);
-    }
-    this.subscribeToAuthChanges();
-  }
-
   /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
     this.client = client;
-    this.register$.next(client);
-    this.register$.complete();
+    this.subscribeToAuthChanges();
   }
 
   public async signInUser(email: string, password: string) {
