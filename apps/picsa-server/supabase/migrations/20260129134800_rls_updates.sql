@@ -6,13 +6,13 @@
 -- Enable RLS
 ALTER TABLE public.climate_station_data ENABLE ROW LEVEL SECURITY;
 
--- Authenticated - read/write
+-- Authenticated - read-only
 REVOKE ALL ON TABLE public.climate_station_data FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.climate_station_data TO authenticated;
+GRANT SELECT ON TABLE public.climate_station_data TO authenticated;
 
-CREATE POLICY "climate_station_data:read_write:authenticated" ON public.climate_station_data
-FOR ALL
-TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "climate_station_data:read:authenticated" ON public.climate_station_data
+FOR SELECT TO authenticated 
+USING (true);
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.climate_station_data FROM anon;
@@ -24,19 +24,13 @@ REVOKE ALL ON TABLE public.climate_station_data FROM anon;
 -- Enable RLS
 ALTER TABLE public.climate_stations ENABLE ROW LEVEL SECURITY;
 
--- Authenticated - read, write (admin)
+-- Authenticated - read-only
 REVOKE ALL ON TABLE public.climate_stations FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.climate_stations TO authenticated;
+GRANT SELECT ON TABLE public.climate_stations TO authenticated;
 
 CREATE POLICY "climate_stations:read:authenticated" ON public.climate_stations
 FOR SELECT TO authenticated 
 USING (true);
-
-CREATE POLICY "climate_stations:write:admin" ON public.climate_stations
-FOR ALL TO authenticated
--- NOTE - assumes country_code matches deployment id
-USING (public.user_is_admin(country_code, 'climate'))
-WITH CHECK (public.user_is_admin(country_code, 'climate'));
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.climate_stations FROM anon;
@@ -114,3 +108,14 @@ REVOKE ALL ON TABLE public.user_roles FROM anon;
 
 -- TODO
 -- Most tables could be controlled via cloud functions to avoid authenticated permissions
+
+-- TODO - doc
+/**
+
+
+CREATE POLICY "climate_stations:write:admin" ON public.climate_stations
+FOR ALL TO authenticated
+-- NOTE - assumes country_code matches deployment id
+USING (public.user_is_admin(country_code, 'climate'))
+WITH CHECK (public.user_is_admin(country_code, 'climate'));
+*/
