@@ -1,3 +1,5 @@
+----------------- deployment -------------------------------
+
 alter table public.deployments drop column variant;
 
 -- Table-level Permissions
@@ -12,3 +14,5 @@ on "public"."deployments"
 for select
 to authenticated
 using (true);
+
+-------------------------------------------------

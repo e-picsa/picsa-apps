@@ -1,35 +1,5 @@
 ---------------- Examples   ---------------------------------------
-
--- Audit
-
--- SELECT audit.enable_table_audit(
---     'public',                -- schema
---     'climate_station_data',  -- table
---     'station_id',            -- PK column
---     ARRAY['updated_at']      -- excluded columns (ignored in diffs)
--- );
-
-
--- -- Table-Level Priviledges
-
--- ALTER TABLE public.climate_station_data ENABLE ROW LEVEL SECURITY;
--- GRANT ALL ON TABLE public.climate_station_data to supabase_auth_admin;
-
--- -- Allow authenticated users to read/write
--- GRANT SELECT, INSERT, UPDATE,
--- ON TABLE public.climate_station_data
--- TO authenticated;
-
--- -- RLS Policies
--- -- 
-
--- CREATE POLICY "Enable full access for authenticated users"
--- ON public.climate_station_data
--- FOR ALL
--- TO authenticated
--- USING (true)
--- WITH CHECK (true);
-
+-- See https://docs.picsa.app/server/database/security
 
 ---------------- climate_station_data   ---------------------------------------
 
@@ -54,13 +24,19 @@ REVOKE ALL ON TABLE public.climate_station_data FROM anon;
 -- Enable RLS
 ALTER TABLE public.climate_stations ENABLE ROW LEVEL SECURITY;
 
--- Authenticated - read/write
+-- Authenticated - read, write (admin)
 REVOKE ALL ON TABLE public.climate_stations FROM authenticated;
 GRANT SELECT, INSERT, UPDATE ON TABLE public.climate_stations TO authenticated;
 
-CREATE POLICY "climate_stations:read_write:authenticated" ON public.climate_stations
-FOR ALL
-TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "climate_stations:read:authenticated" ON public.climate_stations
+FOR SELECT TO authenticated 
+USING (true);
+
+CREATE POLICY "climate_stations:write:admin" ON public.climate_stations
+FOR ALL TO authenticated
+-- NOTE - assumes country_code matches deployment id
+USING (public.user_is_admin(country_code, 'climate'))
+WITH CHECK (public.user_is_admin(country_code, 'climate'));
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.climate_stations FROM anon;
@@ -119,13 +95,20 @@ FOR ALL
 TO anon USING (true) WITH CHECK (true);
 
 ---------------- User Roles   ---------------------------------------
--- Accessed via cloud functions, revoke all other access 
 
+-- Enable RLS
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
-REVOKE ALL
-ON TABLE public.user_roles
-FROM anon, authenticated;
+-- Authenticated - read-owner_only
+REVOKE ALL ON TABLE public.user_roles FROM authenticated;
+GRANT SELECT ON TABLE public.user_roles TO authenticated;
+
+CREATE POLICY "user_roles:select:owner_only" ON public.user_roles
+FOR SELECT
+TO authenticated USING ( auth.uid() = user_id);
+
+-- Anonymous - no access
+REVOKE ALL ON TABLE public.user_roles FROM anon;
 
 
 
