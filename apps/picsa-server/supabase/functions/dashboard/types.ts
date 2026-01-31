@@ -1,4 +1,4 @@
-import type * as ClimateApi from '../../types/climate-api.types';
+import type * as ClimateApi from '../../types/climate-api.types.ts';
 import type { Database } from '../../types/db.types.ts';
 
 // climate
