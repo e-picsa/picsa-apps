@@ -3,6 +3,8 @@
 This folder contains SQL migrations that set up a generic auditing system
 for PostgreSQL (compatible with Supabase).
 
+See additional docs at: https://docs.picsa.app/server/database/security
+
 ## Files
 
 - **audit_schema.sql**  
@@ -10,7 +12,6 @@ for PostgreSQL (compatible with Supabase).
 
 - **audit_functions.sql**  
   Defines core trigger functions:
-
   - `audit.prevent_noop_update` – cancels updates if no meaningful data changed
   - `audit.jsonb_recursive_diff` – computes recursive JSONB diffs
   - `audit.audit_with_diff` – main trigger function to log INSERT/UPDATE/DELETE

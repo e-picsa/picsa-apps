@@ -1,4 +1,4 @@
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -12,7 +12,7 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
 
 @Component({
   selector: 'dashboard-deployment-list',
-  imports: [CommonModule, MatIconModule, MatTabsModule, NgTemplateOutlet, PicsaDataTableComponent, StoragePathPipe],
+  imports: [CommonModule, MatIconModule, MatTabsModule, PicsaDataTableComponent, StoragePathPipe],
   templateUrl: './deployment-list.component.html',
   styleUrls: ['./deployment-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,9 +20,7 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
 export class DeploymentListComponent {
   service = inject(DeploymentDashboardService);
 
-  public farmer: IDeploymentRow[] = [];
-  public extension: IDeploymentRow[] = [];
-  public other: IDeploymentRow[] = [];
+  public deployments = this.service.allDeployments;
 
   public tableOptions: IDataTableOptions = {
     search: false,
@@ -36,10 +34,7 @@ export class DeploymentListComponent {
 
   constructor() {
     effect(() => {
-      const allDeployments = this.service.deployments();
-      this.farmer = allDeployments.filter((d) => d.variant === 'farmer');
-      this.extension = allDeployments.filter((d) => d.variant === 'extension');
-      this.other = allDeployments.filter((d) => d.variant === 'other');
+      console.log('deployments', this.deployments());
     });
   }
 }

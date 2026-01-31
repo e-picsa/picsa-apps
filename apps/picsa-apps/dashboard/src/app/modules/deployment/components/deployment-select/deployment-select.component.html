@@ -2,7 +2,7 @@
   mat-button
   class="select-button"
   [matMenuTriggerFor]="menu"
-  [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'"
+  [style.visibility]="service.userDeployments().length > 0 ? 'visible' : 'hidden'"
 >
   @if (service.activeDeployment(); as deployment) {
     <dashboard-deployment-item [deployment]="deployment" [active]="true" />
@@ -13,7 +13,7 @@
 </button>
 
 <mat-menu #menu="matMenu" style="width: 200px">
-  @for (deployment of userDeployments(); track deployment.id) {
+  @for (deployment of service.userDeployments(); track deployment.id) {
     <button mat-menu-item (click)="service.setActiveDeployment(deployment.id)">
       <dashboard-deployment-item [deployment]="deployment" />
     </button>

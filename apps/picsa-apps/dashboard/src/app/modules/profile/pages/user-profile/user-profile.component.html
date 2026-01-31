@@ -2,7 +2,7 @@
   <h2>Deployments</h2>
   <p>You are a member of the following app deployments</p>
   <div class="deployments-list">
-    @for (deployment of deploymentService.deployments(); track deployment.id) {
+    @for (deployment of deploymentService.userDeployments(); track deployment.id) {
       <dashboard-deployment-item
         (click)="deploymentService.setActiveDeployment(deployment.id)"
         [deployment]="deployment"

@@ -1,5 +1,5 @@
 <div style="position: relative">
-  <button mat-stroked-button (click)="picker.open()">{{ dateSelected() | date: 'MMM YYYY' }}</button>
+  <button mat-stroked-button (click)="picker.open()">{{ dateSelected() | date: 'MMM yyyy' }}</button>
   <!-- Use hidden form field to handle input control. Picker overlay will still display -->
   <mat-form-field (click)="picker.open()" style="visibility: hidden; position: absolute; left: 0; top: -32px">
     <input matInput [matDatepicker]="picker" [min]="minDate" [max]="maxDate" />

@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
@@ -16,16 +15,11 @@ import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/servic
 })
 export class ProfileMenuComponent implements AfterViewInit {
   supabaseAuthService = inject(SupabaseAuthService);
-  private dialog = inject(MatDialog);
 
   async ngAfterViewInit() {
-    await this.supabaseAuthService.ready();
     // HACK - use anonymous user when running in dev
     if (!ENVIRONMENT.production) {
       await this.supabaseAuthService.signInDashboardDevUser();
     }
-  }
-  public signOut() {
-    console.log('signing out');
   }
 }

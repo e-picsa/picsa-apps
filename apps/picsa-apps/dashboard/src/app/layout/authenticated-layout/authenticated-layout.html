@@ -1,0 +1,74 @@
+<mat-toolbar color="primary" class="mat-elevation-z2 flex items-center">
+  <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <dashboard-deployment-select />
+  <dashboard-profile-menu class="ml-auto" />
+</mat-toolbar>
+
+<mat-sidenav-container style="flex: 1">
+  <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
+    <mat-nav-list class="w-64 flex-1">
+      @for (link of navLinks; track link.href) { @if (link.children) {
+      <!-- Nested nav items -->
+      <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive" *roleRequired="link.roleRequired">
+        <mat-expansion-panel-header
+          style="padding: 0 16px"
+          [routerLink]="link.href"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          <mat-panel-title>
+            <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        @for (child of link.children || []; track $index) {
+        <a
+          mat-list-item
+          [routerLink]="link.href + child.href"
+          routerLinkActive="mdc-list-item--activated active-link"
+          *roleRequired="link.roleRequired"
+        >
+          {{ child.label }}</a
+        >
+        }
+      </mat-expansion-panel>
+      } @else {
+      <!-- Single nav item -->
+      <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
+        <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
+      </a>
+      } }
+    </mat-nav-list>
+    <mat-nav-list class="w-64 mt-auto" *roleRequired="'deployments.admin'">
+      <mat-divider></mat-divider>
+      <div mat-subheader>Admin</div>
+      <mat-divider></mat-divider>
+      @for (link of adminLinks; track link.href) {
+      <a
+        mat-list-item
+        [routerLink]="link.href"
+        routerLinkActive="mdc-list-item--activated active-link"
+        *roleRequired="link.roleRequired"
+      >
+        <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
+      </a>
+      }
+    </mat-nav-list>
+    <mat-divider></mat-divider>
+    <dashboard-footer [isSidebar]="true" class="w-64" />
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<ng-template #linkTemplate let-link>
+  <div class="nav-item">
+    @if (link.matIcon) {
+    <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+    }
+    <span>{{ link.label }}</span>
+  </div>
+</ng-template>

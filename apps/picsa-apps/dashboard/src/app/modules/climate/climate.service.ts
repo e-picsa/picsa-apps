@@ -10,7 +10,6 @@ import { catchError, concat, concatMap, from, map, mergeMap, of } from 'rxjs';
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
 import { ApiMapping } from './climate-api.mapping';
-import { ClimateApiService } from './climate-api.service';
 import { IAPICountryCode, IClimateStationData, IStationRow } from './types';
 
 export interface IDataRefreshStatus {
@@ -24,7 +23,6 @@ export interface IDataRefreshStatus {
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
-  private api = inject(ClimateApiService);
   private router = inject(Router);
   private deploymentSevice = inject(DeploymentDashboardService);
   private notificationService = inject(PicsaNotificationService);
@@ -51,7 +49,7 @@ export class ClimateService extends PicsaAsyncService {
   public apiCountryCode: IAPICountryCode;
 
   /** Trigger API request that includes mapping response to local database */
-  public loadFromAPI = ApiMapping(this.api, this, this.supabaseService, this.supabaseService.storage);
+  public loadFromAPI = ApiMapping(this, this.supabaseService);
 
   // Create a signal to represent current stationId as defined by route params
   private activeStationId = toSignal(

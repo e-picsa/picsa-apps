@@ -1,26 +1,10 @@
 <div class="page-content">
-  <!-- Tabs to show table for each variant type -->
-  <mat-tab-group dynamicHeight mat-stretch-tabs="false" mat-align-tabs="start" preserveContent animationDuration="0ms">
-    <mat-tab label="Extension">
-      <ng-container *ngTemplateOutlet="deploymentTable; context: { $implicit: extension }"></ng-container>
-    </mat-tab>
-    <mat-tab label="Farmer">
-      <ng-container *ngTemplateOutlet="deploymentTable; context: { $implicit: farmer }"></ng-container>
-    </mat-tab>
-    <mat-tab label="Other">
-      <ng-container *ngTemplateOutlet="deploymentTable; context: { $implicit: other }"></ng-container>
-    </mat-tab>
-  </mat-tab-group>
-</div>
-
-<!-- General table template -->
-<ng-template #deploymentTable let-data>
   <picsa-data-table
-    [data]="data"
+    [data]="deployments()"
     [options]="tableOptions"
     [valueTemplates]="{ public, access_key_md5, icon_path }"
   ></picsa-data-table>
-</ng-template>
+</div>
 
 <!-- Custom column templates -->
 <ng-template #public let-public>

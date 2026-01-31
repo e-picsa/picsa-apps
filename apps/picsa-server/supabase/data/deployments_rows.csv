@@ -1,4 +1,4 @@
-id,country_code,label,configuration,variant,access_key_md5,public,icon_path
-mw,mw,Malawi,{},,,true,global/images/flags/mw.svg
-test_private,mw,Test Private,"{""climate_country_code"": ""mw_workshops""}",extension,,false,global/images/flags/global.svg
-zm,zm,Zambia,{},,,true,global/images/flags/zm.svg
+id,country_code,label,configuration,access_key_md5,public,icon_path
+mw,mw,Malawi,{},,TRUE,global/images/flags/mw.svg
+test_private,mw,Test Private,"{""climate_country_code"": ""mw_workshops""}",,FALSE,global/images/flags/global.svg
+zm,zm,Zambia,{},,TRUE,global/images/flags/zm.svg

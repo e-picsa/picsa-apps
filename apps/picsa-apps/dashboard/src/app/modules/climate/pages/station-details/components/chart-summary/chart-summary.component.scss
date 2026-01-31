@@ -24,8 +24,8 @@
   text-overflow: ellipsis;
 }
 button.chart-button {
-  --mat-text-button-container-height: auto;
   border: 1px solid var(--color-light);
   width: 100px;
   padding: 8px;
+  height: auto;
 }

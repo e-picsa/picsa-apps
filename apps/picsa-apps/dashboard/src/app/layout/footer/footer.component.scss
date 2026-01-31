@@ -1,19 +1,20 @@
 :host {
-  display: contents;
+  display: block;
 }
-.img-container {
-  @apply absolute overflow-hidden h-full w-full;
-}
-h1 {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
 footer {
   background-color: #222;
-  color: rgba(255, 255, 255, 0.7);
+  color: #ffffffb3;
   @apply text-sm tracking-wide;
 }
 footer > a {
   --mat-button-text-label-text-color: rgba(255, 255, 255, 0.7);
   --mat-button-text-label-text-size: 14;
+}
+
+footer[data-sidebar='true'] {
+  background-color: unset;
+  color: unset;
+  a {
+    --mat-button-text-label-text-color: unset;
+  }
 }

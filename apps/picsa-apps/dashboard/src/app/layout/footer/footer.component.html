@@ -1,0 +1,17 @@
+@if (isSidebar()) {
+  <footer class="flex items-center p-2 gap-1" [attr.data-sidebar]="true">
+    <div class="flex-1 mr-auto">
+      <span>v{{ appVersion }}</span>
+    </div>
+    <a matButton routerLink="/privacy-policy">Privacy</a>
+    <a matButton routerLink="/terms-of-service">Terms</a>
+  </footer>
+} @else {
+  <footer class="flex items-center p-2 md:p-4 gap-1 md:gap-2 flex-wrap">
+    <div class="flex-1 min-w-32 mr-auto">
+      <span>PICSA Dashboard v{{ appVersion }}</span>
+    </div>
+    <a matButton routerLink="/privacy-policy">Privacy Policy</a>
+    <a matButton routerLink="/terms-of-service">Terms of Service</a>
+  </footer>
+}
