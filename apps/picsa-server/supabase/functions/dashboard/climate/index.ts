@@ -143,7 +143,7 @@ export const climate = async (req: Request) => {
         if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
         console.log('station data', data);
 
-        const update = data.data.map((d: any) => ({
+        const update = data.data.map((d: ClimateApi.components['schemas']['StationDataResponce']) => ({
           ...d,
           station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
         }));
