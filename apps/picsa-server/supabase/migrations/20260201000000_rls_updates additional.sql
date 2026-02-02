@@ -23,7 +23,7 @@ ALTER TABLE public.resource_collections ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_collections FROM authenticated;
-GRANT ALL ON TABLE public.resource_collections TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.resource_collections TO authenticated;
 
 CREATE POLICY "resource_collections:read:authenticated" ON public.resource_collections
 FOR SELECT TO authenticated 
@@ -56,7 +56,7 @@ ALTER TABLE public.resource_files ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_files FROM authenticated;
-GRANT ALL ON TABLE public.resource_files TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.resource_files TO authenticated;
 
 CREATE POLICY "resource_files:read:authenticated" ON public.resource_files
 FOR SELECT TO authenticated 
@@ -89,7 +89,7 @@ ALTER TABLE public.resource_files_child ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_files_child FROM authenticated;
-GRANT ALL ON TABLE public.resource_files_child TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.resource_files_child TO authenticated;
 
 CREATE POLICY "resource_files_child:read:authenticated" ON public.resource_files_child
 FOR SELECT TO authenticated 
@@ -123,7 +123,7 @@ ALTER TABLE public.resource_links ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_links FROM authenticated;
-GRANT ALL ON TABLE public.resource_links TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.resource_links TO authenticated;
 
 CREATE POLICY "resource_links:read:authenticated" ON public.resource_links
 FOR SELECT TO authenticated 
