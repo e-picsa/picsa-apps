@@ -23,7 +23,7 @@ ALTER TABLE public.resource_collections ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_collections FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.resource_collections TO authenticated;
+GRANT ALL ON TABLE public.resource_collections TO authenticated;
 
 CREATE POLICY "resource_collections:read:authenticated" ON public.resource_collections
 FOR SELECT TO authenticated 
@@ -37,6 +37,10 @@ CREATE POLICY "resource_collections:update:owner_only" ON public.resource_collec
 FOR UPDATE TO authenticated 
 USING (auth.uid() = owner)
 WITH CHECK (auth.uid() = owner);
+
+CREATE POLICY "resource_collections:delete:owner_only" ON public.resource_collections
+FOR DELETE TO authenticated 
+USING (auth.uid() = owner);
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.resource_collections FROM anon;
@@ -52,7 +56,7 @@ ALTER TABLE public.resource_files ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_files FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.resource_files TO authenticated;
+GRANT ALL ON TABLE public.resource_files TO authenticated;
 
 CREATE POLICY "resource_files:read:authenticated" ON public.resource_files
 FOR SELECT TO authenticated 
@@ -66,6 +70,10 @@ CREATE POLICY "resource_files:update:owner_only" ON public.resource_files
 FOR UPDATE TO authenticated 
 USING (auth.uid() = owner)
 WITH CHECK (auth.uid() = owner);
+
+CREATE POLICY "resource_files:delete:owner_only" ON public.resource_files
+FOR DELETE TO authenticated 
+USING (auth.uid() = owner);
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.resource_files FROM anon;
@@ -81,7 +89,7 @@ ALTER TABLE public.resource_files_child ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_files_child FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.resource_files_child TO authenticated;
+GRANT ALL ON TABLE public.resource_files_child TO authenticated;
 
 CREATE POLICY "resource_files_child:read:authenticated" ON public.resource_files_child
 FOR SELECT TO authenticated 
@@ -95,6 +103,10 @@ CREATE POLICY "resource_files_child:update:owner_only" ON public.resource_files_
 FOR UPDATE TO authenticated 
 USING (auth.uid() = owner)
 WITH CHECK (auth.uid() = owner);
+
+CREATE POLICY "resource_files_child:delete:owner_only" ON public.resource_files_child
+FOR DELETE TO authenticated 
+USING (auth.uid() = owner);
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.resource_files_child FROM anon;
@@ -111,7 +123,7 @@ ALTER TABLE public.resource_links ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated - read/write (all users)
 REVOKE ALL ON TABLE public.resource_links FROM authenticated;
-GRANT SELECT, INSERT, UPDATE ON TABLE public.resource_links TO authenticated;
+GRANT ALL ON TABLE public.resource_links TO authenticated;
 
 CREATE POLICY "resource_links:read:authenticated" ON public.resource_links
 FOR SELECT TO authenticated 
@@ -126,11 +138,18 @@ FOR UPDATE TO authenticated
 USING (auth.uid() = owner)
 WITH CHECK (auth.uid() = owner);
 
+CREATE POLICY "resource_links:delete:owner_only" ON public.resource_links
+FOR DELETE TO authenticated 
+USING (auth.uid() = owner);
+
 -- Anonymous - none
 REVOKE ALL ON TABLE public.resource_links FROM anon;
 
 
 ---------------- translations   ---------------------------------------
+-- Auditing
+select audit.enable_table_audit('public', 'translations', 'id');
+
 -- Enable RLS
 ALTER TABLE public.translations ENABLE ROW LEVEL SECURITY;
 
@@ -141,6 +160,16 @@ GRANT SELECT, INSERT, UPDATE ON TABLE public.translations TO authenticated;
 CREATE POLICY "translations:read:authenticated" ON public.translations
 FOR SELECT TO authenticated 
 USING (true);
+
+CREATE POLICY "translations:create:authenticated" ON public.translations
+FOR INSERT TO authenticated 
+WITH CHECK (true);
+
+CREATE POLICY "translations:update:authenticated" ON public.translations
+FOR UPDATE TO authenticated 
+USING (true)
+WITH CHECK (true);
+
 
 -- Anonymous - none
 REVOKE ALL ON TABLE public.translations FROM anon;

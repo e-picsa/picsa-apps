@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject,signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -105,8 +105,7 @@ export class ClimateAdminPageComponent {
     effect(async () => {
       const country_code = this.deploymentService.activeDeployment()?.country_code;
       if (country_code) {
-        const allStationData = await this.loadAllStationsData(country_code);
-        this.allStationData.set(allStationData || []);
+        await this.updateAllStationsData(country_code);
       }
     });
   }
@@ -164,7 +163,7 @@ export class ClimateAdminPageComponent {
         complete: async () => {
           updateSignal.update((v) => ({ ...v, completed: true }));
           if (e) {
-            await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
+            await this.updateAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
           }
           resolve();
         },
@@ -193,7 +192,7 @@ export class ClimateAdminPageComponent {
       });
     }
     await allSettledInBatches(promises, REFRESH_BATCH_SIZE);
-    await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
+    await this.updateAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
     this.refreshCount.set(-1);
   }
 
@@ -297,12 +296,13 @@ export class ClimateAdminPageComponent {
     }
   }
 
-  private async loadAllStationsData(country_code: string): Promise<IClimateStationData['Row'][]> {
+  private async updateAllStationsData(country_code: string) {
     const { data, error } = await this.service.getAllStationData(country_code);
 
     if (error) {
       throw error;
     }
-    return data;
+    const safeData = data || [];
+    this.allStationData.set(safeData);
   }
 }
