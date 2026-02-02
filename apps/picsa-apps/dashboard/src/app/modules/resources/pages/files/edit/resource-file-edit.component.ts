@@ -100,6 +100,8 @@ export class ResourceFileEditComponent implements OnInit {
       created_at: '',
       md5_checksum: '',
       modified_at: '',
+      updated_at: '',
+      owner: '',
       sort_order: 1,
       ...formValues,
       country_code: formValues.country_code as any,
