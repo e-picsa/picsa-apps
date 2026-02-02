@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -70,6 +70,28 @@ export class ResourceFileEditComponent implements OnInit {
     id: new FormControl(),
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
+
+  public get formValidationMessage(): string {
+    if (this.form.pristine) {
+      return 'No changes to save';
+    }
+    if (this.form.valid) {
+      return '';
+    }
+
+    const errors: string[] = [];
+    const controls = this.form.controls;
+
+    if (controls.title.errors?.['required']) errors.push('Title');
+    if (controls.language_code.errors?.['required']) errors.push('Language');
+    if (controls.storage_file.errors?.['required']) errors.push('Resource File');
+    if (controls.country_code.errors?.['required']) errors.push('Country');
+
+    if (errors.length > 0) {
+      return `Missing required fields: ${errors.join(', ')}`;
+    }
+    return 'Form is invalid';
+  }
 
   // HACK - temporary lookup to compare form values with db entry
   private get mergedValue() {
