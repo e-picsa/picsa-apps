@@ -104,18 +104,3 @@ TO authenticated USING ( auth.uid() = user_id);
 -- Anonymous - no access
 REVOKE ALL ON TABLE public.user_roles FROM anon;
 
-
-
--- TODO
--- Most tables could be controlled via cloud functions to avoid authenticated permissions
-
--- TODO - doc
-/**
-
-
-CREATE POLICY "climate_stations:write:admin" ON public.climate_stations
-FOR ALL TO authenticated
--- NOTE - assumes country_code matches deployment id
-USING (public.user_is_admin(country_code, 'climate'))
-WITH CHECK (public.user_is_admin(country_code, 'climate'));
-*/

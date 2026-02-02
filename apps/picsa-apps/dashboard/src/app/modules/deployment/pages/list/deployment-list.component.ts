@@ -31,10 +31,4 @@ export class DeploymentListComponent {
       return formatHeaderDefault(value);
     },
   };
-
-  constructor() {
-    effect(() => {
-      console.log('deployments', this.deployments());
-    });
-  }
 }
