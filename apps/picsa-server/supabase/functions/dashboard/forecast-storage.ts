@@ -1,4 +1,4 @@
-import { getClient } from '../_shared/client.ts';
+import { getServiceRoleClient } from '../_shared/client.ts';
 import { getJsonData } from '../_shared/request.ts';
 import { JSONResponse } from '../_shared/response.ts';
 import { apiClient } from './forecast-db.ts';
@@ -25,7 +25,7 @@ export const forecastStorage = async (req: Request) => {
 };
 
 class ForecastStorageUpdate {
-  supabaseClient = getClient();
+  supabaseClient = getServiceRoleClient();
 
   private get table() {
     return this.supabaseClient.from('forecasts');
@@ -69,7 +69,7 @@ class ForecastStorageUpdate {
     country_code: string,
     id: string,
   ): Promise<{ data?: IDBClimateForecastRow; error?: any }> {
-    const supabaseClient = getClient();
+    const supabaseClient = getServiceRoleClient();
     // download from api
     const req = apiClient.GET('/v1/documents/{country}/{filepath}', {
       params: { path: { country: country_code as any, filepath: id } },

@@ -1,0 +1,7 @@
+.deployment-button {
+  @apply h-32;
+  @apply flex flex-col items-center p-4 bg-white border rounded-lg shadow-sm;
+  @apply transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus:outline-none focus:ring-2;
+  @apply border-primary;
+}
+// border-slate-200 hover:border-blue-500 focus:ring-blue-500

@@ -1,4 +1,4 @@
-import { getClient } from '../_shared/client.ts';
+import { getServiceRoleClient } from '../_shared/client.ts';
 import { getJsonData } from '../_shared/request.ts';
 import { ErrorResponse } from '../_shared/response.ts';
 import { JSONResponse } from '../_shared/response.ts';
@@ -70,7 +70,7 @@ async function getCountryUpdates(country_code: string, query_prefix: string) {
 
   // map api forecasts to db format and update db
   const updates = mapApiForecastToDb(newForecasts, country_code);
-  const supabaseClient = getClient();
+  const supabaseClient = getServiceRoleClient();
   const { error } = await supabaseClient.from('forecasts').insert(updates);
   if (error) {
     throw error;
@@ -90,7 +90,7 @@ async function getApiForecasts(query: { country_code: string; query_prefix?: str
 }
 
 async function getDBForecasts(query: { country_code: string; query_prefix: string }) {
-  const supabaseClient = getClient();
+  const supabaseClient = getServiceRoleClient();
   const { country_code, query_prefix } = query;
   const { data, error } = await supabaseClient
     .from('forecasts')
@@ -98,7 +98,6 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)
     .order('id', { ascending: false });
-
   if (error) {
     throw error.message;
   }

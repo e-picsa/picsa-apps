@@ -8,7 +8,7 @@ const __dirname = dirname(fromFileUrl(import.meta.url));
 /** Load .env and .env.local files as well as setting local supabase api url */
 export async function setupTestEnv() {
   await load({ envPath: resolve(__dirname, '../.env'), export: true });
-  await load({ envPath: resolve(__dirname, '../.env.local'), export: true });
+  await load({ envPath: resolve(__dirname, '../.env.test'), export: true });
   Deno.env.set('SUPABASE_URL', 'http://localhost:54321');
   Deno.env.set('TEST', 'true');
 }

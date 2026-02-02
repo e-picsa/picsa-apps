@@ -1,13 +1,10 @@
 import { DOCUMENT } from '@angular/common';
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
-import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { firstValueFrom, Subject } from 'rxjs';
 
-import { PicsaAsyncService } from '../../../asyncService.service';
 import { ErrorHandlerService } from '../../error-handler.service';
 import { PicsaNotificationService } from '../../notification.service';
 
@@ -27,7 +24,7 @@ interface ICustomAuthJWTPayload extends JwtPayload {
  * Requires parent service to initialise with main supabase client
  */
 @Injectable({ providedIn: 'root' })
-export class SupabaseAuthService extends PicsaAsyncService {
+export class SupabaseAuthService {
   private document = inject<Document>(DOCUMENT);
   private notificationService = inject(PicsaNotificationService);
   private errorService = inject(ErrorHandlerService);
@@ -40,17 +37,18 @@ export class SupabaseAuthService extends PicsaAsyncService {
       return diff.updated_at && Object.keys(diff).length === 1;
     },
   });
+  public authUserId = computed(() => this.authUser()?.id);
 
   /** Track if initial auth check has completed */
   public isAuthChecked = signal(false);
 
-  /** Track parent supabase client registration */
-  private register$ = new Subject<SupabaseClient>();
+  private client: SupabaseClient;
 
-  private auth: SupabaseAuthClient;
+  private get auth() {
+    return this.client.auth;
+  }
 
   constructor() {
-    super();
     effect(() => {
       const user = this.authUser();
       // Log user for prod debugging
@@ -60,19 +58,10 @@ export class SupabaseAuthService extends PicsaAsyncService {
     });
   }
 
-  public override async init(): Promise<void> {
-    // wait for service to have supabase client registered (done when main client initialised)
-    if (!this.auth) {
-      await firstValueFrom(this.register$);
-    }
-    this.subscribeToAuthChanges();
-  }
-
   /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
-    this.auth = client.auth;
-    this.register$.next(client);
-    this.register$.complete();
+    this.client = client;
+    this.subscribeToAuthChanges();
   }
 
   public async signInUser(email: string, password: string) {
@@ -101,7 +90,10 @@ export class SupabaseAuthService extends PicsaAsyncService {
   }
 
   public async signOut() {
-    return this.auth.signOut();
+    this.auth.signOut();
+    // Clear anything persisted to storage
+    localStorage.clear();
+    sessionStorage.clear();
   }
 
   /**

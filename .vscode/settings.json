@@ -11,11 +11,7 @@
   // NOTE - could be refactored to separate code-workspace
   // https://supabase.com/docs/guides/functions/local-development#setting-up-your-environment
   "deno.enable": true,
-  "deno.enablePaths": [
-    "apps/picsa-server/supabase/functions",
-    "apps/picsa-server/_deprecated/docker",
-    "apps/picsa-server/_deprecated/scripts"
-  ],
+  "deno.enablePaths": ["apps/picsa-server/supabase/functions"],
   "deno.unstable": true,
   "deno.config": "apps/picsa-server/supabase/functions/deno.jsonc"
 }

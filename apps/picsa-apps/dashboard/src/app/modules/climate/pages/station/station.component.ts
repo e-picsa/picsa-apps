@@ -5,20 +5,15 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
-import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
+import { ApiRequest } from '../../climate-api.mapping';
+import { ApiStatusComponent } from '../../components/api-status/api-status.component';
 import { IStationRow } from '../../types';
 
 const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 
 @Component({
   selector: 'dashboard-climate-station-page',
-  imports: [
-    DashboardClimateApiStatusComponent,
-    RouterModule,
-    PicsaDataTableComponent,
-    PicsaMapComponent,
-    MatProgressSpinnerModule,
-  ],
+  imports: [ApiStatusComponent, RouterModule, PicsaDataTableComponent, PicsaMapComponent, MatProgressSpinnerModule],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +22,13 @@ export class ClimateStationPageComponent {
   service = inject(ClimateService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  public get updateRequest(): ApiRequest<'station'> {
+    return {
+      endpoint: 'station',
+      params: this.service.apiCountryCode,
+    };
+  }
 
   public tableOptions: IDataTableOptions = {
     displayColumns: ['map', ...displayColumns],
@@ -44,11 +46,6 @@ export class ClimateStationPageComponent {
     const stations = this.service.stations();
     return this.calcMapMarkers(stations);
   });
-
-  public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: async () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
-    showStatusCode: false,
-  };
 
   public handleMarkerClick(marker: IMapMarker) {
     const { _index } = marker;

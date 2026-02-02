@@ -2,19 +2,31 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 import { filter, firstValueFrom, map } from 'rxjs';
 
+import { DashboardAuthService } from '../auth/services/auth.service';
 import { IDeploymentRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DeploymentDashboardService {
   private supabaseService = inject(SupabaseService);
-  private supabaseAuthService = inject(SupabaseAuthService);
+  private authService = inject(DashboardAuthService);
 
-  public readonly deployments = signal<IDeploymentRow[]>([]);
+  /** List of all deployments retrieved from DB  */
+  public readonly allDeployments = signal<IDeploymentRow[]>([]);
+
+  /** List of all deployments a user is member of */
+  public readonly userDeployments = computed(() => {
+    const userRoles = this.authService.rolesByDeploymentId();
+    if (!userRoles) return [];
+    const userDeploymentIds = Object.keys(userRoles);
+    return this.allDeployments().filter((d) => userDeploymentIds.includes(d.id));
+  });
+
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
   public readonly activeDeployment = signal<IDeploymentRow>(null as any);
+
+  public readonly activeDeploymentId = computed(() => this.activeDeployment()?.id);
 
   /** Country code for active deployment */
   public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
@@ -32,12 +44,21 @@ export class DeploymentDashboardService {
     return this.supabaseService.db.table('deployments');
   }
 
+  public isDeploymentChecked = signal(false);
+
   constructor() {
+    // Update auth roles when deployment changes
+    effect(() => {
+      const deploymentId = this.activeDeploymentId();
+      this.authService.refreshAuthRoles(deploymentId);
+    });
+    // Update list of available deployments when user signs in
     effect(async () => {
-      const authUser = this.supabaseAuthService.authUser();
-      if (authUser) {
+      const authUserId = this.authService.authUserId();
+      if (authUserId) {
         await this.listDeployments();
         this.loadStoredDeployment();
+        this.isDeploymentChecked.set(true);
       }
     });
   }
@@ -46,7 +67,7 @@ export class DeploymentDashboardService {
     const previousId = this.activeDeployment()?.id;
     if (id === previousId) return;
     // provide optimistic update
-    this.activeDeployment.set(this.deployments().find((d) => d.id === id) || (null as any));
+    this.activeDeployment.set(this.allDeployments().find((d) => d.id === id) || (null as any));
     // provide server update
     // TODO - subscribe to realtime updates
     // TODO - consider just using hardcoded deployments to prevent need for optimistic updates
@@ -78,7 +99,7 @@ export class DeploymentDashboardService {
     if (error) {
       throw error;
     }
-    this.deployments.set(data);
+    this.allDeployments.set(data);
   }
 
   /** Store deployment id to localstorage to persist across sessions */

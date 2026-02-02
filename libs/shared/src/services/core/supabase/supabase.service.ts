@@ -1,4 +1,4 @@
-import { inject,Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
@@ -61,7 +61,6 @@ export class SupabaseService extends PicsaAsyncService {
     this.auth.registerSupabaseClient(this.supabase);
 
     // trigger child service initialisers optimistically
-    this.auth.ready();
     this.storage.ready();
   }
 
