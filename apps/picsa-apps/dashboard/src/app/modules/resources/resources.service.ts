@@ -40,16 +40,24 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     };
   }
 
+  private deploymentService = inject(DeploymentDashboardService);
+
   constructor() {
     super();
-    const deploymentService = inject(DeploymentDashboardService);
 
     effect(async () => {
-      const countryCode = deploymentService.activeDeploymentCountry();
+      const countryCode = this.deploymentService.activeDeploymentCountry();
       if (countryCode) {
         await this.listResources(countryCode);
       }
     });
+  }
+
+  public async refresh() {
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    if (countryCode) {
+      await this.listResources(countryCode);
+    }
   }
 
   public override async init() {

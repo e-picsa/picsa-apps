@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -10,6 +10,7 @@ import {
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
@@ -71,6 +72,33 @@ export class ResourceFileEditComponent implements OnInit {
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
+  public get formValidationMessage(): string {
+    if (this.form.pristine) {
+      return 'No changes to save';
+    }
+    if (this.form.valid) {
+      return '';
+    }
+
+    const errors: string[] = [];
+    const controls = this.form.controls;
+
+    Object.keys(controls).forEach((key) => {
+      // access the control safely although we know it exists from the keys
+      const control = this.form.get(key);
+      if (control?.errors?.['required']) {
+        // Convert snake_case to Capitalized Words
+        const fieldName = key.split('_').map(capitalise).join(' ');
+        errors.push(fieldName);
+      }
+    });
+
+    if (errors.length > 0) {
+      return `Missing required fields: ${errors.join(', ')}`;
+    }
+    return 'Form is invalid';
+  }
+
   // HACK - temporary lookup to compare form values with db entry
   private get mergedValue() {
     const formValues = this.form.getRawValue();
@@ -78,6 +106,8 @@ export class ResourceFileEditComponent implements OnInit {
       created_at: '',
       md5_checksum: '',
       modified_at: '',
+      updated_at: '',
+      owner: '',
       sort_order: 1,
       ...formValues,
       country_code: formValues.country_code as any,
@@ -107,7 +137,7 @@ export class ResourceFileEditComponent implements OnInit {
       this.notificationService.showSuccessNotification('Resource Saved');
       // HACK - reinit all resources to ensure update populated
       // TODO - could be made more efficient
-      await this.service.init();
+      await this.service.refresh();
 
       // TODO - Add readonly view to navigate to
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
@@ -136,7 +166,7 @@ export class ResourceFileEditComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.route });
           // HACK - re-init service to populate list without deleted resource
           // TODO - make more efficient
-          await this.service.init();
+          await this.service.refresh();
         }
         //
       }
