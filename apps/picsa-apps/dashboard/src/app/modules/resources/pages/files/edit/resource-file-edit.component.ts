@@ -10,6 +10,7 @@ import {
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
@@ -82,10 +83,15 @@ export class ResourceFileEditComponent implements OnInit {
     const errors: string[] = [];
     const controls = this.form.controls;
 
-    if (controls.title.errors?.['required']) errors.push('Title');
-    if (controls.language_code.errors?.['required']) errors.push('Language');
-    if (controls.storage_file.errors?.['required']) errors.push('Resource File');
-    if (controls.country_code.errors?.['required']) errors.push('Country');
+    Object.keys(controls).forEach((key) => {
+      // access the control safely although we know it exists from the keys
+      const control = this.form.get(key);
+      if (control?.errors?.['required']) {
+        // Convert snake_case to Capitalized Words
+        const fieldName = key.split('_').map(capitalise).join(' ');
+        errors.push(fieldName);
+      }
+    });
 
     if (errors.length > 0) {
       return `Missing required fields: ${errors.join(', ')}`;

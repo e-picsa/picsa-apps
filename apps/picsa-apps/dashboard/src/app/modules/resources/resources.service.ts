@@ -56,7 +56,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   public async refresh() {
     const countryCode = this.deploymentService.activeDeploymentCountry();
     if (countryCode) {
-      this.listResources(countryCode);
+      await this.listResources(countryCode);
     }
   }
 
