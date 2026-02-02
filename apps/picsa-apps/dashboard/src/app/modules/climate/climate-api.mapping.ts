@@ -5,8 +5,14 @@ import { IForecastRow, IStationRow } from './types';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;
+export type ApiParams<T extends IApiMappingName> = Parameters<IApiMapping[T]>[0];
 
-// TODO - mostly proxy now to backend functions
+export type ApiRequest<T extends IApiMappingName = IApiMappingName> = {
+  [K in T]: {
+    endpoint: K;
+    params: ApiParams<K>;
+  };
+}[T];
 
 /**
  * Mapping functions that handle processing of data loaded from API server endpoints,
@@ -19,7 +25,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
      * stored to columns in `climate_station_data` table
      */
     rainfallSummaries: async (station: IStationRow) => {
-      const { country_code, id, station_name } = station;
+      const { country_code } = station;
       return supabaseService.invokeFunction(`dashboard/climate/rainfall-summaries`, {
         body: { station, country_code },
       });

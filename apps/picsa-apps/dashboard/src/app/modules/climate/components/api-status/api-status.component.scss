@@ -1,0 +1,15 @@
+:host {
+  display: inline-block;
+}
+
+button {
+  // Ensure spinner is centered if using mat-spinner inside button
+  ::ng-deep .mat-mdc-progress-spinner {
+    margin: auto;
+  }
+}
+
+::ng-deep .multiline-tooltip {
+  white-space: pre-line;
+  font-size: 12px;
+}

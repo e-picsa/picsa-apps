@@ -1,0 +1,23 @@
+<div class="status-container" *roleRequired="requiredRole()">
+  <button
+    mat-icon-button
+    (click)="runApi()"
+    [disabled]="status() === 'LOADING'"
+    [color]="status() === 'ERROR' ? 'warn' : 'primary'"
+    [matTooltip]="
+      label() +
+      (status() === 'ERROR'
+        ? '\nError: ' + error()
+        : lastRun()
+          ? '\nLast updated: ' + (lastRun() | date: 'medium')
+          : '')
+    "
+    matTooltipClass="multiline-tooltip"
+  >
+    @if (status() === 'LOADING') {
+      <mat-spinner diameter="18"></mat-spinner>
+    } @else {
+      <mat-icon>refresh</mat-icon>
+    }
+  </button>
+</div>

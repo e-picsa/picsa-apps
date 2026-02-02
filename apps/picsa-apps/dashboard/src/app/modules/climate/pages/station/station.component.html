@@ -1,5 +1,10 @@
 <div class="page-content">
-  <dashboard-climate-api-status clientId="station" [options]="apiStatusOptions"></dashboard-climate-api-status>
+  <dashboard-api-status
+    id="station-update"
+    label="Update Stations"
+    [request]="updateRequest"
+    requiredRole="climate.admin"
+  ></dashboard-api-status>
   <div style="display: flex; gap: 1rem; flex-wrap: wrap">
     <div style="flex: 1; min-width: 400px; max-width: 600px">
       <picsa-data-table [options]="tableOptions" [data]="tableData()"> </picsa-data-table>
