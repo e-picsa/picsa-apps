@@ -129,7 +129,7 @@ export class ResourceFileEditComponent implements OnInit {
       this.notificationService.showSuccessNotification('Resource Saved');
       // HACK - reinit all resources to ensure update populated
       // TODO - could be made more efficient
-      await this.service.init();
+      await this.service.refresh();
 
       // TODO - Add readonly view to navigate to
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
@@ -158,7 +158,7 @@ export class ResourceFileEditComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.route });
           // HACK - re-init service to populate list without deleted resource
           // TODO - make more efficient
-          await this.service.init();
+          await this.service.refresh();
         }
         //
       }
