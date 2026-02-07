@@ -15,6 +15,18 @@ The project uses a custom Tailwind configuration shared across apps, located at 
 - **Neutrals & Status (Borders, Backgrounds, Alerts):**
   You may use standard Tailwind colors (e.g., `gray-200`, `red-500`, `emerald-600`) for specific UI states, borders, or neutral backgrounds where strict theming is not required.
 
+## Component Usage
+
+**Mandatory:** Use Angular Material components for all interactive elements (Buttons, Inputs, Icons, etc.) instead of native HTML elements.
+
+**Version:** This workspace uses Angular Material **v21**. Ensure you use the modern, standalone component APIs and MDC-based styles.
+
+- **Buttons:** Use `<button mat-button>`, `<button mat-flat-button>`, etc.
+- **Icons:** Use `<mat-icon>`.
+- **Inputs:** Use `MatFormField` with `matInput`.
+
+Use Tailwind CSS for layout, spacing, and typography **around** the Material components, or to customize them via utility classes (e.g., margins), but prefer Material's native theming/colors (`color="primary"`) for the component state itself.
+
 ### Usage Examples
 
 ✅ **Correct (Themed Action):**

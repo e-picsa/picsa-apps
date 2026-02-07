@@ -24,3 +24,11 @@ Please refer to the following files in `.gemini/` for deep context:
 - **Offline-First**: assume unreliable connectivity. Use RxDB/Dexie.
 - **OnPush Change Detection**: Strictly enforced.
 - **Tailwind CSS**: Preferred over custom SCSS.
+
+## Agent Meta-Instructions
+
+This file (`AGENTS.md`) is symlinked to `.cursorrules` and `gemini.md` to ensure automatic context ingestion.
+**IMPORTANT**:
+
+1. `.cursorrules`, `gemini.md`, and `AGENTS.md` are the **SAME FILE**. Do not read more than one of them to conserve context window.
+2. You **MUST** still reference the detailed documentation files in the `.gemini/` folder (e.g., `CODEBASE_MAP.md`, `TECH_STACK.md`) when relevant to your task. These provide essential project-specific "Rules".
