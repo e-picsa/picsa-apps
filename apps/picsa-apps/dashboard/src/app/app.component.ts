@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -11,11 +11,12 @@ import { AuthenticatedLayoutComponent } from './layout/authenticated-layout/auth
 import { DeploymentSelectLayoutComponent } from './layout/deployment-select/deployment-select.component';
 import { DashboardFooterComponent } from './layout/footer/footer.component';
 import { LandingPageComponent } from './layout/landing/landing.component';
+import { ServerErrorLayoutComponent } from './layout/server-error/server-error.component';
 import { DashboardMaterialModule } from './material.module';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
 
-type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deployment-select';
+type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deployment-select' | 'server-error';
 
 @Component({
   imports: [
@@ -26,6 +27,7 @@ type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deploymen
     DashboardFooterComponent,
     LandingPageComponent,
     AuthenticatedLayoutComponent,
+    ServerErrorLayoutComponent,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
@@ -56,7 +58,7 @@ export class AppComponent implements AfterViewInit {
     if (!this.authService.authUser() && localStorage.length === 0) {
       return 'landing';
     }
-
+    if (this.supabaseService.isAvailable() === false) return 'server-error';
     if (this.authService.authUser()) {
       if (!this.deploymentService.isDeploymentChecked()) return 'loading';
       if (!this.deploymentService.activeDeployment()) return 'deployment-select';

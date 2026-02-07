@@ -28,6 +28,33 @@ export async function checkBackendAvailability(url: string): Promise<boolean> {
 }
 
 export function createOfflineSupabaseClient(): SupabaseClient<Database> {
+  // Mock Admin User
+  const mockUser = {
+    id: 'mock-admin-id',
+    aud: 'authenticated',
+    role: 'authenticated',
+    email: 'admin@stub.com',
+    email_confirmed_at: new Date().toISOString(),
+    phone: '',
+    confirmed_at: new Date().toISOString(),
+    last_sign_in_at: new Date().toISOString(),
+    app_metadata: { provider: 'email', providers: ['email'] },
+    user_metadata: { full_name: 'Mock Admin' },
+    identities: [],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    is_anonymous: false,
+    factors: [],
+  };
+
+  const mockSession = {
+    access_token: 'mock-access-token',
+    refresh_token: 'mock-refresh-token',
+    expires_in: 3600,
+    token_type: 'bearer',
+    user: mockUser,
+  };
+
   const stubClient = {
     auth: {
       onAuthStateChange: () => {
@@ -42,15 +69,15 @@ export function createOfflineSupabaseClient(): SupabaseClient<Database> {
           },
         };
       },
-      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      signInWithPassword: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
-      signInAnonymously: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
-      signUp: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      getSession: () => Promise.resolve({ data: { session: mockSession }, error: null }),
+      getUser: () => Promise.resolve({ data: { user: mockUser }, error: null }),
+      signInWithPassword: () => Promise.resolve({ data: { session: mockSession, user: mockUser }, error: null }),
+      signInAnonymously: () => Promise.resolve({ data: { session: mockSession, user: mockUser }, error: null }),
+      signUp: () => Promise.resolve({ data: { session: mockSession, user: mockUser }, error: null }),
       signOut: () => Promise.resolve({ error: null }),
-      resetPasswordForEmail: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
-      updateUser: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
-      refreshSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      resetPasswordForEmail: () => Promise.resolve({ data: {}, error: null }),
+      updateUser: () => Promise.resolve({ data: { user: mockUser }, error: null }),
+      refreshSession: () => Promise.resolve({ data: { session: mockSession, user: mockUser }, error: null }),
     },
     storage: {
       from: (_bucket: string) => ({
