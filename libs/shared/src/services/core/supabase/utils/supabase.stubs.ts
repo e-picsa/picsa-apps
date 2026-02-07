@@ -1,12 +1,5 @@
-import { Injector, signal } from '@angular/core';
 import { Database } from '@picsa/server-types';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { of } from 'rxjs';
-
-import { TableWithLive } from './query.utils';
-
-type Tables = Database['public']['Tables'];
-type TableRow<T extends keyof Tables> = Tables[T]['Row'];
 
 /** Check if supabase dev server is available, to allow fallback to stub server   */
 export async function checkBackendAvailability(url: string): Promise<boolean> {
@@ -90,6 +83,17 @@ export function createOfflineSupabaseClient(): SupabaseClient<Database> {
     functions: {
       invoke: () => Promise.resolve({ error: { message: 'Offline Mode' } }),
     },
+    // Realtime subscription stub
+    channel: (_topic: string) => ({
+      on: (_type: string, _filter: any, _callback: (payload: any) => void) => ({
+        subscribe: () => ({
+          unsubscribe: () => null,
+        }),
+      }),
+      subscribe: () => null,
+      unsubscribe: () => null,
+    }),
+    removeChannel: (_channel: any) => Promise.resolve('ok'),
     // The 'from' method handles DB queries
     from: (table: string) => createStubQueryBuilder(table),
   };
@@ -115,23 +119,4 @@ function createStubQueryBuilder(_table: string) {
     maybeSingle: () => Promise.resolve({ data: null, error: null }),
   };
   return stubBuilder;
-}
-
-/**
- * Wraps the stub query builder with the live query API needed by the app.
- * This replaces the previous stubTableWithLive function.
- */
-export function stubTableWithLive<T extends keyof Tables>(
-  injector: Injector,
-  client: SupabaseClient<Database>,
-  table: T,
-) {
-  const builder = client.from(table); // This will call the stubbed 'from' method above
-
-  const api = {
-    liveQuery$: () => of([] as TableRow<T>[]),
-    liveSignal: () => signal([] as TableRow<T>[]),
-  };
-
-  return Object.assign(builder, api) as TableWithLive<T>;
 }

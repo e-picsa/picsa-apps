@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector, signal } from '@angular/core';
+import { effect, inject, Injectable, Injector, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
@@ -16,7 +16,7 @@ import { PicsaAsyncService } from '../../asyncService.service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
 import { TableWithLive, tableWithLive } from './utils/query.utils';
-import { checkBackendAvailability, createOfflineSupabaseClient, stubTableWithLive } from './utils/supabase.stubs';
+import { checkBackendAvailability } from './utils/supabase.stubs';
 
 /**
  * Main entrypoint for interacting with Supabase backend
@@ -37,29 +37,32 @@ export class SupabaseService extends PicsaAsyncService {
 
   private supabase: SupabaseClient<Database>;
 
+  constructor() {
+    super();
+    effect(() => {
+      const isAvailable = this.isAvailable();
+      if (isAvailable && !this.supabase) {
+        this.createClients();
+      }
+    });
+  }
+
   public override async init(): Promise<void> {
     this.config = await this.loadConfig();
-
-    const { apiUrl, anonKey } = this.config;
-
-    const isServerAvailable = await checkBackendAvailability(apiUrl);
+    const isServerAvailable = await checkBackendAvailability(this.config.apiUrl);
     this.isAvailable.set(isServerAvailable);
+    // client config will be handled by effect
+  }
 
-    const useMockServer = !this.isAvailable && !ENVIRONMENT.production;
-
-    this.supabase = useMockServer ? createClient(apiUrl, anonKey, {}) : createOfflineSupabaseClient();
-
+  private createClients() {
+    const { apiUrl, anonKey } = this.config;
+    this.supabase = createClient(apiUrl, anonKey, {});
     this.db = {
-      table: (relation) =>
-        useMockServer
-          ? tableWithLive(this.injector, this.supabase, relation)
-          : stubTableWithLive(this.injector, this.supabase, relation),
+      table: (relation) => tableWithLive(this.injector, this.supabase, relation),
     };
-
     // register supabase instance with child services
     this.storage.registerSupabaseClient(this.supabase);
     this.auth.registerSupabaseClient(this.supabase);
-
     // trigger child service initialisers optimistically
     this.storage.ready();
   }

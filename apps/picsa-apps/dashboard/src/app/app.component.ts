@@ -54,8 +54,8 @@ export class AppComponent implements AfterViewInit {
   public viewState = computed<ViewState>(() => {
     // Show public pages immediately
     if (this.isPublicPage()) return 'public';
-    // Landing page bypass (skip loading if no data stored at all)
-    if (!this.authService.authUser() && localStorage.length === 0) {
+    // Use fast-fail auth check to show landing page before loading
+    if (!this.authService.authUser() && this.authService.isAuthChecked()) {
       return 'landing';
     }
     if (this.supabaseService.isAvailable() === false) return 'server-error';
