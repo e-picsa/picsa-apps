@@ -7,21 +7,22 @@ const { join } = require('path');
  */
 const configBase = {
   theme: {
-    extend: {},
+    extend: {
+      // expose same colors as theme
+      // https://www.freedium.cfd/https://medium.com/@icedlee337/how-to-integrate-tailwind-and-angular-material-themes-1591af005457
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-primary)',
+        black: 'var(--color-black)',
+        white: 'var(--color-white)',
+      },
+    },
     // only provide breakpoints for sm, md and lg, aligned to angular-material spec
     // https://material.angular.io/cdk/layout/overview
     screens: {
       sm: '600px',
       md: '960px',
       lg: '1280px',
-    },
-    // expose same colors as theme
-    // https://www.freedium.cfd/https://medium.com/@icedlee337/how-to-integrate-tailwind-and-angular-material-themes-1591af005457
-    colors: {
-      primary: 'var(--color-primary)',
-      secondary: 'var(--color-primary)',
-      black: 'var(--color-black)',
-      white: 'var(--color-white)',
     },
   },
   plugins: [],
@@ -41,7 +42,7 @@ const configBase = {
  */
 const getContentDependencies = (dirname) =>
   [join(dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(dirname)].filter(
-    (p) => !p.includes('webcomponents')
+    (p) => !p.includes('webcomponents'),
   );
 
 /**

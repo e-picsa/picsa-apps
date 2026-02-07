@@ -17,6 +17,7 @@ Please refer to the following files in `.gemini/` for deep context:
 - **[Tech Stack](.gemini/TECH_STACK.md)**: Detailed stack info, constraints (MobX, Tailwind preferences), and library versions.
 - **[Best Practices](.gemini/ANGULAR_BEST_PRACTICES.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.gemini/TESTING.md)**: Instructions for running and writing tests (Jest/Cypress).
+- **[UI & Theming](.gemini/UI_THEMING.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
 
 ## Core Principles
 
