@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
@@ -33,7 +33,7 @@ export class SupabaseService extends PicsaAsyncService {
 
   public config: SupabaseConfig;
 
-  public isAvailable = true;
+  public isAvailable = signal<boolean | undefined>(undefined);
 
   private supabase: SupabaseClient<Database>;
 
@@ -42,16 +42,16 @@ export class SupabaseService extends PicsaAsyncService {
 
     const { apiUrl, anonKey } = this.config;
 
-    // Use stubbed client if running locally and backend server not available
-    if (!ENVIRONMENT.production) {
-      this.isAvailable = await checkBackendAvailability(apiUrl);
-    }
+    const isServerAvailable = await checkBackendAvailability(apiUrl);
+    this.isAvailable.set(isServerAvailable);
 
-    this.supabase = this.isAvailable ? createClient(apiUrl, anonKey, {}) : createOfflineSupabaseClient();
+    const useMockServer = !this.isAvailable && !ENVIRONMENT.production;
+
+    this.supabase = useMockServer ? createClient(apiUrl, anonKey, {}) : createOfflineSupabaseClient();
 
     this.db = {
       table: (relation) =>
-        this.isAvailable
+        useMockServer
           ? tableWithLive(this.injector, this.supabase, relation)
           : stubTableWithLive(this.injector, this.supabase, relation),
     };

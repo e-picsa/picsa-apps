@@ -13,6 +13,9 @@
       @case ('authenticated') {
         <dashboard-authenticated-layout />
       }
+      @case ('server-error') {
+        <dashboard-server-error-layout />
+      }
       @default {
         <dashboard-landing-page class="flex-1" />
       }
