@@ -32,8 +32,8 @@ Use Tailwind CSS for layout, spacing, and typography **around** the Material com
 ✅ **Correct (Themed Action):**
 
 ```html
-<!-- Uses semantic color for branding -->
-<button class="bg-primary text-white">Save Changes</button>
+<!-- Uses semantic color via Material theming -->
+<button mat-flat-button color="primary">Save Changes</button>
 ```
 
 ✅ **Correct (Neutral/Status):**

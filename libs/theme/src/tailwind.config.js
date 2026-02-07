@@ -12,7 +12,7 @@ const configBase = {
       // https://www.freedium.cfd/https://medium.com/@icedlee337/how-to-integrate-tailwind-and-angular-material-themes-1591af005457
       colors: {
         primary: 'var(--color-primary)',
-        secondary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
         black: 'var(--color-black)',
         white: 'var(--color-white)',
       },
