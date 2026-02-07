@@ -1,9 +1,11 @@
 import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { createClient } from '@supabase/supabase-js';
 
 import { SupabaseAuthService } from './services/supabase-auth.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
 import { SupabaseService } from './supabase.service';
+import { createOfflineSupabaseClient } from './utils/supabase.stubs';
 
 // Mock child services
 class MockAuthService {
@@ -16,11 +18,18 @@ class MockStorageService {
   ready = jest.fn();
 }
 
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(),
+  FunctionsHttpError: class {},
+}));
+
 describe('SupabaseService', () => {
   let service: SupabaseService;
   let injector: Injector;
 
   beforeEach(() => {
+    (createClient as jest.Mock).mockReturnValue(createOfflineSupabaseClient());
+
     TestBed.configureTestingModule({
       providers: [
         SupabaseService,
@@ -49,7 +58,7 @@ describe('SupabaseService', () => {
 
     await service.init();
 
-    expect(service.isAvailable).toBe(false);
+    expect(service.isAvailable()).toBe(false);
     expect(service.db).toBeDefined();
 
     // Verify stub behavior
@@ -58,10 +67,8 @@ describe('SupabaseService', () => {
     expect(result.data).toEqual([]); // Stub returns empty array
 
     // Verify Auth stub via service (indirectly)
-    // The auth service would have registered the stub client.
-    // We can verify that invoking a method on the client doesn't throw and returns what we expect
     const authRes = await service['supabase'].auth.getSession();
-    expect(authRes.data.session).toBeNull();
+    expect(authRes.data.session!.access_token).toBe('mock-access-token');
   });
 
   it('should detect backend as online if check succeeds', async () => {
@@ -75,6 +82,6 @@ describe('SupabaseService', () => {
 
     await service.init();
 
-    expect(service.isAvailable).toBe(true);
+    expect(service.isAvailable()).toBe(true);
   });
 });

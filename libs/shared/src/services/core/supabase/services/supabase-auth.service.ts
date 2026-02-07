@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
@@ -40,7 +40,7 @@ export class SupabaseAuthService {
   public authUserId = computed(() => this.authUser()?.id);
 
   /** Track if initial auth check has completed */
-  public isAuthChecked = signal(false);
+  public isAuthChecked = signal(!this.hasSupabaseAuthToken());
 
   private client: SupabaseClient;
 
@@ -48,20 +48,23 @@ export class SupabaseAuthService {
     return this.client.auth;
   }
 
-  constructor() {
-    effect(() => {
-      const user = this.authUser();
-      // Log user for prod debugging
-      if (user) {
-        console.log(`[AUTH USER]`, user);
-      }
-    });
-  }
-
   /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
     this.client = client;
     this.subscribeToAuthChanges();
+    // Explicitly check for session to handle edge cases where onAuthStateChange doesn't fire
+    // Only verify if we have a token (to avoid unnecessary network requests on public pages)
+    if (this.hasSupabaseAuthToken()) {
+      this.client.auth.getSession().finally(() => {
+        this.isAuthChecked.set(true);
+      });
+    }
+  }
+
+  private hasSupabaseAuthToken(): boolean {
+    // Check for any key that looks like a Supabase auth token
+    // Typically: sb-<project-ref>-auth-token
+    return Object.keys(localStorage).some((key) => key.startsWith('sb-') && key.endsWith('-auth-token'));
   }
 
   public async signInUser(email: string, password: string) {
