@@ -18,7 +18,9 @@
 
 - **Preference**: **Tailwind CSS**.
 - **Legacy/Specifics**: SCSS is available but should be minimized in favor of utility classes.
-- **Design System**: Use defined tokens for colors/spacing. Avoid magic numbers.
+- **Use defined tokens**: Colors and spacing are strictly controlled via `libs/theme/src/tailwind.config.js`.
+- **Extended Palette**: Default Tailwind colors are available. Use semantic tokens (`primary`, `secondary`) for branded elements. Use specific colors (e.g., `slate-100`, `red-600`) for neutrals and feedback states.
+- **Source of Truth**: Check `libs/theme/src/tailwind.config.js` for custom theme extensions.
 
 ## State Management
 
