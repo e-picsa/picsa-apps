@@ -55,7 +55,7 @@ export class SupabaseAuthService {
     // Explicitly check for session to handle edge cases where onAuthStateChange doesn't fire
     // Only verify if we have a token (to avoid unnecessary network requests on public pages)
     if (this.hasSupabaseAuthToken()) {
-      this.client.auth.getSession().then(() => {
+      this.client.auth.getSession().finally(() => {
         this.isAuthChecked.set(true);
       });
     }
@@ -180,7 +180,6 @@ export class SupabaseAuthService {
   }
 
   private subscribeToAuthChanges() {
-    console.log('subscribing to auth chagnes');
     // Subscribe to authenticated user changes
     this.auth.onAuthStateChange((_event, session) => {
       console.log(`[AUTH] ${_event}`);
