@@ -66,6 +66,5 @@ function cleanEntry(entry: IStationData) {
 }
 
 function mergeDataSummaries(rainfall: IAnnualRainfallSummariesData[], temperature: IAnnualTemperatureSummariesData[]) {
-  const merged = mergeArraysByKey(rainfall ?? [], temperature ?? [], 'year');
-  return merged.sort((a, b) => (Number(a.year) > Number(b.year) ? 1 : -1));
+  return mergeArraysByKey(rainfall ?? [], temperature ?? [], 'year').sort((a, b) => Number(a.year) - Number(b.year));
 }
