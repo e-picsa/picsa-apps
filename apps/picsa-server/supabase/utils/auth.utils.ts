@@ -1,6 +1,4 @@
-import type { Database } from '../types/db.types.ts';
-
-type AppRole = Database['public']['Enums']['app_role'];
+import type { AppRole } from '../types/index.ts';
 
 /**
  * Exhaustive list of all app roles

@@ -1,14 +1,12 @@
-import type { Database } from '../../../types/db.types.ts';
 import { getServiceRoleClient } from '../../_shared/client.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import { hasAuthRole } from '../../_shared/auth.ts';
-
-type IAppRole = Database['public']['Enums']['app_role'];
+import type { AppRole } from '../../../types/index.ts';
 
 /** Update user roles for a deployment */
 export const updateUserRoles = async (
   req: Request,
-  params: { user_id: string; deployment_id: string; roles: IAppRole[] },
+  params: { user_id: string; deployment_id: string; roles: AppRole[] },
 ) => {
   const adminClient = getServiceRoleClient();
 

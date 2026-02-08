@@ -2,11 +2,10 @@ import type { Database } from '../../../types/db.types.ts';
 import { getServiceRoleClient } from '../../_shared/client.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import { hasAuthRole } from '../../_shared/auth.ts';
-
-type IAppRole = Database['public']['Enums']['app_role'];
+import type { AppRole } from '../../../types/index.ts';
 
 /** List all available authentication users */
-export const addUser = async (req: Request, params: { user_id: string; deployment_id: string; roles?: IAppRole[] }) => {
+export const addUser = async (req: Request, params: { user_id: string; deployment_id: string; roles?: AppRole[] }) => {
   const adminClient = getServiceRoleClient();
 
   const { user_id, deployment_id, roles = ['viewer'] } = params;

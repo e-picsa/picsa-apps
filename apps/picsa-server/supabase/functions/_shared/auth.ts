@@ -1,9 +1,7 @@
 import { decode } from 'djwt';
 import { assignImplicitRoles } from '../../utils/auth.utils.ts';
 import { getServiceRoleClient } from './client.ts';
-import type { Database } from '../../types/db.types.ts';
-
-type AppRole = Database['public']['Enums']['app_role'];
+import type { AppRole } from '../../types/index.ts';
 
 const mockAuthPayload = {
   aal: 'aal1',
