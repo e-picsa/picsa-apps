@@ -1,4 +1,7 @@
-// @ts-expect-error https://thymikee.github.io/jest-preset-angular/docs/getting-started/test-environment
+// Polyfill for requestAnimationFrame
+(globalThis as any).requestAnimationFrame = (callback) => setTimeout(callback, 0);
+(globalThis as any).cancelAnimationFrame = (id) => clearTimeout(id);
+
 globalThis.ngJest = {
   testEnvironmentOptions: {
     errorOnUnknownElements: true,
