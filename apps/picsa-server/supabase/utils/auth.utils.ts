@@ -47,6 +47,5 @@ export function assignImplicitRoles(authRoles: AppRole[]): AppRole[] {
     }
   }
   const uniqueRoles = new Set([globalRole, ...authRoles, ...implicitRoles]);
-  console.log({ authRoles, uniqueRoles });
   return [...uniqueRoles] as AppRole[];
 }

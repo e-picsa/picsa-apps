@@ -1,6 +1,6 @@
-import type { IForecastDBAPIResponse } from '../functions/dashboard/types';
+import type { IForecastDBAPIResponse } from '../functions/dashboard/types.ts';
 
-import type { IAdminListUserRolesResponse, IAdminListUsersResponse } from '../functions/dashboard/admin/types';
+import type { IAdminListUserRolesResponse, IAdminListUsersResponse } from '../functions/dashboard/admin/types.ts';
 
 /** Manually generated list of supabase function responses */
 export type FunctionResponses = {
