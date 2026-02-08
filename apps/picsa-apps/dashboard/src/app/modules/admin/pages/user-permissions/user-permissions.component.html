@@ -18,15 +18,32 @@
   <h2 mat-dialog-title class="mb-2">User Permissions</h2>
   <mat-dialog-content>
     @if (editableUser(); as user) {
-      <button
-        mat-button
-        mat-dialog-close
-        (click)="removeUser(user.id)"
-        [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
-      >
-        <mat-icon>person_remove</mat-icon>
-        Remove User
-      </button>
+      <div class="mb-4">
+        {{ user.email }}
+      </div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Roles</mat-label>
+        <mat-select [formControl]="selectedRoles" multiple>
+          @for (role of availableRoles(); track role) {
+            <mat-option [value]="role">{{ role }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="flex flex-col gap-2 align-start">
+        <button mat-flat-button color="primary" (click)="saveUserRoles()">Save Changes</button>
+
+        <button
+          mat-button
+          color="warn"
+          mat-dialog-close
+          (click)="removeUser(user.id)"
+          [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
+        >
+          <mat-icon>person_remove</mat-icon>
+          Remove User
+        </button>
+      </div>
     }
   </mat-dialog-content>
   <mat-dialog-actions>

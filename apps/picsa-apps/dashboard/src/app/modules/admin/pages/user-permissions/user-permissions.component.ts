@@ -8,6 +8,7 @@ import {
   TemplateRef,
   viewChild,
 } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Database, FunctionResponses } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
@@ -15,6 +16,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 
 type IUserRoles = Database['public']['Tables']['user_roles']['Row']['roles'];
@@ -26,7 +28,7 @@ interface IUserWithRoles extends IAuthUser {
 }
 
 @Component({
-  imports: [DashboardMaterialModule, PicsaDataTableComponent],
+  imports: [DashboardMaterialModule, PicsaDataTableComponent, ReactiveFormsModule],
   templateUrl: './user-permissions.component.html',
   styleUrl: './user-permissions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +37,11 @@ export class AdminUserPermissionsComponent {
   dialog = inject(MatDialog);
   private supabase = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
+
+  public availableRoles = this.authService.authRoles;
+
+  public selectedRoles = new FormControl<IUserRoles>([]);
 
   /** List of all auth users combined with active deployment role */
   public allUsers = computed(() => {
@@ -89,10 +96,22 @@ export class AdminUserPermissionsComponent {
 
   public async showUserEditDialog(user: IUserWithRoles) {
     this.editableUser.set(user);
+    this.selectedRoles.setValue(user.roles || []);
     const dialog = this.dialog.open(this.userPermissionsDialog());
     dialog.afterClosed().subscribe(async (data) => {
       this.editableUser.set(undefined);
     });
+  }
+
+  public async saveUserRoles() {
+    const user = this.editableUser();
+    if (!user) return;
+    const roles = this.selectedRoles.value || [];
+    await this.supabase.invokeFunction(`dashboard/admin/${this.deploymentId}/update-user-roles`, {
+      body: { user_id: user.id, roles },
+    });
+    this.refreshData();
+    this.dialog.closeAll();
   }
 
   public async addUser(user: IAuthUser) {

@@ -1,8 +1,9 @@
 import { decode } from 'djwt';
+import { assignImplicitRoles } from '../../utils/auth.utils.ts';
 import { getServiceRoleClient } from './client.ts';
 import type { Database } from '../../types/db.types.ts';
 
-type IAppRole = Database['public']['Enums']['app_role'];
+type AppRole = Database['public']['Enums']['app_role'];
 
 const mockAuthPayload = {
   aal: 'aal1',
@@ -32,21 +33,22 @@ async function getAuthRoles(req: Request) {
   const [header, payload, signature] = decode(token);
   // NOTE - no need to verify jwt as already handled by supabase
   const { picsa_roles = {}, role: coreRole } = payload as SupabaseAuthJWT;
-  const userRoles = picsa_roles as { [deployment_id: string]: IAppRole[] };
+  const userRoles = picsa_roles as { [deployment_id: string]: AppRole[] };
   return { userRoles, coreRole };
 }
 
 /** Check whether the request user has specific user role on deployment */
-export async function hasAuthRole(req: Request, deployment_id: string, role: IAppRole) {
+export async function hasAuthRole(req: Request, deployment_id: string, role: AppRole) {
   const { userRoles, coreRole } = await getAuthRoles(req);
   // allow api using service token role
   if (coreRole === 'service_role') return true;
 
   const deploymentRoles = userRoles[deployment_id] || [];
-  const [featureName, featureRole] = role.split('.');
-  // allow global role
-  if (deploymentRoles.includes(featureRole as IAppRole)) return true;
-  return deploymentRoles.includes(role);
+
+  // Use shared logic to expand roles
+  const expandedRoles = assignImplicitRoles(deploymentRoles);
+
+  return expandedRoles.includes(role);
 }
 
 /**
