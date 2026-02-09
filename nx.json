@@ -17,6 +17,8 @@
     "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush",
+      "inlineStyle": false,
+      "inlineTemplate": false,
       "type": "component"
     },
     "@schematics/angular:component": {

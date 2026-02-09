@@ -68,6 +68,7 @@ While Signals are preferred for synchronous state, RxJS is still the standard fo
 ## 4. Component Architecture
 
 - **Standalone Components**: All components must be `standalone: true`.
+- **File Structure**: Always use separate files for logic (`.ts`), template (`.html`), and styles (`.scss`). **NEVER** use inline `template` or `styles`.
 - **Imports**: explicity import only what you need.
 - **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush`.
   ```typescript

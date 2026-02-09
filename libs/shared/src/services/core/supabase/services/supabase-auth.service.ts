@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import type { Database } from '@picsa/server-types';
+import type { AppRole } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
@@ -9,9 +9,8 @@ import { ErrorHandlerService } from '../../error-handler.service';
 import { PicsaNotificationService } from '../../notification.service';
 
 type IDeploymentAuthRoles = {
-  [deployment_id: string]: IAuthRole[];
+  [deployment_id: string]: AppRole[];
 };
-export type IAuthRole = Database['public']['Enums']['app_role'];
 
 export type IAuthUser = User & { picsa_roles: IDeploymentAuthRoles };
 

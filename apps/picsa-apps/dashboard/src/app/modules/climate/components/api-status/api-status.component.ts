@@ -4,9 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AppRole } from '@picsa/server-types';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { AuthRoleRequiredDirective } from '../../../auth/directives/authRoleRequired.directive';
 import { ClimateService } from '../../climate.service';
@@ -40,7 +40,7 @@ export class ApiStatusComponent {
   public id = input.required<string>();
   public label = input<string>();
   public request = input.required<ApiRequest>();
-  public requiredRole = input<IAuthRole>();
+  public requiredRole = input<AppRole>();
 
   public autoStart = input<boolean>(false);
 

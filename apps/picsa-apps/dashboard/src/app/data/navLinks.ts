@@ -1,11 +1,11 @@
-import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import type { AppRole } from '@picsa/server-types';
 
 export interface INavLink {
   label: string;
   href: string;
   matIcon?: string;
   children?: INavLink[];
-  roleRequired?: IAuthRole;
+  roleRequired?: AppRole;
 }
 
 export const DASHBOARD_NAV_LINKS: INavLink[] = [

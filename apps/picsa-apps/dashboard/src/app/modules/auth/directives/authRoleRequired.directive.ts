@@ -1,5 +1,5 @@
 import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import { AppRole } from '@picsa/server-types';
 
 import { DashboardAuthService } from '../services/auth.service';
 
@@ -9,7 +9,7 @@ import { DashboardAuthService } from '../services/auth.service';
  *
  * @example
  * ```html
- * <div *roleRequired="'resources.viewer'">
+ * <div *roleRequired="'resources.editor'">
  * ```
  */
 // eslint-disable-next-line @angular-eslint/directive-selector
@@ -22,7 +22,7 @@ export class AuthRoleRequiredDirective {
   private hasView = false;
 
   /** Input signal to track role required for view */
-  public roleRequired = input<IAuthRole>();
+  public roleRequired = input<AppRole>();
 
   constructor() {
     const service = inject(DashboardAuthService);
@@ -36,7 +36,7 @@ export class AuthRoleRequiredDirective {
     });
   }
 
-  private doesUserHaveRole(requiredRole?: IAuthRole, deploymentRoles?: IAuthRole[]) {
+  private doesUserHaveRole(requiredRole?: AppRole, deploymentRoles?: AppRole[]) {
     if (!requiredRole) return true;
     if (!deploymentRoles) return false;
     const [feature, role] = requiredRole.split('.');

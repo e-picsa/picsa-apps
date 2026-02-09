@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { AppRole } from '@picsa/server-types';
 import { assignImplicitRoles } from '@picsa/server-utils';
-import { IAuthRole, SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 /**
  * Authentication and user permission handling
@@ -20,11 +21,11 @@ export class DashboardAuthService {
   public isAuthChecked = this.supabaseAuthService.isAuthChecked;
 
   /** Active auth roles for current deployment **/
-  public readonly authRoles = computed<IAuthRole[]>(() => {
+  public readonly authRoles = computed<AppRole[]>(() => {
     const deploymentId = this.activeDeploymentId();
     const rolesByDeploymentId = this.rolesByDeploymentId();
     if (deploymentId && rolesByDeploymentId) {
-      const authRoles: IAuthRole[] = rolesByDeploymentId[deploymentId] || [];
+      const authRoles: AppRole[] = rolesByDeploymentId[deploymentId] || [];
       return assignImplicitRoles(authRoles);
     }
     return [];

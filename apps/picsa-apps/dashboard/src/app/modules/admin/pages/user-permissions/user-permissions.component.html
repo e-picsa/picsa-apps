@@ -31,8 +31,8 @@
         <mat-select [formControl]="selectedRoles" multiple>
           @for (group of roleGroups(); track group.name) {
             <mat-optgroup [label]="group.name">
-              @for (role of group.roles; track role) {
-                <mat-option [value]="role">{{ role }}</mat-option>
+              @for (role of group.roles; track role.value) {
+                <mat-option [value]="role.value">{{ role.label }}</mat-option>
               }
             </mat-optgroup>
           }
