@@ -16,18 +16,28 @@ export const updateUserRoles = async (
     return ErrorResponse('Roles array is required', 400);
   }
 
-  // Validate that the caller has the roles they are trying to assign
-  for (const role of roles) {
-    const hasRole = await hasAuthRole(req, deployment_id, role);
-    if (!hasRole) {
-      return ErrorResponse(`Cannot assign role '${role}' as you do not possess it.`, 403);
-    }
+  // Check current roles to see if any roles being removed
+  const { data: currentUserRoles, error: fetchError } = await adminClient
+    .from('user_roles')
+    .select('roles')
+    .match({ deployment_id, user_id })
+    .single();
+
+  if (fetchError) {
+    return ErrorResponse(fetchError.message);
   }
 
-  // NOTE: We do not strictly check if we are *removing* a role we don't have,
-  // but generally if you can edit the user you can likely manage their roles.
-  // Stricter implementation might require checking if we are removing a role we don't have permission for.
-  // For now, consistent with "assign" check from prompt.
+  const currentRoles = currentUserRoles?.roles || [];
+  const rolesToAdd = roles.filter((r) => !currentRoles.includes(r));
+  const rolesToRemove = currentRoles.filter((r) => !roles.includes(r));
+
+  // Check permissions for both adding and removing roles
+  for (const role of [...rolesToAdd, ...rolesToRemove]) {
+    const hasRole = await hasAuthRole(req, deployment_id, role);
+    if (!hasRole) {
+      return ErrorResponse(`Cannot modify role '${role}' as you do not possess it.`, 403);
+    }
+  }
 
   const { data, error } = await adminClient
     .from('user_roles')
