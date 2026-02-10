@@ -2,11 +2,11 @@
   color: var(--text-secondary);
 }
 
-.text-primary {
+.text-primary:not([disabled]) {
   color: var(--primary-color, #1976d2);
 }
 
-.text-success {
+.text-success:not([disabled]) {
   color: var(--success-color, #2e7d32);
 }
 
