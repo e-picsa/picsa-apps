@@ -61,17 +61,25 @@ BEGIN
     RETURN false;
   END IF;
   
-  IF 'admin' = ANY(v_roles) THEN
+  -- 1. Global Admin & Deployments Admin have access to everything
+  IF 'admin' = ANY(v_roles) OR 'deployments.admin' = ANY(v_roles) THEN
+    RETURN true;
+  END IF;
+
+  -- 2. Exact role match
+  IF p_role = ANY(v_roles) THEN
     RETURN true;
   END IF;
   
-  IF p_module IS NOT NULL THEN
-    IF (p_module || '.admin') = ANY(v_roles::text[]) THEN
+  -- 3. Implicit Editor Access: feature.admin implies feature.editor
+  -- If the requested role is an editor role, check if the user has the corresponding admin role
+  IF p_role::text LIKE '%.editor' THEN
+    IF (split_part(p_role::text, '.', 1) || '.admin') = ANY(v_roles::text[]) THEN
       RETURN true;
     END IF;
   END IF;
   
-  RETURN p_role = ANY(v_roles);
+  RETURN false;
 END;
 $$;
 
