@@ -1,0 +1,53 @@
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-primary {
+  color: var(--primary-color, #1976d2);
+}
+
+.text-success {
+  color: var(--success-color, #2e7d32);
+}
+
+.text-disabled {
+  color: var(--disabled-color, #bdbdbd);
+}
+
+.icon-sm {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+// Adjust mat-icon-button to fit well in the cell
+.permission-cell-button {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+// Ensure table headers are centered for permissions
+::ng-deep .mat-column-admin,
+::ng-deep .mat-column-climate,
+::ng-deep .mat-column-resources,
+::ng-deep .mat-column-crop,
+::ng-deep .mat-column-monitoring,
+::ng-deep .mat-column-translations,
+::ng-deep .mat-column-deployments,
+::ng-deep .mat-column-actions {
+  text-align: center;
+  justify-content: center;
+
+  .mat-sort-header-container {
+    justify-content: center;
+  }
+}
+::ng-deep th.mat-mdc-header-cell {
+  padding: 2px;
+}
