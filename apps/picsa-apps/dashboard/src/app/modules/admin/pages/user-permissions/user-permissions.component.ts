@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { MatDialog } from '@angular/material/dialog';
 import type { AppRole, Database, FunctionResponses } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
+import { PicsaDialogService } from '@picsa/shared/features/dialog';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
+import { firstValueFrom } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardAuthService } from '../../../auth/services/auth.service';
@@ -23,13 +25,14 @@ interface IUserWithRoles extends IAuthUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminUserPermissionsComponent {
-  dialog = inject(MatDialog);
+  private dialogService = inject(PicsaDialogService);
   private supabase = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
   private authService = inject(DashboardAuthService);
 
   public availableRoles = this.authService.authRoles;
   public currentUserId = this.authService.authUserId;
+  public dialog = inject(MatDialog);
 
   /** List of all auth users combined with active deployment role */
   public allUsers = computed(() => {
@@ -105,8 +108,13 @@ export class AdminUserPermissionsComponent {
     this.refreshData();
   }
 
-  public async deleteUser(user: IUserWithRoles) {
-    if (!confirm(`Are you sure you want to remove ${user.email}?`)) return;
+  public async removeUser(user: IUserWithRoles) {
+    const dialogRef = await this.dialogService.open('delete', {
+      title: `Are you sure you want to remove ${user.email}?`,
+    });
+
+    const confirmed = await firstValueFrom(dialogRef.afterClosed());
+    if (!confirmed) return;
 
     await this.supabase.invokeFunction<any>(`dashboard/admin/${this.deploymentId}/remove-user`, {
       body: { user_id: user.id },
