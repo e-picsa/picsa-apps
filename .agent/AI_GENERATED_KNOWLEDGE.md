@@ -46,3 +46,14 @@ This file is a shared knowledge base for AI agents operating on this codebase.
    - `user-permissions.component.ts` uses `availableRoles` from `DashboardAuthService`.
    - `APP_ROLES` is now derived from the shared utility's exhaustive `APP_ROLES_MAP`.
    - `assignImplicitRoles` in both frontend and backend now uses the robust shared implementation that expands Global Admin/Author roles to all feature roles.
+
+### Role-Based Route Protection
+
+**Date**: 2026-02-10
+**Context**: Implement route guards for the dashboard `climate -> admin` page.
+**Learning**:
+
+1.  **Auth Logic Encapsulation**: `DashboardAuthService` now has a `hasRole(role: AppRole)` method for checking permissions. This replaces ad-hoc logic in directives.
+2.  **Route Guard**: `authRoleGuard` is a functional guard in `dashboard/src/app/modules/auth/guards` that uses `DashboardAuthService.hasRole`.
+3.  **Directives**: `AuthRoleRequiredDirective` also uses `DashboardAuthService.hasRole` for consistency.
+4.  **Navigation**: `navLinks.ts` defines role requirements for menu items, which are enforced by `authenticated-layout.component`.

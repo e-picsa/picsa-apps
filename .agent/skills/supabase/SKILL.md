@@ -102,3 +102,13 @@ This command runs `db reset` and then seeds the database.
 - **Always Prefer MCP**: It is faster, safer, and cleaner than running ad-hoc scripts.
 - **Read-Only First**: When exploring, stick to `SELECT` queries.
 - **Check Status**: If queries fail, verify Docker containers are running (`docker ps`) or use the `status` command.
+
+## 4. Type Generation
+
+To regenerate TypeScript definitions from the database schema:
+
+```bash
+yarn nx run picsa-server:gen-types
+```
+
+This command should be run after any database schema changes (e.g., migrations) to ensure the application's types (`db.types.ts`) are synchronized with the database.

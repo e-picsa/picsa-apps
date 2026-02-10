@@ -30,20 +30,9 @@ export class AuthRoleRequiredDirective {
     // recalcuate user view permissions whenever requiredRole or deploymentRoles change
     effect(() => {
       const requiredRole = this.roleRequired();
-      const deploymentRoles = service.authRoles();
-      const canView = this.doesUserHaveRole(requiredRole, deploymentRoles);
+      const canView = service.hasRole(requiredRole);
       this.setViewContent(canView);
     });
-  }
-
-  private doesUserHaveRole(requiredRole?: AppRole, deploymentRoles?: AppRole[]) {
-    if (!requiredRole) return true;
-    if (!deploymentRoles) return false;
-    const [feature, role] = requiredRole.split('.');
-    // if has global permission return true
-    if (deploymentRoles.includes(role as any)) return true;
-    // otherwise check specific feature permisison
-    return deploymentRoles.includes(requiredRole);
   }
 
   /** Dynamically populate or remove associated view content depending on view permissions */

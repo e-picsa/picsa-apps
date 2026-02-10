@@ -895,6 +895,8 @@ export type Database = {
       app_role:
         | 'admin'
         | 'climate.admin'
+        | 'crop.admin'
+        | 'monitoring.admin'
         | 'resources.admin'
         | 'resources.editor'
         | 'deployments.admin'
@@ -1678,6 +1680,8 @@ export const Constants = {
       app_role: [
         'admin',
         'climate.admin',
+        'crop.admin',
+        'monitoring.admin',
         'resources.admin',
         'resources.editor',
         'deployments.admin',

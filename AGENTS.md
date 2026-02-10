@@ -25,6 +25,10 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **OnPush Change Detection**: Strictly enforced.
 - **Tailwind CSS**: Preferred over custom SCSS.
 
+## Coding Style
+
+- **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
+
 ## Agent Meta-Instructions
 
 This file (`AGENTS.md`) is symlinked to `.cursorrules` and `gemini.md` to ensure automatic context ingestion.

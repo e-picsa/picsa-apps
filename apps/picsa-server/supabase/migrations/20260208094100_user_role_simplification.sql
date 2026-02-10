@@ -15,6 +15,8 @@ ALTER TYPE app_role RENAME TO app_role_old;
 CREATE TYPE app_role AS ENUM (
     'admin',
     'climate.admin',
+    'crop.admin',
+    'monitoring.admin',
     'resources.admin',
     'resources.editor',
     'deployments.admin',

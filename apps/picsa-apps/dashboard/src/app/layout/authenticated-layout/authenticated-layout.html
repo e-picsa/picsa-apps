@@ -28,7 +28,7 @@
           mat-list-item
           [routerLink]="link.href + child.href"
           routerLinkActive="mdc-list-item--activated active-link"
-          *roleRequired="link.roleRequired"
+          *roleRequired="child.roleRequired"
         >
           {{ child.label }}</a
         >

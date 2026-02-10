@@ -12,7 +12,6 @@ import { RouterModule } from '@angular/router';
         redirectTo: '/',
         pathMatch: 'full',
       },
-      // TODO - auth guards
       {
         path: 'user-permissions',
         loadComponent: () =>

@@ -36,4 +36,12 @@ export class DashboardAuthService {
       this.activeDeploymentId.set(deploymentId);
     }
   }
+
+  public hasRole(requiredRole?: AppRole): boolean {
+    if (!requiredRole) return true;
+    const deploymentRoles = this.authRoles();
+    if (!deploymentRoles) return false;
+
+    return deploymentRoles.includes(requiredRole);
+  }
 }
