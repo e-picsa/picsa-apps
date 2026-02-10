@@ -44,12 +44,18 @@ export class AdminUserPermissionsComponent {
 
   // Group roles for display in the edit dialog
   public roleGroups = computed(() => {
-    const roles = this.availableRoles();
-    const groups: { name: string; roles: string[] }[] = [];
+    // Filter out 'viewer' roles as default for all users (will be deprecated from enum)
+    const roles = this.availableRoles().filter((r) => !r.includes('viewer'));
+    const groups: { name: string; roles: { label: string; value: string }[] }[] = [];
 
-    // Global roles
-    const globalRoles = roles.filter((r) => !r.includes('.'));
-    if (globalRoles.length) groups.push({ name: 'Global', roles: globalRoles });
+    // Global roles - admin
+    const globalRoles = roles.filter((r) => r === 'admin');
+    if (globalRoles.length) {
+      groups.push({
+        name: 'Global',
+        roles: globalRoles.map((r) => ({ label: this.capitalize(r), value: r })),
+      });
+    }
 
     // Feature roles
     const featureRoles = roles.filter((r) => r.includes('.'));
@@ -57,7 +63,14 @@ export class AdminUserPermissionsComponent {
 
     features.forEach((feature) => {
       const featureGroup = featureRoles.filter((r) => r.startsWith(feature + '.'));
-      groups.push({ name: this.capitalize(feature), roles: featureGroup });
+      groups.push({
+        name: this.capitalize(feature),
+        roles: featureGroup.map((r) => ({
+          // Remove prefix from label (e.g. 'deployments.admin' -> 'Admin')
+          label: this.capitalize(r.split('.')[1]),
+          value: r,
+        })),
+      });
     });
 
     return groups;
@@ -122,7 +135,7 @@ export class AdminUserPermissionsComponent {
     this.editableUser.set(user);
     this.selectedRoles.setValue(user.roles || []);
     const dialog = this.dialog.open(this.userPermissionsDialog());
-    dialog.afterClosed().subscribe(async (data) => {
+    dialog.afterClosed().subscribe(async () => {
       this.editableUser.set(undefined);
     });
   }

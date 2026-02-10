@@ -6,7 +6,7 @@
       <mat-chip-option [color]="group.color" selected>{{ group.label }}</mat-chip-option>
     }
     @if (roleGroups().length === 0 && !isAdmin()) {
-      <span class="text-gray-500 italic">No explicit roles</span>
+      <span class="text-gray-500 italic">Viewer</span>
     }
   }
 </div>

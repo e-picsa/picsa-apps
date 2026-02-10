@@ -18,7 +18,7 @@ export class UserProfileComponent {
   public authService = inject(DashboardAuthService);
   public deploymentService = inject(DeploymentDashboardService);
 
-  public authRoleLevels = ['viewer', 'author', 'admin'];
+  public authRoleLevels = ['editor', 'admin'];
   public authRoleFeatures: string[] = [];
   constructor() {
     effect(() => {

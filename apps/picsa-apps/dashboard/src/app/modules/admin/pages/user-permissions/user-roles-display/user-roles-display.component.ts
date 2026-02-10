@@ -24,14 +24,6 @@ export class UserRolesDisplayComponent {
 
     const groups: { name: string; label: string; color: string }[] = [];
 
-    // Check for global roles (excluding admin handled above)
-    if (roles.includes('author')) {
-      groups.push({ name: 'author', label: 'Global Author', color: 'primary' });
-    }
-    if (roles.includes('viewer')) {
-      groups.push({ name: 'viewer', label: 'Global Viewer', color: 'warn' }); // warn is usually reddish/orange, maybe not best for viewer but distinctive
-    }
-
     // Process feature roles
     const featureRoles = roles.filter((r) => r.includes('.'));
 
@@ -51,7 +43,6 @@ export class UserRolesDisplayComponent {
 
       let highestLevel = 'viewer';
       if (featureSpecificRoles.includes(`${feature}.admin` as AppRole)) highestLevel = 'admin';
-      else if (featureSpecificRoles.includes(`${feature}.author` as AppRole)) highestLevel = 'author';
 
       const label = `${this.capitalize(feature)}: ${this.capitalize(highestLevel)}`;
       let color = 'primary';

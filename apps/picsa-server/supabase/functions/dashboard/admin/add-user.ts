@@ -8,7 +8,7 @@ import type { AppRole } from '../../../types/index.ts';
 export const addUser = async (req: Request, params: { user_id: string; deployment_id: string; roles?: AppRole[] }) => {
   const adminClient = getServiceRoleClient();
 
-  const { user_id, deployment_id, roles = ['viewer'] } = params;
+  const { user_id, deployment_id, roles = [] } = params;
 
   // Validate that the caller has the roles they are trying to assign
   for (const role of roles) {
