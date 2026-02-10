@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import type { AppRole, Database, FunctionResponses } from '@picsa/server-types';
+import { APP_ROLES } from '@picsa/server-utils';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { PicsaDialogService } from '@picsa/shared/features/dialog';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -222,26 +223,7 @@ export class AdminUserPermissionsComponent {
 
   private getAvailableRolesForFeature(feature: string): AppRole[] {
     if (feature === 'admin') return ['admin'];
-    const adminRole = `${feature}.admin` as AppRole;
-    const editorRole = `${feature}.editor` as AppRole;
-
-    const roles: AppRole[] = [];
-    const validRoles: AppRole[] = [
-      'admin',
-      'climate.admin',
-      'crop.admin',
-      'monitoring.admin',
-      'resources.admin',
-      'resources.editor',
-      'deployments.admin',
-      'translations.admin',
-      'translations.editor',
-    ];
-
-    if (validRoles.includes(adminRole)) roles.push(adminRole);
-    if (validRoles.includes(editorRole)) roles.push(editorRole);
-
-    return roles;
+    return APP_ROLES.filter((r) => r.includes(`${feature}.`));
   }
 
   private async listAuthUsers() {
