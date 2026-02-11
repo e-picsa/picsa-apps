@@ -13,24 +13,25 @@ export const ClimateFeature = defineFeature({
       pathMatch: 'full',
     },
     {
-      path: 'admin',
-      loadComponent: () => import('./pages/admin/admin.component').then((m) => m.ClimateAdminPageComponent),
-      roleRequired: 'climate.admin',
-    },
-    {
       path: 'station',
       nav: { label: 'Station Data' },
       loadComponent: () => import('./pages/station/station.component').then((m) => m.ClimateStationPageComponent),
+    },
+    {
+      path: 'station/:stationId',
+      loadComponent: () =>
+        import('./pages/station-details/station-details.component').then((m) => m.StationDetailsPageComponent),
     },
     {
       path: 'forecast',
       nav: { label: 'Forecasts' },
       loadComponent: () => import('./pages/forecast/forecast.component').then((m) => m.ClimateForecastPageComponent),
     },
+
     {
-      path: 'station/:stationId',
-      loadComponent: () =>
-        import('./pages/station-details/station-details.component').then((m) => m.StationDetailsPageComponent),
+      path: 'admin',
+      loadComponent: () => import('./pages/admin/admin.component').then((m) => m.ClimateAdminPageComponent),
+      roleRequired: 'climate.admin',
     },
   ],
 });

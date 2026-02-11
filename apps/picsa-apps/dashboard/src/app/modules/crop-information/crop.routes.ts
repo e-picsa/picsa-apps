@@ -13,11 +13,6 @@ export const CropFeature = defineFeature({
       pathMatch: 'full',
     },
     {
-      path: 'admin',
-      loadComponent: () => import('./pages/admin/admin.component').then((m) => m.DashboardCropAdminComponent),
-      roleRequired: 'crop.admin',
-    },
-    {
       path: 'variety',
       nav: { label: 'Variety' },
       loadComponent: () => import('./pages/variety/variety.component').then((m) => m.CropVarietyComponent),
@@ -45,6 +40,11 @@ export const CropFeature = defineFeature({
         import('./pages/probability/downscaled/probability-downscaled.component').then(
           (m) => m.ProbabilityDownscaledComponent,
         ),
+    },
+    {
+      path: 'admin',
+      loadComponent: () => import('./pages/admin/admin.component').then((m) => m.DashboardCropAdminComponent),
+      roleRequired: 'crop.admin',
     },
   ],
 });
