@@ -28,6 +28,7 @@ export const appRoutes: Route[] = [
   {
     path: 'deployment',
     loadChildren: () => import('./modules/deployment/deployment.module').then((m) => m.DeploymentModule),
+    canActivate: [authRoleGuard('deployments.admin')],
   },
   {
     path: 'translations',

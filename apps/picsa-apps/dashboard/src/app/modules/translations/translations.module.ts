@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { authRoleGuard } from '../auth/guards/auth-role.guard';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -15,6 +17,7 @@ import { RouterModule } from '@angular/router';
         path: 'import',
         loadComponent: () =>
           import('./pages/import/translations-import.component').then((mod) => mod.TranslationsImportComponent),
+        canActivate: [authRoleGuard('translations.admin')],
       },
       {
         path: 'edit/:id',

@@ -24,6 +24,12 @@ import { authRoleGuard } from '../auth/guards/auth-role.guard';
         loadComponent: () => import('./pages/variety/variety.component').then((m) => m.CropVarietyComponent),
       },
       {
+        path: 'variety/add',
+        loadComponent: () =>
+          import('./pages/variety/details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
+        canActivate: [authRoleGuard('crop.admin')],
+      },
+      {
         path: 'variety/:id',
         loadComponent: () =>
           import('./pages/variety/details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
