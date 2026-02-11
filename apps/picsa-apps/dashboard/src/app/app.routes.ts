@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 
 import { AdminFeature } from './modules/admin/admin.routes';
-import { authRoleGuard } from './modules/auth/guards/auth-role.guard';
 import { ClimateFeature } from './modules/climate/climate.routes';
 import { CropFeature } from './modules/crop-information/crop.routes';
 import { DeploymentFeature } from './modules/deployment/deployment.routes';
@@ -37,13 +36,11 @@ export const appRoutes: Route[] = [
   {
     path: DeploymentFeature.ROOT_PATH,
     loadChildren: () => import('./modules/deployment/deployment.module').then((m) => m.DeploymentModule),
-    // Guard is now in DeploymentFeature.ROUTES
   },
   {
     path: TranslationsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
-  // unmatched routes fallback to home
   {
     path: CropFeature.ROOT_PATH,
     loadChildren: () =>
@@ -52,7 +49,6 @@ export const appRoutes: Route[] = [
   {
     path: MonitoringFeature.ROOT_PATH,
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
-    canActivate: [authRoleGuard('monitoring.admin')],
   },
   {
     path: 'profile',
@@ -61,7 +57,6 @@ export const appRoutes: Route[] = [
   {
     path: AdminFeature.ROOT_PATH,
     loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
-    canActivate: [authRoleGuard('admin')],
   },
   {
     path: StatsFeature.ROOT_PATH,
