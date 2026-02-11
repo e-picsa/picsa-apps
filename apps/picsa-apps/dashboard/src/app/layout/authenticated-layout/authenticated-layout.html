@@ -26,24 +26,29 @@
         @for (child of link.children || []; track $index) {
         <a
           mat-list-item
-          [routerLink]="link.href + child.href"
+          [routerLink]="child.href"
           routerLinkActive="mdc-list-item--activated active-link"
           *roleRequired="child.roleRequired"
         >
-          {{ child.label }}</a
-        >
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: child }"></ng-container>
+        </a>
         }
       </mat-expansion-panel>
       } @else {
       <!-- Single nav item -->
-      <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
+      <a
+        mat-list-item
+        [routerLink]="link.href"
+        routerLinkActive="mdc-list-item--activated active-link"
+        *roleRequired="link.roleRequired"
+      >
         <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
       </a>
       } }
     </mat-nav-list>
-    <mat-nav-list class="w-64 mt-auto" *roleRequired="'deployments.admin'">
+    <mat-nav-list class="w-64 mt-auto">
       <mat-divider></mat-divider>
-      <div mat-subheader>Admin</div>
+      <div mat-subheader></div>
       <mat-divider></mat-divider>
       @for (link of adminLinks; track link.href) {
       <a
@@ -68,7 +73,9 @@
   <div class="nav-item">
     @if (link.matIcon) {
     <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+    } @else {
+    <span style="width: 32px"></span>
     }
-    <span>{{ link.label }}</span>
+    <span class="link-label">{{ link.label }}</span>
   </div>
 </ng-template>

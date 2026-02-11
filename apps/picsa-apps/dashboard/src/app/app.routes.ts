@@ -1,14 +1,22 @@
 import { Route } from '@angular/router';
 
-import { authRoleGuard } from './modules/auth/guards/auth-role.guard';
+import { AdminFeature } from './modules/admin/admin.routes';
+import { ClimateFeature } from './modules/climate/climate.routes';
+import { CropFeature } from './modules/crop-information/crop.routes';
+import { DeploymentFeature } from './modules/deployment/deployment.routes';
+import { HomeFeature } from './modules/home/home.routes';
+import { MonitoringFeature } from './modules/monitoring/monitoring.routes';
+import { ResourcesFeature } from './modules/resources/resources.routes';
+import { StatsFeature } from './modules/stats/stats.routes';
+import { TranslationsFeature } from './modules/translations/translations.routes';
 
 export const appRoutes: Route[] = [
   {
-    path: 'home',
-    loadComponent: () => import('./modules/home/home.component').then((m) => m.DashboardHomeComponent),
+    path: HomeFeature.ROOT_PATH,
+    loadChildren: () => import('./modules/home/home.routes').then((m) => m.HomeFeature.ROUTES),
   },
   {
-    path: 'resources',
+    path: ResourcesFeature.ROOT_PATH,
     loadChildren: () => import('./modules/resources/resources.module').then((m) => m.ResourcesPageModule),
   },
   {
@@ -22,39 +30,36 @@ export const appRoutes: Route[] = [
       import('./modules/legal/terms-of-service/terms-of-service.component').then((m) => m.TermsOfServiceComponent),
   },
   {
-    path: 'climate',
+    path: ClimateFeature.ROOT_PATH,
     loadChildren: () => import('./modules/climate/climate.module').then((m) => m.ClimateModule),
   },
   {
-    path: 'deployment',
+    path: DeploymentFeature.ROOT_PATH,
     loadChildren: () => import('./modules/deployment/deployment.module').then((m) => m.DeploymentModule),
   },
   {
-    path: 'translations',
+    path: TranslationsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
-  // unmatched routes fallback to home
   {
-    path: 'crop',
+    path: CropFeature.ROOT_PATH,
     loadChildren: () =>
       import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
   {
-    path: 'monitoring',
+    path: MonitoringFeature.ROOT_PATH,
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
-    canActivate: [authRoleGuard('monitoring.admin')],
   },
   {
     path: 'profile',
     loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),
   },
   {
-    path: 'admin',
+    path: AdminFeature.ROOT_PATH,
     loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
-    canActivate: [authRoleGuard('admin')],
   },
   {
-    path: 'stats',
+    path: StatsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/stats/stats.module').then((m) => m.StatsModule),
   },
   {

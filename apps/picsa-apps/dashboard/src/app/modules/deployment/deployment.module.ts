@@ -2,16 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { DeploymentFeature } from './deployment.routes';
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        loadComponent: () => import('./pages/list/deployment-list.component').then((m) => m.DeploymentListComponent),
-      },
-    ]),
-  ],
+  imports: [CommonModule, RouterModule.forChild(DeploymentFeature.ROUTES)],
 })
 export class DeploymentModule {}
