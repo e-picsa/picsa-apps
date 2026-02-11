@@ -1,5 +1,7 @@
 import { Route } from '@angular/router';
 
+import { authRoleGuard } from './modules/auth/guards/auth-role.guard';
+
 export const appRoutes: Route[] = [
   {
     path: 'home',
@@ -40,6 +42,7 @@ export const appRoutes: Route[] = [
   {
     path: 'monitoring',
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
+    canActivate: [authRoleGuard('monitoring.admin')],
   },
   {
     path: 'profile',
@@ -48,6 +51,7 @@ export const appRoutes: Route[] = [
   {
     path: 'admin',
     loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
+    canActivate: [authRoleGuard('admin')],
   },
   {
     path: 'stats',

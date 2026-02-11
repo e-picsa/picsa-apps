@@ -1,38 +1,91 @@
 <div class="page-content">
   <!-- Members List -->
-  <h2>Members</h2>
+  <h2>User Permissions</h2>
+  <div class="flex items-center justify-between mb-4">
+    <p class="text-secondary m-0">Manage access across all features. Click icons to toggle permission.</p>
+
+    <!-- Legend -->
+    <div class="flex gap-4 items-center text-sm">
+      <div class="flex items-center gap-1">
+        <mat-icon class="text-primary icon-sm">security</mat-icon> Admin (Full Access)
+      </div>
+      <div class="flex items-center gap-1">
+        <mat-icon class="text-success icon-sm">edit</mat-icon> Editor (Write/Edit)
+      </div>
+    </div>
+  </div>
+
   <picsa-data-table
     [data]="deploymentUsers()"
-    [options]="deploymentUserTableOptions"
-    (rowClick)="showUserEditDialog($event)"
-  ></picsa-data-table>
+    [options]="matrixTableOptions"
+    [valueTemplates]="{
+      admin: permissionTemplate,
+      climate: permissionTemplate,
+      resources: permissionTemplate,
+      crop: permissionTemplate,
+      monitoring: permissionTemplate,
+      translations: permissionTemplate,
+      deployments: permissionTemplate,
+      actions: actionsTemplate,
+    }"
+  >
+    <ng-template #permissionTemplate let-column="column" let-row="row">
+      <div class="flex justify-center">
+        <!-- Use mat-icon-button for interactive elements -->
+        <button
+          matIconButton
+          (click)="togglePermission(row, column)"
+          [class.text-primary]="getPermissionStatus(row, column) === 'admin'"
+          [class.text-success]="getPermissionStatus(row, column) === 'editor'"
+          [disabled]="isCurrentUser(row) || isGlobalAdmin(row) || column === 'admin'"
+        >
+          @switch (getPermissionStatus(row, column)) {
+            @case ('admin') {
+              <mat-icon>security</mat-icon>
+            }
+            @case ('editor') {
+              <mat-icon>edit</mat-icon>
+            }
+            @default {
+              <mat-icon class="text-disabled">remove</mat-icon>
+            }
+          }
+        </button>
+      </div>
+    </ng-template>
 
-  <button mat-stroked-button class="mt-3" (click)="dialog.open(addUserDialog)">
+    <ng-template #actionsTemplate let-row="row">
+      <div class="flex justify-center">
+        <button matIconButton [matMenuTriggerFor]="menu" [disabled]="isCurrentUser(row)">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          @if (isGlobalAdmin(row)) {
+            <button mat-menu-item (click)="toggleGlobalAdmin(row)">
+              <mat-icon>remove_moderator</mat-icon>
+              <span>Revoke Global Admin</span>
+            </button>
+          } @else {
+            <button mat-menu-item (click)="toggleGlobalAdmin(row)">
+              <mat-icon>security</mat-icon>
+              <span>Assign Global Admin</span>
+            </button>
+          }
+
+          <button mat-menu-item (click)="removeUser(row)">
+            <mat-icon color="warn">person_remove</mat-icon>
+            <span>Remove User</span>
+          </button>
+        </mat-menu>
+      </div>
+    </ng-template>
+  </picsa-data-table>
+
+  <button matButton="outlined" class="mt-4" (click)="dialog.open(addUserDialog)">
     Add User
     <mat-icon>person_add</mat-icon>
   </button>
 </div>
-
-<!-- Edit User Dialog -->
-<ng-template #userPermissionsDialog>
-  <h2 mat-dialog-title class="mb-2">User Permissions</h2>
-  <mat-dialog-content>
-    @if (editableUser(); as user) {
-      <button
-        mat-button
-        mat-dialog-close
-        (click)="removeUser(user.id)"
-        [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
-      >
-        <mat-icon>person_remove</mat-icon>
-        Remove User
-      </button>
-    }
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-stroked-button mat-dialog-close class="mt-2">Cancel</button>
-  </mat-dialog-actions>
-</ng-template>
 
 <!-- Add User Dialog -->
 <ng-template #addUserDialog>
@@ -44,7 +97,7 @@
       [valueTemplates]="{ isMember: memberTemplate }"
     >
       <ng-template #memberTemplate let-isMember let-row="row">
-        <button mat-button [disabled]="isMember" mat-dialog-close (click)="addUser(row)">
+        <button matButton [disabled]="isMember" mat-dialog-close (click)="addUser(row)">
           Add
           <mat-icon>person_add</mat-icon>
         </button>
@@ -52,6 +105,6 @@
     </picsa-data-table>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button matButton="outlined" mat-dialog-close>Cancel</button>
   </mat-dialog-actions>
 </ng-template>

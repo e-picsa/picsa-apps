@@ -1,11 +1,11 @@
-import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import type { AppRole } from '@picsa/server-types';
 
 export interface INavLink {
   label: string;
   href: string;
   matIcon?: string;
   children?: INavLink[];
-  roleRequired?: IAuthRole;
+  roleRequired?: AppRole;
 }
 
 export const DASHBOARD_NAV_LINKS: INavLink[] = [
@@ -49,8 +49,7 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       {
         label: 'Admin',
         href: '/admin',
-        // TODO - auth role
-        // TODO - import from module?
+        roleRequired: 'climate.admin',
       },
     ],
   },
@@ -70,8 +69,7 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       {
         label: 'Admin',
         href: '/admin',
-        // TODO - auth role
-        // TODO - import from module?
+        roleRequired: 'crop.admin',
       },
     ],
   },
@@ -79,6 +77,7 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     label: 'Monitoring',
     href: '/monitoring',
     matIcon: 'poll',
+    roleRequired: 'monitoring.admin',
   },
   {
     label: 'Translations',

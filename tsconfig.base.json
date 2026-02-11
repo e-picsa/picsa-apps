@@ -43,6 +43,7 @@
       "@picsa/resources/*": ["apps/picsa-tools/resources-tool/src/app/*"],
       "@picsa/seasonal-calendar/*": ["apps/picsa-tools/seasonal-calendar-tool/*"],
       "@picsa/server-types": ["apps/picsa-server/supabase/types/index.ts"],
+      "@picsa/server-utils": ["apps/picsa-server/supabase/utils/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"],
       "@picsa/theme": ["libs/theme/src/index.ts"],
       "@picsa/webcomponents": ["libs/webcomponents"],

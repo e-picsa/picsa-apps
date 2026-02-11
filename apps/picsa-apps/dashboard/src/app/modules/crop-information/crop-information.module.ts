@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { authRoleGuard } from '../auth/guards/auth-role.guard';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -15,6 +17,7 @@ import { RouterModule } from '@angular/router';
       {
         path: 'admin',
         loadComponent: () => import('./pages/admin/admin.component').then((m) => m.DashboardCropAdminComponent),
+        canActivate: [authRoleGuard('crop.admin')],
       },
       {
         path: 'variety',

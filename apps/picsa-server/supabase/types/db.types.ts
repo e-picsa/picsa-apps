@@ -893,21 +893,15 @@ export type Database = {
     };
     Enums: {
       app_role:
-        | 'resources.viewer'
-        | 'resources.author'
-        | 'resources.admin'
-        | 'deployments.admin'
-        | 'translations.viewer'
-        | 'viewer'
-        | 'author'
         | 'admin'
-        | 'deployments.viewer'
-        | 'deployments.author'
-        | 'translations.author'
+        | 'climate.admin'
+        | 'crop.admin'
+        | 'monitoring.admin'
+        | 'resources.admin'
+        | 'resources.editor'
+        | 'deployments.admin'
         | 'translations.admin'
-        | 'climate.viewer'
-        | 'climate.author'
-        | 'climate.admin';
+        | 'translations.editor';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
@@ -1684,21 +1678,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: [
-        'resources.viewer',
-        'resources.author',
-        'resources.admin',
-        'deployments.admin',
-        'translations.viewer',
-        'viewer',
-        'author',
         'admin',
-        'deployments.viewer',
-        'deployments.author',
-        'translations.author',
-        'translations.admin',
-        'climate.viewer',
-        'climate.author',
         'climate.admin',
+        'crop.admin',
+        'monitoring.admin',
+        'resources.admin',
+        'resources.editor',
+        'deployments.admin',
+        'translations.admin',
+        'translations.editor',
       ],
       country_code: ['global', 'mw', 'zm', 'tj'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],

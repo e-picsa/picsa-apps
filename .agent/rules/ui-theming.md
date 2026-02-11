@@ -21,7 +21,10 @@ The project uses a custom Tailwind configuration shared across apps, located at 
 
 **Version:** This workspace uses Angular Material **v21**. Ensure you use the modern, standalone component APIs and MDC-based styles.
 
-- **Buttons:** Use `<button mat-button>`, `<button mat-flat-button>`, etc.
+- **Buttons:**
+  - Use `matButton` (e.g. `<button matButton>`) or variants like `<button matButton="filled">`.
+  - Avoid using legacy selectors like `mat-raised-button`, `mat-stroked-button`, `mat-flat-button`.
+  - **Icon Buttons:** Use `matIconButton` (`<button matIconButton>`) instead of `mat-icon-button`.
 - **Icons:** Use `<mat-icon>`.
 - **Inputs:** Use `MatFormField` with `matInput`.
 
@@ -33,7 +36,7 @@ Use Tailwind CSS for layout, spacing, and typography **around** the Material com
 
 ```html
 <!-- Uses semantic color via Material theming -->
-<button mat-flat-button color="primary">Save Changes</button>
+<button matButton="filled" color="primary">Save Changes</button>
 ```
 
 ✅ **Correct (Neutral/Status):**
