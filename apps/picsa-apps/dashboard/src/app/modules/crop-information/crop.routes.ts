@@ -24,6 +24,7 @@ export const CropFeature = defineFeature({
     },
     {
       path: 'variety/add',
+      nav: { hidden: true },
       loadComponent: () =>
         import('./pages/variety/details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
       roleRequired: 'crop.admin',

@@ -88,8 +88,8 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
     }
   }
 
-  // If this node has no label and no children links, we generally don't create a nav link for it
-  if (!node.nav?.label && !childrenLinks.length) {
+  // If this node has no label, no children links, and no path, we don't create a nav link for it
+  if (!node.nav?.label && !childrenLinks.length && !node.path) {
     return result;
   }
 
@@ -105,8 +105,10 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
   return result;
 }
 
+/**
+ * Utility to help define app routes alongside navbar configuration and auth restrictions
+ */
 export function defineFeature(config: RecursiveFeatureNode): FeatureDefinition {
-  // Routes: Override the root path to empty string for the internal route definition (lazy-loading compatibility)
   const routes = [
     buildRecursiveRoutes({
       ...config,

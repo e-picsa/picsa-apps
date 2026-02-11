@@ -19,6 +19,7 @@ export const ResourcesFeature = defineFeature({
     },
     {
       path: 'files/create',
+      nav: { hidden: true },
       loadComponent: () =>
         import('./pages/files/edit/resource-file-edit.component').then((m) => m.ResourceFileEditComponent),
       roleRequired: 'resources.admin',
@@ -36,6 +37,7 @@ export const ResourcesFeature = defineFeature({
     },
     {
       path: 'links/create',
+      nav: { hidden: true },
       loadComponent: () =>
         import('./pages/links/edit/resource-link-edit.component').then((m) => m.ResourceLinkEditComponent),
       roleRequired: 'resources.admin',
@@ -54,6 +56,7 @@ export const ResourcesFeature = defineFeature({
     },
     {
       path: 'collections/create',
+      nav: { hidden: true },
       loadComponent: () =>
         import('./pages/collections/edit/resource-collection-edit.component').then(
           (m) => m.ResourceCollectionEditComponent,
