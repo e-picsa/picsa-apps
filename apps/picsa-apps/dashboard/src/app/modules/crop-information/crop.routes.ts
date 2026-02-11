@@ -1,10 +1,12 @@
 import { defineFeature } from '../../utils/route-utils';
 
 export const CropFeature = defineFeature({
-  rootPath: 'crop',
-  navLabel: 'Crop',
-  matIcon: 'spa',
-  routes: [
+  path: 'crop',
+  nav: {
+    label: 'Crop',
+    icon: 'spa',
+  },
+  children: [
     {
       path: '',
       redirectTo: 'variety',
@@ -17,7 +19,7 @@ export const CropFeature = defineFeature({
     },
     {
       path: 'variety',
-      navLabel: 'Variety',
+      nav: { label: 'Variety' },
       loadComponent: () => import('./pages/variety/variety.component').then((m) => m.CropVarietyComponent),
     },
     {
@@ -33,7 +35,7 @@ export const CropFeature = defineFeature({
     },
     {
       path: 'probability',
-      navLabel: 'Probability',
+      nav: { label: 'Probability' },
       loadComponent: () => import('./pages/probability/probability.component').then((m) => m.CropProbabilityComponent),
     },
     {

@@ -1,4 +1,4 @@
-import { AdminUserPermissionsFeature } from '../modules/admin/admin.routes';
+import { AdminFeature } from '../modules/admin/admin.routes';
 import { ClimateFeature } from '../modules/climate/climate.routes';
 import { CropFeature } from '../modules/crop-information/crop.routes';
 import { MonitoringFeature } from '../modules/monitoring/monitoring.routes';
@@ -29,9 +29,9 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       },
     ],
   },
-  ClimateFeature.NAV_LINK,
-  CropFeature.NAV_LINK,
-  MonitoringFeature.NAV_LINK,
+  ...(ClimateFeature.NAV_LINK ? [ClimateFeature.NAV_LINK] : []),
+  ...(CropFeature.NAV_LINK ? [CropFeature.NAV_LINK] : []),
+  ...(MonitoringFeature.NAV_LINK ? [MonitoringFeature.NAV_LINK] : []),
   {
     label: 'Translations',
     href: '/translations',
@@ -61,7 +61,7 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
     matIcon: 'apps',
     roleRequired: 'deployments.admin',
   },
-  AdminUserPermissionsFeature.NAV_LINK,
+  ...AdminFeature.HOISTED_LINKS,
 ];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service'];

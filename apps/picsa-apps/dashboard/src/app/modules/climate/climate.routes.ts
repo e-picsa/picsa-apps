@@ -1,10 +1,12 @@
 import { defineFeature } from '../../utils/route-utils';
 
 export const ClimateFeature = defineFeature({
-  rootPath: 'climate',
-  navLabel: 'Climate',
-  matIcon: 'filter_drama',
-  routes: [
+  path: 'climate',
+  nav: {
+    label: 'Climate',
+    icon: 'filter_drama',
+  },
+  children: [
     {
       path: '',
       redirectTo: 'station',
@@ -17,12 +19,12 @@ export const ClimateFeature = defineFeature({
     },
     {
       path: 'station',
-      navLabel: 'Station Data',
+      nav: { label: 'Station Data' },
       loadComponent: () => import('./pages/station/station.component').then((m) => m.ClimateStationPageComponent),
     },
     {
       path: 'forecast',
-      navLabel: 'Forecasts',
+      nav: { label: 'Forecasts' },
       loadComponent: () => import('./pages/forecast/forecast.component').then((m) => m.ClimateForecastPageComponent),
     },
     {

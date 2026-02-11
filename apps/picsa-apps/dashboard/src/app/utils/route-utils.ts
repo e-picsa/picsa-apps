@@ -4,82 +4,124 @@ import { capitalise } from '@picsa/utils';
 
 import { authRoleGuard } from '../modules/auth/guards/auth-role.guard';
 
-export interface DashboardRoute extends Route {
-  path: string;
-  roleRequired?: AppRole;
-  navLabel?: string; // Optional override for the navigation label
-  matIcon?: string; // Icon for the navigation link
-}
-
 export interface INavLink {
   label: string;
-  href: string; // relative path (or absolute if from root)
+  href: string;
   roleRequired?: AppRole;
   matIcon?: string;
   children?: INavLink[];
 }
 
-const toAuthRoute = ({ roleRequired, navLabel, matIcon, ...route }: DashboardRoute): Route => {
-  void navLabel;
-  void matIcon;
-  if (roleRequired) {
-    // preserve existing canActivate if present
-    const existingGuards = route.canActivate || [];
-    route.canActivate = [...existingGuards, authRoleGuard(roleRequired as AppRole)];
-  }
-  return route;
-};
+export interface NavConfig {
+  label?: string;
+  icon?: string;
+  hidden?: boolean;
+  hoisted?: boolean;
+}
 
-const toAuthRoutes = (routes: DashboardRoute[]) => routes.map(toAuthRoute);
-
-const toNavLink = ({ path, roleRequired, navLabel, matIcon }: DashboardRoute): INavLink | undefined => {
-  // Ignore routes with deep paths (containing /), parameters (:), or wildcards (**).
-  // Also ignore empty paths unless they are meant to be the root link (but typically root link is the parent module).
-  // If we want the empty path to represent the "Home" of this feature...
-  if (path.includes('/') || path.includes(':') || path === '**') return undefined;
-
-  // If path is empty, we skips it as it's typically the feature root handled by the parent
-  if (path === '') return undefined;
-
-  return {
-    label: navLabel || capitalise(path),
-    href: `/${path}`,
-    roleRequired,
-    matIcon,
-  };
-};
-
-const toNavLinks = (routes: DashboardRoute[]) => routes.map(toNavLink).filter((v): v is INavLink => v !== undefined);
-
-export interface FeatureConfig {
-  rootPath: string;
-  navLabel: string;
-  matIcon?: string;
+export interface RecursiveFeatureNode extends Route {
+  path: string;
+  nav?: NavConfig;
   roleRequired?: AppRole;
-  routes: DashboardRoute[];
+  children?: RecursiveFeatureNode[];
 }
 
 export interface FeatureDefinition {
   ROUTES: Route[];
-  NAV_LINK: INavLink;
+  NAV_LINK: INavLink | undefined;
+  HOISTED_LINKS: INavLink[];
   ROOT_PATH: string;
 }
 
-export function defineFeature(config: FeatureConfig): FeatureDefinition {
-  const routes = toAuthRoutes(config.routes);
-  const childLinks = toNavLinks(config.routes);
+function buildRecursiveRoutes(node: RecursiveFeatureNode, parentRole?: AppRole): Route {
+  const { nav, roleRequired, children, ...routeConfig } = node;
+  const applicableRole = roleRequired || parentRole;
 
-  const navLink: INavLink = {
-    label: config.navLabel,
-    href: `/${config.rootPath}`,
-    matIcon: config.matIcon,
-    roleRequired: config.roleRequired,
-    children: childLinks.length > 0 ? childLinks : undefined,
+  const route: Route = {
+    ...routeConfig,
+    children: children ? children.map((child) => buildRecursiveRoutes(child, applicableRole)) : undefined,
   };
+
+  if (applicableRole) {
+    const existingGuards = route.canActivate || [];
+    route.canActivate = [...existingGuards, authRoleGuard(applicableRole)];
+  }
+
+  return route;
+}
+
+interface NavResult {
+  link?: INavLink;
+  hoisted: INavLink[];
+}
+
+function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, parentRole?: AppRole): NavResult {
+  const result: NavResult = { hoisted: [] };
+
+  if (node.nav?.hidden) {
+    return result;
+  }
+
+  // Skip parameters or wildcards in navigation unless explicitly labeled
+  if (node.path.includes(':') || node.path === '**') {
+    return result;
+  }
+
+  const applicableRole = node.roleRequired || parentRole;
+
+  const prefix = parentPath === '/' ? '' : parentPath;
+  const currentPath = node.path ? `${prefix}/${node.path}` : parentPath;
+
+  const childrenLinks: INavLink[] = [];
+  if (node.children) {
+    for (const child of node.children) {
+      const childResult = buildRecursiveNavLinks(child, currentPath, applicableRole);
+
+      result.hoisted.push(...childResult.hoisted);
+
+      if (childResult.link) {
+        if (child.nav?.hoisted) {
+          result.hoisted.push(childResult.link);
+        } else {
+          childrenLinks.push(childResult.link);
+        }
+      }
+    }
+  }
+
+  // If this node has no label and no children links, we generally don't create a nav link for it
+  if (!node.nav?.label && !childrenLinks.length) {
+    return result;
+  }
+
+  const link: INavLink = {
+    label: node.nav?.label || capitalise(node.path || ''),
+    href: currentPath,
+    matIcon: node.nav?.icon,
+    roleRequired: applicableRole,
+    children: childrenLinks.length > 0 ? childrenLinks : undefined,
+  };
+
+  result.link = link;
+  return result;
+}
+
+export function defineFeature(config: RecursiveFeatureNode): FeatureDefinition {
+  // Routes: Override the root path to empty string for the internal route definition (lazy-loading compatibility)
+  const routes = [
+    buildRecursiveRoutes({
+      ...config,
+      path: '',
+    }),
+  ];
+
+  // Nav Links: Use the original path structure
+  const navResult = buildRecursiveNavLinks(config, '', undefined);
 
   return {
     ROUTES: routes,
-    NAV_LINK: navLink,
-    ROOT_PATH: config.rootPath,
+    NAV_LINK: navResult.link,
+    HOISTED_LINKS: navResult.hoisted,
+    ROOT_PATH: config.path,
   };
 }
