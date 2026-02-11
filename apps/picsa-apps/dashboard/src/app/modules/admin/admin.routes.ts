@@ -2,9 +2,7 @@ import { defineFeature } from '../../utils/route-utils';
 
 export const AdminFeature = defineFeature({
   path: 'admin',
-  nav: {
-    label: 'Admin',
-  },
+
   children: [
     {
       path: '',

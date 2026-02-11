@@ -4,15 +4,20 @@ import { AdminFeature } from './modules/admin/admin.routes';
 import { authRoleGuard } from './modules/auth/guards/auth-role.guard';
 import { ClimateFeature } from './modules/climate/climate.routes';
 import { CropFeature } from './modules/crop-information/crop.routes';
+import { DeploymentFeature } from './modules/deployment/deployment.routes';
+import { HomeFeature } from './modules/home/home.routes';
 import { MonitoringFeature } from './modules/monitoring/monitoring.routes';
+import { ResourcesFeature } from './modules/resources/resources.routes';
+import { StatsFeature } from './modules/stats/stats.routes';
+import { TranslationsFeature } from './modules/translations/translations.routes';
 
 export const appRoutes: Route[] = [
   {
-    path: 'home',
-    loadComponent: () => import('./modules/home/home.component').then((m) => m.DashboardHomeComponent),
+    path: HomeFeature.ROOT_PATH,
+    loadChildren: () => import('./modules/home/home.routes').then((m) => m.HomeFeature.ROUTES),
   },
   {
-    path: 'resources',
+    path: ResourcesFeature.ROOT_PATH,
     loadChildren: () => import('./modules/resources/resources.module').then((m) => m.ResourcesPageModule),
   },
   {
@@ -30,12 +35,12 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/climate/climate.module').then((m) => m.ClimateModule),
   },
   {
-    path: 'deployment',
+    path: DeploymentFeature.ROOT_PATH,
     loadChildren: () => import('./modules/deployment/deployment.module').then((m) => m.DeploymentModule),
-    canActivate: [authRoleGuard('deployments.admin')],
+    // Guard is now in DeploymentFeature.ROUTES
   },
   {
-    path: 'translations',
+    path: TranslationsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
   // unmatched routes fallback to home
@@ -59,7 +64,7 @@ export const appRoutes: Route[] = [
     canActivate: [authRoleGuard('admin')],
   },
   {
-    path: 'stats',
+    path: StatsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/stats/stats.module').then((m) => m.StatsModule),
   },
   {

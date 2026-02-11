@@ -28,8 +28,7 @@ export interface RecursiveFeatureNode extends Route {
 
 export interface FeatureDefinition {
   ROUTES: Route[];
-  NAV_LINK: INavLink | undefined;
-  HOISTED_LINKS: INavLink[];
+  NAV_LINKS: INavLink[];
   ROOT_PATH: string;
 }
 
@@ -117,11 +116,11 @@ export function defineFeature(config: RecursiveFeatureNode): FeatureDefinition {
 
   // Nav Links: Use the original path structure
   const navResult = buildRecursiveNavLinks(config, '', undefined);
+  const navLinks = [navResult.link, ...navResult.hoisted].filter((link): link is INavLink => !!link);
 
   return {
     ROUTES: routes,
-    NAV_LINK: navResult.link,
-    HOISTED_LINKS: navResult.hoisted,
+    NAV_LINKS: navLinks,
     ROOT_PATH: config.path,
   };
 }
