@@ -57,10 +57,6 @@ interface NavResult {
 function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, parentRole?: AppRole): NavResult {
   const result: NavResult = { hoisted: [] };
 
-  if (node.nav?.hidden) {
-    return result;
-  }
-
   // Skip parameters or wildcards in navigation unless explicitly labeled
   if (node.path.includes(':') || node.path === '**') {
     return result;
@@ -86,6 +82,11 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
         }
       }
     }
+  }
+
+  // If hidden, return only collected hoisted links
+  if (node.nav?.hidden) {
+    return result;
   }
 
   // If this node has no label, no children links, and no path, we don't create a nav link for it
