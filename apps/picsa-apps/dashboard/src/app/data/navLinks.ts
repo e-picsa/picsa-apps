@@ -1,12 +1,8 @@
-import type { AppRole } from '@picsa/server-types';
-
-export interface INavLink {
-  label: string;
-  href: string;
-  matIcon?: string;
-  children?: INavLink[];
-  roleRequired?: AppRole;
-}
+import { AdminUserPermissionsFeature } from '../modules/admin/admin.routes';
+import { ClimateFeature } from '../modules/climate/climate.routes';
+import { CropFeature } from '../modules/crop-information/crop.routes';
+import { MonitoringFeature } from '../modules/monitoring/monitoring.routes';
+import { INavLink } from '../utils/route-utils';
 
 export const DASHBOARD_NAV_LINKS: INavLink[] = [
   {
@@ -33,52 +29,9 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       },
     ],
   },
-  {
-    label: 'Climate',
-    href: '/climate',
-    matIcon: 'filter_drama',
-    children: [
-      {
-        label: 'Station Data',
-        href: '/station',
-      },
-      {
-        label: 'Forecasts',
-        href: '/forecast',
-      },
-      {
-        label: 'Admin',
-        href: '/admin',
-        roleRequired: 'climate.admin',
-      },
-    ],
-  },
-  {
-    label: 'Crop',
-    href: '/crop',
-    matIcon: 'spa',
-    children: [
-      {
-        label: 'Variety',
-        href: '/variety',
-      },
-      {
-        label: 'Probability',
-        href: '/probability',
-      },
-      {
-        label: 'Admin',
-        href: '/admin',
-        roleRequired: 'crop.admin',
-      },
-    ],
-  },
-  {
-    label: 'Monitoring',
-    href: '/monitoring',
-    matIcon: 'poll',
-    roleRequired: 'monitoring.admin',
-  },
+  ClimateFeature.NAV_LINK,
+  CropFeature.NAV_LINK,
+  MonitoringFeature.NAV_LINK,
   {
     label: 'Translations',
     href: '/translations',
@@ -108,12 +61,7 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
     matIcon: 'apps',
     roleRequired: 'deployments.admin',
   },
-  {
-    label: 'User Permissions',
-    href: '/admin/user-permissions',
-    matIcon: 'manage_accounts',
-    roleRequired: 'deployments.admin',
-  },
+  AdminUserPermissionsFeature.NAV_LINK,
 ];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service'];
