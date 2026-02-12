@@ -9,6 +9,7 @@ import { filter, map } from 'rxjs/operators';
 import { PUBLIC_PAGES } from './data';
 import { AuthenticatedLayoutComponent } from './layout/authenticated-layout/authenticated-layout';
 import { DeploymentSelectLayoutComponent } from './layout/deployment-select/deployment-select.component';
+import { EmailConfirmationLayoutComponent } from './layout/email-confirmation/email-confirmation-layout.component';
 import { DashboardFooterComponent } from './layout/footer/footer.component';
 import { LandingPageComponent } from './layout/landing/landing.component';
 import { ServerErrorLayoutComponent } from './layout/server-error/server-error.component';
@@ -16,7 +17,14 @@ import { DashboardMaterialModule } from './material.module';
 import { DashboardAuthService } from './modules/auth/services/auth.service';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
 
-type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deployment-select' | 'server-error';
+type ViewState =
+  | 'public'
+  | 'authenticated'
+  | 'landing'
+  | 'loading'
+  | 'deployment-select'
+  | 'server-error'
+  | 'email-confirmation';
 
 @Component({
   imports: [
@@ -27,7 +35,9 @@ type ViewState = 'public' | 'authenticated' | 'landing' | 'loading' | 'deploymen
     DashboardFooterComponent,
     LandingPageComponent,
     AuthenticatedLayoutComponent,
+    AuthenticatedLayoutComponent,
     ServerErrorLayoutComponent,
+    EmailConfirmationLayoutComponent,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
@@ -60,6 +70,7 @@ export class AppComponent implements AfterViewInit {
     }
     if (this.supabaseService.isAvailable() === false) return 'server-error';
     if (this.authService.authUser()) {
+      if (!this.authService.authUser()?.email_confirmed_at) return 'email-confirmation';
       if (!this.deploymentService.isDeploymentChecked()) return 'loading';
       if (!this.deploymentService.activeDeployment()) return 'deployment-select';
       return 'authenticated';
