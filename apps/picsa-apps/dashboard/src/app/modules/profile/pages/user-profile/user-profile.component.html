@@ -35,6 +35,69 @@
     </table>
   }
 
+  <h2 class="mt-16">Profile Settings</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="flex flex-col gap-4 max-w-md">
+    @if (emailConfirmed()) {
+      <div class="flex items-center gap-2 text-green-700 bg-green-50 p-2 rounded mb-2 border border-green-200">
+        <mat-icon class="icon-sm">check_circle</mat-icon>
+        <span class="text-sm">Email Verified</span>
+      </div>
+    } @else {
+      <div class="flex items-center gap-2 text-amber-700 bg-amber-50 p-2 rounded mb-2 border border-amber-200">
+        <mat-icon class="icon-sm">warning</mat-icon>
+        <span class="text-sm">Email Not Verified</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="full_name" autocomplete="name" />
+      <mat-error>Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Country</mat-label>
+      <mat-select formControlName="country_code">
+        @for (c of countries; track c.id) {
+          <mat-option [value]="c.id">
+            {{ c.label }}
+          </mat-option>
+        }
+      </mat-select>
+      <mat-error>Country is required</mat-error>
+    </mat-form-field>
+
+    @if (organisations().length > 0) {
+      <mat-form-field appearance="outline">
+        <mat-label>Organization</mat-label>
+        <mat-select formControlName="organisation">
+          @for (org of organisations(); track org.id) {
+            <mat-option [value]="org.label">{{ org.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Organization is required</mat-error>
+      </mat-form-field>
+    } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Organization</mat-label>
+        <input matInput formControlName="organisation" autocomplete="organization" />
+        <mat-error>Organization is required</mat-error>
+      </mat-form-field>
+    }
+
+    @if (showOtherOrgInput()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Organization Name</mat-label>
+        <input matInput formControlName="organisation_other" autocomplete="organization" />
+        <mat-error>Organization Name is required</mat-error>
+      </mat-form-field>
+    }
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || profileForm.disabled">
+      Save Profile
+    </button>
+  </form>
+
   <h2 class="mt-16">Account Management</h2>
 
   <div class="border border-solid border-[#deb1b1] p-6">

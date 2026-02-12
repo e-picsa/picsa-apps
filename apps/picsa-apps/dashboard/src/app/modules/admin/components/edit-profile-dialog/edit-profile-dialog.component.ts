@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import {
@@ -17,39 +16,26 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { SupabaseService } from '@picsa/shared/services/core/supabase/supabase.service';
 import { map, startWith } from 'rxjs/operators';
 
-import { DashboardAuthService } from '../../../auth/services/auth.service';
-import { DeploymentItemComponent } from '../../../deployment/components/deployment-item/deployment-item.component';
-import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+export interface EditProfileDialogData {
+  userId: string;
+}
 
 @Component({
-  selector: 'dashboard-user-profile',
-  imports: [
-    DeploymentItemComponent,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-  ],
-  templateUrl: './user-profile.component.html',
-  styleUrl: './user-profile.component.scss',
+  selector: 'dashboard-admin-edit-profile-dialog',
+  templateUrl: './edit-profile-dialog.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfileComponent {
-  public authService = inject(DashboardAuthService);
-  public deploymentService = inject(DeploymentDashboardService);
+export class AdminEditProfileDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
   private supabase = inject(SupabaseService);
   private notificationService = inject(PicsaNotificationService);
-  private fb = inject(FormBuilder);
-
-  public authRoleLevels = ['editor', 'admin'];
-  public authRoleFeatures: string[] = [];
+  public dialogRef = inject(MatDialogRef<AdminEditProfileDialogComponent>);
+  public data = inject<EditProfileDialogData>(MAT_DIALOG_DATA);
 
   countries = COUNTRIES;
   organisations = signal<IOrganisation[]>([]);
-  public emailConfirmed = signal<boolean>(false);
 
   profileForm = this.fb.group({
     full_name: ['', [Validators.required]],
@@ -74,17 +60,6 @@ export class UserProfileComponent {
       this.profileForm.controls.organisation_other.updateValueAndValidity();
     });
 
-    effect(() => {
-      const authRoleFeatures: string[] = [];
-
-      const roles = this.authService.authRoles();
-      for (const role of roles) {
-        const [feature] = role.split('.');
-        if (!authRoleFeatures.includes(feature)) authRoleFeatures.push(feature);
-      }
-      this.authRoleFeatures = authRoleFeatures;
-    });
-
     this.profileForm.controls.country_code.valueChanges
       .pipe(startWith(this.profileForm.controls.country_code.value))
       .subscribe((countryCode) => {
@@ -94,24 +69,21 @@ export class UserProfileComponent {
           this.organisations.set([]);
         }
       });
+  }
 
+  ngOnInit() {
     this.loadProfile();
   }
 
   async loadProfile() {
-    const userId = this.authService.authUserId();
-    if (!userId) return;
-
     const { data, error } = await this.supabase.db
       .table('user_profiles' as any)
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', this.data.userId)
       .single();
 
     if (data) {
       const profile = data as any;
-      this.emailConfirmed.set(!!profile.email_confirmed);
-
       let org = profile.organisation;
       let orgOther = '';
 
@@ -139,11 +111,7 @@ export class UserProfileComponent {
     this.profileForm.disable();
 
     const { full_name, country_code, organisation, organisation_other } = this.profileForm.getRawValue();
-    const userId = this.authService.authUserId();
-
     const finalOrganisation = organisation === 'Other' ? organisation_other : organisation;
-
-    if (!userId) return;
 
     const { error } = await this.supabase.db
       .table('user_profiles' as any)
@@ -152,7 +120,7 @@ export class UserProfileComponent {
         country_code: country_code!,
         organisation: finalOrganisation!,
       })
-      .eq('user_id', userId);
+      .eq('user_id', this.data.userId);
 
     this.profileForm.enable();
 
@@ -160,6 +128,7 @@ export class UserProfileComponent {
       this.notificationService.showErrorNotification(error.message);
     } else {
       this.notificationService.showSuccessNotification('Profile updated successfully');
+      this.dialogRef.close(true);
     }
   }
 }

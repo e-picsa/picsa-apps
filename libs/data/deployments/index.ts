@@ -4,6 +4,7 @@ import { ICountryCode } from './countries';
 
 export * from './countries';
 export * from './locales';
+export * from './organisations';
 
 /*******************************************************************
  * Deployment Settings

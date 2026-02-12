@@ -11,6 +11,7 @@ import { firstValueFrom } from 'rxjs';
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { AdminEditProfileDialogComponent } from '../../components/edit-profile-dialog/edit-profile-dialog.component';
 
 type IAuthUser = FunctionResponses['Dashboard']['admin']['list-users'][number];
 
@@ -107,6 +108,17 @@ export class AdminUserPermissionsComponent {
       body: entry,
     });
     this.refreshData();
+  }
+
+  public async editProfile(user: IUserWithRoles) {
+    const dialogRef = this.dialog.open(AdminEditProfileDialogComponent, {
+      data: { userId: user.id },
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    if (result) {
+      this.refreshData();
+    }
   }
 
   public async removeUser(user: IUserWithRoles) {
