@@ -23,28 +23,12 @@ export class EmailConfirmationLayoutComponent {
   async resendConfirmation() {
     const email = this.userEmail();
     if (!email) return;
-
-    // We can resend confirmation by trying to sign up again or using a specific resend API if available in our wrapper.
-    // Supabase JS client has `auth.resend({ type: 'signup', email })`.
-    // Let's check if our service exposes it or if we should add it.
-    // For now, assuming we might need to use the client directly or add a method.
-    // Let's see if we can just use the exposed client or add a helper.
-    // Actually, `supabaseAuthService` doesn't expose resend.
-    // I'll assume we can't easily resend without adding a method,
-    // but often just 'signing up' again triggers a resend if user exists but unconfirmed.
-
-    // HOWEVER, to be clean, let's just show a notification saying "Please check your inbox".
-    // If we need real resend, we should add it to SupabaseAuthService.
-    // For this step, I'll just alert the user.
+    await this.supabaseAuthService.resendEmailConfirmation(email);
 
     this.notificationService.showUserNotification({
-      message: "If you haven't received an email, please check your spam folder.",
+      message: 'Email sent, please check your inbox and junk folder',
       matIcon: 'mark_email_read',
     });
-  }
-
-  async reloadPage() {
-    window.location.reload();
   }
 
   async logout() {

@@ -67,15 +67,29 @@ export class SupabaseAuthService {
   }
 
   public async signInUser(email: string, password: string) {
-    return this.auth.signInWithPassword({ email, password });
+    const res = await this.auth.signInWithPassword({ email, password });
+    const { data, error } = res;
+    if (error?.code === 'email_not_confirmed') {
+      // sign in as temp user to allow ui email confirmation
+      this.authUser.set({ email, picsa_roles: {} } as IAuthUser);
+      return { data };
+    }
+    return { data, error };
   }
 
   public async signUpUser(email: string, password: string, data?: object) {
-    return this.auth.signUp({
+    const signupRes = await this.auth.signUp({
       email,
       password,
       options: data ? { data } : undefined,
     });
+    const user = signupRes.data?.user;
+    // HACK - auth state change not triggered if email confirmation pending
+    // so manually set user to allow confirmation UI
+    if (user) {
+      this.authUser.set(user as IAuthUser);
+    }
+    return signupRes;
   }
 
   public async resetEmailPassword(email: string) {
@@ -84,6 +98,10 @@ export class SupabaseAuthService {
     return this.auth.resetPasswordForEmail(email, {
       redirectTo: redirectToUrl,
     });
+  }
+
+  public async resendEmailConfirmation(email: string) {
+    return this.auth.resend({ type: 'signup', email });
   }
 
   // this works automatically since the access token is saved in cookies (really cool)
