@@ -1,3 +1,4 @@
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -15,7 +16,9 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import {
@@ -51,8 +54,16 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
     MatInputModule,
     MatSelectModule,
     MatTabsModule,
+    MatStepperModule,
     MatIconModule,
+    MatProgressBarModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
   ],
   templateUrl: 'sign-in.component.html',
   styleUrl: 'sign-in.component.scss',
@@ -70,18 +81,27 @@ export class DashboardSignInComponent {
     password: new FormControl('', [Validators.required]),
   });
 
-  registerForm = new FormGroup({
+  // Step 1: Personal Details
+  personalDetailsForm = new FormGroup({
     fullName: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+  });
+
+  // Step 2: Professional Details
+  professionalDetailsForm = new FormGroup({
     country: new FormControl<ICountryCode | null>(null, [Validators.required]),
     organization: new FormControl('', [Validators.required]),
     organization_other: new FormControl(''),
-    email: new FormControl('', [Validators.required, Validators.email]),
+  });
+
+  // Step 3: Security
+  securityForm = new FormGroup({
     password: new FormControl('', [Validators.required, this.passwordStrengthValidator]),
     passwordConfirm: new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch]),
   });
 
   public passwordStrength = toSignal(
-    this.registerForm.controls.password.valueChanges.pipe(
+    this.securityForm.controls.password.valueChanges.pipe(
       map((value) => {
         if (!value) return 0;
         const result = zxcvbn(value);
@@ -92,7 +112,7 @@ export class DashboardSignInComponent {
   );
 
   public showOtherOrgInput = toSignal(
-    this.registerForm.controls.organization.valueChanges.pipe(map((value) => value === 'Other')),
+    this.professionalDetailsForm.controls.organization.valueChanges.pipe(map((value) => value === 'Other')),
     { initialValue: false },
   );
 
@@ -100,8 +120,8 @@ export class DashboardSignInComponent {
   public showConfirmPassword = signal(false);
 
   constructor() {
-    this.registerForm.controls.country.valueChanges
-      .pipe(startWith(this.registerForm.controls.country.value))
+    this.professionalDetailsForm.controls.country.valueChanges
+      .pipe(startWith(this.professionalDetailsForm.controls.country.value))
       .subscribe((countryCode) => {
         if (countryCode) {
           this.organisations.set(getOrganisationsForCountry(countryCode));
@@ -112,12 +132,12 @@ export class DashboardSignInComponent {
 
     effect(() => {
       if (this.showOtherOrgInput()) {
-        this.registerForm.controls.organization_other.setValidators([Validators.required]);
+        this.professionalDetailsForm.controls.organization_other.setValidators([Validators.required]);
       } else {
-        this.registerForm.controls.organization_other.clearValidators();
-        this.registerForm.controls.organization_other.setValue('');
+        this.professionalDetailsForm.controls.organization_other.clearValidators();
+        this.professionalDetailsForm.controls.organization_other.setValue('');
       }
-      this.registerForm.controls.organization_other.updateValueAndValidity();
+      this.professionalDetailsForm.controls.organization_other.updateValueAndValidity();
     });
   }
 
@@ -155,14 +175,20 @@ export class DashboardSignInComponent {
   }
 
   async onRegister() {
-    if (this.registerForm.invalid) return;
-    this.registerForm.disable();
-    const { email, password, fullName, country, organization, organization_other } = this.registerForm.getRawValue();
+    if (this.personalDetailsForm.invalid || this.professionalDetailsForm.invalid || this.securityForm.invalid) return;
+
+    this.personalDetailsForm.disable();
+    this.professionalDetailsForm.disable();
+    this.securityForm.disable();
+
+    const { fullName, email } = this.personalDetailsForm.getRawValue();
+    const { country, organization, organization_other } = this.professionalDetailsForm.getRawValue();
+    const { password } = this.securityForm.getRawValue();
 
     const finalOrganisation = organization === 'Other' ? organization_other : organization;
 
     if (!email || !password || !fullName || !finalOrganisation || !country) {
-      this.registerForm.enable();
+      this.enableRegisterForms();
       return;
     }
 
@@ -173,14 +199,27 @@ export class DashboardSignInComponent {
     });
 
     if (error) {
-      this.registerForm.enable();
+      this.enableRegisterForms();
       this.notificationService.showErrorNotification(error.message);
     } else {
-      this.notificationService.showSuccessNotification('Account created! Please check your email.');
-      this.registerForm.reset();
-      this.registerForm.enable();
+      this.notificationService.showSuccessNotification('Account created');
+      this.resetRegisterForms();
+      this.enableRegisterForms();
     }
   }
+
+  private enableRegisterForms() {
+    this.personalDetailsForm.enable();
+    this.professionalDetailsForm.enable();
+    this.securityForm.enable();
+  }
+
+  private resetRegisterForms() {
+    this.personalDetailsForm.reset();
+    this.professionalDetailsForm.reset();
+    this.securityForm.reset();
+  }
+
   async onForgotPassword() {
     const emailControl = this.loginForm.get('email');
     if (emailControl?.invalid || !emailControl?.value) {
@@ -194,7 +233,10 @@ export class DashboardSignInComponent {
     if (error) {
       this.notificationService.showErrorNotification(error.message);
     } else {
-      this.notificationService.showSuccessNotification('Password reset instructions sent to your email');
+      this.notificationService.showUserNotification({
+        message: 'Reset sent, please check your inbox and junk folder',
+        matIcon: 'mark_email_read',
+      });
     }
   }
 }

@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import type { AppRole } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
@@ -27,6 +28,7 @@ export class SupabaseAuthService {
   private document = inject<Document>(DOCUMENT);
   private notificationService = inject(PicsaNotificationService);
   private errorService = inject(ErrorHandlerService);
+  private router = inject(Router);
 
   /** Authenticated user */
   public authUser = signal<IAuthUser | undefined>(undefined, {
@@ -77,19 +79,24 @@ export class SupabaseAuthService {
     return { data, error };
   }
 
-  public async signUpUser(email: string, password: string, data?: object) {
-    const signupRes = await this.auth.signUp({
+  public async signUpUser(
+    email: string,
+    password: string,
+    // data that will be mapped to user_profile table via trigger function
+    meta: { full_name: string; country_code: string; organisation: string },
+  ) {
+    const { data, error } = await this.auth.signUp({
       email,
       password,
-      options: data ? { data } : undefined,
+      options: { data: meta },
     });
-    const user = signupRes.data?.user;
-    // HACK - auth state change not triggered if email confirmation pending
-    // so manually set user to allow confirmation UI
-    if (user) {
-      this.authUser.set(user as IAuthUser);
+    // HACK - auth state change will not be triggered as confirmation pending
+    // avoid setting temp session user, prefer to just assign email so that
+    // confirmation page UI can show
+    if (data.user) {
+      this.authUser.set({ email } as IAuthUser);
     }
-    return signupRes;
+    return { data, error };
   }
 
   public async resetEmailPassword(email: string) {
@@ -114,6 +121,7 @@ export class SupabaseAuthService {
     // Clear anything persisted to storage
     localStorage.clear();
     sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 
   /**

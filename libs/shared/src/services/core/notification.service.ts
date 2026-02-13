@@ -21,7 +21,7 @@ export class PicsaNotificationService {
 
   /** Show a user notification with a success icon (dismiss after 2s) */
   public showSuccessNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
-    return this.showUserNotification({ message, matIcon: 'success' }, config);
+    return this.showUserNotification({ message, matIcon: 'check_circle' }, config);
   }
 
   /** Present a dismissable notification snack bar */

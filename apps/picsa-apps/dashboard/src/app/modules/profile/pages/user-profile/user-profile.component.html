@@ -43,9 +43,14 @@
         <span class="text-sm">Email Verified</span>
       </div>
     } @else {
-      <div class="flex items-center gap-2 text-amber-700 bg-amber-50 p-2 rounded mb-2 border border-amber-200">
-        <mat-icon class="icon-sm">warning</mat-icon>
-        <span class="text-sm">Email Not Verified</span>
+      <div
+        class="flex items-center justify-between gap-2 text-amber-700 bg-amber-50 p-2 rounded mb-2 border border-amber-200"
+      >
+        <div class="flex items-center gap-2">
+          <mat-icon class="icon-sm">warning</mat-icon>
+          <span class="text-sm">Email Not Verified</span>
+        </div>
+        <button matButton="outlined" color="warn" (click)="resendVerificationEmail()">Verify</button>
       </div>
     }
 
@@ -93,7 +98,7 @@
       </mat-form-field>
     }
 
-    <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || profileForm.disabled">
+    <button matButton="filled" color="primary" type="submit" [disabled]="profileForm.invalid || profileForm.disabled">
       Save Profile
     </button>
   </form>
@@ -108,7 +113,7 @@
           <div class="text-sm text-gray-600">Receive a copy of your personal data attached to this account.</div>
         </div>
         <a
-          mat-button
+          matButton
           color="accent"
           href="mailto:apps@c2dev.co.uk?subject=GDPR%20Data%20Export%20Request&body=I%20would%20like%20to%20request%20a%20copy%20of%20all%20personal%20data%20associated%20with%20my%20account."
         >
@@ -125,7 +130,7 @@
           <div class="text-sm text-gray-600">Permanently delete your account and all associated personal data.</div>
         </div>
         <a
-          mat-button
+          matButton
           color="warn"
           href="mailto:apps@c2dev.co.uk?subject=Account%20Deletion%20Request&body=I%20would%20like%20to%20request%20the%20permanent%20deletion%20of%20my%20account%20and%20all%20associated%20personal%20data.%20I%20understand%20this%20action%20cannot%20be%20undone."
         >

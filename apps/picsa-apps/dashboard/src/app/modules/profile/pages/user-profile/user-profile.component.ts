@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import {
   IOrganisation,
 } from '@picsa/data/deployments';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase/supabase.service';
 import { map, startWith } from 'rxjs/operators';
 
@@ -41,6 +42,7 @@ export class UserProfileComponent {
   public authService = inject(DashboardAuthService);
   public deploymentService = inject(DeploymentDashboardService);
   private supabase = inject(SupabaseService);
+  private supabaseAuthService = inject(SupabaseAuthService);
   private notificationService = inject(PicsaNotificationService);
   private fb = inject(FormBuilder);
 
@@ -102,7 +104,7 @@ export class UserProfileComponent {
     const userId = this.authService.authUserId();
     if (!userId) return;
 
-    const { data, error } = await this.supabase.db
+    const { data } = await this.supabase.db
       .table('user_profiles' as any)
       .select('*')
       .eq('user_id', userId)
@@ -148,9 +150,9 @@ export class UserProfileComponent {
     const { error } = await this.supabase.db
       .table('user_profiles' as any)
       .update({
-        full_name: full_name!,
-        country_code: country_code!,
-        organisation: finalOrganisation!,
+        full_name,
+        country_code,
+        organisation: finalOrganisation,
       })
       .eq('user_id', userId);
 
@@ -160,6 +162,21 @@ export class UserProfileComponent {
       this.notificationService.showErrorNotification(error.message);
     } else {
       this.notificationService.showSuccessNotification('Profile updated successfully');
+    }
+  }
+
+  async resendVerificationEmail() {
+    const email = this.authService.authUser()?.email;
+    if (!email) return;
+
+    const { error } = await this.supabaseAuthService.resendEmailConfirmation(email);
+    if (error) {
+      this.notificationService.showErrorNotification(error.message);
+    } else {
+      this.notificationService.showUserNotification({
+        message: 'Email sent, please check your inbox and junk folder',
+        matIcon: 'mark_email_read',
+      });
     }
   }
 }

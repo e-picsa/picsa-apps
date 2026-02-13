@@ -116,9 +116,9 @@ export class AdminEditProfileDialogComponent implements OnInit {
     const { error } = await this.supabase.db
       .table('user_profiles' as any)
       .update({
-        full_name: full_name!,
-        country_code: country_code!,
-        organisation: finalOrganisation!,
+        full_name,
+        country_code,
+        organisation: finalOrganisation,
       })
       .eq('user_id', this.data.userId);
 
