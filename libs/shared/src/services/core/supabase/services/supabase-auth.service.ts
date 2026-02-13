@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import type { AppRole } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
@@ -27,6 +28,7 @@ export class SupabaseAuthService {
   private document = inject<Document>(DOCUMENT);
   private notificationService = inject(PicsaNotificationService);
   private errorService = inject(ErrorHandlerService);
+  private router = inject(Router);
 
   /** Authenticated user */
   public authUser = signal<IAuthUser | undefined>(undefined, {
@@ -67,15 +69,34 @@ export class SupabaseAuthService {
   }
 
   public async signInUser(email: string, password: string) {
-    return this.auth.signInWithPassword({ email, password });
+    const res = await this.auth.signInWithPassword({ email, password });
+    const { data, error } = res;
+    if (error?.code === 'email_not_confirmed') {
+      // sign in as temp user to allow ui email confirmation
+      this.authUser.set({ email, picsa_roles: {} } as IAuthUser);
+      return { data };
+    }
+    return { data, error };
   }
 
-  public async signUpUser(email: string, password: string, data?: object) {
-    return this.auth.signUp({
+  public async signUpUser(
+    email: string,
+    password: string,
+    // data that will be mapped to user_profile table via trigger function
+    meta: { full_name: string; country_code: string; organisation: string },
+  ) {
+    const { data, error } = await this.auth.signUp({
       email,
       password,
-      options: data ? { data } : undefined,
+      options: { data: meta },
     });
+    // HACK - auth state change will not be triggered as confirmation pending
+    // avoid setting temp session user, prefer to just assign email so that
+    // confirmation page UI can show
+    if (data.user) {
+      this.authUser.set({ email } as IAuthUser);
+    }
+    return { data, error };
   }
 
   public async resetEmailPassword(email: string) {
@@ -84,6 +105,10 @@ export class SupabaseAuthService {
     return this.auth.resetPasswordForEmail(email, {
       redirectTo: redirectToUrl,
     });
+  }
+
+  public async resendEmailConfirmation(email: string) {
+    return this.auth.resend({ type: 'signup', email });
   }
 
   // this works automatically since the access token is saved in cookies (really cool)
@@ -96,6 +121,7 @@ export class SupabaseAuthService {
     // Clear anything persisted to storage
     localStorage.clear();
     sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 
   /**

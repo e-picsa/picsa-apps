@@ -52,7 +52,11 @@ VALUES
     'authenticated',
     'admin@picsa.app',
     '{"provider":"email","providers":["email"]}',
-    '{}',
+    jsonb_build_object(
+      'sub', '00000000-0000-0000-0000-000000000000',
+      'email', 'admin@picsa.app',
+      'email_verified', true
+    ),
     FALSE,
     crypt('admin@picsa.app', gen_salt('bf')),
     NOW(),
@@ -65,6 +69,31 @@ VALUES
     '',
     ''
   );
+
+-- Add identity for email provider
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider,
+    provider_id,
+    last_sign_in_at,
+    created_at,
+    updated_at
+) VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000000',
+    jsonb_build_object(
+        'sub', '00000000-0000-0000-0000-000000000000',
+        'email', 'admin@picsa.app',
+        'email_verified', true
+    ),
+    'email',
+    '00000000-0000-0000-0000-000000000000',
+    NOW(),
+    NOW(),
+    NOW()
+);
 
 -- Basic User
   INSERT INTO

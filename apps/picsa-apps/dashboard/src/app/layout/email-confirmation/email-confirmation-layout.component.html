@@ -1,0 +1,23 @@
+<div class="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center max-w-lg mx-auto">
+  <div class="bg-amber-50 p-6 rounded-full mb-6 border-2 border-amber-100">
+    <mat-icon class="text-6xl text-amber-500 !w-[60px] !h-[60px] !text-[60px]">mark_email_unread</mat-icon>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-800 mb-4">Please Verify Your Email</h1>
+
+  <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+    We've sent a verification link to <span class="font-semibold text-gray-900">{{ userEmail() }}</span> <br />Please
+    check your inbox and junk folder.
+  </p>
+
+  <div class="flex flex-col gap-4 w-full max-w-xs">
+    <button matButton="outlined" (click)="resendConfirmation()">Resend Email</button>
+
+    <button matButton color="warn" (click)="logout()">Sign Out</button>
+  </div>
+  <p class="mt-10">Having login issues?</p>
+
+  <a matButton href="mailto:apps@c2dev.co.uk?subject=E-PICSA%20Dashboard%20Login%20Issue">
+    <mat-icon>email</mat-icon>Contact Support
+  </a>
+</div>

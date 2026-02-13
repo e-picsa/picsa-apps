@@ -1,5 +1,7 @@
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   FormGroupDirective,
@@ -11,12 +13,22 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
+import { ICountryCode } from '@picsa/data/deployments';
 import { PICSAFormValidators } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import zxcvbn from 'zxcvbn';
+
+import { ProfileFormComponent } from '../../../profile/components/profile-form/profile-form.component';
+import { PasswordInputComponent } from '../password-input/password-input.component';
+import { PasswordStrengthComponent } from '../password-strength/password-strength.component';
 
 /**
  * Implement custom error handler to only display if control is dirty, touched, or submitted.
@@ -31,14 +43,28 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-sign-in',
+  standalone: true,
   imports: [
     RouterModule,
     FormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatTabsModule,
+    MatStepperModule,
+    MatIconModule,
+    MatProgressBarModule,
     ReactiveFormsModule,
+    ProfileFormComponent,
+    PasswordInputComponent,
+    PasswordStrengthComponent,
+  ],
+  providers: [
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
   ],
   templateUrl: 'sign-in.component.html',
   styleUrl: 'sign-in.component.scss',
@@ -53,13 +79,39 @@ export class DashboardSignInComponent {
     password: new FormControl('', [Validators.required]),
   });
 
-  registerForm = new FormGroup({
-    fullName: new FormControl('', [Validators.required]),
-    organization: new FormControl('', [Validators.required]),
+  // Step 1: Personal Details
+  personalDetailsForm = new FormGroup({
+    full_name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+  });
+
+  // Step 2: Professional Details
+  professionalDetailsForm = new FormGroup({
+    country_code: new FormControl<ICountryCode | null>(null, [Validators.required]),
+    organisation: new FormControl('', [Validators.required]),
+    organisation_other: new FormControl(''),
+  });
+
+  // Step 3: Security
+  securityForm = new FormGroup({
+    password: new FormControl('', [Validators.required, this.passwordStrengthValidator]),
     passwordConfirm: new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch]),
   });
+
+  passwordStrengthValidator(control: AbstractControl) {
+    const value = control.value;
+    if (!value) return null;
+
+    if (value.length < 10) {
+      return { minLength: { requiredLength: 10, actualLength: value.length } };
+    }
+
+    const result = zxcvbn(value);
+    if (result.score < 2) {
+      return { weakPassword: { score: result.score } };
+    }
+    return null;
+  }
 
   async onLogin() {
     if (this.loginForm.invalid) return;
@@ -80,29 +132,51 @@ export class DashboardSignInComponent {
   }
 
   async onRegister() {
-    if (this.registerForm.invalid) return;
-    this.registerForm.disable();
-    const { email, password, fullName, organization } = this.registerForm.getRawValue();
+    if (this.personalDetailsForm.invalid || this.professionalDetailsForm.invalid || this.securityForm.invalid) return;
 
-    if (!email || !password || !fullName || !organization) {
-      this.registerForm.enable();
+    this.personalDetailsForm.disable();
+    this.professionalDetailsForm.disable();
+    this.securityForm.disable();
+
+    const { full_name, email } = this.personalDetailsForm.getRawValue();
+    const { country_code, organisation, organisation_other } = this.professionalDetailsForm.getRawValue();
+    const { password } = this.securityForm.getRawValue();
+
+    const finalOrganisation = organisation === 'OTHER' ? organisation_other : organisation;
+
+    if (!email || !password || !full_name || !finalOrganisation || !country_code) {
+      this.enableRegisterForms();
       return;
     }
 
     const { error } = await this.supabaseAuthService.signUpUser(email, password, {
-      full_name: fullName,
-      organization: organization,
+      full_name,
+      country_code,
+      organisation: finalOrganisation,
     });
 
     if (error) {
-      this.registerForm.enable();
+      this.enableRegisterForms();
       this.notificationService.showErrorNotification(error.message);
     } else {
-      this.notificationService.showSuccessNotification('Account created! Please check your email.');
-      this.registerForm.reset();
-      this.registerForm.enable();
+      this.notificationService.showSuccessNotification('Account created');
+      this.resetRegisterForms();
+      this.enableRegisterForms();
     }
   }
+
+  private enableRegisterForms() {
+    this.personalDetailsForm.enable();
+    this.professionalDetailsForm.enable();
+    this.securityForm.enable();
+  }
+
+  private resetRegisterForms() {
+    this.personalDetailsForm.reset();
+    this.professionalDetailsForm.reset();
+    this.securityForm.reset();
+  }
+
   async onForgotPassword() {
     const emailControl = this.loginForm.get('email');
     if (emailControl?.invalid || !emailControl?.value) {
@@ -116,7 +190,10 @@ export class DashboardSignInComponent {
     if (error) {
       this.notificationService.showErrorNotification(error.message);
     } else {
-      this.notificationService.showSuccessNotification('Password reset instructions sent to your email');
+      this.notificationService.showUserNotification({
+        message: 'Reset sent, please check your inbox and junk folder',
+        matIcon: 'mark_email_read',
+      });
     }
   }
 }

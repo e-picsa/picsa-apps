@@ -24,4 +24,4 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
   ...AdminFeature.NAV_LINKS,
 ];
 
-export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service'];
+export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service', 'profile/password-reset'];

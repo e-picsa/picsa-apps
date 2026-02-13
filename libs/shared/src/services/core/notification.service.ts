@@ -1,4 +1,4 @@
-import { Component, inject,Injectable } from '@angular/core';
+import { Component, inject, Injectable } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -14,14 +14,14 @@ export class PicsaNotificationService {
   private snackBar = inject(MatSnackBar);
 
   /** Show a user notification with an error icon (dismiss after 2s) */
-  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
+  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 5000 }) {
     console.error(message);
     return this.showUserNotification({ message, matIcon: 'error' }, config);
   }
 
   /** Show a user notification with a success icon (dismiss after 2s) */
-  public showSuccessNotification(message: string, config: MatSnackBarConfig = { duration: 2000 }) {
-    return this.showUserNotification({ message, matIcon: 'success' }, config);
+  public showSuccessNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
+    return this.showUserNotification({ message, matIcon: 'check_circle' }, config);
   }
 
   /** Present a dismissable notification snack bar */
@@ -36,7 +36,7 @@ export class PicsaNotificationService {
   template: ` <div class="message-container">
     <mat-icon>{{ data.matIcon }}</mat-icon>
     <span style="margin:0 16px; flex:1; overflow-wrap: anywhere;">{{ data.message }}</span>
-    <button mat-stroked-button color="accent" (click)="snackRef.dismiss()">{{ data.buttonText || 'dismiss' }}</button>
+    <button matButton="filled" color="accent" (click)="snackRef.dismiss()">{{ data.buttonText || 'Dismiss' }}</button>
   </div>`,
   styles: [
     `

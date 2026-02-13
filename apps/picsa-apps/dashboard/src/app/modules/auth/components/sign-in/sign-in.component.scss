@@ -9,6 +9,12 @@
   }
 }
 
+// Hide stepper header
+::ng-deep .mat-mdc-step-header-container,
+::ng-deep .mat-horizontal-stepper-header-container {
+  display: none !important;
+}
+
 // Override form field styles for concise look in card
 mat-form-field {
   width: 100%;
