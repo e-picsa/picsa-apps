@@ -62,3 +62,4 @@ SET
   full_name = EXCLUDED.full_name,
   organisation = EXCLUDED.organisation,
   country_code = COALESCE(EXCLUDED.country_code, public.user_profiles.country_code);
+  
