@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -7,25 +6,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import {
-  COUNTRIES_DATA as COUNTRIES,
-  getOrganisationsForCountry,
-  ICountryCode,
-  IOrganisation,
-} from '@picsa/data/deployments';
+import { getOrganisationsForCountry, ICountryCode } from '@picsa/data/deployments';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase/supabase.service';
-import { map, startWith } from 'rxjs/operators';
 
 import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentItemComponent } from '../../../deployment/components/deployment-item/deployment-item.component';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { ProfileFormComponent } from '../../components/profile-form/profile-form.component';
 
 @Component({
   selector: 'dashboard-user-profile',
+  standalone: true,
   imports: [
     DeploymentItemComponent,
+    ProfileFormComponent,
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
@@ -49,8 +45,6 @@ export class UserProfileComponent {
   public authRoleLevels = ['editor', 'admin'];
   public authRoleFeatures: string[] = [];
 
-  countries = COUNTRIES;
-  organisations = signal<IOrganisation[]>([]);
   public emailConfirmed = signal<boolean>(false);
 
   profileForm = this.fb.group({
@@ -60,22 +54,7 @@ export class UserProfileComponent {
     organisation_other: [''],
   });
 
-  public showOtherOrgInput = toSignal(
-    this.profileForm.controls.organisation.valueChanges.pipe(map((value) => value === 'Other')),
-    { initialValue: false },
-  );
-
   constructor() {
-    effect(() => {
-      if (this.showOtherOrgInput()) {
-        this.profileForm.controls.organisation_other.setValidators([Validators.required]);
-      } else {
-        this.profileForm.controls.organisation_other.clearValidators();
-        this.profileForm.controls.organisation_other.setValue('');
-      }
-      this.profileForm.controls.organisation_other.updateValueAndValidity();
-    });
-
     effect(() => {
       const authRoleFeatures: string[] = [];
 
@@ -86,16 +65,6 @@ export class UserProfileComponent {
       }
       this.authRoleFeatures = authRoleFeatures;
     });
-
-    this.profileForm.controls.country_code.valueChanges
-      .pipe(startWith(this.profileForm.controls.country_code.value))
-      .subscribe((countryCode) => {
-        if (countryCode) {
-          this.organisations.set(getOrganisationsForCountry(countryCode));
-        } else {
-          this.organisations.set([]);
-        }
-      });
 
     this.loadProfile();
   }
@@ -110,12 +79,25 @@ export class UserProfileComponent {
     const { data } = await this.supabase.db.table('user_profiles').select('*').eq('user_id', id).single();
 
     if (data) {
-      const { organisation, full_name, country_code } = data;
+      const profile = data;
+      let org = profile.organisation;
+      let orgOther = '';
+
+      // Check if org is in the current list.
+      // Logic for correctly initializing the form with "Other" if needed.
+      const orgs = getOrganisationsForCountry(profile.country_code as ICountryCode);
+      const knownOrg = orgs.some((o) => o.id === org);
+
+      if (!knownOrg && org) {
+        orgOther = org;
+        org = 'OTHER';
+      }
 
       this.profileForm.patchValue({
-        full_name,
-        country_code: country_code as ICountryCode,
-        organisation,
+        full_name: profile.full_name,
+        country_code: profile.country_code as ICountryCode,
+        organisation: org,
+        organisation_other: orgOther,
       });
     }
   }
@@ -127,7 +109,7 @@ export class UserProfileComponent {
     const { full_name, country_code, organisation, organisation_other } = this.profileForm.getRawValue();
     const userId = this.authService.authUserId();
 
-    const finalOrganisation = organisation === 'Other' ? organisation_other : organisation;
+    const finalOrganisation = organisation === 'OTHER' ? organisation_other : organisation;
 
     if (!userId) return;
 

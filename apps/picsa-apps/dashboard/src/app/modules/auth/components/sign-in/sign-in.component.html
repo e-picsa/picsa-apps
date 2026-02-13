@@ -8,19 +8,7 @@
         <mat-error>Valid email is required</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input
-          matInput
-          formControlName="password"
-          [type]="showPassword() ? 'text' : 'password'"
-          autocomplete="current-password"
-        />
-        <button mat-icon-button matSuffix (click)="showPassword.set(!showPassword())" type="button">
-          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-        <mat-error>Password is required</mat-error>
-      </mat-form-field>
+      <dashboard-password-input [formGroup]="loginForm" />
 
       <div class="flex justify-end mb-2">
         <button mat-button type="button" class="text-sm !text-primary" (click)="onForgotPassword()">
@@ -54,11 +42,7 @@
         <form [formGroup]="personalDetailsForm" class="flex flex-col gap-3">
           <h3 class="text-xl font-medium text-center mb-1">Personal Details</h3>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Full Name</mat-label>
-            <input matInput formControlName="fullName" autocomplete="name" />
-            <mat-error>Name is required</mat-error>
-          </mat-form-field>
+          <dashboard-profile-form [formGroup]="personalDetailsForm" [showProfessionalDetails]="false" />
 
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
@@ -77,43 +61,11 @@
         <form [formGroup]="professionalDetailsForm" class="flex flex-col gap-3">
           <h3 class="text-xl font-medium text-center mb-1">Professional Details</h3>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Country</mat-label>
-            <mat-select formControlName="country">
-              @for (c of countries; track c.id) {
-                <mat-option [value]="c.id">
-                  {{ c.label }}
-                </mat-option>
-              }
-            </mat-select>
-            <mat-error>Country is required</mat-error>
-          </mat-form-field>
-
-          @if (organisations().length > 0) {
-            <mat-form-field appearance="outline">
-              <mat-label>Organization</mat-label>
-              <mat-select formControlName="organization">
-                @for (org of organisations(); track org.id) {
-                  <mat-option [value]="org.id">{{ org.label }}</mat-option>
-                }
-              </mat-select>
-              <mat-error>Organization is required</mat-error>
-            </mat-form-field>
-          } @else {
-            <mat-form-field appearance="outline">
-              <mat-label>Organization</mat-label>
-              <input matInput formControlName="organization" autocomplete="organization" />
-              <mat-error>Organization is required</mat-error>
-            </mat-form-field>
-          }
-
-          @if (showOtherOrgInput()) {
-            <mat-form-field appearance="outline">
-              <mat-label>Organization Name</mat-label>
-              <input matInput formControlName="organization_other" autocomplete="organization" />
-              <mat-error>Organization Name is required</mat-error>
-            </mat-form-field>
-          }
+          <dashboard-profile-form
+            [formGroup]="professionalDetailsForm"
+            [showFullName]="false"
+            [showProfessionalDetails]="true"
+          />
 
           <div class="flex justify-between items-center">
             <button mat-button matStepperPrevious type="button" class="text-gray-600">
@@ -128,79 +80,18 @@
       <mat-step [stepControl]="securityForm">
         <form [formGroup]="securityForm" (ngSubmit)="onRegister()" class="flex flex-col gap-3">
           <h3 class="text-xl font-medium text-center mb-1">Security</h3>
-          <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              [type]="showPassword() ? 'text' : 'password'"
-              autocomplete="new-password"
-            />
-            <button mat-icon-button matSuffix (click)="showPassword.set(!showPassword())" type="button">
-              <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            <mat-error>
-              @if (securityForm.controls.password.errors?.['required']) {
-                Password is required
-              } @else if (securityForm.controls.password.errors?.['minLength']) {
-                Password must be at least 10 characters
-              } @else if (securityForm.controls.password.errors?.['weakPassword']) {
-                Password is too weak
-              }
-            </mat-error>
-          </mat-form-field>
+
+          <dashboard-password-input [formGroup]="securityForm" autocomplete="new-password" />
 
           <!-- Password Strength Indicator -->
-          <div class="flex flex-col gap-1 mb-3 mt-[-10px] min-h-[36px]">
-            <div class="flex gap-1">
-              <!-- Bar 1 -->
-              <div
-                class="h-1 flex-1 rounded transition-colors"
-                [class.bg-gray-200]="!securityForm.controls.password.value"
-                [class.bg-red-500]="securityForm.controls.password.value && passwordStrength() < 2"
-                [class.bg-yellow-500]="securityForm.controls.password.value && passwordStrength() === 2"
-                [class.bg-green-500]="securityForm.controls.password.value && passwordStrength() >= 3"
-              ></div>
-              <!-- Bar 2 -->
-              <div
-                class="h-1 flex-1 rounded transition-colors"
-                [class.bg-gray-200]="!securityForm.controls.password.value || passwordStrength() < 2"
-                [class.bg-yellow-500]="securityForm.controls.password.value && passwordStrength() === 2"
-                [class.bg-green-500]="securityForm.controls.password.value && passwordStrength() >= 3"
-              ></div>
-              <!-- Bar 3 -->
-              <div
-                class="h-1 flex-1 rounded transition-colors"
-                [class.bg-gray-200]="!securityForm.controls.password.value || passwordStrength() < 3"
-                [class.bg-green-500]="securityForm.controls.password.value && passwordStrength() >= 3"
-              ></div>
-              <!-- Bar 4 -->
-              <div
-                class="h-1 flex-1 rounded transition-colors"
-                [class.bg-gray-200]="!securityForm.controls.password.value || passwordStrength() < 4"
-                [class.bg-green-600]="securityForm.controls.password.value && passwordStrength() >= 4"
-              ></div>
-            </div>
-            <div class="text-xs text-gray-500 mt-[-2px] h-[16px]">
-              @if (securityForm.controls.password.value) {
-                Strength: {{ ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength()] }}
-              }
-            </div>
-          </div>
+          <dashboard-password-strength [password]="securityForm.get('password')?.value || ''" />
 
-          <mat-form-field appearance="outline">
-            <mat-label>Repeat Password</mat-label>
-            <input
-              matInput
-              formControlName="passwordConfirm"
-              [type]="showConfirmPassword() ? 'text' : 'password'"
-              autocomplete="new-password"
-            />
-            <button mat-icon-button matSuffix (click)="showConfirmPassword.set(!showConfirmPassword())" type="button">
-              <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            <mat-error>Passwords must match</mat-error>
-          </mat-form-field>
+          <dashboard-password-input
+            [formGroup]="securityForm"
+            controlName="passwordConfirm"
+            label="Repeat Password"
+            autocomplete="new-password"
+          />
 
           <p class="text-xs text-center text-gray-500 mt-0 mb-2">
             By signing up, you agree to our

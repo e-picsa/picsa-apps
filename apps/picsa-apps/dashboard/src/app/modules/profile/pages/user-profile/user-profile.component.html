@@ -54,49 +54,7 @@
       </div>
     }
 
-    <mat-form-field appearance="outline">
-      <mat-label>Full Name</mat-label>
-      <input matInput formControlName="full_name" autocomplete="name" />
-      <mat-error>Name is required</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Country</mat-label>
-      <mat-select formControlName="country_code">
-        @for (c of countries; track c.id) {
-          <mat-option [value]="c.id">
-            {{ c.label }}
-          </mat-option>
-        }
-      </mat-select>
-      <mat-error>Country is required</mat-error>
-    </mat-form-field>
-
-    @if (organisations().length > 0) {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization</mat-label>
-        <mat-select formControlName="organisation">
-          @for (org of organisations(); track org.id) {
-            <mat-option [value]="org.id">{{ org.label }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>Organization is required</mat-error>
-      </mat-form-field>
-    } @else {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization</mat-label>
-        <input matInput formControlName="organisation" autocomplete="organization" />
-        <mat-error>Organization is required</mat-error>
-      </mat-form-field>
-    }
-
-    @if (showOtherOrgInput()) {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization Name</mat-label>
-        <input matInput formControlName="organisation_other" autocomplete="organization" />
-        <mat-error>Organization Name is required</mat-error>
-      </mat-form-field>
-    }
+    <dashboard-profile-form [formGroup]="profileForm" />
 
     <button matButton="filled" color="primary" type="submit" [disabled]="profileForm.invalid || profileForm.disabled">
       Save Profile

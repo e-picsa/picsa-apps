@@ -1,50 +1,6 @@
 <h2 mat-dialog-title>Edit User Profile</h2>
 <mat-dialog-content>
-  <form [formGroup]="profileForm" class="flex flex-col gap-4 min-w-[300px]">
-    <mat-form-field appearance="outline">
-      <mat-label>Full Name</mat-label>
-      <input matInput formControlName="full_name" autocomplete="name" />
-      <mat-error>Name is required</mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Country</mat-label>
-      <mat-select formControlName="country_code">
-        @for (c of countries; track c.id) {
-          <mat-option [value]="c.id">
-            {{ c.label }}
-          </mat-option>
-        }
-      </mat-select>
-      <mat-error>Country is required</mat-error>
-    </mat-form-field>
-
-    @if (organisations().length > 0) {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization</mat-label>
-        <mat-select formControlName="organisation">
-          @for (org of organisations(); track org.id) {
-            <mat-option [value]="org.id">{{ org.label }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>Organization is required</mat-error>
-      </mat-form-field>
-    } @else {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization</mat-label>
-        <input matInput formControlName="organisation" autocomplete="organization" />
-        <mat-error>Organization is required</mat-error>
-      </mat-form-field>
-    }
-
-    @if (showOtherOrgInput()) {
-      <mat-form-field appearance="outline">
-        <mat-label>Organization Name</mat-label>
-        <input matInput formControlName="organisation_other" autocomplete="organization" />
-        <mat-error>Organization Name is required</mat-error>
-      </mat-form-field>
-    }
-  </form>
+  <dashboard-profile-form [formGroup]="profileForm" class="min-w-[300px]" />
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>

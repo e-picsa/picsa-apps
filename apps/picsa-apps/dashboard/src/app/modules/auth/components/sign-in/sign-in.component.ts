@@ -1,6 +1,5 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -21,17 +20,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
-import {
-  COUNTRIES_DATA as COUNTRIES,
-  getOrganisationsForCountry,
-  ICountryCode,
-  IOrganisation,
-} from '@picsa/data/deployments';
+import { ICountryCode } from '@picsa/data/deployments';
 import { PICSAFormValidators } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
-import { map, startWith } from 'rxjs/operators';
 import zxcvbn from 'zxcvbn';
+
+import { PasswordInputComponent } from '../../../../components/password-input/password-input.component';
+import { PasswordStrengthComponent } from '../../../../components/password-strength/password-strength.component';
+import { ProfileFormComponent } from '../../../profile/components/profile-form/profile-form.component';
 
 /**
  * Implement custom error handler to only display if control is dirty, touched, or submitted.
@@ -46,6 +43,7 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-sign-in',
+  standalone: true,
   imports: [
     RouterModule,
     FormsModule,
@@ -58,6 +56,9 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
     MatIconModule,
     MatProgressBarModule,
     ReactiveFormsModule,
+    ProfileFormComponent,
+    PasswordInputComponent,
+    PasswordStrengthComponent,
   ],
   providers: [
     {
@@ -73,9 +74,6 @@ export class DashboardSignInComponent {
   private notificationService = inject(PicsaNotificationService);
   private supabaseAuthService = inject(SupabaseAuthService);
 
-  countries = COUNTRIES;
-  organisations = signal<IOrganisation[]>([]);
-
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
@@ -83,15 +81,15 @@ export class DashboardSignInComponent {
 
   // Step 1: Personal Details
   personalDetailsForm = new FormGroup({
-    fullName: new FormControl('', [Validators.required]),
+    full_name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
   });
 
   // Step 2: Professional Details
   professionalDetailsForm = new FormGroup({
-    country: new FormControl<ICountryCode | null>(null, [Validators.required]),
-    organization: new FormControl('', [Validators.required]),
-    organization_other: new FormControl(''),
+    country_code: new FormControl<ICountryCode | null>(null, [Validators.required]),
+    organisation: new FormControl('', [Validators.required]),
+    organisation_other: new FormControl(''),
   });
 
   // Step 3: Security
@@ -99,47 +97,6 @@ export class DashboardSignInComponent {
     password: new FormControl('', [Validators.required, this.passwordStrengthValidator]),
     passwordConfirm: new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch]),
   });
-
-  public passwordStrength = toSignal(
-    this.securityForm.controls.password.valueChanges.pipe(
-      map((value) => {
-        if (!value) return 0;
-        const result = zxcvbn(value);
-        return result.score;
-      }),
-    ),
-    { initialValue: 0 },
-  );
-
-  public showOtherOrgInput = toSignal(
-    this.professionalDetailsForm.controls.organization.valueChanges.pipe(map((value) => value === 'Other')),
-    { initialValue: false },
-  );
-
-  public showPassword = signal(false);
-  public showConfirmPassword = signal(false);
-
-  constructor() {
-    this.professionalDetailsForm.controls.country.valueChanges
-      .pipe(startWith(this.professionalDetailsForm.controls.country.value))
-      .subscribe((countryCode) => {
-        if (countryCode) {
-          this.organisations.set(getOrganisationsForCountry(countryCode));
-        } else {
-          this.organisations.set([]);
-        }
-      });
-
-    effect(() => {
-      if (this.showOtherOrgInput()) {
-        this.professionalDetailsForm.controls.organization_other.setValidators([Validators.required]);
-      } else {
-        this.professionalDetailsForm.controls.organization_other.clearValidators();
-        this.professionalDetailsForm.controls.organization_other.setValue('');
-      }
-      this.professionalDetailsForm.controls.organization_other.updateValueAndValidity();
-    });
-  }
 
   passwordStrengthValidator(control: AbstractControl) {
     const value = control.value;
@@ -181,20 +138,20 @@ export class DashboardSignInComponent {
     this.professionalDetailsForm.disable();
     this.securityForm.disable();
 
-    const { fullName, email } = this.personalDetailsForm.getRawValue();
-    const { country, organization, organization_other } = this.professionalDetailsForm.getRawValue();
+    const { full_name, email } = this.personalDetailsForm.getRawValue();
+    const { country_code, organisation, organisation_other } = this.professionalDetailsForm.getRawValue();
     const { password } = this.securityForm.getRawValue();
 
-    const finalOrganisation = organization === 'Other' ? organization_other : organization;
+    const finalOrganisation = organisation === 'OTHER' ? organisation_other : organisation;
 
-    if (!email || !password || !fullName || !finalOrganisation || !country) {
+    if (!email || !password || !full_name || !finalOrganisation || !country_code) {
       this.enableRegisterForms();
       return;
     }
 
     const { error } = await this.supabaseAuthService.signUpUser(email, password, {
-      full_name: fullName,
-      country_code: country,
+      full_name,
+      country_code,
       organisation: finalOrganisation,
     });
 
