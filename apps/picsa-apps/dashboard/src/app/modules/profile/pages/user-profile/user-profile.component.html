@@ -77,7 +77,7 @@
         <mat-label>Organization</mat-label>
         <mat-select formControlName="organisation">
           @for (org of organisations(); track org.id) {
-            <mat-option [value]="org.label">{{ org.label }}</mat-option>
+            <mat-option [value]="org.id">{{ org.label }}</mat-option>
           }
         </mat-select>
         <mat-error>Organization is required</mat-error>
