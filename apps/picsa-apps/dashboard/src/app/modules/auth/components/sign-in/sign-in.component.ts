@@ -26,9 +26,9 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 import zxcvbn from 'zxcvbn';
 
-import { PasswordInputComponent } from '../../../../components/password-input/password-input.component';
-import { PasswordStrengthComponent } from '../../../../components/password-strength/password-strength.component';
 import { ProfileFormComponent } from '../../../profile/components/profile-form/profile-form.component';
+import { PasswordInputComponent } from '../password-input/password-input.component';
+import { PasswordStrengthComponent } from '../password-strength/password-strength.component';
 
 /**
  * Implement custom error handler to only display if control is dirty, touched, or submitted.
