@@ -55,7 +55,9 @@ export class AppComponent implements AfterViewInit {
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       map((e) => {
-        return PUBLIC_PAGES.includes(e.urlAfterRedirects.replace('/', ''));
+        // Strip query params and hash fragments to match against public pages list
+        const cleanUrl = e.urlAfterRedirects.split('?')[0].split('#')[0].replace(/^\//, '');
+        return PUBLIC_PAGES.includes(cleanUrl);
       }),
     ),
     { initialValue: false },

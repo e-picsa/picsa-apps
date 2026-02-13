@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -9,9 +9,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -27,7 +29,16 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 @Component({
   selector: 'dashboard-password-reset.',
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
+  imports: [
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './password-reset.component.html',
   styleUrl: './password-reset.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +53,9 @@ export class PasswordResetComponent {
     password: new FormControl('', Validators.required),
   });
 
+  public showPassword = signal(false);
+  public showConfirmPassword = signal(false);
+
   public async handlePasswordReset() {
     if (this.form.value.password !== this.form.value.confirmPassword) {
       this.notificationService.showErrorNotification('Make sure your passwords match');
@@ -51,7 +65,7 @@ export class PasswordResetComponent {
     const { error } = await this.supabaseAuthService.resetResetUserPassword(this.form.value.password);
     if (error) {
       this.form.enable();
-      throw new Error(error.message);
+      this.notificationService.showErrorNotification(error.message);
     } else {
       this.notificationService.showSuccessNotification('Password reset successful');
       this.router.navigate(['/login']);

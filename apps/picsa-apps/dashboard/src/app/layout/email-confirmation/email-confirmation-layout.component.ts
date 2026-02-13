@@ -33,6 +33,5 @@ export class EmailConfirmationLayoutComponent {
 
   async logout() {
     await this.supabaseAuthService.signOut();
-    window.location.reload();
   }
 }

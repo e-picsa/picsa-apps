@@ -95,4 +95,9 @@ $theme-dashboard: mat.m2-define-light-theme(
 body[data-theme='picsa-dashboard'] {
   @include mat.all-component-themes($theme-dashboard);
   @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
+
+  // Overrides
+  mat-select.mat-mdc-select {
+    --mat-select-trigger-text-size: 18px;
+  }
 }
