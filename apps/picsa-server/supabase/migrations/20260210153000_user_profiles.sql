@@ -41,3 +41,24 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+-- Auth.users trigger
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+
+-- Backfill existing users
+INSERT INTO public.user_profiles (user_id, full_name, organisation, country_code)
+SELECT
+  id,
+  raw_user_meta_data->>'full_name',
+  raw_user_meta_data->>'organisation',
+  COALESCE(raw_user_meta_data->>'country_code', 'global')
+FROM auth.users
+ON CONFLICT (user_id) DO UPDATE
+SET
+  full_name = EXCLUDED.full_name,
+  organisation = EXCLUDED.organisation,
+  country_code = COALESCE(EXCLUDED.country_code, public.user_profiles.country_code);
