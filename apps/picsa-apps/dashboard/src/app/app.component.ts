@@ -35,7 +35,6 @@ type ViewState =
     DashboardFooterComponent,
     LandingPageComponent,
     AuthenticatedLayoutComponent,
-    AuthenticatedLayoutComponent,
     ServerErrorLayoutComponent,
     EmailConfirmationLayoutComponent,
   ],
