@@ -20,7 +20,7 @@ CREATE POLICY "Users can update own profile" ON "public"."user_profiles"
   FOR UPDATE USING (auth.uid() = user_id);
 
 CREATE POLICY "Admins can view all profiles" ON "public"."user_profiles"
-  FOR SELECT TO authenticated USING (true);
+  FOR SELECT TO authenticated USING (public.user_is_global_admin());
 
 -- Trigger function
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
