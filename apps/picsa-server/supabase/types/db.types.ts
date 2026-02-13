@@ -830,6 +830,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_profiles: {
+        Row: {
+          country_code: string | null;
+          created_at: string;
+          full_name: string | null;
+          organisation: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          country_code?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          organisation?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          country_code?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          organisation?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_roles: {
         Row: {
           created_at: string;

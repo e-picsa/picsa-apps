@@ -52,7 +52,11 @@ VALUES
     'authenticated',
     'admin@picsa.app',
     '{"provider":"email","providers":["email"]}',
-    '{}',
+    jsonb_build_object(
+      'sub', '00000000-0000-0000-0000-000000000000',
+      'email', 'admin@picsa.app',
+      'email_verified', true
+    ),
     FALSE,
     crypt('admin@picsa.app', gen_salt('bf')),
     NOW(),

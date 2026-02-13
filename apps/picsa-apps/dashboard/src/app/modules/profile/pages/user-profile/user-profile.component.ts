@@ -101,37 +101,21 @@ export class UserProfileComponent {
   }
 
   async loadProfile() {
-    const userId = this.authService.authUserId();
-    if (!userId) return;
+    const authUser = this.authService.authUser();
+    if (!authUser) return;
+    const { email_confirmed_at, id } = authUser;
 
-    const { data } = await this.supabase.db
-      .table('user_profiles' as any)
-      .select('*')
-      .eq('user_id', userId)
-      .single();
+    this.emailConfirmed.set(email_confirmed_at ? true : false);
+
+    const { data } = await this.supabase.db.table('user_profiles').select('*').eq('user_id', id).single();
 
     if (data) {
-      const profile = data as any;
-      this.emailConfirmed.set(!!profile.email_confirmed);
-
-      let org = profile.organisation;
-      let orgOther = '';
-
-      // Check if org is in the current list. logic slightly complex because list depends on country.
-      // We set country first.
-      const orgs = getOrganisationsForCountry(profile.country_code as ICountryCode);
-      const knownOrg = orgs.some((o) => o.label === org);
-
-      if (!knownOrg && org) {
-        orgOther = org;
-        org = 'Other';
-      }
+      const { organisation, full_name, country_code } = data;
 
       this.profileForm.patchValue({
-        full_name: profile.full_name,
-        country_code: profile.country_code as ICountryCode,
-        organisation: org,
-        organisation_other: orgOther,
+        full_name,
+        country_code: country_code as ICountryCode,
+        organisation,
       });
     }
   }
@@ -148,7 +132,7 @@ export class UserProfileComponent {
     if (!userId) return;
 
     const { error } = await this.supabase.db
-      .table('user_profiles' as any)
+      .table('user_profiles')
       .update({
         full_name,
         country_code,
@@ -168,7 +152,6 @@ export class UserProfileComponent {
   async resendVerificationEmail() {
     const email = this.authService.authUser()?.email;
     if (!email) return;
-
     const { error } = await this.supabaseAuthService.resendEmailConfirmation(email);
     if (error) {
       this.notificationService.showErrorNotification(error.message);
