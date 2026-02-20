@@ -17,7 +17,7 @@ async function sendLocalEmail(options: EmailOptions) {
   console.log('Sending email locally to Supabase Inbucket (Mailpit)...');
   const transporter = nodemailer.createTransport({
     host: 'inbucket',
-    port: 2500,
+    port: 1025,
     ignoreTLS: true,
   });
 

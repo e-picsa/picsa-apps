@@ -147,3 +147,6 @@ port = 54327
 vector_port = 54328
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
+
+[functions.dashboard]
+static_files = [ "./functions/dashboard/**/*.html" ]
