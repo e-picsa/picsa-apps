@@ -104,9 +104,12 @@ export class DeploymentDashboardService {
     if (!user) return;
 
     try {
-      await this.supabaseService.invokeFunction('dashboard/deployments/request-access', {
-        body: { deployment_id: deploymentId },
-      });
+      const { error } = await this.supabaseService.db
+        .table('deployment_access_requests')
+        .insert({ user_id: user.id, deployment_id: deploymentId });
+
+      if (error) throw error;
+
       // Optimistically update pending requests
       this.pendingRequests.update((reqs) => [...reqs, deploymentId]);
     } catch (error) {

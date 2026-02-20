@@ -53,22 +53,21 @@ BEFORE UPDATE ON public.deployment_access_requests
 FOR EACH ROW EXECUTE FUNCTION moddatetime('updated_at');
 
 -- Trigger for notification
--- Function to handle the trigger (calls edge function)
+-- Function to handle the notification invocation securely across environments
 CREATE OR REPLACE FUNCTION public.handle_new_deployment_access_request()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-    PERFORM public.call_edge_function('request-access-notification', jsonb_build_object('record', NEW));
+    PERFORM public.call_edge_function('dashboard/deployments/notify-requests', jsonb_build_object('record', NEW));
     RETURN NEW;
 END;
 $$;
 
 CREATE TRIGGER on_deployment_access_request_created
-AFTER INSERT ON public.deployment_access_requests
-FOR EACH ROW
-EXECUTE FUNCTION public.handle_new_deployment_access_request();
+    AFTER INSERT ON public.deployment_access_requests
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_deployment_access_request();
 
 -- Grant permissions explicitly just in case (though defaults might cover it depending on setup)
 GRANT SELECT, INSERT, UPDATE ON public.deployment_access_requests TO authenticated;

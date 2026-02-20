@@ -1,14 +1,14 @@
 import { ErrorResponse } from '../../_shared/response.ts';
-import { requestAccess } from './request-access.ts';
+import { notifyRequests } from './notify-requests.ts';
 
 export const deployments = async (req: Request) => {
   const { pathname } = new URL(req.url);
-  // e.g. /dashboard/deployments/request-access
+  // e.g. /dashboard/deployments/notify-requests
   const endpoint = pathname.replace('/dashboard/deployments/', '').split('/')[0];
 
   switch (endpoint) {
-    case 'request-access':
-      return requestAccess(req);
+    case 'notify-requests':
+      return notifyRequests(req);
     default:
       return ErrorResponse(`Invalid deployments endpoint: ${endpoint}`, 501);
   }

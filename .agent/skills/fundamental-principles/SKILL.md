@@ -28,3 +28,4 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 - Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`).
 - Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
+- **Database Exploration**: ALWAYS use the `supabase-db` MCP skill (`mcp_supabase-db_query`) when trying to introspect the Supabase database (e.g., viewing registered functions, checking schema, exploring tables). This is significantly more efficient and accurate than reading raw schema files using `grep_search` or `view_file`.
