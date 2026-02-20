@@ -9,31 +9,31 @@
   </div>
 
   <div class="w-full max-w-md">
-    @if (service.userDeployments().length) {
-      <section class="flex flex-col gap-2 mb-4">
-        <!-- User Deployments -->
-        @for (deployment of service.userDeployments(); track deployment.id) {
-          <button matButton (click)="service.setActiveDeployment(deployment.id)" class="deployment-list-item">
-            <ng-container
-              *ngTemplateOutlet="deploymentItem; context: { deployment: deployment, mode: 'user' }"
-            ></ng-container>
-          </button>
-        }
-        <!-- Available Deployments -->
+    <section class="flex flex-col gap-2 mb-4">
+      <!-- User Deployments -->
+      @for (deployment of service.userDeployments(); track deployment.id) {
+        <button matButton (click)="service.setActiveDeployment(deployment.id)" class="deployment-list-item">
+          <ng-container
+            *ngTemplateOutlet="deploymentItem; context: { deployment: deployment, mode: 'user' }"
+          ></ng-container>
+        </button>
+      }
+      <!-- Available Deployments -->
+      @if (availableDeployments().length > 0) {
         <h3>Request Access</h3>
-        @for (deployment of availableDeployments(); track deployment.id) {
-          @let isPending = service.pendingRequests().includes(deployment.id);
-          <button matButton (click)="onRequestAccess(deployment)" [disabled]="isPending" class="deployment-list-item">
-            <ng-container
-              *ngTemplateOutlet="
-                deploymentItem;
-                context: { deployment: deployment, mode: 'available', isPending: isPending }
-              "
-            ></ng-container>
-          </button>
-        }
-      </section>
-    }
+      }
+      @for (deployment of availableDeployments(); track deployment.id) {
+        @let isPending = service.pendingRequests().includes(deployment.id);
+        <button matButton (click)="onRequestAccess(deployment)" [disabled]="isPending" class="deployment-list-item">
+          <ng-container
+            *ngTemplateOutlet="
+              deploymentItem;
+              context: { deployment: deployment, mode: 'available', isPending: isPending }
+            "
+          ></ng-container>
+        </button>
+      }
+    </section>
   </div>
 </div>
 
