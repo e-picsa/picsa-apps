@@ -107,14 +107,17 @@ export class DeploymentDashboardService {
     );
   }
 
-  public async requestAccess(deploymentId: string) {
+  public async requestAccess(deploymentId: string, requestMessage?: string) {
     const user = this.authService.authUser();
     if (!user) return;
 
     try {
-      const { error } = await this.supabaseService.db
-        .table('deployment_access_requests')
-        .insert({ user_id: user.id, deployment_id: deploymentId });
+      const payload: any = { user_id: user.id, deployment_id: deploymentId };
+      if (requestMessage) {
+        payload.request_message = requestMessage;
+      }
+
+      const { error } = await this.supabaseService.db.table('deployment_access_requests').insert(payload);
 
       if (error) throw error;
 

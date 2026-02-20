@@ -81,9 +81,10 @@
       <div class="content">
         <div class="greeting">Hello!</div>
         <div class="message">
-          User <strong>{{requesterEmail}}</strong> has requested access to deployment
-          <strong>{{deploymentLabel}}</strong>. <br /><br />
-          Please log in to the dashboard to review, approve, or reject this request.
+          <strong>{{fullName}}</strong> ({{organisation}}, <em>{{requesterEmail}}</em>) has requested access to
+          deployment <strong>{{deploymentLabel}}</strong>. <br /><br />
+
+          {{requestMessage}} Please log in to the dashboard to review, approve, or reject this request.
         </div>
         <div class="button-container">
           <a href="https://dashboard.picsa.app" class="button">Go to Dashboard</a>

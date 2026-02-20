@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS public.deployment_access_requests (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     deployment_id TEXT NOT NULL REFERENCES public.deployments(id) ON DELETE CASCADE,
     status TEXT NOT NULL DEFAULT 'pending',
+    request_message TEXT,
+    response_message TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     UNIQUE(user_id, deployment_id)

@@ -102,3 +102,13 @@ This file is a shared knowledge base for AI agents operating on this codebase.
    [functions.dashboard]
    static_files = [ "./functions/dashboard/**/*.html" ]
    ```
+
+### Agent Bootstrapping and Component Skills
+
+**Date**: 2026-02-20
+**Context**: Enforcing skill reading for Angular UI and component generation.
+**Learning**: Always review `.agent/skills/angular/SKILL.md` and `.agent/skills/ui-theming/SKILL.md` before making UI or component changes. Pay special attention to:
+
+1. Using `<button matButton>` instead of `<button mat-button>`.
+2. Utilizing signal-based inputs (`input()`) and outputs (`output()`).
+3. Appropriate use of semantic colors and standard tailwind classes.
