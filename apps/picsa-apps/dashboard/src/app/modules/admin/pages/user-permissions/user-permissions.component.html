@@ -15,6 +15,32 @@
     </div>
   </div>
 
+  @if (pendingRequestsDetails().length > 0) {
+    <div class="mb-8">
+      <h3 class="text-warn mb-4 flex items-center gap-2">
+        <mat-icon>notification_important</mat-icon> Pending Access Requests
+      </h3>
+      <picsa-data-table
+        [data]="pendingRequestsDetails()"
+        [options]="pendingRequestsTableOptions"
+        [valueTemplates]="{
+          created_at: dateTemplate,
+          actions: pendingActionsTemplate,
+        }"
+      >
+        <ng-template #dateTemplate let-value let-row="row">
+          {{ value | date: 'medium' }}
+        </ng-template>
+        <ng-template #pendingActionsTemplate let-row="row">
+          <div class="flex gap-2 justify-end items-center">
+            <button mat-flat-button color="primary" (click)="approveRequest(row)">Approve</button>
+            <button mat-stroked-button color="warn" (click)="rejectRequest(row)">Reject</button>
+          </div>
+        </ng-template>
+      </picsa-data-table>
+    </div>
+  }
+
   <picsa-data-table
     [data]="deploymentUsers()"
     [options]="matrixTableOptions"

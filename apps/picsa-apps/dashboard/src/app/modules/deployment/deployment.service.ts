@@ -7,6 +7,14 @@ import { filter, firstValueFrom, map } from 'rxjs';
 import { DashboardAuthService } from '../auth/services/auth.service';
 import { IDeploymentRow } from './types';
 
+export interface IAccessRequest {
+  id: string;
+  user_id: string;
+  deployment_id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DeploymentDashboardService {
   private supabaseService = inject(SupabaseService);
@@ -116,6 +124,26 @@ export class DeploymentDashboardService {
       console.error('Failed to request access:', error);
       throw error;
     }
+  }
+
+  public async getDeploymentAccessRequests(deploymentId: string) {
+    const { data, error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .select('*')
+      .eq('deployment_id', deploymentId)
+      .eq('status', 'pending');
+
+    if (error) throw error;
+    return data as IAccessRequest[];
+  }
+
+  public async updateAccessRequestStatus(requestId: string, status: 'approved' | 'rejected') {
+    const { error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .update({ status })
+      .eq('id', requestId);
+
+    if (error) throw error;
   }
 
   private async listDeployments() {

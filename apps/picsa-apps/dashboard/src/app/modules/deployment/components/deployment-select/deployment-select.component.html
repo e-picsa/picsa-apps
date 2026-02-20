@@ -18,4 +18,9 @@
       <dashboard-deployment-item [deployment]="deployment" />
     </button>
   }
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="clearActiveDeployment()">
+    <mat-icon>list</mat-icon>
+    <span>See All Deployments</span>
+  </button>
 </mat-menu>
