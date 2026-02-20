@@ -8,16 +8,74 @@
     <p class="text-lg text-slate-500">Select your deployment to begin</p>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-screen-sm">
-    @for (deployment of service.userDeployments(); track deployment.id) {
-      <button matButton="outlined" (click)="service.setActiveDeployment(deployment.id)" class="deployment-button group">
-        <div class="container" [attr.data-deployment]="deployment.id">
-          @if (deployment.icon_path) {
-            <img [src]="deployment.icon_path | storagePath" class="h-12 w-12 object-contain" />
+  <div class="w-full max-w-screen-md space-y-12">
+    <!-- Your Deployments -->
+    @if (service.userDeployments().length) {
+      <section>
+        <h2 class="text-2xl font-semibold text-slate-700 mb-6 text-center">Your Deployments</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+          @for (deployment of service.userDeployments(); track deployment.id) {
+            <button
+              matButton="outlined"
+              (click)="service.setActiveDeployment(deployment.id)"
+              class="deployment-button group"
+            >
+              <div class="container" [attr.data-deployment]="deployment.id">
+                @if (deployment.icon_path) {
+                  <img [src]="deployment.icon_path | storagePath" class="h-12 w-12 object-contain" />
+                }
+                <div class="text-lg font-semibold">{{ deployment.label }}</div>
+              </div>
+            </button>
           }
-          <div class="text-lg font-semibold">{{ deployment.label }}</div>
         </div>
-      </button>
+      </section>
+    }
+
+    <!-- Available Deployments -->
+    @if (availableDeployments().length) {
+      <section>
+        <h2 class="text-2xl font-semibold text-slate-700 mb-6 text-center">Request Access</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+          @for (deployment of availableDeployments(); track deployment.id) {
+            @let isPending = service.pendingRequests().includes(deployment.id);
+            <button
+              matButton="outlined"
+              (click)="!isPending && service.requestAccess(deployment.id)"
+              [disabled]="isPending"
+              class="deployment-button group relative"
+            >
+              <div
+                class="container opacity-70 group-hover:opacity-100 transition-opacity"
+                [attr.data-deployment]="deployment.id"
+              >
+                @if (deployment.icon_path) {
+                  <img
+                    [src]="deployment.icon_path | storagePath"
+                    class="h-12 w-12 object-contain grayscale group-hover:grayscale-0 transition-all"
+                  />
+                }
+                <div class="text-lg font-semibold">{{ deployment.label }}</div>
+
+                @if (isPending) {
+                  <div
+                    class="absolute inset-x-0 bottom-2 text-xs font-medium text-amber-600 flex items-center justify-center gap-1"
+                  >
+                    <mat-icon class="icon-sm" inline>pending</mat-icon>
+                    Request Pending
+                  </div>
+                } @else {
+                  <div
+                    class="absolute inset-x-0 bottom-2 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    Request Access
+                  </div>
+                }
+              </div>
+            </button>
+          }
+        </div>
+      </section>
     }
   </div>
 </div>

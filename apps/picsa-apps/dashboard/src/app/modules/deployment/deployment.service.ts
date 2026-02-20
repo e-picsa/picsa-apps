@@ -46,6 +46,9 @@ export class DeploymentDashboardService {
 
   public isDeploymentChecked = signal(false);
 
+  /** List of pending access requests for the current user */
+  public readonly pendingRequests = signal<string[]>([]);
+
   constructor() {
     // Update auth roles when deployment changes
     effect(() => {
@@ -59,6 +62,8 @@ export class DeploymentDashboardService {
         await this.listDeployments();
         this.loadStoredDeployment();
         this.isDeploymentChecked.set(true);
+        // Load pending requests
+        this.loadAccessRequests();
       }
     });
   }
@@ -94,12 +99,48 @@ export class DeploymentDashboardService {
     );
   }
 
+  public async requestAccess(deploymentId: string) {
+    const user = this.authService.authUser();
+    if (!user) return;
+
+    try {
+      await this.supabaseService.invokeFunction('dashboard/deployments/request-access', {
+        body: { deployment_id: deploymentId },
+      });
+      // Optimistically update pending requests
+      this.pendingRequests.update((reqs) => [...reqs, deploymentId]);
+    } catch (error) {
+      console.error('Failed to request access:', error);
+      throw error;
+    }
+  }
+
   private async listDeployments() {
     const { data, error } = await this.table.select<'*', IDeploymentRow>('*');
     if (error) {
       throw error;
     }
     this.allDeployments.set(data);
+  }
+
+  private async loadAccessRequests() {
+    const user = this.authService.authUser();
+    if (!user) return;
+
+    const { data, error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .select('deployment_id')
+      .eq('user_id', user.id)
+      .eq('status', 'pending');
+
+    if (error) {
+      console.error('Failed to load access requests', error);
+      return;
+    }
+
+    if (data) {
+      this.pendingRequests.set(data.map((r) => r.deployment_id));
+    }
   }
 
   /** Store deployment id to localstorage to persist across sessions */

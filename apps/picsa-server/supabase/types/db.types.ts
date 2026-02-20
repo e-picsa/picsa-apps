@@ -242,6 +242,41 @@ export type Database = {
           },
         ];
       };
+      deployment_access_requests: {
+        Row: {
+          created_at: string;
+          deployment_id: string;
+          id: string;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          deployment_id: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deployment_id?: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'deployment_access_requests_deployment_id_fkey';
+            columns: ['deployment_id'];
+            isOneToOne: false;
+            referencedRelation: 'deployments';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       deployments: {
         Row: {
           access_key_md5: string | null;
@@ -917,6 +952,7 @@ export type Database = {
         Args: { p_deployment_id: string; p_module?: string };
         Returns: boolean;
       };
+      user_is_global_admin: { Args: never; Returns: boolean };
     };
     Enums: {
       app_role:

@@ -8,6 +8,7 @@ import { forecastDB } from './forecast-db.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { admin } from './admin/index.ts';
 import { climate } from './climate/index.ts';
+import { deployments } from './deployments/index.ts';
 import { forecastCleanup } from './forecast-cleanup.ts';
 
 serve((req) => {
@@ -33,6 +34,8 @@ serve((req) => {
       return forecastCleanup(req);
     case 'climate':
       return climate(req);
+    case 'deployments':
+      return deployments(req);
 
     default:
       return new Response(`Invalid endpoint: ${entryPoint}`, {
