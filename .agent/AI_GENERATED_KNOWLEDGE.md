@@ -57,3 +57,15 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 2.  **Route Guard**: `authRoleGuard` is a functional guard in `dashboard/src/app/modules/auth/guards` that uses `DashboardAuthService.hasRole`.
 3.  **Directives**: `AuthRoleRequiredDirective` also uses `DashboardAuthService.hasRole` for consistency.
 4.  **Navigation**: `navLinks.ts` defines role requirements for menu items, which are enforced by `authenticated-layout.component`.
+
+### Edge Functions and Triggers Architecture
+
+**Date**: 2026-02-19
+**Context**: Implementing Access Requests and Email Notifications.
+**Learning**:
+
+1.  **Dashboard API**: UI interactions should not hit the database directly with complex constraints (like `insertion`) when they represent larger domain actions. Instead, use Edge Functions under `dashboard/{module}/{endpoint}` (e.g., `dashboard/deployments/request-access`).
+2.  **Modularity**: Third-party service integrations (like Resend for emails) must be modularized into `_shared/` directory (e.g., `_shared/email.ts`) rather than duplicated across multiple Edge Functions.
+3.  **Database Webhooks via Edge Functions**:
+    - Avoid sending emails or doing external API calls synchronously from the Dashboard API Edge Function (`request-access.ts`).
+    - Instead, use smaller DB Triggers to act asynchronously. For example, the minimal dashboard Edge Function simply creates a row in the DB: `insert into deployment_access_requests`. Then an `AFTER INSERT` trigger calls another independent Edge Function using `public.call_edge_function('request-access-notification', ...)` for the notification logic.
