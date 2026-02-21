@@ -38,7 +38,7 @@ async function sendLocalEmail(options: EmailOptions) {
 
 async function sendResendEmail(options: EmailOptions, apiKey: string) {
   const resend = new Resend(apiKey);
-  const from = 'PICSA Dashboard <onboarding@resend.dev>'; // Needs to be verified in Resend
+  const from = 'PICSA Dashboard <support@picsa.app>';
 
   const { data, error } = await resend.emails.send({
     from,
