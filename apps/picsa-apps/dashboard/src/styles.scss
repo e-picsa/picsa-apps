@@ -21,7 +21,3 @@ Made available from project.json
 @use 'typography';
 @use 'variables';
 @use 'tailwind';
-
-mat-sidenav-content > * {
-  display: contents;
-}

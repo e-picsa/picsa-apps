@@ -12,7 +12,7 @@
   <mat-icon iconPositionEnd>unfold_more</mat-icon>
 </button>
 
-<mat-menu #menu="matMenu" style="width: 200px">
+<mat-menu #menu="matMenu">
   @for (deployment of service.userDeployments(); track deployment.id) {
     <button mat-menu-item (click)="service.setActiveDeployment(deployment.id)">
       <dashboard-deployment-item [deployment]="deployment" />

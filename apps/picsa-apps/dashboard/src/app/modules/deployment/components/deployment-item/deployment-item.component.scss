@@ -2,20 +2,9 @@
   display: block;
 }
 .deployment-image {
-  height: 36px;
-  width: 36px;
+  height: 28px;
   object-fit: contain;
   margin-right: 8px;
-}
-
-// HACK - invert demo deployment black svg image when active
-[data-active][data-deployment*='demo'] {
-  img {
-    filter: invert(1);
-  }
-}
-.container {
-  display: flex;
-  align-items: center;
-  width: 200px;
+  border-radius: 4px;
+  padding: 2px;
 }
