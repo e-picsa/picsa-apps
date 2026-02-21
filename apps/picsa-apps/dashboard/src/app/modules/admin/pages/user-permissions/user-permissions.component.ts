@@ -48,7 +48,7 @@ export class AdminUserPermissionsComponent {
   public dialog = inject(MatDialog);
 
   public responseDialog = viewChild<TemplateRef<unknown>>('responseDialog');
-  public activeRequest = signal<any | null>(null);
+  public activeRequest = signal<(IAccessRequest & { email: string }) | null>(null);
   public responseAction = signal<'approved' | 'rejected'>('approved');
   public responseMessage = '';
 
