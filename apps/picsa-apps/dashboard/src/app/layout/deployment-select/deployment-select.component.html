@@ -2,22 +2,87 @@
   <dashboard-profile-menu class="ml-auto" />
 </mat-toolbar>
 
-<div class="flex flex-1 flex-col items-center mt-[12vh] px-4">
+<div class="flex flex-1 flex-col items-center my-8 px-4">
   <div class="text-center mb-12">
     <h1 class="text-4xl font-bold text-slate-800 tracking-tight mb-2">Welcome to E-PICSA Dashboard</h1>
-    <p class="text-lg text-slate-500">Select your deployment to begin</p>
+    <p class="text-lg text-slate-500">Select deployment to begin</p>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-screen-sm">
-    @for (deployment of service.userDeployments(); track deployment.id) {
-      <button matButton="outlined" (click)="service.setActiveDeployment(deployment.id)" class="deployment-button group">
-        <div class="container" [attr.data-deployment]="deployment.id">
-          @if (deployment.icon_path) {
-            <img [src]="deployment.icon_path | storagePath" class="h-12 w-12 object-contain" />
-          }
-          <div class="text-lg font-semibold">{{ deployment.label }}</div>
-        </div>
-      </button>
-    }
+  <div class="w-full max-w-md">
+    <section class="flex flex-col gap-2 mb-4">
+      <!-- User Deployments -->
+      @for (deployment of service.userDeployments(); track deployment.id) {
+        <button matButton (click)="service.setActiveDeployment(deployment.id)" class="deployment-list-item">
+          <ng-container
+            *ngTemplateOutlet="deploymentItem; context: { deployment: deployment, mode: 'user' }"
+          ></ng-container>
+        </button>
+      }
+      <!-- Available Deployments -->
+      @if (availableDeployments().length > 0) {
+        <h3>Request Access</h3>
+      }
+      @for (deployment of availableDeployments(); track deployment.id) {
+        @let isPending = service.pendingRequests().includes(deployment.id);
+        <button matButton (click)="onRequestAccess(deployment)" [disabled]="isPending" class="deployment-list-item">
+          <ng-container
+            *ngTemplateOutlet="
+              deploymentItem;
+              context: { deployment: deployment, mode: 'available', isPending: isPending }
+            "
+          ></ng-container>
+        </button>
+      }
+    </section>
   </div>
 </div>
+
+<!-- Deployment Item Template -->
+<ng-template #deploymentItem let-deployment="deployment" let-mode="mode" let-isPending="isPending">
+  <div class="flex items-center gap-4 py-2 w-full text-left" [attr.data-deployment]="deployment.id">
+    @if (deployment.icon_path) {
+      <img [src]="deployment.icon_path | storagePath" class="h-8 w-8 object-contain" />
+    } @else {
+      <mat-icon class="h-8 w-8 text-slate-400">public</mat-icon>
+    }
+
+    <div class="flex flex-col flex-1">
+      <div
+        class="text-lg font-medium"
+        [class.text-slate-700]="mode === 'user'"
+        [class.text-slate-600]="mode === 'available'"
+      >
+        {{ deployment.label }}
+      </div>
+    </div>
+
+    @if (mode === 'user') {
+      <mat-icon class="text-slate-400">chevron_right</mat-icon>
+    } @else {
+      @if (isPending) {
+        <div class="text-xs text-amber-600">Request sent</div>
+      } @else {
+        <mat-icon class="text-slate-400">group_add</mat-icon>
+      }
+    }
+  </div>
+</ng-template>
+
+<!-- Request dialog -->
+<ng-template #requestDialog>
+  <h2 mat-dialog-title>Request Access</h2>
+  <mat-dialog-content>
+    <p>
+      Use this form to send access request for <strong>{{ deploymentLabel }}</strong> deployment
+    </p>
+
+    <mat-form-field appearance="outline" class="w-full mt-4">
+      <mat-label>(Optional) Message</mat-label>
+      <textarea matInput [(ngModel)]="message" rows="4"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="false">Cancel</button>
+    <button matButton="filled" color="primary" [mat-dialog-close]="message" cdkFocusInitial>Request Access</button>
+  </mat-dialog-actions>
+</ng-template>

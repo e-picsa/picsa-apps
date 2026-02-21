@@ -1,3 +1,8 @@
+---
+name: Angular Conventions
+description: Coding standards, architectural rules, and project-specific conventions for the Angular application.
+---
+
 # Angular 21 Best Practices & Senior Developer Guidelines
 
 To ensure high-quality, maintainable, and modern code, adhere to the following guidelines. These are non-negotiable for new feature development.

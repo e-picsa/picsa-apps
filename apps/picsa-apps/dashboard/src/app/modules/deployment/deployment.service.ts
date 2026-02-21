@@ -5,7 +5,15 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { filter, firstValueFrom, map } from 'rxjs';
 
 import { DashboardAuthService } from '../auth/services/auth.service';
-import { IDeploymentRow } from './types';
+import { DeploymentAccessRequest, IDeploymentRow } from './types';
+
+export interface IAccessRequest {
+  id: string;
+  user_id: string;
+  deployment_id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DeploymentDashboardService {
@@ -46,6 +54,9 @@ export class DeploymentDashboardService {
 
   public isDeploymentChecked = signal(false);
 
+  /** List of pending access requests for the current user */
+  public readonly pendingRequests = signal<string[]>([]);
+
   constructor() {
     // Update auth roles when deployment changes
     effect(() => {
@@ -59,6 +70,8 @@ export class DeploymentDashboardService {
         await this.listDeployments();
         this.loadStoredDeployment();
         this.isDeploymentChecked.set(true);
+        // Load pending requests
+        this.loadAccessRequests();
       }
     });
   }
@@ -94,12 +107,79 @@ export class DeploymentDashboardService {
     );
   }
 
+  public async requestAccess(deploymentId: string, requestMessage?: string) {
+    const user = this.authService.authUser();
+    if (!user) return;
+
+    try {
+      const payload: DeploymentAccessRequest['Insert'] = { user_id: user.id, deployment_id: deploymentId };
+      if (requestMessage) {
+        payload.request_message = requestMessage;
+      }
+
+      const { error } = await this.supabaseService.db.table('deployment_access_requests').insert(payload);
+
+      if (error) throw error;
+
+      // Optimistically update pending requests
+      this.pendingRequests.update((reqs) => [...reqs, deploymentId]);
+    } catch (error) {
+      console.error('Failed to request access:', error);
+      throw error;
+    }
+  }
+
+  public async getDeploymentAccessRequests(deploymentId: string) {
+    const { data, error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .select('*')
+      .eq('deployment_id', deploymentId)
+      .eq('status', 'pending');
+
+    if (error) throw error;
+    return data as IAccessRequest[];
+  }
+
+  public async updateAccessRequestStatus(requestId: string, status: 'approved' | 'rejected', responseMessage?: string) {
+    const payload: DeploymentAccessRequest['Update'] = { status };
+    if (responseMessage) {
+      payload.response_message = responseMessage;
+    }
+
+    const { error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .update(payload)
+      .eq('id', requestId);
+
+    if (error) throw error;
+  }
+
   private async listDeployments() {
     const { data, error } = await this.table.select<'*', IDeploymentRow>('*');
     if (error) {
       throw error;
     }
     this.allDeployments.set(data);
+  }
+
+  private async loadAccessRequests() {
+    const user = this.authService.authUser();
+    if (!user) return;
+
+    const { data, error } = await this.supabaseService.db
+      .table('deployment_access_requests')
+      .select('deployment_id')
+      .eq('user_id', user.id)
+      .eq('status', 'pending');
+
+    if (error) {
+      console.error('Failed to load access requests', error);
+      return;
+    }
+
+    if (data) {
+      this.pendingRequests.set(data.map((r) => r.deployment_id));
+    }
   }
 
   /** Store deployment id to localstorage to persist across sessions */

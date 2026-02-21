@@ -15,6 +15,32 @@
     </div>
   </div>
 
+  @if (pendingRequestsDetails().length > 0) {
+    <div class="mb-8">
+      <h3 class="text-warn mb-4 flex items-center gap-2">
+        <mat-icon>notification_important</mat-icon> Pending Access Requests
+      </h3>
+      <picsa-data-table
+        [data]="pendingRequestsDetails()"
+        [options]="pendingRequestsTableOptions"
+        [valueTemplates]="{
+          created_at: dateTemplate,
+          actions: pendingActionsTemplate,
+        }"
+      >
+        <ng-template #dateTemplate let-value let-row="row">
+          {{ value | date: 'medium' }}
+        </ng-template>
+        <ng-template #pendingActionsTemplate let-row="row">
+          <div class="flex gap-2 justify-end items-center">
+            <button matButton="filled" color="primary" (click)="openResponseDialog(row, 'approved')">Approve</button>
+            <button matButton="outlined" color="warn" (click)="openResponseDialog(row, 'rejected')">Reject</button>
+          </div>
+        </ng-template>
+      </picsa-data-table>
+    </div>
+  }
+
   <picsa-data-table
     [data]="deploymentUsers()"
     [options]="matrixTableOptions"
@@ -111,5 +137,33 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button matButton="outlined" mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Response Dialog -->
+<ng-template #responseDialog>
+  <h2 mat-dialog-title class="mb-2">{{ responseAction() === 'approved' ? 'Approve' : 'Reject' }} Request</h2>
+  <mat-dialog-content>
+    <p>
+      You are about to {{ responseAction() === 'approved' ? 'approve' : 'reject' }} the request for
+      <strong>{{ activeRequest()?.email }}</strong
+      >.
+    </p>
+
+    <mat-form-field appearance="outline" class="w-full mt-4">
+      <mat-label>(Optional) Message to User</mat-label>
+      <textarea matInput [(ngModel)]="responseMessage" rows="4"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="false">Cancel</button>
+    <button
+      matButton="filled"
+      [color]="responseAction() === 'approved' ? 'primary' : 'warn'"
+      [mat-dialog-close]="true"
+      cdkFocusInitial
+    >
+      Confirm
+    </button>
   </mat-dialog-actions>
 </ng-template>

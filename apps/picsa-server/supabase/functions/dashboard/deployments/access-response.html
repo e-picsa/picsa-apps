@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Deployment Access Request Response</title>
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    "
+  >
+    <div style="background-color: #f8fafc; border-radius: 8px; padding: 30px; border: 1px solid #e2e8f0">
+      <h2 style="color: #1e293b; margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px">
+        Access Request Status Update
+      </h2>
+
+      <p style="font-size: 16px">
+        Your request to access the deployment <strong>{{deploymentLabel}}</strong> has been <strong>{{status}}</strong>.
+      </p>
+
+      <div style="margin: 25px 0">
+        <p style="font-weight: bold; margin-bottom: 10px; color: #475569">Admin Response:</p>
+        {{responseMessage}}
+      </div>
+
+      <p style="font-size: 14px; margin-top: 30px; text-align: center">
+        <a
+          href="{{publicUrl}}"
+          style="
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+          "
+        >
+          Go to Dashboard
+        </a>
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0" />
+
+      <p style="color: #64748b; font-size: 14px; margin: 0; text-align: center">
+        If you believe this may have been an error, please contact
+        <a href="mailto:support@picsa.app" style="color: #2563eb">support@picsa.app</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -69,7 +69,7 @@ apps/picsa-apps/extension-app-native
 libs/features/map/tiles/assets-for-copy   
 libs/features/map/tiles/**/*.png
 
-.env
+.env.local
 *.keystore
 *.apk
 .firebase

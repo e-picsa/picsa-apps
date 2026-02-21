@@ -1,3 +1,8 @@
+---
+name: UI & Theming Guide
+description: Tailwind CSS configuration and Angular Material component usage guidelines.
+---
+
 # UI & Theming Guide
 
 ## Tailwind CSS Configuration

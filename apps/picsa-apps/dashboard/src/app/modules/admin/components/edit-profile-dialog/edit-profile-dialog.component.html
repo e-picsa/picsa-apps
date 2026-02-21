@@ -5,7 +5,7 @@
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
   <button
-    mat-flat-button
+    matButton="filled"
     color="primary"
     (click)="saveProfile()"
     [disabled]="profileForm.invalid || profileForm.disabled"

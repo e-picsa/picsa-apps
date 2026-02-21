@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import type { AppRole, Database, FunctionResponses } from '@picsa/server-types';
 import { APP_ROLES } from '@picsa/server-utils';
@@ -10,7 +21,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardAuthService } from '../../../auth/services/auth.service';
-import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { DeploymentDashboardService, IAccessRequest } from '../../../deployment/deployment.service';
 import { AdminEditProfileDialogComponent } from '../../components/edit-profile-dialog/edit-profile-dialog.component';
 
 type IAuthUser = FunctionResponses['Dashboard']['admin']['list-users'][number];
@@ -21,7 +32,7 @@ interface IUserWithRoles extends IAuthUser {
 }
 
 @Component({
-  imports: [DashboardMaterialModule, PicsaDataTableComponent],
+  imports: [DashboardMaterialModule, PicsaDataTableComponent, DatePipe, FormsModule],
   templateUrl: './user-permissions.component.html',
   styleUrl: './user-permissions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +46,11 @@ export class AdminUserPermissionsComponent {
   public availableRoles = this.authService.authRoles;
   public currentUserId = this.authService.authUserId;
   public dialog = inject(MatDialog);
+
+  public responseDialog = viewChild<TemplateRef<unknown>>('responseDialog');
+  public activeRequest = signal<(IAccessRequest & { email: string }) | null>(null);
+  public responseAction = signal<'approved' | 'rejected'>('approved');
+  public responseMessage = '';
 
   /** List of all auth users combined with active deployment role */
   public allUsers = computed(() => {
@@ -51,6 +67,29 @@ export class AdminUserPermissionsComponent {
     displayColumns: ['email', 'isMember'],
     formatHeader: (header) => {
       if (header === 'isMember') return '';
+      return formatHeaderDefault(header);
+    },
+  };
+
+  public pendingRequests = signal<IAccessRequest[]>([], { equal: isEqual });
+
+  public pendingRequestsDetails = computed(() => {
+    const reqs = this.pendingRequests();
+    const users = this.authUsers();
+    return reqs.map((r) => {
+      const u = users.find((user) => user.id === r.user_id);
+      return {
+        ...r,
+        email: u ? u.email : 'Unknown User',
+      };
+    });
+  });
+
+  public pendingRequestsTableOptions: IDataTableOptions = {
+    displayColumns: ['email', 'created_at', 'actions'],
+    formatHeader: (header) => {
+      if (header === 'actions') return '';
+      if (header === 'created_at') return 'Requested At';
       return formatHeaderDefault(header);
     },
   };
@@ -97,6 +136,16 @@ export class AdminUserPermissionsComponent {
   private refreshData() {
     this.listAuthUsers();
     this.listUserRoles();
+    this.listPendingRequests();
+  }
+
+  private async listPendingRequests() {
+    try {
+      const reqs = await this.deploymentService.getDeploymentAccessRequests(this.deploymentId);
+      this.pendingRequests.set(reqs || []);
+    } catch (err) {
+      console.error('Failed to load pending requests', err);
+    }
   }
 
   public async addUser(user: IAuthUser) {
@@ -108,6 +157,57 @@ export class AdminUserPermissionsComponent {
       body: entry,
     });
     this.refreshData();
+  }
+
+  public async approveRequest(request: IAccessRequest, responseMessage?: string) {
+    try {
+      await this.deploymentService.updateAccessRequestStatus(request.id, 'approved', responseMessage);
+      const entry: Database['public']['Tables']['user_roles']['Insert'] = {
+        deployment_id: this.deploymentId,
+        user_id: request.user_id,
+      };
+      await this.supabase.invokeFunction<any>(`dashboard/admin/${this.deploymentId}/add-user`, {
+        body: entry,
+      });
+      this.refreshData();
+    } catch (err) {
+      console.error('Failed to approve request:', err);
+    }
+  }
+
+  public async rejectRequest(request: IAccessRequest, responseMessage?: string) {
+    try {
+      await this.deploymentService.updateAccessRequestStatus(request.id, 'rejected', responseMessage);
+      this.refreshData();
+    } catch (err) {
+      console.error('Failed to reject request:', err);
+    }
+  }
+
+  public openResponseDialog(request: IAccessRequest & { email: string }, action: 'approved' | 'rejected') {
+    this.activeRequest.set(request);
+    this.responseAction.set(action);
+    this.responseMessage = '';
+
+    const template = this.responseDialog();
+    if (!template) return;
+
+    const dialogRef = this.dialog.open(template, {
+      width: '450px',
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      const req = this.activeRequest();
+      if (!req) return;
+
+      if (action === 'approved') {
+        this.approveRequest(req, this.responseMessage);
+      } else {
+        this.rejectRequest(req, this.responseMessage);
+      }
+    });
   }
 
   public async editProfile(user: IUserWithRoles) {
