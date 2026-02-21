@@ -5,7 +5,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { filter, firstValueFrom, map } from 'rxjs';
 
 import { DashboardAuthService } from '../auth/services/auth.service';
-import { IDeploymentRow } from './types';
+import { DeploymentAccessRequest, IDeploymentRow } from './types';
 
 export interface IAccessRequest {
   id: string;
@@ -112,7 +112,7 @@ export class DeploymentDashboardService {
     if (!user) return;
 
     try {
-      const payload: any = { user_id: user.id, deployment_id: deploymentId };
+      const payload: DeploymentAccessRequest['Insert'] = { user_id: user.id, deployment_id: deploymentId };
       if (requestMessage) {
         payload.request_message = requestMessage;
       }
@@ -141,7 +141,7 @@ export class DeploymentDashboardService {
   }
 
   public async updateAccessRequestStatus(requestId: string, status: 'approved' | 'rejected', responseMessage?: string) {
-    const payload: any = { status };
+    const payload: DeploymentAccessRequest['Update'] = { status };
     if (responseMessage) {
       payload.response_message = responseMessage;
     }

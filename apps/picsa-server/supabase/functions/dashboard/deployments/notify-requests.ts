@@ -13,11 +13,21 @@ interface RequestAccessRecord {
   created_at: string;
 }
 
+interface HandlerContext {
+  record: RequestAccessRecord;
+  oldRecord?: RequestAccessRecord;
+  deploymentLabel: string;
+  requesterEmail: string;
+  fullName: string;
+  organisation: string;
+}
+
 const getDashboardUrl = () => Deno.env.get('DASHBOARD_PUBLIC_URL') || 'https://dashboard.picsa.app';
 const getFallbackEmail = () => Deno.env.get('DASHBOARD_ADMIN_EMAIL') || 'support@picsa.app';
 
+const supabase = getServiceRoleClient();
+
 export const notifyRequests = async (req: Request) => {
-  const supabase = getServiceRoleClient();
   const payload = await req.json();
   const record: RequestAccessRecord = payload.record;
   const oldRecord: RequestAccessRecord | undefined = payload.old_record;
@@ -55,14 +65,15 @@ export const notifyRequests = async (req: Request) => {
       return await handleUpdateRequest(context);
     }
 
-    return await handleInsertRequest(supabase, context);
-  } catch (err: any) {
+    return await handleInsertRequest(context);
+  } catch (err: unknown) {
     console.error('Unexpected error:', err);
-    return ErrorResponse(err.message, 500);
+    const message = err instanceof Error ? err.message : String(err);
+    return ErrorResponse(message, 500);
   }
 };
 
-async function handleUpdateRequest(ctx: any) {
+async function handleUpdateRequest(ctx: HandlerContext) {
   const { record, oldRecord, deploymentLabel, requesterEmail } = ctx;
   if (!(oldRecord?.status === 'pending' && (record.status === 'approved' || record.status === 'rejected'))) {
     return JSONResponse({ message: 'Update handled, no relevant status change.' });
@@ -88,16 +99,17 @@ async function handleUpdateRequest(ctx: any) {
   );
 }
 
-async function handleInsertRequest(supabase: any, ctx: any) {
+async function handleInsertRequest(ctx: HandlerContext) {
   const { record, deploymentLabel, requesterEmail, fullName, organisation } = ctx;
 
   const { data: roles } = await supabase
     .from('user_roles')
     .select('user_id, roles')
     .eq('deployment_id', record.deployment_id);
-  const adminIds = (roles || [])
-    .filter((r: any) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
-    .map((r: any) => r.user_id);
+
+  const adminIds = ((roles as { user_id: string; roles: string[] }[]) || [])
+    .filter((r) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
+    .map((r) => r.user_id);
 
   if (adminIds.length === 0) return JSONResponse({ message: 'No admins to notify' });
 

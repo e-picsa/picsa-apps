@@ -247,6 +247,8 @@ export type Database = {
           created_at: string;
           deployment_id: string;
           id: string;
+          request_message: string | null;
+          response_message: string | null;
           status: string;
           updated_at: string;
           user_id: string;
@@ -255,6 +257,8 @@ export type Database = {
           created_at?: string;
           deployment_id: string;
           id?: string;
+          request_message?: string | null;
+          response_message?: string | null;
           status?: string;
           updated_at?: string;
           user_id: string;
@@ -263,6 +267,8 @@ export type Database = {
           created_at?: string;
           deployment_id?: string;
           id?: string;
+          request_message?: string | null;
+          response_message?: string | null;
           status?: string;
           updated_at?: string;
           user_id?: string;
