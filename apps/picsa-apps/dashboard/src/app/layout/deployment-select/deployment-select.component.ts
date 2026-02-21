@@ -36,7 +36,6 @@ export class DeploymentSelectLayoutComponent {
     const all = this.service.allDeployments();
     const user = this.service.userDeployments();
     const userIds = user.map((d) => d.id);
-    console.log('available', { all, user, userIds });
     return all.filter((d) => !userIds.includes(d.id));
   });
 
