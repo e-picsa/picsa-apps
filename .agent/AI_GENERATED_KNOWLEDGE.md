@@ -112,3 +112,12 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 1. Using `<button matButton>` instead of `<button mat-button>`.
 2. Utilizing signal-based inputs (`input()`) and outputs (`output()`).
 3. Appropriate use of semantic colors and standard tailwind classes.
+
+### Code Organization and Refactoring
+
+**Date**: 2026-02-20
+**Context**: Refactoring backend Edge Functions (e.g., `notifyRequests`) to improve readability and maintainability.
+**Learning**:
+
+1. Always prefer smaller functions where possible. Functions should ideally be under 50 lines of code. Extract blocks like `INSERT`/`UPDATE` branch logic into their own dedicated helper functions.
+2. Abstract common operations into shared utility files within the `_shared` directory (e.g., extracting template string substitution out of email edge functions into `_shared/template.ts`).

@@ -1,6 +1,7 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
 import { sendEmail } from '../../_shared/email.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
+import { renderTemplate } from '../../_shared/template.ts';
 
 interface RequestAccessRecord {
   id: string;
@@ -8,110 +9,116 @@ interface RequestAccessRecord {
   deployment_id: string;
   status: string;
   request_message?: string;
+  response_message?: string;
   created_at: string;
 }
+
+const getDashboardUrl = () => Deno.env.get('DASHBOARD_PUBLIC_URL') || 'https://dashboard.picsa.app';
+const getFallbackEmail = () => Deno.env.get('DASHBOARD_ADMIN_EMAIL') || 'support@picsa.app';
 
 export const notifyRequests = async (req: Request) => {
   const supabase = getServiceRoleClient();
   const payload = await req.json();
   const record: RequestAccessRecord = payload.record;
+  const oldRecord: RequestAccessRecord | undefined = payload.old_record;
+  const operationType: string = payload.type || 'INSERT';
 
-  if (!record) {
-    return ErrorResponse('No record provided in webhook payload', 400);
-  }
+  if (!record) return ErrorResponse('No record provided in webhook payload', 400);
 
   try {
-    // 1. Get deployment details
-    const { data: deployment, error: deploymentError } = await supabase
+    const { data: deployment, error: dErr } = await supabase
       .from('deployments')
       .select('label')
       .eq('id', record.deployment_id)
       .single();
+    if (dErr) throw dErr;
 
-    if (deploymentError) throw deploymentError;
+    const { data: requester, error: rErr } = await supabase.auth.admin.getUserById(record.user_id);
+    if (rErr) throw rErr;
 
-    // 2. Get user details (requester auth + profile)
-    const { data: requester, error: requesterError } = await supabase.auth.admin.getUserById(record.user_id);
-    if (requesterError) throw requesterError;
-
-    const requesterEmail = requester.user.email;
-
-    const { data: userProfile, error: profileError } = await supabase
+    const { data: userProfile } = await supabase
       .from('user_profiles')
       .select('full_name, organisation')
       .eq('user_id', record.user_id)
       .single();
 
-    // We don't want to throw an error if profile is missing, just default to unkown
-    const fullName = userProfile?.full_name || 'Unknown User';
-    const organisation = userProfile?.organisation || 'Unknown Organisation';
+    const context = {
+      record,
+      oldRecord,
+      deploymentLabel: deployment.label,
+      requesterEmail: requester.user.email!,
+      fullName: userProfile?.full_name || 'Unknown User',
+      organisation: userProfile?.organisation || 'Unknown Organisation',
+    };
 
-    // 3. Find admins for this deployment
-    const { data: allDeploymentRoles, error: allRolesError } = await supabase
-      .from('user_roles')
-      .select('user_id, roles')
-      .eq('deployment_id', record.deployment_id);
-
-    if (allRolesError) throw allRolesError;
-
-    const adminUserIds = allDeploymentRoles
-      .filter((r: any) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
-      .map((r: any) => r.user_id);
-
-    if (adminUserIds.length === 0) {
-      console.log('No admins found for deployment', record.deployment_id);
-      return JSONResponse({ message: 'No admins to notify' });
+    if (operationType === 'UPDATE') {
+      return await handleUpdateRequest(context);
     }
 
-    // 4. Fetch admin emails
-    const adminEmails: string[] = [];
-    for (const adminId of adminUserIds) {
-      const { data: u, error: uError } = await supabase.auth.admin.getUserById(adminId);
-      if (!uError && u.user.email) {
-        adminEmails.push(u.user.email);
-      }
-    }
-
-    // 5. Build and Send Email
-    const emailSubject = `New Access Request for ${deployment.label}`;
-
-    // Load HTML template from the adjacent file and inject variables
-    const templateUrl = new URL('./access-request.html', import.meta.url);
-    const templateHtml = await Deno.readTextFile(templateUrl);
-
-    let emailHtml = templateHtml
-      .replace('{{requesterEmail}}', `${requesterEmail}`)
-      .replace('{{fullName}}', `${fullName}`)
-      .replace('{{organisation}}', `${organisation}`)
-      .replace('{{deploymentLabel}}', `${deployment.label}`)
-      .replace('{{publicUrl}}', Deno.env.get('DASHBOARD_PUBLIC_URL') || 'https://dashboard.picsa.app');
-
-    // If there is a request message, show it, otherwise omit the message block or show "No reason"
-    const requestMessageBlock = record.request_message
-      ? `<div style="padding:15px; background:#f3f4f6; border-left:4px solid #2563eb; margin:20px 0; font-style:italic;">"${record.request_message}"</div>`
-      : '<p><em>No additional reason provided.</em></p>';
-
-    emailHtml = emailHtml.replace('{{requestMessage}}', requestMessageBlock);
-
-    const fallbackEmail = Deno.env.get('DASHBOARD_ADMIN_EMAIL') || 'support@picsa.app';
-    // TODO - include more recipients once tested working
-    // const recipients = fallbackEmail ? [fallbackEmail] : adminEmails;
-    const recipients = fallbackEmail;
-
-    if (recipients.length === 0) {
-      console.log('No valid email recipients found.');
-      return JSONResponse({ message: 'No recipients' });
-    }
-
-    const result = await sendEmail({
-      to: recipients,
-      subject: emailSubject,
-      html: emailHtml,
-    });
-
-    return JSONResponse(result);
+    return await handleInsertRequest(supabase, context);
   } catch (err: any) {
     console.error('Unexpected error:', err);
     return ErrorResponse(err.message, 500);
   }
 };
+
+async function handleUpdateRequest(ctx: any) {
+  const { record, oldRecord, deploymentLabel, requesterEmail } = ctx;
+  if (!(oldRecord?.status === 'pending' && (record.status === 'approved' || record.status === 'rejected'))) {
+    return JSONResponse({ message: 'Update handled, no relevant status change.' });
+  }
+
+  const responseMessageBlock = record.response_message
+    ? `<div style="padding:15px; background:#f3f4f6; border-left:4px solid #2563eb; margin:20px 0; font-style:italic;">"${record.response_message}"</div>`
+    : '<p><em>No additional reasoning provided.</em></p>';
+
+  const html = await renderTemplate('./access-response.html', import.meta.url, {
+    deploymentLabel,
+    status: record.status,
+    publicUrl: getDashboardUrl(),
+    responseMessage: responseMessageBlock,
+  });
+
+  return JSONResponse(
+    await sendEmail({
+      to: requesterEmail,
+      subject: `Access Request ${record.status === 'approved' ? 'Approved' : 'Rejected'} for ${deploymentLabel}`,
+      html,
+    }),
+  );
+}
+
+async function handleInsertRequest(supabase: any, ctx: any) {
+  const { record, deploymentLabel, requesterEmail, fullName, organisation } = ctx;
+
+  const { data: roles } = await supabase
+    .from('user_roles')
+    .select('user_id, roles')
+    .eq('deployment_id', record.deployment_id);
+  const adminIds = (roles || [])
+    .filter((r: any) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
+    .map((r: any) => r.user_id);
+
+  if (adminIds.length === 0) return JSONResponse({ message: 'No admins to notify' });
+
+  const requestMessageBlock = record.request_message
+    ? `<div style="padding:15px; background:#f3f4f6; border-left:4px solid #2563eb; margin:20px 0; font-style:italic;">"${record.request_message}"</div>`
+    : '<p><em>No additional reason provided.</em></p>';
+
+  const html = await renderTemplate('./access-request.html', import.meta.url, {
+    requesterEmail,
+    fullName,
+    organisation,
+    deploymentLabel,
+    publicUrl: getDashboardUrl(),
+    requestMessage: requestMessageBlock,
+  });
+
+  return JSONResponse(
+    await sendEmail({
+      to: getFallbackEmail(),
+      subject: `New Access Request for ${deploymentLabel}`,
+      html,
+    }),
+  );
+}

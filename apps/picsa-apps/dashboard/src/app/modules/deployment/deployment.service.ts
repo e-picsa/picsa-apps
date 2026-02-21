@@ -140,10 +140,15 @@ export class DeploymentDashboardService {
     return data as IAccessRequest[];
   }
 
-  public async updateAccessRequestStatus(requestId: string, status: 'approved' | 'rejected') {
+  public async updateAccessRequestStatus(requestId: string, status: 'approved' | 'rejected', responseMessage?: string) {
+    const payload: any = { status };
+    if (responseMessage) {
+      payload.response_message = responseMessage;
+    }
+
     const { error } = await this.supabaseService.db
       .table('deployment_access_requests')
-      .update({ status })
+      .update(payload)
       .eq('id', requestId);
 
     if (error) throw error;
