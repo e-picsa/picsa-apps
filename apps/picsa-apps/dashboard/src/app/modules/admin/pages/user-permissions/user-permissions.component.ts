@@ -184,7 +184,7 @@ export class AdminUserPermissionsComponent {
     }
   }
 
-  public openResponseDialog(request: any, action: 'approved' | 'rejected') {
+  public openResponseDialog(request: IAccessRequest & { email: string }, action: 'approved' | 'rejected') {
     this.activeRequest.set(request);
     this.responseAction.set(action);
     this.responseMessage = '';
