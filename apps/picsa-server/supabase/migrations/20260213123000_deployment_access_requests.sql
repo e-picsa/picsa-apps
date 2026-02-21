@@ -62,13 +62,14 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-    PERFORM public.call_edge_function('dashboard/deployments/notify-requests', jsonb_build_object('record', NEW));
+    PERFORM public.call_edge_function('dashboard/deployments/notify-requests', jsonb_build_object('type', TG_OP, 'record', NEW, 'old_record', OLD));
     RETURN NEW;
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_deployment_access_request_created ON public.deployment_access_requests;
 CREATE TRIGGER on_deployment_access_request_created
-    AFTER INSERT ON public.deployment_access_requests
+    AFTER INSERT OR UPDATE ON public.deployment_access_requests
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_deployment_access_request();
 
 -- Grant permissions explicitly just in case (though defaults might cover it depending on setup)
