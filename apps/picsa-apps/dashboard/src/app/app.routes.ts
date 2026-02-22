@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-import { AdminFeature } from './modules/admin/admin.routes';
 import { ClimateFeature } from './modules/climate/climate.routes';
 import { CropFeature } from './modules/crop-information/crop.routes';
 import { DeploymentFeature } from './modules/deployment/deployment.routes';
@@ -53,10 +52,6 @@ export const appRoutes: Route[] = [
   {
     path: 'profile',
     loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),
-  },
-  {
-    path: AdminFeature.ROOT_PATH,
-    loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   {
     path: StatsFeature.ROOT_PATH,

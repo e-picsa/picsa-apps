@@ -16,7 +16,6 @@ export interface NavConfig {
   label?: string;
   icon?: string;
   hidden?: boolean;
-  hoisted?: boolean;
 }
 
 export interface RecursiveFeatureNode extends Route {
@@ -51,11 +50,10 @@ function buildRecursiveRoutes(node: RecursiveFeatureNode, parentRole?: AppRole):
 
 interface NavResult {
   link?: INavLink;
-  hoisted: INavLink[];
 }
 
 function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, parentRole?: AppRole): NavResult {
-  const result: NavResult = { hoisted: [] };
+  const result: NavResult = {};
 
   // Skip parameters or wildcards in navigation unless explicitly labeled
   if (node.path.includes(':') || node.path === '**') {
@@ -72,14 +70,8 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
     for (const child of node.children) {
       const childResult = buildRecursiveNavLinks(child, currentPath, applicableRole);
 
-      result.hoisted.push(...childResult.hoisted);
-
       if (childResult.link) {
-        if (child.nav?.hoisted) {
-          result.hoisted.push(childResult.link);
-        } else {
-          childrenLinks.push(childResult.link);
-        }
+        childrenLinks.push(childResult.link);
       }
     }
   }
@@ -119,7 +111,7 @@ export function defineFeature(config: RecursiveFeatureNode): FeatureDefinition {
 
   // Nav Links: Use the original path structure
   const navResult = buildRecursiveNavLinks(config, '', undefined);
-  const navLinks = [navResult.link, ...navResult.hoisted].filter((link): link is INavLink => !!link);
+  const navLinks = [navResult.link].filter((link): link is INavLink => !!link);
 
   return {
     ROUTES: routes,
