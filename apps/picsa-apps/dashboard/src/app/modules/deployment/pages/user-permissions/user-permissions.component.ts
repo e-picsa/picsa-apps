@@ -20,8 +20,8 @@ import { isEqual } from '@picsa/utils/object.utils';
 import { firstValueFrom } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { AdminEditProfileDialogComponent } from '../../../admin/components/edit-profile-dialog/edit-profile-dialog.component';
 import { DashboardAuthService } from '../../../auth/services/auth.service';
+import { AdminEditProfileDialogComponent } from '../../../profile/components/edit-profile-dialog/edit-profile-dialog.component';
 import { DeploymentDashboardService, IAccessRequest } from '../../deployment.service';
 
 type IAuthUser = FunctionResponses['Dashboard']['admin']['list-users'][number];

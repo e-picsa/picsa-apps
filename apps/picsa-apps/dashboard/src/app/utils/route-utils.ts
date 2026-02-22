@@ -48,16 +48,14 @@ function buildRecursiveRoutes(node: RecursiveFeatureNode, parentRole?: AppRole):
   return route;
 }
 
-interface NavResult {
-  link?: INavLink;
-}
-
-function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, parentRole?: AppRole): NavResult {
-  const result: NavResult = {};
-
+function buildRecursiveNavLinks(
+  node: RecursiveFeatureNode,
+  parentPath: string,
+  parentRole?: AppRole,
+): INavLink | undefined {
   // Skip parameters or wildcards in navigation unless explicitly labeled
   if (node.path.includes(':') || node.path === '**') {
-    return result;
+    return undefined;
   }
 
   const applicableRole = node.roleRequired || parentRole;
@@ -70,20 +68,20 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
     for (const child of node.children) {
       const childResult = buildRecursiveNavLinks(child, currentPath, applicableRole);
 
-      if (childResult.link) {
-        childrenLinks.push(childResult.link);
+      if (childResult) {
+        childrenLinks.push(childResult);
       }
     }
   }
 
   // If hidden, return only collected hoisted links
   if (node.nav?.hidden) {
-    return result;
+    return undefined;
   }
 
   // If this node has no label, no children links, and no path, we don't create a nav link for it
   if (!node.nav?.label && !childrenLinks.length && !node.path) {
-    return result;
+    return undefined;
   }
 
   const link: INavLink = {
@@ -94,8 +92,7 @@ function buildRecursiveNavLinks(node: RecursiveFeatureNode, parentPath: string, 
     children: childrenLinks.length > 0 ? childrenLinks : undefined,
   };
 
-  result.link = link;
-  return result;
+  return link;
 }
 
 /**
@@ -110,12 +107,11 @@ export function defineFeature(config: RecursiveFeatureNode): FeatureDefinition {
   ];
 
   // Nav Links: Use the original path structure
-  const navResult = buildRecursiveNavLinks(config, '', undefined);
-  const navLinks = [navResult.link].filter((link): link is INavLink => !!link);
+  const navLink = buildRecursiveNavLinks(config, '', undefined);
 
   return {
     ROUTES: routes,
-    NAV_LINKS: navLinks,
+    NAV_LINKS: navLink ? [navLink] : [],
     ROOT_PATH: config.path,
   };
 }
