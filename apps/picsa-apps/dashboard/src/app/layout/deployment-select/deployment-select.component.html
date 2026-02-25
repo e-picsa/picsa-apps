@@ -78,11 +78,11 @@
 
     <mat-form-field appearance="outline" class="w-full mt-4">
       <mat-label>(Optional) Message</mat-label>
-      <textarea matInput [(ngModel)]="message" rows="4"></textarea>
+      <textarea matInput [ngModel]="message()" (ngModelChange)="message.set($event)" rows="4"></textarea>
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button matButton [mat-dialog-close]="false">Cancel</button>
-    <button matButton="filled" color="primary" [mat-dialog-close]="message" cdkFocusInitial>Request Access</button>
+    <button matButton="filled" color="primary" [mat-dialog-close]="true" cdkFocusInitial>Request Access</button>
   </mat-dialog-actions>
 </ng-template>

@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -30,7 +30,7 @@ export class DeploymentSelectLayoutComponent {
 
   public requestDialog = viewChild<TemplateRef<unknown>>('requestDialog');
   public deploymentLabel = '';
-  public message = '';
+  public message = signal('');
 
   public availableDeployments = computed(() => {
     const all = this.service.allDeployments();
@@ -41,7 +41,6 @@ export class DeploymentSelectLayoutComponent {
 
   public onRequestAccess(deployment: IDeploymentRow) {
     this.deploymentLabel = deployment.label;
-    this.message = '';
 
     const template = this.requestDialog();
     if (!template) return;
@@ -50,11 +49,13 @@ export class DeploymentSelectLayoutComponent {
       width: '450px',
     });
 
-    dialogRef.afterClosed().subscribe((message: string | boolean | undefined) => {
-      // cancel pressed
-      if (typeof message === 'boolean') return;
-      // send request
-      this.service.requestAccess(deployment.id, message);
+    dialogRef.afterClosed().subscribe((shouldSend?: boolean) => {
+      // will not be sent if backdrop or cancel button dismiss
+      if (shouldSend) {
+        // send request
+        this.service.requestAccess(deployment.id, this.message());
+        this.message.set('');
+      }
     });
   }
 }
