@@ -58,4 +58,9 @@ export class DeploymentSelectLayoutComponent {
       }
     });
   }
+
+  public async onJoinPublic(deployment: IDeploymentRow) {
+    // Optimistically or aggressively join without prompting
+    await this.service.joinPublicDeployment(deployment.id);
+  }
 }

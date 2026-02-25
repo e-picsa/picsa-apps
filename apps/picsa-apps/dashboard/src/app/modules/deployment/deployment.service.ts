@@ -129,6 +129,24 @@ export class DeploymentDashboardService {
     }
   }
 
+  public async joinPublicDeployment(deploymentId: string) {
+    try {
+      const data = await this.supabaseService.invokeFunction('dashboard/deployments/join-public', {
+        body: { deployment_id: deploymentId },
+      });
+
+      // Refresh user authorization roles locally
+      await this.authService.refreshAuthRoles(deploymentId);
+      // Ensure the newly joined deployment sits in our list of active deployments correctly.
+      await this.setActiveDeployment(deploymentId, { forceReload: true });
+
+      return data;
+    } catch (error) {
+      console.error('Failed to join public deployment:', error);
+      throw error;
+    }
+  }
+
   public async getDeploymentAccessRequests(deploymentId: string) {
     const { data, error } = await this.supabaseService.db
       .table('deployment_access_requests')

@@ -23,22 +23,39 @@
         <h3>Request Access</h3>
       }
       @for (deployment of availableDeployments(); track deployment.id) {
-        @let isPending = service.pendingRequests().includes(deployment.id);
-        <button matButton (click)="onRequestAccess(deployment)" [disabled]="isPending" class="deployment-list-item">
-          <ng-container
-            *ngTemplateOutlet="
-              deploymentItem;
-              context: { deployment: deployment, mode: 'available', isPending: isPending }
-            "
-          ></ng-container>
-        </button>
+        @if (deployment.public) {
+          <button matButton (click)="onJoinPublic(deployment)" class="deployment-list-item">
+            <ng-container
+              *ngTemplateOutlet="
+                deploymentItem;
+                context: { deployment: deployment, mode: 'available', isPublicJoin: true }
+              "
+            ></ng-container>
+          </button>
+        } @else {
+          @let isPending = service.pendingRequests().includes(deployment.id);
+          <button matButton (click)="onRequestAccess(deployment)" [disabled]="isPending" class="deployment-list-item">
+            <ng-container
+              *ngTemplateOutlet="
+                deploymentItem;
+                context: { deployment: deployment, mode: 'available', isPending: isPending }
+              "
+            ></ng-container>
+          </button>
+        }
       }
     </section>
   </div>
 </div>
 
 <!-- Deployment Item Template -->
-<ng-template #deploymentItem let-deployment="deployment" let-mode="mode" let-isPending="isPending">
+<ng-template
+  #deploymentItem
+  let-deployment="deployment"
+  let-mode="mode"
+  let-isPending="isPending"
+  let-isPublicJoin="isPublicJoin"
+>
   <div class="flex items-center gap-4 py-2 w-full text-left" [attr.data-deployment]="deployment.id">
     @if (deployment.icon_path) {
       <img [src]="deployment.icon_path | storagePath" class="h-8 w-8 object-contain" />
@@ -59,10 +76,18 @@
     @if (mode === 'user') {
       <mat-icon class="text-slate-400">chevron_right</mat-icon>
     } @else {
-      @if (isPending) {
+      @if (isPublicJoin) {
+        <span class="flex gap-2 items-center text-sm text-slate-800">
+          Join Public
+          <mat-icon class="text-slate-400">add</mat-icon>
+        </span>
+      } @else if (isPending) {
         <div class="text-xs text-amber-600">Request sent</div>
       } @else {
-        <mat-icon class="text-slate-400">group_add</mat-icon>
+        <span class="flex gap-2 items-center text-sm text-slate-800">
+          Request Access
+          <mat-icon class="text-slate-400">group_add</mat-icon>
+        </span>
       }
     }
   </div>
