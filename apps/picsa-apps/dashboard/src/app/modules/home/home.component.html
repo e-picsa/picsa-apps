@@ -1,20 +1,39 @@
-<h2 class="text-center">Deployment Overview</h2>
+<!-- dynamic admin components -->
+@if (resolvedComponents().length > 0) {
+  <h2 class="text-center">Latest Updates</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 m-4">
+    @for (resolved of resolvedComponents(); track resolved.href) {
+      <mat-card [routerLink]="resolved.href" class="basic-link-card">
+        <mat-card-header class="link-label">
+          <div>{{ resolved.label }}</div>
+        </mat-card-header>
+        <mat-card-content>
+          @if (resolved.error) {
+            <mat-icon>error</mat-icon>
+            <p>{{ resolved.error }}</p>
+          } @else {
+            @if (resolved.loadedComponent) {
+              <ng-container *ngComponentOutlet="resolved.loadedComponent; inputs: resolved.inputs" />
+            }
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+  <mat-divider></mat-divider>
+}
 
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4 m-4">
-  @for (resolved of resolvedComponents(); track resolved.href) {
-    <mat-card [routerLink]="resolved.href" class="basic-link-card">
+<!-- basic admin components -->
+<h2 class="text-center">PICSA Dashboard</h2>
+<p class="m-4">Use the links below to administer the PICSA App</p>
+<div class="grid grid-cols-3 md:grid-cols-6 gap-4 m-4 max-w-screen-lg">
+  @for (navLink of navLinks; track navLink.href) {
+    <mat-card [routerLink]="navLink.href" class="basic-link-card">
       <mat-card-header class="link-label">
-        <div>{{ resolved.label }}</div>
+        <div>{{ navLink.label }}</div>
       </mat-card-header>
       <mat-card-content>
-        @if (resolved.error) {
-          <mat-icon>error</mat-icon>
-          <p>{{ resolved.error }}</p>
-        } @else {
-          @if (resolved.loadedComponent) {
-            <ng-container *ngComponentOutlet="resolved.loadedComponent" />
-          }
-        }
+        <mat-icon class="link-icon">{{ navLink.matIcon }}</mat-icon>
       </mat-card-content>
     </mat-card>
   }

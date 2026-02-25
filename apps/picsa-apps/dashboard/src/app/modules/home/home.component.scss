@@ -21,6 +21,13 @@ mat-card-header.link-label {
   justify-content: center;
   background: whitesmoke;
 }
+
+mat-card-content {
+  padding: 1rem;
+}
+mat-divider {
+  @apply mt-16;
+}
 mat-icon.link-icon {
   display: block;
   font-size: 48px;
@@ -28,7 +35,4 @@ mat-icon.link-icon {
   width: 48px;
   margin: auto;
   transition: all 0.3s ease-out;
-}
-mat-card-content {
-  padding: 1rem;
 }

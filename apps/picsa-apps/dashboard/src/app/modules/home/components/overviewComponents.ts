@@ -5,16 +5,21 @@ export type HomeOverviewComponent = {
   label: string;
   href: string;
   roleRequired?: AppRole;
+  inputs?: Record<string, any>;
   load: () => Promise<ComponentType<unknown>>;
 };
 
-export const HOME_OVERVIEW_COMPONENTS: HomeOverviewComponent[] = [
+/**
+ * Components display as part of home page summary
+ */
+export const HOME_ADMIN_COMPONENTS: HomeOverviewComponent[] = [
+  // Custom admin
   {
     label: 'Users',
     href: '/deployment/permissions',
     roleRequired: 'deployments.admin',
     load: () =>
-      import('../deployment/components/admin-overview/admin-overview.component').then(
+      import('../../deployment/components/admin-overview/admin-overview.component').then(
         (m) => m.DeploymentAdminSummaryComponent,
       ),
   },
