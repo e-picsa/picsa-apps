@@ -132,7 +132,8 @@ export class DeploymentDashboardService {
 
       // Ensure the newly joined deployment sits in our list of active deployments correctly.
       await this.setActiveDeployment(deploymentId);
-
+      // Refresh auth user permissions
+      await this.authService.reloadPermissions();
       return data;
     } catch (error) {
       console.error('Failed to join public deployment:', error);

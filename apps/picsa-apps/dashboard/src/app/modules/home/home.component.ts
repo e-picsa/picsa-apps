@@ -22,7 +22,7 @@ interface ResolvedComponent extends HomeOverviewComponent {
 })
 export class DashboardHomeComponent {
   public resolvedComponents = signal<ResolvedComponent[]>([]);
-  public navLinks = DASHBOARD_NAV_LINKS.filter(({ href, roleRequired }) => !roleRequired && href !== 'home');
+  public navLinks = DASHBOARD_NAV_LINKS.filter(({ href, roleRequired }) => !roleRequired && href !== '/home');
 
   private authService = inject(DashboardAuthService);
 

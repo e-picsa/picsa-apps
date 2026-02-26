@@ -38,4 +38,8 @@ export class DashboardAuthService {
 
     return deploymentRoles.includes(requiredRole);
   }
+
+  public async reloadPermissions() {
+    return this.supabaseAuthService.reloadUserPermissions();
+  }
 }

@@ -32,11 +32,20 @@ export class DeploymentSelectLayoutComponent {
   public deploymentLabel = '';
   public message = signal('');
 
+  public joinPublicRequestPending = signal(false);
+
   public availableDeployments = computed(() => {
     const all = this.service.allDeployments();
     const user = this.service.userDeployments();
     const userIds = user.map((d) => d.id);
-    return all.filter((d) => !userIds.includes(d.id));
+    return all
+      .filter((d) => !userIds.includes(d.id))
+      .sort((a, b) => {
+        if (a.public !== b.public) {
+          return a.public ? -1 : 1;
+        }
+        return a.label.localeCompare(b.label);
+      });
   });
 
   public onRequestAccess(deployment: IDeploymentRow) {
@@ -60,7 +69,12 @@ export class DeploymentSelectLayoutComponent {
   }
 
   public async onJoinPublic(deployment: IDeploymentRow) {
-    // Optimistically or aggressively join without prompting
-    await this.service.joinPublicDeployment(deployment.id);
+    //  join without prompting
+    try {
+      this.joinPublicRequestPending.set(true);
+      await this.service.joinPublicDeployment(deployment.id);
+    } finally {
+      this.joinPublicRequestPending.set(false);
+    }
   }
 }

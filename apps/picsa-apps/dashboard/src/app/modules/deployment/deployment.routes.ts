@@ -6,6 +6,7 @@ const DeploymentFeature = defineFeature({
     label: 'Deployments',
     icon: 'apps',
   },
+  roleRequired: 'deployments.admin',
 
   children: [
     {

@@ -24,7 +24,12 @@
       }
       @for (deployment of availableDeployments(); track deployment.id) {
         @if (deployment.public) {
-          <button matButton (click)="onJoinPublic(deployment)" class="deployment-list-item">
+          <button
+            matButton
+            (click)="onJoinPublic(deployment)"
+            [disabled]="joinPublicRequestPending()"
+            class="deployment-list-item"
+          >
             <ng-container
               *ngTemplateOutlet="
                 deploymentItem;
