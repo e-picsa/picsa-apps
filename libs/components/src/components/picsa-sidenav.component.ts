@@ -101,6 +101,9 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       mat-sidenav-container {
         margin-top: 0 !important;
       }
+      mat-sidenav-content > * {
+        display: contents;
+      }
     `,
   ],
   standalone: false,

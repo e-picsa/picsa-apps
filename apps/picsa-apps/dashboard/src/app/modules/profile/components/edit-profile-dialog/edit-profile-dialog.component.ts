@@ -6,7 +6,7 @@ import { getOrganisationsForCountry, ICountryCode } from '@picsa/data/deployment
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase/supabase.service';
 
-import { ProfileFormComponent } from '../../../profile/components/profile-form/profile-form.component';
+import { ProfileFormComponent } from '../profile-form/profile-form.component';
 
 export interface EditProfileDialogData {
   userId: string;

@@ -31,10 +31,9 @@ export class DashboardAuthService {
     return [];
   });
 
-  public refreshAuthRoles(deploymentId: string) {
-    if (deploymentId !== this.activeDeploymentId()) {
-      this.activeDeploymentId.set(deploymentId);
-    }
+  // Avoid circular refs by setting directly from dashboard deployment service
+  public setActiveDeploymentId(id: string) {
+    this.activeDeploymentId.set(id);
   }
 
   public hasRole(requiredRole?: AppRole): boolean {
@@ -43,5 +42,9 @@ export class DashboardAuthService {
     if (!deploymentRoles) return false;
 
     return deploymentRoles.includes(requiredRole);
+  }
+
+  public async reloadPermissions() {
+    return this.supabaseAuthService.reloadUserPermissions();
   }
 }

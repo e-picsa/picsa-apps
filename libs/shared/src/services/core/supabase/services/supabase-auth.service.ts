@@ -99,6 +99,14 @@ export class SupabaseAuthService {
     return { data, error };
   }
 
+  public async reloadUserPermissions() {
+    const { error } = await this.auth.refreshSession();
+    if (error) {
+      // force hard reload if not possible to reload user permission
+      location.reload();
+    }
+  }
+
   public async resetEmailPassword(email: string) {
     const baseUrl = this.document.location.origin;
     const redirectToUrl = `${baseUrl}/profile/password-reset`;

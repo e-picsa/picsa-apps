@@ -1,4 +1,3 @@
-import { AdminFeature } from '../modules/admin/admin.routes';
 import { ClimateFeature } from '../modules/climate/climate.routes';
 import { CropFeature } from '../modules/crop-information/crop.routes';
 import { DeploymentFeature } from '../modules/deployment/deployment.routes';
@@ -18,10 +17,6 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   ...ResourcesFeature.NAV_LINKS,
 ];
 
-export const ADMIN_NAV_LINKS: INavLink[] = [
-  ...StatsFeature.NAV_LINKS,
-  ...DeploymentFeature.NAV_LINKS,
-  ...AdminFeature.NAV_LINKS,
-];
+export const ADMIN_NAV_LINKS: INavLink[] = [...StatsFeature.NAV_LINKS, ...DeploymentFeature.NAV_LINKS];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service', 'profile/password-reset'];

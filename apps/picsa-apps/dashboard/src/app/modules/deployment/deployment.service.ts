@@ -58,11 +58,6 @@ export class DeploymentDashboardService {
   public readonly pendingRequests = signal<string[]>([]);
 
   constructor() {
-    // Update auth roles when deployment changes
-    effect(() => {
-      const deploymentId = this.activeDeploymentId();
-      this.authService.refreshAuthRoles(deploymentId);
-    });
     // Update list of available deployments when user signs in
     effect(async () => {
       const authUserId = this.authService.authUserId();
@@ -73,6 +68,11 @@ export class DeploymentDashboardService {
         // Load pending requests
         this.loadAccessRequests();
       }
+    });
+    // Ensure auth service also kept up-to-date with deployment id changes
+    effect(() => {
+      const id = this.activeDeploymentId();
+      this.authService.setActiveDeploymentId(id);
     });
   }
 
@@ -125,6 +125,23 @@ export class DeploymentDashboardService {
       this.pendingRequests.update((reqs) => [...reqs, deploymentId]);
     } catch (error) {
       console.error('Failed to request access:', error);
+      throw error;
+    }
+  }
+
+  public async joinPublicDeployment(deploymentId: string) {
+    try {
+      const data = await this.supabaseService.invokeFunction('dashboard/deployments/join-public', {
+        body: { deployment_id: deploymentId },
+      });
+
+      // Ensure the newly joined deployment sits in our list of active deployments correctly.
+      await this.setActiveDeployment(deploymentId);
+      // Refresh auth user permissions
+      await this.authService.reloadPermissions();
+      return data;
+    } catch (error) {
+      console.error('Failed to join public deployment:', error);
       throw error;
     }
   }

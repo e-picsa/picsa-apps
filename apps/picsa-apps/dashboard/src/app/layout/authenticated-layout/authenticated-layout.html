@@ -1,17 +1,19 @@
 <mat-toolbar color="primary" class="mat-elevation-z2 flex items-center">
-  <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
-    <mat-icon>menu</mat-icon>
-  </button>
   <dashboard-deployment-select />
   <dashboard-profile-menu class="ml-auto" />
 </mat-toolbar>
-
 <mat-sidenav-container style="flex: 1">
+  <!-- Sidenav -->
   <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
-    <mat-nav-list class="w-64 flex-1">
+    <mat-nav-list class="w-48 lg:w-64 flex-1">
       @for (link of navLinks; track link.href) { @if (link.children) {
       <!-- Nested nav items -->
-      <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive" *roleRequired="link.roleRequired">
+      <mat-expansion-panel
+        class="mat-elevation-z0"
+        hideToggle
+        [expanded]="rla.isActive"
+        *roleRequired="link.roleRequired"
+      >
         <mat-expansion-panel-header
           style="padding: 0 16px"
           [routerLink]="link.href"
@@ -46,7 +48,7 @@
       </a>
       } }
     </mat-nav-list>
-    <mat-nav-list class="w-64 mt-auto">
+    <mat-nav-list class="w-48 lg:w-64 mt-auto">
       <mat-divider></mat-divider>
       <div mat-subheader></div>
       <mat-divider></mat-divider>
@@ -62,10 +64,13 @@
       }
     </mat-nav-list>
     <mat-divider></mat-divider>
-    <dashboard-footer [isSidebar]="true" class="w-64" />
+    <dashboard-footer [isSidebar]="true" class="w-48 lg:w-64" />
   </mat-sidenav>
+  <!-- Main Content -->
   <mat-sidenav-content>
-    <router-outlet></router-outlet>
+    <div class="flex flex-col flex-1">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

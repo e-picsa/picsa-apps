@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
+  OnInit,
   signal,
   TemplateRef,
   viewChild,
@@ -21,8 +21,8 @@ import { firstValueFrom } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardAuthService } from '../../../auth/services/auth.service';
-import { DeploymentDashboardService, IAccessRequest } from '../../../deployment/deployment.service';
-import { AdminEditProfileDialogComponent } from '../../components/edit-profile-dialog/edit-profile-dialog.component';
+import { AdminEditProfileDialogComponent } from '../../../profile/components/edit-profile-dialog/edit-profile-dialog.component';
+import { DeploymentDashboardService, IAccessRequest } from '../../deployment.service';
 
 type IAuthUser = FunctionResponses['Dashboard']['admin']['list-users'][number];
 
@@ -37,15 +37,16 @@ interface IUserWithRoles extends IAuthUser {
   styleUrl: './user-permissions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminUserPermissionsComponent {
+export class DeploymentUserPermissionsComponent implements OnInit {
   private dialogService = inject(PicsaDialogService);
-  private supabase = inject(SupabaseService);
-  private deploymentService = inject(DeploymentDashboardService);
   private authService = inject(DashboardAuthService);
 
   public availableRoles = this.authService.authRoles;
   public currentUserId = this.authService.authUserId;
   public dialog = inject(MatDialog);
+
+  public service = inject(DeploymentDashboardService);
+  private supabase = inject(SupabaseService);
 
   public responseDialog = viewChild<TemplateRef<unknown>>('responseDialog');
   public activeRequest = signal<(IAccessRequest & { email: string }) | null>(null);
@@ -116,21 +117,16 @@ export class AdminUserPermissionsComponent {
     },
   };
 
+  ngOnInit() {
+    this.refreshData();
+  }
+
   private authUsers = signal<IAuthUser[]>([], { equal: isEqual });
 
   private userRolesHashmap = signal<Map<string, AppRole[]>>(new Map(), { equal: isEqual });
 
   private get deploymentId() {
-    return this.deploymentService.activeDeployment().id;
-  }
-
-  constructor() {
-    effect(() => {
-      const { activeDeployment } = this.deploymentService;
-      if (activeDeployment()) {
-        this.refreshData();
-      }
-    });
+    return this.service.activeDeployment().id;
   }
 
   private refreshData() {
@@ -141,7 +137,7 @@ export class AdminUserPermissionsComponent {
 
   private async listPendingRequests() {
     try {
-      const reqs = await this.deploymentService.getDeploymentAccessRequests(this.deploymentId);
+      const reqs = await this.service.getDeploymentAccessRequests(this.deploymentId);
       this.pendingRequests.set(reqs || []);
     } catch (err) {
       console.error('Failed to load pending requests', err);
@@ -161,7 +157,7 @@ export class AdminUserPermissionsComponent {
 
   public async approveRequest(request: IAccessRequest, responseMessage?: string) {
     try {
-      await this.deploymentService.updateAccessRequestStatus(request.id, 'approved', responseMessage);
+      await this.service.updateAccessRequestStatus(request.id, 'approved', responseMessage);
       const entry: Database['public']['Tables']['user_roles']['Insert'] = {
         deployment_id: this.deploymentId,
         user_id: request.user_id,
@@ -177,7 +173,7 @@ export class AdminUserPermissionsComponent {
 
   public async rejectRequest(request: IAccessRequest, responseMessage?: string) {
     try {
-      await this.deploymentService.updateAccessRequestStatus(request.id, 'rejected', responseMessage);
+      await this.service.updateAccessRequestStatus(request.id, 'rejected', responseMessage);
       this.refreshData();
     } catch (err) {
       console.error('Failed to reject request:', err);

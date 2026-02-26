@@ -23,6 +23,12 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 
 ## Knowledge Base
 
+### Local Development Credentials
+
+**Date**: 2026-02-20
+**Context**: Logging into the local server during automated tests.
+**Learning**: Use `admin@picsa.app` with password `admin@picsa.app` for admin testing and `user@picsa.app` with password `user@picsa.app` for non-admin testing.
+
 ### Verification Entry
 
 **Date**: 2026-02-06

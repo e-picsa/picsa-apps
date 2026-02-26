@@ -39,6 +39,19 @@ export const getClient = (req?: Request) => {
   );
 };
 
+export const getUserFromRequest = async (req: Request) => {
+  const supabase = getClient(req);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return null;
+  }
+  return user;
+};
+
 export const getServiceRoleClient = () => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
