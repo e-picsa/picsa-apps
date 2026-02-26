@@ -39,7 +39,7 @@ export const joinPublicDeployment = async (req: Request) => {
     // 2. Add user to deployment with base user role using service_role to bypass RLS
     const { error: roleErr } = await supabaseAdmin
       .from('user_roles')
-      .upsert({ user_id: user.id, deployment_id: deploymentId, roles: [] }, { onConflict: 'user_id, deployment_id' });
+      .upsert({ user_id: user.id, deployment_id: deploymentId, roles: [] });
 
     if (roleErr) {
       console.error('Error assigning role:', roleErr);

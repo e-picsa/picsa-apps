@@ -31,12 +31,6 @@ export class DashboardAuthService {
     return [];
   });
 
-  public refreshAuthRoles(deploymentId: string) {
-    if (deploymentId !== this.activeDeploymentId()) {
-      this.activeDeploymentId.set(deploymentId);
-    }
-  }
-
   public hasRole(requiredRole?: AppRole): boolean {
     if (!requiredRole) return true;
     const deploymentRoles = this.authRoles();

@@ -58,11 +58,6 @@ export class DeploymentDashboardService {
   public readonly pendingRequests = signal<string[]>([]);
 
   constructor() {
-    // Update auth roles when deployment changes
-    effect(() => {
-      const deploymentId = this.activeDeploymentId();
-      this.authService.refreshAuthRoles(deploymentId);
-    });
     // Update list of available deployments when user signs in
     effect(async () => {
       const authUserId = this.authService.authUserId();
@@ -135,10 +130,8 @@ export class DeploymentDashboardService {
         body: { deployment_id: deploymentId },
       });
 
-      // Refresh user authorization roles locally
-      await this.authService.refreshAuthRoles(deploymentId);
       // Ensure the newly joined deployment sits in our list of active deployments correctly.
-      await this.setActiveDeployment(deploymentId, { forceReload: true });
+      await this.setActiveDeployment(deploymentId);
 
       return data;
     } catch (error) {
