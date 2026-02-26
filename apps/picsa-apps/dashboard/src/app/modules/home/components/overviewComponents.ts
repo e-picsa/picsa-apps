@@ -15,7 +15,7 @@ export type HomeOverviewComponent = {
 export const HOME_ADMIN_COMPONENTS: HomeOverviewComponent[] = [
   // Custom admin
   {
-    label: 'Users',
+    label: 'Permission Requests',
     href: '/deployment/permissions',
     roleRequired: 'deployments.admin',
     load: () =>

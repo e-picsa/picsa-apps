@@ -1,0 +1,6 @@
+<mat-chip
+  ><strong>{{ activeDeploymentPending().length }}</strong> Pending Requests</mat-chip
+>
+@if (allDeploymentPending().length > 0) {
+  <p>{{ allDeploymentPending().length }} pending in other deployments</p>
+}
