@@ -31,6 +31,11 @@ export class DashboardAuthService {
     return [];
   });
 
+  // Avoid circular refs by setting directly from dashboard deployment service
+  public setActiveDeploymentId(id: string) {
+    this.activeDeploymentId.set(id);
+  }
+
   public hasRole(requiredRole?: AppRole): boolean {
     if (!requiredRole) return true;
     const deploymentRoles = this.authRoles();
