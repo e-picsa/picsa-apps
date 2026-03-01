@@ -629,13 +629,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/core@npm:21.0.7":
-  version: 21.0.7
-  resolution: "@angular/core@npm:21.0.7"
+"@angular/core@npm:21.1.6":
+  version: 21.1.6
+  resolution: "@angular/core@npm:21.1.6"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 21.0.7
+    "@angular/compiler": 21.1.6
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -643,7 +643,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10c0/69e51ecf1158a8fc1298997b9e04b6b1f6a9eb55d40b9aa3dd09b858ef8b1231688d5234e3a51649ad0866fee1525f8bae5fc20f3cf1241fed118cac5491f070
+  checksum: 10c0/d0997edd4f6d358a160cab0f15e5164ee28bf82b5c0f0879aa59d510a0e5a89deb7ae5fe63835eddf3174efb6a45ecbed9b011792064185adfb29c177844c4e9
   languageName: node
   linkType: hard
 
@@ -25079,7 +25079,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -28603,7 +28603,7 @@ __metadata:
     "@angular/common": "npm:21.0.7"
     "@angular/compiler": "npm:21.0.7"
     "@angular/compiler-cli": "npm:21.0.7"
-    "@angular/core": "npm:21.0.7"
+    "@angular/core": "npm:21.1.6"
     "@angular/forms": "npm:21.0.7"
     "@angular/language-service": "npm:21.0.7"
     "@angular/material": "npm:21.0.5"
