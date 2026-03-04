@@ -12,6 +12,7 @@ const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
   mw: { label: 'Malawi' },
   zm: { label: 'Zambia' },
   tj: { label: 'Tajikistan' },
+  zw: { label: 'Zimbabwe' },
   // order entry will also be used for language select screen, so keep global at bottom
   global: { label: 'Global' },
 };

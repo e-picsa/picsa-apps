@@ -971,7 +971,7 @@ export type Database = {
         | 'deployments.admin'
         | 'translations.admin'
         | 'translations.editor';
-      country_code: 'global' | 'mw' | 'zm' | 'tj';
+      country_code: 'global' | 'mw' | 'zm' | 'tj' | 'zw';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
         | 'global_en'
@@ -986,7 +986,10 @@ export type Database = {
         | 'zm_kqn'
         | 'zm_lue'
         | 'zm_en'
-        | 'mw_en';
+        | 'mw_en'
+        | 'zw_en'
+        | 'zw_sn'
+        | 'zw_nd';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -1757,7 +1760,7 @@ export const Constants = {
         'translations.admin',
         'translations.editor',
       ],
-      country_code: ['global', 'mw', 'zm', 'tj'],
+      country_code: ['global', 'mw', 'zm', 'tj', 'zw'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
       locale_code: [
         'global_en',
@@ -1773,6 +1776,9 @@ export const Constants = {
         'zm_lue',
         'zm_en',
         'mw_en',
+        'zw_en',
+        'zw_sn',
+        'zw_nd',
       ],
       resource_link_type: ['app', 'social', 'web'],
     },
