@@ -4,13 +4,18 @@ import mapshaper from 'mapshaper';
 
 export const countryBoundaries = async (req: Request): Promise<Response> => {
   try {
-    const body = await req.json();
-    const countryCode = body.countryCode;
-    if (!countryCode) {
-      return new Response(JSON.stringify({ error: 'countryCode is required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const { pathname } = new URL(req.url);
+    const pathParts = pathname.split('/');
+    const countryCode = pathParts[pathParts.length - 1];
+
+    if (!countryCode || countryCode === 'country-boundaries') {
+      return new Response(
+        JSON.stringify({ error: 'countryCode is required as a positional parameter (e.g. /country-boundaries/zw)' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
 
     // Overpass query for admin level 4 boundaries matching ISO3166-2 prefix
@@ -30,11 +35,30 @@ export const countryBoundaries = async (req: Request): Promise<Response> => {
 
     if (!overpassResponse.ok) {
       const errorText = await overpassResponse.text();
-      console.error('Overpass API error:', errorText);
-      return new Response(JSON.stringify({ error: 'Failed to fetch from Overpass API' }), {
-        status: 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      console.error(`Overpass API error (${overpassResponse.status}):`, errorText);
+
+      let status = 502; // Bad Gateway default
+      let message = 'Failed to fetch from Overpass API';
+
+      if (overpassResponse.status === 429) {
+        status = 429;
+        message = 'Overpass API rate limit exceeded. Please try again later.';
+      } else if (overpassResponse.status === 504) {
+        status = 504;
+        message = 'Overpass API gateway timeout. The query took too long to execute.';
+      }
+
+      return new Response(
+        JSON.stringify({
+          error: message,
+          details: errorText || overpassResponse.statusText,
+          upstream_status: overpassResponse.status,
+        }),
+        {
+          status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
 
     const osmData = await overpassResponse.json();
@@ -78,7 +102,11 @@ export const countryBoundaries = async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify(topojsonData), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=86400',
+      },
     });
   } catch (error) {
     console.error('Unexpected error in country-boundaries function:', error);

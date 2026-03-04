@@ -1,21 +1,33 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { countryBoundaries } from './country-boundaries.ts';
 
-export const climate = (req: Request) => {
+serve((req: Request) => {
+  // handle cors pre-flight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return new Response('Try sending a POST or GET request instead', { status: 400 });
+  }
+
   const { pathname } = new URL(req.url);
-  // e.g. /dashboard/climate/country-boundaries
-  // Or if it's called directly /climate/country-boundaries
-  // Let's match the last part of the path
+  // e.g. /climate/country-boundaries/zw
   const pathParts = pathname.split('/');
-  const entryPoint = pathParts[pathParts.length - 1];
+  const entryPoint = pathParts[2];
+
   switch (entryPoint) {
     case 'country-boundaries':
+      if (req.method !== 'GET') {
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+      }
       return countryBoundaries(req);
 
     default:
       return new Response(`Invalid climate endpoint: ${entryPoint}`, {
         status: 501,
-        headers: corsHeaders,
+        headers: corsHeaders, // Keep CORS headers even on error
       });
   }
-};
+});
