@@ -35,15 +35,15 @@ async function main() {
   const localeCodes = locales.map((l) => `"${l.code}"`).join(' | ');
 
   const output = `// Auto-generated — do not edit manually
-// Run: npx tsx scripts/generate-geo-types.ts
+// Run: npx tsx scripts/gen-types.ts
 
 export type CountryCode = ${countryCodes};
 
 export type LocaleCode = ${localeCodes};
 `;
 
-  writeFileSync('src/types/geo.generated.ts', output);
-  console.log('Generated src/types/geo.generated.ts');
+  writeFileSync('supabase/types/db-derived.types.ts', output);
+  console.log('Generated supabase/types/db-derived.types.ts');
 }
 
 main();
