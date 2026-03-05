@@ -1,0 +1,94 @@
+
+-- ============================================================
+-- Schema
+-- Create `geo` schema to separate geo data from public api.
+-- Ensure permissions for authenticated and service_role 
+-- ============================================================
+CREATE SCHEMA IF NOT EXISTS geo;
+
+GRANT USAGE ON SCHEMA geo TO authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA geo TO authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA geo TO authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA geo TO authenticated, service_role;
+
+-- so future tables/sequences/routines are also accessible
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
+
+CREATE TYPE geo.country_code AS ENUM ();
+
+-- ============================================================
+-- Countries
+-- PK is the ISO 3166-1 alpha-2 code (e.g. 'US', 'GB', 'JP')
+-- Using the code as PK so foreign keys read as `country_code`
+-- rather than an opaque id — self-documenting across the DB.
+-- ============================================================
+CREATE TABLE geo.countries (
+  code        CHAR(2)     PRIMARY KEY
+    CONSTRAINT country_code_format CHECK (code ~ '^[A-Z]{2}$'),
+  name        TEXT        NOT NULL,
+  local_name  TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON COLUMN geo.countries.code IS 'ISO 3166-1 alpha-2 country code';
+
+ALTER TABLE geo.countries ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================
+-- Locales
+-- Each row is a language + optional region.
+-- language_code is ISO 639-1 (2-letter) where available,
+-- otherwise ISO 639-3 (3-letter).
+-- ============================================================
+CREATE TABLE geo.locales (
+  language_code VARCHAR(3)  NOT NULL
+    CONSTRAINT language_code_format
+      CHECK (language_code ~ '^[a-z]{2,3}$'),
+  country_code  CHAR(2)     REFERENCES geo.countries (code),
+  code          TEXT         GENERATED ALWAYS AS (
+    language_code || COALESCE('-' || country_code, '')
+  ) STORED PRIMARY KEY,
+  name          TEXT         NOT NULL,
+  local_name    TEXT,
+  created_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
+COMMENT ON COLUMN geo.locales.language_code
+  IS 'ISO 639-1 (alpha-2) or ISO 639-3 (alpha-3) language code';
+
+ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY; 
+
+COMMENT ON COLUMN geo.locales.language_code IS 'ISO 639 Set 1 (alpha-2) language code';
+
+ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY;
+
+
+-- ============================================================
+-- Boundaries
+-- Stores administrative boundary TopoJSON per country/level.
+-- ============================================================
+CREATE TABLE geo.boundaries (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  country_code  CHAR(2)     NOT NULL REFERENCES geo.countries (code) ON DELETE CASCADE,
+  admin_level   SMALLINT    NOT NULL,    -- e.g. 2 = country, 4 = region/state, 6 = county
+  name          TEXT        NOT NULL,    -- e.g. 'California'
+  admin_center  TEXT,                    -- name of the administrative capital/seat
+  topojson      JSONB       NOT NULL,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+  CONSTRAINT boundaries_admin_level_positive
+    CHECK (admin_level > 0)
+);
+
+CREATE INDEX idx_boundaries_country_level
+  ON geo.boundaries (country_code, admin_level);
+
+CREATE INDEX idx_boundaries_name
+  ON geo.boundaries (name);
+

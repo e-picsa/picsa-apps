@@ -1,9 +1,11 @@
-import { execSync } from 'node:child_process';
 import type { Database } from '../supabase/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 let supabase: SupabaseClient<Database>;
 
+/**
+ * Retrieve service-role supabase client using stored env credentials
+ */
 export function getSupabaseClient() {
   if (supabase) return supabase;
   const { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } = process.env;
