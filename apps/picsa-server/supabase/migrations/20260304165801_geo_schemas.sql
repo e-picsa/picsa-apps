@@ -75,15 +75,13 @@ ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY;
 CREATE TABLE geo.boundaries (
   id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   country_code  CHAR(2)     NOT NULL REFERENCES geo.countries (code) ON DELETE CASCADE,
-  admin_level   SMALLINT    NOT NULL,    -- e.g. 2 = country, 4 = region/state, 6 = county
-  name          TEXT        NOT NULL,    -- e.g. 'California'
-  admin_center  TEXT,                    -- name of the administrative capital/seat
+  admin_level   SMALLINT    NOT NULL
+    CONSTRAINT boundaries_admin_level_positive CHECK (admin_level > 0),
+  name          TEXT        NOT NULL,
+  admin_center  TEXT,
   topojson      JSONB       NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-
-  CONSTRAINT boundaries_admin_level_positive
-    CHECK (admin_level > 0)
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX idx_boundaries_country_level
@@ -91,4 +89,3 @@ CREATE INDEX idx_boundaries_country_level
 
 CREATE INDEX idx_boundaries_name
   ON geo.boundaries (name);
-

@@ -1,13 +1,13 @@
 import { arrayToHashmap } from '@picsa/utils';
 import { ICountryCode } from './countries';
-import { Database } from '@picsa/server-types';
+import { LocaleCodeLegacy } from '@picsa/server-types';
 
 /*******************************************************************
  * Language Settings
  ********************************************************************/
 
 // NOTE - country_codes restricted by database enum
-export type ILocaleCode = Database['public']['Enums']['locale_code'];
+export type ILocaleCode = LocaleCodeLegacy;
 
 // NOTE - 'language' commonly used where 'locale' would be more accurate
 export interface ILocaleDataEntry {
