@@ -6,20 +6,35 @@
 -- ============================================================
 CREATE SCHEMA IF NOT EXISTS geo;
 
+-- Schema visibility
 GRANT USAGE ON SCHEMA geo TO authenticated, service_role;
-GRANT ALL ON ALL TABLES IN SCHEMA geo TO authenticated, service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA geo TO authenticated, service_role;
-GRANT ALL ON ALL ROUTINES IN SCHEMA geo TO authenticated, service_role;
 
--- so future tables/sequences/routines are also accessible
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo
-  GRANT ALL ON TABLES TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo
-  GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo
-  GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
+-- service_role gets everything (it bypasses RLS anyway)
+GRANT ALL ON ALL TABLES    IN SCHEMA geo TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA geo TO service_role;
+GRANT ALL ON ALL ROUTINES  IN SCHEMA geo TO service_role;
 
-CREATE TYPE geo.country_code AS ENUM ();
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON TABLES    TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON SEQUENCES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT ALL ON ROUTINES  TO service_role;
+
+-- authenticated gets only what it needs
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA geo
+  TO authenticated;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA geo
+  TO authenticated;
+GRANT EXECUTE ON ALL ROUTINES IN SCHEMA geo
+  TO authenticated;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT USAGE ON SEQUENCES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo
+  GRANT EXECUTE ON ROUTINES TO authenticated;  
 
 -- ============================================================
 -- Countries
@@ -64,9 +79,6 @@ COMMENT ON COLUMN geo.locales.language_code
 ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY; 
 
 COMMENT ON COLUMN geo.locales.language_code IS 'ISO 639 Set 1 (alpha-2) language code';
-
-ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY;
-
 
 -- ============================================================
 -- Boundaries

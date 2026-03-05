@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs';
-import { getSupabaseClient } from './utils';
+import { getSupabaseClient } from './utils/supabase.utils';
 
 /**
  * Custom type gen for geo data
@@ -16,12 +16,6 @@ async function main() {
     console.warn(localesError);
     process.exit(1);
   }
-  const { data: testData, error: testError } = await supabase.from('deployments').select('*');
-  if (testError) {
-    console.warn(testError);
-    process.exit(1);
-  }
-
   if (!countries) {
     console.warn(`[Supabase] geo.countries data missing. Ensure DB migrations complete before generating types`);
     process.exit(1);
