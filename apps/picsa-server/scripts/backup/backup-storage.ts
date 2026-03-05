@@ -2,8 +2,8 @@ import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
-import { zipFolderContents } from '../../../picsa-scripts/src/utils/file.utils';
-import { getSupabaseClient } from '../utils';
+import { zipFolderContents } from '../utils/file.utils';
+import { getSupabaseClient } from '../utils/supbase.utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
