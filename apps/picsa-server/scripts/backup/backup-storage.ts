@@ -1,9 +1,9 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
-import { zipFolderContents } from '../utils/file.utils';
+import { zipFolderContents } from '../../../picsa-scripts/src/utils/file.utils';
+import { getSupabaseClient } from '../utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
@@ -20,8 +20,6 @@ const omitDirs = ['forecasts'];
 /** List of buckets to exclude from local backup */
 const omitBuckets = [];
 
-let supabase: SupabaseClient;
-
 /** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
   console.log('Starting sync process...');
@@ -32,7 +30,7 @@ export async function backupStorage() {
   }
 
   // setup client
-  supabase = await getSupabaseClient();
+  const supabase = await getSupabaseClient();
 
   // Get all remote files
   const buckets = await listBuckets();
@@ -74,6 +72,7 @@ async function syncFiles(remoteFiles: IFileMeta[]) {
   }
 }
 async function syncFile(remoteFile: IFileMeta) {
+  const supabase = getSupabaseClient();
   const status = { downloaded: false, skipped: false, error: null as any };
   const { filePath, created_at, updated_at, bucketName, metadata } = remoteFile;
   const localFilePath = path.join(localDir, bucketName, filePath);
@@ -152,14 +151,6 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
   console.log(`Removed: ${removedCount}`);
 }
 
-async function getSupabaseClient() {
-  const { SUPABASE_KEY, SUPABASE_URL } = process.env;
-  if (!SUPABASE_KEY) {
-    throw new Error('SUPABASE_KEY missing from .env');
-  }
-  return createClient(SUPABASE_URL, SUPABASE_KEY);
-}
-
 // Calculate MD5 hash of a file
 function calculateMD5(filePath) {
   return new Promise((resolve, reject) => {
@@ -173,6 +164,7 @@ function calculateMD5(filePath) {
 }
 
 async function listBuckets() {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase.storage.listBuckets();
 
   if (error) {
@@ -187,6 +179,7 @@ async function listBuckets() {
 
 // List all files in the bucket (recursively)
 async function listFiles(bucketName: string, prefix = '') {
+  const supabase = getSupabaseClient();
   // skip list of omitted files
   if (omitDirs.includes(prefix)) return [];
 
