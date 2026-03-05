@@ -2,11 +2,11 @@
  * Country Settings
  ********************************************************************/
 
-import { Database } from '@picsa/server-types';
+import { CountryCodeLegacy } from '@picsa/server-types';
 import { arrayToHashmap } from '@picsa/utils';
 
-// NOTE - country_codes restricted by database enum
-export type ICountryCode = Database['public']['Enums']['country_code'];
+// TODO - migrate data to use modern locales
+export type ICountryCode = CountryCodeLegacy;
 
 const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
   mw: { label: 'Malawi' },
