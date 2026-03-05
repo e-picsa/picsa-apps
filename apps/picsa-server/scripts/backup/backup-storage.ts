@@ -2,8 +2,8 @@ import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
-import { zipFolderContents } from '../../../picsa-scripts/src/utils/file.utils';
-import { getSupabaseClient } from '../utils';
+import { zipFolderContents } from '../utils/file.utils';
+import { getSupabaseClient } from '../utils/supabase.utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
@@ -18,7 +18,7 @@ const backupDir = path.resolve(__dirname, './backups');
 const omitDirs = ['forecasts'];
 
 /** List of buckets to exclude from local backup */
-const omitBuckets = [];
+const omitBuckets: string[] = [];
 
 /** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
@@ -152,7 +152,7 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
 }
 
 // Calculate MD5 hash of a file
-function calculateMD5(filePath) {
+function calculateMD5(filePath: string) {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash('md5');
     const stream = fs.createReadStream(filePath);
