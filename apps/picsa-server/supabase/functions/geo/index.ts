@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { corsHeaders } from '../_shared/cors.ts';
-import { countryBoundaries } from './country-boundaries.ts';
+import { adminBoundaries } from './admin-boundaries.ts';
 
 serve((req: Request) => {
   // handle cors pre-flight
@@ -18,11 +18,11 @@ serve((req: Request) => {
   const entryPoint = pathParts[2];
 
   switch (entryPoint) {
-    case 'country-boundaries':
+    case 'admin-boundaries':
       if (req.method !== 'GET') {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
       }
-      return countryBoundaries(req);
+      return adminBoundaries(req);
 
     default:
       return new Response(`Invalid climate endpoint: ${entryPoint}`, {

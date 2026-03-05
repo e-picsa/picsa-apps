@@ -1,4 +1,4 @@
-import { countryBoundaries } from './country-boundaries.ts';
+import { adminBoundaries } from './country-boundaries.ts';
 
 const req = new Request('http://localhost/climate/country-boundaries', {
   method: 'POST',
@@ -9,7 +9,7 @@ const req = new Request('http://localhost/climate/country-boundaries', {
 });
 
 console.log('Sending request...');
-const res = await countryBoundaries(req);
+const res = await adminBoundaries(req);
 console.log('Status:', res.status);
 const text = await res.text();
 if (res.status === 200) {

@@ -1,8 +1,9 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import osmtogeojson from 'osmtogeojson';
 import mapshaper from 'mapshaper';
+import { JSONResponse } from '../_shared/response.ts';
 
-export const countryBoundaries = async (req: Request): Promise<Response> => {
+export const adminBoundaries = async (req: Request): Promise<Response> => {
   try {
     const { pathname } = new URL(req.url);
     const pathParts = pathname.split('/');
@@ -69,18 +70,17 @@ export const countryBoundaries = async (req: Request): Promise<Response> => {
     const geojson = osmtogeojson(osmData);
 
     console.log('Optimizing with Mapshaper...');
-    let topojsonData = null;
+    let topojsonData: any = null;
 
     // Use mapshaper node interface with the generated geojson
     // Input geojson as an object literal in the dictionary
     const mapshaperInput = { 'input.geojson': geojson };
 
     // Commands explained:
-    // -each: rebuilds properties keeping only name, avoiding the missing field error of -filter-fields
-    // -lines: turn polygons into boundaries (lines) and remove duplicate shared edges
+    // -each: rebuilds properties keeping name and @id (matching OSM relation ID), avoiding missing field errors
     // -simplify: reduce complexity by 15% keeping general shapes
     // -o: export to TopoJSON format, quantizing coordinates to 1e4 for smaller file size without visually distorting standard zoom levels
-    const mapshaperCommands = `-i input.geojson -each 'this.properties = { name: this.properties.name || "" }' -lines -simplify dp 15% keep-shapes -o output.topojson format=topojson quantization=1e4`;
+    const mapshaperCommands = `-i input.geojson -each 'this.properties = { "@id": this.properties["@id"] || this.id || "", name: this.properties.name || "" }' -simplify dp 15% keep-shapes -o output.topojson format=topojson quantization=1e4 id-field=@id`;
 
     await new Promise((resolve, reject) => {
       mapshaper.applyCommands(mapshaperCommands, mapshaperInput, (err: Error, output: any) => {
@@ -100,14 +100,18 @@ export const countryBoundaries = async (req: Request): Promise<Response> => {
 
     console.log('Mapshaper processing complete.');
 
-    return new Response(JSON.stringify(topojsonData), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400',
-      },
-    });
+    // Extract metadata from the TopoJSON objects
+    let meta: any[] = [];
+    if (topojsonData?.objects) {
+      const firstObjectKey = Object.keys(topojsonData.objects)[0];
+      const geometries = topojsonData.objects[firstObjectKey]?.geometries || [];
+      meta = geometries.map((g: any) => ({
+        id: g.id || g.properties?.['@id'] || '',
+        name: g.properties?.name || '',
+      }));
+    }
+
+    return JSONResponse({ topjson: topojsonData, meta });
   } catch (error) {
     console.error('Unexpected error in country-boundaries function:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error', details: (error as Error).message }), {
