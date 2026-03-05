@@ -48,7 +48,7 @@ export type CountryCodeLegacy = ${countryCodesLegacy};
 
 export type LocaleCode = ${localeCodes};
 
-export type LocaleCodeLegacy = ${localeCodesLegacy}
+export type LocaleCodeLegacy = ${localeCodesLegacy};
 `;
 
   writeFileSync('supabase/types/db-derived.types.ts', output);

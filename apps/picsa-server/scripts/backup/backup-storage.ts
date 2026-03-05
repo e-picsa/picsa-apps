@@ -18,7 +18,7 @@ const backupDir = path.resolve(__dirname, './backups');
 const omitDirs = ['forecasts'];
 
 /** List of buckets to exclude from local backup */
-const omitBuckets = [];
+const omitBuckets: string[] = [];
 
 /** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
@@ -28,9 +28,6 @@ export async function backupStorage() {
   if (!fs.existsSync(localDir)) {
     fs.mkdirSync(localDir, { recursive: true });
   }
-
-  // setup client
-  const supabase = await getSupabaseClient();
 
   // Get all remote files
   const buckets = await listBuckets();
@@ -152,7 +149,7 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
 }
 
 // Calculate MD5 hash of a file
-function calculateMD5(filePath) {
+function calculateMD5(filePath: string) {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash('md5');
     const stream = fs.createReadStream(filePath);

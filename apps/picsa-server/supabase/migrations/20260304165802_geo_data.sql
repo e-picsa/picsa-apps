@@ -1,22 +1,13 @@
 -- Countries
 
 INSERT INTO geo.countries (code, name, local_name)
-VALUES ('MW', 'Malawi', 'Malaŵi');
-
-INSERT INTO geo.countries (code, name)
-VALUES ('ZM', 'Zambia');
-
-INSERT INTO geo.countries (code, name)
-VALUES ('ZW', 'Zimbabwe');
-
-INSERT INTO geo.countries (code, name, local_name)
-VALUES ('TJ', 'Tajikistan', 'Tojikiston');
-
-INSERT INTO geo.countries (code, name)
-VALUES ('ZZ', 'Global');
-
-INSERT INTO geo.countries (code, name)
-VALUES ('XX', 'Test');
+VALUES 
+  ('MW', 'Malawi', 'Malaŵi'),
+  ('ZM', 'Zambia', NULL),
+  ('ZW', 'Zimbabwe', NULL),
+  ('TJ', 'Tajikistan', 'Tojikiston'),
+  ('ZZ', 'Global', NULL),
+  ('XX', 'Test', NULL);
 
 -- Locales
 
