@@ -2,11 +2,11 @@
  * Country Settings
  ********************************************************************/
 
-import { Database } from '@picsa/server-types';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { arrayToHashmap } from '@picsa/utils';
 
 // NOTE - country_codes restricted by database enum
-export type ICountryCode = Database['public']['Enums']['country_code'];
+export type ICountryCode = CountryCodeLegacy;
 
 const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
   mw: { label: 'Malawi' },
@@ -14,6 +14,7 @@ const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
   tj: { label: 'Tajikistan' },
   // order entry will also be used for language select screen, so keep global at bottom
   global: { label: 'Global' },
+  zw: { label: 'Zimbabwe' },
 };
 
 export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE)
