@@ -6,5 +6,11 @@
     "module": "ESNext",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../picsa-server/scripts/backup/backup-storage.ts",
+    "../picsa-server/scripts/backup/backup.ts",
+    "../picsa-server/scripts/gen-types.ts",
+    "../picsa-server/scripts/utils.ts"
+  ]
 }
