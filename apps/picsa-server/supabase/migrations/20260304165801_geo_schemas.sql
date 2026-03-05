@@ -64,28 +64,3 @@ COMMENT ON COLUMN geo.locales.language_code
 ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY; 
 
 COMMENT ON COLUMN geo.locales.language_code IS 'ISO 639 Set 1 (alpha-2) language code';
-
-ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY;
-
-
--- ============================================================
--- Boundaries
--- Stores administrative boundary TopoJSON per country/level.
--- ============================================================
-CREATE TABLE geo.boundaries (
-  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  country_code  CHAR(2)     NOT NULL REFERENCES geo.countries (code) ON DELETE CASCADE,
-  admin_level   SMALLINT    NOT NULL
-    CONSTRAINT boundaries_admin_level_positive CHECK (admin_level > 0),
-  name          TEXT        NOT NULL,
-  admin_center  TEXT,
-  topojson      JSONB       NOT NULL,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_boundaries_country_level
-  ON geo.boundaries (country_code, admin_level);
-
-CREATE INDEX idx_boundaries_name
-  ON geo.boundaries (name);
