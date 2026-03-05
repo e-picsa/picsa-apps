@@ -111,7 +111,7 @@ export const adminBoundaries = async (req: Request): Promise<Response> => {
       }));
     }
 
-    return JSONResponse({ topjson: topojsonData, meta });
+    return JSONResponse({ meta, topjson: topojsonData });
   } catch (error) {
     console.error('Unexpected error in country-boundaries function:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error', details: (error as Error).message }), {
