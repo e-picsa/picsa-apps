@@ -73,6 +73,17 @@ export const notifyRequests = async (req: Request) => {
   }
 };
 
+// TODO - future multiple admin contact
+async function getAdminEmails() {
+  // const { data: roles } = await supabase
+  //   .from('user_roles')
+  //   .select('user_id, roles')
+  //   .eq('deployment_id', record.deployment_id);
+  // const adminIds = ((roles as { user_id: string; roles: string[] }[]) || [])
+  //   .filter((r) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
+  //   .map((r) => r.user_id);
+}
+
 async function handleUpdateRequest(ctx: HandlerContext) {
   const { record, oldRecord, deploymentLabel, requesterEmail } = ctx;
   if (!(oldRecord?.status === 'pending' && (record.status === 'approved' || record.status === 'rejected'))) {
@@ -89,29 +100,18 @@ async function handleUpdateRequest(ctx: HandlerContext) {
     publicUrl: getDashboardUrl(),
     responseMessage: responseMessageBlock,
   });
-
-  return JSONResponse(
-    await sendEmail({
-      to: requesterEmail,
-      subject: `Access Request ${record.status === 'approved' ? 'Approved' : 'Rejected'} for ${deploymentLabel}`,
-      html,
-    }),
-  );
+  const emailRes = await sendEmail({
+    to: requesterEmail,
+    subject: `Access Request ${record.status === 'approved' ? 'Approved' : 'Rejected'} for ${deploymentLabel}`,
+    html,
+  });
+  return JSONResponse(emailRes);
 }
 
 async function handleInsertRequest(ctx: HandlerContext) {
   const { record, deploymentLabel, requesterEmail, fullName, organisation } = ctx;
 
-  const { data: roles } = await supabase
-    .from('user_roles')
-    .select('user_id, roles')
-    .eq('deployment_id', record.deployment_id);
-
-  const adminIds = ((roles as { user_id: string; roles: string[] }[]) || [])
-    .filter((r) => r.roles.includes('admin') || r.roles.includes('deployments.admin'))
-    .map((r) => r.user_id);
-
-  if (adminIds.length === 0) return JSONResponse({ message: 'No admins to notify' });
+  // if (adminIds.length === 0) return JSONResponse({ message: 'No admins to notify' });
 
   const requestMessageBlock = record.request_message
     ? `<div style="padding:15px; background:#f3f4f6; border-left:4px solid #2563eb; margin:20px 0; font-style:italic;">"${record.request_message}"</div>`
@@ -126,11 +126,11 @@ async function handleInsertRequest(ctx: HandlerContext) {
     requestMessage: requestMessageBlock,
   });
 
-  return JSONResponse(
-    await sendEmail({
-      to: getFallbackEmail(),
-      subject: `New Access Request for ${deploymentLabel}`,
-      html,
-    }),
-  );
+  const emailRes = await sendEmail({
+    to: getFallbackEmail(),
+    subject: `New Access Request for ${deploymentLabel}`,
+    html,
+  });
+
+  return JSONResponse(emailRes);
 }
