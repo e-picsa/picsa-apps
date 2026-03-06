@@ -67,3 +67,25 @@ COMMENT ON COLUMN geo.locales.language_code
   IS 'ISO 639-1 (alpha-2) or ISO 639-3 (alpha-3) language code';
 
 ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY; 
+
+-- ============================================================
+-- Boundaries
+-- Stores administrative boundary TopoJSON per country/level.
+-- ============================================================
+CREATE TABLE geo.boundaries (
+  country_code  CHAR(2)     NOT NULL REFERENCES geo.countries (code) ON DELETE CASCADE,
+  -- e.g. 2 - national, 3-11 subnational
+  admin_level   SMALLINT    NOT NULL
+    CONSTRAINT boundaries_admin_level_positive CHECK (admin_level > 1),
+  label         TEXT,        -- e.g. 'Province', 'District'  
+  topojson      JSONB       NOT NULL,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+  PRIMARY KEY (country_code, admin_level)
+);
+
+CREATE INDEX idx_boundaries_country_level
+  ON geo.boundaries (country_code, admin_level);
+
+ALTER TABLE geo.boundaries ENABLE ROW LEVEL SECURITY; 
