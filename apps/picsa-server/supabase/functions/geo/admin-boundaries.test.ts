@@ -1,11 +1,11 @@
 import { adminBoundaries } from './admin-boundaries.ts';
 
-const req = new Request('http://localhost/climate/country-boundaries', {
+const req = new Request('http://localhost/climate/admin-boundaries', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify({ countryCode: 'ZW' }),
+  body: JSON.stringify({ country_code: 'ZW', admin_level: 2 }),
 });
 
 console.log('Sending request...');

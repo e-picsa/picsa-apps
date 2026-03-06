@@ -6,26 +6,6 @@
 -- ============================================================
 CREATE SCHEMA IF NOT EXISTS geo;
 
--- Schema visibility
-GRANT USAGE ON SCHEMA geo TO authenticated, service_role;
-
--- service_role gets everything (it bypasses RLS anyway)
-GRANT ALL ON ALL TABLES    IN SCHEMA geo TO service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA geo TO service_role;
-GRANT ALL ON ALL ROUTINES  IN SCHEMA geo TO service_role;
-
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON TABLES TO service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON SEQUENCES TO service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON ROUTINES  TO service_role;
-
--- authenticated readonly (will populate via functions and migrations)
-GRANT SELECT ON ALL TABLES IN SCHEMA geo TO authenticated;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA geo TO authenticated;
-GRANT EXECUTE ON ALL ROUTINES IN SCHEMA geo TO authenticated;
-
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT SELECT ON TABLES TO authenticated;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT USAGE ON SEQUENCES TO authenticated;
-ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT EXECUTE ON ROUTINES TO authenticated;  
 -- ============================================================
 -- Countries
 -- PK is the ISO 3166-1 alpha-2 code (e.g. 'US', 'GB', 'JP')
@@ -71,6 +51,9 @@ ALTER TABLE geo.locales ENABLE ROW LEVEL SECURITY;
 -- ============================================================
 -- Boundaries
 -- Stores administrative boundary TopoJSON per country/level.
+--
+-- Labels manually populated, can be looked up at:
+-- https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative
 -- ============================================================
 CREATE TABLE geo.boundaries (
   country_code  CHAR(2)     NOT NULL REFERENCES geo.countries (code) ON DELETE CASCADE,
@@ -79,6 +62,7 @@ CREATE TABLE geo.boundaries (
     CONSTRAINT boundaries_admin_level_positive CHECK (admin_level > 1),
   label         TEXT,        -- e.g. 'Province', 'District'  
   topojson      JSONB       NOT NULL,
+  size_kb       INTEGER NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
 
@@ -89,3 +73,29 @@ CREATE INDEX idx_boundaries_country_level
   ON geo.boundaries (country_code, admin_level);
 
 ALTER TABLE geo.boundaries ENABLE ROW LEVEL SECURITY; 
+
+
+-- ============================================================
+-- Permissions
+-- ============================================================
+
+-- Schema visibility
+GRANT USAGE ON SCHEMA geo TO authenticated, service_role;
+
+-- service_role gets everything (it bypasses RLS anyway)
+GRANT ALL ON ALL TABLES    IN SCHEMA geo TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA geo TO service_role;
+GRANT ALL ON ALL ROUTINES  IN SCHEMA geo TO service_role;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON TABLES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON SEQUENCES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT ALL ON ROUTINES  TO service_role;
+
+-- authenticated readonly (will populate via functions and migrations)
+GRANT SELECT ON ALL TABLES IN SCHEMA geo TO authenticated;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA geo TO authenticated;
+GRANT EXECUTE ON ALL ROUTINES IN SCHEMA geo TO authenticated;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT SELECT ON TABLES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT USAGE ON SEQUENCES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT EXECUTE ON ROUTINES TO authenticated;  

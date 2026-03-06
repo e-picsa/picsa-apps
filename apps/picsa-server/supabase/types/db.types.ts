@@ -9,6 +9,7 @@ export type Database = {
           country_code: string;
           created_at: string;
           label: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at: string;
         };
@@ -17,6 +18,7 @@ export type Database = {
           country_code: string;
           created_at?: string;
           label?: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at?: string;
         };
@@ -25,6 +27,7 @@ export type Database = {
           country_code?: string;
           created_at?: string;
           label?: string | null;
+          size_kb?: number;
           topojson?: Json;
           updated_at?: string;
         };

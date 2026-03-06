@@ -19,13 +19,13 @@ serve((req: Request) => {
 
   switch (entryPoint) {
     case 'admin-boundaries':
-      if (req.method !== 'GET') {
+      if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
       }
       return adminBoundaries(req);
 
     default:
-      return new Response(`Invalid climate endpoint: ${entryPoint}`, {
+      return new Response(`Invalid endpoint: ${entryPoint}`, {
         status: 501,
         headers: corsHeaders, // Keep CORS headers even on error
       });
