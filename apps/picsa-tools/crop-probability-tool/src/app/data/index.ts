@@ -11,4 +11,5 @@ export const PROBABILITY_TABLE_DATA: Record<ICountryCode, IProbabilityTable[]> =
   global: [...MW_DATA, ...ZM_DATA],
   tj: [],
   zm: ZM_DATA,
+  zw: [],
 };

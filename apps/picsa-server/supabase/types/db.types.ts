@@ -1,6 +1,119 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  geo: {
+    Tables: {
+      boundaries: {
+        Row: {
+          admin_center: string | null;
+          admin_level: number;
+          country_code: string;
+          created_at: string;
+          id: string;
+          name: string;
+          topojson: Json;
+          updated_at: string;
+        };
+        Insert: {
+          admin_center?: string | null;
+          admin_level: number;
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          name: string;
+          topojson: Json;
+          updated_at?: string;
+        };
+        Update: {
+          admin_center?: string | null;
+          admin_level?: number;
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          topojson?: Json;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'boundaries_country_code_fkey';
+            columns: ['country_code'];
+            isOneToOne: false;
+            referencedRelation: 'countries';
+            referencedColumns: ['code'];
+          },
+        ];
+      };
+      countries: {
+        Row: {
+          code: string;
+          created_at: string;
+          local_name: string | null;
+          name: string;
+        };
+        Insert: {
+          code: string;
+          created_at?: string;
+          local_name?: string | null;
+          name: string;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          local_name?: string | null;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      locales: {
+        Row: {
+          code: string;
+          country_code: string | null;
+          created_at: string;
+          language_code: string;
+          local_name: string | null;
+          name: string;
+        };
+        Insert: {
+          code?: string;
+          country_code?: string | null;
+          created_at?: string;
+          language_code: string;
+          local_name?: string | null;
+          name: string;
+        };
+        Update: {
+          code?: string;
+          country_code?: string | null;
+          created_at?: string;
+          language_code?: string;
+          local_name?: string | null;
+          name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'locales_country_code_fkey';
+            columns: ['country_code'];
+            isOneToOne: false;
+            referencedRelation: 'countries';
+            referencedColumns: ['code'];
+          },
+        ];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -70,7 +183,7 @@ export type Database = {
           annual_rainfall_metadata: Json | null;
           annual_temperature_data: Json[] | null;
           annual_temperature_metadata: Json | null;
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string;
           created_at: string;
           crop_probability_data: Json[] | null;
           crop_probability_metadata: Json | null;
@@ -88,7 +201,7 @@ export type Database = {
           annual_rainfall_metadata?: Json | null;
           annual_temperature_data?: Json[] | null;
           annual_temperature_metadata?: Json | null;
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string;
           created_at?: string;
           crop_probability_data?: Json[] | null;
           crop_probability_metadata?: Json | null;
@@ -106,7 +219,7 @@ export type Database = {
           annual_rainfall_metadata?: Json | null;
           annual_temperature_data?: Json[] | null;
           annual_temperature_metadata?: Json | null;
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string;
           created_at?: string;
           crop_probability_data?: Json[] | null;
           crop_probability_metadata?: Json | null;
@@ -241,6 +354,24 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      debug_logs: {
+        Row: {
+          created_at: string | null;
+          id: number;
+          payload: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: number;
+          payload?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: number;
+          payload?: string | null;
+        };
+        Relationships: [];
       };
       deployment_access_requests: {
         Row: {
@@ -503,7 +634,7 @@ export type Database = {
       resource_collections: {
         Row: {
           collection_parent: string | null;
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -519,7 +650,7 @@ export type Database = {
         };
         Insert: {
           collection_parent?: string | null;
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -535,7 +666,7 @@ export type Database = {
         };
         Update: {
           collection_parent?: string | null;
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -561,7 +692,7 @@ export type Database = {
       };
       resource_files: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -580,7 +711,7 @@ export type Database = {
           updated_at: string | null;
         };
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -599,7 +730,7 @@ export type Database = {
           updated_at?: string | null;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -636,7 +767,7 @@ export type Database = {
       };
       resource_files_child: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -656,7 +787,7 @@ export type Database = {
           updated_at: string | null;
         };
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -676,7 +807,7 @@ export type Database = {
           updated_at?: string | null;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -721,7 +852,7 @@ export type Database = {
       };
       resource_links: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -735,7 +866,7 @@ export type Database = {
           url: string;
         };
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -749,7 +880,7 @@ export type Database = {
           url: string;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -971,22 +1102,7 @@ export type Database = {
         | 'deployments.admin'
         | 'translations.admin'
         | 'translations.editor';
-      country_code: 'global' | 'mw' | 'zm' | 'tj';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
-      locale_code:
-        | 'global_en'
-        | 'mw_ny'
-        | 'mw_tum'
-        | 'zm_ny'
-        | 'tj_tg'
-        | 'zm_bem'
-        | 'zm_toi'
-        | 'zm_loz'
-        | 'zm_lun'
-        | 'zm_kqn'
-        | 'zm_lue'
-        | 'zm_en'
-        | 'mw_en';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -1741,6 +1857,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  geo: {
+    Enums: {},
+  },
   graphql_public: {
     Enums: {},
   },
@@ -1757,23 +1876,7 @@ export const Constants = {
         'translations.admin',
         'translations.editor',
       ],
-      country_code: ['global', 'mw', 'zm', 'tj'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
-      locale_code: [
-        'global_en',
-        'mw_ny',
-        'mw_tum',
-        'zm_ny',
-        'tj_tg',
-        'zm_bem',
-        'zm_toi',
-        'zm_loz',
-        'zm_lun',
-        'zm_kqn',
-        'zm_lue',
-        'zm_en',
-        'mw_en',
-      ],
       resource_link_type: ['app', 'social', 'web'],
     },
   },

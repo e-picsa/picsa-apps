@@ -52,7 +52,7 @@ USING (
 -- Triggers for updated_at
 CREATE TRIGGER handle_updated_at 
 BEFORE UPDATE ON public.deployment_access_requests 
-FOR EACH ROW EXECUTE FUNCTION moddatetime('updated_at');
+FOR EACH ROW EXECUTE procedure extensions.moddatetime('updated_at');
 
 -- Trigger for notification
 -- Function to handle the notification invocation securely across environments

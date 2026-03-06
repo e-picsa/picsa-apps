@@ -1,13 +1,13 @@
 import { arrayToHashmap } from '@picsa/utils';
-import { ICountryCode } from './countries';
-import { Database } from '@picsa/server-types';
+import type { ICountryCode } from './countries';
+import type { LocaleCodeLegacy } from '@picsa/server-types';
 
 /*******************************************************************
  * Language Settings
  ********************************************************************/
 
 // NOTE - country_codes restricted by database enum
-export type ILocaleCode = Database['public']['Enums']['locale_code'];
+export type ILocaleCode = LocaleCodeLegacy;
 
 // NOTE - 'language' commonly used where 'locale' would be more accurate
 export interface ILocaleDataEntry {
@@ -35,6 +35,10 @@ const LOCALES_BASE: {
   zm_lun: { language_code: 'lun', language_label: 'Lunda', country_code: 'zm' },
   zm_kqn: { language_code: 'kqn', language_label: 'Kaonde', country_code: 'zm' },
   zm_lue: { language_code: 'lue', language_label: 'Luvale', country_code: 'zm' },
+  // Zimbabwe
+  zw_en: { language_code: 'en', language_label: 'English', country_code: 'zw' },
+  zw_sn: { language_code: 'sn', language_label: 'Shona', country_code: 'zw' },
+  zw_nd: { language_code: 'nd', language_label: 'Ndebele', country_code: 'zw' },
   // Tajikistan
   tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj' },
 } as const;
