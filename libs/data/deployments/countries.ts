@@ -1,8 +1,4 @@
-/*******************************************************************
- * Country Settings
- ********************************************************************/
-
-import { CountryCodeLegacy } from '@picsa/server-types';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { arrayToHashmap } from '@picsa/utils';
 
 // TODO - migrate data to use modern locales

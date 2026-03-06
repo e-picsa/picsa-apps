@@ -29,9 +29,6 @@ export async function backupStorage() {
     fs.mkdirSync(localDir, { recursive: true });
   }
 
-  // setup client
-  const supabase = await getSupabaseClient();
-
   // Get all remote files
   const buckets = await listBuckets();
 

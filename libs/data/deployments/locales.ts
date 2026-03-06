@@ -1,6 +1,6 @@
 import { arrayToHashmap } from '@picsa/utils';
-import { ICountryCode } from './countries';
-import { LocaleCodeLegacy } from '@picsa/server-types';
+import type { ICountryCode } from './countries';
+import type { LocaleCodeLegacy } from '@picsa/server-types';
 
 /*******************************************************************
  * Language Settings
