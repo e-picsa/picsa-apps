@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "osmtogeojson": "npm:osmtogeojson",
+    "mapshaper": "npm:mapshaper"
+  }
+}

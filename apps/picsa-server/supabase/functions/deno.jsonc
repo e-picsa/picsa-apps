@@ -1,7 +1,8 @@
 {
+  "workspace": ["./geo"],
   "test": {
     "include": ["**/*.test.ts", "tests/test-utils.ts"],
-    "exclude": []
+    "exclude": [],
   },
-  "importMap": "./import_map.json"
+  "importMap": "./import_map.json",
 }
