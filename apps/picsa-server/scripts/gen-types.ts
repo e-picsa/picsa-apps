@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs';
-import { getSupabaseClient } from './utils/supbase.utils';
+import { getSupabaseClient } from './utils/supabase.utils';
 
 /**
  * Custom type gen for geo data
