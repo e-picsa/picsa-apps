@@ -3,7 +3,7 @@ import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
 import { zipFolderContents } from '../utils/file.utils';
-import { getSupabaseClient } from '../utils/supbase.utils';
+import { getSupabaseClient } from '../utils/supabase.utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
