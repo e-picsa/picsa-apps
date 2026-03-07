@@ -5,32 +5,29 @@ export type Database = {
     Tables: {
       boundaries: {
         Row: {
-          admin_center: string | null;
           admin_level: number;
           country_code: string;
           created_at: string;
-          id: string;
-          name: string;
+          label: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at: string;
         };
         Insert: {
-          admin_center?: string | null;
           admin_level: number;
           country_code: string;
           created_at?: string;
-          id?: string;
-          name: string;
+          label?: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at?: string;
         };
         Update: {
-          admin_center?: string | null;
           admin_level?: number;
           country_code?: string;
           created_at?: string;
-          id?: string;
-          name?: string;
+          label?: string | null;
+          size_kb?: number;
           topojson?: Json;
           updated_at?: string;
         };
