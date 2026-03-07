@@ -60,7 +60,9 @@ CREATE TABLE geo.boundaries (
   -- e.g. 2 - national, 3-11 subnational
   admin_level   SMALLINT    NOT NULL
     CONSTRAINT boundaries_admin_level_positive CHECK (admin_level > 1),
-  label         TEXT,        -- e.g. 'Province', 'District'  
+  label         TEXT,        -- e.g. 'Province', 'District'  ,
+  feature_count INTEGER NOT NULL,
+  bbox          DOUBLE PRECISION[] NOT NULL,
   topojson      JSONB       NOT NULL,
   size_kb       INTEGER NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),

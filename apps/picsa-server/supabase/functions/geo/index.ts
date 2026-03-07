@@ -1,8 +1,7 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { adminBoundaries } from './admin-boundaries.ts';
 
-serve((req: Request) => {
+Deno.serve((req: Request) => {
   // handle cors pre-flight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
