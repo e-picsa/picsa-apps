@@ -1,7 +1,10 @@
+import { AppRole } from '../../types/index.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { hasAuthRole } from '../_shared/auth.ts';
 import { adminBoundaries } from './admin-boundaries.ts';
+import { ErrorResponse } from '../_shared/response.ts';
 
-Deno.serve((req: Request) => {
+Deno.serve(async (req: Request) => {
   // handle cors pre-flight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -12,7 +15,7 @@ Deno.serve((req: Request) => {
   }
 
   const { pathname } = new URL(req.url);
-  // e.g. /climate/country-boundaries/zw
+  // e.g. /geo/admin-boundaries
   const pathParts = pathname.split('/');
   const entryPoint = pathParts[2];
 
@@ -20,6 +23,11 @@ Deno.serve((req: Request) => {
     case 'admin-boundaries':
       if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+      }
+      const roleRequired: AppRole = 'app.admin';
+      const hasPermission = await hasAuthRole(req, roleRequired);
+      if (!hasPermission) {
+        return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
       return adminBoundaries(req);
 
