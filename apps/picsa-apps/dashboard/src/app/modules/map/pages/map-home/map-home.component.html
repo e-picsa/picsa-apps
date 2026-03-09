@@ -1,0 +1,14 @@
+<div class="flex h-full w-full flex-col p-4 space-y-4">
+  <div class="flex items-center space-x-4">
+    <button mat-flat-button color="primary" (click)="generateBoundaries()" [disabled]="isLoading()">
+      <mat-icon>refresh</mat-icon>
+      Generate Boundaries (Supabase Function)
+    </button>
+    @if (isLoading()) {
+      <mat-spinner diameter="24"></mat-spinner>
+    }
+  </div>
+  <div class="relative flex-grow rounded-lg overflow-hidden border border-gray-300 min-h-[500px]">
+    <div id="map-container" class="absolute inset-0 z-0 h-full w-full min-h-[500px]"></div>
+  </div>
+</div>
