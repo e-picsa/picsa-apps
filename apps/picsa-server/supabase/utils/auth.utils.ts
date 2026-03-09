@@ -14,6 +14,7 @@ const APP_ROLES_MAP: Record<AppRole, boolean> = {
   'resources.editor': true,
   'translations.editor': true,
   'translations.admin': true,
+  'app.admin': true,
 };
 
 export const APP_ROLES = Object.keys(APP_ROLES_MAP) as AppRole[];
