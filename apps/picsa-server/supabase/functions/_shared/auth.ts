@@ -23,8 +23,13 @@ const mockAuthPayload = {
 
 type SupabaseAuthJWT = typeof mockAuthPayload;
 
+/** Get deployment id from custom headers passed by client */
+export function getRequestDeploymentId(req: Request) {
+  return req.headers.get('x-picsa-deployment-id');
+}
+
 /** Return all auth roles stored for the current user making request */
-async function getAuthRoles(req: Request) {
+function getAuthRoles(req: Request) {
   const authHeader = req.headers.get('Authorization')!;
   const token = authHeader.replace('Bearer ', '');
 
@@ -36,8 +41,8 @@ async function getAuthRoles(req: Request) {
 }
 
 /** Check whether the request user has specific user role on deployment */
-export async function hasAuthRole(req: Request, deployment_id: string, role: AppRole) {
-  const { userRoles, coreRole } = await getAuthRoles(req);
+export function hasAuthRole(req: Request, deployment_id: string, role: AppRole) {
+  const { userRoles, coreRole } = getAuthRoles(req);
   // allow api using service token role
   if (coreRole === 'service_role') return true;
 
