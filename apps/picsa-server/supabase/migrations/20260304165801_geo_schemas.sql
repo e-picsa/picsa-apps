@@ -101,3 +101,11 @@ GRANT EXECUTE ON ALL ROUTINES IN SCHEMA geo TO authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT SELECT ON TABLES TO authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT USAGE ON SEQUENCES TO authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA geo GRANT EXECUTE ON ROUTINES TO authenticated;  
+
+
+-- ============================================================
+-- Roles
+-- Include "app.admin" role that will be used to manage global
+-- app data such as map boundaries
+-- ============================================================
+alter type public.app_role ADD VALUE 'app.admin';
