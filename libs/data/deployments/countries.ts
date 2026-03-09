@@ -1,20 +1,16 @@
-/*******************************************************************
- * Country Settings
- ********************************************************************/
-
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { arrayToHashmap } from '@picsa/utils';
 
-// NOTE - country_codes restricted by database enum
+// TODO - migrate data to use modern locales
 export type ICountryCode = CountryCodeLegacy;
 
 const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
   mw: { label: 'Malawi' },
   zm: { label: 'Zambia' },
   tj: { label: 'Tajikistan' },
+  zw: { label: 'Zimbabwe' },
   // order entry will also be used for language select screen, so keep global at bottom
   global: { label: 'Global' },
-  zw: { label: 'Zimbabwe' },
 };
 
 export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE)

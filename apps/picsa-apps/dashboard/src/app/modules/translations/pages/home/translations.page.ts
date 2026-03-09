@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject,signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -125,7 +125,12 @@ export class TranslationsPageComponent {
     if (country_code === 'global') {
       return LOCALES_DATA;
     }
-    return LOCALES_DATA.filter((o) => o.country_code === country_code);
+    const filtered = LOCALES_DATA.filter((o) => o.country_code === country_code);
+    if (filtered.length === 0) {
+      console.warn(`[Translations] no language codes for ${country_code}`);
+      return [LOCALES_DATA_HASHMAP.global_en];
+    }
+    return filtered;
   }
 
   private generateTableOptions(locale: string): IDataTableOptions {
