@@ -69,10 +69,11 @@ export class DeploymentDashboardService {
         this.loadAccessRequests();
       }
     });
-    // Ensure auth service also kept up-to-date with deployment id changes
+    // Ensure child services kept up-to-date with deployment id changes
     effect(() => {
       const id = this.activeDeploymentId();
       this.authService.setActiveDeploymentId(id);
+      this.supabaseService.functions.setHeaders({ deployment_id: id });
     });
   }
 
