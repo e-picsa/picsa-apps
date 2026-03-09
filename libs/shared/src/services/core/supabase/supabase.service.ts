@@ -2,7 +2,7 @@ import { effect, inject, Injectable, Injector, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
-import { createClient, FunctionsHttpError, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as z from 'zod';
 
 const Config = z.object({
@@ -14,6 +14,7 @@ type Tables = Database['public']['Tables'];
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
+import { SupabaseFunctionsService } from './services/supabase-functions.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
 import { TableWithLive, tableWithLive } from './utils/query.utils';
 import { checkBackendAvailability } from './utils/supabase.stubs';
@@ -27,6 +28,7 @@ export class SupabaseService extends PicsaAsyncService {
   private injector = inject(Injector);
   storage = inject(SupabaseStorageService);
   auth = inject(SupabaseAuthService);
+  functions = inject(SupabaseFunctionsService);
 
   /** Access to postgres db as a shortcut to table from method */
   public db: { table<T extends keyof Tables>(relation: T): TableWithLive<T> };
@@ -63,6 +65,7 @@ export class SupabaseService extends PicsaAsyncService {
     // register supabase instance with child services
     this.storage.registerSupabaseClient(this.supabase);
     this.auth.registerSupabaseClient(this.supabase);
+    this.functions.registerSupabaseClient(this.supabase);
     // trigger child service initialisers optimistically
     this.storage.ready();
   }
@@ -96,23 +99,10 @@ export class SupabaseService extends PicsaAsyncService {
    * Includes custom error handling of non-2xx response codes
    */
   public async invokeFunction<ResponseType>(endpoint: string, options: FunctionInvokeOptions = {}) {
-    if (!this.isAvailable) {
+    if (!this.isAvailable()) {
       console.warn('[Supabase] Function cannot be invoked when server not running');
       return null;
     }
-    const { data, error } = await this.supabase.functions.invoke<ResponseType>(endpoint, {
-      method: 'POST',
-      body: {},
-      ...options,
-    });
-
-    // Errors thrown from functions in JS client need to wait for message
-    // https://github.com/supabase/functions-js/issues/45
-    if (error && error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json();
-      throw new Error(errorMessage);
-    }
-
-    return data as ResponseType;
+    return this.functions.invoke<ResponseType>(endpoint, options);
   }
 }
