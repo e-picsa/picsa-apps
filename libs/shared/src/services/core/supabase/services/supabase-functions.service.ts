@@ -21,27 +21,28 @@ export class SupabaseFunctionsService {
     this.functions = client.functions;
   }
 
-  /**
-   * Set common headers to use whenever invoking functions
-   */
+  /** Set common headers applied to all function invocations */
   public setHeaders(headers: FunctionHeaders) {
     this.headers = Object.fromEntries(
-      Object.entries(headers).map(([key, value]) => [`${HEADER_PREFIX}-${key.replace('_', '-')}`, value]),
+      Object.entries(headers)
+        .filter(([, value]) => value !== undefined)
+        .map(([key, value]) => [`${HEADER_PREFIX}-${key.replace(/_/g, '-')}`, value]),
     );
   }
 
   public async invoke<ResponseType>(endpoint: string, options: FunctionInvokeOptions = {}) {
     const { data, error } = await this.functions.invoke<ResponseType>(endpoint, {
-      headers: this.headers,
       method: 'POST',
       body: {},
       ...options,
+      headers: { ...this.headers, ...options.headers },
     });
 
     // Errors thrown from functions in JS client need to wait for message
     // https://github.com/supabase/functions-js/issues/45
     if (error && error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json();
+      const errorPayload = await error.context.json();
+      const errorMessage = errorPayload?.message || errorPayload?.error || JSON.stringify(errorPayload);
       throw new Error(errorMessage);
     }
 
