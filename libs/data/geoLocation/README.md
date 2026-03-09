@@ -1,10 +1,12 @@
 # GeoLocation Data
 
-See [Online Docs](https://docs.picsa.app/deployment/map-tiles)
+See [Online Docs](https://docs.picsa.app/deployment/02-map-geo-data)
 
 ## TODO
 
-- [ ] Scripts to convert geojson to topojson (removing metadata and features not required, reducing accuracy)
+- [x] Scripts to convert geojson to topojson (removing metadata and features not required, reducing accuracy)
+- [ ] Consider improved methods to generate and export full lists by admin level
+- [ ]
 - [ ] Re-export geojson to try get admin centre labels (zm did but manually deleted, mw doesn't...?)
 - [ ] Cache geojson conversions
 - [ ] Export all data from OSM instead of natural earth
