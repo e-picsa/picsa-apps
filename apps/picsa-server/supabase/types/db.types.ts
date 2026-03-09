@@ -5,32 +5,35 @@ export type Database = {
     Tables: {
       boundaries: {
         Row: {
-          admin_center: string | null;
           admin_level: number;
+          bbox: number[];
           country_code: string;
           created_at: string;
-          id: string;
-          name: string;
+          feature_count: number;
+          label: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at: string;
         };
         Insert: {
-          admin_center?: string | null;
           admin_level: number;
+          bbox: number[];
           country_code: string;
           created_at?: string;
-          id?: string;
-          name: string;
+          feature_count: number;
+          label?: string | null;
+          size_kb: number;
           topojson: Json;
           updated_at?: string;
         };
         Update: {
-          admin_center?: string | null;
           admin_level?: number;
+          bbox?: number[];
           country_code?: string;
           created_at?: string;
-          id?: string;
-          name?: string;
+          feature_count?: number;
+          label?: string | null;
+          size_kb?: number;
           topojson?: Json;
           updated_at?: string;
         };
@@ -1101,7 +1104,8 @@ export type Database = {
         | 'resources.editor'
         | 'deployments.admin'
         | 'translations.admin'
-        | 'translations.editor';
+        | 'translations.editor'
+        | 'app.admin';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       resource_link_type: 'app' | 'social' | 'web';
     };
@@ -1875,6 +1879,7 @@ export const Constants = {
         'deployments.admin',
         'translations.admin',
         'translations.editor',
+        'app.admin',
       ],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
       resource_link_type: ['app', 'social', 'web'],

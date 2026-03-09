@@ -149,7 +149,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
       deployment_id: this.deploymentId,
       user_id: user.id,
     };
-    await this.supabase.invokeFunction<any>(`dashboard/admin/${this.deploymentId}/add-user`, {
+    await this.supabase.invokeFunction<any>(`dashboard/admin/add-user`, {
       body: entry,
     });
     this.refreshData();
@@ -162,7 +162,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
         deployment_id: this.deploymentId,
         user_id: request.user_id,
       };
-      await this.supabase.invokeFunction<any>(`dashboard/admin/${this.deploymentId}/add-user`, {
+      await this.supabase.invokeFunction<any>(`dashboard/admin/add-user`, {
         body: entry,
       });
       this.refreshData();
@@ -225,7 +225,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
     const confirmed = await firstValueFrom(dialogRef.afterClosed());
     if (!confirmed) return;
 
-    await this.supabase.invokeFunction<any>(`dashboard/admin/${this.deploymentId}/remove-user`, {
+    await this.supabase.invokeFunction<any>(`dashboard/admin/remove-user`, {
       body: { user_id: user.id },
     });
     this.refreshData();
@@ -299,7 +299,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
       newRoles.push(nextRole);
     }
 
-    await this.supabase.invokeFunction(`dashboard/admin/${this.deploymentId}/update-user-roles`, {
+    await this.supabase.invokeFunction(`dashboard/admin/update-user-roles`, {
       body: { user_id: user.id, roles: newRoles },
     });
     this.refreshData();
@@ -323,7 +323,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
       newRoles.push('admin');
     }
 
-    await this.supabase.invokeFunction(`dashboard/admin/${this.deploymentId}/update-user-roles`, {
+    await this.supabase.invokeFunction(`dashboard/admin/update-user-roles`, {
       body: { user_id: user.id, roles: newRoles },
     });
     this.refreshData();
@@ -335,15 +335,16 @@ export class DeploymentUserPermissionsComponent implements OnInit {
   }
 
   private async listAuthUsers() {
-    const users = await this.supabase.invokeFunction<FunctionResponses['Dashboard']['admin']['list-users']>(
-      `dashboard/admin/${this.deploymentId}/list-users`,
-    );
+    const users =
+      await this.supabase.invokeFunction<FunctionResponses['Dashboard']['admin']['list-users']>(
+        `dashboard/admin/list-users`,
+      );
     this.authUsers.set(users || []);
   }
 
   private async listUserRoles() {
     const userRoles = await this.supabase.invokeFunction<FunctionResponses['Dashboard']['admin']['list-user-roles']>(
-      `dashboard/admin/${this.deploymentId}/list-user-roles`,
+      `dashboard/admin/list-user-roles`,
     );
     const map = new Map<string, AppRole[]>();
     for (const entry of userRoles || []) {

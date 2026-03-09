@@ -1,59 +1,59 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import osmtogeojson from 'osmtogeojson';
-import mapshaper from 'mapshaper';
-import { JSONResponse } from '../_shared/response.ts';
+import { z } from 'zod';
+import { ErrorResponse, JSONResponse } from '../_shared/response.ts';
+import { getServiceRoleClient } from '../_shared/client.ts';
+import { validateBody } from '../_shared/validation.ts';
+import { fetchWithRetry } from '../_shared/fetch.ts';
 
-export const adminBoundaries = async (req: Request): Promise<Response> => {
+/**
+ * Code to generate topojson is deployed to Google Cloud Run (better memory management),
+ * deployed from https://github.com/e-picsa/geo-boundaries-topojson
+ */
+const GEO_BOUNDARY_API_URL = Deno.env.get('GEO_BOUNDARY_API_URL') || 'https://geo-boundaries.picsa.app';
+
+const boundaryRequestSchema = z.object({
+  country_code: z
+    .string()
+    .length(2)
+    .regex(/^[a-zA-Z]{2}$/, 'Must be a valid 2-letter country code')
+    .transform((v) => v.toUpperCase()),
+  admin_level: z.coerce.number().int().min(2).max(5),
+});
+
+export type AdminBoundariesSchema = z.infer<typeof boundaryRequestSchema>;
+
+export const adminBoundaries = async (req: Request) => {
   try {
-    const { pathname } = new URL(req.url);
-    const pathParts = pathname.split('/');
-    const countryCode = pathParts[pathParts.length - 1];
+    const { admin_level, country_code } = await validateBody(req, boundaryRequestSchema);
 
-    if (!countryCode || countryCode === 'country-boundaries') {
-      return new Response(
-        JSON.stringify({ error: 'countryCode is required as a positional parameter (e.g. /country-boundaries/zw)' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      );
-    }
+    console.log(`Fetching data for ${country_code}...`);
 
-    // Overpass query for admin level 4 boundaries matching ISO3166-2 prefix
-    const overpassQuery = `
-      [out:json][timeout:60];
-      nwr["admin_level"="4"]["boundary"="administrative"]["ISO3166-2"~"^${countryCode.toUpperCase()}-"];
-      out geom;
-    `.trim();
-
-    console.log(`Fetching Overpass data for ${countryCode}...`);
-
-    // Fetch data from Overpass API
-    const overpassResponse = await fetch('https://overpass-api.de/api/interpreter', {
+    // Fetch data from API
+    const apiResponse = await fetchWithRetry(GEO_BOUNDARY_API_URL, {
       method: 'POST',
-      body: overpassQuery,
+      body: JSON.stringify({ admin_level, country_code }),
     });
 
-    if (!overpassResponse.ok) {
-      const errorText = await overpassResponse.text();
-      console.error(`Overpass API error (${overpassResponse.status}):`, errorText);
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text();
+      console.error(`API error (${apiResponse.status}):`, errorText);
 
       let status = 502; // Bad Gateway default
-      let message = 'Failed to fetch from Overpass API';
+      let message = 'Failed to fetch from API';
 
-      if (overpassResponse.status === 429) {
+      if (apiResponse.status === 429) {
         status = 429;
-        message = 'Overpass API rate limit exceeded. Please try again later.';
-      } else if (overpassResponse.status === 504) {
+        message = 'API rate limit exceeded. Please try again later.';
+      } else if (apiResponse.status === 504) {
         status = 504;
-        message = 'Overpass API gateway timeout. The query took too long to execute.';
+        message = 'API gateway timeout. The query took too long to execute.';
       }
 
       return new Response(
         JSON.stringify({
           error: message,
-          details: errorText || overpassResponse.statusText,
-          upstream_status: overpassResponse.status,
+          details: errorText || apiResponse.statusText,
+          upstream_status: apiResponse.status,
         }),
         {
           status,
@@ -62,61 +62,45 @@ export const adminBoundaries = async (req: Request): Promise<Response> => {
       );
     }
 
-    const osmData = await overpassResponse.json();
-    console.log(`Received ${osmData.elements?.length || 0} elements from Overpass for ${countryCode}`);
+    const data = await apiResponse.json();
+    const { size_kb, feature_count, bbox, topojson } = data;
 
-    // Convert OSM JSON to GeoJSON
-    console.log('Converting to GeoJSON...');
-    const geojson = osmtogeojson(osmData);
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase.schema('geo').from('boundaries').upsert(
+      {
+        country_code,
+        admin_level,
+        size_kb,
+        feature_count,
+        bbox,
+        topojson,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'country_code,admin_level' },
+    );
 
-    console.log('Optimizing with Mapshaper...');
-    let topojsonData: any = null;
-
-    // Use mapshaper node interface with the generated geojson
-    // Input geojson as an object literal in the dictionary
-    const mapshaperInput = { 'input.geojson': geojson };
-
-    // Commands explained:
-    // -each: rebuilds properties keeping name and @id (matching OSM relation ID), avoiding missing field errors
-    // -simplify: reduce complexity by 15% keeping general shapes
-    // -o: export to TopoJSON format, quantizing coordinates to 1e4 for smaller file size without visually distorting standard zoom levels
-    const mapshaperCommands = `-i input.geojson -each 'this.properties = { "@id": this.properties["@id"] || this.id || "", name: this.properties.name || "" }' -simplify dp 15% keep-shapes -o output.topojson format=topojson quantization=1e4 id-field=@id`;
-
-    await new Promise((resolve, reject) => {
-      mapshaper.applyCommands(mapshaperCommands, mapshaperInput, (err: Error, output: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          try {
-            const outputString = output['output.topojson'].toString();
-            topojsonData = JSON.parse(outputString);
-            resolve(true);
-          } catch (parseError) {
-            reject(parseError);
-          }
-        }
-      });
-    });
-
-    console.log('Mapshaper processing complete.');
-
-    // Extract metadata from the TopoJSON objects
-    let meta: any[] = [];
-    if (topojsonData?.objects) {
-      const firstObjectKey = Object.keys(topojsonData.objects)[0];
-      const geometries = topojsonData.objects[firstObjectKey]?.geometries || [];
-      meta = geometries.map((g: any) => ({
-        id: g.id || g.properties?.['@id'] || '',
-        name: g.properties?.name || '',
-      }));
+    if (error) {
+      return ErrorResponse(`DB upsert fail: ${error.message}`);
     }
 
-    return JSONResponse({ meta, topjson: topojsonData });
+    return JSONResponse(
+      {
+        message: 'Boundary data stored successfully',
+        country_code,
+        admin_level,
+        feature_count,
+        bbox,
+        size_kb,
+      },
+      201,
+    );
   } catch (error) {
-    console.error('Unexpected error in country-boundaries function:', error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: (error as Error).message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    if (error instanceof Response) {
+      return error;
+    }
+    console.error(typeof error, error);
+    const e = error as any;
+    const msg = typeof e === 'string' ? e : e?.details || e?.error || e.message || e.msg || e;
+    return ErrorResponse(msg);
   }
 };
