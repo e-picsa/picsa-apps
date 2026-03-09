@@ -73,6 +73,10 @@ CREATE TABLE geo.boundaries (
 
 ALTER TABLE geo.boundaries ENABLE ROW LEVEL SECURITY; 
 
+CREATE POLICY "Allow authenticated read access"
+ON geo.boundaries FOR SELECT TO authenticated
+USING (true);
+
 
 -- ============================================================
 -- Permissions

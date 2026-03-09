@@ -1,36 +1,37 @@
+import { assertEquals, assertExists } from 'jsr:@std/assert';
 import { adminBoundaries } from './admin-boundaries.ts';
 
-const req = new Request('http://localhost/climate/admin-boundaries', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ country_code: 'ZW', admin_level: 2 }),
+Deno.test('adminBoundaries error on missing/invalid body', async () => {
+  const req = new Request('http://localhost/geo/admin-boundaries', {
+    method: 'POST',
+    body: JSON.stringify({}), // Missing required fields
+  });
+
+  const res = await adminBoundaries(req);
+  assertEquals(res.status, 400);
 });
 
-console.log('Sending request...');
-const res = await adminBoundaries(req);
-console.log('Status:', res.status);
-const text = await res.text();
-if (res.status === 200) {
-  console.log('Success! Output length:', text.length);
-  // parse and print top level keys
-  const data = JSON.parse(text);
-  console.log('Keys:', Object.keys(data));
-  if (data.objects) {
-    console.log('Objects:', Object.keys(data.objects));
-    for (const key of Object.keys(data.objects)) {
-      console.log(`\nObject: ${key}`);
-      const obj = data.objects[key];
-      console.log('Type:', obj.type);
-      if (obj.geometries && obj.geometries.length > 0) {
-        console.log(`Found ${obj.geometries.length} geometries`);
-        console.log('First geometry type:', obj.geometries[0].type);
-        console.log('First geometry properties:', obj.geometries[0].properties);
-        console.log('Second geometry properties:', obj.geometries[1]?.properties);
-      }
-    }
-  }
-} else {
-  console.error('Error:', text);
-}
+Deno.test('adminBoundaries success with ZW', async () => {
+  const req = new Request('http://localhost/geo/admin-boundaries', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      country_code: 'ZW',
+      admin_level: 2,
+    }),
+  });
+
+  const res = await adminBoundaries(req);
+
+  // Based on your implementation, it returns 201 Created on success
+  assertEquals(res.status, 201);
+
+  const data = await res.json();
+
+  // Verify the response contains the metadata your handler returns
+  assertEquals(data.country_code, 'ZW');
+  assertEquals(data.admin_level, 2);
+  assertExists(data.feature_count);
+  assertExists(data.bbox);
+  assertExists(data.size_kb);
+});
