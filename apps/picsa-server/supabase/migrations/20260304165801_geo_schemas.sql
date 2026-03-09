@@ -71,9 +71,6 @@ CREATE TABLE geo.boundaries (
   PRIMARY KEY (country_code, admin_level)
 );
 
-CREATE INDEX idx_boundaries_country_level
-  ON geo.boundaries (country_code, admin_level);
-
 ALTER TABLE geo.boundaries ENABLE ROW LEVEL SECURITY; 
 
 

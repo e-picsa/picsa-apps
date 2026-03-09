@@ -9,7 +9,7 @@ import { getServiceRoleClient } from './client.ts';
 export async function writeDebugLog(payload: Record<string, unknown>) {
   const supabase = getServiceRoleClient();
 
-  await supabase.from('debug_logs' as any).insert({
+  return await supabase.from('debug_logs' as any).insert({
     payload: JSON.stringify(payload),
     created_at: new Date().toISOString(),
   });

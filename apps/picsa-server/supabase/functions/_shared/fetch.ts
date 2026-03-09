@@ -11,7 +11,7 @@ export async function fetchWithRetry(
   url: string,
   options: RequestInit,
   retries = 5,
-  initialDelay = 2000,
+  initialDelay = 500,
 ): Promise<Response> {
   let lastResponse: Response = new Response(JSON.stringify({ error: 'Max retries reached' }), {
     status: 504,
@@ -57,7 +57,7 @@ export async function fetchWithRetry(
           statusText: 'Internal Server Error',
         });
       }
-      await new Promise((resolve) => setTimeout(resolve, initialDelay * Math.pow(2, i)));
+      await new Promise((resolve) => setTimeout(resolve, initialDelay * Math.pow(2, i) + Math.random() * 1000));
     }
   }
 

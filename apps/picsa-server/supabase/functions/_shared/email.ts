@@ -29,7 +29,7 @@ async function sendLocalEmail(options: EmailOptions) {
       html: options.html,
     });
     console.log('Successfully routed to local Inbucket:', info.messageId);
-    return { source: 'resend', data: info };
+    return { source: 'local', data: info };
   } catch (err) {
     console.error('Mailer error. Is Inbucket running?', err);
     throw err;

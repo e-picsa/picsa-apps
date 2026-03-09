@@ -9,7 +9,7 @@ import { fetchWithRetry } from '../_shared/fetch.ts';
  * Code to generate topojson is deployed to Google Cloud Run (better memory management),
  * deployed from https://github.com/e-picsa/geo-boundaries-topojson
  */
-const GEO_BOUNDARY_API_URL = 'https://geo-boundaries-topojson-git-78373580660.europe-west1.run.app';
+const GEO_BOUNDARY_API_URL = Deno.env.get('GEO_BOUNDARY_API_URL') || 'https://geo-boundaries.picsa.app';
 
 const boundaryRequestSchema = z.object({
   country_code: z
