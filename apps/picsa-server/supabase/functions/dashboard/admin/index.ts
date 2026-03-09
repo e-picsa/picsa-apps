@@ -1,5 +1,5 @@
 import { ErrorResponse } from '../../_shared/response.ts';
-import { hasAuthRole } from '../../_shared/auth.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { listUsers } from './list-users.ts';
 import { listUserRoles } from './list-user-roles.ts';
 import { addUser } from './add-user.ts';
@@ -13,12 +13,17 @@ import { AppRole } from '../../../types/index.ts';
  */
 export const admin = async (req: Request) => {
   const { pathname } = new URL(req.url);
-  const [deploymentId, adminEndpoint] = pathname.replace('/dashboard/admin/', '').split('/');
+  const [adminEndpoint] = pathname.replace('/dashboard/admin/', '').split('/');
+
+  const deploymentId = getRequestDeploymentId(req);
+  if (!deploymentId) {
+    return ErrorResponse(`[Headers] x-picsa-deployment-id required`);
+  }
 
   switch (adminEndpoint) {
     case 'list-users': {
       const roleRequired: AppRole = 'deployments.admin';
-      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      const hasPermission = hasAuthRole(req, deploymentId, roleRequired);
       if (!hasPermission) {
         return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
@@ -26,7 +31,7 @@ export const admin = async (req: Request) => {
     }
     case 'add-user': {
       const roleRequired: AppRole = 'deployments.admin';
-      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      const hasPermission = hasAuthRole(req, deploymentId, roleRequired);
       if (!hasPermission) {
         return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
@@ -36,7 +41,7 @@ export const admin = async (req: Request) => {
     }
     case 'remove-user': {
       const roleRequired: AppRole = 'deployments.admin';
-      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      const hasPermission = hasAuthRole(req, deploymentId, roleRequired);
       if (!hasPermission) {
         return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
@@ -51,7 +56,7 @@ export const admin = async (req: Request) => {
 
     case 'update-user-roles': {
       const roleRequired: AppRole = 'deployments.admin';
-      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      const hasPermission = hasAuthRole(req, deploymentId, roleRequired);
       if (!hasPermission) {
         return ErrorResponse(`[${roleRequired}] permission required to update user roles`, 401);
       }
