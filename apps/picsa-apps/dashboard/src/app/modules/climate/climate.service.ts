@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -162,7 +163,7 @@ export class ClimateService extends PicsaAsyncService {
     }
   }
 
-  private async listStations(country_code: string) {
+  private async listStations(country_code: CountryCodeLegacy) {
     // TODO - when running should refresh from server as cron task
     const { data, error } = await this.supabaseService.db
       .table('climate_stations')

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaFormsModule } from '@picsa/forms';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
 import { isObjectLiteral } from '@picsa/utils/object.utils';
@@ -147,7 +148,7 @@ export class DashboardCropAdminComponent {
   }
 
   /** Convert flat import data type to nested db entries */
-  private importToEntry(data: ICropDataImport[], country_code: string) {
+  private importToEntry(data: ICropDataImport[], country_code: CountryCodeLegacy) {
     const merged: Record<string, ICropDataDownscaledWaterRequirements> = {};
     for (const entry of data) {
       const { crop, location_id, variety, water_requirement } = entry;
