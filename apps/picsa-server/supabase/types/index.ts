@@ -12,3 +12,5 @@ export type { FunctionResponses };
 
 import type * as ClimateApi from './climate-api.types.ts';
 export type { ClimateApi };
+
+export {COUNTRY_CODE_LEGACY_MAPPING} from './legacy-mapping'

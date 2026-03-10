@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { COUNTRY_CODE_LEGACY_MAPPING } from '@picsa/server-types';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
@@ -18,15 +19,19 @@ export class DashboardMapService {
   public isLoading = signal(false);
   public boundaries = signal<any[]>([]);
 
+  private get table() {
+    return this.supabaseService['supabase'].schema('geo').from('boundaries');
+  }
+
   public async fetchBoundaries() {
     const code = this.deploymentService.activeDeploymentCountry();
     if (!code) return;
 
     this.isLoading.set(true);
     try {
-      // Access the underlying supabase client to query a non-public schema
-      const client = (this.supabaseService as any).supabase;
-      const { data, error } = await client.schema('geo').from('boundaries').select('*').eq('country_code', code);
+      // HACK - geo endpoint uses upper-case codes whereas deployment may be lower
+      const country_code = COUNTRY_CODE_LEGACY_MAPPING[code];
+      const { data, error } = await this.table.select('*').eq('country_code', country_code);
 
       if (!error && data) {
         this.boundaries.set(data);
