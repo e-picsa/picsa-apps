@@ -1,44 +1,71 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, inject, OnDestroy, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { topoJsonToGeoJson } from '@picsa/data/geoLocation/utils';
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import * as L from 'leaflet';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { DashboardMapService } from '../../map.service';
 
 @Component({
   selector: 'dashboard-map-home',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './map-home.component.html',
   styleUrls: ['./map-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapHomeComponent implements AfterViewInit, OnDestroy {
-  private supabaseService = inject(SupabaseService);
+  public mapService = inject(DashboardMapService);
   private deploymentService = inject(DeploymentDashboardService);
 
   private map: L.Map | undefined;
   private geoJsonLayer: L.GeoJSON | undefined;
 
-  public isLoading = signal(false);
-  public boundaries = signal<any[]>([]);
+  public activeAdminLevel = signal<number>(3);
+  public isEditingLabel = signal<number | null>(null);
+  public editLabelText = signal<string>('');
+
+  public availableLevels = [3, 4, 5];
+
+  public displayedBoundary = computed(() => {
+    const level = this.activeAdminLevel();
+    return this.mapService.boundaries().find((b) => b.admin_level === level);
+  });
 
   constructor() {
     effect(() => {
+      // Re-render map when boundaries or active level change
+      this.displayedBoundary();
+      if (this.map) {
+        this.renderBoundaries();
+      }
+    });
+
+    effect(() => {
+      // Refresh boundaries when deployment changes
       const countryCode = this.deploymentService.activeDeploymentCountry();
       if (countryCode && this.map) {
-        this.fetchBoundaries();
+        this.mapService.fetchBoundaries();
       }
     });
   }
 
   ngAfterViewInit() {
     this.initMap();
-    this.fetchBoundaries();
+    this.mapService.fetchBoundaries();
   }
 
   ngOnDestroy() {
@@ -54,29 +81,6 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
     }).addTo(this.map);
   }
 
-  public async fetchBoundaries() {
-    const code = this.deploymentService.activeDeploymentCountry();
-    if (!code) return;
-
-    this.isLoading.set(true);
-    try {
-      // Access the underlying supabase client to query a non-public schema
-      const client = (this.supabaseService as any).supabase;
-      const { data, error } = await client.schema('geo').from('boundaries').select('*').eq('country_code', code);
-
-      if (!error && data) {
-        this.boundaries.set(data);
-        this.renderBoundaries();
-      } else if (error) {
-        console.error('Error fetching boundaries:', error);
-      }
-    } catch (e) {
-      console.error('Failed to fetch boundaries', e);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
   private renderBoundaries() {
     if (!this.map) return;
 
@@ -84,8 +88,8 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
       this.map.removeLayer(this.geoJsonLayer);
     }
 
-    const data = this.boundaries();
-    if (data.length === 0) return;
+    const row = this.displayedBoundary();
+    if (!row || !row.topojson) return;
 
     this.geoJsonLayer = L.geoJSON(undefined, {
       style: {
@@ -95,16 +99,14 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
       },
     });
 
-    data.forEach((row) => {
-      if (row.topojson) {
-        try {
-          const geojson = topoJsonToGeoJson(row.topojson as any);
-          this.geoJsonLayer!.addData(geojson as any);
-        } catch (e) {
-          console.error('Failed to convert TopoJSON to GeoJSON', e);
-        }
+    try {
+      const geojson = topoJsonToGeoJson(row.topojson as never);
+      if (this.geoJsonLayer) {
+        this.geoJsonLayer.addData(geojson as never);
       }
-    });
+    } catch (e) {
+      console.error('Failed to convert TopoJSON to GeoJSON', e);
+    }
 
     this.geoJsonLayer.addTo(this.map);
 
@@ -114,15 +116,34 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  public async generateBoundaries() {
-    this.isLoading.set(true);
-    try {
-      await this.supabaseService.invokeFunction('geo/admin-boundaries');
-      await this.fetchBoundaries();
-    } catch (e) {
-      console.error('Failed to invoke geo/admin-boundaries', e);
-    } finally {
-      this.isLoading.set(false);
-    }
+  public getBoundaryForLevel(level: number) {
+    return this.mapService.boundaries().find((b) => b.admin_level === level);
+  }
+
+  public getLabelForLevel(level: number): string {
+    const b = this.getBoundaryForLevel(level);
+    return b?.label || `Admin Level ${level}`;
+  }
+
+  public selectLevel(level: number) {
+    this.activeAdminLevel.set(level);
+  }
+
+  public startEditLabel(level: number, currentLabel: string) {
+    this.isEditingLabel.set(level);
+    this.editLabelText.set(currentLabel);
+  }
+
+  public async saveLabel(level: number) {
+    await this.mapService.updateAdminLevelLabel(level, this.editLabelText());
+    this.isEditingLabel.set(null);
+  }
+
+  public cancelEdit() {
+    this.isEditingLabel.set(null);
+  }
+
+  public generateBoundaries(level: number) {
+    this.mapService.generateBoundaries(level);
   }
 }

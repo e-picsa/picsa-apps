@@ -1,13 +1,97 @@
 <div class="flex h-full w-full flex-col p-4 space-y-4">
-  <div class="flex items-center space-x-4">
-    <button mat-flat-button color="primary" (click)="generateBoundaries()" [disabled]="isLoading()">
-      <mat-icon>refresh</mat-icon>
-      Generate Boundaries (Supabase Function)
-    </button>
-    @if (isLoading()) {
-      <mat-spinner diameter="24"></mat-spinner>
+  <div class="flex flex-wrap gap-4 items-start">
+    @for (level of availableLevels; track level) {
+      <div
+        class="border rounded-lg p-4 flex flex-col space-y-3 min-w-[250px] transition-colors"
+        [class.bg-blue-50]="activeAdminLevel() === level"
+        [class.border-blue-500]="activeAdminLevel() === level"
+      >
+        <div class="flex items-center justify-between min-h-[40px]">
+          <div class="flex items-center space-x-2">
+            @if (isEditingLabel() === level) {
+              <input
+                type="text"
+                class="border rounded px-2 py-1 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-primary"
+                [ngModel]="editLabelText()"
+                (ngModelChange)="editLabelText.set($event)"
+                (keydown.enter)="saveLabel(level)"
+                (keydown.escape)="cancelEdit()"
+              />
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="saveLabel(level)"
+                class="!w-8 !h-8 !leading-none flex items-center justify-center"
+              >
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">check</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="cancelEdit()"
+                class="!w-8 !h-8 !leading-none flex items-center justify-center"
+              >
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">close</mat-icon>
+              </button>
+            } @else {
+              <h3 class="font-semibold text-lg m-0">{{ getLabelForLevel(level) }}</h3>
+              <button
+                mat-icon-button
+                (click)="startEditLabel(level, getLabelForLevel(level))"
+                class="!w-8 !h-8 !leading-none flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity"
+              >
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">edit</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="text-sm text-gray-500 flex justify-between items-center">
+          <span>Admin Level {{ level }}</span>
+          @if (getBoundaryForLevel(level)) {
+            <span class="text-green-600 flex items-center gap-1 font-medium">
+              <mat-icon class="!text-[16px] !w-4 !h-4 flex items-center justify-center">check_circle</mat-icon>
+              Available
+            </span>
+          } @else {
+            <span class="text-orange-500 flex items-center gap-1 font-medium">
+              <mat-icon class="!text-[16px] !w-4 !h-4 flex items-center justify-center">warning</mat-icon> Missing
+            </span>
+          }
+        </div>
+
+        <div class="flex gap-2 mt-2">
+          <button
+            mat-flat-button
+            [color]="activeAdminLevel() === level ? 'primary' : null"
+            [disabled]="!getBoundaryForLevel(level)"
+            (click)="selectLevel(level)"
+          >
+            <mat-icon>visibility</mat-icon>
+            View
+          </button>
+
+          <button
+            mat-stroked-button
+            class="flex-1"
+            (click)="generateBoundaries(level)"
+            [disabled]="mapService.isLoading()"
+          >
+            <mat-icon>refresh</mat-icon>
+            Generate
+          </button>
+        </div>
+      </div>
     }
   </div>
+
+  @if (mapService.isLoading()) {
+    <div class="flex items-center space-x-2 text-primary p-2">
+      <mat-spinner diameter="24"></mat-spinner>
+      <span class="font-medium animate-pulse">Syncing boundary data with backend...</span>
+    </div>
+  }
+
   <div class="relative flex-grow rounded-lg overflow-hidden border border-gray-300 min-h-[500px]">
     <div id="map-container" class="absolute inset-0 z-0 h-full w-full min-h-[500px]"></div>
   </div>

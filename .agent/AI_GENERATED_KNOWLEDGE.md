@@ -127,3 +127,9 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 
 1. Always prefer smaller functions where possible. Functions should ideally be under 50 lines of code. Extract blocks like `INSERT`/`UPDATE` branch logic into their own dedicated helper functions.
 2. Abstract common operations into shared utility files within the `_shared` directory (e.g., extracting template string substitution out of email edge functions into `_shared/template.ts`).
+
+### State Management Preferences
+
+**Date**: 2026-03-09
+**Context**: Re-architecting state for complex dashboard services.
+**Learning**: MobX should never be used in this codebase as it is heavily deprecated. Ensure that only Angular Signals (`signal`, `computed`, `effect`) are used for reactive state management.
