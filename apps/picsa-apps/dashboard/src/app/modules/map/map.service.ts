@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { COUNTRY_CODE_LEGACY_MAPPING } from '@picsa/server-types';
+import { COUNTRY_CODE_LEGACY_MAPPING, Database } from '@picsa/server-types';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
@@ -8,6 +8,7 @@ export interface AdminBoundariesPayload {
   country_code: string;
   admin_level: number;
 }
+type BoundaryRow = Database['geo']['Tables']['boundaries']['Row'];
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class DashboardMapService {
   private deploymentService = inject(DeploymentDashboardService);
 
   public isLoading = signal(false);
-  public boundaries = signal<any[]>([]);
+  public boundaries = signal<BoundaryRow[]>([]);
 
   private get table() {
     return this.supabaseService['supabase'].schema('geo').from('boundaries');

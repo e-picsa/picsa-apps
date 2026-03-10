@@ -38,7 +38,7 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
   public isEditingLabel = signal<number | null>(null);
   public editLabelText = signal<string>('');
 
-  public availableLevels = [3, 4, 5];
+  public availableLevels = [2, 3, 4, 5];
 
   public displayedBoundary = computed(() => {
     const level = this.activeAdminLevel();
