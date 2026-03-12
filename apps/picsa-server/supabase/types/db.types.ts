@@ -697,7 +697,7 @@ export type Database = {
       };
       resource_files: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: Database['public']['Enums']['country_code'] | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -772,7 +772,7 @@ export type Database = {
       };
       resource_files_child: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: Database['public']['Enums']['country_code'] | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
