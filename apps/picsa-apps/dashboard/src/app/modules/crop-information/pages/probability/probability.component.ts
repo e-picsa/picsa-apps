@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, effect, inject,signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
   formatHeaderDefault,
   IDataTableOptions,
@@ -63,7 +64,7 @@ export class CropProbabilityComponent {
     this.router.navigate([targetLocation], { relativeTo: this.route });
   }
 
-  private async generateDownscaledTableData(country_code: string) {
+  private async generateDownscaledTableData(country_code: CountryCodeLegacy) {
     const { data, error } = await this.service.cropDataDownscaledTable
       .select<'*', ICropDataDownscaled['Row']>('*')
       .eq('country_code', country_code);

@@ -2,6 +2,7 @@ import { ClimateFeature } from '../modules/climate/climate.routes';
 import { CropFeature } from '../modules/crop-information/crop.routes';
 import { DeploymentFeature } from '../modules/deployment/deployment.routes';
 import { HomeFeature } from '../modules/home/home.routes';
+import { MapFeature } from '../modules/map/map.routes';
 import { MonitoringFeature } from '../modules/monitoring/monitoring.routes';
 import { ResourcesFeature } from '../modules/resources/resources.routes';
 import { StatsFeature } from '../modules/stats/stats.routes';
@@ -17,6 +18,10 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   ...ResourcesFeature.NAV_LINKS,
 ];
 
-export const ADMIN_NAV_LINKS: INavLink[] = [...StatsFeature.NAV_LINKS, ...DeploymentFeature.NAV_LINKS];
+export const ADMIN_NAV_LINKS: INavLink[] = [
+  ...StatsFeature.NAV_LINKS,
+  ...DeploymentFeature.NAV_LINKS,
+  ...MapFeature.NAV_LINKS,
+];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service', 'profile/password-reset'];

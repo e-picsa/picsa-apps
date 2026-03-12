@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, inject,input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { IStationRow } from '../../../../../../climate/types';
@@ -35,7 +36,7 @@ export class CropLinkedStationSelectComponent {
   }
 
   /** Retrieve list of climate stations from db to select from */
-  private async loadStations(countryCode: string, locationId: string) {
+  private async loadStations(countryCode: CountryCodeLegacy, locationId: string) {
     await this.supabaseService.ready();
     const { data, error } = await this.supabaseService.db
       .table('climate_stations')

@@ -2,6 +2,7 @@ import { effect, inject, Injectable, signal, WritableSignal } from '@angular/cor
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
@@ -145,7 +146,7 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   private async loadServerForecasts(
-    country_code: string,
+    country_code: CountryCodeLegacy,
     forecast_type: ForecastType,
     latest?: IForecast,
     limit = 3,

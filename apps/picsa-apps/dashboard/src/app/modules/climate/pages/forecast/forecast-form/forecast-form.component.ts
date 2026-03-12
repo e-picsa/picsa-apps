@@ -4,13 +4,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LOCALES_DATA } from '@picsa/data';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
 import type { DBToFormBuilderType } from '@picsa/forms';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 import { FileDropFile, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { ForecastType, IForecastInsert } from '../../../types';
 
 export type IForecastDialogData = {
-  country_code: string;
+  country_code: CountryCodeLegacy;
   forecast_type: ForecastType;
 };
 // id will be populated on upload, location is deprecated (use downscaled_location)

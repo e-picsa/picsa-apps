@@ -4,6 +4,7 @@ import { ClimateFeature } from './modules/climate/climate.routes';
 import { CropFeature } from './modules/crop-information/crop.routes';
 import { DeploymentFeature } from './modules/deployment/deployment.routes';
 import { HomeFeature } from './modules/home/home.routes';
+import { MapFeature } from './modules/map/map.routes';
 import { MonitoringFeature } from './modules/monitoring/monitoring.routes';
 import { ResourcesFeature } from './modules/resources/resources.routes';
 import { StatsFeature } from './modules/stats/stats.routes';
@@ -56,6 +57,10 @@ export const appRoutes: Route[] = [
   {
     path: StatsFeature.ROOT_PATH,
     loadChildren: () => import('./modules/stats/stats.module').then((m) => m.StatsModule),
+  },
+  {
+    path: MapFeature.ROOT_PATH,
+    loadChildren: () => import('./modules/map/map.routes').then((m) => m.MapFeature.ROUTES),
   },
   {
     path: '**',
