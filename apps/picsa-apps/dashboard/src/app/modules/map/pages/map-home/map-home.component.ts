@@ -37,6 +37,7 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
   public activeAdminLevel = signal<number>(3);
   public isEditingLabel = signal<number | null>(null);
   public editLabelText = signal<string>('');
+  public hasFeatures = signal<boolean>(true);
 
   public availableLevels = [2, 3, 4, 5];
 
@@ -89,7 +90,10 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     const row = this.displayedBoundary();
-    if (!row || !row.topojson) return;
+    if (!row || !row.topojson) {
+      this.hasFeatures.set(false);
+      return;
+    }
 
     this.geoJsonLayer = L.geoJSON(undefined, {
       style: {
@@ -100,19 +104,38 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
     });
 
     try {
-      const geojson = topoJsonToGeoJson(row.topojson as never);
-      if (this.geoJsonLayer) {
+      const topojsonObj = row.topojson as unknown as Record<string, unknown>;
+      const objects = topojsonObj['objects'] as Record<string, unknown> | undefined;
+
+      if (!topojsonObj || !objects || Object.keys(objects).length === 0) {
+        this.hasFeatures.set(false);
+        return;
+      }
+
+      const geojson = topoJsonToGeoJson(topojsonObj as never);
+      let validFeatures = false;
+      if (geojson) {
+        if (geojson.type === 'FeatureCollection') {
+          validFeatures = Array.isArray(geojson.features) && geojson.features.length > 0;
+        } else if (geojson.type === 'Feature') {
+          validFeatures = true;
+        }
+      }
+
+      this.hasFeatures.set(validFeatures);
+
+      if (this.geoJsonLayer && validFeatures) {
         this.geoJsonLayer.addData(geojson as never);
+        this.geoJsonLayer.addTo(this.map);
+
+        const bounds = this.geoJsonLayer.getBounds();
+        if (bounds.isValid()) {
+          this.map.fitBounds(bounds, { padding: [20, 20] });
+        }
       }
     } catch (e) {
+      this.hasFeatures.set(false);
       console.error('Failed to convert TopoJSON to GeoJSON', e);
-    }
-
-    this.geoJsonLayer.addTo(this.map);
-
-    const bounds = this.geoJsonLayer.getBounds();
-    if (bounds.isValid()) {
-      this.map.fitBounds(bounds, { padding: [20, 20] });
     }
   }
 

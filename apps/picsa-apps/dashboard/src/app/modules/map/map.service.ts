@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { COUNTRY_CODE_LEGACY_MAPPING, Database } from '@picsa/server-types';
+import { COUNTRY_CODE_LEGACY_MAPPING } from '@picsa/data/geoLocation/legacy-mapping';
+import { Database } from '@picsa/server-types';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
