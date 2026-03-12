@@ -89,7 +89,6 @@ async function patchCountryCodeTypes() {
       moduleSpecifier: './db-derived.types.ts',
     });
   }
-  console.log('sourcefile', sourceFile.print());
 
   // Find the `Database` type alias
   const dbType = sourceFile.getTypeAliasOrThrow('Database');

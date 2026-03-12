@@ -73,12 +73,9 @@ export class DashboardMapService {
 
     this.isLoading.set(true);
     try {
-      const client = (this.supabaseService as any).supabase;
-      const { error } = await client
-        .schema('geo')
-        .from('boundaries')
+      const { error } = await this.table
         .update({ label: newLabel })
-        .eq('country_code', code)
+        .eq('country_code', COUNTRY_CODE_LEGACY_MAPPING[code])
         .eq('admin_level', adminLevel);
 
       if (error) {
