@@ -1,0 +1,105 @@
+{
+  // https://opencode.ai/docs/config
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/minimax-m2.5-free", // default model
+  "agent": {
+    "plan": {
+      "model": "opencode/minimax-m2.5-free", // default plan model
+    },
+    "build": {
+      "model": "opencode/minimax-m2.5-free", // default build model
+    },
+  },
+  "default_agent": "plan",
+
+  // recommended models currently just for reference (opencode does not enforce)
+  // https://models.dev/
+  // https://opencode.ai/docs/providers
+  "enabled_providers": ["openrouter"],
+  "instructions": ["AGENTS.md", "./.agent/**/*.md"],
+  "provider": {
+    "openrouter": {
+      "models": {
+        "google/gemini-3.1-flash-lite-preview": {
+          "name": "Gemini Flash Lite 3.1",
+        },
+        "z-ai/glm-4.5": {
+          "name": "GLM 4.5",
+        },
+        "anthropic/claude-sonnet-4.6": {
+          "name": "Claude Sonnet 4.6",
+        },
+        "openrouter/free": {
+          "name": "OpenRouter Free",
+        },
+      },
+    },
+  },
+
+  "permission": {
+    // prevent read of .env and generated files
+    "read": {
+      "**/.env*": "deny",
+      "**/node_modules/**": "deny",
+      "**/dist/**": "deny",
+      "**/.git/**": "deny",
+      "*": "allow",
+    },
+
+    "bash": {
+      // Deny destructive commands
+      "rm *": "deny",
+      "Remove-*": "deny",
+      "del *": "deny",
+      "git reset --hard": "deny",
+      "ri": "deny",
+      "Remove-Item": "deny",
+      "erase": "deny",
+      "rd": "deny",
+      "rmdir": "deny",
+      "git clean": "deny",
+      "git reset": "deny",
+      "Remove-Variable": "deny",
+      "Remove-Module": "deny",
+
+      // Allow safe navigation and read commands
+      "cat *": "allow",
+      "cd *": "allow",
+      "copy": "allow",
+      "cp": "allow",
+      "dir": "allow",
+      "echo *": "allow",
+      "find": "allow",
+      "gci": "allow",
+      "ls": "allow",
+      "mkdir": "allow",
+      "mv": "allow",
+      "move": "allow",
+      "pwd": "allow",
+
+      // Allow safe git
+      "git diff": "allow",
+      "git log": "allow",
+      "git show": "allow",
+      "git branch": "allow",
+      "git remote": "allow",
+      "git tag": "allow",
+      "git status": "allow",
+
+      // Allow safe powershell
+      "Copy-Item": "allow",
+      "Findstr": "allow",
+      "Get-ChildItem": "allow",
+      "Get-Item": "allow",
+      "Get-Location": "allow",
+      "Get-Content": "allow",
+      "Move-Item": "allow",
+      "New-Item": "allow",
+      "Select-String": "allow",
+      "Write-Output": "allow",
+
+      // Ask for everything else
+      "*": "ask",
+    },
+  },
+}
