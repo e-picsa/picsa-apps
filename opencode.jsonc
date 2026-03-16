@@ -48,9 +48,9 @@
 
     "bash": {
       // Deny destructive commands
-      "rm *": "deny",
+      "rm": "deny",
       "Remove-*": "deny",
-      "del *": "deny",
+      "del": "deny",
       "git reset --hard": "deny",
       "ri": "deny",
       "Remove-Item": "deny",
@@ -63,12 +63,12 @@
       "Remove-Module": "deny",
 
       // Allow safe navigation and read commands
-      "cat *": "allow",
-      "cd *": "allow",
+      "cat": "allow",
+      "cd": "allow",
       "copy": "allow",
       "cp": "allow",
       "dir": "allow",
-      "echo *": "allow",
+      "echo": "allow",
       "find": "allow",
       "gci": "allow",
       "ls": "allow",
