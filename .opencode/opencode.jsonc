@@ -1,51 +1,46 @@
 {
   // https://opencode.ai/docs/config
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/minimax-m2.5-free", // default model
-  "agent": {
-    "plan": {
-      "model": "opencode/minimax-m2.5-free", // default plan model
-    },
-    "build": {
-      "model": "opencode/minimax-m2.5-free", // default build model
-    },
-  },
+  "model": "opencode/minimax-m2.5-free",
+  "small_model": "opencode/minimax-m2.5-free",
   "default_agent": "plan",
+  "enabled_providers": ["openrouter", "opencode"],
 
   // recommended models currently just for reference (opencode does not enforce)
   // https://models.dev/
   // https://opencode.ai/docs/providers
-  "enabled_providers": ["openrouter"],
-  "instructions": ["AGENTS.md", "./.agent/**/*.md"],
   "provider": {
     "openrouter": {
       "models": {
         "google/gemini-3.1-flash-lite-preview": {
-          "name": "Gemini Flash Lite 3.1",
+          "name": "Gemini Flash Lite 3.1"
         },
         "z-ai/glm-4.5": {
-          "name": "GLM 4.5",
+          "name": "GLM 4.5"
         },
         "anthropic/claude-sonnet-4.6": {
-          "name": "Claude Sonnet 4.6",
+          "name": "Claude Sonnet 4.6"
         },
         "openrouter/free": {
-          "name": "OpenRouter Free",
-        },
-      },
-    },
+          "name": "OpenRouter Free"
+        }
+      }
+    }
   },
-
+  "instructions": ["AGENTS.md", "./.agent/**/*.md"],
+  // ask to access any external directories
   "permission": {
+    "external_directory": {
+      "*": "ask"
+    },
     // prevent read of .env and generated files
     "read": {
       "**/.env*": "deny",
       "**/node_modules/**": "deny",
       "**/dist/**": "deny",
       "**/.git/**": "deny",
-      "*": "allow",
+      "*": "allow"
     },
-
     "bash": {
       // Deny destructive commands
       "rm": "deny",
@@ -99,7 +94,7 @@
       "Write-Output": "allow",
 
       // Ask for everything else
-      "*": "ask",
-    },
-  },
+      "*": "ask"
+    }
+  }
 }
