@@ -1,56 +1,37 @@
 {
   // https://opencode.ai/docs/config
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/minimax-m2.5-free", // default model
+  "model": "opencode/minimax-m2.5-free",
   "small_model": "opencode/minimax-m2.5-free",
-  "agent": {
-    "plan": {
-      "model": "opencode/minimax-m2.5-free", // default plan model
-    },
-    "build": {
-      "model": "opencode/minimax-m2.5-free", // default build model
-    },
-    "review": {
-      "description": "Reviews code for best practices and potential issues",
-      "mode": "subagent",
-      "model": "opencode/minimax-m2.5-free",
-      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
-      "tools": {
-        "write": false,
-        "edit": false,
-      },
-    },
-  },
   "default_agent": "plan",
+  "enabled_providers": ["openrouter", "opencode"],
 
   // recommended models currently just for reference (opencode does not enforce)
   // https://models.dev/
   // https://opencode.ai/docs/providers
-  "enabled_providers": ["openrouter", "opencode"],
-  "instructions": ["AGENTS.md", "./.agent/**/*.md"],
   "provider": {
     "openrouter": {
       "models": {
         "google/gemini-3.1-flash-lite-preview": {
-          "name": "Gemini Flash Lite 3.1",
+          "name": "Gemini Flash Lite 3.1"
         },
         "z-ai/glm-4.5": {
-          "name": "GLM 4.5",
+          "name": "GLM 4.5"
         },
         "anthropic/claude-sonnet-4.6": {
-          "name": "Claude Sonnet 4.6",
+          "name": "Claude Sonnet 4.6"
         },
         "openrouter/free": {
-          "name": "OpenRouter Free",
-        },
-      },
-    },
+          "name": "OpenRouter Free"
+        }
+      }
+    }
   },
-
+  "instructions": ["AGENTS.md", "./.agent/**/*.md"],
+  // ask to access any external directories
   "permission": {
-    // ask to access any external directories
     "external_directory": {
-      "*": "ask",
+      "*": "ask"
     },
     // prevent read of .env and generated files
     "read": {
@@ -58,9 +39,8 @@
       "**/node_modules/**": "deny",
       "**/dist/**": "deny",
       "**/.git/**": "deny",
-      "*": "allow",
+      "*": "allow"
     },
-
     "bash": {
       // Deny destructive commands
       "rm": "deny",
@@ -114,7 +94,7 @@
       "Write-Output": "allow",
 
       // Ask for everything else
-      "*": "ask",
-    },
-  },
+      "*": "ask"
+    }
+  }
 }
