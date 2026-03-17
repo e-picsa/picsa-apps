@@ -2,6 +2,7 @@
   // https://opencode.ai/docs/config
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/minimax-m2.5-free", // default model
+  "small_model": "opencode/minimax-m2.5-free",
   "agent": {
     "plan": {
       "model": "opencode/minimax-m2.5-free", // default plan model
@@ -9,13 +10,23 @@
     "build": {
       "model": "opencode/minimax-m2.5-free", // default build model
     },
+    "review": {
+      "description": "Reviews code for best practices and potential issues",
+      "mode": "subagent",
+      "model": "opencode/minimax-m2.5-free",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
+      "tools": {
+        "write": false,
+        "edit": false,
+      },
+    },
   },
   "default_agent": "plan",
 
   // recommended models currently just for reference (opencode does not enforce)
   // https://models.dev/
   // https://opencode.ai/docs/providers
-  "enabled_providers": ["openrouter"],
+  "enabled_providers": ["openrouter", "opencode"],
   "instructions": ["AGENTS.md", "./.agent/**/*.md"],
   "provider": {
     "openrouter": {
@@ -37,6 +48,10 @@
   },
 
   "permission": {
+    // ask to access any external directories
+    "external_directory": {
+      "*": "ask",
+    },
     // prevent read of .env and generated files
     "read": {
       "**/.env*": "deny",
