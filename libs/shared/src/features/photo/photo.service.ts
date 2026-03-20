@@ -3,7 +3,6 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { isEqual } from '@picsa/utils/object.utils';
-import JSZip from 'jszip';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
@@ -190,6 +189,7 @@ export class PhotoService extends PicsaAsyncService {
   }
 
   private async downloadPhotoArchive(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
+    const { default: JSZip } = await import('jszip');
     const zip = new JSZip();
     await Promise.all(
       photos.map(async ({ doc, uri }) => {

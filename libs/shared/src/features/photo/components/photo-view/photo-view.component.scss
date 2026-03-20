@@ -78,6 +78,7 @@ img {
   flex: 1;
   // HACK - fix vertical scroll appearing at 100vh
   max-height: calc(100vh - 6px);
+  --photo-dialog-image-offset: 170px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -88,7 +89,7 @@ img {
   img {
     flex: 1;
     width: 100%;
-    max-height: calc(100vh - 170px);
+    max-height: calc(100vh - var(--photo-dialog-image-offset));
     object-fit: contain;
   }
   .dialog-close-button {
