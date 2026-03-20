@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, effect, inject, input, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, effect, inject, input, output, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,6 +22,11 @@ export class PhotoViewComponent {
 
   /** Input photo document ref */
   photo = input.required<IPhotoEntry>();
+  /** If true the tile toggles selection instead of opening the viewer */
+  selectable = input(false);
+  /** Selection state when the tile is in selectable mode */
+  selected = input(false);
+  readonly selectedChange = output<void>();
   /** Path to resource for render */
   uri = signal('');
   /** Error message to display */
@@ -53,6 +58,18 @@ export class PhotoViewComponent {
       maxHeight: '100vh',
       panelClass: 'no-padding',
     });
+  }
+
+  handlePreviewClick() {
+    if (this.selectable()) {
+      this.selectedChange.emit();
+      return;
+    }
+    this.openPhotoDialog();
+  }
+
+  public async promptShare() {
+    await this.service.sharePhoto(this.photo().id);
   }
 
   public async promptDelete() {

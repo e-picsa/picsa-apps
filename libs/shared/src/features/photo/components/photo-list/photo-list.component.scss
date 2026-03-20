@@ -1,6 +1,34 @@
+.photo-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.selection-summary {
+  font-weight: 600;
+  color: var(--color-black);
+}
+
 .photo-grid {
   display: grid;
   grid-auto-rows: 120px;
   grid-template-columns: repeat(auto-fit, 120px);
   gap: 8px;
+}
+
+.photo-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.photo-tile.is-selected {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.no-photos-message {
+  padding: 12px 0;
 }

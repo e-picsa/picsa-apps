@@ -1,5 +1,21 @@
 @if (uri()) {
-  <img [src]="uri()" (click)="openPhotoDialog()" />
+  @if (selectable()) {
+    <button
+      type="button"
+      class="selection-preview"
+      [class.is-selected]="selected()"
+      (click)="handlePreviewClick()"
+      [attr.aria-pressed]="selected()"
+      [attr.aria-label]="selected() ? 'Deselect photo' : 'Select photo'"
+    >
+      <img [src]="uri()" [alt]="photo().name" />
+      <span class="selection-badge">
+        <mat-icon>{{ selected() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+      </span>
+    </button>
+  } @else {
+    <img [src]="uri()" [alt]="photo().name" (click)="handlePreviewClick()" />
+  }
 }
 @if (errorMsg()) {
   <div class="error-msg">{{ errorMsg() }}</div>
@@ -7,13 +23,25 @@
 
 <ng-template #dialogTemplate>
   <div class="photo-dialog">
-    <button mat-icon-button (click)="photoDialog.closeAll()" class="dialog-close-button">
+    <button matIconButton (click)="photoDialog.closeAll()" class="dialog-close-button" aria-label="Close photo viewer">
       <mat-icon>close</mat-icon>
     </button>
     <img [src]="uri()" [alt]="photo().name" style="flex: 1" />
-    <button mat-button (click)="promptDelete()" color="secondary" class="delete-button">
-      {{ 'Delete' | translate }}
-      <mat-icon>delete</mat-icon>
-    </button>
+    <div class="dialog-actions">
+      <button matButton="filled" color="primary" (click)="promptShare()" class="share-button" aria-label="Share photo">
+        <mat-icon>share</mat-icon>
+        {{ 'Share' | translate }}
+      </button>
+      <button
+        matButton="filled"
+        (click)="promptDelete()"
+        color="secondary"
+        class="delete-button"
+        aria-label="Delete photo"
+      >
+        <mat-icon>delete</mat-icon>
+        {{ 'Delete' | translate }}
+      </button>
+    </div>
   </div>
 </ng-template>
