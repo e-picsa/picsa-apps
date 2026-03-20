@@ -17,7 +17,7 @@ export class PhotoListComponent {
 
   album = input<string>();
   selectionMode = signal(false);
-  selectedPhotoIds = signal<string[]>([]);
+  selectedPhotoIds = signal<Set<string>>(new Set());
 
   photos = computed(() => {
     const album = this.album();
@@ -25,10 +25,10 @@ export class PhotoListComponent {
     return album ? photoDocs.filter((d) => d.album === album) : photoDocs;
   });
 
-  selectedCount = computed(() => this.selectedPhotoIds().length);
+  selectedCount = computed(() => this.selectedPhotoIds().size);
 
   isSelected(photoId: string) {
-    return this.selectedPhotoIds().includes(photoId);
+    return this.selectedPhotoIds().has(photoId);
   }
 
   enableSelection() {
@@ -37,23 +37,25 @@ export class PhotoListComponent {
 
   cancelSelection() {
     this.selectionMode.set(false);
-    this.selectedPhotoIds.set([]);
+    this.selectedPhotoIds.set(new Set());
   }
 
   toggleSelected(photoId: string) {
-    const selectedIds = this.selectedPhotoIds();
-    const nextSelectedIds = selectedIds.includes(photoId)
-      ? selectedIds.filter((id) => id !== photoId)
-      : [...selectedIds, photoId];
+    const nextSelectedIds = new Set(this.selectedPhotoIds());
+    if (nextSelectedIds.has(photoId)) {
+      nextSelectedIds.delete(photoId);
+    } else {
+      nextSelectedIds.add(photoId);
+    }
     this.selectedPhotoIds.set(nextSelectedIds);
 
-    if (nextSelectedIds.length === 0) {
+    if (nextSelectedIds.size === 0) {
       this.selectionMode.set(false);
     }
   }
 
   async shareSelected() {
-    const selectedIds = this.selectedPhotoIds();
+    const selectedIds = [...this.selectedPhotoIds()];
     if (!selectedIds.length) return;
     const didShare = await this.service.sharePhotos(selectedIds);
     if (didShare) {

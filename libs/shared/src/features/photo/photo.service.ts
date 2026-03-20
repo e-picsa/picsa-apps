@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { isEqual } from '@picsa/utils/object.utils';
+import JSZip from 'jszip';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
@@ -15,6 +16,7 @@ import * as Schema from './schema';
   providedIn: 'root',
 })
 export class PhotoService extends PicsaAsyncService {
+  private readonly shareUnavailableMessage = 'Photo could not be shared right now.';
   private dbService = inject(PicsaDatabase_V2_Service);
   private attachmentService = inject(PicsaDatabaseAttachmentService);
   private notificationService = inject(PicsaNotificationService);
@@ -51,7 +53,7 @@ export class PhotoService extends PicsaAsyncService {
     try {
       const shareablePhotos = await this.getShareablePhotos(ids);
       if (!shareablePhotos.length) {
-        this.notificationService.showErrorNotification('Photo could not be shared right now.');
+        this.notificationService.showErrorNotification(this.shareUnavailableMessage);
         return false;
       }
 
@@ -65,7 +67,7 @@ export class PhotoService extends PicsaAsyncService {
         );
         const cacheFiles = files.filter((fileUri): fileUri is string => !!fileUri);
         if (!cacheFiles.length) {
-          this.notificationService.showErrorNotification('Photo could not be shared right now.');
+          this.notificationService.showErrorNotification(this.shareUnavailableMessage);
           return false;
         }
 
@@ -100,14 +102,14 @@ export class PhotoService extends PicsaAsyncService {
         return true;
       }
 
-      this.downloadPhotos(shareablePhotos);
+      await this.downloadPhotos(shareablePhotos);
       this.notificationService.showErrorNotification(
         'Sharing photos is not supported in this browser. The image was downloaded instead.',
       );
       return false;
     } catch (error) {
       console.error('[Photo] Share failed', error);
-      this.notificationService.showErrorNotification('Photo could not be shared right now.');
+      this.notificationService.showErrorNotification(this.shareUnavailableMessage);
       return false;
     }
   }
@@ -170,7 +172,12 @@ export class PhotoService extends PicsaAsyncService {
     return photos.filter((photo): photo is { doc: RxDocument<Schema.IPhotoEntry>; uri: string } => !!photo);
   }
 
-  private downloadPhotos(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
+  private async downloadPhotos(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
+    if (photos.length > 1) {
+      await this.downloadPhotoArchive(photos);
+      return;
+    }
+
     for (const { doc, uri } of photos) {
       const link = document.createElement('a');
       link.href = uri;
@@ -180,5 +187,27 @@ export class PhotoService extends PicsaAsyncService {
       link.click();
       link.remove();
     }
+  }
+
+  private async downloadPhotoArchive(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
+    const zip = new JSZip();
+    await Promise.all(
+      photos.map(async ({ doc, uri }) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        zip.file(this.getPhotoFilename(doc), blob);
+      }),
+    );
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const archiveUrl = URL.createObjectURL(zipBlob);
+    const link = document.createElement('a');
+    link.href = archiveUrl;
+    link.download = 'picsa-photos.zip';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(archiveUrl);
   }
 }
