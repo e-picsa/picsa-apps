@@ -1,24 +1,11 @@
 import { Component, effect, input } from '@angular/core';
+import { PluginListenerHandle } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { _wait } from '@picsa/utils';
-import {
-  CapacitorVideoPlayer,
-  CapacitorVideoPlayerPlugin,
-  capVideoListener,
-  capVideoPlayerOptions,
-  VideoEventName,
-} from 'capacitor-video-player';
+import { CapacitorVideoPlayer, capVideoListener, capVideoPlayerOptions } from 'capacitor-video-player';
 
 import { generateID } from '../../../services/core/db/db.service';
 import { VideoPlayerBaseComponent } from './video-player.base';
-
-interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
-  // TODO - confirm whether this actually is passed, or whether need to
-  // manually retrieve after register and remove, e.g.
-  // `const listener = await this.videoPlayer.addListener(...)`
-  // `listener.remove()`
-  removeListener: (event: VideoEventName, callback: (data: capVideoListener) => void) => void;
-}
 
 @Component({
   selector: 'picsa-video-player-native',
@@ -30,17 +17,21 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
   private playerId: string;
 
-  private videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
+  private videoPlayer = CapacitorVideoPlayer;
 
   private currentTime: number;
   private totalTime: number;
+
+  private playerReadyResolve: (() => void) | null = null;
+
+  private listenerHandles: PluginListenerHandle[] = [];
 
   constructor() {
     super();
     effect((onCleanup) => {
       onCleanup(async () => {
         await this.videoPlayer.stopAllPlayers();
-        this.removeListeners();
+        await this.removeListeners();
       });
     });
   }
@@ -48,9 +39,8 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   public async play() {
     // Stop playback from any other players
     try {
-      // Ensure any previously playing videos have a chance to stop
       await this.videoPlayer.stopAllPlayers();
-      this.removeListeners();
+      await this.removeListeners();
       await _wait(200);
     } catch (error) {
       // Silent fail - player might already be destroyed
@@ -58,11 +48,25 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // Create a new player id to fix issue where pausing, exiting, and playing same file breaks player
     this.playerId = `videoPlayer_${generateID(5)}`;
 
+    // Register listeners BEFORE initPlayer so we can't miss the ready event
+    await this.addListeners();
+
+    // Capture the ready promise before init triggers the event
+    const readyPromise = this.waitForPlayerReady();
+
     // play needs to initialise every time on native
     await this.initPlayer();
-    // register listeners each play (unregisters on exit)
-    this.addListeners();
-    await this.setPlayerInitialTime(this.currentTime || this.startTime() || 0);
+
+    // Wait for ready, then seek
+    await readyPromise;
+
+    const seektime = this.currentTime || this.startTime() || 0;
+    if (seektime > 0) {
+      await this.videoPlayer.setCurrentTime({
+        playerId: this.playerId,
+        seektime,
+      });
+    }
 
     await this.videoPlayer.play({ playerId: this.playerId });
   }
@@ -76,34 +80,26 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // Initial playback can trigger pause event before total time has been calculated
     // so only emit after total time checked
     if (!this.totalTime) {
-      const durationRes = await this.videoPlayer.getDuration({ playerId: this.playerId });
+      const durationRes = await this.videoPlayer.getDuration({
+        playerId: this.playerId,
+      });
       this.totalTime = durationRes.value;
     }
     if (this.totalTime) {
-      this.playbackProgress.emit({ currentTime: this.currentTime, totalTime: this.totalTime });
+      this.playbackProgress.emit({
+        currentTime: this.currentTime,
+        totalTime: this.totalTime,
+      });
     }
   }
 
-  /** Set the initial time for video player feedback */
-  private async setPlayerInitialTime(seektime = 0) {
-    // Hack - on android the seek time can only be set after confirmation the player is ready
-    await this.waitForPlayerReady();
-    await this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime });
-  }
-
   /**
-   * Detect when player ready event has been fired
-   * Used on android when triggering a full screen video
+   * Detect when player ready event has been fired.
+   * Resolved by handlePlayerReady() via the shared listener in addListeners().
    */
-  private async waitForPlayerReady() {
+  private waitForPlayerReady(): Promise<void> {
     return new Promise((resolve) => {
-      const playerReadyCalback = (e: capVideoListener) => {
-        if (e.fromPlayerId === this.playerId) {
-          this.videoPlayer.removeListener('jeepCapVideoPlayerReady', playerReadyCalback);
-          resolve(true);
-        }
-      };
-      this.videoPlayer.addListener('jeepCapVideoPlayerReady', playerReadyCalback);
+      this.playerReadyResolve = resolve;
     });
   }
 
@@ -149,7 +145,6 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     if (source.startsWith('assets')) {
       source = `public/${source}`;
     }
-
     return source;
   }
 
@@ -161,8 +156,12 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
   private handlePlayerReady() {
     this.playerLoaded.set(true);
-    // console.log('[Video Player] ready');
+    if (this.playerReadyResolve) {
+      this.playerReadyResolve();
+      this.playerReadyResolve = null;
+    }
   }
+
   private handlePlayerPlay() {
     // console.log('[Video Player] play');
   }
@@ -178,7 +177,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     console.log('[Video Player] ended', currentTime);
     if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
-      this.removeListeners();
+      await this.removeListeners();
     }
   }
 
@@ -188,71 +187,64 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // so include playerId
     if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
-      this.removeListeners();
+      await this.removeListeners();
     }
-    // Ensure don't get stuck in landscape
     await ScreenOrientation.unlock();
   }
 
-  private listeners: { event: VideoEventName; callback: (e: capVideoListener) => void }[] = [];
-
   /**
-   * Add listener for play events
-   * Use named functions to allow removal on destroy
-   *
-   * Events can be emitted from any player, so only all events only trigger callback
-   * when matching player ID
+   * Add listener for play events.
+   * Each addListener call returns a PluginListenerHandle which is stored
+   * so it can be properly removed later via handle.remove().
    */
-  private addListeners() {
-    // Ensure no previous listeners remain (on android listeners need to be registered every time playback starts)
-    this.removeListeners();
+  private async addListeners() {
+    // Ensure no previous listeners remain
+    await this.removeListeners();
 
     // Ready
-    const jeepCapVideoPlayerReady = (e: capVideoListener) => {
+    const readyHandle = await this.videoPlayer.addListener('jeepCapVideoPlayerReady', (e: capVideoListener) => {
       if (e.fromPlayerId === this.playerId) {
         this.handlePlayerReady();
       }
-    };
-    this.videoPlayer.addListener('jeepCapVideoPlayerReady', jeepCapVideoPlayerReady);
-    this.listeners.push({ event: 'jeepCapVideoPlayerReady', callback: jeepCapVideoPlayerReady });
+    });
+    this.listenerHandles.push(readyHandle);
 
     // Play
-    const jeepCapVideoPlayerPlay = (e: capVideoListener) => {
+    const playHandle = await this.videoPlayer.addListener('jeepCapVideoPlayerPlay', (e: capVideoListener) => {
       if (e.fromPlayerId === this.playerId) {
         this.handlePlayerPlay();
       }
-    };
-    this.videoPlayer.addListener('jeepCapVideoPlayerPlay', jeepCapVideoPlayerPlay);
-    this.listeners.push({ event: 'jeepCapVideoPlayerPlay', callback: jeepCapVideoPlayerPlay });
+    });
+    this.listenerHandles.push(playHandle);
 
     // Pause
-    const jeepCapVideoPlayerPause = (e: capVideoListener) => {
+    const pauseHandle = await this.videoPlayer.addListener('jeepCapVideoPlayerPause', (e: capVideoListener) => {
       this.handlePlayerPause(e.currentTime!, e.fromPlayerId!);
-    };
-    this.videoPlayer.addListener('jeepCapVideoPlayerPause', jeepCapVideoPlayerPause);
-    this.listeners.push({ event: 'jeepCapVideoPlayerPause', callback: jeepCapVideoPlayerPause });
+    });
+    this.listenerHandles.push(pauseHandle);
 
     // Ended
-    const jeepCapVideoPlayerEnded = (e: capVideoListener) => {
+    const endedHandle = await this.videoPlayer.addListener('jeepCapVideoPlayerEnded', (e: capVideoListener) => {
       this.handlePlayerEnded(e.currentTime!, e.fromPlayerId!);
-    };
-    this.videoPlayer.addListener('jeepCapVideoPlayerEnded', jeepCapVideoPlayerEnded);
-    this.listeners.push({ event: 'jeepCapVideoPlayerEnded', callback: jeepCapVideoPlayerEnded });
+    });
+    this.listenerHandles.push(endedHandle);
 
-    // Exit - NOTE - different callback
+    // Exit - NOTE - different callback shape
     const playerId = this.playerId;
-    const jeepCapVideoPlayerExit = (e: { dismiss?: boolean; currentTime: number }) => {
-      this.handlePlayerExit(e.currentTime, playerId);
-    };
-    this.videoPlayer.addListener('jeepCapVideoPlayerExit', jeepCapVideoPlayerExit);
-    this.listeners.push({ event: 'jeepCapVideoPlayerExit', callback: jeepCapVideoPlayerExit } as any);
+    const exitHandle = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerExit',
+      (e: { dismiss?: boolean; currentTime: number }) => {
+        this.handlePlayerExit(e.currentTime, playerId);
+      },
+    );
+    this.listenerHandles.push(exitHandle);
   }
 
-  /** Remove all event listeners */
-  private removeListeners() {
-    for (const { event, callback } of this.listeners) {
-      this.videoPlayer.removeListener(event, callback);
-    }
-    this.listeners = [];
+  /** Remove all event listeners via their stored handles */
+  private async removeListeners() {
+    const handles = this.listenerHandles;
+    this.listenerHandles = [];
+    this.playerReadyResolve = null;
+    await Promise.all(handles.map((h) => h.remove()));
   }
 }
