@@ -41,6 +41,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     try {
       await this.videoPlayer.stopAllPlayers();
       await this.removeListeners();
+      // Ensure any previously playing videos have a chance to stop before starting a new one.
       await _wait(200);
     } catch (error) {
       // Silent fail - player might already be destroyed
@@ -245,6 +246,6 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     const handles = this.listenerHandles;
     this.listenerHandles = [];
     this.playerReadyResolve = null;
-    await Promise.all(handles.map((h) => h.remove()));
+    await Promise.allSettled(handles.map((h) => h.remove()));
   }
 }
