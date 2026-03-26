@@ -1,3 +1,25 @@
+# Pre-requisites
+
+# To allow the `google-github-actions/auth` step to exchange a static JSON key for a secure, short-lived OAuth 2.0 access token,
+# the service account must have explicit permissions to mint tokens.
+
+# If you receive a `403 PERMISSION_DENIED` error, complete the following two steps in the Google Cloud Console:
+
+# ## 1. Enable IAM Credentials API
+# 1. Navigate to the Google Cloud Console for your "Google Play Android Developer" project.
+# 2. Search for **IAM Service Account Credentials API** in the top search bar.
+# 3. Click **Enable** (if it is not already active).
+
+# ## 2. Grant Token Creator Role
+# 1. Navigate to **IAM & Admin** > **IAM**.
+# 2. Locate the specific service account used by the GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret.
+# 3. Click the pencil icon (Edit principal) next to the account.
+# 4. Click **Add Another Role**.
+# 5. Search for and select **Service Account Token Creator** (`roles/iam.serviceAccountTokenCreator`).
+# 6. Click **Save**.
+
+# *Note: IAM changes can take 1-2 minutes to propagate globally before the GitHub Action will successfully authenticate.*
+
 name: Sync Universal APK
 
 on:
@@ -34,12 +56,33 @@ jobs:
         run: |
           echo "🔍 Checking Google Play Internal Track..."
 
-          EDIT_ID=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits" | jq -r '.id')
+          # 1. Create an Edit transaction
+          EDIT_RES=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits")
+          EDIT_ID=$(echo "$EDIT_RES" | jq -r '.id // empty')
+
+          if [ -z "$EDIT_ID" ]; then
+            echo "❌ Failed to create an edit transaction. Google API Response:"
+            echo "$EDIT_RES" | jq .
+            exit 1
+          fi
+
+          # 2. Get track info
           TRACK_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits/$EDIT_ID/tracks/internal")
-          PLAY_VERSION=$(echo "$TRACK_JSON" | jq -r '[.releases[].versionCodes[] | select(. != null) | tonumber] | max')
+
+          # 3. Check if Google returned an error instead of track data
+          if echo "$TRACK_JSON" | jq -e '.error' >/dev/null; then
+            echo "❌ Google API Error when fetching the internal track:"
+            echo "$TRACK_JSON" | jq .
+            exit 1
+          fi
+
+          # 4. Extract highest version code safely
+          PLAY_VERSION=$(echo "$TRACK_JSON" | jq -r '[.releases[]?.versionCodes[]? | select(. != null) | tonumber] | max')
 
           if [ -z "$PLAY_VERSION" ] || [ "$PLAY_VERSION" == "null" ]; then
-            echo "❌ No releases found on Play Store."
+            echo "❌ No releases found on the Play Store Internal track."
+            echo "Raw Track Data:"
+            echo "$TRACK_JSON" | jq .
             exit 1
           fi
 
