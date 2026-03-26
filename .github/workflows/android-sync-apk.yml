@@ -47,6 +47,7 @@ jobs:
         with:
           credentials_json: "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}"
           token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       # 2. Get Latest Play Store Version
       - name: Get Play Store Version
