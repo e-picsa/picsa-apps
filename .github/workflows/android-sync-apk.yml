@@ -119,18 +119,33 @@ jobs:
           FILENAME: ${{ steps.supabase_check.outputs.file_name }}
         run: |
           echo "🔗 Fetching Download ID for version $VERSION..."
-          APKS_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedapks?versionCode=$VERSION")
-          DOWNLOAD_ID=$(echo "$APKS_JSON" | jq -r '.generatedApks[] | select(.generatedUniversalApk != null) | .generatedUniversalApk.downloadId')
+
+          # 1. Fetch the manifest of all generated APKs (Corrected URL path)
+          APKS_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION")
+
+          # 2. Check if Google returned an API error
+          if echo "$APKS_JSON" | jq -e '.error' >/dev/null; then
+            echo "❌ Google API Error when fetching generated APK list:"
+            echo "$APKS_JSON" | jq .
+            exit 1
+          fi
+
+          # 3. Extract the download ID safely
+          DOWNLOAD_ID=$(echo "$APKS_JSON" | jq -r '.generatedApks[]? | select(.generatedUniversalApk != null) | .generatedUniversalApk.downloadId')
 
           if [ -z "$DOWNLOAD_ID" ] || [ "$DOWNLOAD_ID" == "null" ]; then
             echo "⏳ Universal APK not compiled by Google yet. Will try later."
+            echo "Raw JSON returned from Google:"
+            echo "$APKS_JSON" | jq .
             exit 0 
           fi
 
           echo "⬇️ Downloading APK (ID: $DOWNLOAD_ID)..."
+
+          # 4. Download the actual binary file (Corrected URL path)
           curl -s -H "Authorization: Bearer $TOKEN" \
                -o "$FILENAME" \
-               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedapks/$DOWNLOAD_ID:download"
+               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION/downloads/$DOWNLOAD_ID:download"
                
           echo "✅ Download complete."
 
