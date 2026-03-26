@@ -139,10 +139,19 @@ jobs:
 
           echo "⬇️ Downloading APK (ID: $DOWNLOAD_ID)..."
 
-          # 4. Download the actual binary file (Corrected URL path)
-          curl -s -L -H "Authorization: Bearer $TOKEN" \
+          # 4. Download the file 
+          HTTP_STATUS=$(curl -s -L -w "%{http_code}" \
+               -H "Authorization: Bearer $TOKEN" \
                -o "$FILENAME" \
-               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION/downloads/$DOWNLOAD_ID:download"
+               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION/downloads/$DOWNLOAD_ID:download?alt=media")
+               
+          # Check if the HTTP status is anything other than 200 (OK)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Download failed with HTTP Status: $HTTP_STATUS"
+            echo "Google Error Response:"
+            cat "$FILENAME"
+            exit 1
+          fi
                
           # Safety Check: Does the file exist and is it greater than 0 bytes?
           if [ ! -s "$FILENAME" ]; then
@@ -151,7 +160,7 @@ jobs:
           fi
 
           echo "✅ Download complete. File size:"
-          ls -lh "$FILENAME" # Prints the file size in the logs for easy verifying
+          ls -lh "$FILENAME"
 
       # 5. Upload to Supabase Storage
       - name: Upload to Supabase
