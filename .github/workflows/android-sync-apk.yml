@@ -20,7 +20,7 @@
 
 # *Note: IAM changes can take 1-2 minutes to propagate globally before the GitHub Action will successfully authenticate.*
 
-name: Sync Universal APK
+name: Android Sync Universal APK
 
 on:
   schedule:
