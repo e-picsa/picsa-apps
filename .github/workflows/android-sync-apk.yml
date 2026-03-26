@@ -1,0 +1,234 @@
+# Pre-requisites
+
+# To allow the `google-github-actions/auth` step to exchange a static JSON key for a secure, short-lived OAuth 2.0 access token,
+# the service account must have explicit permissions to mint tokens.
+
+# If you receive a `403 PERMISSION_DENIED` error, complete the following two steps in the Google Cloud Console:
+
+# ## 1. Enable IAM Credentials API
+# 1. Navigate to the Google Cloud Console for your "Google Play Android Developer" project.
+# 2. Search for **IAM Service Account Credentials API** in the top search bar.
+# 3. Click **Enable** (if it is not already active).
+
+# ## 2. Grant Token Creator Role
+# 1. Navigate to **IAM & Admin** > **IAM**.
+# 2. Locate the specific service account used by the GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret.
+# 3. Click the pencil icon (Edit principal) next to the account.
+# 4. Click **Add Another Role**.
+# 5. Search for and select **Service Account Token Creator** (`roles/iam.serviceAccountTokenCreator`).
+# 6. Click **Save**.
+
+# *Note: IAM changes can take 1-2 minutes to propagate globally before the GitHub Action will successfully authenticate.*
+
+name: Android Sync Universal APK
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  PKG_NAME: "io.picsa.extension"
+  BUCKET_NAME: "apk-releases"
+  SUPABASE_URL: "https://${{ vars.SUPABASE_PROJECT_ID }}.supabase.co"
+  SUPABASE_KEY: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Google Authentication
+      - name: Authenticate to Google Cloud
+        id: google_auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}"
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
+
+      # 2. Get Latest Play Store Version
+      - name: Get Play Store Version
+        id: play_store
+        env:
+          TOKEN: ${{ steps.google_auth.outputs.access_token }}
+        run: |
+          echo "🔍 Checking Google Play Internal Track..."
+
+          # 1. Create an Edit transaction
+          EDIT_RES=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits")
+          EDIT_ID=$(echo "$EDIT_RES" | jq -r '.id // empty')
+
+          if [ -z "$EDIT_ID" ]; then
+            echo "❌ Failed to create an edit transaction. Google API Response:"
+            echo "$EDIT_RES" | jq .
+            exit 1
+          fi
+
+          # 2. Get track info
+          TRACK_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits/$EDIT_ID/tracks/internal")
+
+          # 3. Check if Google returned an error instead of track data
+          if echo "$TRACK_JSON" | jq -e '.error' >/dev/null; then
+            echo "❌ Google API Error when fetching the internal track:"
+            echo "$TRACK_JSON" | jq .
+            exit 1
+          fi
+
+          # 4. Extract highest version code safely
+          PLAY_VERSION=$(echo "$TRACK_JSON" | jq -r '[.releases[]?.versionCodes[]? | select(. != null) | tonumber] | max')
+
+          if [ -z "$PLAY_VERSION" ] || [ "$PLAY_VERSION" == "null" ]; then
+            echo "❌ No releases found on the Play Store Internal track."
+            echo "Raw Track Data:"
+            echo "$TRACK_JSON" | jq .
+            exit 1
+          fi
+
+          echo "📱 Latest Play Store Version: $PLAY_VERSION"
+          echo "version_code=$PLAY_VERSION" >> $GITHUB_OUTPUT
+
+      # 3. Check if Version Exists in Supabase
+      - name: Check Supabase Storage
+        id: supabase_check
+        env:
+          PLAY_VERSION: ${{ steps.play_store.outputs.version_code }}
+        run: |
+          FILENAME="e-picsa-universal-$PLAY_VERSION.apk"
+          echo "☁️ Checking if $FILENAME exists in Supabase..."
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $SUPABASE_KEY" "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME")
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Supabase is up to date. No action needed."
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ New version detected ($FILENAME missing in Supabase)."
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "file_name=$FILENAME" >> $GITHUB_OUTPUT
+          fi
+
+      # 4. Download the APK
+      - name: Download Universal APK
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        env:
+          TOKEN: ${{ steps.google_auth.outputs.access_token }}
+          VERSION: ${{ steps.play_store.outputs.version_code }}
+          FILENAME: ${{ steps.supabase_check.outputs.file_name }}
+        run: |
+          echo "🔗 Fetching Download ID for version $VERSION..."
+
+          # 1. Fetch the manifest of all generated APKs (Corrected URL path)
+          APKS_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION")
+
+          # 2. Check if Google returned an API error
+          if echo "$APKS_JSON" | jq -e '.error' >/dev/null; then
+            echo "❌ Google API Error when fetching generated APK list:"
+            echo "$APKS_JSON" | jq .
+            exit 1
+          fi
+
+          # 3. Extract the download ID safely
+          DOWNLOAD_ID=$(echo "$APKS_JSON" | jq -r '.generatedApks[]? | select(.generatedUniversalApk != null) | .generatedUniversalApk.downloadId')
+
+          if [ -z "$DOWNLOAD_ID" ] || [ "$DOWNLOAD_ID" == "null" ]; then
+            echo "⏳ Universal APK not compiled by Google yet. Will try later."
+            echo "Raw JSON returned from Google:"
+            echo "$APKS_JSON" | jq .
+            exit 0 
+          fi
+
+          echo "⬇️ Downloading APK (ID: $DOWNLOAD_ID)..."
+
+          # 4. Download the file 
+          HTTP_STATUS=$(curl -s -L -w "%{http_code}" \
+               -H "Authorization: Bearer $TOKEN" \
+               -o "$FILENAME" \
+               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION/downloads/$DOWNLOAD_ID:download?alt=media")
+               
+          # Check if the HTTP status is anything other than 200 (OK)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Download failed with HTTP Status: $HTTP_STATUS"
+            echo "Google Error Response:"
+            cat "$FILENAME"
+            exit 1
+          fi
+               
+          # Safety Check: Does the file exist and is it greater than 0 bytes?
+          if [ ! -s "$FILENAME" ]; then
+            echo "❌ Download failed! The file $FILENAME is empty (0 bytes)."
+            exit 1
+          fi
+
+          echo "✅ Download complete. File size:"
+          ls -lh "$FILENAME"
+
+      # 5. Upload to Supabase Storage
+      - name: Upload to Supabase
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        env:
+          FILENAME: ${{ steps.supabase_check.outputs.file_name }}
+        run: |
+          if [ ! -f "$FILENAME" ]; then
+             echo "❌ File $FILENAME not found on runner!"
+             exit 1 
+          fi
+
+          echo "☁️ Pushing $FILENAME to Supabase Bucket: $BUCKET_NAME..."
+
+          # Use -w to extract the HTTP status code, and -o to save the JSON response
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -o supabase_response.json -X POST "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary @"$FILENAME")
+            
+          # Check if the HTTP status is anything other than 200 (OK)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Upload failed with HTTP Status: $HTTP_STATUS"
+            echo "Supabase Error Response:"
+            cat supabase_response.json | jq .
+            exit 1
+          fi
+            
+          echo "🎉 Upload complete!"
+
+      # 6. Cleanup Old APKs (Keep only the latest 5)
+      - name: Cleanup Old APKs
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        run: |
+          MAX_FILES=5
+          echo "🧹 Cleaning up Supabase bucket (keeping latest $MAX_FILES)..."
+
+          # 1. List all files in the bucket
+          FILES_JSON=$(curl -s -X POST \
+            "$SUPABASE_URL/storage/v1/object/list/$BUCKET_NAME" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{ "prefix": "", "limit": 100, "offset": 0, "sortBy": { "column": "name", "order": "desc" } }')
+
+          # 2. Extract filenames, skip the latest MAX_FILES
+          OLD_FILES=$(echo "$FILES_JSON" \
+            | jq -r '.[].name // empty' \
+            | sort -t'-' -k4 -n -r \
+            | tail -n +$((MAX_FILES + 1)))
+
+          if [ -z "$OLD_FILES" ]; then
+            echo "✅ No old files to delete."
+          else
+            # 3. Build a JSON array of filenames for a single bulk-delete call
+            PREFIXES=$(echo "$OLD_FILES" | jq -R -s -c 'split("\n") | map(select(. != ""))')
+            echo "🗑️ Deleting old versions: $PREFIXES"
+
+            DELETE_STATUS=$(curl -s -o delete_response.json -w "%{http_code}" \
+              -X DELETE "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME" \
+              -H "Authorization: Bearer $SUPABASE_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{ \"prefixes\": $PREFIXES }")
+
+            if [ "$DELETE_STATUS" -eq 200 ]; then
+              echo "✅ Successfully deleted old files."
+            else
+              echo "⚠️ Bulk delete failed (Status: $DELETE_STATUS)"
+              cat delete_response.json | jq .
+              exit 1
+            fi
+          fi
