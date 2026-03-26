@@ -140,11 +140,18 @@ jobs:
           echo "⬇️ Downloading APK (ID: $DOWNLOAD_ID)..."
 
           # 4. Download the actual binary file (Corrected URL path)
-          curl -s -H "Authorization: Bearer $TOKEN" \
+          curl -s -L -H "Authorization: Bearer $TOKEN" \
                -o "$FILENAME" \
                "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedApks/$VERSION/downloads/$DOWNLOAD_ID:download"
                
-          echo "✅ Download complete."
+          # Safety Check: Does the file exist and is it greater than 0 bytes?
+          if [ ! -s "$FILENAME" ]; then
+            echo "❌ Download failed! The file $FILENAME is empty (0 bytes)."
+            exit 1
+          fi
+
+          echo "✅ Download complete. File size:"
+          ls -lh "$FILENAME" # Prints the file size in the logs for easy verifying
 
       # 5. Upload to Supabase Storage
       - name: Upload to Supabase
