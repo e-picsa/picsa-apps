@@ -190,3 +190,45 @@ jobs:
           fi
             
           echo "🎉 Upload complete!"
+
+      # 6. Cleanup Old APKs (Keep only the latest 5)
+      - name: Cleanup Old APKs
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        run: |
+          MAX_FILES=5
+          echo "🧹 Cleaning up Supabase bucket (keeping latest $MAX_FILES)..."
+
+          # 1. List all files in the bucket
+          FILES_JSON=$(curl -s -X POST \
+            "$SUPABASE_URL/storage/v1/object/list/$BUCKET_NAME" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{ "prefix": "", "limit": 100, "offset": 0, "sortBy": { "column": "name", "order": "desc" } }')
+
+          # 2. Extract filenames, skip the latest MAX_FILES
+          OLD_FILES=$(echo "$FILES_JSON" \
+            | jq -r '.[].name // empty' \
+            | sort -t'-' -k4 -n -r \
+            | tail -n +$((MAX_FILES + 1)))
+
+          if [ -z "$OLD_FILES" ]; then
+            echo "✅ No old files to delete."
+          else
+            # 3. Build a JSON array of filenames for a single bulk-delete call
+            PREFIXES=$(echo "$OLD_FILES" | jq -R -s -c 'split("\n") | map(select(. != ""))')
+            echo "🗑️ Deleting old versions: $PREFIXES"
+
+            DELETE_STATUS=$(curl -s -o delete_response.json -w "%{http_code}" \
+              -X DELETE "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME" \
+              -H "Authorization: Bearer $SUPABASE_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{ \"prefixes\": $PREFIXES }")
+
+            if [ "$DELETE_STATUS" -eq 200 ]; then
+              echo "✅ Successfully deleted old files."
+            else
+              echo "⚠️ Bulk delete failed (Status: $DELETE_STATUS)"
+              cat delete_response.json | jq .
+              exit 1
+            fi
+          fi
