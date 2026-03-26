@@ -156,14 +156,24 @@ jobs:
           FILENAME: ${{ steps.supabase_check.outputs.file_name }}
         run: |
           if [ ! -f "$FILENAME" ]; then
-             echo "File not found! Google likely hasn't finished generating it."
-             exit 0 
+             echo "❌ File $FILENAME not found on runner!"
+             exit 1 
           fi
 
           echo "☁️ Pushing $FILENAME to Supabase Bucket: $BUCKET_NAME..."
-          curl -s -X POST "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME" \
+
+          # Use -w to extract the HTTP status code, and -o to save the JSON response
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -o supabase_response.json -X POST "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
             -H "Content-Type: application/vnd.android.package-archive" \
-            --data-binary @"$FILENAME"
+            --data-binary @"$FILENAME")
+            
+          # Check if the HTTP status is anything other than 200 (OK)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Upload failed with HTTP Status: $HTTP_STATUS"
+            echo "Supabase Error Response:"
+            cat supabase_response.json | jq .
+            exit 1
+          fi
             
           echo "🎉 Upload complete!"
