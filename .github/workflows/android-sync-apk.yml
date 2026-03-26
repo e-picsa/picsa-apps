@@ -1,0 +1,107 @@
+name: Sync Universal APK
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  PKG_NAME: "io.picsa.extension"
+  BUCKET_NAME: "apk-releases"
+  SUPABASE_URL: "https://${{ vars.SUPABASE_PROJECT_ID }}.supabase.co"
+  SUPABASE_KEY: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Google Authentication
+      - name: Authenticate to Google Cloud
+        id: google_auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}"
+          token_format: "access_token"
+
+      # 2. Get Latest Play Store Version
+      - name: Get Play Store Version
+        id: play_store
+        env:
+          TOKEN: ${{ steps.google_auth.outputs.access_token }}
+        run: |
+          echo "🔍 Checking Google Play Internal Track..."
+
+          EDIT_ID=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits" | jq -r '.id')
+          TRACK_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/edits/$EDIT_ID/tracks/internal")
+          PLAY_VERSION=$(echo "$TRACK_JSON" | jq -r '[.releases[].versionCodes[] | select(. != null) | tonumber] | max')
+
+          if [ -z "$PLAY_VERSION" ] || [ "$PLAY_VERSION" == "null" ]; then
+            echo "❌ No releases found on Play Store."
+            exit 1
+          fi
+
+          echo "📱 Latest Play Store Version: $PLAY_VERSION"
+          echo "version_code=$PLAY_VERSION" >> $GITHUB_OUTPUT
+
+      # 3. Check if Version Exists in Supabase
+      - name: Check Supabase Storage
+        id: supabase_check
+        env:
+          PLAY_VERSION: ${{ steps.play_store.outputs.version_code }}
+        run: |
+          FILENAME="e-picsa-universal-$PLAY_VERSION.apk"
+          echo "☁️ Checking if $FILENAME exists in Supabase..."
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $SUPABASE_KEY" "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME")
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Supabase is up to date. No action needed."
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ New version detected ($FILENAME missing in Supabase)."
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "file_name=$FILENAME" >> $GITHUB_OUTPUT
+          fi
+
+      # 4. Download the APK
+      - name: Download Universal APK
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        env:
+          TOKEN: ${{ steps.google_auth.outputs.access_token }}
+          VERSION: ${{ steps.play_store.outputs.version_code }}
+          FILENAME: ${{ steps.supabase_check.outputs.file_name }}
+        run: |
+          echo "🔗 Fetching Download ID for version $VERSION..."
+          APKS_JSON=$(curl -s -H "Authorization: Bearer $TOKEN" "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedapks?versionCode=$VERSION")
+          DOWNLOAD_ID=$(echo "$APKS_JSON" | jq -r '.generatedApks[] | select(.generatedUniversalApk != null) | .generatedUniversalApk.downloadId')
+
+          if [ -z "$DOWNLOAD_ID" ] || [ "$DOWNLOAD_ID" == "null" ]; then
+            echo "⏳ Universal APK not compiled by Google yet. Will try later."
+            exit 0 
+          fi
+
+          echo "⬇️ Downloading APK (ID: $DOWNLOAD_ID)..."
+          curl -s -H "Authorization: Bearer $TOKEN" \
+               -o "$FILENAME" \
+               "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$PKG_NAME/generatedapks/$DOWNLOAD_ID:download"
+               
+          echo "✅ Download complete."
+
+      # 5. Upload to Supabase Storage
+      - name: Upload to Supabase
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        env:
+          FILENAME: ${{ steps.supabase_check.outputs.file_name }}
+        run: |
+          if [ ! -f "$FILENAME" ]; then
+             echo "File not found! Google likely hasn't finished generating it."
+             exit 0 
+          fi
+
+          echo "☁️ Pushing $FILENAME to Supabase Bucket: $BUCKET_NAME..."
+          curl -s -X POST "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$FILENAME" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary @"$FILENAME"
+            
+          echo "🎉 Upload complete!"
