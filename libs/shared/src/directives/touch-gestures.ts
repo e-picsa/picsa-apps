@@ -57,7 +57,6 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
   private timeoutId?: ReturnType<typeof setTimeout>;
   private isLongPressing = false;
-  private didLongPressFinish = false;
 
   private startX = 0;
   private startY = 0;
@@ -115,13 +114,10 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
   // --- NATIVE INTERCEPTION ---
   private handleNativeClick(event: MouseEvent) {
-    if (this.didLongPressFinish) {
-      // If a long press just concluded, destroy the native click event
-      // so it doesn't trigger form submissions or native (click) bindings.
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
+    // Prevent all native click interaction
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
   }
 
   // --- POINTER LOGIC ---
@@ -132,11 +128,9 @@ export class PicsaTouchGesturesDirective implements OnInit {
     this.startX = event.clientX;
     this.startY = event.clientY;
     this.isLongPressing = false;
-    this.didLongPressFinish = false; // Reset for the new interaction
 
     this.timeoutId = setTimeout(() => {
       this.isLongPressing = true;
-      this.didLongPressFinish = true;
 
       // Trigger native device vibration in supported webviews (mostly Android)
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
