@@ -68,6 +68,7 @@
     "@capacitor/device": "^7.0.1",
     "@capacitor/filesystem": "^7.1.2",
     "@capacitor/geolocation": "^7.1.4",
+    "@capacitor/haptics": "^8.0.1",
     "@capacitor/network": "^7.0.1",
     "@capacitor/push-notifications": "^7.0.1",
     "@capacitor/screen-orientation": "^7.0.1",
