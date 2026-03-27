@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, effect, inject, input, output, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, effect, inject, input, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaTouchGesturesDirective } from '@picsa/shared/directives';
 
 import { PicsaDialogService } from '../../../dialog';
 import { PhotoService } from '../../photo.service';
@@ -11,7 +12,7 @@ import { IPhotoEntry } from '../../schema';
 
 @Component({
   selector: 'picsa-photo-view',
-  imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule],
+  imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule, PicsaTouchGesturesDirective],
   templateUrl: './photo-view.component.html',
   styleUrl: './photo-view.component.scss',
 })
@@ -22,11 +23,6 @@ export class PhotoViewComponent {
 
   /** Input photo document ref */
   photo = input.required<IPhotoEntry>();
-  /** If true the tile toggles selection instead of opening the viewer */
-  selectable = input(false);
-  /** Selection state when the tile is in selectable mode */
-  selected = input(false);
-  readonly selectedChange = output<void>();
   /** Path to resource for render */
   uri = signal('');
   /** Error message to display */
@@ -61,10 +57,6 @@ export class PhotoViewComponent {
   }
 
   handlePreviewClick() {
-    if (this.selectable()) {
-      this.selectedChange.emit();
-      return;
-    }
     this.openPhotoDialog();
   }
 

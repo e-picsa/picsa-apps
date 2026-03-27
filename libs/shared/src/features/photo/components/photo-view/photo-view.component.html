@@ -1,21 +1,5 @@
 @if (uri()) {
-  @if (selectable()) {
-    <button
-      type="button"
-      class="selection-preview"
-      [class.is-selected]="selected()"
-      (click)="handlePreviewClick()"
-      [attr.aria-pressed]="selected()"
-      [attr.aria-label]="selected() ? 'Deselect photo' : 'Select photo'"
-    >
-      <img [src]="uri()" [alt]="photo().name" />
-      <span class="selection-badge">
-        <mat-icon>{{ selected() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
-      </span>
-    </button>
-  } @else {
-    <img [src]="uri()" [alt]="photo().name" (click)="handlePreviewClick()" />
-  }
+  <img [src]="uri()" [alt]="photo().name" />
 }
 @if (errorMsg()) {
   <div class="error-msg">{{ errorMsg() }}</div>

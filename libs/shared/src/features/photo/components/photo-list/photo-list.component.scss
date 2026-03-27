@@ -1,3 +1,6 @@
+:host {
+  display: contents;
+}
 .photo-list-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -23,8 +26,16 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .no-photos-message {
   padding: 12px 0;
+}
+
+button.select-button {
+  @apply h-full w-full p-0 relative;
+}
+mat-icon.select-icon {
+  @apply absolute top-2 left-2;
 }

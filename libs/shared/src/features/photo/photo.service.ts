@@ -1,30 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { inject, Injectable, signal } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { Share } from '@capacitor/share';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '../../services/core/db_v2';
+import { IAttachment } from '../../services/core/db_v2/schemas/attachments';
 import { PicsaNotificationService } from '../../services/core/notification.service';
-import { NativeStorageService } from '../../services/native';
+import { ShareService } from '../../services/core/share.service';
 import * as Schema from './schema';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PhotoService extends PicsaAsyncService {
-  private readonly shareUnavailableMessage = 'Photo could not be shared right now.';
   private dbService = inject(PicsaDatabase_V2_Service);
   private attachmentService = inject(PicsaDatabaseAttachmentService);
   private notificationService = inject(PicsaNotificationService);
-  private nativeStorageService = inject(NativeStorageService);
+  private shareService = inject(ShareService);
 
   public collection: RxCollection<Schema.IPhotoEntry>;
 
+  private photoDocs = signal<RxDocument<Schema.IPhotoEntry>[]>([]);
+
   /** List of all stored photos, exposed as signal */
-  public photos = signal<Schema.IPhotoEntry[]>([], { equal: isEqual });
+  public photos = computed<Schema.IPhotoEntry[]>(() => this.photoDocs().map((v) => v._data), { equal: isEqual });
+
+  public isSharingPhotos = signal(false);
 
   override async init() {
     try {
@@ -49,69 +52,33 @@ export class PhotoService extends PicsaAsyncService {
   }
 
   public async sharePhotos(ids: string[]) {
+    this.isSharingPhotos.set(true);
+    await _wait(50);
+    const photoDocs = this.photoDocs().filter((v) => ids.includes(v.id));
+
     try {
-      const shareablePhotos = await this.getShareablePhotos(ids);
-      if (!shareablePhotos.length) {
-        this.notificationService.showErrorNotification(this.shareUnavailableMessage);
-        return false;
-      }
-
-      const title =
-        shareablePhotos.length === 1 ? this.getPhotoTitle(shareablePhotos[0].doc) : `${shareablePhotos.length} Photos`;
-      const text = 'Shared from Picsa App';
-
-      if (Capacitor.isNativePlatform()) {
-        const files = await Promise.all(
-          shareablePhotos.map(async ({ uri }) => this.nativeStorageService.copyFileToCache(uri)),
-        );
-        const cacheFiles = files.filter((fileUri): fileUri is string => !!fileUri);
-        if (!cacheFiles.length) {
-          this.notificationService.showErrorNotification(this.shareUnavailableMessage);
-          return false;
+      const photoAttachments: RxDocument<IAttachment>[] = [];
+      for (const doc of photoDocs) {
+        // photos are stored as attachment in separate doc
+        const attachmentDoc = await this.attachmentService.getAttachmentDoc(doc, doc.id);
+        if (attachmentDoc) {
+          photoAttachments.push(attachmentDoc);
         }
-
-        await Share.share({
-          files: cacheFiles,
-          title,
-          text,
-          dialogTitle: 'Share Photo',
-        });
-        return true;
       }
-
-      const files = await Promise.all(
-        shareablePhotos.map(async ({ doc, uri }) => {
-          const response = await fetch(uri);
-          const blob = await response.blob();
-          return new File([blob], this.getPhotoFilename(doc), { type: blob.type || 'image/jpeg' });
-        }),
-      );
-
-      if (
-        typeof navigator !== 'undefined' &&
-        typeof navigator.share === 'function' &&
-        typeof navigator.canShare === 'function' &&
-        navigator.canShare({ files })
-      ) {
-        await navigator.share({
-          files,
-          title,
-          text,
-        });
-        return true;
+      console.log({ photoAttachments });
+      if (photoAttachments.length === 0) {
+        this.notificationService.showErrorNotification(`Cannot share photos`);
+        return;
       }
-
-      await this.downloadPhotos(shareablePhotos);
-      this.notificationService.showErrorNotification(
-        'Sharing photos is not supported in this browser. The image was downloaded instead.',
-      );
-      return false;
-    } catch (error) {
-      console.error('[Photo] Share failed', error);
-      this.notificationService.showErrorNotification(this.shareUnavailableMessage);
-      return false;
+      await this.shareService.shareFromAttachments(photoAttachments);
+    } catch (error: any) {
+      console.error(error);
+      this.notificationService.showErrorNotification(error?.message);
+    } finally {
+      this.isSharingPhotos.set(false);
     }
   }
+
   public revokePhotoAttachment(id: string) {
     this.attachmentService.revokeFileAttachmentURIs([id]);
   }
@@ -119,11 +86,10 @@ export class PhotoService extends PicsaAsyncService {
   /** Subscribe to all photos and store list within angular signal */
   private subscribeToPhotos() {
     this.collection.find().$.subscribe((docs) => {
-      const photos = docs.map((d) => d._data);
-      // as photo docs are updated before attachment stored filter to only include those that have
-      // had attachment added
-      const photosWithAttachments = photos.filter((p) => (p._attachments[p.id] ? true : false));
-      this.photos.set(photosWithAttachments);
+      // as photo docs are updated before attachment stored filter to only include those
+      // that have had attachment added
+      const withAttachments = docs.filter((doc) => doc.allAttachments().length > 0);
+      this.photoDocs.set(withAttachments);
     });
   }
 
@@ -147,67 +113,5 @@ export class PhotoService extends PicsaAsyncService {
     if (!photoDoc) return;
     const updatedDoc = await this.attachmentService.removeAttachment(photoDoc, id);
     return updatedDoc;
-  }
-
-  private getPhotoTitle(doc: RxDocument<Schema.IPhotoEntry>) {
-    return doc.name || this.getPhotoFilename(doc);
-  }
-
-  private getPhotoFilename(doc: RxDocument<Schema.IPhotoEntry>) {
-    const fallbackName = doc.id.split('/').pop() || 'photo';
-    return fallbackName.includes('.') ? fallbackName : `${fallbackName}.jpg`;
-  }
-
-  private async getShareablePhotos(ids: string[]) {
-    const photos = await Promise.all(
-      ids.map(async (id) => {
-        const doc = await this.collection.findOne(id).exec();
-        if (!doc) return null;
-        const uri = await this.getPhotoAttachment(id, !Capacitor.isNativePlatform());
-        if (!uri) return null;
-        return { doc, uri };
-      }),
-    );
-    return photos.filter((photo): photo is { doc: RxDocument<Schema.IPhotoEntry>; uri: string } => !!photo);
-  }
-
-  private async downloadPhotos(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
-    if (photos.length > 1) {
-      await this.downloadPhotoArchive(photos);
-      return;
-    }
-
-    for (const { doc, uri } of photos) {
-      const link = document.createElement('a');
-      link.href = uri;
-      link.download = this.getPhotoFilename(doc);
-      link.rel = 'noopener';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
-  }
-
-  private async downloadPhotoArchive(photos: Array<{ doc: RxDocument<Schema.IPhotoEntry>; uri: string }>) {
-    const { default: JSZip } = await import('jszip');
-    const zip = new JSZip();
-    await Promise.all(
-      photos.map(async ({ doc, uri }) => {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        zip.file(this.getPhotoFilename(doc), blob);
-      }),
-    );
-
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const archiveUrl = URL.createObjectURL(zipBlob);
-    const link = document.createElement('a');
-    link.href = archiveUrl;
-    link.download = 'picsa-photos.zip';
-    link.rel = 'noopener';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(archiveUrl);
   }
 }

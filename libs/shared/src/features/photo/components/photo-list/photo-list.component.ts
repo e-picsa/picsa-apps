@@ -1,23 +1,31 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaTouchGesturesDirective } from '@picsa/shared/directives';
 
 import { PhotoService } from '../../photo.service';
+import { IPhotoEntry } from '../../schema';
 import { PhotoViewComponent } from '../photo-view/photo-view.component';
 
 @Component({
   selector: 'picsa-photo-list',
-  imports: [MatButtonModule, MatIconModule, PhotoViewComponent, PicsaTranslateModule],
+  imports: [MatButtonModule, MatIconModule, PhotoViewComponent, PicsaTranslateModule, PicsaTouchGesturesDirective],
   templateUrl: './photo-list.component.html',
   styleUrl: './photo-list.component.scss',
 })
 export class PhotoListComponent {
   private service = inject(PhotoService);
+  public bottomSheet = inject(MatBottomSheet);
 
-  album = input<string>();
+  album = input.required<string>();
+
   selectionMode = signal(false);
-  selectedPhotoIds = signal<Set<string>>(new Set());
+
+  public selectedPhotos = model<IPhotoEntry[]>([]);
+
+  public selectedPhotoIds = computed(() => this.selectedPhotos().map((v) => v.id));
 
   photos = computed(() => {
     const album = this.album();
@@ -25,41 +33,44 @@ export class PhotoListComponent {
     return album ? photoDocs.filter((d) => d.album === album) : photoDocs;
   });
 
-  selectedCount = computed(() => this.selectedPhotoIds().size);
+  selectedCount = computed(() => this.selectedPhotos().length);
 
-  isSelected(photoId: string) {
-    return this.selectedPhotoIds().has(photoId);
+  public handlePhotoTap(photo: IPhotoEntry, ref: PhotoViewComponent) {
+    if (this.selectionMode()) {
+      this.toggleSelected(photo);
+    } else {
+      ref.openPhotoDialog();
+    }
   }
 
-  enableSelection() {
+  public handlePhotoLongPress(photo: IPhotoEntry) {
+    // Enable selection mode with current photo selected
+    if (!this.selectionMode()) {
+      this.selectedPhotos.set([photo]);
+      this.selectionMode.set(true);
+    }
+  }
+
+  public async selectAll() {
+    this.selectedPhotos.set([...this.photos()]);
     this.selectionMode.set(true);
   }
 
   cancelSelection() {
     this.selectionMode.set(false);
-    this.selectedPhotoIds.set(new Set());
+    this.selectedPhotos.set([]);
   }
 
-  toggleSelected(photoId: string) {
-    const nextSelectedIds = new Set(this.selectedPhotoIds());
-    if (nextSelectedIds.has(photoId)) {
-      nextSelectedIds.delete(photoId);
+  toggleSelected(photo: IPhotoEntry) {
+    const current = this.selectedPhotos();
+    if (current.some((v) => v.id === photo.id)) {
+      this.selectedPhotos.set(current.filter((v) => v.id !== photo.id));
     } else {
-      nextSelectedIds.add(photoId);
+      this.selectedPhotos.set([...current, photo]);
     }
-    this.selectedPhotoIds.set(nextSelectedIds);
 
-    if (nextSelectedIds.size === 0) {
+    if (this.selectedPhotos().length === 0) {
       this.selectionMode.set(false);
-    }
-  }
-
-  async shareSelected() {
-    const selectedIds = [...this.selectedPhotoIds()];
-    if (!selectedIds.length) return;
-    const didShare = await this.service.sharePhotos(selectedIds);
-    if (didShare) {
-      this.cancelSelection();
     }
   }
 }
