@@ -46,7 +46,7 @@ export class PicsaTouchGesturesDirective implements OnInit {
   /** Emitted when the user quickly taps, clicks, or presses Enter/Space.
    * Exclusively replaces the native `(click)` event.
    */
-  tap = output<Event>();
+  tap = output<PointerEvent | KeyboardEvent>();
 
   /** Emitted when the user holds the element for the duration of the threshold. */
   longPress = output<PointerEvent>();
