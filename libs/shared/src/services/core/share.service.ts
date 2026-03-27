@@ -48,7 +48,7 @@ export class ShareService {
         let targetFilename = uri.split('/').pop() as string;
         const targetExt = getExtensionForMime(type);
         if (!targetExt) {
-          console.warn('Doc does not include known mimetype, skipping', doc._data);
+          console.warn('Could not determine file extension for mime type, skipping file', { type, uri });
           continue;
         }
         if (!isFilenameValidForMime(targetFilename, type)) {
@@ -103,7 +103,7 @@ export class ShareService {
         if (ext) {
           const blob = await base64ToBlob(base64Data, type);
           const baseName = id.split('/').pop() || 'attachment';
-          const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}.${ext}`;
+          const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}${ext}`;
           const file = new File([blob], safeName, { type });
           files.push(file);
         } else {
