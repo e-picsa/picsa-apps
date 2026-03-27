@@ -51,5 +51,20 @@
       "@picsa/webcomponents/loader": ["dist/libs/webcomponents/loader"]
     }
   },
+  // Default (strict) angular compiler options
+  // Modules should be migrated on a per-module basis to inherit these
+  // and remove custom config where possible
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true,
+    "strictOutputEventTypes": true,
+    "strictDomEventTypes": true,
+    "strictContextGenerics": true,
+    "strictLiteralTypes": true,
+    "strictAttributeTypes": true,
+    "strictStandalone": true
+  },
   "exclude": ["node_modules", "tmp"]
 }

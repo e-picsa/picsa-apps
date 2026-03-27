@@ -13,10 +13,7 @@
     "module": "preserve"
   },
   "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictStandalone": false
   },
   "files": [],
   "include": ["src/**/*.ts"]
