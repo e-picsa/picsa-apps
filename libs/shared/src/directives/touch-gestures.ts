@@ -1,6 +1,17 @@
 import { isPlatformBrowser } from '@angular/common';
 import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATFORM_ID } from '@angular/core';
 
+type EventBinding<K extends keyof HTMLElementEventMap> = [
+  K,
+  (e: HTMLElementEventMap[K]) => void,
+  AddEventListenerOptions?,
+];
+
+/** Utility function to allow event bindings to be defined in type-safe array */
+function eventBinding<K extends keyof HTMLElementEventMap>(...args: EventBinding<K>): EventBinding<K> {
+  return args;
+}
+
 /**
  * A highly optimized, Zoneless-compatible directive for handling mobile-first
  * touch gestures (tap and long-press) while gracefully falling back to desktop
@@ -82,36 +93,29 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
     const element = this.el.nativeElement as HTMLElement;
 
-    const onCancel = () => this.cancelGesture();
     const onContextMenu = (e: Event) => e.preventDefault();
 
-    // Attach native listeners outside of Angular's knowledge
-    element.addEventListener('pointerdown', this.handlePointerDown);
-    element.addEventListener('pointermove', this.handlePointerMove);
-    element.addEventListener('pointerup', this.handlePointerUp);
-    element.addEventListener('pointercancel', onCancel);
-    element.addEventListener('pointerleave', onCancel);
-    element.addEventListener('contextmenu', onContextMenu);
+    const listeners = [
+      eventBinding('pointerdown', this.handlePointerDown),
+      eventBinding('pointermove', this.handlePointerMove),
+      eventBinding('pointerup', this.handlePointerUp),
+      eventBinding('pointercancel', this.cancelGesture),
+      eventBinding('pointerleave', this.cancelGesture),
+      eventBinding('contextmenu', onContextMenu),
+      // Use capture phase to intercept the click before it bubbles to Angular
+      eventBinding('click', this.handleNativeClick, { capture: true }),
+      eventBinding('keydown', this.handleKeyDown),
+    ];
 
-    // Use capture phase to intercept the click before it bubbles to Angular
-    element.addEventListener('click', this.handleNativeClick, {
-      capture: true,
-    });
-    element.addEventListener('keydown', this.handleKeyDown);
+    for (const [event, handler, options] of listeners) {
+      element.addEventListener(event, handler as EventListener, options);
+    }
 
     // Cleanup memory when the directive is destroyed
     this.destroyRef.onDestroy(() => {
-      element.removeEventListener('pointerdown', this.handlePointerDown);
-      element.removeEventListener('pointermove', this.handlePointerMove);
-      element.removeEventListener('pointerup', this.handlePointerUp);
-      element.removeEventListener('pointercancel', onCancel);
-      element.removeEventListener('pointerleave', onCancel);
-      element.removeEventListener('contextmenu', onContextMenu);
-      element.removeEventListener('click', this.handleNativeClick, {
-        capture: true,
-      });
-      element.removeEventListener('keydown', this.handleKeyDown);
-      this.clearTimer();
+      for (const [event, handler, options] of listeners) {
+        element.removeEventListener(event, handler as EventListener, options);
+      }
     });
   }
 
