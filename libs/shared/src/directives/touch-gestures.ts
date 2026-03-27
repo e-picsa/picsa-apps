@@ -34,7 +34,7 @@ function eventBinding<K extends keyof HTMLElementEventMap>(...args: EventBinding
  *
  * @example
  * ```html
- * <button mat-flat-button picsaTouchGestures (tap)="deleteItem()" (longPress)="openAdvancedMenu()">Action</button>
+ * <button matButton picsaTouchGestures (tap)="deleteItem()" (longPress)="openAdvancedMenu()">Action</button>
  *
  * <div picsaTouchGestures [touchThreshold]="750" [touchTolerance]="30" (longPress)="showTooltip()">Hold for info</div>
  * ```
