@@ -1,4 +1,4 @@
-import { Component, inject, viewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -15,16 +15,14 @@ import { PhotoListComponent } from '../photo-list/photo-list.component';
 export class PhotoDebugComponent {
   public service = inject(PhotoService);
 
-  private photoList = viewChild.required(PhotoListComponent);
-
-  public async handlePhotoShareClick() {
-    const photos = this.photoList().selectedPhotos();
+  public async handlePhotoShareClick(photoList: PhotoListComponent) {
+    const photos = photoList.selectedPhotos();
     // If clicked without selection toggle all photo selection
     // and wait for user to confirm by clicking a second time
     if (photos.length === 0) {
-      this.photoList().selectAll();
+      photoList.selectAll();
     } else {
-      this.service.sharePhotos(this.photoList().selectedPhotoIds());
+      this.service.sharePhotos(photoList.selectedPhotoIds());
     }
   }
 }

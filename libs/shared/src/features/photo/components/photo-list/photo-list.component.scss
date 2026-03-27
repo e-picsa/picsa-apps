@@ -30,7 +30,7 @@
 }
 
 .no-photos-message {
-  padding: 12px 0;
+  @apply h-24 w-24 border-dashed border-2 flex flex-col items-center justify-center text-center rounded border-gray-400 text-gray-600;
 }
 
 button.select-button {

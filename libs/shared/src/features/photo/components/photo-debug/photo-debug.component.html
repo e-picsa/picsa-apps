@@ -1,9 +1,13 @@
 <div class="page-content">
   <h2>Photos Debug</h2>
   <picsa-photo-list album="debug" #photoList />
-  <div class="mt-2 flex gap-4 items-center">
+  <div class="mt-4 flex gap-4">
     <picsa-photo-input album="debug" />
-    <button matButton (click)="handlePhotoShareClick()" [disabled]="service.isSharingPhotos()">
+    <button
+      matButton
+      (click)="handlePhotoShareClick(photoList)"
+      [disabled]="service.isSharingPhotos() || !photoList.photos().length"
+    >
       <mat-icon>share</mat-icon>
       @if (photoList.selectedCount()) {
         Share {{ photoList.selectedCount() }} Photos
