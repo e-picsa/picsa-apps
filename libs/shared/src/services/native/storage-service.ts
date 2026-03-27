@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
@@ -78,15 +78,16 @@ export class NativeStorageService extends PicsaAsyncService {
    * Copy a file from data folder to cache folder.
    * This is required if sharing files and explicit permission not granted for data folder
    **/
-  public async copyFileToCache(uri: string) {
+  public async copyFileToCache(uri: string, targetFilename: string) {
     // determine the relative filepath (with subfolders) as written to data directory
     const fileDirectory = await Filesystem.getUri({ directory: Directory.Data, path: '' });
     const relativePath = uri.replace(fileDirectory.uri, '');
+    const to = targetFilename || (uri.split('/').pop() as string);
     // copy file to cache, ignoring nested folder structures (just keep flat)
     const { uri: cacheFileUri } = await Filesystem.copy({
       from: relativePath,
       directory: Directory.Data,
-      to: relativePath.split('/').pop() as string,
+      to,
       toDirectory: Directory.Cache,
     });
     return cacheFileUri;
