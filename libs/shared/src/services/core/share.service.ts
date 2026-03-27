@@ -48,8 +48,8 @@ export class ShareService {
         let targetFilename = uri.split('/').pop() as string;
         const targetExt = getExtensionForMime(type);
         if (!targetExt) {
-          console.warn('Doc does not include mimetype, auto-populating');
-          break;
+          console.warn('Could not determine file extension for mime type, skipping file', { type, uri });
+          continue;
         }
         if (!targetFilename.endsWith(targetExt)) {
           targetFilename += `${targetExt}`;
