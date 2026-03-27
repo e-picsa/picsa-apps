@@ -1,0 +1,168 @@
+import { isPlatformBrowser } from '@angular/common';
+import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATFORM_ID } from '@angular/core';
+
+/**
+ * A highly optimized, Zoneless-compatible directive for handling mobile-first
+ * touch gestures (tap and long-press) while gracefully falling back to desktop
+ * mouse and keyboard interactions.
+ *
+ * Features:
+ *
+ * - **SSR Safe:** Safely bypasses execution on the server.
+ * - **Zoneless Ready:** Uses native DOM events to prevent unnecessary change detection cycles.
+ * - **Drift Protection:** Cancels the long-press if the user's finger wiggles or swipes (>15px).
+ * - **A11y Compliant:** Supports 'Enter' and 'Space' keystrokes for screen readers and keyboard navigation.
+ * - **Conflict Resolution:** Violently intercepts and kills native DOM `click` events to prevent double-firing.
+ *
+ * @example
+ * ```html
+ * <button mat-flat-button picsaTouchGestures (tap)="deleteItem()" (longPress)="openAdvancedMenu()">Action</button>
+ *
+ * <div picsaTouchGestures [threshold]="750" (longPress)="showTooltip()">Hold for info</div>
+ * ```
+ */
+@Directive({
+  selector: '[picsaTouchGestures]',
+  standalone: true,
+})
+export class PicsaTouchGesturesDirective implements OnInit {
+  /** The duration in milliseconds the user must hold the element to trigger a long press.
+   * @default 500
+   */
+  threshold = input<number>(500);
+
+  /** Emitted when the user quickly taps, clicks, or presses Enter/Space.
+   * Exclusively replaces the native `(click)` event.
+   */
+  tap = output<Event>();
+
+  /** Emitted when the user holds the element for the duration of the threshold. */
+  longPress = output<PointerEvent>();
+
+  private el = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
+  private platformId = inject(PLATFORM_ID);
+
+  private timeoutId?: ReturnType<typeof setTimeout>;
+  private isLongPressing = false;
+  private didLongPressFinish = false;
+
+  private startX = 0;
+  private startY = 0;
+  private readonly DRIFT_TOLERANCE = 15; // Pixels of allowed finger wiggle
+
+  ngOnInit() {
+    // Abort if rendering on the server (Angular Universal / SSR)
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const element = this.el.nativeElement as HTMLElement;
+
+    // Pointer event references
+    const onDown = (e: PointerEvent) => this.handlePointerDown(e);
+    const onMove = (e: PointerEvent) => this.handlePointerMove(e);
+    const onUp = (e: PointerEvent) => this.handlePointerUp(e);
+    const onCancel = () => this.clearTimer();
+    const onContextMenu = (e: Event) => e.preventDefault();
+
+    // Click & Keyboard event references
+    const onClick = (e: MouseEvent) => this.handleNativeClick(e);
+    const onKeyDown = (e: KeyboardEvent) => this.handleKeyDown(e);
+
+    // Attach native listeners outside of Angular's knowledge
+    element.addEventListener('pointerdown', onDown);
+    element.addEventListener('pointermove', onMove);
+    element.addEventListener('pointerup', onUp);
+    element.addEventListener('pointercancel', onCancel);
+    element.addEventListener('pointerleave', onCancel);
+    element.addEventListener('contextmenu', onContextMenu);
+
+    // Use capture phase to intercept the click before it bubbles to Angular
+    element.addEventListener('click', onClick, { capture: true });
+    element.addEventListener('keydown', onKeyDown);
+
+    // Cleanup memory when the directive is destroyed
+    this.destroyRef.onDestroy(() => {
+      element.removeEventListener('pointerdown', onDown);
+      element.removeEventListener('pointermove', onMove);
+      element.removeEventListener('pointerup', onUp);
+      element.removeEventListener('pointercancel', onCancel);
+      element.removeEventListener('pointerleave', onCancel);
+      element.removeEventListener('contextmenu', onContextMenu);
+      element.removeEventListener('click', onClick, { capture: true });
+      element.removeEventListener('keydown', onKeyDown);
+      this.clearTimer();
+    });
+  }
+
+  // --- ACCESSIBILITY (A11Y) ---
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); // Prevents page scroll on Space
+      this.tap.emit(event);
+    }
+  }
+
+  // --- NATIVE INTERCEPTION ---
+  private handleNativeClick(event: MouseEvent) {
+    if (this.didLongPressFinish) {
+      // If a long press just concluded, destroy the native click event
+      // so it doesn't trigger form submissions or native (click) bindings.
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  // --- POINTER LOGIC ---
+  private handlePointerDown(event: PointerEvent) {
+    // Ignore right-clicks on desktop
+    if (event.button !== 0 && event.pointerType === 'mouse') return;
+
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+    this.isLongPressing = false;
+    this.didLongPressFinish = false; // Reset for the new interaction
+
+    this.timeoutId = setTimeout(() => {
+      this.isLongPressing = true;
+      this.didLongPressFinish = true;
+
+      // Trigger native device vibration in supported webviews (mostly Android)
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+
+      this.longPress.emit(event);
+    }, this.threshold());
+  }
+
+  private handlePointerMove(event: PointerEvent) {
+    // If timer isn't running, ignore movement
+    if (!this.timeoutId) return;
+
+    const deltaX = Math.abs(event.clientX - this.startX);
+    const deltaY = Math.abs(event.clientY - this.startY);
+
+    // Cancel the hold if the user dragged their finger too far
+    if (deltaX > this.DRIFT_TOLERANCE || deltaY > this.DRIFT_TOLERANCE) {
+      this.clearTimer();
+    }
+  }
+
+  private handlePointerUp(event: PointerEvent) {
+    const wasLongPressing = this.isLongPressing;
+    this.clearTimer();
+
+    // Only fire the tap event if the threshold wasn't reached
+    if (!wasLongPressing) {
+      this.tap.emit(event);
+    }
+  }
+
+  private clearTimer() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = undefined;
+    }
+  }
+}
