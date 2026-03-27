@@ -97,7 +97,7 @@ export class ShareService {
         if (ext) {
           const blob = await base64ToBlob(base64Data, type);
           const baseName = id.split('/').pop() || 'attachment';
-          const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}.${ext}`;
+          const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}${ext}`;
           const file = new File([blob], safeName, { type });
           files.push(file);
         } else {
