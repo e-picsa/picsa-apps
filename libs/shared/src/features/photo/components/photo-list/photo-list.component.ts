@@ -1,5 +1,4 @@
 import { Component, computed, inject, input, model, signal } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -17,15 +16,14 @@ import { PhotoViewComponent } from '../photo-view/photo-view.component';
 })
 export class PhotoListComponent {
   private service = inject(PhotoService);
-  public bottomSheet = inject(MatBottomSheet);
 
   album = input.required<string>();
 
   selectionMode = signal(false);
 
-  public selectedPhotos = model<IPhotoEntry[]>([]);
+  selectedPhotos = model<IPhotoEntry[]>([]);
 
-  public selectedPhotoIds = computed(() => this.selectedPhotos().map((v) => v.id));
+  selectedPhotoIds = computed(() => this.selectedPhotos().map((v) => v.id));
 
   photos = computed(() => {
     const album = this.album();
@@ -56,12 +54,7 @@ export class PhotoListComponent {
     this.selectionMode.set(true);
   }
 
-  cancelSelection() {
-    this.selectionMode.set(false);
-    this.selectedPhotos.set([]);
-  }
-
-  toggleSelected(photo: IPhotoEntry) {
+  public toggleSelected(photo: IPhotoEntry) {
     const current = this.selectedPhotos();
     if (current.some((v) => v.id === photo.id)) {
       this.selectedPhotos.set(current.filter((v) => v.id !== photo.id));

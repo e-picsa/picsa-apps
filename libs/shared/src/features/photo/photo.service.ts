@@ -51,6 +51,10 @@ export class PhotoService extends PicsaAsyncService {
     return this.sharePhotos([id]);
   }
 
+  /**
+   * Take a list of photo ids, retrieve db doc and corresponding attachments
+   * and send to service for sharing
+   */
   public async sharePhotos(ids: string[]) {
     this.isSharingPhotos.set(true);
     await _wait(50);
@@ -65,7 +69,6 @@ export class PhotoService extends PicsaAsyncService {
           photoAttachments.push(attachmentDoc);
         }
       }
-      console.log({ photoAttachments });
       if (photoAttachments.length === 0) {
         this.notificationService.showErrorNotification(`Cannot share photos`);
         return;
