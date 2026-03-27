@@ -18,7 +18,7 @@ import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATF
  * ```html
  * <button mat-flat-button picsaTouchGestures (tap)="deleteItem()" (longPress)="openAdvancedMenu()">Action</button>
  *
- * <div picsaTouchGestures [threshold]="750" (longPress)="showTooltip()">Hold for info</div>
+ * <div picsaTouchGestures [touchThreshold]="750" [touchTolerance]="30" (longPress)="showTooltip()">Hold for info</div>
  * ```
  */
 @Directive({
@@ -31,10 +31,17 @@ import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATF
   },
 })
 export class PicsaTouchGesturesDirective implements OnInit {
-  /** The duration in milliseconds the user must hold the element to trigger a long press.
+  /**
+   * The duration in milliseconds the user must hold the element to trigger a long press.
    * @default 500
    */
-  threshold = input<number>(500);
+  touchThreshold = input<number>(500);
+
+  /**
+   * The number of pixels touch can move and still register long-press
+   * @default 15
+   */
+  touchTolerance = input<number>(15);
 
   /** Emitted when the user quickly taps, clicks, or presses Enter/Space.
    * Exclusively replaces the native `(click)` event.
@@ -54,7 +61,6 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
   private startX = 0;
   private startY = 0;
-  private readonly DRIFT_TOLERANCE = 15; // Pixels of allowed finger wiggle
 
   ngOnInit() {
     // Abort if rendering on the server (Angular Universal / SSR)
@@ -138,7 +144,7 @@ export class PicsaTouchGesturesDirective implements OnInit {
       }
 
       this.longPress.emit(event);
-    }, this.threshold());
+    }, this.touchThreshold());
   }
 
   private handlePointerMove(event: PointerEvent) {
@@ -149,7 +155,7 @@ export class PicsaTouchGesturesDirective implements OnInit {
     const deltaY = Math.abs(event.clientY - this.startY);
 
     // Cancel the hold if the user dragged their finger too far
-    if (deltaX > this.DRIFT_TOLERANCE || deltaY > this.DRIFT_TOLERANCE) {
+    if (deltaX > this.touchTolerance() || deltaY > this.touchTolerance()) {
       this.clearTimer();
     }
   }
