@@ -1,15 +1,5 @@
 import { PortalModule } from '@angular/cdk/portal';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  OnDestroy,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +9,7 @@ import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@pics
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features';
 import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { filter, map } from 'rxjs';
@@ -50,6 +40,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   componentsService = inject(PicsaCommonComponentsService);
+  photoService = inject(PhotoService);
 
   public content = computed<IFarmerContent | undefined>(
     () => {
@@ -155,6 +146,17 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0));
     await _wait(100);
     this.fadeInContent.set(true);
+  }
+
+  public handlePhotoShareClick(photoList: PhotoListComponent) {
+    const photos = photoList.selectedPhotos();
+    // If clicked without selection toggle all photo selection
+    // and wait for user to confirm by clicking a second time
+    if (photos.length === 0) {
+      photoList.selectAll();
+    } else {
+      this.photoService.sharePhotos(photoList.selectedPhotoIds());
+    }
   }
 
   /**

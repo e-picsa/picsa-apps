@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { base64ToBlob } from '@picsa/utils';
 import { blobToBase64String, RxCollection, RxDocument } from 'rxdb';
@@ -44,7 +44,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   }
 
   /** Get a file attachment ref populated to a specific collection doc */
-  private async getAttachment(doc: RxDocument<any>, filename: string) {
+  public async getAttachmentDoc(doc: RxDocument<any>, filename: string) {
     const id = this.generateAttachmentID(doc, filename);
     return this.collection.findOne(id).exec();
   }
@@ -60,8 +60,13 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
       console.error(doc);
       throw new Error(`No attachment name provided`);
     }
-    const attachment = await this.getAttachment(doc, filename);
+    // If uri already processed on web return
+    const existing = this.objectURLs[filename];
+    if (existing) return existing;
+
+    const attachment = await this.getAttachmentDoc(doc, filename);
     if (!attachment) return null;
+
     if (attachment) {
       if (Capacitor.isNativePlatform()) {
         const { uri } = attachment;

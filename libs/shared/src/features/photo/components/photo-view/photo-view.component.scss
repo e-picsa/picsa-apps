@@ -3,20 +3,13 @@
   position: relative;
 }
 img {
+  display: block;
   height: 100%;
   width: 100%;
   object-fit: cover;
+  object-position: center;
 }
-button.delete-button.mat-mdc-icon-button.mat-mdc-button-base {
-  --mat-icon-button-state-layer-size: 32px;
-  padding: 4px;
-  border-radius: 0;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  color: rgb(0 0 0 / 50%);
-  background: rgb(255 255 255 / 20%);
-}
+
 .error-msg {
   display: flex;
   flex-direction: column;
@@ -44,5 +37,19 @@ button.delete-button.mat-mdc-icon-button.mat-mdc-button-base {
     position: absolute;
     top: 0;
     right: 0;
+  }
+
+  .dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .share-button,
+  .delete-button {
+    min-width: 120px;
   }
 }

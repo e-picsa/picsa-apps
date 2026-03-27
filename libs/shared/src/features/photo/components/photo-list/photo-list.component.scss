@@ -1,6 +1,33 @@
+:host {
+  display: contents;
+}
+
+.selection-summary {
+  font-weight: 600;
+  color: var(--color-black);
+}
+
 .photo-grid {
   display: grid;
   grid-auto-rows: 120px;
   grid-template-columns: repeat(auto-fit, 120px);
   gap: 8px;
+}
+
+.photo-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.no-photos-message {
+  @apply h-24 w-24 border-dashed border-2 flex flex-col items-center justify-center text-center rounded border-gray-400 text-gray-600;
+}
+
+button.select-button {
+  @apply h-full w-full p-0 relative;
+}
+mat-icon.select-icon {
+  @apply absolute top-2 left-2;
 }

@@ -2,7 +2,5 @@
   display: block;
 }
 .photo-icon {
-  position: relative;
-  top: 2px;
-  right: 5px;
+  @apply text-[24px] w-6 h-6 align-middle;
 }

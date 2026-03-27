@@ -1,8 +1,34 @@
-<div class="photo-grid">
-  @for (photo of photos(); track photo.id) {
-    <picsa-photo-view [photo]="photo"></picsa-photo-view>
-  }
-</div>
 @if (photos().length === 0) {
   <div class="no-photos-message">{{ 'No photos added' | translate }}</div>
 }
+
+<div class="photo-grid">
+  @for (photo of photos(); track photo.id) {
+    <div class="photo-tile">
+      @if (selectionMode()) {
+        <!-- Selection -->
+        @let isSelected = selectedPhotoIds().includes(photo.id);
+        <div class="absolute z-10 top-0 left-0 w-full h-full">
+          <button
+            class="select-button"
+            (click)="toggleSelected(photo)"
+            matButton
+            [class.is-selected]="isSelected"
+            [attr.aria-label]="isSelected ? 'Deselect photo' : 'Select photo'"
+          >
+            <mat-icon class="select-icon">{{ isSelected ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
+        </div>
+      }
+      <!-- Viewer -->
+      <picsa-photo-view
+        #ref
+        picsaTouchGestures
+        (tap)="handlePhotoTap(photo, ref)"
+        (longPress)="handlePhotoLongPress(photo)"
+        class="h-full w-full"
+        [photo]="photo"
+      ></picsa-photo-view>
+    </div>
+  }
+</div>

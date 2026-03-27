@@ -29,8 +29,23 @@
                   @if (photoAlbum(); as album) {
                     <div class="p-2">
                       <p>{{ 'If you recorded anything on paper you can capture photos here' | translate }}</p>
-                      <picsa-photo-list [album]="album"></picsa-photo-list>
-                      <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+                      <picsa-photo-list [album]="album" #photoList></picsa-photo-list>
+                      <div class="flex mt-4 gap-4">
+                        <picsa-photo-input [album]="album"></picsa-photo-input>
+                        <button
+                          class="ml-auto"
+                          matButton
+                          (click)="handlePhotoShareClick(photoList)"
+                          [disabled]="photoService.isSharingPhotos() || !photoList.photos().length"
+                        >
+                          <mat-icon>share</mat-icon>
+                          @if (photoList.selectedCount()) {
+                            Share {{ photoList.selectedCount() }} Photos
+                          } @else {
+                            Share
+                          }
+                        </button>
+                      </div>
                     </div>
                   }
                 }

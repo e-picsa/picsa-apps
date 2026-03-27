@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { inject,Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
-import { RxCollection } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '../../services/core/db_v2';
+import { IAttachment } from '../../services/core/db_v2/schemas/attachments';
+import { PicsaNotificationService } from '../../services/core/notification.service';
+import { ShareService } from '../../services/core/share.service';
 import * as Schema from './schema';
 
 @Injectable({
@@ -13,11 +17,17 @@ import * as Schema from './schema';
 export class PhotoService extends PicsaAsyncService {
   private dbService = inject(PicsaDatabase_V2_Service);
   private attachmentService = inject(PicsaDatabaseAttachmentService);
+  private notificationService = inject(PicsaNotificationService);
+  private shareService = inject(ShareService);
 
   public collection: RxCollection<Schema.IPhotoEntry>;
 
+  private photoDocs = signal<RxDocument<Schema.IPhotoEntry>[]>([]);
+
   /** List of all stored photos, exposed as signal */
-  public photos = signal<Schema.IPhotoEntry[]>([], { equal: isEqual });
+  public photos = computed<Schema.IPhotoEntry[]>(() => this.photoDocs().map((v) => v._data), { equal: isEqual });
+
+  public isSharingPhotos = signal(false);
 
   override async init() {
     try {
@@ -29,13 +39,49 @@ export class PhotoService extends PicsaAsyncService {
     }
   }
 
-  public async getPhotoAttachment(id: string) {
+  public async getPhotoAttachment(id: string, convertFileSrc = true) {
     const doc = await this.collection.findOne(id).exec();
     if (doc) {
-      return this.attachmentService.getFileAttachmentURI(doc, id);
+      return this.attachmentService.getFileAttachmentURI(doc, id, convertFileSrc);
     }
     return undefined;
   }
+
+  public async sharePhoto(id: string) {
+    return this.sharePhotos([id]);
+  }
+
+  /**
+   * Take a list of photo ids, retrieve db doc and corresponding attachments
+   * and send to service for sharing
+   */
+  public async sharePhotos(ids: string[]) {
+    this.isSharingPhotos.set(true);
+    await _wait(50);
+    const photoDocs = this.photoDocs().filter((v) => ids.includes(v.id));
+
+    try {
+      const photoAttachments: RxDocument<IAttachment>[] = [];
+      for (const doc of photoDocs) {
+        // photos are stored as attachment in separate doc
+        const attachmentDoc = await this.attachmentService.getAttachmentDoc(doc, doc.id);
+        if (attachmentDoc) {
+          photoAttachments.push(attachmentDoc);
+        }
+      }
+      if (photoAttachments.length === 0) {
+        this.notificationService.showErrorNotification(`Cannot share photos`);
+        return;
+      }
+      await this.shareService.shareFromAttachments(photoAttachments);
+    } catch (error: any) {
+      console.error(error);
+      this.notificationService.showErrorNotification(error?.message);
+    } finally {
+      this.isSharingPhotos.set(false);
+    }
+  }
+
   public revokePhotoAttachment(id: string) {
     this.attachmentService.revokeFileAttachmentURIs([id]);
   }
@@ -43,11 +89,10 @@ export class PhotoService extends PicsaAsyncService {
   /** Subscribe to all photos and store list within angular signal */
   private subscribeToPhotos() {
     this.collection.find().$.subscribe((docs) => {
-      const photos = docs.map((d) => d._data);
-      // as photo docs are updated before attachment stored filter to only include those that have
-      // had attachment added
-      const photosWithAttachments = photos.filter((p) => (p._attachments[p.id] ? true : false));
-      this.photos.set(photosWithAttachments);
+      // as photo docs are updated before attachment stored filter to only include those
+      // that have had attachment added
+      const withAttachments = docs.filter((doc) => doc.allAttachments().length > 0);
+      this.photoDocs.set(withAttachments);
     });
   }
 

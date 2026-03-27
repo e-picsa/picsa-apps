@@ -12,11 +12,11 @@ button.mdc-button {
   font-size: 14px;
   font-weight: 500;
 }
-button.mat-mdc-button > .mat-icon {
-  font-size: 24px;
-  width: 24px;
-  min-width: 24px; // climate share icon not showing without
-  height: 24px;
+
+// Set default buttons with icon to show at 24px font size
+button.mat-mdc-button > .mat-icon,
+button.mdc-button > .mat-icon {
+  @apply text-[24px] w-6 h-6 min-w-6 align-middle;
 }
 // Don't allow button labels to extend beyond their container
 .mdc-button__label {
