@@ -97,12 +97,12 @@ export class PicsaTouchGesturesDirective implements OnInit {
   }
 
   // --- ACCESSIBILITY (A11Y) ---
-  private handleKeyDown(event: KeyboardEvent) {
+  private handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault(); // Prevents page scroll on Space
       this.tap.emit(event);
     }
-  }
+  };
 
   // --- NATIVE INTERCEPTION ---
   private handleNativeClick = (event: MouseEvent) => {
