@@ -65,7 +65,7 @@ export class ShareService {
 
     if (shareable.length > 0) {
       const files = shareable.map(({ cacheUri }) => cacheUri);
-      opts.title ??= shareable.length === 1 ? shareable[1].title : `${shareable.length} Files`;
+      opts.title ??= shareable.length === 1 ? shareable[0].title : `${shareable.length} Files`;
       await Share.share({ ...SHARE_OPTION_DEFAULTS, ...opts, files });
 
       // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
