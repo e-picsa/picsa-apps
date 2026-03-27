@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Capacitor } from '@capacitor/core';
-import { RxAttachment } from 'rxdb';
+import { RxDocument } from 'rxdb';
 
 import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
@@ -15,22 +14,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   imports: [MatButtonModule, MatIconModule],
 })
 export class ResourceShareComponent {
-  private service = inject(ResourcesToolService);
-  private cdr = inject(ChangeDetectorRef);
+  public service = inject(ResourcesToolService);
 
-  public attachment?: RxAttachment<IResourceFile>;
-
-  link = input.required<string>();
-  uri = input<string>();
-
-  public async share() {
-    // on native prefer to share file directly
-    const uri = this.uri();
-    if (Capacitor.isNativePlatform() && uri) {
-      this.service.shareFileNative(uri);
-      // fallback to sharing link on web and non-file type
-    } else {
-      this.service.shareLink(this.link());
-    }
-  }
+  public doc = input.required<RxDocument<IResourceFile>>();
 }

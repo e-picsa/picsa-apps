@@ -1,9 +1,9 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { loadCSV } from '@picsa/utils/data';
 import { _wait } from '@picsa/utils/browser.utils';
+import { getMimeType } from '@picsa/utils/mimetypes';
 import { readFileSync, readdirSync } from 'fs';
 import { globSync } from 'glob';
-import { lookup } from 'mime-types';
 
 import { resolve } from 'path';
 import { execSync } from 'child_process';
@@ -136,7 +136,7 @@ class SupabaseSeed {
       results.push({ file: bucketPath });
       // ensure mimetypes populated correctly
       // https://github.com/supabase/supabase/issues/6916
-      const type = lookup(bucketPath);
+      const type = getMimeType(bucketPath);
       if (!type) throw new Error('Failed to lookup content type: ' + localPath);
       const fileBlob = new Blob([readFileSync(localPath)], { type });
       const { error: uploadError } = await storage.from(bucketName).upload(bucketPath, fileBlob, { upsert: true });

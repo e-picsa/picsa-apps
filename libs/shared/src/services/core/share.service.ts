@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share, ShareOptions } from '@capacitor/share';
-import { base64ToBlob } from '@picsa/utils';
+import { base64ToBlob } from '@picsa/utils/data';
+import { getExtensionForMime, isFilenameValidForMime } from '@picsa/utils/mimetypes';
 import { RxDocument } from 'rxdb';
 
 import { NativeStorageService } from '../native';
@@ -27,33 +28,45 @@ export class ShareService {
    * attachments db table. Share all files from attachments
    */
   public async shareFromAttachments(docs: RxDocument<IAttachment>[], opts: Omit<ShareOptions, 'files'> = {}) {
-    if (Capacitor.isNativePlatform()) {
-      // On native use custom method to share from uri
-      const uris = docs.map(({ uri }) => uri).filter((u): u is string => !!u);
-      if (uris.length === 0) {
-        throw new Error('No shareable files found');
-      }
-      return this.shareFromNativeUris(uris, opts);
-    } else {
-      // On web base64 data must be converted to files for sharing
-      return this.shareFromWebBase64(docs, opts);
-    }
+    return Capacitor.isNativePlatform()
+      ? this.shareFromAttachmentsNative(docs, opts)
+      : this.shareFromAttachmentsWeb(docs, opts);
   }
 
   /** Share uri path to file on native filesystem */
-  public async shareFromNativeUris(uris: string[], opts: Omit<ShareOptions, 'files'> = {}) {
+  private async shareFromAttachmentsNative(docs: RxDocument<IAttachment>[], opts: Omit<ShareOptions, 'files'> = {}) {
     // HACK - files can only be shared from the cache folder (unless specific permissions granted)
     // Copy to cache folder, share and delete from cache
     // https://capacitorjs.com/docs/v5/apis/share#android
     // https://capawesome.io/plugins/file-opener/#android
 
     const shareable: { cacheUri: string; title: string }[] = [];
-    for (const uri of uris) {
-      const cacheUri = await this.nativeStorageService.copyFileToCache(uri);
+    for (const doc of docs) {
+      const { uri, type } = doc._data;
+      if (type && uri) {
+        // Ensure file extension included
+        let targetFilename = uri.split('/').pop() as string;
+        const targetExt = getExtensionForMime(type);
+        if (!targetExt) {
+          console.warn('Could not determine file extension for mime type, skipping file', { type, uri });
+          continue;
+        }
+        if (!isFilenameValidForMime(targetFilename, type)) {
+          const dotIndex = targetFilename.lastIndexOf('.');
+          // if there's an extension, replace it. Otherwise, append.
+          if (dotIndex > 0) {
+            targetFilename = targetFilename.substring(0, dotIndex) + targetExt;
+          } else {
+            targetFilename += targetExt;
+          }
+        }
 
-      if (cacheUri) {
-        const title = uri.split('/').pop() as string;
-        shareable.push({ cacheUri, title });
+        // Populate to cache for sharing
+        const cacheUri = await this.nativeStorageService.copyFileToCache(uri, targetFilename);
+        if (cacheUri) {
+          const title = uri.split('/').pop() as string;
+          shareable.push({ cacheUri, title });
+        }
       }
     }
     if (shareable.length === 0) {
@@ -82,16 +95,20 @@ export class ShareService {
   }
 
   /** Convert base64 data to file and share */
-  private async shareFromWebBase64(docs: RxDocument<IAttachment>[], opts: Omit<ShareOptions, 'files'> = {}) {
+  private async shareFromAttachmentsWeb(docs: RxDocument<IAttachment>[], opts: Omit<ShareOptions, 'files'> = {}) {
     const files: File[] = [];
     for (const { data: base64Data, type, id } of docs) {
       if (base64Data) {
-        const blob = await base64ToBlob(base64Data, type);
-        const ext = type.split('/')[1] ?? 'bin';
-        const baseName = id.split('/').pop() || 'attachment';
-        const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}.${ext}`;
-        const file = new File([blob], safeName, { type });
-        files.push(file);
+        const ext = getExtensionForMime(type);
+        if (ext) {
+          const blob = await base64ToBlob(base64Data, type);
+          const baseName = id.split('/').pop() || 'attachment';
+          const safeName = `${baseName.replace(/[/\\|:*?"<>]/g, '_')}${ext}`;
+          const file = new File([blob], safeName, { type });
+          files.push(file);
+        } else {
+          console.warn('Failed to determine extension type from type', { type, id });
+        }
       }
     }
     if (files.length === 0) {
