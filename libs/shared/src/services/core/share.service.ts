@@ -3,7 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share, ShareOptions } from '@capacitor/share';
 import { base64ToBlob } from '@picsa/utils/data';
-import { getExtensionForMime } from '@picsa/utils/mimetypes';
+import { getExtensionForMime, isFilenameValidForMime } from '@picsa/utils/mimetypes';
 import { RxDocument } from 'rxdb';
 
 import { NativeStorageService } from '../native';
@@ -48,11 +48,17 @@ export class ShareService {
         let targetFilename = uri.split('/').pop() as string;
         const targetExt = getExtensionForMime(type);
         if (!targetExt) {
-          console.warn('Doc does not include mimetype, auto-populating');
-          break;
+          console.warn('Doc does not include known mimetype, skipping', doc._data);
+          continue;
         }
-        if (!targetFilename.endsWith(targetExt)) {
-          targetFilename += `${targetExt}`;
+        if (!isFilenameValidForMime(targetFilename, type)) {
+          const dotIndex = targetFilename.lastIndexOf('.');
+          // if there's an extension, replace it. Otherwise, append.
+          if (dotIndex > 0) {
+            targetFilename = targetFilename.substring(0, dotIndex) + targetExt;
+          } else {
+            targetFilename += targetExt;
+          }
         }
 
         // Populate to cache for sharing
