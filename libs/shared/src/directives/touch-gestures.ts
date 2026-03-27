@@ -63,7 +63,7 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
   /**
    * Emitted when the user quickly taps, clicks, or presses Enter/Space.
-   * Exclusively replaces the native `(click)` event.
+   * Recommended output for tap actions. Note: the native `(click)` event is not suppressed.
    */
   tap = output<PointerEvent | KeyboardEvent>();
 
@@ -113,6 +113,7 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
     // Cleanup memory when the directive is destroyed
     this.destroyRef.onDestroy(() => {
+      this.clearTimer();
       for (const [event, handler, options] of listeners) {
         element.removeEventListener(event, handler as EventListener, options);
       }
