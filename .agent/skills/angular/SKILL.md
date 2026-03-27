@@ -111,3 +111,17 @@ While Signals are preferred for synchronous state, RxJS is still the standard fo
 
 - **Tailwind First**: Use utility classes for layout (flex, grid), spacing (m-_, p-_), and typography.
 - **Component Styles**: Use SCSS files only for complex, component-specific styles that are hard to express with Tailwind.
+
+## 8. Internationalization (i18n)
+
+The app is translated into over 20 languages. **NEVER** hardcode user-facing text in templates or components.
+
+- **Templates**: Always use the `translate` pipe.
+
+  ```html
+  <!-- DO -->
+  <button>{{ 'Share' | translate }}</button>
+
+  <!-- DON'T -->
+  <button>Share</button>
+  ```

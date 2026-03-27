@@ -24,6 +24,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **Offline-First**: assume unreliable connectivity. Use RxDB/Dexie.
 - **OnPush Change Detection**: Strictly enforced.
 - **Tailwind CSS**: Preferred over custom SCSS.
+- **Internationalization (i18n)**: assume 20+ languages. NEVER hardcode user-facing text. Always use the `translate` pipe or appropriate service.
 
 ## Coding Style
 
@@ -31,11 +32,21 @@ Please refer to the following files in `.agent/rules/` for deep context:
 
 ## Agent Meta-Instructions
 
-This file (`AGENTS.md`) is symlinked to `.cursorrules` and `gemini.md` to ensure automatic context ingestion.
+This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other IDE-specific instruction files to ensure automatic context ingestion across all agentic tools (Gemini, Cursor, OpenCode, Copilot, etc.).
 **IMPORTANT**:
 
-1. `.cursorrules`, `gemini.md`, and `AGENTS.md` are the **SAME FILE**. Do not read more than one of them to conserve context window.
+1. These rule files are the **SAME FILE**. Do not read more than one of them to conserve context window.
 2. You **MUST** still reference the detailed documentation files in the `.agent/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
+
+### Tool Usage Requirements (Crucial for Context Preservation)
+
+To avoid overloading the context window and consuming excessive tokens, all AI/Agent assistants (regardless of the IDE) MUST adhere to the following file-reading constraints:
+
+- **Prioritize Native IDE Tools**: You MUST use your native, built-in tools for file exploration over standard terminal commands whenever possible.
+  - Use your native `view_file` or `read_file` tools instead of terminal commands like `cat`, `type`, or `Get-Content`.
+  - Use your native `grep_search` or IDE-provided search capabilities instead of `grep`, `findstr`, or `Select-String`.
+  - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.
+- **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
 
 ## Self-Documentation
 
