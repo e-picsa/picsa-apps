@@ -24,6 +24,11 @@ import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATF
 @Directive({
   selector: '[picsaTouchGestures]',
   standalone: true,
+  host: {
+    // Merge tailwind classes onto host element to prevent text highlight
+    // and native os popup menus
+    class: 'select-none touch-manipulation [-webkit-touch-callout:none]',
+  },
 })
 export class PicsaTouchGesturesDirective implements OnInit {
   /** The duration in milliseconds the user must hold the element to trigger a long press.
