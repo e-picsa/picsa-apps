@@ -67,39 +67,31 @@ export class PicsaTouchGesturesDirective implements OnInit {
 
     const element = this.el.nativeElement as HTMLElement;
 
-    // Pointer event references
-    const onDown = (e: PointerEvent) => this.handlePointerDown(e);
-    const onMove = (e: PointerEvent) => this.handlePointerMove(e);
-    const onUp = (e: PointerEvent) => this.handlePointerUp(e);
     const onCancel = () => this.clearTimer();
     const onContextMenu = (e: Event) => e.preventDefault();
 
-    // Click & Keyboard event references
-    const onClick = (e: MouseEvent) => this.handleNativeClick(e);
-    const onKeyDown = (e: KeyboardEvent) => this.handleKeyDown(e);
-
     // Attach native listeners outside of Angular's knowledge
-    element.addEventListener('pointerdown', onDown);
-    element.addEventListener('pointermove', onMove);
-    element.addEventListener('pointerup', onUp);
+    element.addEventListener('pointerdown', this.handlePointerDown);
+    element.addEventListener('pointermove', this.handlePointerMove);
+    element.addEventListener('pointerup', this.handlePointerUp);
     element.addEventListener('pointercancel', onCancel);
     element.addEventListener('pointerleave', onCancel);
     element.addEventListener('contextmenu', onContextMenu);
 
     // Use capture phase to intercept the click before it bubbles to Angular
-    element.addEventListener('click', onClick, { capture: true });
-    element.addEventListener('keydown', onKeyDown);
+    element.addEventListener('click', this.handleNativeClick, { capture: true });
+    element.addEventListener('keydown', this.handleKeyDown);
 
     // Cleanup memory when the directive is destroyed
     this.destroyRef.onDestroy(() => {
-      element.removeEventListener('pointerdown', onDown);
-      element.removeEventListener('pointermove', onMove);
-      element.removeEventListener('pointerup', onUp);
+      element.removeEventListener('pointerdown', this.handlePointerDown);
+      element.removeEventListener('pointermove', this.handlePointerMove);
+      element.removeEventListener('pointerup', this.handlePointerUp);
       element.removeEventListener('pointercancel', onCancel);
       element.removeEventListener('pointerleave', onCancel);
       element.removeEventListener('contextmenu', onContextMenu);
-      element.removeEventListener('click', onClick, { capture: true });
-      element.removeEventListener('keydown', onKeyDown);
+      element.removeEventListener('click', this.handleNativeClick, { capture: true });
+      element.removeEventListener('keydown', this.handleKeyDown);
       this.clearTimer();
     });
   }
@@ -113,15 +105,15 @@ export class PicsaTouchGesturesDirective implements OnInit {
   }
 
   // --- NATIVE INTERCEPTION ---
-  private handleNativeClick(event: MouseEvent) {
+  private handleNativeClick = (event: MouseEvent) => {
     // Prevent all native click interaction
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-  }
+  };
 
   // --- POINTER LOGIC ---
-  private handlePointerDown(event: PointerEvent) {
+  private handlePointerDown = (event: PointerEvent) => {
     // Ignore right-clicks on desktop
     if (event.button !== 0 && event.pointerType === 'mouse') return;
 
@@ -133,15 +125,15 @@ export class PicsaTouchGesturesDirective implements OnInit {
       this.isLongPressing = true;
 
       // Trigger native device vibration in supported webviews (mostly Android)
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      if (navigator.vibrate) {
         navigator.vibrate(50);
       }
 
       this.longPress.emit(event);
     }, this.touchThreshold());
-  }
+  };
 
-  private handlePointerMove(event: PointerEvent) {
+  private handlePointerMove = (event: PointerEvent) => {
     // If timer isn't running, ignore movement
     if (!this.timeoutId) return;
 
@@ -152,9 +144,9 @@ export class PicsaTouchGesturesDirective implements OnInit {
     if (deltaX > this.touchTolerance() || deltaY > this.touchTolerance()) {
       this.clearTimer();
     }
-  }
+  };
 
-  private handlePointerUp(event: PointerEvent) {
+  private handlePointerUp = (event: PointerEvent) => {
     const wasLongPressing = this.isLongPressing;
     this.clearTimer();
 
@@ -162,12 +154,12 @@ export class PicsaTouchGesturesDirective implements OnInit {
     if (!wasLongPressing) {
       this.tap.emit(event);
     }
-  }
+  };
 
-  private clearTimer() {
+  private clearTimer = () => {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = undefined;
     }
-  }
+  };
 }
