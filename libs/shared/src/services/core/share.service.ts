@@ -64,8 +64,7 @@ export class ShareService {
         // Populate to cache for sharing
         const cacheUri = await this.nativeStorageService.copyFileToCache(uri, targetFilename);
         if (cacheUri) {
-          const title = uri.split('/').pop() as string;
-          shareable.push({ cacheUri, title });
+          shareable.push({ cacheUri, title: targetFilename });
         }
       }
     }
