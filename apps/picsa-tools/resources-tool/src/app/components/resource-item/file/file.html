@@ -2,15 +2,17 @@
 
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative; max-width: 854px; margin: auto; width: 100%">
+  @if(dbDoc(); as doc){
+  <!-- File share -->
   @if(fileUri(); as uri){
-  <resource-share class="share-link" [link]="dbDoc.url" [uri]="uri"></resource-share>
+  <resource-share class="share-link" [doc]="doc"></resource-share>
   }
 
   <!-- Download overlay -->
   <div
     class="download-overlay"
     [style.visibility]="dl.downloadStatus()==='complete' ? 'hidden' : 'visible'"
-    [attr.data-file-type]="dbDoc?.subtype || null"
+    [attr.data-file-type]="doc.subtype || null"
   >
     <div class="mat-elevation-z8; border-radius: 8px;">
       <resource-download
@@ -33,5 +35,5 @@
   <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">
   </resource-item-link>
 
-  } }
+  } } }
 </div>

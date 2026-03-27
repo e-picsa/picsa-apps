@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject,Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../schemas';
@@ -20,7 +20,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
 
   @Input() resource: IResourceFile;
 
-  public dbDoc: RxDocument<IResourceFile>;
+  public dbDoc = signal<RxDocument<IResourceFile> | null>(null);
   public fileUri = signal<string | null>(null);
 
   private downloader = viewChild.required(ResourceDownloadComponent);
@@ -29,15 +29,14 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
     await this.service.ready();
 
     const dbDoc = await this.service.dbFiles.findOne(this.resource.id).exec();
-    if (dbDoc) {
-      this.dbDoc = dbDoc;
-    }
+    this.dbDoc.set(dbDoc);
   }
 
   async ngOnDestroy() {
+    const dbDoc = this.dbDoc();
     // ensure any created file attachment uris disposed of
-    if (this.dbDoc) {
-      this.service.revokeFileAttachmentURIs([this.dbDoc.filename]);
+    if (dbDoc) {
+      this.service.revokeFileAttachmentURIs([dbDoc.filename]);
     }
   }
 
@@ -54,8 +53,9 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   /** Generic file opener */
   public async handleFileLinkClick(e: Event) {
     const uri = await this.downloader().uri();
-    if (uri) {
-      this.service.openFileResource(uri, this.dbDoc!.type, this.resource.id);
+    const doc = this.dbDoc();
+    if (uri && doc) {
+      this.service.openFileResource(uri, doc.type, this.resource.id);
     }
   }
 

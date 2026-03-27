@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
@@ -11,6 +11,7 @@ import { AnalyticsService } from '@picsa/shared/services/core/analytics.service'
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { ShareService } from '@picsa/shared/services/core/share.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
 import { arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
@@ -31,6 +32,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   private analyticsService = inject(AnalyticsService);
   private clipboard = inject(Clipboard);
   private notificationService = inject(PicsaNotificationService);
+  private shareService = inject(ShareService);
 
   private canShare: boolean;
 
@@ -118,6 +120,31 @@ export class ResourcesToolService extends PicsaAsyncService {
     return this.dbAttachmentService.removeAttachment(doc, doc.filename);
   }
 
+  public async shareLink(url: string) {
+    if (this.canShare) {
+      await Share.share({
+        title: 'Share Resource',
+        url: url,
+        dialogTitle: 'Share Resource Link',
+      });
+    } else {
+      // Simply copy the link to clipboard
+      this.clipboard.copy(url);
+      this.notificationService.showUserNotification({
+        matIcon: 'success',
+        message: 'Link to this resource has been copied for you to share.',
+      });
+    }
+  }
+
+  public async shareFile(doc: RxDocument<schemas.IResourceFile>) {
+    const filename = doc.filename || doc.id;
+    const attachmentDoc = await this.dbAttachmentService.getAttachmentDoc(doc, filename);
+    if (attachmentDoc) {
+      return this.shareService.shareFromAttachments([attachmentDoc]);
+    }
+  }
+
   private async populateHardcodedResources() {
     // Remove resources marked for deletion (TODO - find cleaner method to keep in sync)
     // TODO - process after cache check
@@ -198,42 +225,5 @@ export class ResourcesToolService extends PicsaAsyncService {
 
   private setAssetResourcesVersion() {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION);
-  }
-
-  public async shareLink(url: string) {
-    if (this.canShare) {
-      await Share.share({
-        title: 'Share Resource',
-        url: url,
-        dialogTitle: 'Share Resource Link',
-      });
-    } else {
-      // Simply copy the link to clipboard
-      this.clipboard.copy(url);
-      this.notificationService.showUserNotification({
-        matIcon: 'success',
-        message: 'Link to this resource has been copied for you to share.',
-      });
-    }
-  }
-  public async shareFileNative(uri: string) {
-    // HACK - files can only be shared from the cache folder (unless specific permissions granted)
-    // Copy to cache folder, share and delete from cache
-    // https://capacitorjs.com/docs/v5/apis/share#android
-    // https://capawesome.io/plugins/file-opener/#android
-    const cacheFileUri = await this.nativeStorageService.copyFileToCache(uri);
-    const filename = uri.split('/').pop() as string;
-    if (cacheFileUri) {
-      await Share.share({
-        files: [cacheFileUri],
-        title: filename,
-        dialogTitle: 'Share File',
-        text: 'Shared from Picsa App',
-      });
-      // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
-      // so do not delete cache file as no guarantee target task completed
-
-      // await Filesystem.deleteFile({ path: cacheFileUri, directory: Directory.Cache });
-    }
   }
 }
