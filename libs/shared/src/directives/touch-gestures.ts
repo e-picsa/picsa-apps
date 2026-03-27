@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { DestroyRef, Directive, ElementRef, inject, input, OnInit, output, PLATFORM_ID } from '@angular/core';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 type EventBinding<K extends keyof HTMLElementEventMap> = [
   K,
@@ -100,7 +101,6 @@ export class PicsaTouchGesturesDirective implements OnInit {
       eventBinding('pointermove', this.handlePointerMove),
       eventBinding('pointerup', this.handlePointerUp),
       eventBinding('pointercancel', this.cancelGesture),
-      eventBinding('pointerleave', this.cancelGesture),
       eventBinding('contextmenu', onContextMenu),
       // Use capture phase to intercept the click before it bubbles to Angular
       eventBinding('click', this.handleNativeClick, { capture: true }),
@@ -148,6 +148,14 @@ export class PicsaTouchGesturesDirective implements OnInit {
     // Ignore secondary touches / pointers
     if (this.activePointerId !== null) return;
 
+    // Reset gesture state for the new interaction. Clearing suppressNextClick
+    // guards against a stale flag from a prior long press whose click never
+    // fired (e.g. pointer released outside the element). Capturing the pointer
+    // ensures move/up events are delivered even if the finger drifts off the
+    // element, which prevents false cancellations on small touch targets.
+    this.suppressNextClick = false;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+
     this.activePointerId = event.pointerId;
     this.startX = event.clientX;
     this.startY = event.clientY;
@@ -157,10 +165,8 @@ export class PicsaTouchGesturesDirective implements OnInit {
       this.isLongPressing = true;
       this.suppressNextClick = true;
 
-      // Trigger native device vibration in supported webviews (mostly Android)
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
+      // Trigger native device vibration
+      Haptics.impact({ style: ImpactStyle.Medium });
 
       this.longPress.emit(event);
     }, this.touchThreshold());
