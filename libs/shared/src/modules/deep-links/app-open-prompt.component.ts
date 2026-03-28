@@ -1,85 +1,63 @@
-import { Component, inject } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { CommunicationService } from '../../services/promptToHomePageService.service';
-import { DeepLinksService } from './deep-links.service';
+import { GooglePlayBadgeComponent } from './google-play-badge.component';
 
 /**
- * Show a link to open the app in native platform version, using dynamic app link
+ * Show a banner to encourage users to install the native app from Play Store.
+ * Note: We only show this on mobile web because if the app was installed,
+ * App Links would have automatically opened the native app instead.
  */
 @Component({
   selector: 'picsa-app-open-prompt',
+  imports: [MatIconModule, MatBottomSheetModule, MatButtonModule, GooglePlayBadgeComponent],
   template: `
-    <div>
-      <h2>Open With...</h2>
-      <a [href]="appDynamicLink" target="_blank" rel="noopener">
-        <div class="open-option">
-          <div class="picsa-app-icon">PICSA</div>
-          <h3>PICSA App</h3>
-          <button mat-raised-button color="primary" (click)="triggerTour()">Open</button>
-        </div>
-      </a>
-      <div class="open-option" (click)="dismiss()">
-        <mat-icon class="open-icon">language</mat-icon>
-        <h3>Browser</h3>
-        <button mat-stroked-button>Continue</button>
-      </div>
-      <div class="spacer"></div>
-    </div>
+    <h2>Get the PICSA App</h2>
+    <p class="subtitle">For the best experience, download from the Play Store</p>
+
+    <a href="https://play.google.com/store/apps/details?id=io.picsa.extension" target="_blank" rel="noopener">
+      <google-play-badge class="play-badge"></google-play-badge>
+    </a>
+
+    <button matButton class="continue-button" (click)="dismiss()">
+      <mat-icon class="open-icon">language</mat-icon>
+      Continue in Browser
+    </button>
   `,
   styles: [
     `
-      .picsa-app-icon {
-        background: #8a2644;
-        border-radius: 10px;
-        color: white;
-        padding: 4px;
-        line-height: 48px;
-        height: 48px;
-        width: 48px;
+      :host {
+        display: block;
+        padding: 1rem;
         text-align: center;
-        font-size: 16px;
       }
-      .open-option {
-        display: flex;
-        align-items: center;
+      h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+      .play-badge {
+        height: 56px;
+      }
+      .subtitle {
+        margin: 0 0 1.5rem 0;
+        color: #666;
+        font-size: 0.875rem;
+      }
+      .continue-button {
+        margin-top: 1rem;
         margin-bottom: 1rem;
-      }
-      h3 {
-        flex: 1;
-        text-align: left;
-        margin-left: 1rem;
-      }
-      a {
-        text-decoration: none;
-        color: unset;
-      }
-      button {
-        width: 90px;
-      }
-      .open-icon {
-        font-size: 48px;
-        height: 48px;
-        width: 48px;
-        padding: 4px;
-      }
-      .spacer {
-        height: 1rem;
       }
     `,
   ],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppOpenPromptComponent {
   private bottomSheet = inject(MatBottomSheet);
   private communicationService = inject(CommunicationService);
-
-  appDynamicLink: string;
-  constructor() {
-    const deepLinksService = inject(DeepLinksService);
-
-    this.appDynamicLink = deepLinksService.config!.appDynamicLink;
-  }
 
   triggerTour() {
     this.communicationService.triggerUserEvent();
@@ -87,7 +65,6 @@ export class AppOpenPromptComponent {
 
   dismiss() {
     this.bottomSheet.dismiss();
-    // trigger homepage tour
     this.triggerTour();
   }
 }

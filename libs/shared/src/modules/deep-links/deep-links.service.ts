@@ -1,4 +1,4 @@
-import { inject,Injectable, NgZone } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
@@ -9,14 +9,16 @@ import { AppOpenPromptComponent } from './app-open-prompt.component';
 export class DeepLinksServiceConfig {
   /** Web url associated with deep links */
   baseUrl: string;
-  /** E.g. firebase dynamic link */
-  appDynamicLink: string;
 }
 
 @Injectable({ providedIn: 'root' })
 /**
- * Provide support for opening deep links within app
- * https://capacitorjs.com/docs/guides/deep-links#angular
+ * Provides support for:
+ * 1. Deep linking: Opens native app when user clicks links to picsa.app (via App Links/assetlinks.json)
+ * 2. App promotion: Shows banner on mobile web to encourage Play Store installation
+ *
+ * Note: On mobile web, we show the banner because if the app was installed,
+ * App Links would have automatically opened the native app instead.
  */
 export class DeepLinksService {
   config = inject(DeepLinksServiceConfig, { optional: true });
