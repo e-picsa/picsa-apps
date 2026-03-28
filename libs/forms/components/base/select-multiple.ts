@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { ControlValueAccessor } from '@angular/forms';
 import { arrayToHashmap } from '@picsa/utils';
 
 /** For more information about this base component see local @see./README.md */
@@ -7,7 +6,7 @@ import { arrayToHashmap } from '@picsa/utils';
   template: '',
   standalone: false,
 })
-export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> implements ControlValueAccessor {
+export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> {
   private _selected: string[] = []; // this is the updated value that the class accesses
 
   /** Selected value binding */
@@ -69,14 +68,9 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
     if (id) {
       const valueIndex = this.selected.indexOf(id);
       if (valueIndex === -1) {
-        this._selected = [...this._selected, id];
+        this.selected = [...this._selected, id];
       } else {
-        this._selected = this._selected.filter((v) => v !== id);
-      }
-      this.cdr.markForCheck();
-      this.selectedChange.emit(this._selected);
-      if (this._onChange) {
-        this._onChange(this._selected);
+        this.selected = this._selected.filter((v) => v !== id);
       }
     }
   }
