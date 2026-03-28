@@ -1,5 +1,5 @@
 import { FormCropActivitySelectComponent } from './crop-activity-select/crop-activity-select.component';
-import { FormCropSelectMultipleComponent, FormCropSelectSingleComponent } from './crop-select/crop-select.component';
+import { FormCropSelectMultipleComponent, FormCropSelectSingleComponent } from './crop-select';
 import { FormLocationSelectComponent } from './location-select/location-select.component';
 import { FormWeatherSelectComponent } from './weather-select/weather-select.component';
 

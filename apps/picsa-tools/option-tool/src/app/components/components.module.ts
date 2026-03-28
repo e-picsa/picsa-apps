@@ -13,7 +13,8 @@ import { InvestmentInputComponent } from './editor/inputs/investment/investment-
 import { PerformanceInputComponent } from './editor/inputs/performance/performance-input';
 import { OptionMaterialModule } from './material.module';
 
-const Components = [EditorComponent, GenderInputComponent, InvestmentInputComponent, PerformanceInputComponent];
+const Components = [EditorComponent];
+const Standalone = [GenderInputComponent, InvestmentInputComponent, PerformanceInputComponent];
 
 @NgModule({
   imports: [
@@ -24,8 +25,9 @@ const Components = [EditorComponent, GenderInputComponent, InvestmentInputCompon
     PicsaTranslateModule,
     ReactiveFormsModule,
     RouterModule,
+    ...Standalone,
   ],
-  exports: [OptionMaterialModule, PicsaCommonComponentsModule, ...Components],
+  exports: [OptionMaterialModule, PicsaCommonComponentsModule, ...Components, ...Standalone],
   declarations: [Components],
   providers: [],
 })
