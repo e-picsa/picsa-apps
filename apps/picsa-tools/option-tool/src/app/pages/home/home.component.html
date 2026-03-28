@@ -1,6 +1,6 @@
 <div class="page-content" [class.HideOverflow]="matStepperOpen">
   <div class="flex items-center">
-    <button class="ml-auto" mat-button aria-label="Share" (click)="sharePicture()" [disabled]="shareDisabled">
+    <button class="ml-auto" matButton aria-label="Share" (click)="sharePicture()" [disabled]="shareDisabled">
       <mat-icon>share</mat-icon>{{ status | translate }}
     </button>
   </div>
@@ -141,7 +141,7 @@
     </table>
   </div>
   <div class="sticky-footer">
-    <button class="footer-button" (click)="openNewDialog()" mat-button mat-raised-button color="primary">
+    <button class="footer-button" (click)="openNewDialog()" matButton matButton="elevated" color="primary">
       <mat-icon>add</mat-icon>
       {{ 'Add Option' | translate }}
     </button>

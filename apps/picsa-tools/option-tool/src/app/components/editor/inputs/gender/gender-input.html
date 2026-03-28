@@ -3,7 +3,7 @@
   <div class="input-container">
     @for (option of filteredOptions(); track option.id) {
     <button
-      mat-button
+      matButton
       class="select-button"
       (click)="toggleSelected(option.id)"
       [attr.data-gender]="option.id"

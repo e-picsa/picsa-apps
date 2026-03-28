@@ -97,7 +97,7 @@
               />
               <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
                 <option-gender-input [formField]="form.benefits[i].beneficiary"></option-gender-input>
-                <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
+                <button matButton color="primary" (click)="handleRemovingBenefits(i)">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -109,7 +109,7 @@
         <button
           style="margin-bottom: 16px; margin-top: -16px"
           (click)="handleMoreBenefits()"
-          mat-button
+          matButton
           [disabled]="
             values.benefits.length > 0 &&
             (values.benefits[values.benefits.length - 1].benefit === undefined ||
@@ -212,7 +212,7 @@
         <button
           style="margin-bottom: 16px; margin-top: -16px"
           (click)="values.risk.push('')"
-          mat-button
+          matButton
           [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
@@ -230,20 +230,20 @@
     <ng-template #stepButtons let-nextDisabled="nextDisabled" let-firstStep="stepper.selectedIndex === 0">
       <div class="step-buttons">
         @if (stepper.selectedIndex === 0) {
-          <button mat-button (click)="promptDelete()" [disabled]="nextDisabled">
+          <button matButton (click)="promptDelete()" [disabled]="nextDisabled">
             <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
           </button>
         }
         @if (stepper.selectedIndex > 0) {
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          <button matButton matStepperPrevious>{{ 'Back' | translate }}</button>
         }
         @if (stepper.selectedIndex < 7) {
-          <button mat-raised-button color="primary" [disabled]="nextDisabled" matStepperNext>
+          <button matButton="elevated" color="primary" [disabled]="nextDisabled" matStepperNext>
             {{ 'Next' | translate }}
           </button>
         }
         @if (stepper.selectedIndex === 7) {
-          <button mat-raised-button color="primary" [disabled]="nextDisabled" (click)="submitForm()">
+          <button matButton="elevated" color="primary" [disabled]="nextDisabled" (click)="submitForm()">
             {{ 'Finish' | translate }}
           </button>
         }

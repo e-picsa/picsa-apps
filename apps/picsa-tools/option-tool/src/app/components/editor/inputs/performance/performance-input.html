@@ -2,7 +2,7 @@
 <div class="input-container">
   @for (option of filteredOptions(); track option.id) {
   <button
-    mat-button
+    matButton
     class="select-button"
     (click)="value.set(option.id)"
     [attr.data-value]="option.id"
