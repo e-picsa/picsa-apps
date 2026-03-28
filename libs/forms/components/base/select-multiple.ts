@@ -1,5 +1,6 @@
-import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, computed, input, model } from '@angular/core';
+import { FormValueControl } from '@angular/forms/signals';
 import { arrayToHashmap } from '@picsa/utils';
 
 /**
@@ -9,12 +10,14 @@ import { arrayToHashmap } from '@picsa/utils';
   template: '',
   standalone: true,
 })
-export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> {
+export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }>
+  implements FormValueControl<string[]>
+{
   /** The model signal that replaces NG_VALUE_ACCESSOR binding */
-  public value = model<string[]>([], { alias: 'selected' });
+  public value = model<string[]>([]);
 
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: coerceBooleanProperty });
-  public readonly required = input<boolean, BooleanInput>(false, { transform: coerceBooleanProperty });
+  public readonly disabled = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
+  public readonly required = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
   public readonly filterFn = input<(option: T) => boolean>();
 
   public selectOptions: T[] = [];
