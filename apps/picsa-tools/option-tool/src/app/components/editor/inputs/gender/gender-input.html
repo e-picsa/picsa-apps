@@ -1,13 +1,13 @@
-@if (!options.readonly) {
+@if (!options().readonly) {
 <div>
   <div class="input-container">
-    @for (option of selectOptions; track option) {
+    @for (option of filteredOptions(); track option.id) {
     <button
       mat-button
       class="select-button"
       (click)="toggleSelected(option.id)"
       [attr.data-gender]="option.id"
-      [attr.data-selected]="selected.includes(option.id)"
+      [attr.data-selected]="value().includes(option.id)"
     >
       <div>
         <mat-icon class="gender-icon" [svgIcon]="option.svgIcon"></mat-icon>
@@ -16,9 +16,9 @@
     </button>
     }
   </div>
-  @if (options.showValueText) {
+  @if (options().showValueText) {
   <div class="text-value">
-    @for (text of valueTextArray; track text) {
+    @for (text of valueTextArray(); track text) {
     <span>{{text | translate}}</span>
     }
   </div>
@@ -27,18 +27,18 @@
 }
 
 <!-- readonly display - Render all icons but hide non-selected to keep consistent spacing -->
-@if (options.readonly) {
+@if (options().readonly) {
 <div style="display: flex">
-  @for (option of selectOptions; track option) {
+  @for (option of filteredOptions(); track option.id) {
   <div class="readonly-value" [attr.data-gender]="option.id">
     <mat-icon
       [svgIcon]="option.svgIcon"
-      [style.visibility]="selected.includes(option.id) ? 'visible' : 'hidden'"
+      [style.visibility]="value().includes(option.id) ? 'visible' : 'hidden'"
     ></mat-icon>
   </div>
-  } @if (options.showValueText) {
+  } @if (options().showValueText) {
   <div class="text-value">
-    @for (text of valueTextArray; track text) {
+    @for (text of valueTextArray(); track text) {
     <span>{{text | translate}}</span>
     }
   </div>

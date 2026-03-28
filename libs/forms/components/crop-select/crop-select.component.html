@@ -1,10 +1,10 @@
-<div ngClass="icons-container" [attr.data-disabled]="disabled" tabindex="0">
-  @for (crop of filteredOptions; track crop.id) {
+<div ngClass="icons-container" [attr.data-disabled]="disabled()" tabindex="0">
+  @for (crop of filteredOptions(); track crop.id) {
     <div ngClass="filter-icons">
       <div
         (click)="handleSelect(crop.name)"
         ngClass="icon"
-        [attr.data-selected]="isMultiple ? selected.includes(crop.name) : $any(selected) === crop.name"
+        [attr.data-selected]="isMultiple ? value().includes(crop.name) : value() === crop.name"
       >
         <mat-icon [svgIcon]="'picsa_crops:' + crop.svgIcon"></mat-icon>
         <div ngClass="name">{{ crop.label | translate }}</div>
@@ -12,11 +12,11 @@
     </div>
   }
   <!-- Optional reset button -->
-  @if (resetOption) {
+  @if (resetOption(); as reset) {
     <div ngClass="filter-icons">
       <div (click)="handleReset()" ngClass="icon">
-        <mat-icon>{{ resetOption.matIcon }}</mat-icon>
-        <div ngClass="name">{{ resetOption.text | translate }}</div>
+        <mat-icon>{{ reset.matIcon }}</mat-icon>
+        <div ngClass="name">{{ reset.text | translate }}</div>
       </div>
     </div>
   }

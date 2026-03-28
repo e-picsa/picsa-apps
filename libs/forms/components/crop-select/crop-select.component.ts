@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject,Input } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { CROPS_DATA, CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PicsaFormBaseSelectComponent } from '../base/select';
 import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
@@ -21,35 +22,18 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
   selector: 'picsa-form-crop-select',
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FormCropSelectSingleComponent),
-      multi: true,
-    },
-    {
-      provide: MatFormFieldControl,
-      useExisting: FormCropSelectSingleComponent,
-      multi: true,
-    },
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatIconModule, PicsaTranslateModule],
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
   protected isMultiple = false;
   /** Show reset option button with custom text and matIcon */
-  @Input() resetOption: { text: 'Show All'; matIcon: 'apps' };
-  constructor() {
-    const cdr = inject(ChangeDetectorRef);
+  public readonly resetOption = input<{ text: string; matIcon: string }>();
 
-    super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
-  }
-  public handleSelect(id: string) {
-    this.selected = id;
-  }
-  public handleReset() {
-    this.selected = '';
+  constructor() {
+    super();
+    this.initBase(CROPS_DATA, CROPS_DATA_HASHMAP);
   }
 }
 
@@ -59,40 +43,27 @@ export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<
  * ```
  * <picsa-form-crop-select-multiple [(ngModel)]="someVariable"></picsa-form-crop-select-multiple>
  * ```
-
+ *
  */
 @Component({
   selector: 'picsa-form-crop-select-multiple',
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FormCropSelectMultipleComponent),
-      multi: true,
-    },
-    {
-      provide: MatFormFieldControl,
-      useExisting: FormCropSelectMultipleComponent,
-      multi: true,
-    },
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatIconModule, PicsaTranslateModule],
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
   protected isMultiple = true;
   /** Show reset option button with custom text and matIcon */
-  public resetOption: { text: string; matIcon: string };
-  constructor() {
-    const cdr = inject(ChangeDetectorRef);
+  public readonly resetOption = input<{ text: string; matIcon: string }>();
 
-    super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
+  constructor() {
+    super();
+    this.initBase(CROPS_DATA, CROPS_DATA_HASHMAP);
   }
+
   public handleSelect(id: string) {
     this.toggleSelected(id);
-  }
-  public handleReset() {
-    this.selected = [];
   }
 }

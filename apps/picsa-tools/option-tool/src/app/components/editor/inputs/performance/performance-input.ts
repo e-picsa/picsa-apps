@@ -1,15 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  forwardRef,
-  inject,
-  Input,
-  Provider,
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 interface IPerformanceOption {
   label: string;
@@ -20,30 +15,24 @@ interface IPerformanceOption {
 }
 
 const PERFORMANCE_OPTIONS: { [id: string]: IPerformanceOption } = {
-  bad: {
-    label: translateMarker('Bad'),
-    matIcon: 'cancel',
-    readonlyIcon: 'close',
+  negative: {
+    label: translateMarker('Negative'),
+    matIcon: 'thumb_down',
+    readonlyIcon: 'sentiment_very_dissatisfied',
   },
   neutral: {
     label: translateMarker('Neutral'),
-    matIcon: 'do_not_disturb_on',
-    readonlyIcon: 'horizontal_rule',
+    matIcon: 'horizontal_rule',
+    readonlyIcon: 'sentiment_neutral',
   },
-  good: {
-    label: translateMarker('Good'),
-    matIcon: 'check_circle',
-    readonlyIcon: 'check',
+  positive: {
+    label: translateMarker('Positive'),
+    matIcon: 'thumb_up',
+    readonlyIcon: 'sentiment_very_satisfied',
   },
 };
-const SELECT_OPTIONS = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
-/** Accessor used for binding with ngModel or formgroups */
-export const PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => PerformanceInputComponent),
-  multi: true,
-};
+const SELECT_OPTIONS = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
 /**
  * Custom input element designed for use with angular Ng-model or standalone syntax
@@ -56,21 +45,20 @@ export const PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   selector: 'option-performance-input',
   templateUrl: './performance-input.html',
   styleUrls: ['./performance-input.scss'],
-  providers: [PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
 export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
   /** Configurable display options (none currently used) */
-  @Input() options: { readonly?: boolean } = {};
+  public readonly options = input<{ readonly?: boolean }>({});
 
-  protected get selectedIconValue() {
-    return this.selectedOption?.readonlyIcon || '';
-  }
+  protected readonly selectedIconValue = computed(() => {
+    return this.selectedOption()?.readonlyIcon || '';
+  });
 
   constructor() {
-    const cdr = inject(ChangeDetectorRef);
-
-    super(cdr, SELECT_OPTIONS);
+    super();
+    this.initBase(SELECT_OPTIONS);
   }
 }

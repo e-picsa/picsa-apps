@@ -1,7 +1,7 @@
 <div class="display-container">
-  @if (selected && selectedOption) {
+  @if (value() && selectedOption(); as option) {
     <div (click)="dialog.open(inputDialog)" style="height: 100%; width: 100%">
-      <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_weather:' + selectedOption.svgIcon"></mat-icon>
+      <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_weather:' + option.svgIcon"></mat-icon>
     </div>
   } @else {
     <button style="height: 100%" mat-stroked-button (click)="dialog.open(inputDialog)">
@@ -14,8 +14,8 @@
 <!-- Dialog -->
 <ng-template #inputDialog>
   <div class="select-container">
-    @for (option of selectOptions; track option.id) {
-      <div class="option-container" [attr.data-selected]="option.id === selected" (click)="selected = option.id">
+    @for (option of filteredOptions(); track option.id) {
+      <div class="option-container" [attr.data-selected]="option.id === value()" (click)="value.set(option.id)">
         <div class="option-label">{{ option.label | translate }}</div>
         <mat-icon class="option-icon" [svgIcon]="'picsa_weather:' + option.svgIcon"></mat-icon>
       </div>

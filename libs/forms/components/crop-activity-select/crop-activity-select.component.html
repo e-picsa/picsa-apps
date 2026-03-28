@@ -1,10 +1,10 @@
 <div class="display-container">
-  @if (selected && selectedOption) {
+  @if (value() && selectedOption(); as option) {
     <div (click)="dialog.open(inputDialog)" style="height: 100%; width: 100%">
-      @if (selectedOption.svgIcon) {
-        <mat-icon class="option-icon" [svgIcon]="'picsa_crop_activity:' + selectedOption.svgIcon"></mat-icon>
+      @if (option.svgIcon) {
+        <mat-icon class="option-icon" [svgIcon]="'picsa_crop_activity:' + option.svgIcon"></mat-icon>
       } @else {
-        <img class="option-img" [src]="selectedOption.assetIconPath" />
+        <img class="option-img" [src]="option.assetIconPath" />
       }
     </div>
   } @else {
@@ -17,8 +17,8 @@
 <!-- Dialog -->
 <ng-template #inputDialog>
   <div class="select-container">
-    @for (option of selectOptions; track option.id) {
-      <div class="option-container" [attr.data-selected]="option.id === selected" (click)="selected = option.id">
+    @for (option of filteredOptions(); track option.id) {
+      <div class="option-container" [attr.data-selected]="option.id === value()" (click)="value.set(option.id)">
         <div class="option-label">{{ option.label | translate }}</div>
         @if (option.svgIcon) {
           <mat-icon class="option-icon" [svgIcon]="'picsa_crop_activity:' + option.svgIcon"></mat-icon>

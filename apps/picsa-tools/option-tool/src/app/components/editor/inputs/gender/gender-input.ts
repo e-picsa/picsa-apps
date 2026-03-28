@@ -1,15 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  forwardRef,
-  inject,
-  Input,
-  Provider,
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectMultipleComponent } from '@picsa/forms/components/base/select-multiple';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
   female: {
@@ -27,13 +22,6 @@ const STRINGS = { only: translateMarker('Only'), and: translateMarker('and'), bo
 
 const SELECT_OPTIONS = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
-/** Accessor used for binding with ngModel or formgroups */
-export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => GenderInputComponent),
-  multi: true,
-};
-
 /**
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
@@ -45,20 +33,17 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   selector: 'option-gender-input',
   templateUrl: './gender-input.html',
   styleUrls: ['./gender-input.scss'],
-  providers: [GENDER_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
 export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<(typeof SELECT_OPTIONS)[0]> {
-  // public override selectOptions = SELECT_OPTIONS;
-
   /** Configurable display options */
-  @Input() options: { showValueText?: boolean; readonly?: boolean } = {};
+  public readonly options = input<{ showValueText?: boolean; readonly?: boolean }>({});
 
   constructor() {
-    const cdr = inject(ChangeDetectorRef);
-
-    super(cdr, SELECT_OPTIONS);
+    super();
+    this.initBase(SELECT_OPTIONS);
   }
 
   /**
@@ -66,10 +51,11 @@ export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<(
    * In case one gender selected will return ['Only', 'Female']
    * In case both selected will return ['Both']
    */
-  public get valueTextArray() {
-    if (this.selected.length == 0) return [];
-    if (this.selected.length === 2) return [STRINGS.both];
-    const [selectedId] = this.selected;
-    return [STRINGS.only, GENDER_OPTIONS[selectedId].label];
-  }
+  public readonly valueTextArray = computed(() => {
+    const selectedVals = this.value() || [];
+    if (selectedVals.length === 0) return [];
+    if (selectedVals.length === 2) return [STRINGS.both];
+    const [selectedId] = selectedVals;
+    return [STRINGS.only, GENDER_OPTIONS[selectedId]?.label || ''];
+  });
 }

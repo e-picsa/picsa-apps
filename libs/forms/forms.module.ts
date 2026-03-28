@@ -30,9 +30,9 @@ export class PicsaFormsModuleConfig {
     MatSelectModule,
     MatDialogModule,
     PicsaTranslateModule,
+    ...PICSA_FORM_COMPONENTS,
   ],
   exports: [...PICSA_FORM_COMPONENTS],
-  declarations: [...PICSA_FORM_COMPONENTS],
 })
 export class PicsaFormsModule {
   private config = inject<PicsaFormsModuleConfig>(PicsaFormsModuleConfig);

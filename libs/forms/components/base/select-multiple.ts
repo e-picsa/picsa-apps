@@ -1,99 +1,60 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import { Component, computed, input, model } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
-/** For more information about this base component see local @see./README.md */
+/**
+ * Base component representing a standard multiple form control using Angular 21 Signal forms.
+ */
 @Component({
   template: '',
-  standalone: false,
+  standalone: true,
 })
 export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> {
-  private _selected: string[] = []; // this is the updated value that the class accesses
+  /** The model signal that replaces NG_VALUE_ACCESSOR binding */
+  public value = model<string[]>([], { alias: 'selected' });
 
-  /** Selected value binding */
-  @Input()
-  get selected() {
-    return this._selected;
-  }
-  set selected(selected: string[]) {
-    // avoid setting value if control disabled
-    if (this.disabled) return;
-    if (!selected) selected = [];
-    if (selected.join(',') !== this._selected.join(',')) {
-      this._selected = selected;
-      this.cdr.markForCheck();
-      this.selectedChange.emit(this._selected);
-      if (this._onChange) {
-        this._onChange(this._selected);
-      }
-    }
-  }
+  public readonly disabled = input<boolean, BooleanInput>(false, { transform: coerceBooleanProperty });
+  public readonly required = input<boolean, BooleanInput>(false, { transform: coerceBooleanProperty });
+  public readonly filterFn = input<(option: T) => boolean>();
 
-  @Input() set filterFn(filterFn: (option: T) => boolean) {
-    this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
-  }
+  public selectOptions: T[] = [];
+  public selectOptionsHashmap: Record<string, T> = {} as any;
 
-  disabled = false;
-
-  /** Get full selected entry data */
-  protected get selectedOptions() {
-    if (this.selected) {
-      return this.selected.map((id) => this.selectOptionsHashmap[id]);
-    }
-    return [];
-  }
-
-  protected filteredOptions: T[] = [];
-
-  /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/
-  @Output() selectedChange = new EventEmitter<string[]>();
-
-  /**
-   *
-   * @param cdr - Angular change detector ref
-   * @param selectOptions List of options to select from. Each option should include 'id' property
-   * @param selectOptionsHashmap Hashmap of select options. If not provided will be calculated
-   */
-  constructor(
-    private cdr: ChangeDetectorRef,
-    @Inject('selectOptions') public selectOptions: T[],
-    @Inject('selectOptionsHashmap') public selectOptionsHashmap: Record<string, T> = null as any,
-  ) {
-    if (!this.selectOptionsHashmap) {
+  protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
+    this.selectOptions = selectOptions;
+    if (selectOptionsHashmap) {
+      this.selectOptionsHashmap = selectOptionsHashmap;
+    } else {
       this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
     }
-    this.filteredOptions = this.selectOptions;
   }
+
+  protected readonly filteredOptions = computed(() => {
+    const fn = this.filterFn();
+    return fn ? this.selectOptions.filter(fn) : this.selectOptions;
+  });
+
+  protected readonly selectedOptions = computed(() => {
+    const vals = this.value() || [];
+    return vals.map((val) => this.selectOptionsHashmap[val]).filter(Boolean);
+  });
 
   public toggleSelected(id: string) {
-    if (id) {
-      const valueIndex = this.selected.indexOf(id);
-      if (valueIndex === -1) {
-        this.selected = [...this._selected, id];
+    if (this.disabled() || !id) return;
+
+    this.value.update((current) => {
+      const vals = current || [];
+      const index = vals.indexOf(id);
+      if (index === -1) {
+        return [...vals, id];
       } else {
-        this.selected = this._selected.filter((v) => v !== id);
+        return vals.filter((v) => v !== id);
       }
-    }
+    });
   }
 
-  /** Events registered by ngModel and Form Controls */
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private _onChange: (value: string[]) => void;
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private _onTouched: (value: string[]) => void;
-
-  writeValue(selected: string[]) {
-    this.selected = selected;
-  }
-
-  registerOnChange(fn: (value: string[]) => void) {
-    this._onChange = fn;
-  }
-
-  registerOnTouched(fn: (value: string[]) => void) {
-    this._onTouched = fn; // <-- save the function
-  }
-
-  setDisabledState(disabled: boolean) {
-    this.disabled = disabled;
+  public handleReset() {
+    if (this.disabled()) return;
+    this.value.set([]);
   }
 }
