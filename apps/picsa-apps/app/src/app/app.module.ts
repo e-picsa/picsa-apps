@@ -30,7 +30,6 @@ import { AppLayoutComponent } from './components/layout';
     PicsaTranslateModule.forRoot(),
     PicsaDeepLinksModule.forRoot({
       baseUrl: 'https://picsa.app',
-      appDynamicLink: 'https://picsa.page.link/dynamic',
     }),
     PicsaLoadingComponent,
     PicsaTranslateModule,

@@ -1,16 +1,8 @@
-import { inject,ModuleWithProviders, NgModule } from '@angular/core';
-import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { inject, ModuleWithProviders, NgModule } from '@angular/core';
 
-import { AppOpenPromptComponent } from './app-open-prompt.component';
 import { DeepLinksService, DeepLinksServiceConfig } from './deep-links.service';
 
-@NgModule({
-  imports: [MatIconModule, MatBottomSheetModule, MatButtonModule],
-  exports: [],
-  declarations: [AppOpenPromptComponent],
-})
+@NgModule({})
 export class PicsaDeepLinksModule {
   constructor() {
     const deepLinksService = inject(DeepLinksService);
