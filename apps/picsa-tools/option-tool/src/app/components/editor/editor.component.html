@@ -1,6 +1,6 @@
 <div class="editor-container">
-  <button mat-mini-fab color="primary" (click)="submitForm()" class="closeButton">
-    <mat-icon>close</mat-icon>
+  <button matMiniFab color="primary" (click)="submitForm()" class="closeButton">
+    <mat-icon class="!w-full">close</mat-icon>
   </button>
 
   <mat-stepper [linear]="false" #stepper class="slim-headers responsive-content-padding">
@@ -203,7 +203,7 @@
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
               <input style="margin-left: 4px" [formField]="form.risk[i]" class="form-control" />
-              <button mat-icon-button (click)="values.risk.splice(i, 1)">
+              <button matIconButton (click)="values.risk.splice(i, 1)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -60,5 +60,8 @@ export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<(typ
   constructor() {
     super();
     this.initBase(SELECT_OPTIONS);
+    effect(() => {
+      console.log('perf value', this.value());
+    });
   }
 }
