@@ -33,7 +33,7 @@ const SELECT_OPTIONS = Object.entries(INVESTMENT_OPTIONS).map(([id, value]) => (
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
  * ```
- * <option-investment-input [(ngModel)]="someVariable"></option-gender-input>
+ * <option-investment-input [formField]="someVariable"></option-gender-input>
  * ```
  */
 @Component({

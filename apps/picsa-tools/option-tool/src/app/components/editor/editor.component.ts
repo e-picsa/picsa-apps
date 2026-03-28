@@ -1,4 +1,5 @@
-import { Component, EventEmitter, inject,OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, signal, ViewChild } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -18,7 +19,14 @@ export class EditorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private componentService = inject(PicsaCommonComponentsService);
 
-  public values = ENTRY_TEMPLATE();
+  /** model used to set initial form values */
+  private model = signal<IOptionsToolEntry>(ENTRY_TEMPLATE());
+  public form = form(this.model);
+  //
+  public get values() {
+    return this.model();
+  }
+
   public performanceConditions = PERFORMANCE_CONDITIONS;
   public investmentTypes = INVESTMENT_TYPES;
   public stepperSteps = STEPPER_STEPS;
@@ -37,25 +45,32 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  public setFormBenefit(index: number, benefit: any) {
+    this.form.benefits[index].benefit().value.set(benefit);
+  }
+  public setFormTimeValue(value: string | number) {
+    // Bypass formField binding as nested `form.time.value` as name conflicts
+    // with `value()` property. Ensure cast to number
+    const parsed = value ? Number(value) : null;
+    this.form.time().value.update((v) => ({ ...v, value: parsed }));
+  }
+
   public handleRemovingBenefits(index: number) {
-    this.values.benefits.splice(index, 1);
+    this.form.benefits().value.update((v) => v.filter((_, i) => i !== index));
   }
   public handleMoreBenefits() {
-    this.values.benefits.push({
-      benefit: '',
-      beneficiary: [],
-    });
+    this.form.benefits().value.update((v) => [...v, { benefit: '', beneficiary: [] }]);
   }
 
   public async submitForm() {
-    this.values.enterprise = this.enterprise;
+    this.form.enterprise().value.set(this.enterprise);
     // minimum for auto save should be at least a name
-    if (!this.values.practice) {
+    if (!this.form.practice().value()) {
       this.dataTransfer.emit(null);
       return;
     }
     // Emit the values
-    this.dataTransfer.emit(this.values);
+    this.dataTransfer.emit(this.model());
     // Reset form
     this.resetForm();
   }
@@ -67,7 +82,7 @@ export class EditorComponent implements OnInit {
 
   // Allow update from home copmonent
   public presetVariables(rowData: IOptionsToolEntry) {
-    this.values = rowData;
+    this.model.set(rowData);
   }
   public async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
@@ -78,7 +93,7 @@ export class EditorComponent implements OnInit {
     });
   }
   public resetVariables() {
-    this.values = ENTRY_TEMPLATE();
+    this.model.set(ENTRY_TEMPLATE());
   }
 
   /**

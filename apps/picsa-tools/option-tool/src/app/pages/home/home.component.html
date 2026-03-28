@@ -20,7 +20,7 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'Who makes decisions' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <option-gender-input
-            [ngModel]="element._data.gender_decisions"
+            [value]="element._data.gender_decisions"
             [options]="{ readonly: true }"
           ></option-gender-input>
         </td>
@@ -31,7 +31,7 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'Who does activity' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <option-gender-input
-            [ngModel]="element._data.gender_activities"
+            [value]="element._data.gender_activities"
             [options]="{ readonly: true }"
           ></option-gender-input>
         </td>
@@ -44,7 +44,7 @@
           @for (benefit of element._data.benefits; track benefit; let i = $index) {
             <div style="display: flex">
               <div style="flex: 1">{{ benefit.benefit }}</div>
-              <option-gender-input [ngModel]="benefit.beneficiary" [options]="{ readonly: true }"></option-gender-input>
+              <option-gender-input [value]="benefit.beneficiary" [options]="{ readonly: true }"></option-gender-input>
             </div>
           }
         </td>
@@ -59,15 +59,15 @@
           <div>
             <option-performance-input
               [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.lowRf"
+              [value]="element._data.performance.lowRf"
             ></option-performance-input>
             <option-performance-input
               [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.midRf"
+              [value]="element._data.performance.midRf"
             ></option-performance-input>
             <option-performance-input
               [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.highRf"
+              [value]="element._data.performance.highRf"
             ></option-performance-input>
           </div>
         </td>
@@ -79,11 +79,11 @@
         <td mat-cell *matCellDef="let element" class="split-values">
           <div>
             <option-investment-input
-              [(ngModel)]="element._data.investment.money"
+              [value]="element._data.investment.money"
               [options]="{ readonly: true }"
             ></option-investment-input>
             <option-investment-input
-              [(ngModel)]="element._data.investment.time"
+              [value]="element._data.investment.time"
               [options]="{ readonly: true }"
             ></option-investment-input>
           </div>

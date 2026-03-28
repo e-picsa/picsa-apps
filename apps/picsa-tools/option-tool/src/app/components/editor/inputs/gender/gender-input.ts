@@ -26,7 +26,7 @@ const SELECT_OPTIONS = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ..
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
  * ```
- * <option-gender-input [(ngModel)]="someVariable"></option-gender-input>
+ * <option-gender-input [formField]="someVariable"></option-gender-input>
  * ```
  */
 @Component({

@@ -49,7 +49,7 @@
     <!-- 1. Practice -->
     <ng-template #practiceInput>
       <div class="form-group">
-        <input [(ngModel)]="values.practice" class="form-control" />
+        <input [formField]="form.practice" class="form-control" />
       </div>
       <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !values.practice }">
       </ng-container>
@@ -59,7 +59,7 @@
     <ng-template #decisionsInput>
       <option-gender-input
         style="margin-top: 1rem"
-        [(ngModel)]="values.gender_decisions"
+        [formField]="form.gender_decisions"
         [options]="{ showValueText: true }"
       ></option-gender-input>
 
@@ -74,7 +74,7 @@
     <ng-template #activitiesInput>
       <option-gender-input
         style="margin-top: 1rem"
-        [(ngModel)]="values.gender_activities"
+        [formField]="form.gender_activities"
         [options]="{ showValueText: true }"
       ></option-gender-input>
       <ng-container
@@ -89,9 +89,14 @@
         @for (benefit of values.benefits; track benefit; let i = $index) {
           <div class="entry-row-item">
             <div class="benefit-container">
-              <input [(ngModel)]="benefit.benefit" class="form-control" style="flex: 1" />
+              <input
+                [value]="values.benefits[i].benefit"
+                (change)="setFormBenefit(i, $event.target.value)"
+                class="form-control"
+                style="flex: 1"
+              />
               <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
-                <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
+                <option-gender-input [formField]="form.benefits[i].beneficiary"></option-gender-input>
                 <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
                   <mat-icon>close</mat-icon>
                 </button>
@@ -132,7 +137,7 @@
                 <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
               </div>
             </div>
-            <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
+            <option-performance-input [formField]="form.performance[condition.id]"></option-performance-input>
           </div>
         }
       </div>
@@ -156,7 +161,7 @@
                 <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
               </div>
             </div>
-            <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
+            <option-investment-input [formField]="form.investment[investment.id]"></option-investment-input>
           </div>
         }
       </div>
@@ -171,7 +176,13 @@
     <!-- 7. Time -->
     <ng-template #timeInput>
       <div style="display: flex; gap: 16px; align-items: center">
-        <input [(ngModel)]="values.time.value" type="number" class="form-control" style="width: 64px" />
+        <input
+          type="number"
+          [value]="values.time.value"
+          (change)="setFormTimeValue($event.target.value)"
+          class="form-control"
+          style="width: 64px"
+        />
         <mat-select class="form-control value-primary" [(value)]="values.time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
@@ -191,7 +202,7 @@
         @for (risk of values.risk; track trackByIndex(i); let i = $index) {
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
-              <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
+              <input style="margin-left: 4px" [formField]="form.risk[i]" class="form-control" />
               <button mat-icon-button (click)="values.risk.splice(i, 1)">
                 <mat-icon>close</mat-icon>
               </button>

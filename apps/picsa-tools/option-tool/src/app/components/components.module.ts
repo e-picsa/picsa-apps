@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
@@ -20,6 +21,7 @@ const Standalone = [GenderInputComponent, InvestmentInputComponent, PerformanceI
   imports: [
     CommonModule,
     FormsModule,
+    FormField,
     OptionMaterialModule,
     PicsaCommonComponentsModule,
     PicsaTranslateModule,

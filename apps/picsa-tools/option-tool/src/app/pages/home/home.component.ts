@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, ElementRef, inject,OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';

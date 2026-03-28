@@ -38,7 +38,7 @@ const SELECT_OPTIONS = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => 
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
  * ```
- * <option-performance-input [(ngModel)]="someVariable"></option-gender-input>
+ * <option-performance-input [formField]="someVariable"></option-gender-input>
  * ```
  */
 @Component({
