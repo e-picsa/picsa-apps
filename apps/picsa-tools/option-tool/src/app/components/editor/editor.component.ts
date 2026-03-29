@@ -19,13 +19,11 @@ export class EditorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private componentService = inject(PicsaCommonComponentsService);
 
-  /** model used to set initial form values */
-  private model = signal<IOptionsToolEntry>(ENTRY_TEMPLATE());
+  /** model used to read and set full form values */
+  public model = signal<IOptionsToolEntry>(ENTRY_TEMPLATE());
+
+  /** form bindings */
   public form = form(this.model);
-  //
-  public get values() {
-    return this.model();
-  }
 
   public performanceConditions = PERFORMANCE_CONDITIONS;
   public investmentTypes = INVESTMENT_TYPES;

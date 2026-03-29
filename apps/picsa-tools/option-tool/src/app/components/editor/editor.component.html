@@ -5,7 +5,7 @@
 
   <mat-stepper [linear]="false" #stepper class="slim-headers responsive-content-padding">
     <!-- Step header (common) -->
-    @for (step of stepperSteps; track step; let stepIndex = $index) {
+    @for (step of stepperSteps; track step.id; let stepIndex = $index) {
       <mat-step matStepContent>
         <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
         <div class="StepContainer" [attr.data-step]="stepIndex + 1">
@@ -51,7 +51,7 @@
       <div class="form-group">
         <input [formField]="form.practice" class="form-control" />
       </div>
-      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !values.practice }">
+      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !model().practice }">
       </ng-container>
     </ng-template>
 
@@ -65,7 +65,7 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().gender_decisions.length === 0 }"
       >
       </ng-container>
     </ng-template>
@@ -79,18 +79,18 @@
       ></option-gender-input>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.gender_activities.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().gender_activities.length === 0 }"
       ></ng-container>
     </ng-template>
 
     <!-- 4. Benefits -->
     <ng-template #benefitsInput>
       <div class="entry-rows">
-        @for (benefit of values.benefits; track benefit; let i = $index) {
+        @for (benefit of model().benefits; track benefit; let i = $index) {
           <div class="entry-row-item">
             <div class="benefit-container">
               <input
-                [value]="values.benefits[i].benefit"
+                [value]="model().benefits[i].benefit"
                 (change)="setFormBenefit(i, $event.target.value)"
                 class="form-control"
                 style="flex: 1"
@@ -111,9 +111,9 @@
           (click)="handleMoreBenefits()"
           matButton
           [disabled]="
-            values.benefits.length > 0 &&
-            (values.benefits[values.benefits.length - 1].benefit === undefined ||
-              values.benefits[values.benefits.length - 1].beneficiary.length === 0)
+            model().benefits.length > 0 &&
+            (model().benefits[model().benefits.length - 1].benefit === undefined ||
+              model().benefits[model().benefits.length - 1].beneficiary.length === 0)
           "
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
@@ -122,7 +122,7 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.benefits.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().benefits.length === 0 }"
       ></ng-container>
     </ng-template>
 
@@ -145,7 +145,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf),
+          nextDisabled: !(model().performance.lowRf && model().performance.midRf && model().performance.highRf),
         }"
       ></ng-container>
     </ng-template>
@@ -168,7 +168,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.investment.money && values.investment.time),
+          nextDisabled: !(model().investment.money && model().investment.time),
         }"
       ></ng-container>
     </ng-template>
@@ -178,12 +178,12 @@
       <div style="display: flex; gap: 16px; align-items: center">
         <input
           type="number"
-          [value]="values.time.value"
+          [value]="model().time.value"
           (change)="setFormTimeValue($event.target.value)"
           class="form-control"
           style="width: 64px"
         />
-        <mat-select class="form-control value-primary" [(value)]="values.time.unit">
+        <mat-select class="form-control value-primary" [(value)]="model().time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
           <mat-option value="day">{{ 'Days' | translate }}</mat-option>
@@ -192,18 +192,18 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: !values.time }"
+        [ngTemplateOutletContext]="{ nextDisabled: !model().time }"
       ></ng-container>
     </ng-template>
 
     <!-- 8. Risk -->
     <ng-template #riskInput>
       <div class="entry-rows">
-        @for (risk of values.risk; track trackByIndex(i); let i = $index) {
+        @for (risk of model().risk; track trackByIndex(i); let i = $index) {
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
               <input style="margin-left: 4px" [formField]="form.risk[i]" class="form-control" />
-              <button matIconButton (click)="values.risk.splice(i, 1)">
+              <button matIconButton (click)="model().risk.splice(i, 1)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
@@ -211,9 +211,9 @@
         }
         <button
           style="margin-bottom: 16px; margin-top: -16px"
-          (click)="values.risk.push('')"
+          (click)="model().risk.push('')"
           matButton
-          [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
+          [disabled]="model().risk.length > 0 && !model().risk[model().risk.length - 1]"
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
         </button>
@@ -221,7 +221,7 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: !values.risk }"
+        [ngTemplateOutletContext]="{ nextDisabled: !model().risk }"
       ></ng-container>
     </ng-template>
 
