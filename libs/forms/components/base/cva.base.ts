@@ -1,5 +1,5 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, effect, inject, input, model, untracked } from '@angular/core';
+import { Directive, effect, inject, input, model, signal, untracked } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { FormValueControl } from '@angular/forms/signals';
 
@@ -21,14 +21,12 @@ let nextUniqueId = 0;
  * Simply update `this.value.set(newValue)` inside the child, and the base class handles the rest.
  * * @template T - The expected data type of the form control's value (e.g., `string`, `string[]`, `number`).
  */
-@Component({
-  template: '',
+@Directive({
   standalone: true,
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix
-export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAccessor, FormValueControl<T> {
+export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAccessor, FormValueControl<T | null> {
   // --- State Models ---
-  public value = model<T | any>(null);
+  public value = model<T | null>(null);
   public disabled = model<boolean>(false);
 
   // --- Standard Inputs ---
@@ -38,11 +36,14 @@ export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAc
   // --- Form Control Injection ---
   public ngControl = inject(NgControl, { optional: true, self: true });
 
-  // UI State Properties
-  public focused = false;
+  // UI State Properties (Converted to signal for OnPush compatibility)
+  public focused = signal(false);
 
-  protected onChange: (value: T | any) => void = () => null;
+  protected onChange: (value: T | null) => void = () => null;
   protected onTouched: () => void = () => null;
+
+  // Track the last value sent to the parent to prevent the "echo" bug
+  private lastReportedValue: T | null = null;
 
   constructor() {
     if (this.ngControl) {
@@ -53,15 +54,18 @@ export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAc
     // Automatically sync signal changes back to the parent form
     effect(() => {
       const val = this.value();
-      untracked(() => this.onChange(val));
+
+      untracked(() => {
+        // Only trigger onChange if the value actually changed via the UI/Child component
+        if (val !== this.lastReportedValue) {
+          this.lastReportedValue = val;
+          this.onChange(val);
+        }
+      });
     });
   }
 
   // --- Validation Helper ---
-  /**
-   * Returns true if the control is invalid AND has been touched/dirtied.
-   * Useful for binding to template error classes (e.g., `[class.has-error]="errorState"`).
-   */
   get errorState(): boolean {
     if (!this.ngControl || !this.ngControl.control) {
       return false;
@@ -73,17 +77,19 @@ export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAc
   // --- Focus/Blur Helpers ---
   public onFocus(): void {
     if (!this.disabled()) {
-      this.focused = true;
+      this.focused.set(true);
     }
   }
 
   public onBlur(): void {
-    this.focused = false;
+    this.focused.set(false);
     this.markAsTouched();
   }
 
   // --- Standard CVA Methods ---
-  writeValue(val: T | any): void {
+  writeValue(val: T | null): void {
+    // Update the tracker BEFORE setting the model, so the effect ignores this update
+    this.lastReportedValue = val;
     this.value.set(val);
   }
 

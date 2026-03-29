@@ -1,7 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
-// Import your new base class
 import { PicsaBaseControlValueAccessor } from './cva.base';
 
 @Component({
