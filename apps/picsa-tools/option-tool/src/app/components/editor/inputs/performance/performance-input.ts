@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
 import { PicsaTranslateModule } from '@picsa/i18n';
+
+import { OptionMaterialModule } from '../../../material.module';
 
 interface IPerformanceOption {
   label: string;
@@ -46,8 +46,8 @@ const SELECT_OPTIONS = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => 
   templateUrl: './performance-input.html',
   styleUrls: ['./performance-input.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
+
+  imports: [CommonModule, OptionMaterialModule, PicsaTranslateModule],
 })
 export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
   /** Configurable display options (none currently used) */

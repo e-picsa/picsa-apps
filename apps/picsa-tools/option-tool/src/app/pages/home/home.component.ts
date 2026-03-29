@@ -8,19 +8,33 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
+import { GenderInputComponent } from '../../components/editor/inputs/gender/gender-input';
+import { InvestmentInputComponent } from '../../components/editor/inputs/investment/investment-input';
+import { PerformanceInputComponent } from '../../components/editor/inputs/performance/performance-input';
+import { OptionMaterialModule } from '../../components/material.module';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
 @Component({
   selector: 'option-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
+
+  imports: [
+    GenderInputComponent,
+    PerformanceInputComponent,
+    InvestmentInputComponent,
+    PicsaTranslateModule,
+    OptionMaterialModule,
+    EditorComponent,
+  ],
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
   private service = inject(OptionsToolService);

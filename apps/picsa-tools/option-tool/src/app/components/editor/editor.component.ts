@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,21 +9,35 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { FieldState, form } from '@angular/forms/signals';
+import { FieldState, form, FormField } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ENTERPRISES_BY_ID, INVESTMENT_TYPES, PERFORMANCE_CONDITIONS, STEPPER_STEPS } from '../../data';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
+import { OptionMaterialModule } from '../material.module';
+import { GenderInputComponent } from './inputs/gender/gender-input';
+import { InvestmentInputComponent } from './inputs/investment/investment-input';
+import { PerformanceInputComponent } from './inputs/performance/performance-input';
 
 @Component({
   selector: 'option-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  standalone: false,
+
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    GenderInputComponent,
+    FormField,
+    InvestmentInputComponent,
+    OptionMaterialModule,
+    PicsaTranslateModule,
+    CommonModule,
+    PerformanceInputComponent,
+  ],
 })
 export class EditorComponent implements OnInit {
   private dialog = inject(PicsaDialogService);
