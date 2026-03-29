@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectMultipleComponent } from '@picsa/forms/components/base/select-multiple';
 import { PicsaTranslateModule } from '@picsa/i18n';
+
+import { OptionMaterialModule } from '../../../material.module';
 
 const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
   female: {
@@ -34,8 +34,8 @@ const SELECT_OPTIONS = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ..
   templateUrl: './gender-input.html',
   styleUrls: ['./gender-input.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
+
+  imports: [CommonModule, OptionMaterialModule, PicsaTranslateModule],
 })
 export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<(typeof SELECT_OPTIONS)[0]> {
   /** Configurable display options */
