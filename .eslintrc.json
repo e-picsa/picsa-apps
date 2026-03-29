@@ -41,6 +41,7 @@
         "@typescript-eslint/no-loss-of-precision": ["warn"],
         "@typescript-eslint/no-non-null-assertion": "warn",
         "@typescript-eslint/no-unused-vars": ["warn"],
+        "@angular-eslint/prefer-standalone": "warn",
         "no-loss-of-precision": "off",
         "no-prototype-builtins": "off",
         "no-unused-vars": "off",
