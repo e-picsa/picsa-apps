@@ -1,11 +1,11 @@
 <div class="editor-container">
-  <button mat-mini-fab color="primary" (click)="submitForm()" class="closeButton">
-    <mat-icon>close</mat-icon>
+  <button matMiniFab color="primary" (click)="submitForm()" class="closeButton">
+    <mat-icon class="!w-full">close</mat-icon>
   </button>
 
   <mat-stepper [linear]="false" #stepper class="slim-headers responsive-content-padding">
     <!-- Step header (common) -->
-    @for (step of stepperSteps; track step; let stepIndex = $index) {
+    @for (step of stepperSteps; track step.id; let stepIndex = $index) {
       <mat-step matStepContent>
         <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
         <div class="StepContainer" [attr.data-step]="stepIndex + 1">
@@ -49,9 +49,9 @@
     <!-- 1. Practice -->
     <ng-template #practiceInput>
       <div class="form-group">
-        <input [(ngModel)]="values.practice" class="form-control" />
+        <input [formField]="form.practice" class="form-control" />
       </div>
-      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !values.practice }">
+      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !model().practice }">
       </ng-container>
     </ng-template>
 
@@ -59,13 +59,13 @@
     <ng-template #decisionsInput>
       <option-gender-input
         style="margin-top: 1rem"
-        [(ngModel)]="values.gender_decisions"
+        [formField]="form.gender_decisions"
         [options]="{ showValueText: true }"
       ></option-gender-input>
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().gender_decisions.length === 0 }"
       >
       </ng-container>
     </ng-template>
@@ -74,25 +74,25 @@
     <ng-template #activitiesInput>
       <option-gender-input
         style="margin-top: 1rem"
-        [(ngModel)]="values.gender_activities"
+        [formField]="form.gender_activities"
         [options]="{ showValueText: true }"
       ></option-gender-input>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.gender_activities.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().gender_activities.length === 0 }"
       ></ng-container>
     </ng-template>
 
     <!-- 4. Benefits -->
     <ng-template #benefitsInput>
       <div class="entry-rows">
-        @for (benefit of values.benefits; track benefit; let i = $index) {
+        @for (benefit of model().benefits; track $index; let i = $index) {
           <div class="entry-row-item">
             <div class="benefit-container">
-              <input [(ngModel)]="benefit.benefit" class="form-control" style="flex: 1" />
+              <input [formField]="form.benefits[i].benefit" class="form-control" style="flex: 1" />
               <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
-                <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
-                <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
+                <option-gender-input [formField]="form.benefits[i].beneficiary"></option-gender-input>
+                <button matButton color="primary" (click)="formArrayRemove(form.benefits(), i)">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -103,12 +103,12 @@
         TODO would be easier to manage all validation if using formgroups -->
         <button
           style="margin-bottom: 16px; margin-top: -16px"
-          (click)="handleMoreBenefits()"
-          mat-button
+          (click)="formArrayPush(form.benefits(), { beneficiary: [], benefit: '' })"
+          matButton
           [disabled]="
-            values.benefits.length > 0 &&
-            (values.benefits[values.benefits.length - 1].benefit === undefined ||
-              values.benefits[values.benefits.length - 1].beneficiary.length === 0)
+            model().benefits.length > 0 &&
+            (model().benefits[model().benefits.length - 1].benefit === undefined ||
+              model().benefits[model().benefits.length - 1].beneficiary.length === 0)
           "
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
@@ -117,7 +117,7 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: values.benefits.length === 0 }"
+        [ngTemplateOutletContext]="{ nextDisabled: model().benefits.length === 0 }"
       ></ng-container>
     </ng-template>
 
@@ -132,7 +132,7 @@
                 <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
               </div>
             </div>
-            <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
+            <option-performance-input [formField]="form.performance[condition.id]"></option-performance-input>
           </div>
         }
       </div>
@@ -140,7 +140,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf),
+          nextDisabled: !(model().performance.lowRf && model().performance.midRf && model().performance.highRf),
         }"
       ></ng-container>
     </ng-template>
@@ -156,14 +156,14 @@
                 <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
               </div>
             </div>
-            <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
+            <option-investment-input [formField]="form.investment[investment.id]"></option-investment-input>
           </div>
         }
       </div>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.investment.money && values.investment.time),
+          nextDisabled: !(model().investment.money && model().investment.time),
         }"
       ></ng-container>
     </ng-template>
@@ -171,8 +171,14 @@
     <!-- 7. Time -->
     <ng-template #timeInput>
       <div style="display: flex; gap: 16px; align-items: center">
-        <input [(ngModel)]="values.time.value" type="number" class="form-control" style="width: 64px" />
-        <mat-select class="form-control value-primary" [(value)]="values.time.unit">
+        <input
+          type="number"
+          [value]="model().time.value"
+          (change)="setFormTimeValue($event.target.value)"
+          class="form-control"
+          style="width: 64px"
+        />
+        <mat-select class="form-control value-primary min-w-32" [formField]="form.time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
           <mat-option value="day">{{ 'Days' | translate }}</mat-option>
@@ -181,18 +187,18 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: !values.time }"
+        [ngTemplateOutletContext]="{ nextDisabled: !model().time }"
       ></ng-container>
     </ng-template>
 
     <!-- 8. Risk -->
     <ng-template #riskInput>
       <div class="entry-rows">
-        @for (risk of values.risk; track trackByIndex(i); let i = $index) {
+        @for (risk of model().risk; track $index; let i = $index) {
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
-              <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
-              <button mat-icon-button (click)="values.risk.splice(i, 1)">
+              <input style="margin-left: 4px" [formField]="form.risk[i]" class="form-control" />
+              <button matIconButton (click)="formArrayRemove(form.risk(), i)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
@@ -200,9 +206,9 @@
         }
         <button
           style="margin-bottom: 16px; margin-top: -16px"
-          (click)="values.risk.push('')"
-          mat-button
-          [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
+          (click)="formArrayPush(form.risk(), '')"
+          matButton
+          [disabled]="model().risk.length > 0 && !model().risk[model().risk.length - 1]"
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
         </button>
@@ -210,7 +216,7 @@
 
       <ng-container
         [ngTemplateOutlet]="stepButtons"
-        [ngTemplateOutletContext]="{ nextDisabled: !values.risk }"
+        [ngTemplateOutletContext]="{ nextDisabled: !model().risk }"
       ></ng-container>
     </ng-template>
 
@@ -219,20 +225,20 @@
     <ng-template #stepButtons let-nextDisabled="nextDisabled" let-firstStep="stepper.selectedIndex === 0">
       <div class="step-buttons">
         @if (stepper.selectedIndex === 0) {
-          <button mat-button (click)="promptDelete()" [disabled]="nextDisabled">
+          <button matButton (click)="promptDelete()" [disabled]="nextDisabled">
             <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
           </button>
         }
         @if (stepper.selectedIndex > 0) {
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          <button matButton matStepperPrevious>{{ 'Back' | translate }}</button>
         }
         @if (stepper.selectedIndex < 7) {
-          <button mat-raised-button color="primary" [disabled]="nextDisabled" matStepperNext>
+          <button matButton="elevated" color="primary" [disabled]="nextDisabled" matStepperNext>
             {{ 'Next' | translate }}
           </button>
         }
         @if (stepper.selectedIndex === 7) {
-          <button mat-raised-button color="primary" [disabled]="nextDisabled" (click)="submitForm()">
+          <button matButton="elevated" color="primary" [disabled]="nextDisabled" (click)="submitForm()">
             {{ 'Finish' | translate }}
           </button>
         }

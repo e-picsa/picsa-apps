@@ -1,15 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  forwardRef,
-  inject,
-  Input,
-  Provider,
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 interface IInvestmentOption {
   label: string;
@@ -34,35 +29,27 @@ const INVESTMENT_OPTIONS: { [id: string]: IInvestmentOption } = {
 
 const SELECT_OPTIONS = Object.entries(INVESTMENT_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
-/** Accessor used for binding with ngModel or formgroups */
-export const INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => InvestmentInputComponent),
-  multi: true,
-};
-
 /**
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
  * ```
- * <option-investment-input [(ngModel)]="someVariable"></option-gender-input>
+ * <option-investment-input [formField]="someVariable"></option-gender-input>
  * ```
  */
 @Component({
   selector: 'option-investment-input',
   templateUrl: './investment-input.html',
   styleUrls: ['./investment-input.scss'],
-  providers: [INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
 export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
   /** Configurable display options (none currently used) */
-  @Input() options: { readonly?: boolean } = {};
+  public readonly options = input<{ readonly?: boolean }>({});
 
   constructor() {
-    const cdr = inject(ChangeDetectorRef);
-
-    super(cdr, SELECT_OPTIONS);
+    super();
+    this.initBase(SELECT_OPTIONS);
   }
 }

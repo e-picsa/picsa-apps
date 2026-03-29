@@ -1,4 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
@@ -16,7 +19,8 @@ import { isEqual } from '@picsa/utils/object.utils';
  */
 @Component({
   selector: 'picsa-form-location-select',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

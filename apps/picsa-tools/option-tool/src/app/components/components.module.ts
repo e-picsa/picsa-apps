@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
@@ -13,19 +14,22 @@ import { InvestmentInputComponent } from './editor/inputs/investment/investment-
 import { PerformanceInputComponent } from './editor/inputs/performance/performance-input';
 import { OptionMaterialModule } from './material.module';
 
-const Components = [EditorComponent, GenderInputComponent, InvestmentInputComponent, PerformanceInputComponent];
+const Components = [EditorComponent];
+const Standalone = [GenderInputComponent, InvestmentInputComponent, PerformanceInputComponent];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    FormField,
     OptionMaterialModule,
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
     ReactiveFormsModule,
     RouterModule,
+    ...Standalone,
   ],
-  exports: [OptionMaterialModule, PicsaCommonComponentsModule, ...Components],
+  exports: [OptionMaterialModule, PicsaCommonComponentsModule, ...Components, ...Standalone],
   declarations: [Components],
   providers: [],
 })

@@ -1,24 +1,24 @@
-@if (!options.readonly) {
+@if (!options().readonly) {
 <div class="input-container">
-  @for (option of selectOptions; track option) {
+  @for (option of filteredOptions(); track option.id) {
   <button
-    mat-button
+    matButton
     class="select-button"
-    (click)="selected=option.id"
+    (click)="value.set(option.id)"
     [attr.data-value]="option.id"
-    [attr.data-selected]="selected===option.id"
+    [attr.data-selected]="value()===option.id"
   >
     <div>
       <mat-icon>{{option.matIcon}}</mat-icon>
-      <div>{{ option.label | translate }}</div>
+      <div class="truncate">{{ option.label | translate }}</div>
     </div>
   </button>
   }
 </div>
 }
 <!-- Alternatively readonly mode which just displays selected icon -->
-@if (options.readonly) {
-<div class="readonly-value" [attr.data-value]="selected">
-  <mat-icon>{{selectedIconValue}}</mat-icon>
+@if (options().readonly) {
+<div class="readonly-value" [attr.data-value]="value()">
+  <mat-icon>{{selectedIconValue()}}</mat-icon>
 </div>
 }

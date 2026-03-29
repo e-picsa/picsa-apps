@@ -1,4 +1,14 @@
-import { Component, EventEmitter, inject,OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { FieldState, form } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -12,16 +22,22 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent implements OnInit {
   private dialog = inject(PicsaDialogService);
   private route = inject(ActivatedRoute);
   private componentService = inject(PicsaCommonComponentsService);
 
-  public values = ENTRY_TEMPLATE();
-  public performanceConditions = PERFORMANCE_CONDITIONS;
-  public investmentTypes = INVESTMENT_TYPES;
-  public stepperSteps = STEPPER_STEPS;
+  /** model used to read and set full form values */
+  public model = signal<IOptionsToolEntry>(ENTRY_TEMPLATE());
+
+  /** form bindings */
+  public form = form(this.model);
+
+  public readonly performanceConditions = PERFORMANCE_CONDITIONS;
+  public readonly investmentTypes = INVESTMENT_TYPES;
+  public readonly stepperSteps = STEPPER_STEPS;
 
   private enterprise: IOptionsToolEntry['enterprise'];
 
@@ -37,25 +53,32 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  public handleRemovingBenefits(index: number) {
-    this.values.benefits.splice(index, 1);
+  public setFormBenefit(index: number, benefit: string) {
+    this.form.benefits[index].benefit().value.set(benefit);
   }
-  public handleMoreBenefits() {
-    this.values.benefits.push({
-      benefit: '',
-      beneficiary: [],
-    });
+  public setFormTimeValue(value: string | number) {
+    // Bypass formField binding as nested `form.time.value` as name conflicts
+    // with `value()` property. Ensure cast to number
+    const parsed = value ? Number(value) : null;
+    this.form.time().value.update((v) => ({ ...v, value: parsed }));
+  }
+
+  public formArrayPush<T>(field: FieldState<T[], string>, value: T) {
+    field.value.update((v) => [...v, value]);
+  }
+  public formArrayRemove<T>(field: FieldState<T[], string>, index: number) {
+    field.value.update((v) => v.filter((_, i) => i !== index));
   }
 
   public async submitForm() {
-    this.values.enterprise = this.enterprise;
+    this.form.enterprise().value.set(this.enterprise);
     // minimum for auto save should be at least a name
-    if (!this.values.practice) {
+    if (!this.form.practice().value()) {
       this.dataTransfer.emit(null);
       return;
     }
     // Emit the values
-    this.dataTransfer.emit(this.values);
+    this.dataTransfer.emit(this.model());
     // Reset form
     this.resetForm();
   }
@@ -67,7 +90,7 @@ export class EditorComponent implements OnInit {
 
   // Allow update from home copmonent
   public presetVariables(rowData: IOptionsToolEntry) {
-    this.values = rowData;
+    this.model.set(rowData);
   }
   public async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
@@ -78,15 +101,7 @@ export class EditorComponent implements OnInit {
     });
   }
   public resetVariables() {
-    this.values = ENTRY_TEMPLATE();
-  }
-
-  /**
-   * Using [(ngModel)] bindings inside an array requires simple trackBy function
-   * https://stackoverflow.com/a/50139592
-   **/
-  public trackByIndex(index: number) {
-    return index;
+    this.model.set(ENTRY_TEMPLATE());
   }
 
   private resetStepper(): void {
