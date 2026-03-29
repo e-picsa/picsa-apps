@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { IWeatherDataEntry, WEATHER_DATA, WEATHER_DATA_HASHMAP } from '@picsa/data/weather';
+import { IWeatherDataEntry, WEATHER_DATA } from '@picsa/data/weather';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PicsaFormBaseSelectComponent } from '../base/select';
@@ -20,6 +20,6 @@ export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWe
 
   constructor() {
     super();
-    this.initBase(WEATHER_DATA, WEATHER_DATA_HASHMAP);
+    this.initBase(WEATHER_DATA.filter((v) => !!v.label));
   }
 }

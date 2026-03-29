@@ -1,7 +1,8 @@
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, computed, input, model } from '@angular/core';
-import { FormValueControl } from '@angular/forms/signals';
+import { Component, computed, input } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
+
+// Import the super-powered CVA base class
+import { PicsaBaseControlValueAccessor } from './cva.base';
 
 /**
  * Base component representing a standard multiple form control using Angular 21 Signal forms.
@@ -10,14 +11,12 @@ import { arrayToHashmap } from '@picsa/utils';
   template: '',
   standalone: true,
 })
-export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }>
-  implements FormValueControl<string[]>
-{
-  /** The model signal that replaces NG_VALUE_ACCESSOR binding */
-  public value = model<string[]>([]);
+// Extend the generic base class and tell it to expect an array of strings
+export abstract class PicsaFormBaseSelectMultipleComponent<
+  T extends { id: string },
+> extends PicsaBaseControlValueAccessor<string[]> {
+  // `value`, `disabled`, and `required` are seamlessly inherited!
 
-  public readonly disabled = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
-  public readonly required = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
   public readonly filterFn = input<(option: T) => boolean>();
 
   public selectOptions: T[] = [];
@@ -25,11 +24,7 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
 
   protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
     this.selectOptions = selectOptions;
-    if (selectOptionsHashmap) {
-      this.selectOptionsHashmap = selectOptionsHashmap;
-    } else {
-      this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
-    }
+    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(this.selectOptions, 'id');
   }
 
   protected readonly filteredOptions = computed(() => {
@@ -38,6 +33,7 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
   });
 
   protected readonly selectedOptions = computed(() => {
+    // The base class might initialize value as `null`, so the fallback to `[]` here is perfect
     const vals = this.value() || [];
     return vals.map((val) => this.selectOptionsHashmap[val]).filter(Boolean);
   });
@@ -45,6 +41,8 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
   public toggleSelected(id: string) {
     if (this.disabled() || !id) return;
 
+    // Update the signal. The effect() in the base class will automatically catch this
+    // and sync the new array up to the parent form.
     this.value.update((current) => {
       const vals = current || [];
       const index = vals.indexOf(id);
@@ -54,10 +52,14 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
         return vals.filter((v) => v !== id);
       }
     });
+
+    // Mark as touched on user interaction
+    this.markAsTouched();
   }
 
   public handleReset() {
     if (this.disabled()) return;
     this.value.set([]);
+    this.markAsTouched();
   }
 }

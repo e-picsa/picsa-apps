@@ -1,35 +1,26 @@
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, computed, input, model } from '@angular/core';
-import { FormValueControl } from '@angular/forms/signals';
+import { Component, computed, input } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
-/**
- * Base component representing a standard form control using Angular 21 Signal forms.
- * Implementing FormValueControl natively binds the `value` signal to the parent form.
- */
+// Import your new base class
+import { PicsaBaseControlValueAccessor } from './cva.base';
+
 @Component({
   template: '',
   standalone: true,
 })
-export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> implements FormValueControl<string> {
-  public value = model<string>('');
-
-  /** UI State Properties */
-  public readonly disabled = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
-  public readonly required = input<boolean, unknown>(false, { transform: coerceBooleanProperty });
+export abstract class PicsaFormBaseSelectComponent<
+  T extends { id: string },
+> extends PicsaBaseControlValueAccessor<string> {
+  /** UI State Properties specific to Select */
   public readonly filterFn = input<(option: T) => boolean>();
 
-  /** Data Properties - overridden by child components */
+  /** Data Properties */
   public selectOptions: T[] = [];
-  public selectOptionsHashmap: Record<string, T> = {} as any;
+  public selectOptionsHashmap: Record<string, T> = {};
 
   protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
     this.selectOptions = selectOptions;
-    if (selectOptionsHashmap) {
-      this.selectOptionsHashmap = selectOptionsHashmap;
-    } else {
-      this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
-    }
+    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(this.selectOptions, 'id');
   }
 
   /** Computed UI values */
@@ -45,11 +36,17 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> imp
 
   public handleSelect(id: string) {
     if (this.disabled()) return;
+
+    // Just set the signal. The effect in the base class handles the rest!
     this.value.set(id);
+
+    // Mark the control as touched since the user interacted with it
+    this.markAsTouched();
   }
 
   public handleReset() {
     if (this.disabled()) return;
     this.value.set('');
+    this.markAsTouched();
   }
 }
