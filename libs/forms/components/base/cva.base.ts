@@ -24,9 +24,9 @@ let nextUniqueId = 0;
 @Directive({
   standalone: true,
 })
-export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAccessor, FormValueControl<T | null> {
+export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAccessor, FormValueControl<T> {
   // --- State Models ---
-  public value = model<T | null>(null);
+  public value = model<T>(null as T);
   public disabled = model<boolean>(false);
 
   // --- Standard Inputs ---
@@ -39,11 +39,11 @@ export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAc
   // UI State Properties (Converted to signal for OnPush compatibility)
   public focused = signal(false);
 
-  protected onChange: (value: T | null) => void = () => null;
+  protected onChange: (value: T) => void = () => null;
   protected onTouched: () => void = () => null;
 
   // Track the last value sent to the parent to prevent the "echo" bug
-  private lastReportedValue: T | null = null;
+  private lastReportedValue: T = null as T;
 
   constructor() {
     if (this.ngControl) {
@@ -87,7 +87,7 @@ export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAc
   }
 
   // --- Standard CVA Methods ---
-  writeValue(val: T | null): void {
+  writeValue(val: T): void {
     // Update the tracker BEFORE setting the model, so the effect ignores this update
     this.lastReportedValue = val;
     this.value.set(val);

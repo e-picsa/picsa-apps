@@ -86,15 +86,10 @@
     <!-- 4. Benefits -->
     <ng-template #benefitsInput>
       <div class="entry-rows">
-        @for (benefit of model().benefits; track benefit; let i = $index) {
+        @for (benefit of model().benefits; track $index; let i = $index) {
           <div class="entry-row-item">
             <div class="benefit-container">
-              <input
-                [value]="model().benefits[i].benefit"
-                (change)="setFormBenefit(i, $event.target.value)"
-                class="form-control"
-                style="flex: 1"
-              />
+              <input [formField]="form.benefits[i].benefit" class="form-control" style="flex: 1" />
               <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
                 <option-gender-input [formField]="form.benefits[i].beneficiary"></option-gender-input>
                 <button matButton color="primary" (click)="formArrayRemove(form.benefits(), i)">

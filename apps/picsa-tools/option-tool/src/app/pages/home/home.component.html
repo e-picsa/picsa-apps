@@ -41,7 +41,7 @@
       <ng-container matColumnDef="benefits">
         <th mat-header-cell *matHeaderCellDef>{{ 'Benefits and who' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          @for (benefit of element._data.benefits; track benefit; let i = $index) {
+          @for (benefit of element._data.benefits; track $index; let i = $index) {
             <div style="display: flex">
               <div style="flex: 1">{{ benefit.benefit }}</div>
               <option-gender-input [value]="benefit.beneficiary" [options]="{ readonly: true }"></option-gender-input>
