@@ -97,7 +97,7 @@
               />
               <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
                 <option-gender-input [formField]="form.benefits[i].beneficiary"></option-gender-input>
-                <button matButton color="primary" (click)="handleRemovingBenefits(i)">
+                <button matButton color="primary" (click)="formArrayRemove(form.benefits(), i)">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -108,7 +108,7 @@
         TODO would be easier to manage all validation if using formgroups -->
         <button
           style="margin-bottom: 16px; margin-top: -16px"
-          (click)="handleMoreBenefits()"
+          (click)="formArrayPush(form.benefits(), { beneficiary: [], benefit: '' })"
           matButton
           [disabled]="
             model().benefits.length > 0 &&
@@ -183,7 +183,7 @@
           class="form-control"
           style="width: 64px"
         />
-        <mat-select class="form-control value-primary" [(value)]="model().time.unit">
+        <mat-select class="form-control value-primary min-w-32" [formField]="form.time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
           <mat-option value="day">{{ 'Days' | translate }}</mat-option>
@@ -199,11 +199,11 @@
     <!-- 8. Risk -->
     <ng-template #riskInput>
       <div class="entry-rows">
-        @for (risk of model().risk; track trackByIndex(i); let i = $index) {
+        @for (risk of model().risk; track $index; let i = $index) {
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
               <input style="margin-left: 4px" [formField]="form.risk[i]" class="form-control" />
-              <button matIconButton (click)="model().risk.splice(i, 1)">
+              <button matIconButton (click)="formArrayRemove(form.risk(), i)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
@@ -211,7 +211,7 @@
         }
         <button
           style="margin-bottom: 16px; margin-top: -16px"
-          (click)="model().risk.push('')"
+          (click)="formArrayPush(form.risk(), '')"
           matButton
           [disabled]="model().risk.length > 0 && !model().risk[model().risk.length - 1]"
         >

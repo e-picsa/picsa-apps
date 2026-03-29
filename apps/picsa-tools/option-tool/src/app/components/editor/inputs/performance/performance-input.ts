@@ -60,8 +60,5 @@ export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<(typ
   constructor() {
     super();
     this.initBase(SELECT_OPTIONS);
-    effect(() => {
-      console.log('perf value', this.value());
-    });
   }
 }

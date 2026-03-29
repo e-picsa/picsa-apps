@@ -1,5 +1,14 @@
-import { Component, EventEmitter, inject, OnInit, Output, signal, ViewChild } from '@angular/core';
-import { form } from '@angular/forms/signals';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { FieldState, form } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -13,6 +22,7 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent implements OnInit {
   private dialog = inject(PicsaDialogService);
@@ -25,9 +35,9 @@ export class EditorComponent implements OnInit {
   /** form bindings */
   public form = form(this.model);
 
-  public performanceConditions = PERFORMANCE_CONDITIONS;
-  public investmentTypes = INVESTMENT_TYPES;
-  public stepperSteps = STEPPER_STEPS;
+  public readonly performanceConditions = PERFORMANCE_CONDITIONS;
+  public readonly investmentTypes = INVESTMENT_TYPES;
+  public readonly stepperSteps = STEPPER_STEPS;
 
   private enterprise: IOptionsToolEntry['enterprise'];
 
@@ -43,7 +53,7 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  public setFormBenefit(index: number, benefit: any) {
+  public setFormBenefit(index: number, benefit: string) {
     this.form.benefits[index].benefit().value.set(benefit);
   }
   public setFormTimeValue(value: string | number) {
@@ -53,11 +63,11 @@ export class EditorComponent implements OnInit {
     this.form.time().value.update((v) => ({ ...v, value: parsed }));
   }
 
-  public handleRemovingBenefits(index: number) {
-    this.form.benefits().value.update((v) => v.filter((_, i) => i !== index));
+  public formArrayPush<T>(field: FieldState<T[], string>, value: T) {
+    field.value.update((v) => [...v, value]);
   }
-  public handleMoreBenefits() {
-    this.form.benefits().value.update((v) => [...v, { benefit: '', beneficiary: [] }]);
+  public formArrayRemove<T>(field: FieldState<T[], string>, index: number) {
+    field.value.update((v) => v.filter((_, i) => i !== index));
   }
 
   public async submitForm() {
@@ -92,14 +102,6 @@ export class EditorComponent implements OnInit {
   }
   public resetVariables() {
     this.model.set(ENTRY_TEMPLATE());
-  }
-
-  /**
-   * Using [(ngModel)] bindings inside an array requires simple trackBy function
-   * https://stackoverflow.com/a/50139592
-   **/
-  public trackByIndex(index: number) {
-    return index;
   }
 
   private resetStepper(): void {
