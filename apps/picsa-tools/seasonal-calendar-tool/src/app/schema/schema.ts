@@ -1,3 +1,4 @@
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
@@ -76,7 +77,7 @@ export const SCHEMA: RxJsonSchema<CalendarDataEntry> = {
 
 export function ENTRY_TEMPLATE(): CalendarDataEntry {
   return {
-    id: '',
+    id: generateID(),
     name: '',
     activities: {},
     weather: [],
