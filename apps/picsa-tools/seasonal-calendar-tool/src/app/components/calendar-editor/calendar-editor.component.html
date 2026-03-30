@@ -5,18 +5,17 @@
     <mat-label>{{ 'Name' | translate }}</mat-label>
     <input matInput [formField]="form().name" [placeholder]="'Example Calendar' | translate" />
 
-    @if (form().name().touched() && form().name().errors().length) {
-      <mat-error>{{ 'Please add title' | translate }}</mat-error>
-    }
+    <mat-error>{{ 'Please add title' | translate }}</mat-error>
   </mat-form-field>
 
   <h2>{{ 'Season Crops' | translate }}</h2>
 
-  <picsa-form-crop-select-multiple [formField]="form().meta.enterprises"></picsa-form-crop-select-multiple>
-
-  @if (form().meta.enterprises().touched() && form().meta.enterprises().errors().length) {
+  <mat-form-field style="max-width: unset">
+    <!-- Use dummy control to handle mat-error integration as crop-select is not a compatible mat input -->
+    <input matInput [formField]="$any(form().meta.enterprises)" style="display: none" />
+    <picsa-form-crop-select-multiple [formField]="form().meta.enterprises"></picsa-form-crop-select-multiple>
     <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
-  }
+  </mat-form-field>
 
   <div>
     <h2>{{ 'Calendar Time' | translate }}</h2>
@@ -28,17 +27,13 @@
             <mat-option [value]="i">{{ month.label | translate }}</mat-option>
           }
         </mat-select>
-        @if (monthForm.startIndex().touched() && monthForm.startIndex().errors().length) {
-          <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
-        }
+        <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>{{ 'Number of Months' | translate }}</mat-label>
         <input matInput type="number" [formField]="monthForm.totalCount" />
-        <!-- @if (monthForm.totalCount().touched() && !monthForm.totalCount().value()) { -->
         <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
-        <!-- } -->
       </mat-form-field>
     </div>
 
