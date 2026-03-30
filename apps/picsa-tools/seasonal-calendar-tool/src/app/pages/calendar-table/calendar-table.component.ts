@@ -69,10 +69,10 @@ export class CalendarTableComponent {
   private readonly cropsByName = arrayToHashmap(CROPS_DATA, 'name');
 
   constructor() {
-    effect(async () => {
+    effect(() => {
       const id = this.calendarId();
-      if (id && id !== this.form.id().value()) {
-        await this.loadCalendarById(id);
+      if (id && id !== untracked(() => this.form.id().value())) {
+        this.loadCalendarById(id);
       }
     });
     // auto-save on changes with debounce
