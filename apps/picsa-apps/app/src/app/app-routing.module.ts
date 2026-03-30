@@ -16,7 +16,7 @@ import { APP_ROUTES } from './routes/app-routes';
 
 @NgModule({
   imports: [
-    RouterModule.forRoot([...APP_ROUTES, ...TOOL_ROUTES]),
+    RouterModule.forRoot([...APP_ROUTES, ...TOOL_ROUTES], { bindToComponentInputs: true }),
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     CropProbabilityToolModule.forRoot({ urlPrefix: 'crop-probability' }),

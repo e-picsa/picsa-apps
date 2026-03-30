@@ -1,102 +1,104 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, signal, untracked } from '@angular/core';
+import { FieldTree, form, FormField, max, min, required } from '@angular/forms/signals'; // Angular 21 Signal Forms
 import { MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
-import { PicsaFormsModule } from '@picsa/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { markAllAsTouched, PicsaFormsModule } from '@picsa/forms';
+import { PicsaTranslateModule } from '@picsa/i18n/src';
 
-import { ISeasonCalendarForm } from '../../services/calendar-form.service';
+import { CalendarDataEntry } from '../../schema';
 import { SeasonalCalendarMaterialModule } from '../material.module';
 
-type IMonthForm = ReturnType<CalendarEditorComponent['createMonthForm']>;
-
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'seasonal-calendar-editor',
   templateUrl: './calendar-editor.component.html',
   styleUrls: ['./calendar-editor.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, SeasonalCalendarMaterialModule, PicsaFormsModule, TranslatePipe],
+  imports: [FormField, SeasonalCalendarMaterialModule, PicsaFormsModule, PicsaTranslateModule],
 })
-export class CalendarEditorComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
+export class CalendarEditorComponent implements OnInit {
+  public readonly form = input.required<FieldTree<CalendarDataEntry, string | number>>();
 
-  /** List of month data to use in select component */
-  public monthOptions = MONTH_DATA;
+  public readonly monthOptions = MONTH_DATA;
 
-  public monthLabels: string[] = [];
+  // 2. Define the exact form model state using a standard writable signal
+  public readonly monthModel = signal<{ startIndex: number | null; totalCount: number | null }>({
+    startIndex: null,
+    totalCount: null,
+  });
 
-  private componentDestroyed$ = new Subject<boolean>();
+  // 3. Create the typed Signal Form with built-in schema validation
+  public readonly monthForm = form(this.monthModel, (path) => {
+    required(path.startIndex);
+    min(path.startIndex, 0);
+    required(path.totalCount);
+    min(path.totalCount, 0);
+    max(path.totalCount, 24);
+  });
 
-  /** Additional form just used to input start and total month numbers */
-  public monthForm: IMonthForm;
+  // 4. Computed signal for labels, deriving state purely from the model signal
+  public readonly monthLabels = computed(() => {
+    const { startIndex, totalCount } = this.monthModel();
 
-  @Input() form: ISeasonCalendarForm;
-
-  // get controls of nested `entry.meta` form
-  public get metaFormControls() {
-    return this.form.controls.meta.controls;
-  }
-
-  public get formValue() {
-    return this.form.getRawValue();
-  }
-
-  ngOnInit() {
-    this.monthForm = this.createMonthForm();
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
-  }
-
-  /** Force form validation. Marking elements as touched to show validation UI */
-  public validate() {
-    this.form.markAllAsTouched();
-    this.monthForm.markAllAsTouched();
-    return this.form.valid && this.monthForm.valid;
-  }
-
-  /**
-   * A separate form is used to allow track month startIndex and totalCount
-   * values, and generate list of month names accordingly
-   */
-  private createMonthForm() {
-    // calculate initial values from any existing form data
-    const [startMonth] = this.formValue.meta.months;
-    const startIndex = startMonth ? MONTH_DATA_HASHMAP[startMonth].index : null;
-    const totalCount = this.formValue.meta.months.length || null;
-    // create form
-    const monthForm = this.fb.nonNullable.group({
-      startIndex: new FormControl<number>(startIndex as any, {
-        validators: [Validators.required, Validators.min(0)],
-        nonNullable: true,
-      }),
-      totalCount: new FormControl<number>(totalCount as any, {
-        validators: [Validators.required, Validators.min(0)],
-        nonNullable: true,
-      }),
-    });
-    // Subscribe to form value changes and generate list of month names as requried
-    monthForm.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => {
-      this.generateMonthNames();
-    });
-    return monthForm;
-  }
-
-  /**
-   * When the user specifies start month and total months generate an array of the names of all months that would cover
-   * the period. E.g. startIndex:2 totalCount:3 => ['march','april','may']
-   * Data is represented both with month ids and month labels for display
-   */
-
-  private generateMonthNames() {
-    const { startIndex, totalCount } = this.monthForm.getRawValue();
     if (startIndex !== null && totalCount !== null) {
-      // start with a list of duplciate month names to allow looping over year (e.g. November -> March)
       const monthsData = [...MONTH_DATA, ...MONTH_DATA].slice(startIndex, startIndex + totalCount);
-      const monthIds = monthsData.map((m) => m.id);
-      this.metaFormControls.months.patchValue(monthIds);
-      this.monthLabels = monthsData.map((m) => m.label);
+      return monthsData.map((m) => m.label);
     }
+    return [];
+  });
+
+  constructor() {
+    // Sync local metadata model to overal form model, populating correct placeholders
+    // for weather and activities depending on number of months
+    effect(() => {
+      const { startIndex, totalCount } = this.monthModel();
+      const parentForm = this.form();
+
+      if (startIndex !== null && totalCount !== null) {
+        // 1. Calculate the new months array
+        const monthsData = [...MONTH_DATA, ...MONTH_DATA].slice(startIndex, startIndex + totalCount);
+        const monthIds = monthsData.map((m) => m.id);
+
+        // We use untracked() so reading the parent form's current values
+        // doesn't cause this effect to re-run in an infinite loop.
+        untracked(() => {
+          const currentMeta = parentForm.meta().value();
+          const currentWeather = parentForm.weather().value();
+          const currentActivities = parentForm.activities().value();
+
+          // 2. Sync Weather Array Length
+          const newWeather = Array.from({ length: totalCount }, (_, i) => currentWeather[i] || '');
+
+          // 3. Sync Activities Array Lengths
+          const newActivities: Record<string, string[]> = {};
+          for (const heading of currentMeta.enterprises) {
+            const existingArray = currentActivities[heading] || [];
+            newActivities[heading] = Array.from({ length: totalCount }, (_, i) => existingArray[i] || '');
+          }
+
+          // 4. Safely push ALL updates back to the parent Signal Form
+          parentForm.meta.months().value.set(monthIds);
+          parentForm.weather().value.set(newWeather);
+          parentForm.activities().value.set(newActivities);
+        });
+      }
+    });
+  }
+
+  public ngOnInit(): void {
+    const months = this.form().meta.months().value();
+    const [startMonth] = months;
+
+    // Set the initial signal state. The form automatically syncs to this model.
+    this.monthModel.set({
+      startIndex: startMonth ? MONTH_DATA_HASHMAP[startMonth].index : null,
+      totalCount: months.length || null,
+    });
+  }
+
+  public validate(): boolean {
+    markAllAsTouched(this.form());
+    markAllAsTouched(this.monthForm);
+    // Signal Forms manage state via signals directly.
+    // We validate by reading the `valid()` signal computation from the root form.
+    return this.form()().valid() && this.monthForm().valid();
   }
 }

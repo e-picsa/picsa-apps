@@ -10,6 +10,7 @@ import { DataIconRegistry, IconPackName } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PICSA_FORM_COMPONENTS } from './components';
+import { PICSA_FORM_DIRECTIVES } from './directives';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,11 @@ export class PicsaFormsModuleConfig {
   public iconPacks: IconPackName[] = ['crop_activity', 'crops', 'weather'];
 }
 
-/** Input components for use within forms */
+/**
+ * Single module import (large size) that includes all components and directives
+ *
+ * NOTE - all components and directives can also be imported standalone instead
+ **/
 @NgModule({
   imports: [
     CommonModule,
@@ -31,8 +36,9 @@ export class PicsaFormsModuleConfig {
     MatDialogModule,
     PicsaTranslateModule,
     ...PICSA_FORM_COMPONENTS,
+    ...PICSA_FORM_DIRECTIVES,
   ],
-  exports: [...PICSA_FORM_COMPONENTS],
+  exports: [...PICSA_FORM_COMPONENTS, ...PICSA_FORM_DIRECTIVES],
 })
 export class PicsaFormsModule {
   private config = inject<PicsaFormsModuleConfig>(PicsaFormsModuleConfig);

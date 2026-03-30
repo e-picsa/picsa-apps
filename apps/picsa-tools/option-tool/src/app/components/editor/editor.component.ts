@@ -13,6 +13,7 @@ import { FieldState, form, FormField } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { FormNumberValueAccessor } from '@picsa/forms/directives/numberValueAccessor';
 import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 
@@ -32,6 +33,7 @@ import { PerformanceInputComponent } from './inputs/performance/performance-inpu
   imports: [
     GenderInputComponent,
     FormField,
+    FormNumberValueAccessor,
     InvestmentInputComponent,
     OptionMaterialModule,
     PicsaTranslateModule,

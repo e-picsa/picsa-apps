@@ -172,7 +172,7 @@
     <ng-template #timeInput>
       <div style="display: flex; gap: 16px; align-items: center">
         <!-- Assert $(any) to bypass input type inference `string | number` -->
-        <input type="number" [formField]="$any(form.time.quantity)" class="form-control" style="width: 64px" />
+        <input type="number" [formField]="form.time.quantity" class="form-control" style="width: 64px" />
         <mat-select class="form-control value-primary min-w-32" [formField]="form.time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>

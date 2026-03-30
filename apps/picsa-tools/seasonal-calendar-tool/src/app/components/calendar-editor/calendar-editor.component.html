@@ -1,41 +1,50 @@
-<form [formGroup]="form">
+<form>
   <h2>{{ 'Calendar name' | translate }}</h2>
 
-  <!-- Name -->
   <mat-form-field>
     <mat-label>{{ 'Name' | translate }}</mat-label>
-    <input matInput formControlName="name" [placeholder]="'Example Calendar' | translate" />
-    <mat-error>{{ 'Please add title' | translate }}</mat-error>
+    <input matInput [formField]="form().name" [placeholder]="'Example Calendar' | translate" />
+
+    @if (form().name().touched() && form().name().errors().length) {
+      <mat-error>{{ 'Please add title' | translate }}</mat-error>
+    }
   </mat-form-field>
 
-  <!-- Enterprises -->
   <h2>{{ 'Season Crops' | translate }}</h2>
-  <picsa-form-crop-select-multiple [formControl]="metaFormControls.enterprises"></picsa-form-crop-select-multiple>
-  @if (metaFormControls.enterprises.touched && metaFormControls.enterprises.errors) {
+
+  <picsa-form-crop-select-multiple [formField]="form().meta.enterprises"></picsa-form-crop-select-multiple>
+
+  @if (form().meta.enterprises().touched() && form().meta.enterprises().errors().length) {
     <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
 
-  <!-- Months generators -->
   <div>
     <h2>{{ 'Calendar Time' | translate }}</h2>
     <div class="calendar-box">
       <mat-form-field>
         <mat-label>{{ 'Start Month ' | translate }} :</mat-label>
-        <mat-select id="startMonth" [formControl]="monthForm.controls.startIndex">
-          @for (month of monthOptions; track month; let i = $index) {
+        <mat-select id="startMonth" [formField]="monthForm.startIndex">
+          @for (month of monthOptions; track month.id; let i = $index) {
             <mat-option [value]="i">{{ month.label | translate }}</mat-option>
           }
         </mat-select>
-        <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
+        @if (monthForm.startIndex().touched() && monthForm.startIndex().errors().length) {
+          <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
+        }
       </mat-form-field>
+
       <mat-form-field>
         <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-        <input matInput type="number" [formControl]="monthForm.controls.totalCount" max="24" min="1" />
+        <!-- HACK - avoid [FormField] binding to ensure number cast correctly -->
+        <input matInput type="number" [formField]="monthForm.totalCount" />
+        <!-- @if (monthForm.totalCount().touched() && !monthForm.totalCount().value()) { -->
         <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
+        <!-- } -->
       </mat-form-field>
     </div>
+
     <div class="calendar-summary">
-      @for (month of monthLabels; track $index) {
+      @for (month of monthLabels(); track $index) {
         <div>{{ month | translate }}</div>
       }
     </div>

@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PrintProvider } from '@picsa/shared/services/native';
@@ -34,20 +34,7 @@ export class SeasonCalendarService extends PicsaAsyncService {
   }
 
   public async getCalendarById(id: string) {
-    try {
-      const result = await this.dbCollection
-        .findOne({
-          selector: {
-            id: id,
-          },
-        })
-        .exec();
-      const calendar = result?._data;
-      return calendar;
-    } catch (err) {
-      console.error('Failed to get calendar by name:', err);
-      throw err;
-    }
+    return this.dbCollection.findOne({ selector: { id: id } }).exec();
   }
 
   public async shareAsImage(title: string) {
