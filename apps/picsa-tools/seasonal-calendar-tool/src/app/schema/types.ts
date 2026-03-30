@@ -14,3 +14,10 @@ export interface CalendarDataEntry_v0 {
     enterprises: string[];
   };
 }
+
+export interface CalendarDataEntry_v1 extends Omit<CalendarDataEntry_v0, 'activities' | 'weather'> {
+  activities: {
+    [enterprise: string]: string[][];
+  };
+  weather: string[][];
+}

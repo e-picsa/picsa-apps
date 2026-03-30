@@ -1,7 +1,16 @@
-import { CalendarDataEntry_v0 } from './types';
+import { CalendarDataEntry_v0, CalendarDataEntry_v1 } from './types';
 
 export default {
-  // No migrations needed for version 0
-} as {
-  [key: number]: (data: CalendarDataEntry_v0) => CalendarDataEntry_v0;
+  1: (d: CalendarDataEntry_v0): CalendarDataEntry_v1 => {
+    // Convert activities: { [key]: string[] } → { [key]: string[][] }
+    const activities: CalendarDataEntry_v1['activities'] = {};
+    for (const [enterprise, values] of Object.entries(d.activities)) {
+      activities[enterprise] = values.map((v) => [v]);
+    }
+
+    // Convert weather: string[] → string[][]
+    const weather = d.weather.map((v) => [v]);
+
+    return { ...d, activities, weather };
+  },
 };
