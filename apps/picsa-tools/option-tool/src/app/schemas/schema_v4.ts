@@ -1,4 +1,3 @@
-import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { generateTimestamp, type IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
@@ -42,20 +41,3 @@ export const COLLECTION_V4: IPicsaCollectionCreator<IOptionsToolEntry_v4> = {
     }),
   },
 };
-
-// Use a function to generate templates to ensure new object instantiated with id
-export function ENTRY_TEMPLATE_V4(): IOptionsToolEntry_v4 {
-  return {
-    _id: generateID(),
-    practice: '',
-    gender_decisions: [],
-    gender_activities: [],
-    benefits: [{ beneficiary: [], benefit: '' }],
-    performance: { lowRf: '', highRf: '', midRf: '' },
-    investment: { money: '', time: '' },
-    time: { value: null, unit: 'month' },
-    risk: [''],
-    enterprise: 'crop',
-    _created_at: generateTimestamp(),
-  };
-}
