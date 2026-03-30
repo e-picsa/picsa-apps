@@ -142,7 +142,6 @@ export function debouncedEffect<T>(source: Signal<T> | (() => T), action: (value
   destroyRef.onDestroy(() => {
     clearTimeout(timeoutId);
     if (isPending) {
-      console.log('Component destroying: Flushing pending effect action...');
       action(latestValue);
     }
   });
