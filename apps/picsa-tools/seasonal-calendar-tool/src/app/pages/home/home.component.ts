@@ -62,7 +62,7 @@ export class HomeComponent implements OnDestroy {
   }
 
   public async saveCopy() {
-    await this.service.save({ ...this.menuTargetEntry._data, name: this.copyName() });
+    await this.service.save({ ...this.menuTargetEntry._data, id: generateID(), name: this.copyName() });
     this.dialog.closeAll();
   }
 
