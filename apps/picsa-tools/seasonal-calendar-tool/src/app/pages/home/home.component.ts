@@ -1,10 +1,14 @@
-import { Component, inject,OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { CalendarDataEntry } from '../../schema';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
@@ -13,7 +17,7 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   selector: 'seasonal-calendar-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
+  imports: [RouterLink, FormsModule, SeasonalCalendarMaterialModule, ReactiveFormsModule, TranslatePipe],
 })
 export class HomeComponent implements OnDestroy {
   private service = inject(SeasonCalendarService);

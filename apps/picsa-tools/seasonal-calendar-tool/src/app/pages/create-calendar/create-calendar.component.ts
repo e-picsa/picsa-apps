@@ -1,7 +1,9 @@
-import { Component, inject,OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
+import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 
@@ -9,7 +11,7 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   selector: 'seasonal-calendar-create',
   templateUrl: './create-calendar.component.html',
   styleUrls: ['./create-calendar.component.scss'],
-  standalone: false,
+  imports: [CalendarEditorComponent, SeasonalCalendarMaterialModule, TranslatePipe],
 })
 export class CreateCalendarComponent implements OnInit {
   private router = inject(Router);
