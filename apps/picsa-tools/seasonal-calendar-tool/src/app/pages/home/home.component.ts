@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
