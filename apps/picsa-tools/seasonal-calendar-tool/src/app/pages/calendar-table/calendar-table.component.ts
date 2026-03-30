@@ -7,13 +7,19 @@ import {
   OnInit,
   TemplateRef,
 } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
+import { FormCropActivitySelectComponent } from '@picsa/forms/components/crop-activity-select/crop-activity-select.component';
+import { FormWeatherSelectComponent } from '@picsa/forms/components/weather-select/weather-select.component';
 import { arrayToHashmap } from '@picsa/utils';
 import { _wait } from '@picsa/utils/browser.utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
+import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
+import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { CalendarDataEntry } from '../../schema';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
@@ -23,7 +29,15 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   templateUrl: './calendar-table.component.html',
   styleUrls: ['./calendar-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    SeasonalCalendarMaterialModule,
+    FormWeatherSelectComponent,
+    FormCropActivitySelectComponent,
+    CalendarEditorComponent,
+    TranslatePipe,
+  ],
 })
 export class CalendarTableComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

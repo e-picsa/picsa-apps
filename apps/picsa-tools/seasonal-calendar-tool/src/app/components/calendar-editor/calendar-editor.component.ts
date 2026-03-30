@@ -1,9 +1,12 @@
-import { Component, inject,Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
+import { PicsaFormsModule } from '@picsa/forms';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ISeasonCalendarForm } from '../../services/calendar-form.service';
+import { SeasonalCalendarMaterialModule } from '../material.module';
 
 type IMonthForm = ReturnType<CalendarEditorComponent['createMonthForm']>;
 
@@ -11,7 +14,7 @@ type IMonthForm = ReturnType<CalendarEditorComponent['createMonthForm']>;
   selector: 'seasonal-calendar-editor',
   templateUrl: './calendar-editor.component.html',
   styleUrls: ['./calendar-editor.component.scss'],
-  standalone: false,
+  imports: [FormsModule, ReactiveFormsModule, SeasonalCalendarMaterialModule, PicsaFormsModule, TranslatePipe],
 })
 export class CalendarEditorComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);

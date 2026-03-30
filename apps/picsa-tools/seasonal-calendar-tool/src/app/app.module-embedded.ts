@@ -3,8 +3,6 @@ import { Router, RouterModule } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/i18n';
 import { registerEmbeddedRoutes } from '@picsa/utils/angular';
 
-import { AppComponentEmbedded } from './app.component';
-import { APP_COMMON_IMPORTS } from './app.module';
 import { ROUTES_COMMON } from './app-routing.module';
 
 export class EmbeddedConfig {
@@ -31,9 +29,7 @@ export class EmbeddedRoutingModule {
  * Module
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponentEmbedded],
-  imports: [...APP_COMMON_IMPORTS, EmbeddedRoutingModule],
-  bootstrap: [AppComponentEmbedded],
+  imports: [EmbeddedRoutingModule],
 })
 export class BaseModule {
   translate = inject(PicsaTranslateService);
