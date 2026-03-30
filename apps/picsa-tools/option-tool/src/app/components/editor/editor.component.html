@@ -171,13 +171,8 @@
     <!-- 7. Time -->
     <ng-template #timeInput>
       <div style="display: flex; gap: 16px; align-items: center">
-        <input
-          type="number"
-          [value]="model().time.value"
-          (change)="setFormTimeValue($event.target.value)"
-          class="form-control"
-          style="width: 64px"
-        />
+        <!-- Assert $(any) to bypass input type inference `string | number` -->
+        <input type="number" [formField]="$any(form.time.quantity)" class="form-control" style="width: 64px" />
         <mat-select class="form-control value-primary min-w-32" [formField]="form.time.unit">
           <mat-option value="month">{{ 'Months' | translate }}</mat-option>
           <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>

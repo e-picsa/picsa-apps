@@ -94,8 +94,8 @@
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef>{{ 'Time' | translate }}</th>
         <td mat-cell style="text-align: center" *matCellDef="let element">
-          @if (element._data.time.value) {
-            <span> {{ element._data.time.value }}{{ (element._data.time.unit | translate).slice(0, 1) }} </span>
+          @if (element._data.time.quantity) {
+            <span> {{ element._data.time.quantity }}{{ (element._data.time.unit | translate).slice(0, 1) }} </span>
           }
         </td>
       </ng-container>

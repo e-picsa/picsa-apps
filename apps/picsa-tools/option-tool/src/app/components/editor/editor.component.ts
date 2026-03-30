@@ -71,12 +71,6 @@ export class EditorComponent implements OnInit {
   public setFormBenefit(index: number, benefit: string) {
     this.form.benefits[index].benefit().value.set(benefit);
   }
-  public setFormTimeValue(value: string | number) {
-    // Bypass formField binding as nested `form.time.value` as name conflicts
-    // with `value()` property. Ensure cast to number
-    const parsed = value ? Number(value) : null;
-    this.form.time().value.update((v) => ({ ...v, value: parsed }));
-  }
 
   public formArrayPush<T>(field: FieldState<T[], string>, value: T) {
     field.value.update((v) => [...v, value]);
