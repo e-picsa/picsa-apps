@@ -1,3 +1,4 @@
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
@@ -12,14 +13,17 @@ import { CalendarDataEntry_v1 } from './types';
  * 2. Update type imports above to use latest version
  * 3. Update `CalendarDataEntry` and `_typeCheck` to satisfy type changes
  * 4. Update ENTRY_TEMPLATE
- * 5. Update SCHEMA_VERSION below LAST!! (avoid rxdb invalid state)
+ * 5. Update `./form.ts` createForm method
+ * 6. Update SCHEMA_VERSION below LAST!! (avoid rxdb invalid state)
  *
  * On next startup app will run and apply data migrations
  */
 const SCHEMA_VERSION = 0;
 
 export type CalendarDataEntry = {
+  /** generated id */
   id: string;
+  /** user-defined name */
   name: string;
   /** Activities by entry. Note, each entry can include multiple activities in a month */
   activities: {
@@ -81,7 +85,7 @@ export const SCHEMA: RxJsonSchema<CalendarDataEntry> = {
 
 export function ENTRY_TEMPLATE(): CalendarDataEntry {
   return {
-    id: '',
+    id: generateID(),
     name: '',
     activities: {},
     weather: [],

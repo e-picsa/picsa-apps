@@ -1,33 +1,37 @@
-import { Component, inject,OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { CalendarDataEntry } from '../../schema';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
-import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'seasonal-calendar-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
+  imports: [RouterLink, SeasonalCalendarMaterialModule, PicsaTranslateModule],
 })
 export class HomeComponent implements OnDestroy {
   private service = inject(SeasonCalendarService);
   dialog = inject(MatDialog);
   private dialogService = inject(PicsaDialogService);
-  private formService = inject(SeasonCalendarFormService);
-
-  /** Track current calendar selected from editing from menu popup */
-  public calendarCopyForm: ISeasonCalendarForm;
-  public calendarDeleteDoc: RxDocument<CalendarDataEntry>;
 
   private componentDestroyed$ = new Subject();
 
-  public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
+  /** Track which rx document entry is target for menu actions */
+  private menuTargetEntry: RxDocument<CalendarDataEntry>;
+
+  public dbCalendars = signal<RxDocument<CalendarDataEntry>[]>([]);
+
+  /** Input dialog used when copying form */
+  public copyName = signal('');
 
   constructor() {
     this.subscribeToDbChanges();
@@ -39,23 +43,27 @@ export class HomeComponent implements OnDestroy {
   }
 
   /** When opening action menu ensure active calendar saved to track with dialog actions */
-  public handleMenuClick(e: Event, calendar: RxDocument<CalendarDataEntry>) {
+  public handleMenuClick(e: Event, entry: RxDocument<CalendarDataEntry>) {
     e.stopPropagation();
-    this.calendarDeleteDoc = calendar;
-    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, id: generateID() });
+    this.menuTargetEntry = entry;
+    // ensure copy dialog populated with name
+    this.copyName.set(entry.name);
   }
 
   public async promptDelete() {
-    const dialog = await this.dialogService.open('delete');
-    dialog.afterClosed().subscribe(async (shouldDelete) => {
-      if (shouldDelete) {
-        await this.calendarDeleteDoc.remove();
-      }
-    });
+    const entry = this.menuTargetEntry;
+    if (entry) {
+      const dialog = await this.dialogService.open('delete');
+      dialog.afterClosed().subscribe(async (shouldDelete) => {
+        if (shouldDelete) {
+          await entry.remove();
+        }
+      });
+    }
   }
 
   public async saveCopy() {
-    await this.service.save(this.calendarCopyForm.getRawValue());
+    await this.service.save({ ...this.menuTargetEntry._data, id: generateID(), name: this.copyName() });
     this.dialog.closeAll();
   }
 
@@ -63,7 +71,7 @@ export class HomeComponent implements OnDestroy {
     await this.service.ready();
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      this.dbCalendars = docs;
+      this.dbCalendars.set(docs);
     });
   }
 }

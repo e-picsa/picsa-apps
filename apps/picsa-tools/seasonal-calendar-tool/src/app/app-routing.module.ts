@@ -4,17 +4,19 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Seasonal Calendar',
   },
   {
     path: 'create',
-    loadChildren: () => import('./pages/create-calendar/create-calendar.module').then((m) => m.CreateCalendarModule),
+    loadComponent: () =>
+      import('./pages/create-calendar/create-calendar.component').then((m) => m.CreateCalendarComponent),
     title: 'Create Calendar',
   },
   {
-    path: ':id',
-    loadChildren: () => import('./pages/calendar-table/calendar-table.module').then((m) => m.CalendarTableModule),
+    path: ':calendarId',
+    loadComponent: () =>
+      import('./pages/calendar-table/calendar-table.component').then((m) => m.CalendarTableComponent),
     title: 'Calendar Table',
   },
 ];
@@ -28,6 +30,7 @@ const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
   imports: [
     RouterModule.forRoot([...ROUTES_COMMON, ...ROUTES_STANDALONE], {
       preloadingStrategy: PreloadAllModules,
+      bindToComponentInputs: true,
     }),
   ],
   exports: [RouterModule],
