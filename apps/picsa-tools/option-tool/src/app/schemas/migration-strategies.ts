@@ -33,7 +33,6 @@ export default {
         value: parseInt(data.time) || 0,
       },
       risk: [data.risk],
-      _id: generateID(),
     };
   },
 
