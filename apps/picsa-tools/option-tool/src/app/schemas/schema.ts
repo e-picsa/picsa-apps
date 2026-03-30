@@ -13,15 +13,10 @@ import { IOptionsToolEntry_v5 } from './types';
  * 2. Update type imports above to use latest version
  * 3. Update `IOptionsToolEntry` and `_typeCheck` to satisfy type changes
  * 4. Update ENTRY_TEMPLATE
- * 5. Update SCHEMA_VERSION variable and run app (migrations will apply on start)
- */
-
-/**
- * Current schema version
+ * 5. Update SCHEMA_VERSION below LAST!! (avoid rxdb invalid state)
  *
- * IMPORTANT - only change this value after schema and migration populated
- * to avoid rxdb conflict
- * */
+ * On next startup app will run and apply data migrations
+ */
 const SCHEMA_VERSION = 5;
 
 // Step 3a
@@ -46,8 +41,9 @@ export interface IOptionsToolEntry {
   _created_at: string;
 }
 
-// Step 3b
 type ExactEqual<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
+
+// Step 3b
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _typeCheck: ExactEqual<IOptionsToolEntry, IOptionsToolEntry_v5> = true;
 
