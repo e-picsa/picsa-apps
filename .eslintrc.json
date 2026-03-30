@@ -25,11 +25,12 @@
             ]
           }
         ],
+
         "no-restricted-imports": [
           "error",
           {
             "name": "@ngx-translate/core",
-            "importNames": ["TranslateModule"],
+            "importNames": ["TranslateModule", "TranslatePipe"],
             "message": "Please use PicsaTranslateModule instead"
           }
         ],

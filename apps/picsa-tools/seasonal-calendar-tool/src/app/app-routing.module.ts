@@ -14,7 +14,7 @@ export const ROUTES_COMMON: Routes = [
     title: 'Create Calendar',
   },
   {
-    path: ':id',
+    path: ':calendarId',
     loadComponent: () =>
       import('./pages/calendar-table/calendar-table.component').then((m) => m.CalendarTableComponent),
     title: 'Calendar Table',
@@ -30,6 +30,7 @@ const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
   imports: [
     RouterModule.forRoot([...ROUTES_COMMON, ...ROUTES_STANDALONE], {
       preloadingStrategy: PreloadAllModules,
+      bindToComponentInputs: true,
     }),
   ],
   exports: [RouterModule],

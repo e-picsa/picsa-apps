@@ -1,10 +1,9 @@
-import { Component, computed, input } from '@angular/core';
+import { computed, Directive, input } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { PicsaBaseControlValueAccessor } from './cva.base';
 
-@Component({
-  template: '',
+@Directive({
   standalone: true,
 })
 export abstract class PicsaFormBaseSelectComponent<

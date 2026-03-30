@@ -13,7 +13,8 @@ import { CalendarDataEntry_v0 } from './types';
  * 2. Update type imports above to use latest version
  * 3. Update `CalendarDataEntry` and `_typeCheck` to satisfy type changes
  * 4. Update ENTRY_TEMPLATE
- * 5. Update SCHEMA_VERSION below LAST!! (avoid rxdb invalid state)
+ * 5. Update `./form.ts` createForm method
+ * 6. Update SCHEMA_VERSION below LAST!! (avoid rxdb invalid state)
  *
  * On next startup app will run and apply data migrations
  */

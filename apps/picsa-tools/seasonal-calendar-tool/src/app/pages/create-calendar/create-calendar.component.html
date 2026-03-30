@@ -1,8 +1,8 @@
 <div class="page-content">
-  @if (form) {
+  @if (form()) {
     <seasonal-calendar-editor #editor [form]="form"></seasonal-calendar-editor>
     <div class="submit-button">
-      <button mat-raised-button class="footer-button" color="primary" (click)="handleSubmit()">
+      <button matButton="elevated" class="footer-button" color="primary" (click)="handleSubmit()">
         <mat-icon>add</mat-icon>
         {{ 'Create' | translate }}
       </button>
