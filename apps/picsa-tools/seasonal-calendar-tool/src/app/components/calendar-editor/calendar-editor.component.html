@@ -35,7 +35,6 @@
 
       <mat-form-field>
         <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-        <!-- HACK - avoid [FormField] binding to ensure number cast correctly -->
         <input matInput type="number" [formField]="monthForm.totalCount" />
         <!-- @if (monthForm.totalCount().touched() && !monthForm.totalCount().value()) { -->
         <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
