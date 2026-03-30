@@ -3,6 +3,10 @@ import { form, minLength, required } from '@angular/forms/signals';
 
 import { CalendarDataEntry, ENTRY_TEMPLATE } from './schema';
 
+/**
+ * Generate a form to use with angular signal-based forms
+ * https://angular.dev/guide/forms/signals/overview
+ **/
 export function createForm(initialState: Partial<CalendarDataEntry> = {}) {
   // Create the Writable Signal Model
   const model = signal<CalendarDataEntry>({ ...ENTRY_TEMPLATE(), ...initialState });

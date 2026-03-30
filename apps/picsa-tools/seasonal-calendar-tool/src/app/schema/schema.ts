@@ -21,8 +21,11 @@ import { CalendarDataEntry_v0 } from './types';
 const SCHEMA_VERSION = 0;
 
 export type CalendarDataEntry = {
+  /** generated id */
   id: string;
+  /** user-defined name */
   name: string;
+  /** list of activities by enterprise */
   activities: {
     [enterprise: string]: string[];
   };
