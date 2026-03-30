@@ -2,14 +2,30 @@ import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { generateTimestamp, type IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
-import { COLLECTION_V4, IOptionsToolEntry_v4 } from './schema_v4';
-
-const SCHEMA_VERSION = 5;
+import migrationStrategies from './migration-strategies';
+import { IOptionsToolEntry_v5 } from './types';
 
 /**
- * Full schema v5 with all properties explicitly defined
+ * @Note
+ * If planning a migration do the following:
+ *
+ * 1. Create an interface in './types' to describe minimal type changes
+ * 2. Update type imports above to use latest version
+ * 3. Update `IOptionsToolEntry` and `_typeCheck` to satisfy type changes
+ * 4. Update ENTRY_TEMPLATE
+ * 5. Update SCHEMA_VERSION variable and run app (migrations will apply on start)
  */
-export interface IOptionsToolEntry_v5 {
+
+/**
+ * Current schema version
+ *
+ * IMPORTANT - only change this value after schema and migration populated
+ * to avoid rxdb conflict
+ * */
+const SCHEMA_VERSION = 5;
+
+// Step 3a
+export interface IOptionsToolEntry {
   _id: string;
   practice: string;
   gender_decisions: string[];
@@ -30,7 +46,13 @@ export interface IOptionsToolEntry_v5 {
   _created_at: string;
 }
 
-export const SCHEMA_V5: RxJsonSchema<IOptionsToolEntry_v5> = {
+// Step 3b
+type ExactEqual<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _typeCheck: ExactEqual<IOptionsToolEntry, IOptionsToolEntry_v5> = true;
+
+// Step 4
+export const SCHEMA: RxJsonSchema<IOptionsToolEntry> = {
   version: SCHEMA_VERSION,
   type: 'object',
   properties: {
@@ -98,23 +120,8 @@ export const SCHEMA_V5: RxJsonSchema<IOptionsToolEntry_v5> = {
   primaryKey: '_id',
 };
 
-export const COLLECTION_V5: IPicsaCollectionCreator<IOptionsToolEntry_v5> = {
-  schema: SCHEMA_V5,
-  isUserCollection: false,
-  migrationStrategies: {
-    ...COLLECTION_V4.migrationStrategies,
-    // Renamed time.value -> time.quantity for improved FormField compatibility ("value" reserved)
-    5: (d: IOptionsToolEntry_v4): IOptionsToolEntry_v5 => {
-      return {
-        ...d,
-        time: { quantity: d.time?.value || null, unit: d.time?.unit || null },
-      };
-    },
-  },
-};
-
 // Use a function to generate templates to ensure new object instantiated with id
-export function ENTRY_TEMPLATE_V5(): IOptionsToolEntry_v5 {
+export function ENTRY_TEMPLATE(): IOptionsToolEntry {
   return {
     _id: generateID(),
     practice: '',
@@ -129,3 +136,9 @@ export function ENTRY_TEMPLATE_V5(): IOptionsToolEntry_v5 {
     _created_at: generateTimestamp(),
   };
 }
+
+export const COLLECTION: IPicsaCollectionCreator<IOptionsToolEntry> = {
+  schema: SCHEMA,
+  isUserCollection: false,
+  migrationStrategies,
+};
