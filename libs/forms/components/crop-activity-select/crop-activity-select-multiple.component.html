@@ -1,0 +1,37 @@
+<div class="display-container">
+  @if (selectedOptions().length > 0) {
+    <div class="selected-icons" (click)="dialog.open(inputDialog)">
+      @for (option of selectedOptions(); track option.id) {
+        @if (option.svgIcon) {
+          <mat-icon class="option-icon" [svgIcon]="'picsa_crop_activity:' + option.svgIcon"></mat-icon>
+        } @else {
+          <img class="option-img" [src]="option.assetIconPath" />
+        }
+      }
+    </div>
+  } @else {
+    <button style="height: 100%" mat-stroked-button (click)="dialog.open(inputDialog)">
+      <mat-icon style="margin: 0">add</mat-icon>
+    </button>
+  }
+</div>
+
+<!-- Dialog -->
+<ng-template #inputDialog>
+  <div class="select-container">
+    @for (option of filteredOptions(); track option.id) {
+      <div
+        class="option-container"
+        [attr.data-selected]="value().includes(option.id)"
+        (click)="toggleSelected(option.id)"
+      >
+        <div class="option-label">{{ option.label | translate }}</div>
+        @if (option.svgIcon) {
+          <mat-icon class="option-icon" [svgIcon]="'picsa_crop_activity:' + option.svgIcon"></mat-icon>
+        } @else {
+          <img class="option-img" [src]="option.assetIconPath" />
+        }
+      </div>
+    }
+  </div>
+</ng-template>
