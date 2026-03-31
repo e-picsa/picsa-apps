@@ -3,7 +3,7 @@ import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2'
 import { RxJsonSchema } from 'rxdb';
 
 import migrationStrategies from './migration-strategies';
-import { CalendarDataEntry_v0 } from './types';
+import { CalendarDataEntry_v1 } from './types';
 
 /**
  * @Note
@@ -18,18 +18,19 @@ import { CalendarDataEntry_v0 } from './types';
  *
  * On next startup app will run and apply data migrations
  */
-const SCHEMA_VERSION = 0;
+const SCHEMA_VERSION = 1;
 
 export type CalendarDataEntry = {
   /** generated id */
   id: string;
   /** user-defined name */
   name: string;
-  /** list of activities by enterprise */
+  /** Activities by entry. Note, each entry can include multiple activities in a month */
   activities: {
-    [enterprise: string]: string[];
+    [enterprise: string]: string[][];
   };
-  weather: string[];
+  /** Weather in month. Note, each month can include multiple weather entries */
+  weather: string[][];
   meta: {
     /** Specified time period. Sets number of items shown in activities and weather */
     months: string[];
@@ -43,7 +44,7 @@ export type CalendarDataEntry = {
 type ExactEqual<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _typeCheck: ExactEqual<CalendarDataEntry, CalendarDataEntry_v0> = true;
+const _typeCheck: ExactEqual<CalendarDataEntry, CalendarDataEntry_v1> = true;
 
 export const SCHEMA: RxJsonSchema<CalendarDataEntry> = {
   title: 'seasonal_calendar_tool',
@@ -60,11 +61,14 @@ export const SCHEMA: RxJsonSchema<CalendarDataEntry> = {
     },
     activities: {
       type: 'object',
-      additionalProperties: { type: 'array', items: { type: 'string' } },
+      additionalProperties: {
+        type: 'array',
+        items: { type: 'array', items: { type: 'string' } },
+      },
     },
     weather: {
       type: 'array',
-      items: { type: 'string' },
+      items: { type: 'array', items: { type: 'string' } },
     },
     meta: {
       type: 'object',
@@ -101,13 +105,13 @@ export const COLLECTION: IPicsaCollectionCreator<CalendarDataEntry> = {
 
 // Example data to illustrate schema
 export const CALENDAR_ENTRY_MOCK: CalendarDataEntry = {
-  id: 'mock_01',
+  id: 'mock_abc',
   name: 'Mock Entry',
   activities: {
-    cassava: ['sowing', 'sowing', 'planting'],
-    maize: ['land_preparation', 'sowing', 'planting'],
+    cassava: [['sowing'], ['sowing', 'planting'], ['planting']],
+    maize: [['land_preparation'], ['sowing'], ['sowing', 'planting']],
   },
-  weather: ['sunny', 'cloudy', 'rain'],
+  weather: [['sunny'], ['sunny', 'cloudy'], ['cloudy', 'rain']],
   meta: {
     months: ['march', 'april', 'may'],
     enterpriseType: 'crop',

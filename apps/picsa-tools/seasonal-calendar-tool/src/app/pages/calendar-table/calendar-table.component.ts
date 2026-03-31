@@ -3,8 +3,8 @@ import { FormField } from '@angular/forms/signals';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
-import { FormCropActivitySelectComponent } from '@picsa/forms/components/crop-activity-select/crop-activity-select.component';
-import { FormWeatherSelectComponent } from '@picsa/forms/components/weather-select/weather-select.component';
+import { FormCropActivitySelectMultipleComponent } from '@picsa/forms/components/crop-activity-select/crop-activity-select-multiple.component';
+import { FormWeatherSelectMultipleComponent } from '@picsa/forms/components/weather-select/weather-select-multiple.component';
 import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { arrayToHashmap } from '@picsa/utils';
@@ -25,8 +25,8 @@ import { SeasonCalendarService } from '../../services/calendar.data.service';
   imports: [
     FormField,
     SeasonalCalendarMaterialModule,
-    FormWeatherSelectComponent,
-    FormCropActivitySelectComponent,
+    FormWeatherSelectMultipleComponent,
+    FormCropActivitySelectMultipleComponent,
     CalendarEditorComponent,
     PicsaTranslateModule,
     PicsaLoadingComponent,

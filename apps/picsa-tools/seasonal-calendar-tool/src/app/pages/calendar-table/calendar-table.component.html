@@ -24,10 +24,10 @@
                 <div style="margin-bottom: 8px">
                   {{ columnLabels()[$index] | translate }}
                 </div>
-                <picsa-form-weather-select
+                <picsa-form-weather-select-multiple
                   [formField]="weatherControl"
-                  [attr.data-hasValue]="weatherControl().value() ? true : null"
-                ></picsa-form-weather-select>
+                  [attr.data-hasValue]="weatherControl().value().length > 0 ? true : false"
+                ></picsa-form-weather-select-multiple>
               </th>
             }
           </tr>
@@ -41,10 +41,10 @@
               </td>
               @for (control of form.activities[crop]; track $index) {
                 <td>
-                  <picsa-form-crop-activity-select
+                  <picsa-form-crop-activity-select-multiple
                     [formField]="control"
-                    [attr.data-hasValue]="control().value() ? true : null"
-                  ></picsa-form-crop-activity-select>
+                    [attr.data-hasValue]="control().value().length > 0 ? true : false"
+                  ></picsa-form-crop-activity-select-multiple>
                 </td>
               }
             </tr>

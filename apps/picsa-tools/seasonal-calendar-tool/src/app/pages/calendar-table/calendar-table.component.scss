@@ -23,7 +23,10 @@
   text-align: left;
   background-color: whitesmoke;
 }
-
+.calendar-container:not(.print-mode) {
+  width: 100%;
+  overflow: auto;
+}
 .calendar-container.print-mode {
   // align content centrally
   padding: 16px;
@@ -34,10 +37,10 @@
   align-items: center;
   justify-content: center;
   // Hide empty placeholders
-  picsa-form-weather-select[data-hasValue='false'] {
+  picsa-form-weather-select-multiple[data-hasValue='false'] {
     visibility: hidden;
   }
-  picsa-form-crop-activity-select[data-hasValue='false'] {
+  picsa-form-crop-activity-select-multiple[data-hasValue='false'] {
     visibility: hidden;
   }
 }

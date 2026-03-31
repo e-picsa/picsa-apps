@@ -65,13 +65,13 @@ export class CalendarEditorComponent implements OnInit {
           const currentActivities = parentForm.activities().value();
 
           // 2. Sync Weather Array Length
-          const newWeather = Array.from({ length: totalCount }, (_, i) => currentWeather[i] || '');
+          const newWeather = Array.from({ length: totalCount }, (_, i) => currentWeather[i] || []);
 
           // 3. Sync Activities Array Lengths
-          const newActivities: Record<string, string[]> = {};
+          const newActivities: Record<string, string[][]> = {};
           for (const heading of currentMeta.enterprises) {
             const existingArray = currentActivities[heading] || [];
-            newActivities[heading] = Array.from({ length: totalCount }, (_, i) => existingArray[i] || '');
+            newActivities[heading] = Array.from({ length: totalCount }, (_, i) => existingArray[i] || []);
           }
 
           // 4. Safely push ALL updates back to the parent Signal Form
