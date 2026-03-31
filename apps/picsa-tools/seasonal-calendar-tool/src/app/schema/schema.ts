@@ -18,7 +18,7 @@ import { CalendarDataEntry_v1 } from './types';
  *
  * On next startup app will run and apply data migrations
  */
-const SCHEMA_VERSION = 0;
+const SCHEMA_VERSION = 1;
 
 export type CalendarDataEntry = {
   /** generated id */
@@ -105,7 +105,7 @@ export const COLLECTION: IPicsaCollectionCreator<CalendarDataEntry> = {
 
 // Example data to illustrate schema
 export const CALENDAR_ENTRY_MOCK: CalendarDataEntry = {
-  id: 'mock_01',
+  id: 'mock_abc',
   name: 'Mock Entry',
   activities: {
     cassava: [['sowing'], ['sowing', 'planting'], ['planting']],
