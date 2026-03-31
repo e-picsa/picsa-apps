@@ -25,8 +25,4 @@ export class FormWeatherSelectMultipleComponent extends PicsaFormBaseSelectMulti
       WEATHER_DATA_HASHMAP,
     );
   }
-
-  public handleSelect(id: string) {
-    this.toggleSelected(id);
-  }
 }

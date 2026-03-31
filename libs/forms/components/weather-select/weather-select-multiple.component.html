@@ -20,7 +20,7 @@
       <div
         class="option-container"
         [attr.data-selected]="value().includes(option.id)"
-        (click)="handleSelect(option.id)"
+        (click)="toggleSelected(option.id)"
       >
         <div class="option-label">{{ option.label | translate }}</div>
         <mat-icon class="option-icon" [svgIcon]="'picsa_weather:' + option.svgIcon"></mat-icon>
