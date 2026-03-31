@@ -16,6 +16,10 @@
 
 <!-- Dialog -->
 <ng-template #inputDialog>
+  <button matButton="outlined" color="primary" mat-dialog-close class="mb-4 ml-auto p-2 min-h-10">
+    {{ 'Close' | translate }}
+    <mat-icon>close</mat-icon>
+  </button>
   <div class="select-container">
     @for (option of filteredOptions(); track option.id) {
       <div class="option-container" [attr.data-selected]="option.id === value()" (click)="value.set(option.id)">

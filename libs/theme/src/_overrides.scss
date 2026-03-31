@@ -24,6 +24,13 @@ button.mdc-button > .mat-icon {
   overflow: hidden;
   width: 100%;
 }
+// remove labels if marked as icon-only to fix 8px label offset
+// that otherwise applies due to prettier text wrapping
+.icon-only {
+  .mdc-button__label {
+    display: none; /* or margin: 0 !important; */
+  }
+}
 
 mat-card.link {
   cursor: pointer;

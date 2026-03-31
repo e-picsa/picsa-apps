@@ -6,7 +6,7 @@
       }
     </div>
   } @else {
-    <button style="height: 100%" matButton="outlined" (click)="dialog.open(inputDialog)">
+    <button class="!h-full" matButton="outlined" (click)="dialog.open(inputDialog)">
       <mat-icon>cloud</mat-icon>
       +
     </button>
@@ -15,6 +15,10 @@
 
 <!-- Dialog -->
 <ng-template #inputDialog>
+  <button matButton="outlined" color="primary" mat-dialog-close class="mb-4 ml-auto p-2 min-h-10">
+    {{ 'Close' | translate }}
+    <mat-icon>close</mat-icon>
+  </button>
   <div class="select-container">
     @for (option of filteredOptions(); track option.id) {
       <div
