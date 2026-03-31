@@ -10,7 +10,7 @@ import { PicsaFormBaseSelectComponent } from '../base/select';
 @Component({
   selector: 'picsa-form-crop-activity-select',
   templateUrl: './crop-activity-select.component.html',
-  styleUrls: ['./crop-activity-select.component.scss'],
+  styleUrls: ['./crop-activity-select.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule],
