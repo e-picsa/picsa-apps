@@ -10,7 +10,6 @@ export default {
 
     // Convert weather: string[] → string[][]
     const weather = d.weather.map((v) => [v]);
-
     return { ...d, activities, weather };
   },
 };

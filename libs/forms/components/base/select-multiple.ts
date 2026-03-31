@@ -44,12 +44,10 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
     // and sync the new array up to the parent form.
     this.value.update((current) => {
       const vals = current || [];
-      const index = vals.indexOf(id);
-      if (index === -1) {
-        return [...vals, id];
-      } else {
+      if (vals.includes(id)) {
         return vals.filter((v) => v !== id);
       }
+      return [...vals, id];
     });
 
     // Mark as touched on user interaction

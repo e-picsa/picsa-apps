@@ -26,7 +26,7 @@
                 </div>
                 <picsa-form-weather-select-multiple
                   [formField]="weatherControl"
-                  [attr.data-hasValue]="weatherControl().value() ? true : null"
+                  [attr.data-hasValue]="weatherControl().value().length > 0 ? true : false"
                 ></picsa-form-weather-select-multiple>
               </th>
             }
@@ -43,7 +43,7 @@
                 <td>
                   <picsa-form-crop-activity-select-multiple
                     [formField]="control"
-                    [attr.data-hasValue]="control().value() ? true : null"
+                    [attr.data-hasValue]="control().value().length > 0 ? true : false"
                   ></picsa-form-crop-activity-select-multiple>
                 </td>
               }
