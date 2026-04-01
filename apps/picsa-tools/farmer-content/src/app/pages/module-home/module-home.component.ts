@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features';
@@ -14,7 +15,6 @@ import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { filter, map } from 'rxjs';
 
-import { FarmerContentService } from '../../services/farmer-content.service';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
 
 @Component({
@@ -34,15 +34,12 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 }), FlyInOut({ axis: 'Y' })],
-  // Ensure url changes update in nested tools by using default change detection
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  // HACK - inject to ensure icons are available to component
-  // TODO - find cleaner pattern
-  private service = inject(FarmerContentService);
+  private dataIconRegistry = inject(DataIconRegistry);
   componentsService = inject(PicsaCommonComponentsService);
   photoService = inject(PhotoService);
 
@@ -102,6 +99,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   );
 
   constructor() {
+    this.dataIconRegistry.registerMatIcons('tools');
     effect(() => {
       const content = this.content();
       if (!content) {
