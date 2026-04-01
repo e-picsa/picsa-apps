@@ -2,20 +2,17 @@
 import { Routes } from '@angular/router';
 
 export const TOOL_ROUTES: Routes = [
-  // support embed of budget tool app
-  // see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
   {
     path: 'budget',
     loadChildren: () => import('@picsa/budget/src/app/app.routes').then((mod) => mod.BUDGET_ROUTES),
   },
   {
     path: 'climate',
-    loadChildren: () => import('@picsa/climate/src/app/app.module-embedded').then((mod) => mod.ClimateToolModule),
+    loadChildren: () => import('@picsa/climate/src/app/app.routes').then((mod) => mod.CLIMATE_ROUTES),
   },
   {
     path: 'crop-probability',
-    loadChildren: () =>
-      import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
+    loadChildren: () => import('@picsa/crop-probability/src/app/app.routes').then((mod) => mod.CROP_PROBABILITY_ROUTES),
   },
   {
     path: 'forecasts',
@@ -23,23 +20,23 @@ export const TOOL_ROUTES: Routes = [
   },
   {
     path: 'monitoring',
-    loadChildren: () => import('@picsa/monitoring/src/app/app.module-embedded').then((mod) => mod.MonitoringToolModule),
+    loadChildren: () => import('@picsa/monitoring/src/app/app.routes').then((mod) => mod.MONITORING_ROUTES),
   },
   {
     path: 'manual',
-    loadChildren: () => import('@picsa/manual/src/app/app.module-embedded').then((mod) => mod.ManualToolModule),
+    loadChildren: () => import('@picsa/manual/src/app/app.routes').then((mod) => mod.MANUAL_ROUTES),
   },
   {
     path: 'option',
-    loadChildren: () => import('@picsa/option/src/app/app.module-embedded').then((mod) => mod.OptionsToolModule),
+    loadChildren: () => import('@picsa/option/src/app/app.routes').then((mod) => mod.OPTION_ROUTES),
   },
   {
     path: 'resources',
-    loadChildren: () => import('@picsa/resources/app.module-embedded').then((mod) => mod.ResourcesToolModule),
+    loadChildren: () => import('@picsa/resources/app.routes').then((mod) => mod.RESOURCES_ROUTES),
   },
   {
     path: 'seasonal-calendar',
     loadChildren: () =>
-      import('@picsa/seasonal-calendar/src/app/app.module-embedded').then((mod) => mod.SeasonalCalendarToolModule),
+      import('@picsa/seasonal-calendar/src/app/app.routes').then((mod) => mod.SEASONAL_CALENDAR_ROUTES),
   },
 ];

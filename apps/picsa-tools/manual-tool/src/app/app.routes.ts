@@ -11,15 +11,5 @@ export const ROUTES_COMMON: Routes = [
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
 
-/*******************************************************************
- *  Standalone Version
- ******************************************************************/
-@NgModule({
-  imports: [
-    RouterModule.forRoot([...ROUTES_COMMON, ...ROUTES_STANDALONE], {
-      preloadingStrategy: PreloadAllModules,
-    }),
-  ],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
+export const MANUAL_ROUTES: Routes = ROUTES_COMMON;
+export const appRoutes: Routes = [...ROUTES_COMMON, ...ROUTES_STANDALONE];

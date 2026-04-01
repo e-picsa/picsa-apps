@@ -14,6 +14,7 @@ import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { filter, map } from 'rxjs';
 
+import { FarmerContentService } from '../../services/farmer-content.service';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
 
 @Component({
@@ -34,11 +35,14 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 }), FlyInOut({ axis: 'Y' })],
   // Ensure url changes update in nested tools by using default change detection
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  // HACK - inject to ensure icons are available to component
+  // TODO - find cleaner pattern
+  private service = inject(FarmerContentService);
   componentsService = inject(PicsaCommonComponentsService);
   photoService = inject(PhotoService);
 

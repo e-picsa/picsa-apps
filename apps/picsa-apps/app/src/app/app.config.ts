@@ -1,7 +1,7 @@
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig, ErrorHandler, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PreloadAllModules,provideRouter, withPreloading } from '@angular/router';
+import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloading } from '@angular/router';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection(),
     provideAnimations(),
-    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
+    provideRouter(appRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
     provideHttpClient(withInterceptorsFromDi()),
     { provide: ErrorHandler, useClass: ErrorHandlerService },
     ...(ENVIRONMENT.useMockServices
