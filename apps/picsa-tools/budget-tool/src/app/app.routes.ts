@@ -8,7 +8,6 @@ export const BUDGET_ROUTES: Routes = [
   {
     path: '',
     providers: [
-      BudgetStore,
       {
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
