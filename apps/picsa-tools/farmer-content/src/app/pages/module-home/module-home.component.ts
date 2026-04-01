@@ -34,7 +34,10 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 }), FlyInOut({ axis: 'Y' })],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // Ensure url changes update in nested tools by using default change detection
+  // E.g. Budget load. Can be removed once all child tools have onPush
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
