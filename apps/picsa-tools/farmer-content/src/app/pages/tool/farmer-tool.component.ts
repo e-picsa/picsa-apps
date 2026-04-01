@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FARMER_TOOLS_DATA } from '@picsa/data';
 import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'farmer-content-tool',
+  imports: [RouterModule],
   template: `
     <div class="page">
       @if (!toolId()) {
@@ -22,7 +23,6 @@ import { filter, map } from 'rxjs';
       <router-outlet></router-outlet>
     </div>
   `,
-  standalone: false,
 })
 export class FarmerToolPlaceholderComponent {
   private router = inject(Router);

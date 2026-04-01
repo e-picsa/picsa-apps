@@ -5,7 +5,6 @@ import { registerEmbeddedRoutes } from '@picsa/utils/angular';
 
 import { PicsaFarmerContent } from './app.component';
 import { appRoutes } from './app.routes';
-import { FarmerToolPlaceholderComponent } from './pages/tool/farmer-tool.component';
 import { FarmerContentService } from './services/farmer-content.service';
 
 export class EmbeddedConfig {
@@ -34,9 +33,7 @@ export class EmbeddedRoutingModule {
  * Module
  ******************************************************************/
 @NgModule({
-  declarations: [PicsaFarmerContent, FarmerToolPlaceholderComponent],
-  imports: [EmbeddedRoutingModule, RouterModule, RouterOutlet],
-  bootstrap: [PicsaFarmerContent],
+  imports: [EmbeddedRoutingModule, RouterModule, RouterOutlet, PicsaFarmerContent],
 })
 export class BaseModule {
   translate = inject(PicsaTranslateService);

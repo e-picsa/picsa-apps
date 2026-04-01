@@ -1,7 +1,5 @@
 import { Route } from '@angular/router';
 
-import { FarmerToolPlaceholderComponent } from './pages/tool/farmer-tool.component';
-
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -10,12 +8,13 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'tool',
-    component: FarmerToolPlaceholderComponent,
+    loadComponent: () => import('./pages/tool/farmer-tool.component').then((mod) => mod.FarmerToolPlaceholderComponent),
     loadChildren: () => {
       return [
         {
           path: ':toolId',
-          component: FarmerToolPlaceholderComponent,
+          loadComponent: () =>
+            import('./pages/tool/farmer-tool.component').then((mod) => mod.FarmerToolPlaceholderComponent),
         },
       ];
     },
@@ -23,13 +22,13 @@ export const appRoutes: Route[] = [
   },
   {
     path: ':slug',
-    // TODO - make non-standalone to work with tools (or get tools to work standalone)
     loadComponent: () =>
       import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),
     children: [
       {
         path: ':toolId',
-        component: FarmerToolPlaceholderComponent,
+        loadComponent: () =>
+          import('./pages/tool/farmer-tool.component').then((mod) => mod.FarmerToolPlaceholderComponent),
       },
     ],
   },
