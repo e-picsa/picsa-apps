@@ -4,12 +4,12 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'picsa-forecasts-tool',
+  selector: 'picsa-monitoring-tool',
   template: `<router-outlet></router-outlet>`,
   standalone: true,
   imports: [RouterOutlet],
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class PicsaForecastsTool {
-  title = 'forecasts-tool';
+export class PicsaMonitoringTool {
+  title = 'monitoring-tool';
 }
