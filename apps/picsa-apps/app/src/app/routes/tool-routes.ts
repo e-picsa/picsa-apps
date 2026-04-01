@@ -6,7 +6,7 @@ export const TOOL_ROUTES: Routes = [
   // see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
   {
     path: 'budget',
-    loadChildren: () => import('@picsa/budget/src/app/app.module-embedded').then((mod) => mod.BudgetToolModule),
+    loadChildren: () => import('@picsa/budget/src/app/app.routes').then((mod) => mod.BUDGET_ROUTES),
   },
   {
     path: 'climate',

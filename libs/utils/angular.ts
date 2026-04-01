@@ -1,14 +1,7 @@
 import { DestroyRef, effect, inject, signal, Signal, untracked } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd } from '@angular/router';
 import type { ActivatedRoute, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
-import { debounceTime, filter, map, startWith } from 'rxjs';
-
-function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
-  if (parentModule) {
-    throw new Error(`${moduleName} has already been loaded. Import ${moduleName} in the AppModule only.`);
-  }
-}
+import { filter, map, startWith } from 'rxjs';
 
 /**
  * When embedding as part of another application the route will have an initial prefix

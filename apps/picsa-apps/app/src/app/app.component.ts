@@ -1,5 +1,5 @@
 import { Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { ConfigurationService } from '@picsa/configuration';
@@ -19,11 +19,14 @@ import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-n
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 import { _wait } from '@picsa/utils';
 
+import { AppLayoutComponent } from './components/layout';
+
 @Component({
   selector: 'picsa-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [AppLayoutComponent, RouterModule],
 })
 export class AppComponent implements OnInit {
   private analyticsService = inject(AnalyticsService);
