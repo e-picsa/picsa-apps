@@ -1,7 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Routes } from '@angular/router';
-import { appRoutes as extensionContentRoutes } from '@picsa/extension-content/src/app/app.routes';
-import { appRoutes as farmerAppRoutes } from '@picsa/farmer-content/src/app/app.routes';
 
 export const APP_ROUTES: Routes = [
   // Updated syntax for standalone components (other routes could be migrated in similar way)
@@ -10,13 +8,13 @@ export const APP_ROUTES: Routes = [
   {
     path: 'farmer',
     canActivate: [],
-    children: farmerAppRoutes,
+    loadChildren: () => import('@picsa/farmer-content/src/app/app.routes').then((mod) => mod.appRoutes),
     title: 'PICSA',
   },
   {
     path: 'extension',
     canActivate: [],
-    children: extensionContentRoutes,
+    loadChildren: () => import('@picsa/extension-content/src/app/app.routes').then((mod) => mod.appRoutes),
     title: 'PICSA',
   },
   // Photos debug page
