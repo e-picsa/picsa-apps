@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 
+import { PicsaForecastsTool } from './app/app.component';
 import { appConfig } from './app/app.config';
-import { ForecastComponent } from './app/pages/forecast/forecast.page';
 
-bootstrapApplication(ForecastComponent, appConfig).catch((err) => console.error(err));
+bootstrapApplication(PicsaForecastsTool, appConfig).catch((err) => console.error(err));

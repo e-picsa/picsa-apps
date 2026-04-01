@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [],
-  selector: 'forecast-app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'picsa-forecasts-tool',
+  template: `<router-outlet></router-outlet>`,
+  standalone: true,
+  imports: [RouterOutlet],
 })
-export class AppComponent {
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class PicsaForecastsTool {
   title = 'forecasts-tool';
 }

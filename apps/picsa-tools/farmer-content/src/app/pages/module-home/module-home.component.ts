@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features';
@@ -34,11 +35,14 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 }), FlyInOut({ axis: 'Y' })],
   // Ensure url changes update in nested tools by using default change detection
+  // E.g. Budget load. Can be removed once all child tools have onPush
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private dataIconRegistry = inject(DataIconRegistry);
   componentsService = inject(PicsaCommonComponentsService);
   photoService = inject(PhotoService);
 
@@ -98,6 +102,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   );
 
   constructor() {
+    this.dataIconRegistry.registerMatIcons('tools');
     effect(() => {
       const content = this.content();
       if (!content) {

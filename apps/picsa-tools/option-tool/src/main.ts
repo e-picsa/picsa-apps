@@ -1,18 +1,6 @@
-import { importProvidersFrom } from '@angular/core';
-import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
-import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaDb_V2_Module } from '@picsa/shared/modules';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-import { AppComponent } from './app/app.component';
-import { AppRoutingModule } from './app/app-routing.module';
+import { PicsaOptionTool } from './app/app.component';
+import { appConfig } from './app/app.config';
 
-const StandaloneImports = [
-  AppRoutingModule,
-  BrowserModule,
-  PicsaTranslateModule.forRoot(),
-  PicsaDb_V2_Module.forRoot(),
-];
-
-bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(StandaloneImports)],
-}).catch((err) => console.error(err));
+bootstrapApplication(PicsaOptionTool, appConfig).catch((err) => console.error(err));

@@ -6,7 +6,7 @@ import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { PicsaDb_V2_Module } from '@picsa/shared/modules';
 
-import { ROUTES_COMMON } from './app-routing.module';
+import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     // NOTE - provideExperimentalCheckNoChangesForDebug not good for debug here due to way
     // routerActive used to toggle nav sections (infinite loops triggered)
-    provideRouter(ROUTES_COMMON, withComponentInputBinding()),
+    provideRouter(appRoutes, withComponentInputBinding()),
     provideAnimations(),
     provideHttpClient(),
     // Enable picsa forms and (global) translate module for lazy-loaded standalone components

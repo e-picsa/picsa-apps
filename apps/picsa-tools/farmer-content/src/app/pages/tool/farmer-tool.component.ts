@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FARMER_TOOLS_DATA } from '@picsa/data';
 import { filter, map } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'farmer-content-tool',
   template: `
     <div class="page">
@@ -22,7 +23,8 @@ import { filter, map } from 'rxjs';
       <router-outlet></router-outlet>
     </div>
   `,
-  standalone: false,
+  standalone: true,
+  imports: [RouterModule],
 })
 export class FarmerToolPlaceholderComponent {
   private router = inject(Router);

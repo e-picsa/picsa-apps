@@ -1,13 +1,6 @@
-import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { ENVIRONMENT } from '@picsa/environments';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-import { AppModule } from './app/app.module';
+import { PicsaBudgetTool } from './app/app.component';
+import { appConfig } from './app/app.config';
 
-if (ENVIRONMENT.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic()
-  .bootstrapModule(AppModule, { applicationProviders: [provideZoneChangeDetection()] })
-  .catch((err) => console.error(err));
+bootstrapApplication(PicsaBudgetTool, appConfig).catch((err) => console.error(err));

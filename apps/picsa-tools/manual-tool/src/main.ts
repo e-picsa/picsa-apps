@@ -1,8 +1,6 @@
-import { provideZoneChangeDetection } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-import { AppModule } from './app/app.module';
+import { PicsaManualTool } from './app/app.component';
+import { appConfig } from './app/app.config';
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule, { applicationProviders: [provideZoneChangeDetection()] })
-  .catch((err) => console.error(err));
+bootstrapApplication(PicsaManualTool, appConfig).catch((err) => console.error(err));

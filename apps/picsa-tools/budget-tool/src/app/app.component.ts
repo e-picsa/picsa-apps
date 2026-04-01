@@ -1,28 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { PicsaTranslateService } from '@picsa/i18n';
-
-import { BudgetStore } from './store/budget.store';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  // tslint:disable component-selector
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-budget-tool',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false,
+  template: `<router-outlet></router-outlet>`,
+  standalone: true,
+  imports: [RouterOutlet],
 })
-export class AppComponent {
-  store = inject(BudgetStore);
-  translate? = inject(PicsaTranslateService);
-
-  title = 'picsa-budget-tool';
-  standalone = true;
-  storeReady = false;
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class PicsaBudgetTool {
+  title = 'budget-tool';
 }
-
-@Component({
-  // tslint:disable component-selector
-  selector: 'picsa-budget-tool',
-  template: '',
-  standalone: false,
-})
-export class AppComponentEmbedded extends AppComponent {}

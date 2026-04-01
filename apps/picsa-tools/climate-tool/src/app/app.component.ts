@@ -1,23 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { PicsaTranslateService } from '@picsa/i18n';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'climate-tool',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'picsa-climate-tool',
+  template: `<router-outlet></router-outlet>`,
+  standalone: true,
+  imports: [RouterOutlet],
 })
-export class AppComponent {
-  translate = inject(PicsaTranslateService);
-
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class PicsaClimateTool {
   title = 'climate-tool';
 }
-
-@Component({
-  selector: 'climate-tool',
-  // use empty template as router outlet not required
-  template: '',
-  styleUrls: ['./app.component.scss'],
-  standalone: false,
-})
-export class AppComponentEmbedded extends AppComponent {}

@@ -1,39 +1,37 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 
-import { FarmerToolPlaceholderComponent } from './pages/tool/farmer-tool.component';
-
-export const appRoutes: Route[] = [
-  {
-    path: '',
-    loadComponent: () => import('./pages/home/farmer-home.component').then((mod) => mod.FarmerContentHomeComponent),
-    title: 'PICSA',
-  },
-  {
-    path: 'tool',
-    component: FarmerToolPlaceholderComponent,
-    loadChildren: () => {
-      return [
-        {
-          path: ':toolId',
-          component: FarmerToolPlaceholderComponent,
-        },
-      ];
+export function buildFarmerRoutes(nestedTools: Routes): Routes {
+  return [
+    {
+      path: '',
+      loadComponent: () => import('./pages/home/farmer-home.component').then((mod) => mod.FarmerContentHomeComponent),
+      title: 'PICSA',
     },
-    title: 'PICSA',
-  },
+    // Tool debug page
+    {
+      path: 'tool',
+      loadComponent: () =>
+        import('./pages/tool/farmer-tool.component').then((mod) => mod.FarmerToolPlaceholderComponent),
+      children: nestedTools,
+      title: 'PICSA',
+    },
+    {
+      path: ':slug',
+      loadComponent: () =>
+        import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),
+      children: nestedTools,
+    },
+  ];
+}
+
+/** Routes only registered in standalone mode */
+export const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
+
+export const FAKE_TOOL_ROUTES: Routes = [
   {
-    path: ':slug',
-    // TODO - make non-standalone to work with tools (or get tools to work standalone)
-    loadComponent: () =>
-      import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),
-    children: [
-      {
-        path: ':toolId',
-        component: FarmerToolPlaceholderComponent,
-      },
-    ],
+    path: ':toolId',
+    loadComponent: () => import('./pages/tool/farmer-tool.component').then((mod) => mod.FarmerToolPlaceholderComponent),
   },
 ];
 
-/** Routes only registered in standalone mode */
-const ROUTES_STANDALONE: Route[] = [{ path: '**', redirectTo: '' }];
+export const appRoutes: Routes = buildFarmerRoutes(FAKE_TOOL_ROUTES);
