@@ -6,13 +6,14 @@
 <ng-template #headerPortal>
   <div class="flex items-center w-full">
     <div class="relative w-[200px]">
-      <button matButton color="primary" (click)="select.open()" class="station-select" class="w-full">
+      <button matButton color="primary" (click)="select.open()" class="station-select">
         @if(chartService.station){ <span class="text-lg">{{chartService.station.name}}</span> }
         <mat-icon iconPositionEnd>expand_more</mat-icon>
       </button>
       <!-- Use a hidden select that opens from button (instead of using full select form component) -->
       <mat-select
         class="absolute left-0 top-0 h-full w-full z-0 opacity-0 pointer-events-none"
+        tabindex="-1"
         #select
         (selectionChange)="handleStationSelect(select.value)"
         [value]="chartService.station?.id"
