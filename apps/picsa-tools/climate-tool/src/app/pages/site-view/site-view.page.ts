@@ -15,11 +15,16 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
+import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';
+import { ClimateChartOptionsComponent } from '../../components/climate-chart-options/climate-chart-options.component';
+import { PicsaClimateMaterialModule } from '../../components/material.module';
+import { ClimatePrintLayoutComponent } from '../../components/print-layout/print-layout.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
@@ -36,7 +41,15 @@ interface ISiteViewParams {
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [
+    PicsaClimateMaterialModule,
+    PicsaTranslateModule,
+    ClimateChartOptionsComponent,
+    ClimateChartLayoutComponent,
+    ClimatePrintLayoutComponent,
+    PicsaCommonComponentsModule,
+  ],
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   chartService = inject(ClimateChartService);
@@ -48,9 +61,9 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private viewContainer = inject(ViewContainerRef);
   private cdr = inject(ChangeDetectorRef);
 
-  public showRotateAnimation = signal(false);
+  readonly showRotateAnimation = signal(false);
 
-  public stationSelectOptions = computed(() => {
+  readonly stationSelectOptions = computed(() => {
     const stations = this.dataService.stations();
     return stations
       .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
@@ -62,6 +75,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private _siteId: string;
 
   @ViewChild('headerPortal') headerPortal: TemplateRef<unknown>;
+
   constructor() {
     effect(async () => {
       const viewId = this.viewId() || 'rainfall';
