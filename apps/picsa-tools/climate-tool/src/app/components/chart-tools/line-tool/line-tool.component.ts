@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY, MatDatepickerModule } from '@angular/material/datepicker';
@@ -28,6 +28,7 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 export class LineToolComponent {
   private chartService = inject(ClimateChartService);
   private toolService = inject(ClimateToolService);
+  private destroyRef = inject(DestroyRef);
 
   readonly ranges = signal<{ min: number; max: number }>({ min: 0, max: 0 });
   readonly step = signal(1);
@@ -52,6 +53,10 @@ export class LineToolComponent {
     effect(() => {
       const val = this.value();
       this.updateOnValueChange(val);
+    });
+    // Remove line when component destroyed
+    this.destroyRef.onDestroy(() => {
+      this.updateOnValueChange(undefined);
     });
   }
 
