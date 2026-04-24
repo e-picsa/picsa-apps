@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaChartComponent, PicsaDialogsModule } from '@picsa/shared/features';
-import { PicsaSharedPipesModule } from '@picsa/shared/pipes';
 
 import { ClimateChartLayoutComponent } from './chart-layout/chart-layout';
 import { CropAnalysisComponent } from './chart-tools/crop-analysis/crop-analysis';
@@ -20,19 +19,21 @@ import { ClimatePrintLayoutComponent } from './print-layout/print-layout.compone
 import { ClimateShareDialogComponent } from './share-dialog/share-dialog.component';
 import { ViewSelectComponent } from './view-select/view-select';
 
-const Standalone = [ClimatePrintLayoutComponent];
-
-const Components = [
+const Standalone = [
+  ClimatePrintLayoutComponent,
   ClimateChartLayoutComponent,
-  ClimateChartOptionsComponent,
-  ClimateShareDialogComponent,
-  CropAnalysisComponent,
   LineToolComponent,
   LineDatePickerHeaderComponent,
   ProbabilityToolComponent,
   TercilesToolComponent,
-  ViewSelectComponent,
   ToolSelectComponent,
+];
+
+const Components = [
+  ClimateChartOptionsComponent,
+  ClimateShareDialogComponent,
+  CropAnalysisComponent,
+  ViewSelectComponent,
 ];
 
 @NgModule({
@@ -45,7 +46,6 @@ const Components = [
     PicsaCommonComponentsModule,
     PicsaChartComponent,
     PicsaDialogsModule,
-    PicsaSharedPipesModule,
     ReactiveFormsModule,
     RouterModule,
     ...Standalone,

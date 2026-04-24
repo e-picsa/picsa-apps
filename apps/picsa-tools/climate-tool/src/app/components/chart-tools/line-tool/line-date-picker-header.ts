@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
 import { Subject, takeUntil } from 'rxjs';
 
 /** Custom header component for datepicker. */
 @Component({
-  selector: 'climte-line-date-picker-header',
+  selector: 'climate-line-date-picker-header',
   styles: [
     `
       .line-date-picker-header {
@@ -38,7 +40,8 @@ import { Subject, takeUntil } from 'rxjs';
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule],
 })
 export class LineDatePickerHeaderComponent<D> implements OnDestroy {
   private _calendar = inject<MatCalendar<D>>(MatCalendar);

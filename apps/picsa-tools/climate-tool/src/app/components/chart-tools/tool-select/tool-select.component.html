@@ -1,9 +1,9 @@
 <div class="tool-select-container">
-  @for (tool of toolService.tools | objectValues; track tool) {
+  @for (tool of toolService.tools() | objectValues; track tool) {
     <mat-card
       appearance="outlined"
       class="tool-card"
-      [attr.data-enabled]="toolService.enabled[tool.name] || null"
+      [attr.data-enabled]="toolService.enabled()[tool.name] || null"
       (click)="toolService.toggleEnabled(tool.name)"
     >
       <div class="tool-label">{{ tool.label | translate }}</div>

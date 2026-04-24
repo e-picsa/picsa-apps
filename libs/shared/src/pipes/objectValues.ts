@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'objectValues',
-  standalone: false,
+  standalone: true,
 })
 /**
  * Take an object and return the Object.values() method on it

@@ -1,4 +1,4 @@
-import { Component, inject,Input, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, OnDestroy } from '@angular/core';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile } from '../../../services/climate-tool.service';
@@ -12,16 +12,22 @@ interface ITercile {
   selector: 'climate-terciles-tool',
   templateUrl: './terciles-tool.component.html',
   styleUrls: ['./terciles-tool.component.scss'],
-  standalone: false,
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TercilesToolComponent implements OnDestroy {
   private chartService = inject(ClimateChartService);
 
   /** Value of current series data displayed */
-  @Input() set values(values: number[]) {
-    setTimeout(() => {
-      this.generateTerciles(values);
-    }, 200);
+  readonly values = input<number[]>([]);
+
+  constructor() {
+    effect(() => {
+      const vals = this.values();
+      setTimeout(() => {
+        this.generateTerciles(vals);
+      }, 200);
+    });
   }
 
   terciles: { upper?: ITercile; lower?: ITercile } = {};

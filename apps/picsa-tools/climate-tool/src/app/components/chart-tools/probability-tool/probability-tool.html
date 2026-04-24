@@ -1,4 +1,4 @@
-@if (probabilities) {
+@if (probabilities(); as prob) {
 <div style="display: flex">
   <!-- show/hide control -->
   <div style="margin-right: 2em">
@@ -30,9 +30,9 @@
       style="display: flex"
       [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'"
     >
-      @for (b of numberToArray(probabilities.above.count); track b) {
+      @for (b of numberToArray(prob.above.count); track b) {
       <div class="block above" [style.background-color]="lineOptions.above.color"></div>
-      } @for (b of numberToArray(probabilities.below.count); track b) {
+      } @for (b of numberToArray(prob.below.count); track b) {
       <div class="block below" [style.background-color]="lineOptions.below.color"></div>
       }
     </div>
@@ -48,10 +48,8 @@
           <div class="summary-label" [style.color]="lineOptions.above.color">
             <span>{{options.above.label | translate}}</span>
           </div>
-          <div style="margin: 4px">
-            {{ probabilities.above.count }} {{ 'out of' | translate }} {{ probabilities.total }}
-          </div>
-          <div class="prob-10">{{ probabilities.above.inTen }} {{ 'years out of every 10' | translate }}</div>
+          <div style="margin: 4px">{{ prob.above.count }} {{ 'out of' | translate }} {{ prob.total }}</div>
+          <div class="prob-10">{{ prob.above.inTen }} {{ 'years out of every 10' | translate }}</div>
         </mat-card>
         <mat-card
           class="text-summary"
@@ -62,10 +60,8 @@
           <div class="summary-label" [style.color]="lineOptions.below.color">
             <span>{{options.below.label | translate}}</span>
           </div>
-          <div style="margin: 4px">
-            {{ probabilities.below.count }} {{ 'out of' | translate }} {{ probabilities.total }}
-          </div>
-          <div class="prob-10">{{ probabilities.below.inTen }} {{ 'years out of every 10' | translate }}</div>
+          <div style="margin: 4px">{{ prob.below.count }} {{ 'out of' | translate }} {{ prob.total }}</div>
+          <div class="prob-10">{{ prob.below.inTen }} {{ 'years out of every 10' | translate }}</div>
         </mat-card>
       </div>
     </div>

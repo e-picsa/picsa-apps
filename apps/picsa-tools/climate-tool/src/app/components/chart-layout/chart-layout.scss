@@ -1,13 +1,19 @@
 :host {
   display: grid;
-  grid-template-columns: 60px 1fr;
-  // fit the chart to aline line-tool with chart, description underneat and probability tools
+  grid-template-columns: 1fr;
   grid-template-areas:
-    'line chart'
-    'blank  desc'
-    'prob prob';
-  // ensure the chart fits a minimum of 400px, with a target height of 60vh
+    'chart'
+    'desc'
+    'prob';
   grid-template-rows: minmax(400px, 60vh) auto auto;
+
+  &.has-line-tool {
+    grid-template-columns: 60px 1fr;
+    grid-template-areas:
+      'line chart'
+      'blank  desc'
+      'prob prob';
+  }
 }
 
 climate-line-tool {

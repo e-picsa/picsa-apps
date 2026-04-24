@@ -1,5 +1,10 @@
-import { Component, inject,OnDestroy, OnInit } from '@angular/core';
-import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DATE_RANGE_SELECTION_STRATEGY, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -18,7 +23,9 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
       useClass: LineDatePickerSelectionStrategy,
     },
   ],
-  standalone: false,
+  standalone: true,
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatIconModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineToolComponent implements OnInit, OnDestroy {
   private chartService = inject(ClimateChartService);
