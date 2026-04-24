@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY, MatDatepickerModule } from '@angular/material/datepicker';
@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
-import { Subject, takeUntil } from 'rxjs';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile, ClimateToolService } from '../../../services/climate-tool.service';
@@ -27,31 +26,34 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LineToolComponent implements OnInit, OnDestroy {
+export class LineToolComponent {
   private chartService = inject(ClimateChartService);
   private toolService = inject(ClimateToolService);
 
-  public value?: number;
-  public ranges: { min: number; max: number };
-  public step: number;
+  readonly ranges = signal<{ min: number; max: number }>({ min: 0, max: 0 });
+  readonly step = signal(1);
+  readonly inputType = signal<'number' | 'date' | undefined>(undefined);
+  readonly value = signal<number | undefined>(undefined);
 
-  public inputType?: 'number' | 'date';
-  public datePickerHeader = LineDatePickerHeaderComponent;
+  readonly datePickerHeader = LineDatePickerHeaderComponent;
 
   /** Configurable options overridden in chart config */
   private options = LINE_TOOL_OPTIONS;
 
-  private componentDestroyed$ = new Subject<boolean>();
+  constructor() {
+    // Subscribe to chart definition changes
+    effect(() => {
+      const chartDef = this.chartService.chartDefinition;
+      if (chartDef) {
+        this.loadLineToolConfig(chartDef);
+      }
+    });
 
-  ngOnInit(): void {
-    this.subscribeToDefinitionChanges();
-  }
-
-  ngOnDestroy() {
-    // when tool is toggle off also remove from the graph
-    this.updateChartPointColours(undefined);
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
+    // React to value changes and update chart
+    effect(() => {
+      const val = this.value();
+      this.updateOnValueChange(val);
+    });
   }
 
   public setLineToolFromDate(datestring: string) {
@@ -65,61 +67,69 @@ export class LineToolComponent implements OnInit, OnDestroy {
    * and trigger event emitter to handle line load/unload and chart refresh
    */
   public setLineToolValue(value: number) {
-    if (value <= (this.ranges?.min as number)) {
-      value = undefined as any;
+    const min = this.ranges().min;
+    if (value <= min) {
+      this.value.set(undefined);
+    } else {
+      this.value.set(value);
     }
-    this.value = value;
-    this.updateChartPointColours(value);
-    // also inform tool service of value changes so that probability tool can update
-    return this.toolService.setValue('line', value);
+    // Note: updateOnValueChange effect handles the rest
   }
 
   /** Set line tool dates formats and min/max values for line tool */
-  private loadLineToolConfig() {
-    const { chartConfig: config, chartDefinition: definition } = this.chartService;
-    if (config && definition) {
-      this.options = definition.tools.line;
-      this.step = definition.axes.yMinor;
-      if (definition.yFormat === 'value') {
-        this.inputType = 'number';
-      } else {
-        this.inputType = 'date';
-      }
-      this.ranges = {
+  private loadLineToolConfig(definition: {
+    tools: { line: typeof LINE_TOOL_OPTIONS };
+    axes: { yMinor: number };
+    yFormat: string;
+  }) {
+    this.options = definition.tools.line;
+    this.step.set(definition.axes.yMinor);
+    if (definition.yFormat === 'value') {
+      this.inputType.set('number');
+    } else {
+      this.inputType.set('date');
+    }
+
+    const config = this.chartService.chartConfig;
+    if (config) {
+      this.ranges.set({
         min: config.axis?.y?.min || 0,
         max: config.axis?.y?.max || 0,
-      };
-      setTimeout(() => {
-        this.setDefaultLineValue();
-      }, 50);
+      });
     }
+
+    // Set default after config loads
+    setTimeout(() => {
+      this.setDefaultLineValue();
+    }, 50);
   }
 
-  private subscribeToDefinitionChanges() {
-    this.chartService.chartDefinition$.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => {
-      this.loadLineToolConfig();
-    });
-  }
-
-  private updateChartPointColours(value: number | undefined) {
+  private updateOnValueChange(value: number | undefined) {
+    // Update point colours
     const { above, below } = this.options;
     const pointFormatter = (d: { value: number }) => {
       if (!value) return;
       return d.value >= value ? above.color : below.color;
     };
     this.chartService.getPointColour = pointFormatter;
+
+    // Update chart line
     this.updateChart(value);
+
+    // Also inform tool service of value changes so that probability tool can update
+    this.toolService.setValue('line', value);
   }
 
   private setDefaultLineValue() {
     // if no initial value provided calculate median and plot
     const median = calcPercentile(this.chartService.chartSeriesData, 0.5);
-    const rounded = Math.round(median / this.step) * this.step;
-    this.value = rounded;
-    this.setLineToolValue(rounded);
+    const currentStep = this.step();
+    const rounded = Math.round(median / currentStep) * currentStep;
+    this.value.set(rounded);
+    this.updateOnValueChange(rounded);
   }
 
-  /** Load or unload the linetool value as a line on the cchart */
+  /** Load or unload the linetool value as a line on the chart */
   private updateChart(value?: number) {
     const id = 'LineTool';
     if (value) {

@@ -1,7 +1,7 @@
 <!-- View Toggle (hidden on md+ screen size) -->
 @let toggleIcon = view()==='map' ? 'list' : 'map'; @let toggleText = view()==='map' ? strings.showList :
 strings.showMap;
-<button mat-button (click)="toggleView()" class="view-toggle">
+<button matButton (click)="toggleView()" class="view-toggle">
   <mat-icon>{{toggleIcon}}</mat-icon>
   {{toggleText}}
 </button>

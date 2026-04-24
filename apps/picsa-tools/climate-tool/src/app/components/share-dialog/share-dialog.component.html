@@ -1,13 +1,17 @@
 <h1 mat-dialog-title>{{ 'Share Chart' | translate }}</h1>
 <div mat-dialog-content>
   <div class="button-grid">
-    <button mat-button class="share-button" (click)="sharePicture()" [disabled]="disabled()" style="margin-right: 4px">
+    <button matButton class="share-button" (click)="sharePicture()" [disabled]="disabled()" style="margin-right: 4px">
       <div style="margin-top: 8px">
-        <img src="assets/budget-icons/share-image.svg" style="height: 100px" [attr.data-disabled]="disabled() || null" />
+        <img
+          src="assets/budget-icons/share-image.svg"
+          style="height: 100px"
+          [attr.data-disabled]="disabled() || null"
+        />
         <div>{{ 'Print Version' | translate }}</div>
       </div>
     </button>
-    <!-- <button mat-button class="share-button" (click)="shareLink()" [disabled]="disabled()" style="margin-left: 4px">
+    <!-- <button matButton class="share-button" (click)="shareLink()" [disabled]="disabled()" style="margin-left: 4px">
     <div style="margin-top: 8px">
       <img src="assets/budget-icons/share-mobile.svg" style="height: 100px" [attr.data-disabled]="disabled() || null" />
       <div>{{ 'Share App Link' | translate }}</div>
@@ -17,5 +21,5 @@
 </div>
 <div class="status-message">{{ status() }}</div>
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>
+  <button matButton mat-dialog-close>{{ 'Close' | translate }}</button>
 </div>

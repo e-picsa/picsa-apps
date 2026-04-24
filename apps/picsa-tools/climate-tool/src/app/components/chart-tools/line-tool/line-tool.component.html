@@ -1,28 +1,27 @@
 <input
   id="lineToolSlider"
   type="range"
-  [min]="ranges.min"
-  [max]="ranges.max"
-  [step]="step"
-  [(ngModel)]="value"
+  [min]="ranges().min"
+  [max]="ranges().max"
+  [step]="step()"
+  [ngModel]="value()"
   (ngModelChange)="setLineToolValue($event)"
-  [step]="step"
   orient="vertical"
 />
 
-@if (inputType === 'number') {
+@if (inputType() === 'number') {
   <mat-form-field class="lineToolInputField no-padding no-hint">
     <input
       matInput
       class="lineToolInput"
       placeholder="Line"
-      [(ngModel)]="value"
+      [ngModel]="value()"
       (ngModelChange)="setLineToolValue($event)"
     />
   </mat-form-field>
 }
 
-@if (inputType === 'date') {
+@if (inputType() === 'date') {
   <mat-form-field class="lineToolInputField no-padding no-hint">
     <mat-label style="display: none"></mat-label>
     <input
