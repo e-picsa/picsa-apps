@@ -5,7 +5,7 @@
     'chart'
     'desc'
     'prob';
-  grid-template-rows: minmax(400px, 60vh) auto auto;
+  grid-template-rows: minmax(600px, 60vh) auto auto;
 
   &.has-line-tool {
     grid-template-columns: 60px 1fr;
