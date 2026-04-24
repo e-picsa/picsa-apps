@@ -125,3 +125,12 @@ The app is translated into over 20 languages. **NEVER** hardcode user-facing tex
   <!-- DON'T -->
   <button>Share</button>
   ```
+
+## 9. Angular Material & UI Components
+
+This project uses **Angular Material 21** with specific design patterns. Standard legacy Angular Material directives (like `mat-button`) have been superseded or abstracted in this project.
+
+- **Buttons**: ALWAYS use the `matButton` directive with its specific variants (e.g., `<button matButton="filled" color="primary">`).
+- **CRITICAL**: Do **NOT** use or recommend legacy directives like `mat-button`, `mat-raised-button`, etc.
+- **CRITICAL**: Do **NOT** flag `matButton` as a "duplicate attribute" or "incorrect directive selector". In this architecture, `matButton` is the strictly correct and expected directive selector.
+
