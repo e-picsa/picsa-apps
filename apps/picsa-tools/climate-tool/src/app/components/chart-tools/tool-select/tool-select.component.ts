@@ -9,7 +9,6 @@ import { ClimateToolService } from '../../../services/climate-tool.service';
   selector: 'climate-tool-select',
   templateUrl: './tool-select.component.html',
   styleUrls: ['./tool-select.component.scss'],
-  standalone: true,
   imports: [MatCardModule, PicsaTranslateModule, ObjectValuesPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

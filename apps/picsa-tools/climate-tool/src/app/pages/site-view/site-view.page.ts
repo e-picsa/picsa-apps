@@ -41,7 +41,6 @@ interface ISiteViewParams {
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PicsaClimateMaterialModule,
     PicsaTranslateModule,

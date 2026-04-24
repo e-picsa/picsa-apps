@@ -11,7 +11,6 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   selector: 'climate-view-select',
   templateUrl: './view-select.html',
   styleUrls: ['./view-select.scss'],
-  standalone: true,
   imports: [MatCardModule, RouterLink, RouterLinkActive, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

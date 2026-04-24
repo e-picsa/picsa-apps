@@ -12,7 +12,6 @@ interface ITercile {
   selector: 'climate-terciles-tool',
   templateUrl: './terciles-tool.component.html',
   styleUrls: ['./terciles-tool.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TercilesToolComponent implements OnDestroy {

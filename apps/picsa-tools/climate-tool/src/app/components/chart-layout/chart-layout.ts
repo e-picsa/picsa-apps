@@ -18,7 +18,6 @@ import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-too
   selector: 'climate-chart-layout',
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
-  standalone: true,
   imports: [
     PicsaTranslateModule,
     PicsaChartComponent,

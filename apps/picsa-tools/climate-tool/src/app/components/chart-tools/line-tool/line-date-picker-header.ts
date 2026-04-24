@@ -40,7 +40,6 @@ import { Subject, takeUntil } from 'rxjs';
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
 })
 export class LineDatePickerHeaderComponent<D> implements OnDestroy {

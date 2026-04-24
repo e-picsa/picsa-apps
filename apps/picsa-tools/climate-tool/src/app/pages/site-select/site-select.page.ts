@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject,signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +19,6 @@ const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarke
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatIconModule, PicsaMapComponent, PicsaDataTableComponent],
 })

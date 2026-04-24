@@ -22,7 +22,6 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
       useClass: LineDatePickerSelectionStrategy,
     },
   ],
-  standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

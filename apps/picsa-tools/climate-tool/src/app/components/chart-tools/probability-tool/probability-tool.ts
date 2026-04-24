@@ -12,7 +12,6 @@ import { ClimateChartService } from '../../../services/climate-chart.service';
   selector: 'climate-probability-tool',
   templateUrl: './probability-tool.html',
   styleUrls: ['./probability-tool.scss'],
-  standalone: true,
   imports: [MatButtonToggleModule, MatCardModule, MatIconModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -11,7 +11,6 @@ import { ViewSelectComponent } from '../view-select/view-select';
   selector: 'climate-chart-options',
   templateUrl: './climate-chart-options.component.html',
   styleUrls: ['./climate-chart-options.component.scss'],
-  standalone: true,
   imports: [PicsaClimateMaterialModule, PicsaTranslateModule, ToolSelectComponent, ViewSelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
