@@ -133,3 +133,9 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 **Date**: 2026-03-09
 **Context**: Re-architecting state for complex dashboard services.
 **Learning**: MobX should never be used in this codebase as it is heavily deprecated. Ensure that only Angular Signals (`signal`, `computed`, `effect`) are used for reactive state management.
+
+### Internationalization (i18n) Imports in Standalone Components
+
+**Date**: 2026-04-24
+**Context**: Refactoring components to standalone and importing the translate pipe.
+**Learning**: Never import `TranslatePipe` directly from `@ngx-translate/core`. The correct pattern for this project is to import `PicsaTranslateModule` from `@picsa/i18n` and add it to the `imports` array of your standalone component.
