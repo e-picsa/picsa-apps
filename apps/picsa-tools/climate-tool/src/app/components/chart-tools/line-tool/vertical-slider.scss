@@ -1,6 +1,6 @@
 input[type='range'][orient='vertical'] {
-  writing-mode: bt-lr;
-  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
 }
 
 // custom slider styling

@@ -1,5 +1,5 @@
 <div class="tool-select-container">
-  @for (tool of toolService.tools() | objectValues; track tool) {
+  @for (tool of tools(); track tool.name) {
     <mat-card
       appearance="outlined"
       class="tool-card"
