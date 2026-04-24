@@ -11,6 +11,7 @@ import {
 import { IChartConfig } from '@picsa/models';
 import * as c3 from 'c3';
 
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'picsa-chart',
   template: ` <div data-cy="chart-container" #chart class="chart-container"></div> `,

@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -28,6 +29,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
  * TODO - could be refactored to inject directly into app container instead of page
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-sidenav-layout',
   template: `
     <mat-sidenav-container style="flex: 1" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
