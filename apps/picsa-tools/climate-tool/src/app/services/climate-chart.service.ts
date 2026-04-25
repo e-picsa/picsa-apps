@@ -79,10 +79,10 @@ export class ClimateChartService {
    */
   public async setChart(id: IChartId) {
     const station = this.station();
-    const definition = station?.definitions[id];
-    this.chartDefinition.set(definition);
+    const definition = station?.definitions?.[id] ? { ...station.definitions[id] } : undefined;
 
     if (definition) {
+      this.chartDefinition.set(definition);
       // apply translations
       definition.name = await this.translateService.translateText(definition.name);
       definition.yLabel = await this.translateService.translateText(definition.yLabel);

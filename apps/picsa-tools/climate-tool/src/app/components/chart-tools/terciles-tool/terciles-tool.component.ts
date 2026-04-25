@@ -23,9 +23,7 @@ export class TercilesToolComponent implements OnDestroy {
   constructor() {
     effect(() => {
       const vals = this.values();
-      setTimeout(() => {
-        this.generateTerciles(vals);
-      }, 200);
+      this.generateTerciles(vals);
     });
   }
 
