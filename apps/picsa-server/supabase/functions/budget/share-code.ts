@@ -11,9 +11,7 @@ export const normalizeShareCode = (code?: string | null) => {
 export const isShareCodeValid = (code: string) => SHARE_CODE_REGEX.test(code);
 
 export const generateShareCode = () => {
-  let value = '';
-  for (let i = 0; i < SHARE_CODE_LENGTH; i++) {
-    value += SHARE_CODE_CHARS.charAt(Math.floor(Math.random() * SHARE_CODE_CHARS.length));
-  }
-  return value;
+  return Array.from(crypto.getRandomValues(new Uint32Array(SHARE_CODE_LENGTH)), (value) => {
+    return SHARE_CODE_CHARS.charAt(value % SHARE_CODE_CHARS.length);
+  }).join('');
 };

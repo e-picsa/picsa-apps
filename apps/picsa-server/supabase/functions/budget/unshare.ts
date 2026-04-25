@@ -11,10 +11,6 @@ const unshareRequestSchema = z.object({
 
 type UnshareRequest = z.infer<typeof unshareRequestSchema>;
 
-type BudgetRow = {
-  share_code: string;
-};
-
 export const unshareBudget = async (req: Request) => {
   try {
     const { share_code }: UnshareRequest = await validateBody(req, unshareRequestSchema);
@@ -29,7 +25,7 @@ export const unshareBudget = async (req: Request) => {
 
     if (error) {
       console.error(error);
-      return ErrorResponse(error.message);
+      return ErrorResponse('Internal Server Error', 500);
     }
 
     const deleted = Array.isArray(data) && data.length > 0;
@@ -38,9 +34,7 @@ export const unshareBudget = async (req: Request) => {
     if (error instanceof Response) {
       return error;
     }
-    console.error(typeof error, error);
-    const e = error as any;
-    const msg = typeof e === 'string' ? e : e?.details || e?.error || e.message || e.msg || e;
-    return ErrorResponse(msg);
+    console.error(error);
+    return ErrorResponse('Internal Server Error', 500);
   }
 };

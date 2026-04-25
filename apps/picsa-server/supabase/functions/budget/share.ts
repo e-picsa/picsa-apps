@@ -4,6 +4,7 @@ import { ErrorResponse, JSONResponse } from '../_shared/response.ts';
 import { validateBody } from '../_shared/validation.ts';
 import { generateShareCode, normalizeShareCode } from './share-code.ts';
 import type { BudgetShareResponse } from './types.ts';
+import type { Json } from '../../types/db.types.ts';
 
 const shareRequestSchema = z.object({
   budget: z.unknown(),
@@ -14,7 +15,7 @@ type ShareRequest = z.infer<typeof shareRequestSchema>;
 
 type BudgetRow = {
   share_code: string;
-  data: Record<string, unknown>;
+  data: Json;
 };
 
 const MAX_SHARE_CODE_ATTEMPTS = 8;
@@ -35,7 +36,7 @@ export const shareBudget = async (req: Request) => {
     }
 
     const supabase = getServiceRoleClient();
-    const normalizedShareCode = normalizeShareCode(share_code ?? (budget.shareCode as string | undefined));
+    const normalizedShareCode = normalizeShareCode(share_code ?? (budgetData.shareCode as string | undefined));
 
     if (share_code && !normalizedShareCode) {
       return ErrorResponse('Invalid share code', 400);
@@ -50,7 +51,7 @@ export const shareBudget = async (req: Request) => {
 
       if (existingError) {
         console.error(existingError);
-        return ErrorResponse(existingError.message);
+        return ErrorResponse('Internal Server Error', 500);
       }
 
       const existingKey = (existingRow?.data as Record<string, unknown> | undefined)?._key as string | undefined;
@@ -66,7 +67,7 @@ export const shareBudget = async (req: Request) => {
       const { error } = await supabase.from('budgets').upsert(payload, { onConflict: 'share_code' });
       if (error) {
         console.error(error);
-        return ErrorResponse(error.message);
+        return ErrorResponse('Internal Server Error', 500);
       }
 
       return JSONResponse<BudgetShareResponse>({ share_code: normalizedShareCode });
@@ -87,7 +88,7 @@ export const shareBudget = async (req: Request) => {
 
       if (error.code !== '23505') {
         console.error(error);
-        return ErrorResponse(error.message);
+        return ErrorResponse('Internal Server Error', 500);
       }
     }
 
@@ -96,9 +97,7 @@ export const shareBudget = async (req: Request) => {
     if (error instanceof Response) {
       return error;
     }
-    console.error(typeof error, error);
-    const e = error as any;
-    const msg = typeof e === 'string' ? e : e?.details || e?.error || e.message || e.msg || e;
-    return ErrorResponse(msg);
+    console.error(error);
+    return ErrorResponse('Internal Server Error', 500);
   }
 };

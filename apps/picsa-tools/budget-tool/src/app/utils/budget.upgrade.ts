@@ -51,7 +51,7 @@ const PERIOD_TYPES = ['activities', 'inputs', 'outputs', 'familyLabour', 'produc
 export const checkForBudgetUpgrades = (budget: IBudget) => upgradeBudget(budget);
 
 export const upgradeBudget = (budget: BudgetLike): IBudget => {
-  const clonedBudget = JSON.parse(JSON.stringify(budget ?? {})) as BudgetLike;
+  const clonedBudget = structuredClone(budget ?? {}) as BudgetLike;
   if (isCurrentBudgetShape(clonedBudget)) {
     return normalizeCurrentBudget(clonedBudget);
   }
@@ -94,7 +94,7 @@ function normalizeLegacyBudget(budget: BudgetLike): IBudget {
   const declaredTotal = normalizeNumber(budget.periods?.total ?? periodKeys.length, periodKeys.length);
   const periodCount = Math.max(periodKeys.length, declaredTotal);
   const data = new Array(periodCount).fill(undefined).map((_, index) => {
-    const periodKey = periodKeys[index] ?? String(index);
+    const periodKey = String(index);
     const period = legacyPeriods[periodKey as keyof typeof legacyPeriods] as LegacyBudgetPeriod | undefined;
     return normalizeLegacyPeriod(period, budget);
   });

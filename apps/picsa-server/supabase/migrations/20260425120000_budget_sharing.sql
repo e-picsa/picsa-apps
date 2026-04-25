@@ -1,4 +1,6 @@
 -- Create budgets table for share codes
+CREATE EXTENSION IF NOT EXISTS "moddatetime" SCHEMA extensions;
+
 CREATE TABLE public.budgets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     share_code TEXT NOT NULL UNIQUE,
@@ -6,6 +8,8 @@ CREATE TABLE public.budgets (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE INDEX IF NOT EXISTS idx_budgets_data_key ON public.budgets ((data->>'_key'));
 
 -- Enable RLS
 ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;

@@ -16,11 +16,6 @@ const importRequestSchema = z
 
 type ImportRequest = z.infer<typeof importRequestSchema>;
 
-type BudgetRow = {
-  share_code: string;
-  data: Record<string, unknown>;
-};
-
 export const importBudget = async (req: Request) => {
   try {
     const { share_code, budget_key }: ImportRequest = await validateBody(req, importRequestSchema);
@@ -35,16 +30,17 @@ export const importBudget = async (req: Request) => {
     let query = supabase.from('budgets').select('data, share_code');
 
     if (shareCode) {
-      query = query.eq('share_code', shareCode);
+      query = query.eq('share_code', shareCode).limit(1);
     } else if (budget_key) {
-      query = query.eq('data->>_key', budget_key);
+      query = query.eq('data->>_key', budget_key).order('updated_at', { ascending: false }).limit(1);
     }
 
-    const { data: row, error } = await query.maybeSingle<BudgetRow>();
+    const { data: rows, error } = await query;
+    const row = Array.isArray(rows) ? rows[0] : undefined;
 
     if (error) {
       console.error(error);
-      return ErrorResponse(error.message);
+      return ErrorResponse('Internal Server Error', 500);
     }
 
     if (!row?.data) {
@@ -57,9 +53,7 @@ export const importBudget = async (req: Request) => {
     if (error instanceof Response) {
       return error;
     }
-    console.error(typeof error, error);
-    const e = error as any;
-    const msg = typeof e === 'string' ? e : e?.details || e?.error || e.message || e.msg || e;
-    return ErrorResponse(msg);
+    console.error(error);
+    return ErrorResponse('Internal Server Error', 500);
   }
 };

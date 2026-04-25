@@ -19,6 +19,45 @@ describe('checkForBudgetUpgrades', () => {
     expect(budget.data[5].produceConsumed[0].values.quantity).toBe(2);
   });
 
+  it('keeps sparse legacy periods aligned by index', () => {
+    const budget = checkForBudgetUpgrades({
+      apiVersion: 3,
+      _key: 'gap-demo',
+      periods: {
+        total: 3,
+        scale: 'months',
+      },
+      meta: {
+        title: 'Gap Demo',
+      },
+      data: {
+        0: {
+          familyLabour: {
+            labour0: {
+              id: 'family-labour',
+              name: 'Family labour',
+              days: 3,
+            },
+          },
+        },
+        2: {
+          familyLabour: {
+            labour2: {
+              id: 'family-labour',
+              name: 'Family labour',
+              days: 5,
+            },
+          },
+        },
+      },
+    } as any);
+
+    expect(budget.data).toHaveLength(3);
+    expect(budget.data[1].familyLabour).toHaveLength(0);
+    expect(budget.data[2].familyLabour).toHaveLength(1);
+    expect(budget.data[2].familyLabour[0].values.quantity).toBe(5);
+  });
+
   it('normalizes legacy v2 budgets into the current structure', () => {
     const budget = checkForBudgetUpgrades(PB_MOCK_API_2 as any);
 
