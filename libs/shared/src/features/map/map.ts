@@ -2,11 +2,9 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   effect,
   EventEmitter,
-  inject,
   input,
   OnInit,
   Output,
@@ -26,8 +24,6 @@ import * as L from 'leaflet';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaMapComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
-
   @Output() onMapReady = new EventEmitter<L.Map>();
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
@@ -167,21 +163,28 @@ export class PicsaMapComponent implements OnInit {
   // when marker is clicked zoom in map on marker, update icon and emit event
   protected _onMarkerClick(marker: IMapMarker, renderedMarker: L.Marker<any>) {
     if (marker && renderedMarker) {
-      // Fly map to marker
-      const latLng = renderedMarker.getLatLng();
-      this.map().flyTo(latLng, 12);
-
-      // Programatically updated classnames on current and previous
-      // selected marker. Use CDR to ensure updated
-      renderedMarker.getElement()?.classList.add('selected');
+      // skip duplicate action
       const { marker: prevMarker, renderedMarker: prevRenderedMarker } = this.selected;
-      if (prevMarker && prevMarker._index !== marker._index) {
-        prevRenderedMarker?.getElement()?.classList.remove('selected');
+      if (marker.latlng[0] === prevMarker?.latlng[0] && marker.latlng[1] === prevMarker?.latlng[1]) {
+        return;
       }
       this.selected = { marker, renderedMarker };
-      this.cdr.markForCheck();
+      console.log('fly to marker', marker);
+      // Fly map to marker
+      const latLng = renderedMarker.getLatLng();
+      requestAnimationFrame(() => {
+        this.map().flyTo(latLng, 12);
 
-      this.onMarkerClick.emit(marker);
+        // Programatically updated classnames on current and previous
+        // selected marker. Use CDR to ensure updated
+        renderedMarker.getElement()?.classList.add('selected');
+
+        if (prevMarker && prevMarker._index !== marker._index) {
+          prevRenderedMarker?.getElement()?.classList.remove('selected');
+        }
+
+        this.onMarkerClick.emit(marker);
+      });
     }
   }
 }

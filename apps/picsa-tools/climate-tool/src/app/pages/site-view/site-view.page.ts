@@ -2,7 +2,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   effect,
@@ -15,7 +14,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService, PicsaSidenavComponent } from '@picsa/components/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
@@ -47,7 +46,7 @@ interface ISiteViewParams {
     ClimateChartOptionsComponent,
     ClimateChartLayoutComponent,
     ClimatePrintLayoutComponent,
-    PicsaCommonComponentsModule,
+    PicsaSidenavComponent,
   ],
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
@@ -58,7 +57,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private router = inject(Router);
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
-  private cdr = inject(ChangeDetectorRef);
 
   readonly showRotateAnimation = signal(false);
 
@@ -93,8 +91,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
           this.checkOrientation();
         }
       }
-
-      this.cdr.markForCheck();
     });
   }
 
@@ -107,7 +103,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.chartService.clearChartData();
     this.componentsService.patchHeader({ cdkPortalCenter: undefined });
-    this.cdr.markForCheck();
   }
 
   public async handleStationSelect(id: string) {
@@ -116,7 +111,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
       queryParamsHandling: 'preserve',
       replaceUrl: true,
     });
-    this.cdr.markForCheck();
   }
 
   private async loadView(viewId: IChartId) {

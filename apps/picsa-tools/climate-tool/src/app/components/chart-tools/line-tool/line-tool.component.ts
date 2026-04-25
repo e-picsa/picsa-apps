@@ -41,9 +41,9 @@ export class LineToolComponent {
   private options = LINE_TOOL_OPTIONS;
 
   constructor() {
-    // Subscribe to chart definition changes
+    // Subscribe to chart definition changes via effect
     effect(() => {
-      const chartDef = this.chartService.chartDefinition;
+      const chartDef = this.chartService.chartDefinition();
       if (chartDef) {
         this.loadLineToolConfig(chartDef);
       }
@@ -54,7 +54,8 @@ export class LineToolComponent {
       const val = this.value();
       this.updateOnValueChange(val);
     });
-    // Remove line when component destroyed
+
+    // Remove line when component is destroyed
     this.destroyRef.onDestroy(() => {
       this.updateOnValueChange(undefined);
     });
@@ -94,7 +95,7 @@ export class LineToolComponent {
       this.inputType.set('date');
     }
 
-    const config = this.chartService.chartConfig;
+    const config = this.chartService.chartConfig();
     if (config) {
       this.ranges.set({
         min: config.axis?.y?.min || 0,
@@ -126,7 +127,7 @@ export class LineToolComponent {
 
   private setDefaultLineValue() {
     // if no initial value provided calculate median and plot
-    const median = calcPercentile(this.chartService.chartSeriesData, 0.5);
+    const median = calcPercentile(this.chartService.chartSeriesData(), 0.5);
     const currentStep = this.step();
     const rounded = Math.round(median / currentStep) * currentStep;
     this.value.set(rounded);

@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { MediaMatcher } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +12,9 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
 
@@ -108,7 +111,8 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
-  standalone: false,
+  imports: [A11yModule, MatButtonModule, MatSidenavModule, MatIconModule],
+  standalone: true,
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);

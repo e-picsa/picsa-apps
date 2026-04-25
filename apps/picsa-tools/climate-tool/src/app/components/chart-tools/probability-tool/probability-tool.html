@@ -1,4 +1,4 @@
-@if (probabilities(); as prob) {
+@if (probabilities(); as prob) { @if(lineOptions(); as lineOpts){@if(options(); as opts){
 <div style="display: flex">
   <!-- show/hide control -->
   <div style="margin-right: 8px">
@@ -28,25 +28,25 @@
     <div
       class="probability-blocks-group"
       style="display: flex"
-      [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'"
+      [style.flex-direction]="opts.reverse ? 'row-reverse' : 'row'"
     >
       @for (b of numberToArray(prob.above.count); track b) {
-      <div class="block above" [style.background-color]="lineOptions.above.color"></div>
+      <div class="block above" [style.background-color]="lineOpts.above.color"></div>
       } @for (b of numberToArray(prob.below.count); track b) {
-      <div class="block below" [style.background-color]="lineOptions.below.color"></div>
+      <div class="block below" [style.background-color]="lineOpts.below.color"></div>
       }
     </div>
     <!-- text -->
     <div class="probability-info">
-      <div style="display: flex; margin-top: 1em" [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'">
+      <div style="display: flex; margin-top: 1em" [style.flex-direction]="opts.reverse ? 'row-reverse' : 'row'">
         <mat-card
           class="text-summary"
           appearance="outlined"
           mat-elevation-z4
-          [style.border-color]="lineOptions.above.color"
+          [style.border-color]="lineOpts.above.color"
         >
-          <div class="summary-label" [style.color]="lineOptions.above.color">
-            <span>{{options.above.label | translate}}</span>
+          <div class="summary-label" [style.color]="lineOpts.above.color">
+            <span>{{opts.above.label | translate}}</span>
           </div>
           <div style="margin: 4px">{{ prob.above.count }} {{ 'out of' | translate }} {{ prob.total }}</div>
           <div class="prob-10">{{ prob.above.inTen }} {{ 'years out of every 10' | translate }}</div>
@@ -55,10 +55,10 @@
           class="text-summary"
           appearance="outlined"
           mat-elevation-z4
-          [style.border-color]="lineOptions.below.color"
+          [style.border-color]="lineOpts.below.color"
         >
-          <div class="summary-label" [style.color]="lineOptions.below.color">
-            <span>{{options.below.label | translate}}</span>
+          <div class="summary-label" [style.color]="lineOpts.below.color">
+            <span>{{opts.below.label | translate}}</span>
           </div>
           <div style="margin: 4px">{{ prob.below.count }} {{ 'out of' | translate }} {{ prob.total }}</div>
           <div class="prob-10">{{ prob.below.inTen }} {{ 'years out of every 10' | translate }}</div>
@@ -67,4 +67,4 @@
     </div>
   </div>
 </div>
-}
+} }}

@@ -3,7 +3,7 @@
 <climate-line-tool #lineTool></climate-line-tool>
 }
 <!-- chart -->
-<picsa-chart #picsaChart [config]="chartService.chartConfig" [data]="$any(chartService.stationData)"></picsa-chart>
+<picsa-chart #picsaChart [config]="chartService.chartConfig() || {}"></picsa-chart>
 <!-- definition -->
 <div class="chart-definition">{{definition().definition | translate}}</div>
 <!-- probability tool -->
@@ -11,11 +11,11 @@
 <climate-probability-tool
   style="height: 140px"
   [lineValue]="$any(toolService.tools().line.value)"
-  [values]="chartService.chartSeriesData"
+  [values]="chartService.chartSeriesData()"
   [chartName]="definition().name"
 ></climate-probability-tool>
 }
 <!-- terciles tool -->
 @if (toolService.enabled().terciles) {
-<climate-terciles-tool [values]="chartService.chartSeriesData"></climate-terciles-tool>
+<climate-terciles-tool [values]="chartService.chartSeriesData()"></climate-terciles-tool>
 }

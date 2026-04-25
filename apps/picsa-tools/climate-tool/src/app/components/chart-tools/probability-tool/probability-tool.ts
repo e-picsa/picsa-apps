@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,15 +15,16 @@ import { ClimateChartService } from '../../../services/climate-chart.service';
   imports: [MatButtonToggleModule, MatCardModule, MatIconModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProbabilityToolComponent implements OnInit {
+export class ProbabilityToolComponent {
   private chartService = inject(ClimateChartService);
 
   readonly chartName = input<string>();
   readonly lineValue = input<number>();
   readonly values = input<number[]>([]);
 
-  public lineOptions: ILineToolOptions;
-  public options: IProbabilityToolOptions;
+  // Tool options from chart definition - reactive via effect
+  readonly lineOptions = signal<ILineToolOptions | undefined>(undefined);
+  readonly options = signal<IProbabilityToolOptions | undefined>(undefined);
 
   readonly probabilities = computed(() => {
     const lv = this.lineValue();
@@ -34,9 +35,15 @@ export class ProbabilityToolComponent implements OnInit {
     return undefined;
   });
 
-  ngOnInit(): void {
-    this.lineOptions = this.chartService.chartDefinition!.tools.line;
-    this.options = this.chartService.chartDefinition!.tools.probability;
+  constructor() {
+    // Load tool options when chart definition changes
+    effect(() => {
+      const chartDef = this.chartService.chartDefinition();
+      if (chartDef?.tools) {
+        this.lineOptions.set(chartDef.tools.line);
+        this.options.set(chartDef.tools.probability);
+      }
+    });
   }
 
   calculateProbabilities(x: number, values: number[]): IProbabilities | undefined {

@@ -10,26 +10,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent } from '@picsa/configuration';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
+import { PicsaSidenavComponent } from './components';
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { BackButton } from './components/back-button.component';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
-import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
 import { ProfileSelectComponent } from './components/profile-select/profile-select.component';
 
 // import {} from './warning.component';
-const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent, PicsaSidenavComponent, ProfileSelectComponent];
+const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent, ProfileSelectComponent];
 
 const standalone = [
   AlertBoxComponent,
   BackButton,
   PicsaConfigurationSelectComponent,
   PicsaConfigurationSummaryComponent,
+  PicsaSidenavComponent,
 ];
 
 @NgModule({
@@ -45,7 +45,6 @@ const standalone = [
     MatIconModule,
     MatInputModule,
     MatRadioModule,
-    MatSidenavModule,
     PortalModule,
     PicsaTranslateModule,
     ReactiveFormsModule,

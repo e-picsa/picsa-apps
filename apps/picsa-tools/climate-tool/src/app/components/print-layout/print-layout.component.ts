@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnDestroy } from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -10,27 +10,23 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   imports: [PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClimatePrintLayoutComponent implements OnInit, OnDestroy {
+export class ClimatePrintLayoutComponent implements OnDestroy {
   private chartService = inject(ClimateChartService);
 
-  public stationName: string;
-  public chartName: string;
-  public chartDefinition: string;
+  readonly chartPngBlob = input.required<Blob>();
 
-  public chartPngBlob = input.required<Blob>();
-  public pngSrc: string;
+  // Derive metadata from chart service signals
+  readonly stationName = computed(() => this.chartService.station()?.name ?? '');
+  readonly chartDefinition = computed(() => this.chartService.chartDefinition()?.definition ?? '');
+  readonly chartName = computed(() => this.chartService.chartDefinition()?.name ?? '');
 
-  ngOnInit(): void {
-    this.pngSrc = URL.createObjectURL(this.chartPngBlob());
+  readonly pngSrc = computed(() => URL.createObjectURL(this.chartPngBlob()));
 
-    const { station } = this.chartService;
-    if (station) {
-      this.stationName = station.name;
-      this.chartDefinition = this.chartService.chartDefinition?.definition || '';
-      this.chartName = this.chartService.chartDefinition?.name || '';
+  ngOnDestroy() {
+    // Clean up object URL when component is destroyed
+    const url = this.pngSrc();
+    if (url) {
+      URL.revokeObjectURL(url);
     }
-  }
-  ngOnDestroy(): void {
-    URL.revokeObjectURL(this.pngSrc);
   }
 }
