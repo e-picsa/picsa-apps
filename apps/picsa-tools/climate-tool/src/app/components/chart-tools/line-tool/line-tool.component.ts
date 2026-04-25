@@ -102,11 +102,7 @@ export class LineToolComponent {
         max: config.axis?.y?.max || 0,
       });
     }
-
-    // Set default after config loads
-    setTimeout(() => {
-      this.setDefaultLineValue();
-    }, 50);
+    requestAnimationFrame(() => this.setDefaultLineValue());
   }
 
   private updateOnValueChange(value: number | undefined) {
