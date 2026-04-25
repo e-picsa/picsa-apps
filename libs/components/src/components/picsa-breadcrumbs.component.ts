@@ -1,17 +1,21 @@
-import { Component, effect, inject,OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { debounce, filter, interval, Subject, takeUntil } from 'rxjs';
 
 import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/components.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-breadcrumbs',
   template: `
-    @if (options.enabled && breadcrumbs.length > 2) {
+    @if (options().enabled && breadcrumbs().length > 2) {
       <div class="breadcrumbs-container">
-        @for (breadcrumb of breadcrumbs; track breadcrumb; let isLast = $last) {
+        @for (breadcrumb of breadcrumbs(); track breadcrumb.path; let isLast = $last) {
           <div>
-            <button mat-button [routerLink]="breadcrumb.path">
+            <button matButton [routerLink]="breadcrumb.path">
               {{ breadcrumb.label }}
             </button>
             @if (!isLast) {
@@ -31,15 +35,18 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule, RouterModule],
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   private componentsService = inject(PicsaCommonComponentsService);
   private router = inject(Router);
 
-  public breadcrumbs: { label: string; path: string }[] = [];
+  public breadcrumbs = signal<{ label: string; path: string }[]>([]);
   private aliases: Map<string, string>;
-  public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
+  public options = toSignal(this.componentsService.breadcrumbOptions$, {
+    initialValue: { hideOnPaths: {}, enabled: false } as IBreadcrumbOptions,
+  });
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
   constructor() {
@@ -57,7 +64,6 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.constructBreadcrumbAliases();
-    this.listenToServiceChanges();
     this.listenToRouteChanges();
     // Debounce to prevent too frequent breadcrumb updates
     this.rebuild$
@@ -94,13 +100,6 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
         this.rebuild$.next(true);
       });
   }
-  /** Listen to changes to title triggered directly service */
-  private listenToServiceChanges() {
-    this.componentsService.breadcrumbOptions$.pipe(takeUntil(this.destroyed$)).subscribe((options) => {
-      this.options = options;
-      //
-    });
-  }
   /********************************************************************************
    * Breadcrumbs
    *******************************************************************************/
@@ -124,7 +123,7 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
 
   private constructBreadcrumbs() {
     const segments = location.pathname.split('/').filter((s) => !!s);
-    this.breadcrumbs = segments
+    const breadcrumbs = segments
       .map((segment, i) => {
         let path = segments.slice(0, i + 1).join('/');
         if (!path.startsWith('/')) path = `/${path}`;
@@ -132,8 +131,9 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
         return { label, path };
       })
       .filter((b) => {
-        return !this.options.hideOnPaths?.[b.path];
+        return !this.options()?.hideOnPaths?.[b.path];
       });
-    this.breadcrumbs.unshift({ path: '/', label: this.getAlias('/') || '/' });
+    breadcrumbs.unshift({ path: '/', label: this.getAlias('/') || '/' });
+    this.breadcrumbs.set(breadcrumbs);
   }
 }

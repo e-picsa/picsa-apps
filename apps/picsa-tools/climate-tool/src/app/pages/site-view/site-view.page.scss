@@ -51,7 +51,7 @@ mat-option[data-draft='true'] {
 }
 
 button.station-select {
-  @apply text-lg h-10 whitespace-nowrap;
+  @apply text-lg h-10 whitespace-nowrap w-full;
 }
 button.map-button {
   @apply text-xl h-10;

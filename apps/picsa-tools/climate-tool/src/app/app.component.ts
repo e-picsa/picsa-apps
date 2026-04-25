@@ -6,7 +6,6 @@ import { RouterOutlet } from '@angular/router';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-climate-tool',
   template: `<router-outlet></router-outlet>`,
-  standalone: true,
   imports: [RouterOutlet],
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix

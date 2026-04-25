@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -10,7 +11,9 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
 
@@ -28,6 +31,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
  * TODO - could be refactored to inject directly into app container instead of page
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-sidenav-layout',
   template: `
     <mat-sidenav-container style="flex: 1" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
@@ -106,7 +110,8 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
-  standalone: false,
+  imports: [MatButtonModule, MatSidenavModule, MatIconModule],
+  standalone: true,
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);

@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -7,7 +7,8 @@ import { NavigationStackService } from '../services/navStack.service';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'back-button',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'picsa-back-button',
   template: `
     @switch (variant) {
       @case ('white') {
@@ -24,8 +25,7 @@ import { NavigationStackService } from '../services/navStack.service';
   `,
   imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BackButton {
+export class PicsaBackButtonComponent {
   @Input() variant: 'white' | 'primary' = 'white';
 
   public navStackService = inject(NavigationStackService);

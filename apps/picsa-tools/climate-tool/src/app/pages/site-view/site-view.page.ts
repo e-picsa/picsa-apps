@@ -2,7 +2,6 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   effect,
@@ -15,11 +14,17 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
+import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
+import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';
+import { ClimateChartOptionsComponent } from '../../components/climate-chart-options/climate-chart-options.component';
+import { PicsaClimateMaterialModule } from '../../components/material.module';
+import { ClimatePrintLayoutComponent } from '../../components/print-layout/print-layout.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
@@ -36,7 +41,14 @@ interface ISiteViewParams {
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PicsaClimateMaterialModule,
+    PicsaTranslateModule,
+    ClimateChartOptionsComponent,
+    ClimateChartLayoutComponent,
+    ClimatePrintLayoutComponent,
+    PicsaSidenavComponent,
+  ],
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   chartService = inject(ClimateChartService);
@@ -46,11 +58,10 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private router = inject(Router);
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
-  private cdr = inject(ChangeDetectorRef);
 
-  public showRotateAnimation = signal(false);
+  readonly showRotateAnimation = signal(false);
 
-  public stationSelectOptions = computed(() => {
+  readonly stationSelectOptions = computed(() => {
     const stations = this.dataService.stations();
     return stations
       .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
@@ -62,6 +73,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private _siteId: string;
 
   @ViewChild('headerPortal') headerPortal: TemplateRef<unknown>;
+
   constructor() {
     effect(async () => {
       const viewId = this.viewId() || 'rainfall';
@@ -80,8 +92,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
           this.checkOrientation();
         }
       }
-
-      this.cdr.markForCheck();
     });
   }
 
@@ -94,7 +104,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.chartService.clearChartData();
     this.componentsService.patchHeader({ cdkPortalCenter: undefined });
-    this.cdr.markForCheck();
   }
 
   public async handleStationSelect(id: string) {
@@ -103,7 +112,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
       queryParamsHandling: 'preserve',
       replaceUrl: true,
     });
-    this.cdr.markForCheck();
   }
 
   private async loadView(viewId: IChartId) {

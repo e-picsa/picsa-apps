@@ -1,29 +1,28 @@
 <input
   id="lineToolSlider"
   type="range"
-  [min]="ranges.min"
-  [max]="ranges.max"
-  [step]="step"
-  [(ngModel)]="value"
+  [min]="ranges().min"
+  [max]="ranges().max"
+  [step]="step()"
+  [ngModel]="value()"
   (ngModelChange)="setLineToolValue($event)"
-  [step]="step"
   orient="vertical"
 />
 
-@if (inputType === 'number') {
-  <mat-form-field class="lineToolInputField no-padding">
+@if (inputType() === 'number') {
+  <mat-form-field class="lineToolInputField no-padding no-hint">
     <input
       matInput
       class="lineToolInput"
       placeholder="Line"
-      [(ngModel)]="value"
+      [ngModel]="value()"
       (ngModelChange)="setLineToolValue($event)"
     />
   </mat-form-field>
 }
 
-@if (inputType === 'date') {
-  <mat-form-field class="lineToolInputField no-padding">
+@if (inputType() === 'date') {
+  <mat-form-field class="lineToolInputField no-padding no-hint">
     <mat-label style="display: none"></mat-label>
     <input
       matInput
@@ -32,7 +31,7 @@
       style="display: none"
     />
     <mat-datepicker #picker touchUi [calendarHeaderComponent]="datePickerHeader"></mat-datepicker>
-    <button mat-icon-button (click)="picker.open()" class="calendar-picker-button">
+    <button matIconButton (click)="picker.open()" class="w-full h-full">
       <mat-icon>calendar_month</mat-icon>
     </button>
   </mat-form-field>

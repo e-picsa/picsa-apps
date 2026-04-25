@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 

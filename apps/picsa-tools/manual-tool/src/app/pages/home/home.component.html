@@ -2,7 +2,7 @@
   <div class="pdf-container slide-in" [class.active]="pageNumber()">
     @if (pdfSrc(); as src) {
       <picsa-pdf-viewer [page]="pageNumber()" [src]="src">
-        <back-button style="margin-right: 8px" variant="primary"></back-button>
+        <picsa-back-button style="margin-right: 8px" variant="primary"></picsa-back-button>
       </picsa-pdf-viewer>
     }
   </div>

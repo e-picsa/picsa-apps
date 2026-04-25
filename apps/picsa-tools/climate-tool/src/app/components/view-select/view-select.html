@@ -1,5 +1,5 @@
 <div class="chart-select-container">
-  @for(chart of availableCharts; track chart._id){
+  @for(chart of availableCharts(); track chart._id){
   <mat-card
     appearance="outlined"
     class="mat-elevation-z8 chart-card"
