@@ -12,7 +12,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { IStationMeta } from '@picsa/models';
+import type { IStationMeta } from '@picsa/models/src/climate.models';
 import * as L from 'leaflet';
 
 @Component({

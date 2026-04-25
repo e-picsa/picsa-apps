@@ -19,10 +19,9 @@ import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { BackButton } from './components/back-button.component';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
-import { ProfileSelectComponent } from './components/profile-select/profile-select.component';
 
 // import {} from './warning.component';
-const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent, ProfileSelectComponent];
+const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent];
 
 const standalone = [
   AlertBoxComponent,
