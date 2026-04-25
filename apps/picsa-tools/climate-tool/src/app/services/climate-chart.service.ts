@@ -4,7 +4,7 @@ import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
-import { PrintProvider } from '@picsa/shared/services/native';
+import { PrintProvider } from '@picsa/shared/services/native/print';
 import { _wait } from '@picsa/utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';

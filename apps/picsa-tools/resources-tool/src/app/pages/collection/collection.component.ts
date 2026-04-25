@@ -1,7 +1,7 @@
-import { Component, inject,OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { map } from 'rxjs';
 
 import { ResourceCollectionComponent } from '../../components';

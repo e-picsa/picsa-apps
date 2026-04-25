@@ -1,6 +1,6 @@
 import { effect, inject, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments/src/version';

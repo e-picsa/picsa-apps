@@ -6,7 +6,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { ConfigurationService } from '@picsa/configuration';
 import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
 import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
