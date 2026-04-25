@@ -7,7 +7,7 @@ import { APP_VERSION } from '@picsa/environments/src/version';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
-import { generateID } from '@picsa/shared/services/core/db/db.service';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import merge from 'deepmerge';
 import { toJS } from 'mobx';
@@ -16,7 +16,6 @@ import { BehaviorSubject } from 'rxjs';
 
 import {
   IBudget,
-  IBudgetCodeDoc,
   IBudgetMeta,
   IBudgetPeriodType,
   IBudgetValueCounters,
@@ -30,12 +29,25 @@ import { NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
 export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
 
+interface BudgetShareResponse {
+  share_code: string;
+}
+
+interface BudgetImportResponse {
+  budget: IBudget | null;
+}
+
+interface BudgetUnshareResponse {
+  deleted: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class BudgetStore {
   private service = inject(BudgetService);
   private db = inject(PicsaDbService);
+  private supabase = inject(SupabaseService);
   private printPrvdr = inject(PrintProvider);
   private sanitizer = inject(DomSanitizer);
   private dialogService = inject(PicsaDialogService);
@@ -192,7 +204,7 @@ export class BudgetStore {
     this.setActiveBudget(budget);
   }
   async saveBudget() {
-    await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, true);
+    await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue);
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
@@ -201,18 +213,17 @@ export class BudgetStore {
       if (budget) {
         this.loadBudget(toJS(budget));
       } else {
-        await this.importBudget(key);
+        await this.importBudgetByKey(key);
       }
     }
   }
   async loadBudgetByShareCode(code: string) {
-    const codeDoc = await this.db.getDoc<IBudgetCodeDoc>('budgetTool/default/shareCodes', code, 'server');
-    if (codeDoc) {
-      return this.importBudget(codeDoc.budget_key);
-    } else {
-      console.warn('No budget share code found for code:', code);
+    const shareCode = this.normalizeShareCode(code);
+    if (!shareCode) {
+      console.warn('Invalid budget share code:', code);
       return undefined;
     }
+    return this.importBudgetByShareCode(shareCode);
   }
   async loadBudget(budget: IBudget) {
     budget = checkForBudgetUpgrades(budget);
@@ -227,29 +238,43 @@ export class BudgetStore {
   }
 
   async deleteBudget(budget: IBudget) {
-    await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
+    await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key], false);
     if (budget.shareCode) {
-      await this.db.deleteDocs('budgetTool/default/shareCodes', [budget.shareCode]);
+      await this.unshareBudgetFromSupabase(budget.shareCode);
     }
   }
 
   /** Duplicate a server budget and save locally */
-  private async importBudget(key: string): Promise<IBudget | undefined> {
-    const budget: IBudget = await this.db.getDoc('budgetTool/${GROUP}/budgets', key, 'server');
-    if (budget) {
-      // remove previous share code to allow re-share as new budget
-      if (budget.shareCode) {
-        delete budget.shareCode;
-      }
-      // append additional key to keep reference from parent to derived budgets
-      const { _key } = generateDBMeta();
-      budget._key += `_${_key}`;
-      this.setActiveBudget(budget);
-      await this.saveBudget();
-    } else {
+  private async importBudgetByKey(key: string): Promise<IBudget | undefined> {
+    const budget = await this.fetchBudgetFromServer({ budgetKey: key });
+    if (!budget) {
       console.warn('No budget doc found for key:', key);
+      return undefined;
     }
-    return budget;
+    return this.importBudgetData(budget);
+  }
+
+  private async importBudgetByShareCode(shareCode: string): Promise<IBudget | undefined> {
+    const budget = await this.fetchBudgetFromServer({ shareCode });
+    if (!budget) {
+      console.warn('No budget share code found for code:', shareCode);
+      return undefined;
+    }
+    return this.importBudgetData(budget);
+  }
+
+  private async importBudgetData(budget: IBudget): Promise<IBudget> {
+    const budgetCopy = checkForBudgetUpgrades(JSON.parse(JSON.stringify(budget)));
+    // remove previous share code to allow re-share as new budget
+    if (budgetCopy.shareCode) {
+      delete budgetCopy.shareCode;
+    }
+    // append additional key to keep reference from parent to derived budgets
+    const { _key } = generateDBMeta();
+    budgetCopy._key += `_${_key}`;
+    this.setActiveBudget(budgetCopy);
+    await this.saveBudget();
+    return budgetCopy;
   }
 
   public async shareAsImage() {
@@ -257,20 +282,57 @@ export class BudgetStore {
   }
 
   public async shareAsLink() {
-    const { shareCode } = this.activeBudget;
-    if (!shareCode) {
-      const code = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
-      // TODO ensure share code doesn't already exist
-      const budgetCodeDoc: IBudgetCodeDoc = {
-        ...generateDBMeta(),
-        _key: code,
-        budget_key: this.activeBudget._key,
-      };
-      await this.db.setDoc('budgetTool/default/shareCodes', budgetCodeDoc, true);
-      this.activeBudget.shareCode = code;
-    }
+    const shareCode = await this.shareBudgetToSupabase();
+    this.activeBudget.shareCode = shareCode;
     await this.saveBudget();
-    return this.activeBudget.shareCode as string;
+    return shareCode;
+  }
+
+  private async shareBudgetToSupabase() {
+    await this.supabase.ready();
+    if (!this.supabase.isAvailable()) {
+      throw new Error('Unable to share');
+    }
+
+    const payload = {
+      budget: this.activeBudgetValue,
+      share_code: this.activeBudget.shareCode,
+    };
+
+    try {
+      const response = await this.supabase.invokeFunction<BudgetShareResponse>('budget/share', {
+        body: payload,
+      });
+
+      if (!response?.share_code) {
+        throw new Error('Unable to share');
+      }
+
+      return response.share_code;
+    } catch (error) {
+      console.warn('[Budget] Share failed', error);
+      throw new Error('Unable to share');
+    }
+  }
+
+  private async unshareBudgetFromSupabase(shareCode: string) {
+    const normalized = this.normalizeShareCode(shareCode);
+    if (!normalized) {
+      return;
+    }
+
+    await this.supabase.ready();
+    if (!this.supabase.isAvailable()) {
+      return;
+    }
+
+    try {
+      await this.supabase.invokeFunction<BudgetUnshareResponse>('budget/unshare', {
+        body: { share_code: normalized },
+      });
+    } catch (error) {
+      console.warn('[Budget] Unshare failed', error);
+    }
   }
 
   /**************************************************************************
@@ -347,5 +409,40 @@ export class BudgetStore {
       [10 * b, 5 * b, b, b / 2, b / 10, b / 20],
     ];
     return counters;
+  }
+
+  private async fetchBudgetFromServer({
+    shareCode,
+    budgetKey,
+  }: {
+    shareCode?: string;
+    budgetKey?: string;
+  }): Promise<IBudget | undefined> {
+    await this.supabase.ready();
+    if (!this.supabase.isAvailable()) {
+      console.warn('[Budget] Supabase unavailable');
+      return undefined;
+    }
+
+    try {
+      const response = await this.supabase.invokeFunction<BudgetImportResponse>('budget/import', {
+        body: {
+          share_code: shareCode,
+          budget_key: budgetKey,
+        },
+      });
+      return response?.budget ?? undefined;
+    } catch (error) {
+      console.warn('[Budget] Import failed', error);
+      return undefined;
+    }
+  }
+
+  private normalizeShareCode(code: string) {
+    const normalized = code?.trim().toUpperCase();
+    if (!normalized || !/^[ABCDEFGHIJKLMNPQRSTUVWXYZ123456789]{4}$/.test(normalized)) {
+      return undefined;
+    }
+    return normalized;
   }
 }
