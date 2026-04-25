@@ -131,7 +131,6 @@ export class LineToolComponent {
     const currentStep = this.step();
     const rounded = Math.round(median / currentStep) * currentStep;
     this.value.set(rounded);
-    this.updateOnValueChange(rounded);
   }
 
   /** Load or unload the linetool value as a line on the chart */
