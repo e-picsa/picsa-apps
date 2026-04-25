@@ -28,11 +28,11 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
           [style.display]="hideBackButton() ? 'none' : 'block'"
           [variant]="style() === 'primary' ? 'white' : 'primary'"
         ></picsa-back-button>
-        <ng-template [cdkPortalOutlet]="cdkPortalStart" #portalOutlet></ng-template>
+        <ng-template [cdkPortalOutlet]="cdkPortalStart()" #portalOutlet></ng-template>
       </div>
       <h1 class="central-content">
-        <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
-        @if (!cdkPortalCenter) {
+        <ng-template [cdkPortalOutlet]="cdkPortalCenter()" #portalOutlet></ng-template>
+        @if (!cdkPortalCenter()) {
           <span class="title">{{ title() | translate }}</span>
         }
       </h1>
@@ -71,8 +71,8 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
 
   private destroyed$ = new Subject<boolean>();
   /** Inject dynamic content into header slots using angular cdk portal */
-  public cdkPortalStart: IHeaderOptions['cdkPortalStart'];
-  public cdkPortalCenter: IHeaderOptions['cdkPortalCenter'];
+  public cdkPortalStart = signal<IHeaderOptions['cdkPortalStart']>(undefined);
+  public cdkPortalCenter = signal<IHeaderOptions['cdkPortalCenter']>(undefined);
 
   public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
 
@@ -150,19 +150,17 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
 
   private setPortalContent(options: IHeaderOptions) {
     const { cdkPortalStart, cdkPortalCenter } = options;
-    // Center Portal
+    // Start Portal
     if (!cdkPortalStart) {
-      this.cdkPortalStart = undefined;
-    }
-    if (!cdkPortalStart?.isAttached) {
-      this.cdkPortalStart = cdkPortalStart;
+      this.cdkPortalStart.set(undefined);
+    } else if (!cdkPortalStart.isAttached) {
+      this.cdkPortalStart.set(cdkPortalStart);
     }
     // Center Portal
     if (!cdkPortalCenter) {
-      this.cdkPortalCenter = undefined;
-    }
-    if (!cdkPortalCenter?.isAttached) {
-      this.cdkPortalCenter = cdkPortalCenter;
+      this.cdkPortalCenter.set(undefined);
+    } else if (!cdkPortalCenter.isAttached) {
+      this.cdkPortalCenter.set(cdkPortalCenter);
     }
   }
 }
