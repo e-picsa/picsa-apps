@@ -189,10 +189,10 @@ export class ClimateChartService {
 
     // if cache config exists revert back
     if (this.isPrintVersion) {
-      this.chartConfig.set({ ...config, size: { width: 900, height: 500 } });
+      this.chartConfig.set({ ...config, size: { width: 900, height: 500 }, title: { text: '' } });
       this.pointRadius = 3;
     } else {
-      const newConfig = { ...config, size: undefined, title: { ...config.title, text: '' } };
+      const newConfig = { ...config, size: undefined };
       this.chartConfig.set(newConfig);
       this.pointRadius = 8;
     }
