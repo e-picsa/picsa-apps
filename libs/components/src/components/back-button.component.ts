@@ -25,8 +25,7 @@ import { NavigationStackService } from '../services/navStack.service';
   `,
   imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BackButton {
+export class PicsaBackButtonComponent {
   @Input() variant: 'white' | 'primary' = 'white';
 
   public navStackService = inject(NavigationStackService);

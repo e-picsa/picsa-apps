@@ -1,3 +1,4 @@
+import { PortalModule } from '@angular/cdk/portal';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,7 +14,7 @@ import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { filter, map, Subject, takeUntil } from 'rxjs';
 
 import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';
-import { BackButton } from './back-button.component';
+import { PicsaBackButtonComponent } from './back-button.component';
 import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
 
 @Component({
@@ -48,7 +49,14 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
   `,
   styleUrls: ['./picsa-header.component.scss'],
   standalone: true,
-  imports: [PicsaBreadcrumbsComponent, MatIconModule, BackButton, PicsaTranslateModule, MatButtonModule],
+  imports: [
+    PicsaBreadcrumbsComponent,
+    MatIconModule,
+    PicsaBackButtonComponent,
+    PicsaTranslateModule,
+    MatButtonModule,
+    PortalModule,
+  ],
 })
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);
