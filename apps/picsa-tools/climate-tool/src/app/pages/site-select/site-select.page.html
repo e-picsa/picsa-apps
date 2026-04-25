@@ -6,7 +6,7 @@ strings.showMap;
   {{toggleText}}
 </button>
 
-<div class="page-content">
+<div class="flex flex-col flex-1 overflow-hidden relative z-0">
   <!-- Split screen display -->
   <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
     <div class="table-container" [attr.data-view]="view()">
@@ -21,7 +21,6 @@ strings.showMap;
     <div class="map-container" [attr.data-view]="view()">
       <picsa-map
         (onMarkerClick)="handleMarkerClick($event)"
-        [mapOptions]="mapOptions"
         [basemapOptions]="basemapOptions"
         [markers]="mapMarkers()"
         (onMapReady)="mapReady.set(true)"

@@ -7,7 +7,7 @@ import { ConfigurationService } from '@picsa/configuration';
 import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
 
@@ -34,8 +34,6 @@ export class SiteSelectPage {
 
   mapReady = signal(false);
 
-  // main options handled by featuredCountry
-  mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
@@ -123,7 +121,13 @@ export class SiteSelectPage {
 
   public handleRowClick(station: IStationMeta) {
     if (station?.id) {
-      this.selectedStation.set(station);
+      if (station.id === this.selectedStation()?.id) {
+        // second tap on same station go to page
+        this.goToSite(station);
+      } else {
+        // first tap on station set selected to zoom to
+        this.selectedStation.set(station);
+      }
     }
   }
   public handleMarkerClick(e: IMapMarker) {
