@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 
 import { BudgetStore } from '../../store/budget.store';
@@ -9,10 +9,12 @@ import { BudgetStore } from '../../store/budget.store';
   templateUrl: './import-dialog.component.html',
   styleUrls: ['./import-dialog.component.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetImportDialogComponent {
   private store = inject(BudgetStore);
-  private router = inject(Router);
+  private dialogRef = inject(MatDialogRef<BudgetImportDialogComponent>);
+  private cdr = inject(ChangeDetectorRef);
 
   public status = '';
   public disabled = false;
@@ -29,14 +31,23 @@ export class BudgetImportDialogComponent {
     const code = this.importValue;
     this.status = 'Importing...';
     this.disabled = true;
-    await _wait(200);
-    const budget = await this.store.loadBudgetByShareCode(code);
-    if (budget) {
-      this.router.navigate([location.pathname, budget._key]);
-      this.status = 'Import success ';
-    } else {
+    this.cdr.markForCheck();
+    try {
+      await _wait(200);
+      const budget = await this.store.loadBudgetByShareCode(code);
+      if (budget) {
+        this.dialogRef.close(budget._key);
+        return;
+      }
       this.status = 'Code not found';
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.warn('[Budget] Import dialog failed', error);
+      this.status = 'Unable to import budget';
+      this.cdr.markForCheck();
+    } finally {
       this.disabled = false;
+      this.cdr.markForCheck();
     }
   }
 
