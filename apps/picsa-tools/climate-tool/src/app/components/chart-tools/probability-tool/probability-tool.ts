@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { ILineToolOptions, IProbabilityToolOptions } from '@picsa/models/src';
 
 import { IProbabilities } from '../../../models';

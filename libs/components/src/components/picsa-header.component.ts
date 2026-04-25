@@ -10,7 +10,7 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { filter, map, Subject, takeUntil } from 'rxjs';
 
 import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';

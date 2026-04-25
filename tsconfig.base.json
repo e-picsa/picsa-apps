@@ -36,6 +36,7 @@
       "@picsa/forecasts/*": ["apps/picsa-tools/forecasts-tool/src/app/*"],
       "@picsa/forms": ["libs/forms"],
       "@picsa/i18n": ["libs/i18n/src/index.ts"],
+      "@picsa/i18n/*": ["libs/i18n/src/*"],
       "@picsa/manual/*": ["apps/picsa-tools/manual-tool/*"],
       "@picsa/migrations": ["libs/migrations/index.ts"],
       "@picsa/models": ["libs/models/src/index.ts"],

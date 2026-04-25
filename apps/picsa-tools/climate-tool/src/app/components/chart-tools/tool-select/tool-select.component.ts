@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateToolService } from '../../../services/climate-tool.service';

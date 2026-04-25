@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, viewChild } from '@angular/core';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
