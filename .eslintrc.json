@@ -74,7 +74,7 @@
           "error",
           {
             "selector": "TextAttribute[name='mat-icon-button']",
-            "message": "❌ Don't use legacy 'mat-icon-button'. ✅ Use MDC directive 'matIconButton' (e.g., <button matIconButton>)."
+            "message": "❌ Don't use legacy '<button mat-icon-button>'. ✅ Use MDC '<button matIconButton>' or '<button matButton='outlined' class='icon-only'>'."
           }
         ]
       }
