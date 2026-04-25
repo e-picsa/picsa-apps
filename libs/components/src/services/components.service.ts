@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { isEqual } from '@picsa/utils/object.utils';
 import { BehaviorSubject } from 'rxjs';
 
-import type { PicsaSidenavComponent } from '../components';
+import type { PicsaSidenavComponent } from '../components/picsa-sidenav.component';
 
 export interface IHeaderOptions {
   title?: string;

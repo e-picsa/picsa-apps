@@ -14,8 +14,8 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaSidenavComponent } from '@picsa/components/components/picsa-sidenav.component';
-import { PicsaCommonComponentsService } from '@picsa/components/services/components.service';
+import { PicsaCommonComponentsService } from '@picsa/components';
+import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';

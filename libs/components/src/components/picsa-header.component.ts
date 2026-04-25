@@ -1,4 +1,6 @@
-import { Component, computed, effect, inject,OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -7,26 +9,30 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n/src';
 import { filter, map, Subject, takeUntil } from 'rxjs';
 
 import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';
+import { BackButton } from './back-button.component';
+import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-header',
   template: `
-    <header [attr.data-style]="style" [style.display]="hideHeader() ? 'none' : 'flex'">
+    <header [attr.data-style]="style()" [style.display]="hideHeader() ? 'none' : 'flex'">
       <div class="start-content">
         <!-- HACK - menu button passed as portal but back-button hardcoded -->
-        <back-button
+        <picsa-back-button
           [style.display]="hideBackButton() ? 'none' : 'block'"
-          [variant]="style === 'primary' ? 'white' : 'primary'"
-        ></back-button>
+          [variant]="style() === 'primary' ? 'white' : 'primary'"
+        ></picsa-back-button>
         <ng-template [cdkPortalOutlet]="cdkPortalStart" #portalOutlet></ng-template>
       </div>
       <h1 class="central-content">
         <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
         @if (!cdkPortalCenter) {
-          <span class="title">{{ title | translate }}</span>
+          <span class="title">{{ title() | translate }}</span>
         }
       </h1>
       <div class="end-content">
@@ -41,7 +47,8 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [PicsaBreadcrumbsComponent, MatIconModule, BackButton, PicsaTranslateModule, MatButtonModule],
 })
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);
@@ -49,8 +56,8 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private titleStrategy = inject(DefaultTitleStrategy);
   private titleService = inject(Title);
 
-  public title = '';
-  public style: 'primary' | 'inverted' = 'primary';
+  public title = signal('');
+  public style = signal<'primary' | 'inverted'>('primary');
   public hideBackButton = signal(false);
   public hideHeader = signal(false);
 
@@ -118,12 +125,12 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private handleHeaderOptionsChange(options: IHeaderOptions) {
     const { title, style, hideBackButton, hideHeader } = options;
     requestAnimationFrame(() => {
-      if (title && this.title !== title) {
-        this.title = title;
+      if (title && this.title() !== title) {
+        this.title.set(title);
         this.titleService.setTitle(title);
       }
       if (style) {
-        this.style = style;
+        this.style.set(style);
       }
       this.setPortalContent(options);
       // hide back button when set or if on farmer or extension homepages

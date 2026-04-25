@@ -1,56 +1,25 @@
-import { A11yModule } from '@angular/cdk/a11y';
-import { PortalModule } from '@angular/cdk/portal';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { RouterModule } from '@angular/router';
 import { PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent } from '@picsa/configuration';
-import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { PicsaSidenavComponent } from './components';
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { BackButton } from './components/back-button.component';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
-
-// import {} from './warning.component';
-const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent];
+import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
 
 const standalone = [
   AlertBoxComponent,
   BackButton,
+  PicsaBreadcrumbsComponent,
+  PicsaHeaderComponent,
   PicsaConfigurationSelectComponent,
   PicsaConfigurationSummaryComponent,
   PicsaSidenavComponent,
 ];
 
 @NgModule({
-  declarations: components,
-  imports: [
-    A11yModule,
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRadioModule,
-    PortalModule,
-    PicsaTranslateModule,
-    ReactiveFormsModule,
-    RouterModule,
-    ...standalone,
-  ],
-  exports: [...components, ...standalone],
+  imports: standalone,
+  exports: standalone,
   providers: [],
 })
 export class PicsaCommonComponentsModule {}
