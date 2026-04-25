@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { ILineToolOptions, IProbabilityToolOptions } from '@picsa/models/src';
 
 import { IProbabilities } from '../../../models';
 import { ClimateChartService } from '../../../services/climate-chart.service';
@@ -22,10 +22,6 @@ export class ProbabilityToolComponent {
   readonly lineValue = input<number>();
   readonly values = input<number[]>([]);
 
-  // Tool options from chart definition - reactive via effect
-  readonly lineOptions = signal<ILineToolOptions | undefined>(undefined);
-  readonly options = signal<IProbabilityToolOptions | undefined>(undefined);
-
   readonly probabilities = computed(() => {
     const lv = this.lineValue();
     const vals = this.values();
@@ -35,16 +31,15 @@ export class ProbabilityToolComponent {
     return undefined;
   });
 
-  constructor() {
-    // Load tool options when chart definition changes
-    effect(() => {
-      const chartDef = this.chartService.chartDefinition();
-      if (chartDef?.tools) {
-        this.lineOptions.set(chartDef.tools.line);
-        this.options.set(chartDef.tools.probability);
-      }
-    });
-  }
+  public options = computed(() => this.chartService.chartDefinition()?.tools.probability || PROBABILITY_TOOL_OPTIONS);
+
+  /** Match probability block colors to line tool */
+  public colorAbove = computed(
+    () => this.chartService.chartDefinition()?.tools.line.above.color || LINE_TOOL_OPTIONS.above.color,
+  );
+  public colorBelow = computed(
+    () => this.chartService.chartDefinition()?.tools.line.below.color || LINE_TOOL_OPTIONS.below.color,
+  );
 
   calculateProbabilities(x: number, values: number[]): IProbabilities | undefined {
     if (x === undefined || x === null || !values) {
