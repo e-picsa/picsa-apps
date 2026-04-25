@@ -11,7 +11,7 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-breadcrumbs',
   template: `
-    @if (options()?.enabled && breadcrumbs().length > 2) {
+    @if (options().enabled && breadcrumbs().length > 2) {
       <div class="breadcrumbs-container">
         @for (breadcrumb of breadcrumbs(); track breadcrumb.path; let isLast = $last) {
           <div>

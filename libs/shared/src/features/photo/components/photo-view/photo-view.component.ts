@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, effect, inject, input, signal, TemplateRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  signal,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +20,7 @@ import { PhotoService } from '../../photo.service';
 import { IPhotoEntry } from '../../schema';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-photo-view',
   imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule, PicsaTouchGesturesDirective],
   templateUrl: './photo-view.component.html',

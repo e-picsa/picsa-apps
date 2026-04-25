@@ -1,4 +1,3 @@
-import { A11yModule } from '@angular/cdk/a11y';
 import { MediaMatcher } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy,
@@ -111,7 +110,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
-  imports: [A11yModule, MatButtonModule, MatSidenavModule, MatIconModule],
+  imports: [MatButtonModule, MatSidenavModule, MatIconModule],
   standalone: true,
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
