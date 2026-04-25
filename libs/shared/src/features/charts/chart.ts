@@ -55,7 +55,6 @@ export class PicsaChartComponent {
   constructor() {
     effect(() => {
       const config = this.config();
-      console.log('chart config', config);
       this.create(config);
     });
   }
