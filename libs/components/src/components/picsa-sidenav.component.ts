@@ -50,7 +50,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         <div class="sidenav-container" [attr.data-mobile]="mobileQuery.matches">
           <!-- Mobile-only  -->
           <div class="sidenav-mobile-header" [style.display]="mobileQuery.matches ? 'flex' : 'none'">
-            <button mat-icon-button color="primary" (click)="snav.toggle()">
+            <button matIconButton color="primary" (click)="snav.toggle()">
               <mat-icon>close</mat-icon>
             </button>
             <ng-content select="[mobileHeader]"></ng-content>

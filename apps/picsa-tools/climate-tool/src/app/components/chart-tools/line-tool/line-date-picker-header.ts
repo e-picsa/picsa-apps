@@ -30,11 +30,11 @@ import { Subject, takeUntil } from 'rxjs';
   ],
   template: `
     <div class="line-date-picker-header">
-      <button mat-icon-button (click)="previousClicked('month')">
+      <button matIconButton (click)="previousClicked('month')">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
       <span class="line-date-picker-header-label">{{ periodLabel }}</span>
-      <button mat-icon-button (click)="nextClicked('month')">
+      <button matIconButton (click)="nextClicked('month')">
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </div>
