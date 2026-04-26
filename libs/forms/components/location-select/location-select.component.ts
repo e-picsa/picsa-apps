@@ -19,7 +19,6 @@ import { isEqual } from '@picsa/utils/object.utils';
  */
 @Component({
   selector: 'picsa-form-location-select',
-  standalone: true,
   imports: [CommonModule, MatFormFieldModule, MatSelectModule],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',

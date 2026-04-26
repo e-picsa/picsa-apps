@@ -8,7 +8,7 @@ describe('VideoThumbnailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [VideoThumbnailComponent],
+      imports: [VideoThumbnailComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VideoThumbnailComponent);

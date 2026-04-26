@@ -1,4 +1,14 @@
-import { Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { firstValueFrom, map } from 'rxjs';
@@ -6,6 +16,7 @@ import { firstValueFrom, map } from 'rxjs';
 import { VideoPlayerBaseComponent } from './video-player.base';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-video-player-web',
   template: ` <video preload="auto" [src]="videoUrl()" #videoEl class="block w-full h-full object-cover"></video> `,
   styles: [

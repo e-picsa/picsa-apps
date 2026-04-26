@@ -15,7 +15,6 @@ export interface EditProfileDialogData {
 @Component({
   selector: 'dashboard-admin-edit-profile-dialog',
   templateUrl: './edit-profile-dialog.component.html',
-  standalone: true,
   imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, ProfileFormComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

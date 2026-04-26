@@ -35,7 +35,6 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
       }
     `,
   ],
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, RouterModule],
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {

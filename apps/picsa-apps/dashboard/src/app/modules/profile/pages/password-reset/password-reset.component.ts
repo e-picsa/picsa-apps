@@ -28,7 +28,6 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-password-reset.',
-  standalone: true,
   imports: [
     FormsModule,
     MatButtonModule,

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VideoPlayerComponent } from './video-player.component';
+import { PicsaVideoPlayerComponent } from './video-player.component';
 
-describe('VideoPlayerComponent', () => {
-  let component: VideoPlayerComponent;
-  let fixture: ComponentFixture<VideoPlayerComponent>;
+describe('PicsaVideoPlayerComponent', () => {
+  let component: PicsaVideoPlayerComponent;
+  let fixture: ComponentFixture<PicsaVideoPlayerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [VideoPlayerComponent],
+      imports: [PicsaVideoPlayerComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VideoPlayerComponent);
+    fixture = TestBed.createComponent(PicsaVideoPlayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

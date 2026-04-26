@@ -1,15 +1,15 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
-import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 
 import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'farmer-step-video',
-  imports: [MatListModule, MatDivider, PicsaVideoPlayerModule, FarmerStepVideoPlayerComponent],
+  imports: [MatListModule, MatDivider, FarmerStepVideoPlayerComponent],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })

@@ -16,7 +16,6 @@ import { SupabaseService } from '../../supabase.service';
  */
 @Directive({
   selector: '[supabaseStoragePicker]',
-  standalone: true,
 })
 export class SupabaseStoragePickerDirective {
   private dialog = inject(MatDialog);
