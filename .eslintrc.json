@@ -81,10 +81,6 @@
             "message": "❌ Don't use legacy <button mat-icon-button>. ✅ Use MDC <button matIconButton> or <button matButton='outlined' class='icon-only'>."
           },
           {
-            "selector": "TextAttribute[name='mat-button']",
-            "message": "❌ Don't use legacy <button mat-button>. ✅ Use MDC <button matButton>"
-          },
-          {
             "selector": "TextAttribute[name='mat-raised-button']",
             "message": "❌ Don't use legacy <button mat-raised-button>. ✅ Use MDC <button matButton='elevated'>"
           },
