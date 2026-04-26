@@ -67,7 +67,7 @@
       }
     },
     {
-      "files": ["*.html", "*.ts"],
+      "files": ["*.html"],
       "parser": "@angular-eslint/template-parser",
       "rules": {
         "no-restricted-syntax": [
