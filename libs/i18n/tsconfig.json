@@ -13,7 +13,7 @@
     "module": "preserve"
   },
   "angularCompilerOptions": {
-    "strictStandalone": false
+    "strictStandalone": true
   },
   "files": [],
   "include": ["src/**/*.ts"]
