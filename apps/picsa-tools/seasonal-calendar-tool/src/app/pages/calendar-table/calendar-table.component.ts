@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { FormCropActivitySelectMultipleComponent } from '@picsa/forms/components/crop-activity-select/crop-activity-select-multiple.component';
 import { FormWeatherSelectMultipleComponent } from '@picsa/forms/components/weather-select/weather-select-multiple.component';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { arrayToHashmap } from '@picsa/utils';
 import { debouncedEffect } from '@picsa/utils/angular';

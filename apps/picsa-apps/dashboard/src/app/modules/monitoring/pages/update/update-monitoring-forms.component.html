@@ -32,7 +32,7 @@
         >
         </picsa-supabase-upload>
         <!-- <button
-          mat-button
+          matButton
           color="primary"
           supabaseStoragePicker
           [storageBucketName]="storageBucketName()"
@@ -64,7 +64,7 @@
           (uploadComplete)="handleCoverUploadComplete($event)"
         ></picsa-supabase-upload>
         <button
-          mat-button
+          matButton
           color="primary"
           supabaseStoragePicker
           [storageBucketName]="storageBucketName()"
@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <button mat-raised-button color="primary" (click)="handleSubmitForm()" [disabled]="form.invalid">
+    <button matButton="elevated" color="primary" (click)="handleSubmitForm()" [disabled]="form.invalid">
       {{ loadingNewForm ? 'saving...' : 'Save Form' }}
     </button>
   </form>

@@ -17,28 +17,18 @@
                 (keydown.enter)="saveLabel(level)"
                 (keydown.escape)="cancelEdit()"
               />
-              <button
-                mat-icon-button
-                color="primary"
-                (click)="saveLabel(level)"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center"
-              >
+              <button matIconButton color="primary" (click)="saveLabel(level)">
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">check</mat-icon>
               </button>
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="cancelEdit()"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center"
-              >
+              <button matIconButton color="warn" (click)="cancelEdit()">
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">close</mat-icon>
               </button>
             } @else {
               <h3 class="font-semibold text-lg m-0">{{ getLabelForLevel(level) }}</h3>
               <button
-                mat-icon-button
+                matIconButton
                 (click)="startEditLabel(level, getLabelForLevel(level))"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity"
+                class="opacity-50 hover:opacity-100 transition-opacity"
               >
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">edit</mat-icon>
               </button>
@@ -62,7 +52,7 @@
 
         <div class="flex gap-2 mt-2">
           <button
-            mat-flat-button
+            matButton="filled"
             [color]="activeAdminLevel() === level ? 'primary' : null"
             [disabled]="!getBoundaryForLevel(level)"
             (click)="selectLevel(level)"
@@ -72,7 +62,7 @@
           </button>
 
           <button
-            mat-stroked-button
+            matButton="outlined"
             class="flex-1"
             (click)="generateBoundaries(level)"
             [disabled]="mapService.isLoading()"
@@ -97,15 +87,18 @@
 
     @if (!hasFeatures() && getBoundaryForLevel(activeAdminLevel())) {
       <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
-        <div class="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-md mx-4 transform transition-all">
+        <div
+          class="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-md mx-4 transform transition-all"
+        >
           <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
             <mat-icon class="!text-orange-500 !w-8 !h-8 !text-[32px] flex items-center justify-center">info</mat-icon>
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-2">No Boundary Features</h3>
           <p class="text-gray-500 leading-relaxed mb-6">
-            Admin level {{ activeAdminLevel() }} is mapped in the database, but it does not contain any polygons or boundary definitions for this region.
+            Admin level {{ activeAdminLevel() }} is mapped in the database, but it does not contain any polygons or
+            boundary definitions for this region.
           </p>
-          <button mat-stroked-button color="primary" (click)="generateBoundaries(activeAdminLevel())">
+          <button matButton="outlined" color="primary" (click)="generateBoundaries(activeAdminLevel())">
             <mat-icon>refresh</mat-icon>
             Regenerate
           </button>

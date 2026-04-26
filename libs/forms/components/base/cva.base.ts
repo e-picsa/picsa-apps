@@ -21,9 +21,7 @@ let nextUniqueId = 0;
  * Simply update `this.value.set(newValue)` inside the child, and the base class handles the rest.
  * * @template T - The expected data type of the form control's value (e.g., `string`, `string[]`, `number`).
  */
-@Directive({
-  standalone: true,
-})
+@Directive({})
 export abstract class PicsaBaseControlValueAccessor<T> implements ControlValueAccessor, FormValueControl<T> {
   // --- State Models ---
   public value = model<T>(null as T);

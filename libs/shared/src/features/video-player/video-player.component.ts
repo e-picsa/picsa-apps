@@ -1,4 +1,7 @@
-import { Component, effect, HostBinding, inject,Input, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { MatFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { Capacitor } from '@capacitor/core';
 import { capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -7,44 +10,58 @@ import type { IVideoPlayerProgressEvent } from './player/video-player.base';
 import { VideoPlayerNativeComponent } from './player/video-player.native';
 import { VideoPlayerWebComponent } from './player/video-player.web';
 import { VideoPlayerService } from './video-player.service';
+import { VideoThumbnailComponent } from './video-thumbnail/video-thumbnail.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
-  standalone: false,
+  host: {
+    '[attr.data-player-id]': 'playerId()',
+  },
+  imports: [
+    MatFabButton,
+    MatIcon,
+    VideoPlayerNativeComponent,
+    VideoPlayerWebComponent,
+    VideoThumbnailComponent,
+    MatProgressBar,
+  ],
 })
-export class VideoPlayerComponent {
+export class PicsaVideoPlayerComponent {
   private analyticsService = inject(AnalyticsService);
   private playerService = inject(VideoPlayerService);
 
   public isNative = Capacitor.isNativePlatform();
 
-  public startTime: number;
+  public startTime = signal<number>(0);
 
   /** Optional override of player options */
-  @Input() options: Partial<capVideoPlayerOptions> = {};
+  options = input<Partial<capVideoPlayerOptions>>({});
 
   /** Unique video id, used for analytics and handling multiple videos */
-  @Input() id: string;
+  id = input<string>();
 
   /** Video source - can be string url or data blob */
   source = input<string | undefined | null>();
 
   /** Optional image shown as preview */
-  @Input() thumbnail?: string;
+  thumbnail = input<string>();
 
   /** Optional online video url - used to generate thumbnail */
-  @Input() onlineVideoUrl?: string;
+  onlineVideoUrl = input<string>();
 
-  // Bind player id to host element to support element query when initialising player
-  @HostBinding('attr.data-player-id') get playerId() {
-    if (!this.id) {
+  private generatedId = `videoPlayer_${generateID(5)}`;
+
+  public playerId = computed(() => {
+    const id = this.id();
+    if (!id) {
       console.warn('No id provided to <picsa-video-player> component');
-      this.id = `videoPlayer_${generateID(5)}`;
+      return this.generatedId;
     }
-    return this.id;
-  }
+    return id;
+  });
 
   public playbackPercentage = signal<number>(0);
 
@@ -53,18 +70,6 @@ export class VideoPlayerComponent {
   private nativePlayer = viewChild<VideoPlayerNativeComponent>('nativePlayer');
 
   protected showThumbnail = signal(true);
-
-  constructor() {
-    effect((onCleanup) => {
-      const source = this.source();
-      onCleanup(() => {
-        // TODO - confirm if parent already cleaning up
-        if (source) {
-          URL.revokeObjectURL(source);
-        }
-      });
-    });
-  }
 
   async ngOnInit() {
     await this.playerService.ready();
@@ -75,12 +80,12 @@ export class VideoPlayerComponent {
     const { currentTime, totalTime } = e;
     const playbackPercentage = (currentTime / totalTime) * 100;
     this.playbackPercentage.set(playbackPercentage);
-    await this.playerService.updateVideoState({ videoId: this.playerId, currentTime, playbackPercentage, totalTime });
+    await this.playerService.updateVideoState({ videoId: this.playerId(), currentTime, playbackPercentage, totalTime });
   }
 
   private async loadVideoState() {
-    const videoState = await this.playerService.getVideoState(this.playerId);
-    this.startTime = videoState?.currentTime || 0;
+    const videoState = await this.playerService.getVideoState(this.playerId());
+    this.startTime.set(videoState?.currentTime || 0);
     this.playbackPercentage.set(videoState?.playbackPercentage || 0);
   }
 
@@ -95,7 +100,7 @@ export class VideoPlayerComponent {
     }
 
     // Track video play event
-    this.analyticsService.trackVideoPlay(this.playerId);
+    this.analyticsService.trackVideoPlay(this.playerId());
   }
 }
 

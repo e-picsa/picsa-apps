@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -10,7 +11,9 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
 
@@ -28,6 +31,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
  * TODO - could be refactored to inject directly into app container instead of page
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-sidenav-layout',
   template: `
     <mat-sidenav-container style="flex: 1" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
@@ -46,7 +50,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         <div class="sidenav-container" [attr.data-mobile]="mobileQuery.matches">
           <!-- Mobile-only  -->
           <div class="sidenav-mobile-header" [style.display]="mobileQuery.matches ? 'flex' : 'none'">
-            <button mat-icon-button color="primary" (click)="snav.toggle()">
+            <button matIconButton color="primary" (click)="snav.toggle()">
               <mat-icon>close</mat-icon>
             </button>
             <ng-content select="[mobileHeader]"></ng-content>
@@ -106,7 +110,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
-  standalone: false,
+  imports: [MatButtonModule, MatSidenavModule, MatIconModule],
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);

@@ -16,16 +16,16 @@
       <div class="flex mb-8">
         @if (editMode()) {
           @if (!isNewEntry()) {
-            <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
+            <button matButton="elevated" color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
           }
-          <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
+          <button matButton="elevated" color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
             Submit
           </button>
         } @else {
-          <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
+          <button matButton="elevated" color="primary" (click)="editMode.set(true)">Edit</button>
         }
         @if (variety.value.id) {
-          <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
+          <button matButton class="ml-auto" (click)="dialog.open(deleteDialog)">
             <mat-icon>delete</mat-icon>
             Delete
           </button>
@@ -53,9 +53,9 @@
     <b>This action cannot be undone</b>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
+    <button matButton mat-dialog-close>Cancel</button>
     @if (variety.value.id) {
-      <button mat-button [mat-dialog-close]="true" (click)="handleDelete(variety.value.id)" cdkFocusInitial>
+      <button matButton [mat-dialog-close]="true" (click)="handleDelete(variety.value.id)" cdkFocusInitial>
         Delete
       </button>
     }

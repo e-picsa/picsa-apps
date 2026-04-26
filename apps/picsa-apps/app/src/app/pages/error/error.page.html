@@ -7,8 +7,8 @@
         <h2>{{ "Something went wrong..." | translate }}</h2>
         <div>{{ "Click on the button below to retry" | translate }}</div>
         <button
-          mat-raised-button
-          style="margin-top: 1rem; padding: 16px"
+          matButton="elevated"
+          class="mt-4 p-4"
           color="primary"
           [disabled]="reloading"
           (click)="reloadPage()"

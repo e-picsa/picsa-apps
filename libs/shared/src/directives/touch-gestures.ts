@@ -41,7 +41,6 @@ function eventBinding<K extends keyof HTMLElementEventMap>(...args: EventBinding
  */
 @Directive({
   selector: '[picsaTouchGestures]',
-  standalone: true,
   host: {
     // Merge tailwind classes onto host element to prevent text highlight
     // and native os popup menus

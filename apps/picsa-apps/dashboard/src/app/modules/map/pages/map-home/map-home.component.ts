@@ -21,7 +21,6 @@ import { DashboardMapService } from '../../map.service';
 
 @Component({
   selector: 'dashboard-map-home',
-  standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './map-home.component.html',
   styleUrls: ['./map-home.component.scss'],

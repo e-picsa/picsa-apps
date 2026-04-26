@@ -8,6 +8,6 @@
   <mat-label>{{'Card Label' | translate}}</mat-label>
   <input matInput [(ngModel)]="card.label" />
 </mat-form-field>
-<button mat-stroked-button (click)="save()" [disabled]="!card.label || !imgData" style="margin-top: 1em; width: 70%">
+<button matButton="outlined" (click)="save()" [disabled]="!card.label || !imgData" style="margin-top: 1em; width: 70%">
   <mat-icon>check</mat-icon>{{ 'Save' | translate }}
 </button>

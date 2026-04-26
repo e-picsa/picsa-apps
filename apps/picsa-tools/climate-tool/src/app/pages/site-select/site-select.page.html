@@ -1,12 +1,12 @@
 <!-- View Toggle (hidden on md+ screen size) -->
 @let toggleIcon = view()==='map' ? 'list' : 'map'; @let toggleText = view()==='map' ? strings.showList :
 strings.showMap;
-<button mat-button (click)="toggleView()" class="view-toggle">
+<button matButton (click)="toggleView()" class="view-toggle">
   <mat-icon>{{toggleIcon}}</mat-icon>
   {{toggleText}}
 </button>
 
-<div class="page-content">
+<div class="flex flex-col flex-1 overflow-hidden relative z-0">
   <!-- Split screen display -->
   <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
     <div class="table-container" [attr.data-view]="view()">
@@ -21,7 +21,6 @@ strings.showMap;
     <div class="map-container" [attr.data-view]="view()">
       <picsa-map
         (onMarkerClick)="handleMarkerClick($event)"
-        [mapOptions]="mapOptions"
         [basemapOptions]="basemapOptions"
         [markers]="mapMarkers()"
         (onMapReady)="mapReady.set(true)"
@@ -35,7 +34,7 @@ strings.showMap;
 
 @if(selectedStation(); as station){
 <div class="site-select-container">
-  <button (click)="goToSite(station)" mat-raised-button color="primary">
+  <button (click)="goToSite(station)" matButton="elevated" color="primary">
     <span>{{ station.name }}</span>
     <mat-icon iconPositionEnd>arrow_forward</mat-icon>
   </button>

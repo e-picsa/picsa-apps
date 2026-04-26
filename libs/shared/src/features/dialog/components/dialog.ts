@@ -1,36 +1,20 @@
-import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { IPicsaDialogData, IPicsaDialogSelectOption } from '../dialog.models';
-
-// Dialog base
-@Component({
-  template: '',
-  standalone: false,
-})
-export class PicsaDialogComponent {
-  data = inject<IPicsaDialogData>(MAT_DIALOG_DATA) ?? {};
-  dialogRef = inject<MatDialogRef<PicsaDialogComponent>>(MatDialogRef);
-}
+import { PicsaLoadingComponent } from '../../loading/loading';
+import { IPicsaDialogData } from '../dialog.models';
 
 // action dialogs present title, html content, optional loader and action buttons
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-action-dialog',
   templateUrl: './action-dialog.html',
   styleUrls: ['./dialog.scss'],
-  standalone: false,
+  imports: [PicsaLoadingComponent, MatDialogActions, MatButton, MatDialogClose, PicsaTranslateModule],
 })
-export class PicsaActionDialog extends PicsaDialogComponent {}
-
-// select dialog present an array of images for selection and returns clicked image
-@Component({
-  selector: 'picsa-image-select-dialog',
-  templateUrl: './image-select.html',
-  styleUrls: ['./dialog.scss'],
-  standalone: false,
-})
-export class PicsaSelectDialog extends PicsaDialogComponent {
-  select(option: IPicsaDialogSelectOption) {
-    this.dialogRef.close(option.data);
-  }
+export class PicsaActionDialogComponent {
+  data = inject<IPicsaDialogData>(MAT_DIALOG_DATA) ?? {};
+  dialogRef = inject<MatDialogRef<PicsaActionDialogComponent>>(MatDialogRef);
 }

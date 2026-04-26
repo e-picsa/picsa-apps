@@ -38,7 +38,7 @@
         "@angular-eslint/component-class-suffix": ["warn"],
         "@angular-eslint/prefer-inject": ["warn"],
         "@angular-eslint/prefer-on-push-component-change-detection": "warn",
-        "@angular-eslint/prefer-standalone": "warn",
+        "@angular-eslint/prefer-standalone": ["error"],
         "@typescript-eslint/no-explicit-any": ["warn"],
         "@typescript-eslint/no-loss-of-precision": ["warn"],
         "@typescript-eslint/no-non-null-assertion": "warn",
@@ -64,6 +64,43 @@
       "rules": {
         "@typescript-eslint/no-extra-semi": "error",
         "no-extra-semi": "off"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "TextAttribute[name='mat-button']",
+            "message": "❌ Don't use legacy <button mat-button>. ✅ Use MDC <button matButton>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-flat-button']",
+            "message": "❌ Don't use legacy <button mat-flat-button>. ✅ Use MDC <button matButton='filled'>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-icon-button']",
+            "message": "❌ Don't use legacy <button mat-icon-button>. ✅ Use MDC <button matIconButton> or <button matButton='outlined' class='icon-only'>."
+          },
+          {
+            "selector": "TextAttribute[name='mat-raised-button']",
+            "message": "❌ Don't use legacy <button mat-raised-button>. ✅ Use MDC <button matButton='elevated'>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-stroked-button']",
+            "message": "❌ Don't use legacy <button mat-stroked-button>. ✅ Use MDC <button matButton='outlined'>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-fab']",
+            "message": "❌ Don't use legacy <button mat-fab>. ✅ Use MDC <button matFab>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-mini-fab']",
+            "message": "❌ Don't use legacy <button mat-mini-fab>. ✅ Use MDC <button matMiniFab>"
+          }
+        ]
       }
     }
   ]

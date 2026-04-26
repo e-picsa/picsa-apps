@@ -2,7 +2,7 @@
 <budget-card [card]="card" (click)="onCardClicked(card)" [selected]="selected[card.id]" @fadeInOut></budget-card>
 } @if (!showAllCards) {
 <div @fadeInOut>
-  <button mat-button (click)="showAllCards = true">{{ 'Show More' | translate }}</button>
+  <button matButton (click)="showAllCards = true">{{ 'Show More' | translate }}</button>
 </div>
 } @if(showAllCards){ @for (card of otherCards; track card) {
 <budget-card [card]="card" (click)="onCardClicked(card)" [selected]="selected[card.id]" @fadeInOut></budget-card>

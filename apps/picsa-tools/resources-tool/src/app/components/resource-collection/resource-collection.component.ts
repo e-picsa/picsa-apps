@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { AlertBoxComponent } from '@picsa/components';
+import { AlertBoxComponent } from '@picsa/components/alert-box/alert-box.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { RxDocument } from 'rxdb';
 

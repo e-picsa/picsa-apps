@@ -3,9 +3,7 @@ import { arrayToHashmap } from '@picsa/utils';
 
 import { PicsaBaseControlValueAccessor } from './cva.base';
 
-@Directive({
-  standalone: true,
-})
+@Directive({})
 export abstract class PicsaFormBaseSelectComponent<
   T extends { id: string },
 > extends PicsaBaseControlValueAccessor<string> {

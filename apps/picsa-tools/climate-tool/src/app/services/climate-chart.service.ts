@@ -4,11 +4,11 @@ import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
-import { PrintProvider } from '@picsa/shared/services/native';
+import { PrintProvider } from '@picsa/shared/services/native/print';
 import { _wait } from '@picsa/utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
-import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 
 import { generateChartConfig } from '../utils';
 import { ClimateDataService } from './climate-data.service';
@@ -19,99 +19,100 @@ export class ClimateChartService {
   private dataService = inject(ClimateDataService);
   private printProvider = inject(PrintProvider);
 
-  public chartDefinition?: IChartMeta;
+  // SIGNALS - single source of truth for application state
+  readonly station = signal<IStationMeta | undefined>(undefined);
+  readonly chartDefinition = signal<IChartMeta | undefined>(undefined);
+  readonly chartConfig = signal<IChartConfig | undefined>(undefined);
+  readonly chartSeriesData = signal<number[]>([]);
+  readonly stationData = signal<IStationData[]>([]);
+
+  // PNG blob for print version
+  readonly chartPngBlob = signal<Blob | undefined>(undefined);
+
+  // Subject for chart rendered events (one-time events, not state)
+  private _chartRendered = new Subject<void>();
+  chartRendered$ = this._chartRendered.asObservable();
 
   /** Binding for active rendered chart component */
   public chartComponent?: PicsaChartComponent;
 
-  /** Datapoints of the current rendered chart */
-  public chartSeriesData: number[];
-
-  /** Actively selected station */
-  public station?: IStationMeta;
-  /** Observable subject for active station */
-
-  public stationData: IStationData[];
-
-  /** Config of current displayed chart */
-  public chartConfig: IChartConfig;
-
-  /** Png version of chart converted from SVG */
-  public chartPngBlob = signal<Blob | undefined>(undefined);
-
-  /** Observable properties for config above */
-  public chartConfig$ = new BehaviorSubject<IChartConfig | undefined>(undefined);
-  public chartDefinition$ = new BehaviorSubject<IChartMeta | undefined>(undefined);
-  public station$ = new BehaviorSubject<IStationMeta | undefined>(undefined);
-  public chartSeriesData$ = new BehaviorSubject<number[]>([]);
-
-  public chartRendered$ = new Subject<void>();
-
   /** Track whether print mode has been toggled */
   private isPrintVersion = false;
-
   private pointRadius = 8;
 
   /** List of month names translated */
   private monthNames: string[] = [];
 
+  /**
+   * Clear all chart data and reset to initial state.
+   */
   public async clearChartData() {
-    this.chartDefinition$.next(undefined);
-    this.chartConfig$.next(undefined);
-    this.chartSeriesData$.next([]);
+    this.stationData.set([]);
+    this.chartSeriesData.set([]);
+    this.chartConfig.set(undefined);
+    this.chartDefinition.set(undefined);
     this.setStation(undefined);
     this.getPointColour = () => undefined;
   }
 
-  /** Provide access to the current chart for use in tools */
+  /**
+   * Provide access to the current chart for use in tools.
+   */
   public registerChartComponent(chart: PicsaChartComponent) {
     this.chartComponent = chart;
   }
 
+  /**
+   * Set the active station by ID.
+   */
   public async setStation(id?: string) {
     const station = id ? await this.dataService.getStationMeta(id) : undefined;
-    this.station = station;
-    this.station$.next(station);
-    this.stationData = station?.data || [];
+    this.station.set(station);
+    this.stationData.set(station?.data || []);
     // ensure month names are translated
     this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
-    return this.station;
+    return station;
   }
 
+  /**
+   * Set the active chart by ID.
+   */
   public async setChart(id: IChartId) {
-    const definition = this.station?.definitions[id];
-    this.chartDefinition = definition;
-    this.chartDefinition$.next(this.chartDefinition);
+    const station = this.station();
+    const definition = station?.definitions?.[id] ? { ...station.definitions[id] } : undefined;
+
     if (definition) {
+      this.chartDefinition.set(definition);
       // apply translations
       definition.name = await this.translateService.translateText(definition.name);
       definition.yLabel = await this.translateService.translateText(definition.yLabel);
       definition.xLabel = await this.translateService.translateText(definition.xLabel);
+
       // generate config and apply custom onrendered callback
-      // these are not included in base methods as they are used by both extension and dashboard tools
-      const config = await generateChartConfig(this.stationData, definition, this.monthNames);
+      const currentStationData = this.stationData();
+      const config = await generateChartConfig(currentStationData, definition, this.monthNames);
       config.onrendered = () => {
-        this.chartRendered$.next();
+        this._chartRendered.next();
       };
+
       // override point color if function set
       config.data!.color = (color, d) => this.getPointColour(d as DataPoint) || color;
       config.point!.r = (d) => {
         return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
       };
-      // TODO - ensure month names translated (removed from method)
-      this.chartConfig = config;
-      this.chartConfig$.next(config);
+
+      this.chartConfig.set(config);
       // update data used by tools
-      this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
-      this.chartSeriesData$.next(this.chartSeriesData);
+      const seriesData = currentStationData.map((v) => v[definition.keys[0]] as number);
+      this.chartSeriesData.set(seriesData);
     } else {
-      console.warn('No chart found', id, this.station);
+      console.warn('No chart found', id, station);
     }
   }
 
   /*****************************************************************************
    *   Chart additions
-   ****************************************************************************
+   ***************************************************************************/
 
   /**
    * Add a horizontal line to the chart at a specific value.
@@ -121,7 +122,8 @@ export class ClimateChartService {
     const chart = this.chartComponent?.chart;
     if (!chart) return;
     if (value) {
-      const lineArray = new Array(this.stationData.length).fill(value);
+      const dataLength = this.stationData().length;
+      const lineArray = new Array(dataLength).fill(value);
       lineArray.unshift(id);
       chart.load({ columns: [lineArray as any], classes: { id } });
       chart.show(id);
@@ -129,6 +131,7 @@ export class ClimateChartService {
       chart.unload({ ids: [id] });
     }
   }
+
   public removeSeriesFromChart(ids: string[]) {
     const chart = this.chartComponent?.chart;
     if (!chart) return;
@@ -137,7 +140,7 @@ export class ClimateChartService {
 
   /*****************************************************************************
    *   Styles and Formatting
-   ****************************************************************************/
+   ***************************************************************************/
 
   /**
    * Update styles and when rendered save as png
@@ -149,7 +152,8 @@ export class ClimateChartService {
    * https://github.com/exupero/saveSvgAsPng/issues/186
    */
   public async generatePrintVersion() {
-    const { station, chartDefinition } = this;
+    const station = this.station();
+    const chartDefinition = this.chartDefinition();
     const filename = `${station?.name} - ${chartDefinition!.name}`;
     // TODO - translate and add language suffix
 
@@ -165,6 +169,7 @@ export class ClimateChartService {
         this.chartPngBlob.set(pngBlob);
       }
     }
+
     // wait for `print-layout` to render with generated image and export
     await _wait(500);
     await this.printProvider.shareHtmlDom('#picsaClimatePrintLayout', filename);
@@ -174,22 +179,24 @@ export class ClimateChartService {
   }
 
   /**
-   * When printing reduce the size of points and fix the chart size
-   * Uses cache to revert back to original after print complete
+   * When printing reduce the size of points and fix the chart size.
    */
   private async togglePrintVersion() {
     this.isPrintVersion = !this.isPrintVersion;
+    const config = this.chartConfig();
+
+    if (!config) return;
+
     // if cache config exists revert back
     if (this.isPrintVersion) {
-      this.chartConfig.size = { width: 900, height: 500 };
+      this.chartConfig.set({ ...config, size: { width: 900, height: 500 }, title: { text: '' } });
       this.pointRadius = 3;
-      this.chartConfig.title!.text = '';
     } else {
-      this.chartConfig.size = undefined;
+      const newConfig = { ...config, size: undefined };
+      this.chartConfig.set(newConfig);
       this.pointRadius = 8;
-      const title = `${this.station?.name} | ${this.chartDefinition!.name}`;
-      this.chartConfig.title!.text = title;
     }
+
     window.dispatchEvent(new CustomEvent('picsaChartRerender'));
     // Ensure graphics updated by waiting for chart render notification and timeout
     await firstValueFrom(this.chartRendered$);
@@ -197,16 +204,17 @@ export class ClimateChartService {
   }
 
   /**
-   * Overridable function for point colour setting (e.g. line tool supplies custom)
+   * Overridable function for point colour setting (e.g. line tool supplies custom).
    * @return hex colour code string or undefined for default colour
-   * */
+   */
   public getPointColour(d: DataPoint): string | undefined {
     return;
   }
 
   public convertDateToDayNumber(d: Date) {
     const dayNumber = getDayOfYear(d);
-    if (this.chartDefinition?.yFormat === 'date-from-July') {
+    const def = this.chartDefinition();
+    if (def?.yFormat === 'date-from-July') {
       return dayNumber > 183 ? dayNumber - 183 : dayNumber + 183;
     }
     return dayNumber;

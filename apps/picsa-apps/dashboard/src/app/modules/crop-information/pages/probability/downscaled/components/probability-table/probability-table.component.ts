@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { AlertBoxComponent } from '@picsa/components/src';
+import { AlertBoxComponent } from '@picsa/components/alert-box/alert-box.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries

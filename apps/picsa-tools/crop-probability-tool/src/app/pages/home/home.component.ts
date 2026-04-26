@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject,OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
@@ -23,7 +23,6 @@ const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: true,
   imports: [PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
 })
 export class HomeComponent implements OnInit {

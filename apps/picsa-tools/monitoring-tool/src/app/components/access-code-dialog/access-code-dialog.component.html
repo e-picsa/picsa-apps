@@ -16,7 +16,7 @@
       (keyup.enter)="validateAndSubmit()"
     />
     <button
-      mat-icon-button
+      matIconButton
       matSuffix
       (click)="togglePasswordVisibility()"
       [attr.aria-label]="'Toggle password visibility'"
@@ -32,8 +32,8 @@
   }
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
-  <button mat-raised-button color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode().trim()">
+  <button matButton (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  <button matButton="elevated" color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode().trim()">
     {{ 'Unlock' | translate }}
   </button>
 </div>

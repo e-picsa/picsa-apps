@@ -24,7 +24,7 @@
 }
 <!-- Video Language Select -->
 @if(videoLanguageOptions().length > 1){
-<button mat-button [matMenuTriggerFor]="menu" class="language-select" (click)="$event.stopImmediatePropagation()">
+<button matButton [matMenuTriggerFor]="menu" class="language-select" (click)="$event.stopImmediatePropagation()">
   <div class="flex gap-2 items-center">
     <mat-icon matButtonIcon align="start">language</mat-icon>
     {{videoLanguageSelected()?.language_label}}

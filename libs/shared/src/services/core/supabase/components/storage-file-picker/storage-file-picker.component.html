@@ -36,9 +36,9 @@
 </div>
 
 <div style="display: flex; margin-top: 1rem">
-  <button mat-button (click)="fileSelected.next(undefined)">Cancel</button>
+  <button matButton (click)="fileSelected.next(undefined)">Cancel</button>
   <button
-    mat-raised-button
+    matButton="elevated"
     color="primary"
     (click)="fileSelected.next(selected[0])"
     [disabled]="!selected[0]"

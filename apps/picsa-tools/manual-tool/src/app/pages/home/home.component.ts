@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AlertBoxComponent } from '@picsa/components/alert-box/alert-box.component';
+import { PicsaBackButtonComponent } from '@picsa/components/back-button.component';
+import { PicsaTranslateModule } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -7,9 +10,11 @@ import { IResourceFile } from '@picsa/resources/schemas';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
+import { PdfViewerComponent } from '@picsa/shared/features/pdf-viewer/pdf-viewer.component';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { ManualSelectComponent, StepsContainerComponent } from '../../components';
 import { LOCALISED_MANUALS } from '../../data';
 import { IManualPeriodEntryLocalised } from '../../models';
 @Component({
@@ -18,7 +23,15 @@ import { IManualPeriodEntryLocalised } from '../../models';
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
-  standalone: false,
+  imports: [
+    PdfViewerComponent,
+    PicsaBackButtonComponent,
+    ManualSelectComponent,
+    AlertBoxComponent,
+    StepsContainerComponent,
+    ResourceDownloadComponent,
+    PicsaTranslateModule,
+  ],
 })
 export class HomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);

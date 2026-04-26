@@ -9,7 +9,7 @@
   @if (!isLoading()) {
     <div class="header-container">
       <h2>{{ 'Submissions' | translate }}</h2>
-      <button class="create-button" mat-stroked-button color="primary" (click)="createNewSubmission()">
+      <button class="create-button" matButton="outlined" color="primary" (click)="createNewSubmission()">
         <mat-icon>add</mat-icon>
         <span>{{ 'Create New' | translate }}</span>
       </button>

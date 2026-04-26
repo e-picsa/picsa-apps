@@ -6,16 +6,17 @@
 <ng-template #headerPortal>
   <div class="flex items-center w-full">
     <div class="relative w-[200px]">
-      <button matButton color="primary" (click)="select.open()" class="station-select" class="w-full">
-        @if(chartService.station){ <span class="text-lg">{{chartService.station.name}}</span> }
+      <button matButton color="primary" (click)="select.open()" class="station-select">
+        @if(chartService.station(); as station){ <span class="text-lg">{{station.name}}</span> }
         <mat-icon iconPositionEnd>expand_more</mat-icon>
       </button>
       <!-- Use a hidden select that opens from button (instead of using full select form component) -->
       <mat-select
         class="absolute left-0 top-0 h-full w-full z-0 opacity-0 pointer-events-none"
+        tabindex="-1"
         #select
         (selectionChange)="handleStationSelect(select.value)"
-        [value]="chartService.station?.id"
+        [value]="chartService.station()?.id"
       >
         @for(option of stationSelectOptions(); track option.value){
         <mat-option [value]="option.value" [attr.data-draft]="option.draft" class="station-select-option"
@@ -25,7 +26,7 @@
       </mat-select>
     </div>
 
-    <button mat-button color="primary" (click)="goToSiteSelect()" class="map-button">
+    <button matButton color="primary" (click)="goToSiteSelect()" class="map-button">
       <mat-icon>place</mat-icon>
       <span class="hidden sm:inline">{{ 'Map' | translate }}</span>
     </button>
@@ -35,9 +36,11 @@
 <div class="page-content">
   <picsa-sidenav-layout #snav [initialOpen]="true">
     <climate-chart-options sidenav></climate-chart-options>
-    @if (chartService.chartDefinition && chartService.station) {
-    <climate-chart-layout content style="flex: 1" [definition]="chartService.chartDefinition"></climate-chart-layout>
-    }
+    <div content class="flex-1 flex flex-col">
+      @if (chartService.chartDefinition(); as definition){ @if(chartService.station(); as station){
+      <climate-chart-layout style="flex: 1" [definition]="definition"></climate-chart-layout>
+      }}
+    </div>
   </picsa-sidenav-layout>
 </div>
 
