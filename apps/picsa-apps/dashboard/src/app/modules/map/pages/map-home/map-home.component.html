@@ -52,7 +52,7 @@
 
         <div class="flex gap-2 mt-2">
           <button
-            mat-flat-button
+            matButton="filled"
             [color]="activeAdminLevel() === level ? 'primary' : null"
             [disabled]="!getBoundaryForLevel(level)"
             (click)="selectLevel(level)"

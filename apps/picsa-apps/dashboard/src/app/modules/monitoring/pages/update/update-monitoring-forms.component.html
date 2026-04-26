@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <button mat-raised-button color="primary" (click)="handleSubmitForm()" [disabled]="form.invalid">
+    <button matButton="elevated" color="primary" (click)="handleSubmitForm()" [disabled]="form.invalid">
       {{ loadingNewForm ? 'saving...' : 'Save Form' }}
     </button>
   </form>

@@ -111,7 +111,7 @@
   <!-- Editor save -->
   @if (service.editMode()) {
   <div class="editor-save" style="display: flex" (click)="service.editMode.set(false)">
-    <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
+    <button matButton="elevated" color="primary" class="footer-button">{{'Save' | translate}}</button>
   </div>
   }
 </div>
