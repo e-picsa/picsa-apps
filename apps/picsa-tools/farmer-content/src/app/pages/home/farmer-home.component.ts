@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { FadeInOut } from '@picsa/shared/animations';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'farmer-home',
   imports: [
     MatButtonModule,

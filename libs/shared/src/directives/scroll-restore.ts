@@ -1,9 +1,9 @@
-import { AfterViewInit, Directive, ElementRef, inject,Injectable, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, inject, Injectable, OnDestroy, OnInit } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ScrollRestoreService {
   /** Saved scroll states for different location pathnames */
-  public savedStates: { [pathname: string]: number } = {};
+  private savedStates: { [pathname: string]: number } = {};
 
   public setPosition(pathname: string, scrollTop: number) {
     this.savedStates[pathname] = scrollTop;
@@ -39,12 +39,24 @@ export class PicsaScrollRestoreDirective implements OnInit, AfterViewInit, OnDes
   }
   ngAfterViewInit() {
     const savedPostion = this.service.getPosition(this.pathname);
+    // Restore scroll position
     if (savedPostion) {
       this.el.nativeElement.scrollTop = savedPostion;
+      document.querySelectorAll('.page').forEach((el) => (el.scrollTop = savedPostion));
+    }
+    // Scroll to top on first visit
+    else {
+      this.el.nativeElement.scrollTop = 0;
+      document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0));
     }
   }
 
   ngOnDestroy(): void {
-    this.service.setPosition(this.pathname, this.el.nativeElement.scrollTop);
+    // Save current scrollTop
+    let scrollTop = this.el.nativeElement.scrollTop;
+    document.querySelectorAll('.page').forEach((el) => (scrollTop = Math.max(scrollTop, el.scrollTop)));
+    this.service.setPosition(this.pathname, scrollTop);
+    // Ensure next page starts at top
+    requestAnimationFrame(() => document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0)));
   }
 }
