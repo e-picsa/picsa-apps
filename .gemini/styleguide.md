@@ -27,4 +27,4 @@ This codebase is modern and relies heavily on Signals and Standalone components.
 
 ## 4. Internationalization (i18n)
 
-- **Never Hardcode Text**: The app is translated into 20+ languages. Always use the `translate` pipe for user-facing text (e.g., `<button>{{ 'Share' | translate }}</button>`). Do not suggest hardcoded text strings in templates.
+- **Never Hardcode Text (Except Dashboard)**: The app is translated into 20+ languages. Always use the `translate` pipe for user-facing text (e.g., `<button>{{ 'Share' | translate }}</button>`). Do not suggest hardcoded text strings in templates, **UNLESS** the file is located within the `apps/picsa-apps/dashboard` app, which does not require strict translation enforcement.

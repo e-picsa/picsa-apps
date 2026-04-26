@@ -6,7 +6,7 @@
         <h2>{{ 'Choose country' | translate }}</h2>
         <mat-radio-group class="options-container" [formControl]="countryForm.controls.country_code">
           @for (option of countryOptions; track option.id) {
-            <button mat-button class="options-button" (click)="setCountry(option.id)">
+            <button matButton class="options-button" (click)="setCountry(option.id)">
               <div style="display: flex; align-items: center; gap: 8px">
                 <mat-radio-button color="primary" [value]="option.id"></mat-radio-button>
                 <img class="flag-icon" [src]="option.flag_path" />
@@ -24,7 +24,7 @@
         <h2>{{ 'Choose language' | translate }}</h2>
         <mat-radio-group class="options-container" [formControl]="languageForm.controls.language_code">
           @for (option of languageOptions(); track option.id) {
-            <button mat-button class="options-button" (click)="setLanguage($any(option.id))">
+            <button matButton class="options-button" (click)="setLanguage($any(option.id))">
               <div style="display: flex; align-items: center; gap: 8px">
                 <mat-radio-button color="primary" [value]="option.id">{{ option.language_label }}</mat-radio-button>
               </div>
@@ -38,7 +38,7 @@
         <h2>{{ 'What best describes you?' | translate }}</h2>
         <mat-radio-group class="options-container" [formControl]="userTypeForm.controls.user_type">
           @for (option of userTypeOptions; track option.id) {
-            <button mat-button class="options-button" style="text-align: left" (click)="setUserType(option.id)">
+            <button matButton class="options-button" style="text-align: left" (click)="setUserType(option.id)">
               <div style="display: flex; align-items: center">
                 <mat-radio-button color="primary" [value]="option.id">
                   <span>{{ option.label | translate }}</span>

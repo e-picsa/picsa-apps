@@ -69,7 +69,7 @@
         <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
         <h2>{{ 'How long is your budget for?' | translate }}</h2>
         <div class="flex flex-wrap items-center">
-          <button mat-button class="variable-container editable" (click)="periodTotalSelect.open()">
+          <button matButton class="variable-container editable" (click)="periodTotalSelect.open()">
             <span class="variable-value">{{ budgetMetaForm.value.lengthTotal }}</span>
             <mat-select class="select--hidden" #periodTotalSelect formControlName="lengthTotal" style="opacity: 0">
               @for (n of periodTotalOptions; track n) {
@@ -78,7 +78,7 @@
             </mat-select>
           </button>
 
-          <button mat-button class="variable-container editable" (click)="periodScaleSelect.open()">
+          <button matButton class="variable-container editable" (click)="periodScaleSelect.open()">
             <span class="variable-value">{{ budgetMetaForm.value.lengthScale | translate }}</span>
             <mat-select class="select--hidden" #periodScaleSelect formControlName="lengthScale" style="opacity: 0">
               @for (option of periodScaleOptions; track option) {
@@ -89,7 +89,7 @@
           @if (budgetMetaForm.value.lengthScale === 'months') {
           <div class="variable-container">{{ 'starting in' | translate }}</div>
           } @if (budgetMetaForm.value.lengthScale === 'months') {
-          <button mat-button class="variable-container editable" (click)="periodStartSelect.open()">
+          <button matButton class="variable-container editable" (click)="periodStartSelect.open()">
             <span class="variable-value"
               >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] | translate }}</span
             >

@@ -2,7 +2,7 @@
 <div class="chart-list">
   @for (definition of chartDefintions(); track definition._id) {
     <button
-      mat-button
+      matButton
       class="chart-button"
       (click)="activeChartDefinition.set(definition)"
       [disabled]="definition.disabled"

@@ -114,7 +114,7 @@ While Signals are preferred for synchronous state, RxJS is still the standard fo
 
 ## 8. Internationalization (i18n)
 
-The app is translated into over 20 languages. **NEVER** hardcode user-facing text in templates or components.
+The app is translated into over 20 languages. **NEVER** hardcode user-facing text in templates or components, **EXCEPT** for files within the `apps/picsa-apps/dashboard` application, which does not require strict translation enforcement.
 
 - **Templates**: Always use the `translate` pipe.
 

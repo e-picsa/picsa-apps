@@ -73,6 +73,10 @@
         "no-restricted-syntax": [
           "error",
           {
+            "selector": "TextAttribute[name='mat-button']",
+            "message": "❌ Don't use legacy <button mat-button>. ✅ Use MDC <button matButton>"
+          },
+          {
             "selector": "TextAttribute[name='mat-flat-button']",
             "message": "❌ Don't use legacy <button mat-flat-button>. ✅ Use MDC <button matButton='filled'>"
           },
@@ -83,6 +87,10 @@
           {
             "selector": "TextAttribute[name='mat-raised-button']",
             "message": "❌ Don't use legacy <button mat-raised-button>. ✅ Use MDC <button matButton='elevated'>"
+          },
+          {
+            "selector": "TextAttribute[name='mat-stroked-button']",
+            "message": "❌ Don't use legacy <button mat-stroked-button>. ✅ Use MDC <button matButton='outlined'>"
           },
           {
             "selector": "TextAttribute[name='mat-fab']",

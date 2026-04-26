@@ -11,7 +11,7 @@ import { SupabaseService } from '../../supabase.service';
 /**
  * Directive that can be added to any component to launch storage file picker component
  * ```
- *  <button mat-button supabaseStoragePicker storageBucketName='mw' >Pick File</button>
+ *  <button matButton supabaseStoragePicker storageBucketName='mw' >Pick File</button>
  * ```
  */
 @Directive({
