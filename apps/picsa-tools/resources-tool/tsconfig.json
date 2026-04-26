@@ -25,7 +25,5 @@
     "module": "preserve",
     "lib": ["dom", "dom.iterable", "es2022"]
   },
-  "angularCompilerOptions": {
-    "strictStandalone": true
-  }
+  "angularCompilerOptions": {}
 }

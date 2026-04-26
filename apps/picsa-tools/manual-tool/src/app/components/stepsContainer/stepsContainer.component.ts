@@ -1,16 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject,input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { IManualPeriodEntryLocalised, IManualStepLocalised } from '../../models';
+import { ManualToolMaterialModule } from '../material.module';
 
 @Component({
   selector: 'picsa-manual-steps-container',
   templateUrl: './stepsContainer.component.html',
   styleUrls: ['./stepsContainer.component.scss'],
-  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatIcon, PicsaTranslateModule, ManualToolMaterialModule],
 })
-export class stepsContainerComponent {
+export class StepsContainerComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
