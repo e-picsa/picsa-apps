@@ -1,4 +1,3 @@
-export * from './animations';
 export * from './audio-playback';
 export * from './charts';
 export * from './data-table';

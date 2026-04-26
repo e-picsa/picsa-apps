@@ -5,7 +5,6 @@ import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloa
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaAnimationsModule } from '@picsa/shared/features';
 import { MockHttpInterceptor } from '@picsa/shared/mocks/mock-http.interceptor';
 import { PicsaDb_V2_Module, PicsaDbModule, PicsaDeepLinksModule, PicsaNativeModule } from '@picsa/shared/modules';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
@@ -36,7 +35,6 @@ export const appConfig: ApplicationConfig = {
       PicsaDeepLinksModule.forRoot({
         baseUrl: 'https://picsa.app',
       }),
-      PicsaAnimationsModule.forRoot(),
     ),
   ],
 };
