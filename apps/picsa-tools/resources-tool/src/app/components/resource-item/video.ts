@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
 
