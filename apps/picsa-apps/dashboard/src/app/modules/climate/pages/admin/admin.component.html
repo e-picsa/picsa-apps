@@ -85,7 +85,7 @@
     <!-- CSV download column  -->
     <ng-template #downloadTemplate let-row="row">
       <div class="flex gap-2 items-center">
-        <button matButton (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
+<button matIconButton (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
           <mat-icon>download</mat-icon>
         </button>
       </div>
