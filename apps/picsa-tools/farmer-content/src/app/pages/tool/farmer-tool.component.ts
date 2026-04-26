@@ -23,7 +23,6 @@ import { filter, map } from 'rxjs';
       <router-outlet></router-outlet>
     </div>
   `,
-  standalone: true,
   imports: [RouterModule],
 })
 export class FarmerToolPlaceholderComponent {

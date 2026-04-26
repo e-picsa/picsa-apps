@@ -25,7 +25,6 @@ import { AppLayoutComponent } from './components/layout';
   selector: 'picsa-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: true,
   imports: [AppLayoutComponent, RouterModule],
 })
 export class AppComponent implements OnInit {

@@ -55,7 +55,6 @@ export const formatHeaderDefault = (v: string) => v.split('_').map(capitalise).j
  * used to modify cell values in a pure way
  */
 @Pipe({
-  standalone: true,
   name: 'formatValue',
 })
 export class FormatValuePipe implements PipeTransform {

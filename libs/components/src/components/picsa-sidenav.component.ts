@@ -111,7 +111,6 @@ import { PicsaCommonComponentsService } from '../services/components.service';
     `,
   ],
   imports: [MatButtonModule, MatSidenavModule, MatIconModule],
-  standalone: true,
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);

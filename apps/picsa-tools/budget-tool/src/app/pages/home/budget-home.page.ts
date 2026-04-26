@@ -16,7 +16,6 @@ import { BudgetListItemComponent } from './list-item/budget-list-item';
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',
   styleUrls: ['./budget-home.page.scss'],
-  standalone: true,
   imports: [MatButton, PicsaTranslateModule, BudgetMaterialModule, BudgetListItemComponent, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

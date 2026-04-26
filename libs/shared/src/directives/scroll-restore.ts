@@ -17,7 +17,6 @@ import { filter, Subscription } from 'rxjs';
  */
 @Directive({
   selector: '[scrollRestore]',
-  standalone: true,
 })
 export class PicsaScrollRestoreDirective implements OnInit, OnDestroy {
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);

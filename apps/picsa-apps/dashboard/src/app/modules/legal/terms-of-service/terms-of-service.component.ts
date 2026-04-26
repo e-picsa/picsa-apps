@@ -7,7 +7,6 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'dashboard-terms-of-service',
-  standalone: true,
   imports: [MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './terms-of-service.component.html',

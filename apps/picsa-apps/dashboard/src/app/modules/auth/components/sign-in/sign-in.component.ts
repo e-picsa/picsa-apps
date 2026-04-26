@@ -43,7 +43,6 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-sign-in',
-  standalone: true,
   imports: [
     RouterModule,
     FormsModule,

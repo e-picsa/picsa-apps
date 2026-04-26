@@ -9,7 +9,6 @@ import { DashboardAuthService } from '../../modules/auth/services/auth.service';
 @Component({
   selector: 'dashboard-email-confirmation-layout',
   templateUrl: './email-confirmation-layout.component.html',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

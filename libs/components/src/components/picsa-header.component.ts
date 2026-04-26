@@ -48,7 +48,6 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
-  standalone: true,
   imports: [
     PicsaBreadcrumbsComponent,
     MatIconModule,
