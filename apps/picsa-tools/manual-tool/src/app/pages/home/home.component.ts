@@ -6,8 +6,6 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourceDownloadComponent as ResourceDownloadComponent_1 } from '@picsa/resources/components/resource-download/resource-download.component';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { IResourceFile } from '@picsa/resources/schemas';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -16,8 +14,7 @@ import { PdfViewerComponent } from '@picsa/shared/features/pdf-viewer/pdf-viewer
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import { stepsContainerComponent } from '../../components';
-import { ManualSelectComponent } from '../../components/manualSelect/manual-select.component';
+import { ManualSelectComponent, StepsContainerComponent } from '../../components';
 import { LOCALISED_MANUALS } from '../../data';
 import { IManualPeriodEntryLocalised } from '../../models';
 @Component({
@@ -31,8 +28,8 @@ import { IManualPeriodEntryLocalised } from '../../models';
     PicsaBackButtonComponent,
     ManualSelectComponent,
     AlertBoxComponent,
-    ResourceDownloadComponent_1,
-    stepsContainerComponent,
+    StepsContainerComponent,
+    ResourceDownloadComponent,
     PicsaTranslateModule,
   ],
 })

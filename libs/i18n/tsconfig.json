@@ -12,9 +12,7 @@
     "emitDecoratorMetadata": false,
     "module": "preserve"
   },
-  "angularCompilerOptions": {
-    "strictStandalone": true
-  },
+  "angularCompilerOptions": {},
   "files": [],
   "include": ["src/**/*.ts"]
 }

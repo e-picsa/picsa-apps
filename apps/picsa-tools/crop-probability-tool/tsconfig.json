@@ -26,7 +26,5 @@
     }
   ],
   "extends": "../../../tsconfig.base.json",
-  "angularCompilerOptions": {
-    "strictStandalone": true
-  }
+  "angularCompilerOptions": {}
 }

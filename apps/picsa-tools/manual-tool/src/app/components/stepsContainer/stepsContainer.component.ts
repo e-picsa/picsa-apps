@@ -13,7 +13,7 @@ import { ManualToolMaterialModule } from '../material.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIcon, PicsaTranslateModule, ManualToolMaterialModule],
 })
-export class stepsContainerComponent {
+export class StepsContainerComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
