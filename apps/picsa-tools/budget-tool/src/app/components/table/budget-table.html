@@ -26,7 +26,7 @@
       <div class="time-period-title cell top-row">
         <!-- Editor - Delete -->
         @if (service.editMode()) {
-        <button matButton class="editor-button" (click)="store.editorDeleteTimePeriod(columnIndex)">
+        <button matIconButton class="editor-button" (click)="store.editorDeleteTimePeriod(columnIndex)">
           <mat-icon style="margin: 0">delete</mat-icon>
         </button>
         }
@@ -34,7 +34,7 @@
         <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
         <!-- Editor - Copy -->
         @if (service.editMode()) {
-        <button matButton class="editor-button" (click)="store.editorCopyTimePeriod(columnIndex)">
+        <button matIconButton class="editor-button" (click)="store.editorCopyTimePeriod(columnIndex)">
           <mat-icon style="margin: 0">content_copy</mat-icon>
         </button>
         }
