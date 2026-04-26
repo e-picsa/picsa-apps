@@ -19,7 +19,7 @@
 <!-- Upload button -->
 @if (!this.autoUpload && !hideUploadButton) {
   <button
-    mat-stroked-button
+    matButton="outlined"
     color="primary"
     [disabled]="dashboardOptions.disabled"
     (click)="startUpload()"

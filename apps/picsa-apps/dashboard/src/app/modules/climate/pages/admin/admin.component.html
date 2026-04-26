@@ -3,11 +3,11 @@
   <div style="display: flex; align-items: center; gap: 2em">
     <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
     <!-- Data Download -->
-    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
+    <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
       <mat-icon>download</mat-icon>Download All
     </button>
     <!-- Data Refresh -->
-    <button mat-stroked-button color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
+    <button matButton="outlined" color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
       <mat-icon>refresh</mat-icon>
       <span>
         @if (refreshCount() > -1) {

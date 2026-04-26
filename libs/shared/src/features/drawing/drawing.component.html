@@ -1,8 +1,8 @@
 <div class="dialog-container">
   <div class="edit-buttons">
-    <button mat-stroked-button (click)="undoSvgStroke()"><mat-icon>undo</mat-icon>{{ 'Undo' | translate }}</button>
-    <button mat-stroked-button (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
-    <button mat-stroked-button style="margin-left: auto" (click)="clearDraw()">{{ 'Clear All' | translate }}</button>
+    <button matButton="outlined" (click)="undoSvgStroke()"><mat-icon>undo</mat-icon>{{ 'Undo' | translate }}</button>
+    <button matButton="outlined" (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
+    <button matButton="outlined" style="margin-left: auto" (click)="clearDraw()">{{ 'Clear All' | translate }}</button>
   </div>
   <div class="svg-container" [style.width]="size() + 'px'" [style.height]="size() + 'px'">
     <svg

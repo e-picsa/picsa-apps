@@ -2,7 +2,13 @@
   <div style="display: flex; align-items: center">
     <h2 class="mr-2">Forecasts</h2>
     <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
-    <button mat-stroked-button color="primary" *roleRequired="'climate.admin'" class="ml-auto" (click)="addForecast()">
+    <button
+      matButton="outlined"
+      color="primary"
+      *roleRequired="'climate.admin'"
+      class="ml-auto"
+      (click)="addForecast()"
+    >
       <mat-icon>add</mat-icon>
       <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
     </button>
