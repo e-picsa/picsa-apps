@@ -12,7 +12,7 @@
           @if (form.value.external_url; as external_url) {
             <div style="flex: 1">
               <label>External URL</label>
-              <a mat-stroked-button [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
+              <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
                 <mat-icon>open_in_new</mat-icon>
                 View Resource
               </a>
@@ -118,7 +118,7 @@
     }
     <!-- </mat-tab-group>  -->
     <div style="margin-top: 2rem; display: flex; align-items: center">
-      <button mat-stroked-button [disabled]="!form.valid || form.pristine" (click)="saveResource()">
+      <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
         <mat-icon>done</mat-icon>
         Save Resource
       </button>

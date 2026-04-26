@@ -7,12 +7,7 @@
       <mat-card-subtitle>{{ budget()._created | date }}</mat-card-subtitle>
     </div>
     <budget-summary [budgetData]="budget().data" style="margin-bottom: 1.2rem; width: 150px"></budget-summary>
-    <button
-      matIconButton
-      [matMenuTriggerFor]="budgetMenu"
-      style="height: 70px; width: 50px"
-      (click)="$event.stopPropagation()"
-    >
+    <button matIconButton [matMenuTriggerFor]="budgetMenu" (click)="$event.stopPropagation()">
       <mat-icon>more_vert</mat-icon>
     </button>
 

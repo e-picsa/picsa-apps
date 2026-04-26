@@ -26,5 +26,8 @@
       "path": "./tsconfig.editor.json"
     }
   ],
-  "extends": "../../../tsconfig.base.json"
+  "extends": "../../../tsconfig.base.json",
+  "angularCompilerOptions": {
+    "strictStandalone": false
+  }
 }
