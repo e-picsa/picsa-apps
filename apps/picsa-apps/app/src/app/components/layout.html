@@ -1,7 +1,7 @@
 <mat-drawer-container [hasBackdrop]="true">
   <mat-drawer #drawer mode="over">
     <div class="page-content draw-content">
-      <button mat-icon-button (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
+      <button matIconButton (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
       <div style="margin-top: 4rem"></div>
       <!-- Version toggle -->
       <mat-nav-list>
@@ -67,7 +67,7 @@
 <!-- Inject menu toggle into global header when enabled -->
 <ng-template #menuButtonTemplate>
   @if(showMenuButton()){
-  <button id="menuButton" mat-icon-button (click)="drawer.toggle()" class="menu-button">
+  <button id="menuButton" matIconButton (click)="drawer.toggle()" class="menu-button">
     <mat-icon id="menuIcon">menu</mat-icon>
   </button>
   }

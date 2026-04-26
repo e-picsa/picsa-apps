@@ -39,7 +39,7 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
       <div class="end-content">
         <!-- sidenav toggle -->
         @if (showSidenavToggle()) {
-          <button mat-icon-button (click)="componentsService.toggleSidenav()">
+          <button matIconButton (click)="componentsService.toggleSidenav()">
             <mat-icon>menu</mat-icon>
           </button>
         }

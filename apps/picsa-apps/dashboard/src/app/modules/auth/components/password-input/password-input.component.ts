@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
         [type]="showPassword() ? 'text' : 'password'"
         [autocomplete]="autocomplete()"
       />
-      <button mat-icon-button matSuffix (click)="showPassword.set(!showPassword())" type="button">
+      <button matIconButton matSuffix (click)="showPassword.set(!showPassword())" type="button">
         <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       <mat-error>

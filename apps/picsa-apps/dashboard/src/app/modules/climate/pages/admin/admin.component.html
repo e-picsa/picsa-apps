@@ -41,7 +41,7 @@
           @for (statusUpdate of row.updateSignal().statuses; track $index) {
             @let status = statusUpdate.status;
             <button
-              mat-icon-button
+              matIconButton
               [matTooltip]="statusUpdate.id"
               class="status-icon"
               [attr.data-status]="status"
@@ -63,7 +63,7 @@
         } @else {
           <!-- Product download summary -->
           @for (product of products; track $index) {
-            <button mat-icon-button [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
+            <button matIconButton [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
               @if (product.available) {
                 <mat-icon color="primary">check</mat-icon>
               } @else {

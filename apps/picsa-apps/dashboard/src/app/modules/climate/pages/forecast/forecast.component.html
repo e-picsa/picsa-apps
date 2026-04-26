@@ -30,7 +30,7 @@
 <ng-template #created_at let-value> {{ value | date }} </ng-template>
 <ng-template #storage_file let-value let-row="row">
   @let status = activeDownloads()[row.id];
-  <button mat-icon-button [disabled]="status === 'pending'">
+  <button matIconButton [disabled]="status === 'pending'">
     @if (value || status === 'complete') {
       <mat-icon>open_in_new</mat-icon>
     } @else if (status === 'pending') {

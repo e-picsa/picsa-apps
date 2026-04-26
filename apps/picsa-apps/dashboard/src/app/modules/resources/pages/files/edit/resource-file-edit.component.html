@@ -26,7 +26,7 @@
               @if (form.value.storage_file) {
                 <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
                 <button
-                  mat-icon-button
+                  matIconButton
                   class="file-remove"
                   (click)="handleStorageFileSelected(undefined, 'storage_file')"
                 >
@@ -65,7 +65,7 @@
                 [id]="form.value.cover_image"
                 displayStyle="button"
               ></dashboard-storage-link>
-              <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
+              <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
                 <mat-icon>close</mat-icon>
               </button>
               <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />

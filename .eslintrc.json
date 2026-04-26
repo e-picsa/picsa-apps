@@ -65,6 +65,19 @@
         "@typescript-eslint/no-extra-semi": "error",
         "no-extra-semi": "off"
       }
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "TextAttribute[name='mat-icon-button']",
+            "message": "❌ Don't use legacy '<button mat-icon-button>'. ✅ Use MDC '<button matIconButton>' or '<button matButton='outlined' class='icon-only'>'."
+          }
+        ]
+      }
     }
   ]
 }
