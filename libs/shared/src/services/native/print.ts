@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Capacitor } from '@capacitor/core';
 import { _wait } from '@picsa/utils';

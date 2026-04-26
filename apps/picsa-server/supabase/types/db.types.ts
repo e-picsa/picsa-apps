@@ -182,6 +182,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      budgets: {
+        Row: {
+          created_at: string;
+          data: Json;
+          id: string;
+          share_code: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          data: Json;
+          id?: string;
+          share_code: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          id?: string;
+          share_code?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       climate_station_data: {
         Row: {
           annual_rainfall_data: Json[] | null;

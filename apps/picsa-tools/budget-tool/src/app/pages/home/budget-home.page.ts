@@ -44,13 +44,20 @@ export class BudgetHomePage implements OnInit {
     });
   }
   public importBudgetCode() {
-    this.matDialog.open(BudgetImportDialogComponent);
+    this.matDialog
+      .open(BudgetImportDialogComponent)
+      .afterClosed()
+      .subscribe((budgetKey) => {
+        if (budgetKey) {
+          this.router.navigate(['/budget', budgetKey]);
+        }
+      });
   }
   public showBudgetCreate() {
     const dialog = this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
     dialog.afterClosed().subscribe((budgetKey) => {
       if (budgetKey) {
-        this.router.navigate([budgetKey], { relativeTo: this.route });
+        this.router.navigate(['/budget', budgetKey]);
       }
     });
   }
