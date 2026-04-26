@@ -11,7 +11,7 @@ import { TourService } from './tour.service';
  */
 @Component({
   selector: 'picsa-tour-button',
-  template: ` <button mat-button class="tour-button" color="primary" (click)="startTour()">
+  template: ` <button matButton class="tour-button" color="primary" (click)="startTour()">
     <mat-icon class="tour-icon mat-elevation-z4">question_mark</mat-icon>
     <span>{{ 'Demo' | translate }}</span>
   </button>`,

@@ -12,12 +12,12 @@ import { NavigationStackService } from '../services/navStack.service';
   template: `
     @switch (variant) {
       @case ('white') {
-        <button mat-button style="color:white" (click)="navStackService.back()">
+        <button matButton style="color:white" (click)="navStackService.back()">
           <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
         </button>
       }
       @default {
-        <button mat-button color="primary" (click)="navStackService.back()">
+        <button matButton color="primary" (click)="navStackService.back()">
           <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
         </button>
       }
