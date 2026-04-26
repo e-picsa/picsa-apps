@@ -17,20 +17,10 @@
                 (keydown.enter)="saveLabel(level)"
                 (keydown.escape)="cancelEdit()"
               />
-              <button
-                matIconButton
-                color="primary"
-                (click)="saveLabel(level)"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center"
-              >
+              <button matIconButton color="primary" (click)="saveLabel(level)">
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">check</mat-icon>
               </button>
-              <button
-                matIconButton
-                color="warn"
-                (click)="cancelEdit()"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center"
-              >
+              <button matIconButton color="warn" (click)="cancelEdit()">
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">close</mat-icon>
               </button>
             } @else {
@@ -38,7 +28,7 @@
               <button
                 matIconButton
                 (click)="startEditLabel(level, getLabelForLevel(level))"
-                class="!w-8 !h-8 !leading-none flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity"
+                class="opacity-50 hover:opacity-100 transition-opacity"
               >
                 <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">edit</mat-icon>
               </button>

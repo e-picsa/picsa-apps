@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { RefreshSpinnerComponent } from '@picsa/components';
+import { RefreshSpinnerComponent } from '@picsa/components/refresh-spinner/refresh-spinner.component';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { FunctionResponses } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
