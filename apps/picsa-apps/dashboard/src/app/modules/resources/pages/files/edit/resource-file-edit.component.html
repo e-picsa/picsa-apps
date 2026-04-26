@@ -42,7 +42,7 @@
                   (uploadComplete)="handleUploadComplete($event, 'storage_file')"
                 ></picsa-supabase-upload>
                 <button
-                  mat-button
+                  matButton
                   color="primary"
                   supabaseStoragePicker
                   [storageBucketName]="storageBucketName()"
@@ -79,7 +79,7 @@
                 (uploadComplete)="handleUploadComplete($event, 'cover_image')"
               ></picsa-supabase-upload>
               <button
-                mat-button
+                matButton
                 color="primary"
                 supabaseStoragePicker
                 [storageBucketName]="storageBucketName()"
@@ -126,7 +126,7 @@
         <span class="validation-message">{{ formValidationMessage }}</span>
       }
       @if (form.valid) {
-        <button style="margin-left: auto" mat-button color="warn" (click)="promptDelete()">
+        <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
           <mat-icon>delete</mat-icon>
           Delete Resource
         </button>

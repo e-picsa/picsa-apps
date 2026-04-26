@@ -70,7 +70,7 @@
   <div class="my-6 text-secondary flex items-center">
     <button matIconButton style="color: black" routerLink="/farmer"><mat-icon>home</mat-icon></button>
     @if (nextModule(); as nextModule) {
-      <button mat-button class="flex-1" (click)="goToModule(nextModule)">
+      <button matButton class="flex-1" (click)="goToModule(nextModule)">
         <span>{{ nextModule.title | translate }}</span>
         <mat-icon iconPositionEnd>arrow_forward</mat-icon>
       </button>
@@ -90,7 +90,7 @@
   >
     <!-- Custom tool header -->
     <div class="tool-header">
-      <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="hideTool()">
+      <button matButton color="primary" class="p-4 flex-1 max-w-32" (click)="hideTool()">
         {{ 'Close' | translate }}
         <mat-icon>close</mat-icon>
       </button>
@@ -101,7 +101,7 @@
       </div>
 
       @if (showSidenavToggle()) {
-        <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="componentsService.toggleSidenav()">
+        <button matButton color="primary" class="p-4 flex-1 max-w-32" (click)="componentsService.toggleSidenav()">
           {{ 'Options' | translate }}
           <mat-icon>menu</mat-icon>
         </button>

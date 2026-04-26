@@ -20,8 +20,8 @@
 <div class="status-message">{{ status }}</div>
 
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>
-  <button mat-button (click)="handleImport()" [disabled]="importValue.length !== 4 || disabled">
+  <button matButton mat-dialog-close>{{ 'Close' | translate }}</button>
+  <button matButton (click)="handleImport()" [disabled]="importValue.length !== 4 || disabled">
     {{ 'Import' | translate }}
   </button>
 </div>

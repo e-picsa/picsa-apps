@@ -4,7 +4,7 @@
   <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
 </mat-card>
 } @if (showCustomCardDelete && card.customMeta && !selected) {
-<button mat-button class="delete-button" (click)="promptCustomDelete($event)">
+<button matButton class="delete-button" (click)="promptCustomDelete($event)">
   <mat-icon class="delete-button-icon">delete</mat-icon>
 </button>
 }

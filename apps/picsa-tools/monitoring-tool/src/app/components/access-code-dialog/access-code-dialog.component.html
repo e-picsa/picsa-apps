@@ -32,7 +32,7 @@
   }
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  <button matButton (click)="cancel()">{{ 'Cancel' | translate }}</button>
   <button matButton="elevated" color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode().trim()">
     {{ 'Unlock' | translate }}
   </button>
