@@ -19,7 +19,7 @@
           <button
             matStepperNext
             color="primary"
-            mat-raised-button
+            matButton="elevated"
             class="footer-button"
             [disabled]="!budgetMetaForm.value.enterprise || !budgetMetaForm.value.enterprise.type"
           >
@@ -54,7 +54,7 @@
           <button
             matStepperNext
             color="primary"
-            mat-raised-button
+            matButton="elevated"
             class="footer-button"
             [disabled]="!budgetMetaForm.value.enterprise.id"
           >
@@ -102,7 +102,7 @@
           }
         </div>
         <div class="sticky-footer">
-          <button matStepperNext color="primary" mat-raised-button class="footer-button">
+          <button matStepperNext color="primary" matButton="elevated" class="footer-button">
             {{ 'Next' | translate }}
             <mat-icon iconPositionEnd>arrow_forward</mat-icon>
           </button>
@@ -123,7 +123,7 @@
           <button
             matStepperNext
             color="primary"
-            mat-raised-button
+            matButton="elevated"
             [disabled]="budgetMetaForm.invalid"
             class="footer-button"
             (click)="save()"

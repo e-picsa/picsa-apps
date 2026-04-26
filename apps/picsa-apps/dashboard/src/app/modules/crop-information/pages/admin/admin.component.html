@@ -23,7 +23,7 @@
         </mat-expansion-panel-header>
         @if (insertRows().length > 0) {
           <picsa-data-table [data]="updates()" [options]="updateTableOptions"></picsa-data-table>
-          <button mat-raised-button (click)="processImport(insertRows())" color="primary">Import</button>
+          <button matButton="elevated" (click)="processImport(insertRows())" color="primary">Import</button>
         } @else {
           <p>All data already exists</p>
         }

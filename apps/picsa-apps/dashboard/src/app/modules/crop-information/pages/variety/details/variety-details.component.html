@@ -16,13 +16,13 @@
       <div class="flex mb-8">
         @if (editMode()) {
           @if (!isNewEntry()) {
-            <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
+            <button matButton="elevated" color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
           }
-          <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
+          <button matButton="elevated" color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
             Submit
           </button>
         } @else {
-          <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
+          <button matButton="elevated" color="primary" (click)="editMode.set(true)">Edit</button>
         }
         @if (variety.value.id) {
           <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
