@@ -1,62 +1,57 @@
-import { AfterViewInit, Directive, ElementRef, inject, Injectable, OnDestroy, OnInit } from '@angular/core';
-
-@Injectable({ providedIn: 'root' })
-export class ScrollRestoreService {
-  /** Saved scroll states for different location pathnames */
-  private savedStates: { [pathname: string]: number } = {};
-
-  public setPosition(pathname: string, scrollTop: number) {
-    this.savedStates[pathname] = scrollTop;
-  }
-
-  public getPosition(pathname: string) {
-    return this.savedStates[pathname];
-  }
-}
+import { Directive, ElementRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 
 /**
- * Directive to restore an element's scrollTop position following navigation events
- * This differs to angulars in-built scrollPositionRestoration router configuration or
- * withInMemoryScrolling which only applies to body (app content uses scrollable page-content div)
+ * Preserves scroll position on back/forward nav and scrolls to top on forward nav.
  *
- * The directive tracks scroll position for current page, and restores on revisit,
- * E.g. if the user moves to a new page and then comes back
+ * Host element must be the scroll container. Disable Angular's built-in
+ * restoration via `withInMemoryScrolling({ scrollPositionRestoration: 'disabled' })`.
  *
  * @example
- * <div class="page-content" scrollRestore>
- * ...
+ * ```html
+ * <div class="page" scrollRestore>
+ *   <router-outlet />
  * </div>
+ * ```
  */
-@Directive({ selector: '[scrollRestore]', standalone: true })
-export class PicsaScrollRestoreDirective implements OnInit, AfterViewInit, OnDestroy {
-  private el = inject<ElementRef<HTMLDivElement>>(ElementRef);
-  private service = inject(ScrollRestoreService);
+@Directive({
+  selector: '[scrollRestore]',
+  standalone: true,
+})
+export class PicsaScrollRestoreDirective implements OnInit, OnDestroy {
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly router = inject(Router);
 
-  private pathname: string;
+  private readonly positions = new Map<string, number>();
+  private currentUrl = this.router.url;
+  private restoreTo: number | null = null;
+  private sub?: Subscription;
 
   ngOnInit(): void {
-    this.pathname = location.pathname;
-  }
-  ngAfterViewInit() {
-    const savedPostion = this.service.getPosition(this.pathname);
-    // Restore scroll position
-    if (savedPostion) {
-      this.el.nativeElement.scrollTop = savedPostion;
-      document.querySelectorAll('.page').forEach((el) => (el.scrollTop = savedPostion));
-    }
-    // Scroll to top on first visit
-    else {
-      this.el.nativeElement.scrollTop = 0;
-      document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0));
-    }
+    this.sub = this.router.events
+      .pipe(filter((e) => e instanceof NavigationStart || e instanceof NavigationEnd))
+      .subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          // Save scroll position of the page we're leaving
+          this.positions.set(this.currentUrl, this.el.nativeElement.scrollTop);
+
+          // Decide where to scroll once nav completes
+          const trigger = this.router.currentNavigation()?.trigger;
+          this.restoreTo = trigger === 'popstate' ? (this.positions.get(event.url) ?? 0) : 0;
+        } else if (event instanceof NavigationEnd) {
+          this.currentUrl = event.urlAfterRedirects;
+          const top = this.restoreTo ?? 0;
+          this.restoreTo = null;
+
+          requestAnimationFrame(() => {
+            this.el.nativeElement.scrollTo({ top, behavior: 'auto' });
+          });
+        }
+      });
   }
 
   ngOnDestroy(): void {
-    // Save current scrollTop
-    let scrollTop = this.el.nativeElement.scrollTop;
-    document.querySelectorAll('.page').forEach((el) => (scrollTop = Math.max(scrollTop, el.scrollTop)));
-    this.service.setPosition(this.pathname, scrollTop);
-    // Ensure next page starts at top
-    requestAnimationFrame(() => document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0)));
+    this.sub?.unsubscribe();
   }
 }
