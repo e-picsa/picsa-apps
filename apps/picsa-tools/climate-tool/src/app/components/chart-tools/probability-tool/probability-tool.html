@@ -2,14 +2,14 @@
 <div style="display: flex">
   <!-- show/hide control -->
   <div style="margin-right: 8px">
-    <matButton-toggle-group #show="matButtonToggleGroup" value="show">
-      <matButton-toggle value="show" [style.display]="show.value === 'hide' ? 'block' : 'none'"
-        ><mat-icon>visibility</mat-icon></matButton-toggle
+    <mat-toggle-group #show="matButtonToggleGroup" value="show">
+      <mat-toggle value="show" [style.display]="show.value === 'hide' ? 'block' : 'none'"
+        ><mat-icon>visibility</mat-icon></mat-toggle
       >
-      <matButton-toggle value="hide" [style.display]="show.value === 'show' ? 'block' : 'none'"
-        ><mat-icon>visibility_off</mat-icon></matButton-toggle
+      <mat-toggle value="hide" [style.display]="show.value === 'show' ? 'block' : 'none'"
+        ><mat-icon>visibility_off</mat-icon></mat-toggle
       >
-    </matButton-toggle-group>
+    </mat-toggle-group>
   </div>
   <!-- displays -->
   <div
