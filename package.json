@@ -5,12 +5,11 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && jetifier && husky install",
-    "start": "yarn build:webcomponents && nx serve",
+    "start": "nx serve",
     "start:server": "nx run picsa-server:supabase start",
     "start:server:functions": "nx run picsa-server:supabase functions serve",
     "start:dashboard": "nx run picsa-apps-dashboard:serve",
     "build": "nx run picsa-apps-app-native:build",
-    "build:webcomponents": "yarn nx build picsa-webcomponents",
     "build:stats": "nx run picsa-apps-app-native:build:stats",
     "analyse": "yarn build:stats && echo \"\nUse https://esbuild.github.io/analyze/ to analyze output \ndist/apps/picsa-apps/app/stats.json\"",
     "docs": "cd ../docs && yarn start",

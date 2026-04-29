@@ -1,11 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import type { Database } from '@picsa/server-types';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -15,15 +14,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 
 @Component({
   selector: 'dashboard-monitoring-view',
-  imports: [
-    DashboardMaterialModule,
-    DatePipe,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    NgxJsonViewerModule,
-    WebcomponentsNgxModule,
-  ],
+  imports: [DashboardMaterialModule, DatePipe, FormsModule, ReactiveFormsModule, RouterModule, NgxJsonViewerModule],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

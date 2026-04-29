@@ -1,5 +1,5 @@
 /**
- * NOTE - Utils duplicated from libs/webcomponents/src/components/enketo-webform
+ * NOTE - Utils duplicated from @picsa/enketo-webform
  * Should migrate with tests
  */
 
