@@ -13,12 +13,10 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { Router } from '@angular/router';
-import { ɵɵRouterLink } from '@angular/router/testing';
+import { Router, RouterLink } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { COUNTRIES_DATA, DEPLOYMENT_DATA, ICountryCode, IDeploymentId, ILocaleCode, LOCALES_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -35,7 +33,7 @@ import { ConfigurationService, IUserSettings } from '../../provider';
     MatStepperModule,
     FormsModule,
     ReactiveFormsModule,
-    ɵɵRouterLink,
+    RouterLink,
   ],
   providers: [
     {
@@ -53,7 +51,6 @@ export class PicsaConfigurationSelectComponent implements OnInit {
   private configurationService = inject(ConfigurationService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
-  private dialog = inject(MatDialog);
 
   @Output() selectionChange = new EventEmitter<IUserSettings>();
 

@@ -18,9 +18,15 @@
           }
         </mat-radio-group>
         <p class="text-xs text-center text-gray-500 mt-8">
-          By continuing, you agree to our
-          <a routerLink="/terms" target="_blank" class="text-primary hover:underline">Terms of Use</a> and
-          <a routerLink="/privacy" target="_blank" class="text-primary hover:underline">Privacy Policy</a>.
+          {{ 'By continuing, you agree to our' | translate }}
+          <a routerLink="/terms" target="_blank" class="text-primary hover:underline">{{
+            'Terms of Use' | translate
+          }}</a>
+          {{ 'and' | translate }}
+          <a routerLink="/privacy" target="_blank" class="text-primary hover:underline">{{
+            'Privacy Policy' | translate
+          }}</a
+          >.
         </p>
       </mat-step>
 
