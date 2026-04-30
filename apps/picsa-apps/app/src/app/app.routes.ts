@@ -60,13 +60,13 @@ export const appRoutes: Routes = [
   // (possibly needs to import router-outlet or similar for setup)
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((mod) => mod.HomePageModule),
+    loadComponent: () => import('./pages/home/home.page').then((mod) => mod.HomePageComponent),
     title: 'PICSA',
   },
 
   {
     path: 'privacy',
-    loadChildren: () => import('./pages/privacy/privacy.module').then((mod) => mod.PrivacyModule),
+    loadComponent: () => import('./pages/privacy/privacy.component').then((mod) => mod.PrivacyComponent),
   },
   {
     path: 'farmer',
