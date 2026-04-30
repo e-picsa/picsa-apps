@@ -1,5 +1,7 @@
+import '@picsa/enketo-webform';
+
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import type { Database } from '@picsa/server-types';
@@ -18,6 +20,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ViewMonitoringFormsComponent implements OnInit {
   private service = inject(MonitoringFormsDashboardService);
