@@ -69,10 +69,6 @@ export const appRoutes: Routes = [
     loadChildren: () => import('./pages/privacy/privacy.module').then((mod) => mod.PrivacyModule),
   },
   {
-    path: 'error',
-    loadChildren: () => import('./pages/error/error.module').then((mod) => mod.ErrorPageModule),
-  },
-  {
     path: 'farmer',
     loadChildren: () =>
       import('@picsa/farmer-content/src/app/app.routes').then((m) => m.buildFarmerRoutes(TOOL_ROUTES)),
