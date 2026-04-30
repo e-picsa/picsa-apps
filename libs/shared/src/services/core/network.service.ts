@@ -37,7 +37,7 @@ export class NetworkService {
    */
   private setupOnlineListeners() {
     const network$ = new Observable((subscriber) => {
-      const listener = Network.addListener('networkStatusChange', () => subscriber.next(true));
+      const listener = Network.addListener('networkStatusChange', (status) => subscriber.next(status));
       return () => listener.then((l) => l.remove());
     });
     const online$ = fromEvent(window, 'online');

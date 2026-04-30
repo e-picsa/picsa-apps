@@ -19,7 +19,6 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   selector: 'monitoring-form-view',
   templateUrl: './form-view.component.html',
   styleUrls: ['./form-view.component.scss'],
-  standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [MonitoringMaterialModule, PicsaTranslateModule],
 })

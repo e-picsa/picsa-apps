@@ -11,20 +11,22 @@ Extend the base select component to create a custom standalone select component:
 ```ts
 import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
 
-const SELECT_OPTIONS = [{id:'1',label:'hello'}, {id:'2',label:'world'}]
+const SELECT_OPTIONS = [
+  { id: '1', label: 'hello' },
+  { id: '2', label: 'world' },
+];
 
 @Component({
   selector: 'my-select-component',
-  standalone: true,
   imports: [CommonModule], // Add necessary imports
   templateUrl: './my-select-component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MySelectComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]>{
-     constructor(){
-        super();
-        this.initBase(SELECT_OPTIONS);
-     }
+export class MySelectComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
+  constructor() {
+    super();
+    this.initBase(SELECT_OPTIONS);
+  }
 }
 ```
 
@@ -34,11 +36,9 @@ Since `value` is a `model()` signal, interaction in the template uses Signal syn
 
 ```html
 @for(option of filteredOptions()){
-  <div (click)="value.set(option.id)">....</div>
-}
-
-@if(selectedOption()) {
-  <div>Selected option: {{selectedOption()?.label}}</div>
+<div (click)="value.set(option.id)">....</div>
+} @if(selectedOption()) {
+<div>Selected option: {{selectedOption()?.label}}</div>
 }
 ```
 
@@ -48,7 +48,7 @@ The process for extending multiple select base is similar. `value` is a signal c
 
 ```html
 @for(option of filteredOptions()){
-  <div (click)="toggleSelected(option.id)">....</div>
+<div (click)="toggleSelected(option.id)">....</div>
 }
 ```
 
@@ -67,10 +67,10 @@ Since these components now rely on modern Signal API with `FormValueControl` cap
 The base class will by default create a hashmap of option entries for lookup purposes. If the same component will be used in multiple locations, it is beneficial to provide the `selectOptionsHashmap` directly to `this.initBase` to avoid recalculation.
 
 ```ts
-export class MySelectComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]>{
-     constructor(){
-        super()
-        this.initBase(SELECT_OPTIONS, SELECT_OPTIONS_HASHMAP)
-     }
+export class MySelectComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
+  constructor() {
+    super();
+    this.initBase(SELECT_OPTIONS, SELECT_OPTIONS_HASHMAP);
+  }
 }
 ```
