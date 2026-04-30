@@ -1,12 +1,16 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import '@picsa/enketo-webform';
+
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationStackService } from '@picsa/components';
+import type { IEnketoFormEntry } from '@picsa/enketo-webform';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
-import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { MonitoringMaterialModule } from '../../../components/material.module';
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
@@ -15,7 +19,8 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   selector: 'monitoring-form-view',
   templateUrl: './form-view.component.html',
   styleUrls: ['./form-view.component.scss'],
-  standalone: false,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [MonitoringMaterialModule, PicsaTranslateModule],
 })
 export class FormViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { MonitoringToolComponentsModule } from '../../components/monitoring-tool-components.module';
-import { FormViewComponent } from './form-view/form-view.component';
 import { SubmissionListComponent } from './submission-list/submission-list.component';
 
 const routes: Route[] = [
@@ -15,18 +13,12 @@ const routes: Route[] = [
   },
   {
     path: ':formId/:submissionId',
-    component: FormViewComponent,
+    loadComponent: () => import('./form-view/form-view.component').then((m) => m.FormViewComponent),
   },
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MonitoringToolComponentsModule,
-    PicsaTranslateModule,
-    RouterModule.forChild(routes),
-    WebcomponentsNgxModule,
-  ],
-  declarations: [FormViewComponent, SubmissionListComponent],
+  imports: [CommonModule, MonitoringToolComponentsModule, PicsaTranslateModule, RouterModule.forChild(routes)],
+  declarations: [SubmissionListComponent],
 })
 export class FormModule {}

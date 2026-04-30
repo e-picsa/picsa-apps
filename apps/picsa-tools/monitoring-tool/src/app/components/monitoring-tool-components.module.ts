@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { AccessCodeDialogComponent } from './access-code-dialog/access-code-dialog.component';
 import { FormItemComponent } from './form-item/form-item.component';
@@ -14,7 +13,6 @@ const STANDALONE_COMPONENTS = [AccessCodeDialogComponent, FormItemComponent];
 @NgModule({
   imports: [
     CommonModule,
-    WebcomponentsNgxModule,
     MonitoringMaterialModule,
     PicsaTranslateModule,
     RouterModule,
