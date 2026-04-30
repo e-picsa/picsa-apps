@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
@@ -11,6 +11,7 @@ export interface AccessCodeDialogResult {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'monitoring-access-code-dialog',
   templateUrl: './access-code-dialog.component.html',
   styleUrls: ['./access-code-dialog.component.scss'],

@@ -56,8 +56,6 @@ export const appRoutes: Routes = [
     loadComponent: () => import('@picsa/shared/features/photo').then((mod) => mod.PhotoDebugComponent),
   },
 
-  // NOTE - Home not currently working as standalone component so keeping as module
-  // (possibly needs to import router-outlet or similar for setup)
   {
     path: '',
     loadComponent: () => import('./pages/home/home.page').then((mod) => mod.HomePageComponent),
@@ -67,6 +65,10 @@ export const appRoutes: Routes = [
   {
     path: 'privacy',
     loadComponent: () => import('./pages/privacy/privacy.component').then((mod) => mod.PrivacyComponent),
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./pages/terms/terms.component').then((mod) => mod.TermsComponent),
   },
   {
     path: 'farmer',
