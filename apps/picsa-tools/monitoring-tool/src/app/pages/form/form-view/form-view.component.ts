@@ -1,8 +1,13 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationStackService } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
+import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,10 +17,11 @@ import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'monitoring-form-view',
   templateUrl: './form-view.component.html',
   styleUrls: ['./form-view.component.scss'],
-  standalone: false,
+  imports: [MatProgressSpinner, WebcomponentsNgxModule, MatButton, MatIcon, PicsaTranslateModule],
 })
 export class FormViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -24,14 +30,14 @@ export class FormViewComponent implements OnInit, OnDestroy {
   private dialogService = inject(PicsaDialogService);
   private navStackService = inject(NavigationStackService);
 
-  public formInitial: {
+  public formInitial = signal<{
     /** html form representation */
     form: string;
     /** xml string model */
     model: string;
     /** DB submission */
     submission: IFormSubmission;
-  } | null = null;
+  } | null>(null);
 
   /** Form entry data from enketo form */
   public formEntry?: IEnketoFormEntry;
@@ -100,7 +106,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   private async handleViewDestroy(): Promise<void> {
     // Check whether outstanding data requires saving/deleting
-    if (!this.formFinalised && this.formInitial) {
+    if (!this.formFinalised && this.formInitial()) {
       const action = this.determineFormAction();
       // save as draft if data updated
       if (action === 'UPDATE' && this.formEntry) {
@@ -114,10 +120,11 @@ export class FormViewComponent implements OnInit, OnDestroy {
    * Determine what action to take when finalising form
    */
   private determineFormAction(): 'UPDATE' | 'DELETE' | 'IGNORE' {
-    if (!this.formInitial?.submission) return 'IGNORE';
+    const submission = this.formInitial()?.submission;
+    if (!submission) return 'IGNORE';
 
     const afterJson = this.getFormEntryJson(this.formEntry?.xml);
-    const { enketoEntry, json: beforeJson } = this.formInitial.submission;
+    const { enketoEntry, json: beforeJson } = submission;
     const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
     const after = { json: afterJson, xml: this.formEntry?.xml || '' };
 
@@ -183,7 +190,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
         }
 
         this.formEntry = submission.enketoEntry;
-        this.formInitial = { form, model, submission };
+        this.formInitial.set({ form, model, submission });
       } catch (error) {
         console.error('Error loading form submission:', error);
         await this.monitoringService.showMessage('FORM_LOAD_ERROR');

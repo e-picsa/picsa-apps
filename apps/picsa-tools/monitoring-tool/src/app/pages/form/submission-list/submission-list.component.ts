@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,10 +10,12 @@ import {
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { Subject, takeUntil } from 'rxjs';
 
+import { MonitoringMaterialModule } from '../../../components/material.module';
 import { STATUS_ICONS } from '../../../models';
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
@@ -23,7 +26,7 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   templateUrl: './submission-list.component.html',
   styleUrls: ['./submission-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [MonitoringMaterialModule, RouterLink, TitleCasePipe, PicsaTranslateModule],
 })
 export class SubmissionListComponent implements OnInit, OnDestroy {
   private service = inject(MonitoringToolService);

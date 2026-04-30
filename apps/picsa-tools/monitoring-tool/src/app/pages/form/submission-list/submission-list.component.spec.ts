@@ -8,7 +8,7 @@ describe('SubmissionListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SubmissionListComponent],
+      imports: [SubmissionListComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SubmissionListComponent);
