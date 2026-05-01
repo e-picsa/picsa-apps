@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { COUNTRIES_DATA, DEPLOYMENT_DATA, ICountryCode, IDeploymentId, ILocaleCode, LOCALES_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -33,6 +33,7 @@ import { ConfigurationService, IUserSettings } from '../../provider';
     MatStepperModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   providers: [
     {

@@ -1,17 +1,20 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Monitoring',
   },
 
   {
-    path: 'view',
-    loadChildren: () => import('./pages/form/form.module').then((m) => m.FormModule),
-    title: 'Monitoring',
+    path: 'view/:formId',
+    loadComponent: () =>
+      import('./pages/form/submission-list/submission-list.component').then((m) => m.SubmissionListComponent),
+  },
+  {
+    path: 'view/:formId/:submissionId',
+    loadComponent: () => import('./pages/form/form-view/form-view.component').then((m) => m.FormViewComponent),
   },
 ];
 /** Routes only registered in standalone mode */

@@ -1,8 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { switchMap } from 'rxjs';
 
+import { FormItemComponent } from '../../components/form-item/form-item.component';
 import { IMonitoringForm } from '../../schema/forms';
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
@@ -10,8 +14,8 @@ import { MonitoringToolService } from '../../services/monitoring-tool.service';
   selector: 'monitoring-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButton, MatIcon, FormItemComponent, PicsaTranslateModule],
 })
 export class HomeComponent {
   service = inject(MonitoringToolService);
