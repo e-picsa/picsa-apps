@@ -9281,7 +9281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@picsa/enketo-webform@npm:^1.3.2":
+"@picsa/enketo-webform@npm:1.3.2":
   version: 1.3.2
   resolution: "@picsa/enketo-webform@npm:1.3.2"
   dependencies:
@@ -25915,7 +25915,7 @@ __metadata:
     "@nx/nest": "npm:22.3.3"
     "@nx/web": "npm:22.3.3"
     "@nx/workspace": "npm:22.3.3"
-    "@picsa/enketo-webform": "npm:^1.3.2"
+    "@picsa/enketo-webform": "npm:1.3.2"
     "@schematics/angular": "npm:21.0.5"
     "@supabase/supabase-js": "npm:^2.93.3"
     "@swc-node/register": "npm:1.9.2"
