@@ -10,28 +10,29 @@
       }
     </div>
   }
-
-  @if (!isLoading() && !isAuthenticating() && formInitial) {
-    <enketo-webform
-      [form]="formInitial.form"
-      [model]="formInitial.model"
-      (dataUpdated)="handleAutosave($event)"
-      (formSaved)="handleSave($event)"
-      [showButtons]="false"
-    ></enketo-webform>
-    <div class="form-actions">
-      <button matButton class="delete-button" (click)="promptDelete()">
-        <mat-icon>delete</mat-icon>{{ 'Delete' | translate }}
-      </button>
-      <button
-        matButton="elevated"
-        color="primary"
-        class="submit-button"
-        [disabled]="!formEntry"
-        (click)="handleCustomSave()"
-      >
-        {{ 'Submit' | translate }}
-      </button>
-    </div>
+  @if (formInitial(); as initial) {
+    @if (!isLoading() && !isAuthenticating()) {
+      <enketo-webform
+        [form]="initial.form"
+        [model]="initial.model"
+        (dataUpdated)="handleAutosave($event)"
+        (formSaved)="handleSave($event)"
+        [showButtons]="false"
+      ></enketo-webform>
+      <div class="form-actions">
+        <button matButton class="delete-button" (click)="promptDelete()">
+          <mat-icon>delete</mat-icon>{{ 'Delete' | translate }}
+        </button>
+        <button
+          matButton="elevated"
+          color="primary"
+          class="submit-button"
+          [disabled]="!formEntry"
+          (click)="handleCustomSave()"
+        >
+          {{ 'Submit' | translate }}
+        </button>
+      </div>
+    }
   }
 </div>
