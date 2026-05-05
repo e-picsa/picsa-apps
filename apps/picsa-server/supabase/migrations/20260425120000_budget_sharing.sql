@@ -22,7 +22,7 @@ CREATE TABLE budget.budgets (
     meta JSONB NOT NULL, -- month start, scale etc.
     summary JSONB NOT NULL, -- computed total labor, profit/loss etc.
     schema_version integer not null,
-    share_code TEXT NOT NULL UNIQUE,
+    share_code TEXT UNIQUE, -- generated when user chooses to share for first time
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

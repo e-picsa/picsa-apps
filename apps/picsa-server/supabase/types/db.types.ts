@@ -3,6 +3,67 @@ import type { CountryCode, CountryCodeLegacy } from './db-derived.types.ts';
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  budget: {
+    Tables: {
+      budgets: {
+        Row: {
+          created_at: string;
+          data: Json;
+          deployment_id: string;
+          description: string | null;
+          enterprise_id: string;
+          id: string;
+          meta: Json;
+          schema_version: number;
+          share_code: string | null;
+          summary: Json;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          data: Json;
+          deployment_id: string;
+          description?: string | null;
+          enterprise_id: string;
+          id?: string;
+          meta: Json;
+          schema_version: number;
+          share_code?: string | null;
+          summary: Json;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          deployment_id?: string;
+          description?: string | null;
+          enterprise_id?: string;
+          id?: string;
+          meta?: Json;
+          schema_version?: number;
+          share_code?: string | null;
+          summary?: Json;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   geo: {
     Tables: {
       boundaries: {
@@ -181,59 +242,6 @@ export type Database = {
           user_type?: string | null;
         };
         Relationships: [];
-      };
-      budgets: {
-        Row: {
-          created_at: string;
-          data: Json;
-          deployment_id: string;
-          description: string | null;
-          enterprise_id: string;
-          id: string;
-          meta: Json;
-          schema_version: number;
-          share_code: string;
-          summary: Json;
-          title: string | null;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          data: Json;
-          deployment_id: string;
-          description?: string | null;
-          enterprise_id: string;
-          id?: string;
-          meta: Json;
-          schema_version: number;
-          share_code: string;
-          summary: Json;
-          title?: string | null;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          data?: Json;
-          deployment_id?: string;
-          description?: string | null;
-          enterprise_id?: string;
-          id?: string;
-          meta?: Json;
-          schema_version?: number;
-          share_code?: string;
-          summary?: Json;
-          title?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'budgets_deployment_id_fkey';
-            columns: ['deployment_id'];
-            isOneToOne: false;
-            referencedRelation: 'deployments';
-            referencedColumns: ['id'];
-          },
-        ];
       };
       climate_station_data: {
         Row: {
@@ -1931,6 +1939,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  budget: {
+    Enums: {},
+  },
   geo: {
     Enums: {},
   },
