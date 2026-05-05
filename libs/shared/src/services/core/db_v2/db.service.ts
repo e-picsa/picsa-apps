@@ -1,7 +1,15 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import md5 from 'crypto-js/md5';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, nativeSha256, RxCollection, RxDatabase } from 'rxdb';
+import {
+  addRxPlugin,
+  createRxDatabase,
+  HashFunction,
+  MangoQuerySelector,
+  nativeSha256,
+  RxCollection,
+  RxDatabase,
+} from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
@@ -57,7 +65,9 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
       name: `picsa_app_16`,
       // when running in production do not validate data (expense op and could lead to accidental data loss)
       storage: ENVIRONMENT.production ? dexieStorage : wrappedValidateAjvStorage({ storage: dexieStorage }),
-      hashFunction: location.host.startsWith('192') ? md5HashFunction : nativeSha256,
+      hashFunction: location.host.startsWith('192')
+        ? (md5HashFunction as HashFunction)
+        : (nativeSha256 as HashFunction),
       // TODO - want to use md5 hashfunction for all but would require migrate all collections
       // (would also need to compare performance when hashing large video files)
     });

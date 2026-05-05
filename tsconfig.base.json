@@ -47,10 +47,7 @@
       "@picsa/server-types": ["apps/picsa-server/supabase/types/index.ts"],
       "@picsa/server-utils": ["apps/picsa-server/supabase/utils/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"],
-      "@picsa/theme": ["libs/theme/src/index.ts"],
-      "@picsa/webcomponents": ["libs/webcomponents"],
-      "@picsa/webcomponents-ngx": ["libs/webcomponents-ngx/src/index.ts"],
-      "@picsa/webcomponents/loader": ["dist/libs/webcomponents/loader"]
+      "@picsa/theme": ["libs/theme/src/index.ts"]
     }
   },
   // Default (strict) angular compiler options
