@@ -9,7 +9,3 @@ export type BudgetShareResponse = {
 export type BudgetImportResponse = {
   budget: Record<string, unknown> | null;
 };
-
-export type BudgetUnshareResponse = {
-  deleted: boolean;
-};

@@ -2,97 +2,33 @@ import { z } from 'zod';
 import { getServiceRoleClient } from '../_shared/client.ts';
 import { ErrorResponse, JSONResponse } from '../_shared/response.ts';
 import { validateBody } from '../_shared/validation.ts';
-import { generateShareCode, normalizeShareCode } from './share-code.ts';
-import type { BudgetShareResponse } from './types.ts';
-import type { Json } from '../../types/db.types.ts';
+import type { BudgetShareResponse, BudgetDB } from './types.ts';
 
-const shareRequestSchema = z.object({
-  budget: z.unknown(),
-  share_code: z.string().trim().optional(),
-});
+const shareRequestSchema = z.object<BudgetDB['Insert']>();
 
-type ShareRequest = z.infer<typeof shareRequestSchema>;
-
-type BudgetRow = {
-  share_code: string;
-  data: Json;
-};
-
-const MAX_SHARE_CODE_ATTEMPTS = 8;
+const MAX_SHARE_CODE_ATTEMPTS = 10;
 
 export const shareBudget = async (req: Request) => {
   try {
-    const { budget, share_code }: ShareRequest = await validateBody(req, shareRequestSchema);
+    const budget = await validateBody(req, shareRequestSchema);
 
-    if (!budget || typeof budget !== 'object' || Array.isArray(budget)) {
-      return ErrorResponse('Budget payload must be an object', 400);
-    }
+    const { share_code } = budget;
 
-    const budgetData = budget as Record<string, unknown>;
-
-    const budgetKey = typeof budgetData._key === 'string' ? budgetData._key : undefined;
-    if (!budgetKey) {
-      return ErrorResponse('Budget _key is required', 400);
+    // Update existing share, or generate new share code for first share
+    if (!share_code) {
+      budget.share_code = await generateUniqueShareCode();
     }
 
     const supabase = getServiceRoleClient();
-    const normalizedShareCode = normalizeShareCode(share_code ?? (budgetData.shareCode as string | undefined));
+    const table = supabase.schema('budget').from('budgets');
 
-    if (share_code && !normalizedShareCode) {
-      return ErrorResponse('Invalid share code', 400);
+    const { error } = await table.upsert(budget as BudgetDB['Insert'], { onConflict: 'share_code' });
+    if (error) {
+      console.error(error);
+      return ErrorResponse('Internal Server Error', 500);
     }
 
-    if (normalizedShareCode) {
-      const { data: existingRow, error: existingError } = await supabase
-        .from('budgets')
-        .select('data')
-        .eq('share_code', normalizedShareCode)
-        .maybeSingle();
-
-      if (existingError) {
-        console.error(existingError);
-        return ErrorResponse('Internal Server Error', 500);
-      }
-
-      const existingKey = (existingRow?.data as Record<string, unknown> | undefined)?._key as string | undefined;
-      if (existingKey && existingKey !== budgetKey) {
-        return ErrorResponse('Share code already assigned', 409);
-      }
-
-      const payload: BudgetRow = {
-        share_code: normalizedShareCode,
-        data: { ...budgetData, shareCode: normalizedShareCode },
-      };
-
-      const { error } = await supabase.from('budgets').upsert(payload, { onConflict: 'share_code' });
-      if (error) {
-        console.error(error);
-        return ErrorResponse('Internal Server Error', 500);
-      }
-
-      return JSONResponse<BudgetShareResponse>({ share_code: normalizedShareCode });
-    }
-
-    for (let attempt = 0; attempt < MAX_SHARE_CODE_ATTEMPTS; attempt++) {
-      const generated = generateShareCode();
-      const payload: BudgetRow = {
-        share_code: generated,
-        data: { ...budgetData, shareCode: generated },
-      };
-
-      const { error } = await supabase.from('budgets').insert(payload);
-
-      if (!error) {
-        return JSONResponse<BudgetShareResponse>({ share_code: generated }, 201);
-      }
-
-      if (error.code !== '23505') {
-        console.error(error);
-        return ErrorResponse('Internal Server Error', 500);
-      }
-    }
-
-    return ErrorResponse('Unable to generate share code', 500);
+    return JSONResponse<BudgetShareResponse>({ share_code: budget.share_code as string });
   } catch (error) {
     if (error instanceof Response) {
       return error;
@@ -101,3 +37,38 @@ export const shareBudget = async (req: Request) => {
     return ErrorResponse('Internal Server Error', 500);
   }
 };
+
+/**
+ * Generate a share code that doesn't collide with any existing budget.
+ * Retries up to MAX_SHARE_CODE_ATTEMPTS times before giving up.
+ */
+async function generateUniqueShareCode(): Promise<string> {
+  const supabase = getServiceRoleClient();
+  for (let attempt = 0; attempt < MAX_SHARE_CODE_ATTEMPTS; attempt++) {
+    const code = generateShareCode();
+    const table = supabase.schema('budget').from('budgets');
+    const { data, error } = await table.select('id').eq('share_code', code).maybeSingle();
+    if (error) {
+      throw new Error(`Failed to check share code uniqueness: ${error.message}`);
+    }
+    if (!data) {
+      return code;
+    }
+  }
+  throw new Error(`Could not generate unique share code after ${MAX_SHARE_CODE_ATTEMPTS} attempts`);
+}
+
+const SHARE_CODE_CHARS = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+const SHARE_CODE_LENGTH = 4;
+
+/**
+ * Generate a 4-character alpha-numeric code for sharing
+ *
+ * This avoids characters commonly confused (e.g. 0/O), and should still generate a sufficiently
+ * unique code given the relatively small number of budgets that are actively shared
+ */
+function generateShareCode() {
+  return Array.from(crypto.getRandomValues(new Uint32Array(SHARE_CODE_LENGTH)), (value) => {
+    return SHARE_CODE_CHARS.charAt(value % SHARE_CODE_CHARS.length);
+  }).join('');
+}
