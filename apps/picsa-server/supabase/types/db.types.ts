@@ -186,25 +186,54 @@ export type Database = {
         Row: {
           created_at: string;
           data: Json;
+          deployment_id: string;
+          description: string | null;
+          enterprise_id: string;
           id: string;
+          meta: Json;
+          schema_version: number;
           share_code: string;
+          summary: Json;
+          title: string | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           data: Json;
+          deployment_id: string;
+          description?: string | null;
+          enterprise_id: string;
           id?: string;
+          meta: Json;
+          schema_version: number;
           share_code: string;
+          summary: Json;
+          title?: string | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           data?: Json;
+          deployment_id?: string;
+          description?: string | null;
+          enterprise_id?: string;
           id?: string;
+          meta?: Json;
+          schema_version?: number;
           share_code?: string;
+          summary?: Json;
+          title?: string | null;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'budgets_deployment_id_fkey';
+            columns: ['deployment_id'];
+            isOneToOne: false;
+            referencedRelation: 'deployments';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       climate_station_data: {
         Row: {
@@ -721,7 +750,7 @@ export type Database = {
       };
       resource_files: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -796,7 +825,7 @@ export type Database = {
       };
       resource_files_child: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
