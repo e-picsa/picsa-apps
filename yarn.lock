@@ -9281,11 +9281,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@picsa/enketo-webform@npm:1.3.2":
-  version: 1.3.2
-  resolution: "@picsa/enketo-webform@npm:1.3.2"
+"@picsa/enketo-webform@npm:1.4.1":
+  version: 1.4.1
+  resolution: "@picsa/enketo-webform@npm:1.4.1"
   dependencies:
-    bootstrap-datepicker: "npm:^1.10.1"
     fast-xml-parser: "npm:^5.7.2"
     form-data: "npm:^4.0.5"
     html5sortable: "npm:^0.14.0"
@@ -9294,7 +9293,7 @@ __metadata:
     lit: "npm:^3.3.2"
     mergexml: "npm:^1.2.4"
     signature_pad: "npm:^5.1.3"
-  checksum: 10c0/d19903b08f05fa628b373aea78f9b167fe1175f28f7faeb4a63dc0c724da6c187abb1450d900407a8a8cf2117e4d8ff240ac891799402b3985c7ee4001283e8c
+  checksum: 10c0/b2a5153804477fbf2e8d9ec16cec75039925e3ba8419446e77dd43871ae0b8adf67e807ae289c1b313dd16da18d057f07d06fc71477302bd64e5db0ca17b75ff
   languageName: node
   linkType: hard
 
@@ -14146,15 +14145,6 @@ __metadata:
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
   checksum: 10c0/e4b53deb4f2b85c52be0e21a273f2045c7b6a6ea002b0e139c744cb6f95e9ec044439a52883b0d74dedd1ff3da55ed140cfdddfed7fb0cccbed373de5dce1bcf
-  languageName: node
-  linkType: hard
-
-"bootstrap-datepicker@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "bootstrap-datepicker@npm:1.10.1"
-  dependencies:
-    jquery: "npm:>=3.4.0 <4.0.0"
-  checksum: 10c0/bad08e373b70040f4a62003b46dde2e5bd4a7b73aeffb1d504c0a1736b6beaccf56b908d565980491c7f4329377af8c4cfb7bff9c38480ea689210c7c308dc7d
   languageName: node
   linkType: hard
 
@@ -22202,13 +22192,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:>=3.4.0 <4.0.0":
-  version: 3.7.1
-  resolution: "jquery@npm:3.7.1"
-  checksum: 10c0/808cfbfb758438560224bf26e17fcd5afc7419170230c810dd11f5c1792e2263e2970cca8d659eb84fcd9acc301edb6d310096e450277d54be4f57071b0c82d9
-  languageName: node
-  linkType: hard
-
 "jquery@npm:^4.0.0":
   version: 4.0.0
   resolution: "jquery@npm:4.0.0"
@@ -25915,7 +25898,7 @@ __metadata:
     "@nx/nest": "npm:22.3.3"
     "@nx/web": "npm:22.3.3"
     "@nx/workspace": "npm:22.3.3"
-    "@picsa/enketo-webform": "npm:1.3.2"
+    "@picsa/enketo-webform": "npm:1.4.1"
     "@schematics/angular": "npm:21.0.5"
     "@supabase/supabase-js": "npm:^2.93.3"
     "@swc-node/register": "npm:1.9.2"
