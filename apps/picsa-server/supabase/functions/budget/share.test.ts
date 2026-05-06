@@ -1,10 +1,14 @@
-import { beforeAll, beforeEach, describe, it } from 'https://deno.land/std@0.204.0/testing/bdd.ts';
+import { afterAll, beforeAll, beforeEach, describe, it } from 'https://deno.land/std@0.204.0/testing/bdd.ts';
 import { assertEquals, assertMatch } from 'jsr:@std/assert';
 
 import { generateShareCode, shareBudget } from './share.ts';
 import { setupTestEnv } from '../tests/test-utils.ts';
 import { getServiceRoleClient } from '../_shared/client.ts';
 
+/**
+ * Run tests via script below. Note, integration tests require running supabase instance
+ * yarn nx run picsa-server:test-functions --file=budget/share.test.ts
+ */
 describe('shareBudget', () => {
   beforeAll(async () => {
     await setupTestEnv();
@@ -33,6 +37,7 @@ describe('shareBudget Integation', () => {
   beforeAll(async () => {
     await setupTestEnv();
   });
+  afterAll(async () => await clearTestData());
   beforeEach(async () => await clearTestData());
 
   // Integration tests - require running Supabase instance
