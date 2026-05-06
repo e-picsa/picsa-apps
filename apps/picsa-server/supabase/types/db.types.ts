@@ -3,6 +3,67 @@ import type { CountryCode, CountryCodeLegacy } from './db-derived.types.ts';
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  budget: {
+    Tables: {
+      budgets: {
+        Row: {
+          created_at: string;
+          data: Json;
+          deployment_id: string;
+          description: string | null;
+          enterprise_id: string;
+          id: string;
+          meta: Json;
+          schema_version: number;
+          share_code: string | null;
+          summary: Json;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          data: Json;
+          deployment_id: string;
+          description?: string | null;
+          enterprise_id: string;
+          id?: string;
+          meta: Json;
+          schema_version: number;
+          share_code?: string | null;
+          summary: Json;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          deployment_id?: string;
+          description?: string | null;
+          enterprise_id?: string;
+          id?: string;
+          meta?: Json;
+          schema_version?: number;
+          share_code?: string | null;
+          summary?: Json;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   geo: {
     Tables: {
       boundaries: {
@@ -697,7 +758,7 @@ export type Database = {
       };
       resource_files: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -772,7 +833,7 @@ export type Database = {
       };
       resource_files_child: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -1878,6 +1939,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  budget: {
+    Enums: {},
+  },
   geo: {
     Enums: {},
   },
