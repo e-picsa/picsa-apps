@@ -131,5 +131,15 @@
     "https://esm.sh/v133/@supabase/functions-js@2.1.5/denonext/dist/module.js": "b8e0dd8968a8b9c892a27237a65a3f2c55860de98832ca107bfee144a563a9b2",
     "https://esm.sh/v133/@supabase/functions-js@2.1.5/dist/module/index.js": "aa709919d64a493baeb254ffcb2e7a39bf4c79406ab923dd9941badb871dcbba",
     "https://esm.sh/v133/@supabase/node-fetch@2.6.14/denonext/node-fetch.mjs": "23a71af3512da67a8757ab1e2356fa22565758444ea1fc08e0de0e8d4625e8aa"
+  },
+  "workspace": {
+    "members": {
+      "budget": {
+        "dependencies": [
+          "jsr:@hono/hono@4",
+          "npm:zod@4"
+        ]
+      }
+    }
   }
 }
