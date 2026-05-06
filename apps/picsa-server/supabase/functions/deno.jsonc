@@ -1,5 +1,5 @@
 {
-  "workspace": ["./geo"],
+  "workspace": ["./geo", "./budget"],
   "test": {
     "include": ["**/*.test.ts", "tests/test-utils.ts"],
     "exclude": [],
