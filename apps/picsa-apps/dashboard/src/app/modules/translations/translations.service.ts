@@ -54,15 +54,14 @@ export class TranslationDashboardService extends PicsaAsyncService {
 
     // If no data is returned, it might be a no-op update caught by a trigger.
     // Fallback to our existing local copy.
-    const resolvedData = data || this.translationsHashmap[id];
-
-    if (resolvedData) {
-      // Update current list
-      this.translationsHashmap[id] = resolvedData;
+    // If no data is returned, it might be a no-op update caught by a trigger.
+    // We only update the local state and signal if new data was actually returned.
+    if (data) {
+      this.translationsHashmap[id] = data;
       this.translations.set(Object.values(this.translationsHashmap));
     }
 
-    return resolvedData;
+    return data || this.translationsHashmap[id];
   }
 
   // Fetch a translation record by ID
