@@ -1,4 +1,4 @@
-import { inject,Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -45,12 +45,23 @@ export class TranslationDashboardService extends PicsaAsyncService {
       .update(updatedData)
       .eq('id', id)
       .select<'*', ITranslationRow>('*')
-      .single();
-    if (error) throw new Error(error.message);
-    // Update current list
-    this.translationsHashmap[id] = data;
-    this.translations.set(Object.values(this.translationsHashmap));
-    return data;
+      .maybeSingle();
+
+    if (error) {
+      console.error({ id, updatedData });
+      throw new Error(error.message);
+    }
+
+    // If no data is returned, it might be a no-op update caught by a trigger.
+    // Fallback to our existing local copy.
+    // If no data is returned, it might be a no-op update caught by a trigger.
+    // We only update the local state and signal if new data was actually returned.
+    if (data) {
+      this.translationsHashmap[id] = data;
+      this.translations.set(Object.values(this.translationsHashmap));
+    }
+
+    return data || this.translationsHashmap[id];
   }
 
   // Fetch a translation record by ID
