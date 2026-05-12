@@ -1,0 +1,88 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.share-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.5rem 0 1rem;
+}
+
+.share-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(100%, 34rem);
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 0.75rem;
+}
+
+.title {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  color: #7c1332;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.icon-wrap {
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.25rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.install-hero-image {
+  width: clamp(140px, 42vw, 220px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.question {
+  margin: 0;
+  text-align: center;
+  font-size: 1.25rem;
+  color: #0f3b58;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.action-btn {
+  width: min(100%, 24rem);
+  align-self: center;
+  min-height: 3.25rem;
+  box-sizing: border-box;
+  --mdc-filled-button-container-color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .share-page {
+    padding: 1rem 0 1.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .question {
+    font-size: 1.1rem;
+  }
+
+  .action-btn {
+    width: min(92%, 21rem);
+    min-height: 2.875rem;
+  }
+}

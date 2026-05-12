@@ -1,0 +1,27 @@
+<div class="share-page">
+  <div class="top-row">
+    <button mat-icon-button class="back-icon-btn" (click)="goBack()" aria-label="Back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+
+  <div class="share-card">
+    <div class="section-header">{{ 'Share via Bluetooth' | translate }}</div>
+
+    <div class="content">
+      <button mat-raised-button color="primary" class="action-btn" (click)="shareAppApk()">
+        <mat-icon>android</mat-icon>
+        {{ 'Share the E-PICSA app' | translate }}
+      </button>
+
+      <button mat-raised-button color="primary" class="action-btn" (click)="goToVideoShare()">
+        <mat-icon>video_library</mat-icon>
+        {{ 'Share E-PICSA video' | translate }}
+      </button>
+
+      @if (shareStatus() !== 'idle') {
+        <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
+      }
+    </div>
+  </div>
+</div>

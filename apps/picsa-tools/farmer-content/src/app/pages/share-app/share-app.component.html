@@ -1,0 +1,29 @@
+<div class="share-page">
+  <div class="page-header">
+    <button mat-button type="button" class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'Back' | translate }}
+    </button>
+    <h1 class="title">{{ 'Share the E-PICSA App' | translate }}</h1>
+  </div>
+
+  <div class="share-card">
+    <div class="icon-wrap">
+      <img class="install-hero-image" src="/assets/images/mobile.svg" alt="" />
+    </div>
+
+    <button mat-raised-button color="primary" class="action-btn" (click)="shareViaBluetooth()">
+      <mat-icon>bluetooth</mat-icon>
+      {{ 'Share via Bluetooth' | translate }}
+    </button>
+
+    <button mat-raised-button color="primary" class="action-btn" (click)="shareViaWhatsApp()">
+      <mat-icon>chat</mat-icon>
+      {{ 'Share via WhatsApp' | translate }}
+    </button>
+
+    @if (shareStatus() !== 'idle') {
+      <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
+    }
+  </div>
+</div>
