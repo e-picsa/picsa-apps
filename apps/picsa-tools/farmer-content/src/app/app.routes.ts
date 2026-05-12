@@ -16,6 +16,31 @@ export function buildFarmerRoutes(nestedTools: Routes): Routes {
       title: 'PICSA',
     },
     {
+      path: 'share',
+      loadComponent: () => import('./pages/share/share.component').then((mod) => mod.FarmerContentShareComponent),
+      title: 'PICSA',
+    },
+    {
+      path: 'share/app',
+      loadComponent: () =>
+        import('./pages/share-app/share-app.component').then((mod) => mod.FarmerContentShareAppComponent),
+      title: 'PICSA',
+    },
+    {
+      path: 'share/bluetooth',
+      loadComponent: () =>
+        import('./pages/share-bluetooth/share-bluetooth.component').then(
+          (mod) => mod.FarmerContentShareBluetoothComponent,
+        ),
+      title: 'PICSA',
+    },
+    {
+      path: 'share/videos',
+      loadComponent: () =>
+        import('./pages/share-videos/share-videos.component').then((mod) => mod.FarmerContentShareVideosComponent),
+      title: 'PICSA',
+    },
+    {
       path: ':slug',
       loadComponent: () =>
         import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),
