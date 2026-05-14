@@ -91,8 +91,11 @@ export function mergeArraysByKey<T = Record<string, any>, U = Record<string, any
  * This can be removed once baseline webview > 98
  * https://caniuse.com/?search=structuredClone
  */
-export const deepClone = <T>(value: T): T =>
-  value === undefined ? (undefined as T) : typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+export const deepClone = <T>(value: T): T => {
+  if (value === undefined) return undefined as T;
+  if (typeof structuredClone === 'function') return structuredClone(value);
+  return JSON.parse(JSON.stringify(value));
+};
 
 /**
  * Retrieve a nested property from a json object
