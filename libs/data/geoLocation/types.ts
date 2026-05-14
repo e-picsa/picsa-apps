@@ -33,7 +33,7 @@ export type IBoundaryData = Record<string, number[][]>;
 export type ITopoJson = {
   type: string;
   bbox?: number[];
-  arcs: number[][][] | number[][] | number[];
+  arcs: number[][][];
   transform: {
     scale: number[];
     translate: number[];
