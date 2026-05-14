@@ -47,7 +47,7 @@ export class ClimateChartService {
     // NOTE - while this could create a race condition where chart loads before months translated
     // in practice this is unlikely as in-memory translations likely loaded before accessing page
     effect(async () => {
-      this.translateService.languageSignal();
+      this.translateService.locale();
       this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
     });
   }

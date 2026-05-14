@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type { ILocaleCode } from '@picsa/data/deployments';
 import { firstValueFrom } from 'rxjs';
@@ -7,15 +7,16 @@ import { firstValueFrom } from 'rxjs';
 export class PicsaTranslateService {
   ngxTranslate = inject(TranslateService);
 
-  public language: ILocaleCode = 'global_en';
+  public locale = signal<ILocaleCode>('global_en');
+
   constructor() {
     const ngxTranslate = this.ngxTranslate;
 
     ngxTranslate.setDefaultLang('global_en');
   }
   public setLanguage(code: ILocaleCode) {
-    if (code === this.language) return;
-    this.language = code;
+    if (code === this.locale()) return;
+    this.locale.set(code);
     // use global en if any localised en language selected
     if (code.endsWith('_en')) {
       this.ngxTranslate.use('global_en');
