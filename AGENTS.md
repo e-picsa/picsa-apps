@@ -38,6 +38,10 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 1. These rule files are the **SAME FILE**. Do not read more than one of them to conserve context window.
 2. You **MUST** still reference the detailed documentation files in the `.agent/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
 
+### Planning Mode Requirements
+
+- **Respect Planning Mode in all cases**: Avoid making code changes without presenting a plan and receiving explicit approval, unless explicitly given permission to do so by the user. This ensures strict adherence to the planning workflow across all tasks.
+
 ### Tool Usage Requirements (Crucial for Context Preservation)
 
 To avoid overloading the context window and consuming excessive tokens, all AI/Agent assistants (regardless of the IDE) MUST adhere to the following file-reading constraints:

@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData, IGelocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
@@ -87,13 +88,8 @@ export class FormLocationSelectComponent {
   }
 
   private getLocationData(country_code: string): IGelocationData {
-    const locationData: IGelocationData = GEO_LOCATION_DATA[country_code];
-    if (locationData) {
-      return this.locationModifier()(locationData, country_code);
-    } else {
-      console.error('[Location Select] no data for country', country_code);
-      return { admin_4: { label: '', locations: [], topoJson: () => null as any } };
-    }
+    const locationData = getGeoLocationData(country_code as ICountryCode);
+    return this.locationModifier()(locationData, country_code);
   }
 
   /** Update admin 5 options/selected when admin 4 changes */

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LOCALES_DATA } from '@picsa/data';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData } from '@picsa/data/geoLocation';
 import type { DBToFormBuilderType } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { FileDropFile, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
@@ -66,7 +66,7 @@ export class ForecastFormComponent {
   );
   public locationOptions = computed(() => {
     const { country_code } = this.initialValues;
-    const locationData = GEO_LOCATION_DATA[country_code] as IGelocationData;
+    const locationData = getGeoLocationData(country_code);
     return locationData?.admin_5?.locations || locationData?.admin_4?.locations || [];
   });
 

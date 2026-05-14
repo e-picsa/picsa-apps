@@ -3,7 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
@@ -102,7 +103,7 @@ export class CropProbabilityComponent {
 
   /** Merge crop location id with lookup geojson data  **/
   private mergeDetailedLocationData(country_code: string, data: ICropDataDownscaledTableData[]) {
-    const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
+    const { admin_4, admin_5 } = getGeoLocationData(country_code as ICountryCode);
     const isAdmin5Location = admin_5 ? true : false;
     const admin4Hashmap = arrayToHashmap(admin_4.locations, 'id');
 
