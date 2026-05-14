@@ -3,6 +3,7 @@ import merge from 'deepmerge';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
+import { deepClone } from '@picsa/utils';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
@@ -202,7 +203,7 @@ const definitions: IChartDefinitions = {
 
 // Provide additional export as cloned object to avoid duplicate references
 const DEFINITIONS = () => {
-  const chartDefinitions: IChartDefinitions = JSON.parse(JSON.stringify(definitions));
+  const chartDefinitions: IChartDefinitions = deepClone(definitions);
   return chartDefinitions;
 };
 

@@ -9,6 +9,7 @@ import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PrintProvider } from '@picsa/shared/services/native/print';
+import { deepClone } from '@picsa/utils';
 import merge from 'deepmerge';
 import { toJS } from 'mobx';
 import { action, observable } from 'mobx-angular';
@@ -97,7 +98,7 @@ export class BudgetStore {
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     const period = this.service.activePeriod();
     // ensure clean write by cloning existing budget before updating deeply nested property
-    const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
+    const budgetData = deepClone(this.activeBudget.data);
     budgetData[period][type] = data;
     this.patchBudget({ data: budgetData });
     // use behaviour subject to provide better change detection binding on changes
@@ -174,7 +175,7 @@ export class BudgetStore {
   public async editorCopyTimePeriod(index: number) {
     const { meta, data } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
-    data.splice(index, 0, JSON.parse(JSON.stringify(data[index])));
+    data.splice(index, 0, deepClone(data[index]));
     await this.patchBudget({ data });
   }
 
