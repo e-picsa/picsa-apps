@@ -7,7 +7,11 @@ import { ConfigurationService } from '@picsa/configuration';
 import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
+import {
+  formatHeaderDefault,
+  IDataTableOptions,
+  PicsaDataTableComponent,
+} from '@picsa/shared/features/data-table/data-table.component';
 import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
@@ -64,10 +68,19 @@ export class SiteSelectPage {
     });
   });
 
-  public tableOptions: IDataTableOptions = {
-    displayColumns: ['map', 'name', 'district'],
-    sort: { id: 'district', start: 'asc' },
-  };
+  public tableOptions = computed(() => {
+    // map location to correct admin 4 name (e.g. province/district)
+    const country_code = this.userCountryCode();
+    const geoData = getGeoLocationData(country_code);
+    return {
+      displayColumns: ['map', 'name', 'location'],
+      formatHeader: (v) => {
+        if (v === 'location') return geoData.admin_4.label;
+        return formatHeaderDefault(v);
+      },
+      sort: { id: 'location', start: 'asc' },
+    } satisfies IDataTableOptions;
+  });
 
   private nearestStation = signal<IStationMeta | undefined>(undefined);
 

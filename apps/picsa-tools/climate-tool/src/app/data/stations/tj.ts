@@ -9,6 +9,7 @@ const stations: IStationMeta[] = [
     longitude: 68.775917,
     countryCode: 'tj',
     definitions: CLIMATE_CHART_DEFINTIONS.zm,
+    location: [],
   },
 ];
 
