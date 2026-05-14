@@ -92,7 +92,7 @@ export function mergeArraysByKey<T = Record<string, any>, U = Record<string, any
  * https://caniuse.com/?search=structuredClone
  */
 export const deepClone = <T>(value: T): T =>
-  typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+  value === undefined ? (undefined as T) : typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
 
 /**
  * Retrieve a nested property from a json object
