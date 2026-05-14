@@ -75,16 +75,14 @@ export class ClimateChartService {
    * Set the active station by ID.
    */
   public async setStation(id?: string) {
-    const station = id ? await this.dataService.getStationMeta(id) : undefined;
-    this.station.set(station);
     if (id) {
       const station = await this.dataService.getStationMeta(id);
-      this.station.set(station);
       const data = await this.dataService.getStationData(id);
+      this.station.set(station);
       this.stationData.set(data || []);
     } else {
-      this.stationData.set([]);
       this.station.set(undefined);
+      this.stationData.set([]);
     }
   }
 
