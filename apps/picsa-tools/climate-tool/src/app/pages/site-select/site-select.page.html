@@ -11,7 +11,7 @@ strings.showMap;
   <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
     <div class="table-container" [attr.data-view]="view()">
       <picsa-data-table
-        [options]="tableOptions"
+        [options]="tableOptions()"
         [data]="tableData()"
         class="flex-1"
         (rowClick)="handleRowClick($event)"

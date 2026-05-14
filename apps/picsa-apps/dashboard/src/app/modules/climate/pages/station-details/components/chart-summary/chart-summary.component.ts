@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
-import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
+import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { ChartConfiguration } from 'c3';
@@ -38,7 +38,7 @@ export class ChartSummaryComponent {
   constructor() {
     effect(() => {
       const { country_code } = this.station();
-      const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
+      const definitions = CLIMATE_CHART_DEFINITIONS[country_code] || CLIMATE_CHART_DEFINITIONS.default;
       this.chartDefintions.set(Object.values(definitions));
       this.activeChartDefinition.set(definitions[0]);
     });

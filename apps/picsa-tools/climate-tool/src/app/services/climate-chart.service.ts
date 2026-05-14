@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
@@ -40,8 +40,17 @@ export class ClimateChartService {
   private isPrintVersion = false;
   private pointRadius = 8;
 
-  /** List of month names translated */
   private monthNames: string[] = [];
+
+  constructor() {
+    // Ensure month names are translated
+    // NOTE - while this could create a race condition where chart loads before months translated
+    // in practice this is unlikely as in-memory translations likely loaded before accessing page
+    effect(async () => {
+      this.translateService.locale();
+      this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
+    });
+  }
 
   /**
    * Clear all chart data and reset to initial state.
@@ -66,12 +75,15 @@ export class ClimateChartService {
    * Set the active station by ID.
    */
   public async setStation(id?: string) {
-    const station = id ? await this.dataService.getStationMeta(id) : undefined;
-    this.station.set(station);
-    this.stationData.set(station?.data || []);
-    // ensure month names are translated
-    this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
-    return station;
+    if (id) {
+      const station = await this.dataService.getStationMeta(id);
+      const data = await this.dataService.getStationData(id);
+      this.station.set(station);
+      this.stationData.set(data || []);
+    } else {
+      this.station.set(undefined);
+      this.stationData.set([]);
+    }
   }
 
   /**

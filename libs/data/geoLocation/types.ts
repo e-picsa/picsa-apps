@@ -1,4 +1,4 @@
-export interface IGelocationData {
+export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
   /**
    * Osm admin_4 typically represents district/province level data
