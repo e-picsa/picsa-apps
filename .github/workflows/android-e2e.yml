@@ -18,10 +18,8 @@ jobs:
   build:
     uses: ./.github/workflows/android-build.yml
     with:
-      build-type: debug
-      configuration: e2e
-      # Manually populate mock fixtures
-      post-build-command: cp -r apps/picsa-apps/app-native-e2e/src/fixtures/assets/* dist/apps/picsa-apps/app/assets/
+      is-debug: true
+      is-e2e: true
     secrets:
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
