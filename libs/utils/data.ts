@@ -85,6 +85,16 @@ export function mergeArraysByKey<T = Record<string, any>, U = Record<string, any
 }
 
 /**
+ * Take a deep clone of an object.
+ * Uses structuredClone with fallback to JSON.parse(JSON.stringify())
+ *
+ * This can be removed once baseline webview > 98
+ * https://caniuse.com/?search=structuredClone
+ */
+export const deepClone = <T>(value: T): T =>
+  typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+
+/**
  * Retrieve a nested property from a json object
  * using a single path string accessor
  * (modified from https://gist.github.com/jasonrhodes/2321581)

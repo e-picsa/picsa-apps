@@ -7,9 +7,10 @@
  */
 
 import migrate from './rxdb-14.migration';
+import { deepClone } from '../../../utils/data';
 
 // HACK
-global.structuredClone = (v) => JSON.parse(JSON.stringify(v));
+global.structuredClone = (v) => deepClone(v);
 
 import crypto from 'crypto';
 

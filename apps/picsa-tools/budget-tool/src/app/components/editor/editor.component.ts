@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FadeInOut } from '@picsa/shared/animations';
-import { _wait } from '@picsa/utils';
+import { _wait, deepClone } from '@picsa/utils';
 import { Subscription } from 'rxjs';
 
 import { IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
@@ -127,7 +127,7 @@ export class BudgetEditorComponent implements OnDestroy {
       const activeData = this.store.activeBudget.data[period];
       if (activeData) {
         // create copy of data to avoid first input populating multiple activities
-        this.data.set(JSON.parse(JSON.stringify(activeData)));
+        this.data.set(deepClone(activeData));
       }
     }
   }

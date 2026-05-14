@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
-import { arrayToHashmap, loadCSV } from '@picsa/utils';
+import { arrayToHashmap, deepClone, loadCSV } from '@picsa/utils';
 
 import { CLIMATE_STATIONS_META } from '../data/stations';
 
@@ -53,7 +53,7 @@ export class ClimateDataService {
     }
 
     // HACK - ensure chart definitions don't persist across sites
-    return JSON.parse(JSON.stringify(station));
+    return deepClone(station);
   }
   public async getStationData(stationId: string) {
     const data = this.loadedStationData[stationId];
