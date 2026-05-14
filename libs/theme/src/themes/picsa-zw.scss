@@ -1,0 +1,92 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
+$primary: (
+  50: #e0f3e7,
+  100: #b3e0c4,
+  200: #80cb9c,
+  300: #4db674,
+  400: #26a757,
+  500: #009739,
+  600: #008f33,
+  700: #00842c,
+  800: #007a24,
+  900: #006917,
+  A100: #98ffa6,
+  A200: #65ff7a,
+  A400: #32ff4e,
+  A700: #19ff38,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+$accent: (
+  50: #fffce0,
+  100: #fef7b3,
+  200: #fef180,
+  300: #fdeb4d,
+  400: #fce726,
+  500: #fce300,
+  600: #fce000,
+  700: #fbdc00,
+  800: #fbd800,
+  900: #fad000,
+  A100: #ffffff,
+  A200: #fffced,
+  A400: #fff2ba,
+  A700: #ffeda1,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #000000,
+    700: #000000,
+    800: #000000,
+    900: #000000,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$palette-primary: mat.m2-define-palette($primary);
+$palette-accent: mat.m2-define-palette($accent, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$palette-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme-zw: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $palette-primary,
+      accent: $palette-accent,
+      warn: $palette-warn,
+    ),
+  )
+);
+
+body[data-theme='picsa-zw'] {
+  @include mat.all-component-themes($theme-zw);
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
+}
