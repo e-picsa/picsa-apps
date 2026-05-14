@@ -41,6 +41,7 @@ function generate(settings: Partial<IDeploymentSettings>) {
   return combined;
 }
 
+// TODO - refactor to use country data (or update docs when adding countries)
 const DEPLOYMENTS_BASE = {
   global: generate({ country_code: 'global', climateTool: { station_filter: () => true } }),
   mw: generate({
@@ -58,6 +59,14 @@ const DEPLOYMENTS_BASE = {
       currencyBaseValue: 10,
     },
     theme: 'picsa-zm',
+  }),
+  zw: generate({
+    country_code: 'zw',
+    budgetTool: {
+      currency: 'ZMD',
+      currencyBaseValue: 100,
+    },
+    theme: 'picsa-zw',
   }),
   tj: generate({
     country_code: 'tj',

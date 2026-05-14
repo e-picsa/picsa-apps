@@ -4,7 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
-import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
 import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
@@ -167,8 +168,7 @@ export class SiteSelectPage {
 
   /** Load country boundaries from geojson */
   private async loadCountryAdminBoundaries(map: Map, country_code: string) {
-    const metadata: IGelocationData = GEO_LOCATION_DATA[country_code];
-    if (!metadata) return;
+    const metadata = getGeoLocationData(country_code as ICountryCode);
     const topojson = await metadata.topoJson();
     // TODO - hardcoded level 4 could be configured to either
     // show a mix of levels or different levels depending on country config

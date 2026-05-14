@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData } from '@picsa/data/geoLocation';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { filter, firstValueFrom, map } from 'rxjs';
 
@@ -40,9 +40,9 @@ export class DeploymentDashboardService {
   public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
 
   /** Geolocation data for active deployment */
-  public activeDeploymentLocationData = computed<IGelocationData>(() => {
+  public activeDeploymentLocationData = computed(() => {
     const countryCode = this.activeDeploymentCountry();
-    return GEO_LOCATION_DATA[countryCode] || GEO_LOCATION_PLACEHOLDER;
+    return getGeoLocationData(countryCode);
   });
 
   /** Observable activeDeployment used to monitor changes (ensure deployment selected) */
