@@ -92,7 +92,7 @@ export class FormLocationSelectComponent {
       return this.locationModifier()(locationData, country_code);
     } else {
       console.error('[Location Select] no data for country', country_code);
-      return { admin_4: { label: '', locations: [], topoJson: () => null as any } };
+      return { topoJson: () => null as any, admin_4: { label: '', locations: [] } };
     }
   }
 

@@ -169,8 +169,10 @@ export class SiteSelectPage {
   private async loadCountryAdminBoundaries(map: Map, country_code: string) {
     const metadata: IGelocationData = GEO_LOCATION_DATA[country_code];
     if (!metadata) return;
-    const topojson = await metadata.admin_4.topoJson();
-    const feature = topoJsonToGeoJson(topojson);
+    const topojson = await metadata.topoJson();
+    // TODO - hardcoded level 4 could be configured to either
+    // show a mix of levels or different levels depending on country config
+    const feature = topoJsonToGeoJson(topojson, 4);
     geoJSON(feature as any)
       .setStyle({ fill: false, color: 'brown', opacity: 0.5 })
       .addTo(map);

@@ -111,7 +111,7 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      const geojson = topoJsonToGeoJson(topojsonObj as never);
+      const geojson = topoJsonToGeoJson(topojsonObj as never, row.admin_level);
       let validFeatures = false;
       if (geojson) {
         if (geojson.type === 'FeatureCollection') {

@@ -2,10 +2,22 @@ import { IBoundaryData, IGeoJsonData, ITopoJson } from './types';
 
 import * as topojson from 'topojson-client';
 
-export function topoJsonToGeoJson(t: ITopoJson) {
+export function topoJsonToGeoJson<T = any>(t: ITopoJson, adminLevel?: string | number): IGeoJsonData<T> {
   // convert the first named object in the topology
   const [objectName] = Object.keys(t.objects);
-  return topojson.feature(t, t.objects[objectName]);
+  const topologyObject = t.objects[objectName];
+
+  if (adminLevel && topologyObject.type === 'GeometryCollection') {
+    const levelStr = String(adminLevel);
+    // filter geometries at the TopoJSON level before converting to GeoJSON
+    const filteredGeometries = topologyObject.geometries.filter(
+      (g) => g.properties && String(g.properties.admin_level) === levelStr,
+    );
+    const filteredObject = { ...topologyObject, geometries: filteredGeometries };
+    return topojson.feature(t, filteredObject as any) as unknown as IGeoJsonData<T>;
+  }
+
+  return topojson.feature(t, topologyObject as any) as unknown as IGeoJsonData<T>;
 }
 
 /**

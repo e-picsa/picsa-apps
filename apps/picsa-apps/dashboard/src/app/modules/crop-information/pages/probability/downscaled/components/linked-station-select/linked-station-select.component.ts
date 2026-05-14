@@ -76,8 +76,8 @@ export class CropLinkedStationSelectComponent {
 // private async setMapBounds(countryCode: string, downscaledCode: string) {
 //   // Load admin 4 boundaries and put on map
 //   const geoData = GEO_LOCATION_DATA[countryCode] as IGelocationData;
-//   const topoJson = await geoData.admin_4.topoJson();
-//   const feature = topoJsonToGeoJson(topoJson);
+//   const topoJson = await geoData.topoJson();
+//   const feature = topoJsonToGeoJson(topoJson, 4);
 
 //   feature.features = feature.features.filter((v) => v.properties.name === downscaledCode);
 //   const map = this.picsaMapComponent().map();
