@@ -38,7 +38,7 @@ const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGelocationData } = 
 const GEO_LOCATION_PLACEHOLDER: IGelocationData = {
   topoJson: async () => ({
     type: 'Topology',
-    objects: {},
+    objects: { input: { type: 'GeometryCollection', geometries: [] } },
     arcs: [],
     transform: { scale: [], translate: [] },
     bbox: [-180, -90, 180, 90],
