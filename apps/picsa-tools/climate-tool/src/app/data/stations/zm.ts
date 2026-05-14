@@ -1,4 +1,4 @@
-import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
+import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMeta } from '@picsa/models';
 import merge from 'deepmerge';
 
@@ -251,7 +251,7 @@ const stations: IStationMeta[] = [
     latitude: -14.25,
     longitude: 31.28,
     location: ['PETAUKE'],
-    definitions: merge(CLIMATE_CHART_DEFINTIONS.zm, {
+    definitions: merge(CLIMATE_CHART_DEFINITIONS.zm, {
       extreme_rainfall_days: { definition: 'For Petauke the 95th percentile calculated to be 41.35mm' },
     }),
   },
@@ -307,7 +307,7 @@ const stations: IStationMeta[] = [
 ].map((station) => ({
   ...station,
   countryCode: 'zm',
-  definitions: station.definitions || CLIMATE_CHART_DEFINTIONS.zm,
+  definitions: station.definitions || CLIMATE_CHART_DEFINITIONS.zm,
 }));
 
 export default stations;

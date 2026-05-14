@@ -1,4 +1,4 @@
-import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
+import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMeta } from '@picsa/models';
 
 const stations: IStationMeta[] = [
@@ -40,7 +40,7 @@ const stations: IStationMeta[] = [
 ].map((station) => ({
   ...station,
   countryCode: 'zw',
-  definitions: CLIMATE_CHART_DEFINTIONS.zw,
+  definitions: CLIMATE_CHART_DEFINITIONS.zw,
 }));
 
 export default stations;

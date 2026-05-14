@@ -1,7 +1,7 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import MW_DISTRICTS from './mw/districts';
 import { ICountryCode } from '../deployments';
-import { IGelocationData } from './types';
+import { IGeolocationData } from './types';
 import ZM_PROVINCES from './zm/provinces';
 import ZM_DISTRICTS from './zm/districts';
 import ZW_PROVINCES from './zw/provinces';
@@ -9,7 +9,7 @@ import ZW_PROVINCES from './zw/provinces';
 export * from './utils';
 export * from './types';
 
-const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGelocationData } = {
+const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGeolocationData } = {
   mw: {
     topoJson: async () => {
       const res = await import('./mw/MW.topo.json');
@@ -46,7 +46,7 @@ const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGelocationData } = 
   },
 };
 
-const GEO_LOCATION_PLACEHOLDER: IGelocationData = {
+const GEO_LOCATION_PLACEHOLDER: IGeolocationData = {
   topoJson: async () => ({
     type: 'Topology',
     objects: { input: { type: 'GeometryCollection', geometries: [] } },

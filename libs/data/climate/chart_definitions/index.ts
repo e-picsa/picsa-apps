@@ -3,7 +3,7 @@ import zm from './zm';
 import zw from './zw';
 import defaultDefinitions from './default';
 
-export const CLIMATE_CHART_DEFINTIONS = {
+export const CLIMATE_CHART_DEFINITIONS = {
   mw,
   zm,
   zw,

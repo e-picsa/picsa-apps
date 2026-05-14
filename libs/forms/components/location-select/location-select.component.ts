@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, output, si
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, IGelocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
@@ -31,7 +31,7 @@ export class FormLocationSelectComponent {
   public value = input<(string | undefined)[]>([]);
 
   /** Optional method to apply to data before rendering locations in list */
-  public locationModifier = input<(data: IGelocationData, countryCode: string) => IGelocationData>((data) => data);
+  public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
   public valueChanged = output<(string | undefined)[]>();
 
@@ -52,7 +52,7 @@ export class FormLocationSelectComponent {
     return computedValue[4] ? true : false;
   });
 
-  public locationData = computed<IGelocationData>(() => {
+  public locationData = computed<IGeolocationData>(() => {
     const countryCode = this.countryCode();
     return this.getLocationData(countryCode);
   });
@@ -87,7 +87,7 @@ export class FormLocationSelectComponent {
     return value;
   }
 
-  private getLocationData(country_code: string): IGelocationData {
+  private getLocationData(country_code: string): IGeolocationData {
     const locationData = getGeoLocationData(country_code as ICountryCode);
     return this.locationModifier()(locationData, country_code);
   }
