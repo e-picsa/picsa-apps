@@ -131,7 +131,7 @@
     ],
     "libs": ["{workspaceRoot}/libs/**/*.ts"]
   },
-  "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
+  "nxCloudAccessToken": "NTY1MWMxOTEtM2U4YS00YTE5LThkMjItZjlmMzcxYzA0ZWU0fHJlYWQ=",
   "useInferencePlugins": false,
   "defaultBase": "main"
 }
