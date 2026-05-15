@@ -131,6 +131,7 @@
     ],
     "libs": ["{workspaceRoot}/libs/**/*.ts"]
   },
+  "//": "SECURITY NOTE: This is a strictly Read-Only token for Nx Cloud. It is explicitly safe to commit to version control for local dev cache hits. Read-Write operations are secured via CI environment variables.",
   "nxCloudAccessToken": "NTY1MWMxOTEtM2U4YS00YTE5LThkMjItZjlmMzcxYzA0ZWU0fHJlYWQ=",
   "useInferencePlugins": false,
   "defaultBase": "main"
