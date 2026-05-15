@@ -59,7 +59,6 @@ td.mdc-data-table__cell {
 .editor-content {
   background: white;
   position: relative;
-  overflow: auto;
   justify-content: center;
   display: flex;
   height: 100%;
@@ -160,7 +159,7 @@ th.split-values {
   border: 1px solid #e2e2e2;
   z-index: 2;
   min-height: 600px;
-  min-width: 900x;
+  min-width: 900px;
   table {
     box-shadow: unset;
   }
