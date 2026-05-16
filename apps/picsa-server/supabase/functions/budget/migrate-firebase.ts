@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { getServiceRoleClient } from '../_shared/client.ts';
-import { hasAuthRole } from '../_shared/auth.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../_shared/auth.ts';
 import {
   FirebaseConfigError,
+  queryFirestoreCollectionWhereFieldIn,
   queryFirestoreCollectionWhereFieldNotNull,
   type FirestoreDocument,
 } from '../_shared/firebase.ts';
@@ -12,7 +13,7 @@ import type { AppRole } from '../../types/index.ts';
 import type { BudgetDB, BudgetFirebaseMigrationResponse, BudgetFirebaseMigrationResult } from './types.ts';
 
 const DEFAULT_COLLECTION_PATH = 'budgetTool/GLOBAL/budgets';
-const DEFAULT_DEPLOYMENT_ID = 'demo';
+const MIGRATION_DEPLOYMENT_ID_ENV = 'BUDGET_MIGRATION_DEPLOYMENT_ID';
 
 type LegacyFirebaseBudget = Record<string, unknown>;
 
@@ -29,25 +30,50 @@ const migrationRequestSchema = z.strictObject({
 
 export async function migrateFirebaseBudgets(req: Request) {
   try {
+    const deploymentId = getMigrationDeploymentId(req);
+    if (!deploymentId) {
+      return ErrorResponse(`[Headers] x-picsa-deployment-id or ${MIGRATION_DEPLOYMENT_ID_ENV} required`);
+    }
+
     const roleRequired: AppRole = 'deployments.admin';
-    if (!hasAuthRole(req, DEFAULT_DEPLOYMENT_ID, roleRequired)) {
+    if (!hasAuthRole(req, deploymentId, roleRequired)) {
       return ErrorResponse(`[${roleRequired}] permission required to migrate firebase budgets`, 401);
     }
 
     const options = await parseMigrationOptions(req);
-    const sourceDocs = await queryFirestoreCollectionWhereFieldNotNull<LegacyFirebaseBudget>(
-      DEFAULT_COLLECTION_PATH,
-      'shareCode',
-    );
     const requestedShareCodes = getRequestedShareCodes(options);
+    const sourceDocs = await getFirebaseBudgetDocs(requestedShareCodes);
     const filteredDocs = filterByRequestedShareCodes(sourceDocs, requestedShareCodes);
     const docs = filteredDocs;
-    const mapped = docs.map((doc) => mapFirebaseBudget(doc, DEFAULT_DEPLOYMENT_ID));
+    const mapped = docs.map((doc) => mapFirebaseBudget(doc, deploymentId));
 
     const results: BudgetFirebaseMigrationResult[] = [];
     const sourceShareCodes = new Set<string>();
     const supabase = getServiceRoleClient();
     const table = supabase.schema('budget').from('budgets');
+    const existingShareCodes = new Set<string>();
+    const sourceMappedShareCodes = [
+      ...new Set(
+        mapped.flatMap((entry) => {
+          if (!('row' in entry) || !entry.row.share_code) return [];
+          return [entry.row.share_code];
+        }),
+      ),
+    ];
+
+    if (sourceMappedShareCodes.length > 0) {
+      const { data: existingRows, error: existingRowsError } = await table
+        .select('share_code')
+        .in('share_code', sourceMappedShareCodes);
+
+      if (existingRowsError) {
+        throw ErrorResponse(existingRowsError.message, 500);
+      }
+
+      for (const row of existingRows || []) {
+        if (row.share_code) existingShareCodes.add(row.share_code);
+      }
+    }
 
     for (const entry of mapped) {
       if (!('row' in entry)) {
@@ -67,16 +93,7 @@ export async function migrateFirebaseBudgets(req: Request) {
       }
       sourceShareCodes.add(shareCode);
 
-      const { data: existing, error: existingError } = await table
-        .select('id')
-        .eq('share_code', shareCode)
-        .maybeSingle();
-
-      if (existingError) {
-        results.push({ ...result, status: 'error', error: existingError.message });
-        continue;
-      }
-      if (existing) {
+      if (existingShareCodes.has(shareCode)) {
         results.push({ ...result, status: 'existing' });
         continue;
       }
@@ -108,6 +125,17 @@ export async function migrateFirebaseBudgets(req: Request) {
     console.error(error);
     return ErrorResponse('Internal Server Error', 500);
   }
+}
+
+async function getFirebaseBudgetDocs(requestedShareCodes: string[]) {
+  if (requestedShareCodes.length > 0) {
+    return queryFirestoreCollectionWhereFieldIn<LegacyFirebaseBudget>(
+      DEFAULT_COLLECTION_PATH,
+      'shareCode',
+      requestedShareCodes,
+    );
+  }
+  return queryFirestoreCollectionWhereFieldNotNull<LegacyFirebaseBudget>(DEFAULT_COLLECTION_PATH, 'shareCode');
 }
 
 function mapFirebaseBudget(
@@ -211,6 +239,10 @@ async function parseMigrationOptions(req: Request): Promise<MigrationOptions> {
     throw ErrorResponse(z.flattenError(result.error), 400);
   }
   return result.data;
+}
+
+function getMigrationDeploymentId(req: Request) {
+  return getRequestDeploymentId(req) || Deno.env.get(MIGRATION_DEPLOYMENT_ID_ENV) || undefined;
 }
 
 function extractEnterpriseId(source: LegacyFirebaseBudget, meta: Record<string, unknown>) {

@@ -23,6 +23,8 @@ type FirestoreRunQueryResponse = {
   readTime?: string;
 };
 
+const FIRESTORE_IN_FILTER_LIMIT = 30;
+
 export type FirebaseConfig = {
   apiKey: string;
   projectId: string;
@@ -64,6 +66,62 @@ export async function queryFirestoreCollectionWhereFieldNotNull<T = Record<strin
   config = getFirebaseConfigFromEnv(),
 ): Promise<FirestoreDocument<T>[]> {
   const { parentPath, collectionId } = parseCollectionPath(collectionPath);
+
+  return runFirestoreStructuredQuery<T>(config, parentPath, {
+    from: [{ collectionId }],
+    where: {
+      unaryFilter: {
+        field: { fieldPath },
+        op: 'IS_NOT_NULL',
+      },
+    },
+    orderBy: [{ field: { fieldPath }, direction: 'ASCENDING' }],
+  });
+}
+
+export async function queryFirestoreCollectionWhereFieldIn<T = Record<string, unknown>>(
+  collectionPath: string,
+  fieldPath: string,
+  values: string[],
+  config = getFirebaseConfigFromEnv(),
+): Promise<FirestoreDocument<T>[]> {
+  const uniqueValues = [...new Set(values.filter(Boolean))];
+  if (uniqueValues.length === 0) return [];
+
+  const { parentPath, collectionId } = parseCollectionPath(collectionPath);
+  const chunks = chunkArray(uniqueValues, FIRESTORE_IN_FILTER_LIMIT);
+  const chunkResults = await Promise.all(
+    chunks.map((chunk) =>
+      runFirestoreStructuredQuery<T>(config, parentPath, {
+        from: [{ collectionId }],
+        where: {
+          fieldFilter: {
+            field: { fieldPath },
+            op: 'IN',
+            value: {
+              arrayValue: {
+                values: chunk.map((value) => ({ stringValue: value })),
+              },
+            },
+          },
+        },
+        orderBy: [{ field: { fieldPath }, direction: 'ASCENDING' }],
+      }),
+    ),
+  );
+
+  const docsByName = new Map<string, FirestoreDocument<T>>();
+  for (const doc of chunkResults.flat()) {
+    docsByName.set(doc.name, doc);
+  }
+  return [...docsByName.values()];
+}
+
+async function runFirestoreStructuredQuery<T>(
+  config: FirebaseConfig,
+  parentPath: string[],
+  structuredQuery: Record<string, unknown>,
+) {
   const parent = firestoreParentPath(config, parentPath);
   const url = new URL(`https://firestore.googleapis.com/v1/${parent}:runQuery`);
   url.searchParams.set('key', config.apiKey);
@@ -71,18 +129,7 @@ export async function queryFirestoreCollectionWhereFieldNotNull<T = Record<strin
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      structuredQuery: {
-        from: [{ collectionId }],
-        where: {
-          unaryFilter: {
-            field: { fieldPath },
-            op: 'IS_NOT_NULL',
-          },
-        },
-        orderBy: [{ field: { fieldPath }, direction: 'ASCENDING' }],
-      },
-    }),
+    body: JSON.stringify({ structuredQuery }),
   });
 
   if (!response.ok) {
@@ -95,6 +142,14 @@ export async function queryFirestoreCollectionWhereFieldNotNull<T = Record<strin
     if (!result.document) return [];
     return [decodeFirestoreDocument<T>(result.document)];
   });
+}
+
+function chunkArray<T>(values: T[], chunkSize: number) {
+  const chunks: T[][] = [];
+  for (let i = 0; i < values.length; i += chunkSize) {
+    chunks.push(values.slice(i, i + chunkSize));
+  }
+  return chunks;
 }
 
 function parseCollectionPath(collectionPath: string) {
