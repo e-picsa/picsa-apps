@@ -23,107 +23,149 @@ type MappedBudget = {
   result: BudgetFirebaseMigrationResult;
 };
 
+type MigrationEntry = MappedBudget | BudgetFirebaseMigrationResult;
+
+type BudgetTable = ReturnType<typeof getBudgetTable>;
+
 const migrationRequestSchema = z.strictObject({
   share_codes: z.array(z.string().min(1)).optional(),
 });
 
 export async function migrateFirebaseBudgets(req: Request) {
   try {
-    const deploymentId = getMigrationDeploymentId(req);
-    if (!deploymentId) {
-      return ErrorResponse(`[Headers] x-picsa-deployment-id required`);
-    }
-
-    const roleRequired: AppRole = 'deployments.admin';
-    if (!hasAuthRole(req, deploymentId, roleRequired)) {
-      return ErrorResponse(`[${roleRequired}] permission required to migrate firebase budgets`, 401);
-    }
-
-    const options = await parseMigrationOptions(req);
-    const requestedShareCodes = getRequestedShareCodes(options);
-    const sourceDocs = await getFirebaseBudgetDocs(requestedShareCodes);
-    const filteredDocs = filterByRequestedShareCodes(sourceDocs, requestedShareCodes);
-    const docs = filteredDocs;
-    const mapped = docs.map((doc) => mapFirebaseBudget(doc, deploymentId));
-
-    const results: BudgetFirebaseMigrationResult[] = [];
-    const sourceShareCodes = new Set<string>();
-    const supabase = getServiceRoleClient();
-    const table = supabase.schema('budget').from('budgets');
-    const existingShareCodes = new Set<string>();
-    const sourceMappedShareCodes = [
-      ...new Set(
-        mapped.flatMap((entry) => {
-          if (!('row' in entry) || !entry.row.share_code) return [];
-          return [entry.row.share_code];
-        }),
-      ),
-    ];
-
-    if (sourceMappedShareCodes.length > 0) {
-      const { data: existingRows, error: existingRowsError } = await table
-        .select('share_code')
-        .in('share_code', sourceMappedShareCodes);
-
-      if (existingRowsError) {
-        throw ErrorResponse(existingRowsError.message, 500);
-      }
-
-      for (const row of existingRows || []) {
-        if (row.share_code) existingShareCodes.add(row.share_code);
-      }
-    }
-
-    for (const entry of mapped) {
-      if (!('row' in entry)) {
-        results.push(entry);
-        continue;
-      }
-
-      const { row, result } = entry;
-      const shareCode = row.share_code;
-      if (!shareCode) {
-        results.push({ ...result, status: 'invalid', error: 'Missing mapped share code' });
-        continue;
-      }
-      if (sourceShareCodes.has(shareCode)) {
-        results.push({ ...result, status: 'error', error: 'Duplicate shareCode found in Firebase source' });
-        continue;
-      }
-      sourceShareCodes.add(shareCode);
-
-      if (existingShareCodes.has(shareCode)) {
-        results.push({ ...result, status: 'existing' });
-        continue;
-      }
-
-      const { error } = await table.insert(row);
-      if (error) {
-        results.push({ ...result, status: 'error', error: error.message });
-      } else {
-        results.push({ ...result, status: 'migrated' });
-      }
-    }
+    const deploymentId = getAuthorizedDeploymentId(req);
+    const { docs, mapped, requestedShareCodes } = await prepareFirebaseBudgetMigration(req, deploymentId);
+    const table = getBudgetTable();
+    const existingShareCodes = await getExistingShareCodes(table, mapped);
+    const results = await migrateMappedBudgets(table, mapped, existingShareCodes);
     results.push(...getMissingRequestedShareCodeResults(docs, requestedShareCodes));
 
-    return JSONResponse<BudgetFirebaseMigrationResponse>({
-      migrated_count: results.filter((result) => result.status === 'migrated').length,
-      existing_count: results.filter((result) => result.status === 'existing').length,
-      missing_count: results.filter((result) => result.status === 'missing').length,
-      invalid_count: results.filter((result) => result.status === 'invalid').length,
-      error_count: results.filter((result) => result.status === 'error').length,
-      results,
-    });
+    return JSONResponse<BudgetFirebaseMigrationResponse>(createMigrationResponse(results));
   } catch (error) {
-    if (error instanceof Response) {
-      return error;
-    }
-    if (error instanceof FirebaseConfigError) {
-      return ErrorResponse(error.message, 500);
-    }
-    console.error(error);
-    return ErrorResponse('Internal Server Error', 500);
+    return handleMigrationError(error);
   }
+}
+
+function getAuthorizedDeploymentId(req: Request) {
+  const deploymentId = getMigrationDeploymentId(req);
+  if (!deploymentId) {
+    throw ErrorResponse(`[Headers] x-picsa-deployment-id required`);
+  }
+
+  const roleRequired: AppRole = 'deployments.admin';
+  if (!hasAuthRole(req, deploymentId, roleRequired)) {
+    throw ErrorResponse(`[${roleRequired}] permission required to migrate firebase budgets`, 401);
+  }
+
+  return deploymentId;
+}
+
+async function prepareFirebaseBudgetMigration(req: Request, deploymentId: string) {
+  const options = await parseMigrationOptions(req);
+  const requestedShareCodes = getRequestedShareCodes(options);
+  const sourceDocs = await getFirebaseBudgetDocs(requestedShareCodes);
+  const docs = filterByRequestedShareCodes(sourceDocs, requestedShareCodes);
+  const mapped = docs.map((doc) => mapFirebaseBudget(doc, deploymentId));
+
+  return { docs, mapped, requestedShareCodes };
+}
+
+function getBudgetTable() {
+  return getServiceRoleClient().schema('budget').from('budgets');
+}
+
+async function getExistingShareCodes(table: BudgetTable, mapped: MigrationEntry[]) {
+  const shareCodes = getMappedShareCodes(mapped);
+  const existingShareCodes = new Set<string>();
+
+  if (shareCodes.length === 0) {
+    return existingShareCodes;
+  }
+
+  const { data: existingRows, error } = await table.select('share_code').in('share_code', shareCodes);
+  if (error) {
+    throw ErrorResponse(error.message, 500);
+  }
+
+  for (const row of existingRows || []) {
+    if (row.share_code) existingShareCodes.add(row.share_code);
+  }
+  return existingShareCodes;
+}
+
+function getMappedShareCodes(mapped: MigrationEntry[]) {
+  return [
+    ...new Set(
+      mapped.flatMap((entry) => {
+        if (!isMappedBudget(entry) || !entry.row.share_code) return [];
+        return [entry.row.share_code];
+      }),
+    ),
+  ];
+}
+
+async function migrateMappedBudgets(table: BudgetTable, mapped: MigrationEntry[], existingShareCodes: Set<string>) {
+  const results: BudgetFirebaseMigrationResult[] = [];
+  const sourceShareCodes = new Set<string>();
+
+  for (const entry of mapped) {
+    results.push(await migrateMappedBudget(table, entry, existingShareCodes, sourceShareCodes));
+  }
+  return results;
+}
+
+async function migrateMappedBudget(
+  table: BudgetTable,
+  entry: MigrationEntry,
+  existingShareCodes: Set<string>,
+  sourceShareCodes: Set<string>,
+): Promise<BudgetFirebaseMigrationResult> {
+  if (!isMappedBudget(entry)) {
+    return entry;
+  }
+
+  const { row, result } = entry;
+  const shareCode = row.share_code;
+  if (!shareCode) {
+    return { ...result, status: 'invalid', error: 'Missing mapped share code' };
+  }
+  if (sourceShareCodes.has(shareCode)) {
+    return { ...result, status: 'error', error: 'Duplicate shareCode found in Firebase source' };
+  }
+  sourceShareCodes.add(shareCode);
+
+  if (existingShareCodes.has(shareCode)) {
+    return { ...result, status: 'existing' };
+  }
+
+  const { error } = await table.insert(row);
+  return error ? { ...result, status: 'error', error: error.message } : { ...result, status: 'migrated' };
+}
+
+function isMappedBudget(entry: MigrationEntry): entry is MappedBudget {
+  return 'row' in entry;
+}
+
+function createMigrationResponse(results: BudgetFirebaseMigrationResult[]): BudgetFirebaseMigrationResponse {
+  return {
+    migrated_count: results.filter((result) => result.status === 'migrated').length,
+    existing_count: results.filter((result) => result.status === 'existing').length,
+    missing_count: results.filter((result) => result.status === 'missing').length,
+    invalid_count: results.filter((result) => result.status === 'invalid').length,
+    error_count: results.filter((result) => result.status === 'error').length,
+    results,
+  };
+}
+
+function handleMigrationError(error: unknown) {
+  if (error instanceof Response) {
+    return error;
+  }
+  if (error instanceof FirebaseConfigError) {
+    return ErrorResponse(error.message, 500);
+  }
+  console.error(error);
+  return ErrorResponse('Internal Server Error', 500);
 }
 
 async function getFirebaseBudgetDocs(requestedShareCodes: string[]) {
