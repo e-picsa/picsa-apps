@@ -13,7 +13,6 @@ import type { AppRole } from '../../types/index.ts';
 import type { BudgetDB, BudgetFirebaseMigrationResponse, BudgetFirebaseMigrationResult } from './types.ts';
 
 const DEFAULT_COLLECTION_PATH = 'budgetTool/GLOBAL/budgets';
-const MIGRATION_DEPLOYMENT_ID_ENV = 'BUDGET_MIGRATION_DEPLOYMENT_ID';
 
 type LegacyFirebaseBudget = Record<string, unknown>;
 
@@ -32,7 +31,7 @@ export async function migrateFirebaseBudgets(req: Request) {
   try {
     const deploymentId = getMigrationDeploymentId(req);
     if (!deploymentId) {
-      return ErrorResponse(`[Headers] x-picsa-deployment-id or ${MIGRATION_DEPLOYMENT_ID_ENV} required`);
+      return ErrorResponse(`[Headers] x-picsa-deployment-id required`);
     }
 
     const roleRequired: AppRole = 'deployments.admin';
@@ -242,7 +241,7 @@ async function parseMigrationOptions(req: Request): Promise<MigrationOptions> {
 }
 
 function getMigrationDeploymentId(req: Request) {
-  return getRequestDeploymentId(req) || Deno.env.get(MIGRATION_DEPLOYMENT_ID_ENV) || undefined;
+  return getRequestDeploymentId(req) || undefined;
 }
 
 function extractEnterpriseId(source: LegacyFirebaseBudget, meta: Record<string, unknown>) {
