@@ -101,8 +101,8 @@
       </div>
 
       @if (showSidenavToggle()) {
-        <button matButton color="primary" class="p-4 flex-1 max-w-32" (click)="componentsService.toggleSidenav()">
-          {{ 'Options' | translate }}
+        <button matButton color="primary" class="p-4" (click)="componentsService.toggleSidenav()">
+          <span style="display: none" class="sm:!block"> {{ 'Options' | translate }}</span>
           <mat-icon>menu</mat-icon>
         </button>
       }
