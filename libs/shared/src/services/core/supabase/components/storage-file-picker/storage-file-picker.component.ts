@@ -91,7 +91,7 @@ export class SupabaseStorageFilePickerComponent {
     return a.name === b.name;
   }
 
-  public handleFileSelect() {
+  public async handleFileSelect() {
     const [entry] = this.selected;
     if (this.selected) {
       this.previewUrl = this.storage.getPublicLink(entry.bucket_id as string, entry.name as string);

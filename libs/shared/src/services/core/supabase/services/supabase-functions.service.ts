@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
-import { FunctionsHttpError, SupabaseClient } from '@supabase/supabase-js';
+import { FunctionsHttpError } from '@supabase/supabase-js';
+
+import { SupabaseDeferredClient } from './deferred-client';
 
 const HEADER_PREFIX = `x-picsa`;
 
@@ -12,14 +14,8 @@ interface FunctionHeaders {
  * Utility class for interacting with supabase functions
  */
 @Injectable({ providedIn: 'root' })
-export class SupabaseFunctionsService {
-  private functions: SupabaseClient['functions'];
-
+export class SupabaseFunctionsService extends SupabaseDeferredClient {
   private headers: Record<string, string> = {};
-
-  public registerSupabaseClient(client: SupabaseClient) {
-    this.functions = client.functions;
-  }
 
   /** Set common headers applied to all function invocations */
   public setHeaders(headers: FunctionHeaders) {
@@ -31,7 +27,8 @@ export class SupabaseFunctionsService {
   }
 
   public async invoke<ResponseType>(endpoint: string, options: FunctionInvokeOptions = {}) {
-    const { data, error } = await this.functions.invoke<ResponseType>(endpoint, {
+    const { functions } = await this.getClient;
+    const { data, error } = await functions.invoke<ResponseType>(endpoint, {
       method: 'POST',
       body: {},
       ...options,
