@@ -125,7 +125,7 @@ export class SupabaseAuthService extends SupabaseDeferredClient {
 
   public async signOut() {
     const { auth } = await this.getClient;
-    auth.signOut();
+    await auth.signOut();
     // Clear anything persisted to storage
     localStorage.clear();
     sessionStorage.clear();
