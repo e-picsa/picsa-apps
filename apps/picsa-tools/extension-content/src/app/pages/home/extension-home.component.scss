@@ -50,7 +50,6 @@ h2.section-header {
 }
 .link-container {
   flex: 1;
-  max-height: calc(100vh - 102px);
   overflow: auto;
 }
 .link-grid {
@@ -90,18 +89,6 @@ h2.section-header {
   text-overflow: ellipsis;
   font-weight: bold;
   letter-spacing: 2px;
-}
-
-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px;
-  position: absolute;
-  bottom: 0;
-  width: calc(100% - 10px);
-  left: 0;
-  background: var(--color-primary);
-  align-items: center;
 }
 
 .nav-icon {

@@ -2956,28 +2956,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/status-bar@npm:^8.0.0":
-  version: 8.0.2
-  resolution: "@capacitor/status-bar@npm:8.0.2"
-  peerDependencies:
-    "@capacitor/core": ">=8.0.0"
-  checksum: 10c0/2e27cf6629666b9e3078ac26e68a13d211a442b24ce64e40510ca9741666abe72c64c0be05b2645ebfcd297413a2f5238812218649e74b906d11893378a15231
-  languageName: node
-  linkType: hard
-
 "@capacitor/synapse@npm:^1.0.4":
   version: 1.0.4
   resolution: "@capacitor/synapse@npm:1.0.4"
   checksum: 10c0/83f37d06ebdb4234596f123417043aae8b0fd3b5905d399fe8bb7f1d7c3352c8449bef093793b01a0b3c4a59208ac27aec5b1ed7cf5e399c5c3004cc0ca74646
-  languageName: node
-  linkType: hard
-
-"@capawesome/capacitor-android-edge-to-edge-support@npm:^8.0.0":
-  version: 8.0.8
-  resolution: "@capawesome/capacitor-android-edge-to-edge-support@npm:8.0.8"
-  peerDependencies:
-    "@capacitor/core": ">=8.0.0"
-  checksum: 10c0/ab155bd5eb7b9f345b8a36f6bc7d93892b01b2a21ee2efb4888ab5a7050f074318bb96d646430963998a40af4b538df58f2f9a1ff46d46f1502cc9a2fb18b769
   languageName: node
   linkType: hard
 
@@ -25884,8 +25866,6 @@ __metadata:
     "@capacitor/push-notifications": "npm:^8.0.0"
     "@capacitor/screen-orientation": "npm:^8.0.0"
     "@capacitor/share": "npm:^8.0.0"
-    "@capacitor/status-bar": "npm:^8.0.0"
-    "@capawesome/capacitor-android-edge-to-edge-support": "npm:^8.0.0"
     "@capawesome/capacitor-app-update": "npm:^8.0.0"
     "@ngx-translate/core": "npm:~16.0.4"
     "@ngx-translate/http-loader": "npm:~16.0.1"

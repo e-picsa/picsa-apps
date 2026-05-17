@@ -50,12 +50,14 @@
     </div>
   </mat-drawer>
   <mat-drawer-content>
+    <div class="status-bar-underlay"></div>
     <div class="page" scrollRestore>
       <picsa-header> </picsa-header>
       @if(ready()){
       <router-outlet></router-outlet>
       }
     </div>
+
     <!-- Loading spinner -->
     @if(showLoader()) {
     <div class="loading-container">

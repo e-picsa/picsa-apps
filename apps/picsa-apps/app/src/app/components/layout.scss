@@ -1,3 +1,22 @@
+// Fixed color that goes under status bar when edge-to-edge
+// This is preferable to capacitor status/system bars which
+// can be unpredictable (core behavior configured in android code)
+.status-bar-underlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--status-bar-height);
+  background-color: var(--color-primary);
+  z-index: 9999;
+  transition: background-color 0.5s ease;
+}
+// Simply padding to ensure safe at bottom
+.nav-bar-underlay {
+  height: 100px;
+  width: 100%;
+  background-color: yellow;
+}
 .loading-container {
   height: 100vh;
   display: flex;
@@ -19,6 +38,8 @@ button#menuButton {
   width: 300px;
   background: var(--color-primary-50);
   padding: 0;
+  padding-top: var(--status-bar-height);
+  padding-bottom: var(--nav-bar-height);
 }
 .close-button {
   position: absolute;

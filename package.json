@@ -58,8 +58,6 @@
     "@capacitor/push-notifications": "^8.0.0",
     "@capacitor/screen-orientation": "^8.0.0",
     "@capacitor/share": "^8.0.0",
-    "@capacitor/status-bar": "^8.0.0",
-    "@capawesome/capacitor-android-edge-to-edge-support": "^8.0.0",
     "@capawesome/capacitor-app-update": "^8.0.0",
     "@ngx-translate/core": "~16.0.4",
     "@ngx-translate/http-loader": "~16.0.1",
