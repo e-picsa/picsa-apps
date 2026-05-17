@@ -5,6 +5,7 @@
 .editor-container {
   position: relative;
   padding-bottom: 2rem;
+  padding-top: var(--status-bar-height);
 }
 // ***************************************************************************************
 // Stepper - General
@@ -18,13 +19,10 @@ mat-stepper.mat-stepper-horizontal {
 }
 
 .closeButton {
-  position: absolute;
-  right: 8px;
-  top: (-$close-button-height);
-  width: $close-button-height;
-  height: $close-button-height;
   color: white;
   z-index: 2;
+  float: right;
+  margin-right: 8px;
 }
 
 // ***************************************************************************************
