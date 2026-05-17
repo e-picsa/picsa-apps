@@ -8,6 +8,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 import { ErrorHandlerService } from '../../error-handler.service';
 import { PicsaNotificationService } from '../../notification.service';
+import { SupabaseDeferredClient } from './deferred-client';
 
 type IDeploymentAuthRoles = {
   [deployment_id: string]: AppRole[];
@@ -24,7 +25,7 @@ interface ICustomAuthJWTPayload extends JwtPayload {
  * Requires parent service to initialise with main supabase client
  */
 @Injectable({ providedIn: 'root' })
-export class SupabaseAuthService {
+export class SupabaseAuthService extends SupabaseDeferredClient {
   private document = inject<Document>(DOCUMENT);
   private notificationService = inject(PicsaNotificationService);
   private errorService = inject(ErrorHandlerService);
@@ -43,20 +44,12 @@ export class SupabaseAuthService {
   /** Track if initial auth check has completed */
   public isAuthChecked = signal(!this.hasSupabaseAuthToken());
 
-  private client: SupabaseClient;
-
-  private get auth() {
-    return this.client.auth;
-  }
-
-  /** As the auth service is a child of the main supabase service provide way to register parent client */
-  public registerSupabaseClient(client: SupabaseClient) {
-    this.client = client;
-    this.subscribeToAuthChanges();
+  public override async handleClientRegistered(client: SupabaseClient) {
+    this.subscribeToAuthChanges(client);
     // Explicitly check for session to handle edge cases where onAuthStateChange doesn't fire
     // Only verify if we have a token (to avoid unnecessary network requests on public pages)
     if (this.hasSupabaseAuthToken()) {
-      this.client.auth.getSession().finally(() => {
+      client.auth.getSession().finally(() => {
         this.isAuthChecked.set(true);
       });
     }
@@ -69,7 +62,8 @@ export class SupabaseAuthService {
   }
 
   public async signInUser(email: string, password: string) {
-    const res = await this.auth.signInWithPassword({ email, password });
+    const { auth } = await this.getClient;
+    const res = await auth.signInWithPassword({ email, password });
     const { data, error } = res;
     if (error?.code === 'email_not_confirmed') {
       // sign in as temp user to allow ui email confirmation
@@ -85,7 +79,8 @@ export class SupabaseAuthService {
     // data that will be mapped to user_profile table via trigger function
     meta: { full_name: string; country_code: string; organisation: string },
   ) {
-    const { data, error } = await this.auth.signUp({
+    const { auth } = await this.getClient;
+    const { data, error } = await auth.signUp({
       email,
       password,
       options: { data: meta },
@@ -100,7 +95,8 @@ export class SupabaseAuthService {
   }
 
   public async reloadUserPermissions() {
-    const { error } = await this.auth.refreshSession();
+    const { auth } = await this.getClient;
+    const { error } = await auth.refreshSession();
     if (error) {
       // force hard reload if not possible to reload user permission
       location.reload();
@@ -108,24 +104,28 @@ export class SupabaseAuthService {
   }
 
   public async resetEmailPassword(email: string) {
+    const { auth } = await this.getClient;
     const baseUrl = this.document.location.origin;
     const redirectToUrl = `${baseUrl}/profile/password-reset`;
-    return this.auth.resetPasswordForEmail(email, {
+    return auth.resetPasswordForEmail(email, {
       redirectTo: redirectToUrl,
     });
   }
 
   public async resendEmailConfirmation(email: string) {
-    return this.auth.resend({ type: 'signup', email });
+    const { auth } = await this.getClient;
+    return auth.resend({ type: 'signup', email });
   }
 
   // this works automatically since the access token is saved in cookies (really cool)
   public async resetResetUserPassword(newPassword: string) {
-    return this.auth.updateUser({ password: newPassword });
+    const { auth } = await this.getClient;
+    return auth.updateUser({ password: newPassword });
   }
 
   public async signOut() {
-    this.auth.signOut();
+    const { auth } = await this.getClient;
+    auth.signOut();
     // Clear anything persisted to storage
     localStorage.clear();
     sessionStorage.clear();
@@ -139,13 +139,14 @@ export class SupabaseAuthService {
    * in app when not providing alternative sign-in provider and requiring db access
    * */
   public async signInAppUserOrAnonymous() {
-    const { data, error: getSessionError } = await this.auth.getSession();
+    const { auth } = await this.getClient;
+    const { data, error: getSessionError } = await auth.getSession();
     if (getSessionError) {
       this.errorService.handleError(getSessionError);
       return;
     }
     if (!data.session) {
-      const { data, error: signInError } = await this.auth.signInAnonymously();
+      const { data, error: signInError } = await auth.signInAnonymously();
       if (signInError) {
         console.error('[SUPABASE AUTH] Failed to sign in anonymous user', signInError);
         this.errorService.handleError(signInError);
@@ -158,7 +159,8 @@ export class SupabaseAuthService {
 
   /** Attempt to sign-in as persisted user, with fallback to anonymous */
   public async signInDashboardDevUser() {
-    const { error } = await this.auth.getUser();
+    const { auth } = await this.getClient;
+    const { error } = await auth.getUser();
     if (error) {
       return this.signInDevUser();
     }
@@ -196,9 +198,10 @@ export class SupabaseAuthService {
 
   /** Use generated dev credential when running supabase locally */
   private async signInDevUser() {
+    const { auth } = await this.getClient;
     const email = 'admin@picsa.app';
     const password = 'admin@picsa.app';
-    const { error } = await this.auth.signInWithPassword({ email, password });
+    const { error } = await auth.signInWithPassword({ email, password });
     // TODO - could consider function to generate app user base on id which could also use RLS for sync
     if (error) {
       console.error(error);
@@ -212,9 +215,9 @@ export class SupabaseAuthService {
     return this.authUser;
   }
 
-  private subscribeToAuthChanges() {
+  private subscribeToAuthChanges(client: SupabaseClient) {
     // Subscribe to authenticated user changes
-    this.auth.onAuthStateChange((_event, session) => {
+    client.auth.onAuthStateChange((_event, session) => {
       console.log(`[AUTH] ${_event}`);
       // Ensure we mark auth as checked on any event (including INITIAL_SESSION)
       this.isAuthChecked.set(true);
@@ -227,7 +230,7 @@ export class SupabaseAuthService {
         // If user auth cames are updated it will trigger a signed_in action (same as initial)
         // Refresh session to ensure any updated user roles are included
         if (_event === 'SIGNED_IN') {
-          this.auth.refreshSession();
+          client.auth.refreshSession();
         }
       }
       this.authUser.set(user);

@@ -13,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaTouchGesturesDirective } from '@picsa/shared/directives';
 
 import { PicsaDialogService } from '../../../dialog';
 import { PhotoService } from '../../photo.service';
@@ -22,7 +21,7 @@ import { IPhotoEntry } from '../../schema';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-photo-view',
-  imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule, PicsaTouchGesturesDirective],
+  imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule],
   templateUrl: './photo-view.component.html',
   styleUrl: './photo-view.component.scss',
 })
