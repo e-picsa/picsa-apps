@@ -24,6 +24,7 @@ $icon-size: 48px;
     width: calc($icon-size + 1rem + 8px);
     cursor: pointer;
     background: #fff;
+    color: black;
     div.name {
       // allow up to 2 lines of text with padding
       height: calc(2rem + 4px);

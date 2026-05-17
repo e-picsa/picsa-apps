@@ -1,5 +1,4 @@
 /// <reference types="@capacitor/push-notifications" />
-/// <reference types="@capacitor/status-bar" />
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
@@ -18,7 +17,6 @@ const config: CapacitorConfig = {
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
     // capacitor
-    '@capawesome/capacitor-android-edge-to-edge-support',
     '@capacitor/app',
     '@capacitor/browser',
     '@capacitor/core',
@@ -33,22 +31,15 @@ const config: CapacitorConfig = {
     '@capacitor/screen-orientation',
     '@capacitor/camera',
     '@capacitor/share',
-    '@capacitor/status-bar',
     '@capacitor/push-notifications',
   ],
   plugins: {
     PushNotifications: {
       presentationOptions: ['alert'],
     },
-    // Use dark text on light background
-    StatusBar: {
-      style: 'LIGHT',
-    },
-    // Config handled at runtime
-    EdgeToEdge: {},
-    // Disable in favor of @capawesome/capacitor-android-edge-to-edge-support
     SystemBars: {
-      insetsHandling: 'disable',
+      insetsHandling: 'css',
+      style: 'DARK',
     },
   },
   // Enable app to use native http for requests (bypass cors)

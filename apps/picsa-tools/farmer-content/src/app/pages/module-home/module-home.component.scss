@@ -1,3 +1,7 @@
+header,
+.tool-header {
+  padding-top: var(--status-bar-height);
+}
 .header-title {
   @apply text-[var(--color-primary)]  text-2xl text-center mr-2 -ml-2;
 }

@@ -42,7 +42,6 @@
       "cache": false,
       "executor": "nx:run-commands",
       "description": "Serve extension app in external mode to support live-reload",
-      "dependsOn": ["^build"],
       "inputs": ["{projectRoot}/capacitor.config.ts", "{projectRoot}/.env.local"],
       "options": {
         "commands": ["npx cap sync && nx run picsa-apps-app:serve --configuration=external"],
