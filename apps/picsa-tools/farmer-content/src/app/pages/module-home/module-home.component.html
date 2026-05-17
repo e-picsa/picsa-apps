@@ -1,11 +1,11 @@
 <div class="page-content" #contentEl>
   <!-- Custom Header -->
-  <div class="flex items-center">
+  <header class="flex items-center">
     <button color="primary" matIconButton routerLink="/farmer">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <h2 class="header-title">{{ content()?.title || '' | translate }}</h2>
-  </div>
+  </header>
 
   @if (content(); as content) {
     <!-- Main Content -->
