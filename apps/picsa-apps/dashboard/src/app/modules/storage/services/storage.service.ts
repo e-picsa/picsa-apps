@@ -1,4 +1,4 @@
-import { inject,Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import {
   IStorageEntry,
@@ -26,7 +26,6 @@ export class DashboardStorageService extends PicsaAsyncService {
   public storageList = signal<IDashboardStorageEntry[]>([]);
 
   public override async init() {
-    await this.storageService.ready();
     const files = await this.listStorageEntries();
     // Ensure active deployment loaded and list all files available either to deployment country or globally
     this.storageList.set(files);

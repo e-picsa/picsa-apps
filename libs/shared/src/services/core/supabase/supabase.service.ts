@@ -66,8 +66,6 @@ export class SupabaseService extends PicsaAsyncService {
     this.storage.registerSupabaseClient(this.supabase);
     this.auth.registerSupabaseClient(this.supabase);
     this.functions.registerSupabaseClient(this.supabase);
-    // trigger child service initialisers optimistically
-    this.storage.ready();
   }
 
   private async loadConfig(): Promise<SupabaseConfig> {

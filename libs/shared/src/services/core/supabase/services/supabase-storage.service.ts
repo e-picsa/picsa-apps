@@ -1,11 +1,9 @@
-import { inject,Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import type { Database } from '@picsa/server-types';
-import { FileObject, FileOptions } from '@supabase/storage-js';
+import { FileObject, FileOptions, StorageClient } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { firstValueFrom, Subject } from 'rxjs';
 
-import { PicsaAsyncService } from '../../../asyncService.service';
-import { PicsaNotificationService } from '../../notification.service';
+import { SupabaseDeferredClient } from './deferred-client';
 
 type IStorageDB = Database['storage']['Tables']['objects']['Row'];
 
@@ -30,29 +28,12 @@ type IStorageEntrySDK = FileObject;
  * Utility class for interacting with supabase storage client
  **/
 @Injectable({ providedIn: 'root' })
-export class SupabaseStorageService extends PicsaAsyncService {
-  private notificationService = inject(PicsaNotificationService);
+export class SupabaseStorageService extends SupabaseDeferredClient {
+  private storage: StorageClient | undefined;
 
-  private storage: SupabaseClient['storage'];
-  private client: SupabaseClient;
-
-  /** Track parent service registration */
-  private register$ = new Subject<SupabaseClient>();
-
-  public override async init(): Promise<void> {
-    // wait for service to have supabase client registered (done in app module)
-    if (!this.storage) {
-      await firstValueFrom(this.register$);
-    }
-  }
-
-  public registerSupabaseClient(client: SupabaseClient) {
+  public override async handleClientRegistered(client: SupabaseClient) {
     this.storage = client.storage;
-    this.client = client;
-    this.register$.next(client);
-    this.register$.complete();
   }
-
   /**
    * List a bucket contents
    * Uses custom table view as by default js sdk appears to only return top-level files/folders
@@ -61,8 +42,9 @@ export class SupabaseStorageService extends PicsaAsyncService {
    * @param subFolder - list all files within nested folder structure
    * */
   public async list(bucketId?: string, subfolder?: string) {
+    const client = await this.getClient;
     // NOTE - access via storage table instead of storage api as does not support recursive list
-    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*');
+    let query = client.from('storage_objects').select<'*', IStorageEntry>('*');
     if (bucketId) {
       query = query.eq('bucket_id', bucketId);
     }
@@ -84,9 +66,10 @@ export class SupabaseStorageService extends PicsaAsyncService {
    * @param storagePath - Fully qualified path to file, including bucket prefix
    */
   public async getFile(storagePath: string): Promise<IStorageEntry | null> {
+    const client = await this.getClient;
     const [bucket_id, ...path_tokens] = storagePath.split('/');
-    const { data, error } = await this.client
-      .from(`storage_objects`)
+    const { data, error } = await client
+      .from('storage_objects')
       .select<'*', IStorageEntry>('*')
       .eq('bucket_id', bucket_id)
       .eq('name', path_tokens.join('/'))
@@ -113,9 +96,10 @@ export class SupabaseStorageService extends PicsaAsyncService {
     filename: string;
     folderPath?: string;
   }): Promise<IStorageEntrySDK | null> {
+    const { storage } = await this.getClient;
     const defaults = { folderPath: '' };
     const { bucketId, filename, folderPath } = { ...defaults, ...options };
-    const { data, error } = await this.storage.from(bucketId).list(folderPath, { limit: 1, search: filename });
+    const { data, error } = await storage.from(bucketId).list(folderPath, { limit: 1, search: filename });
     if (error) {
       throw error;
     }
@@ -126,10 +110,11 @@ export class SupabaseStorageService extends PicsaAsyncService {
     options: { bucketId: string; filename: string; fileBlob: Blob; folderPath?: string },
     fileOptions: FileOptions = { upsert: false },
   ) {
+    const { storage } = await this.getClient;
     const defaults = { folderPath: '' };
     const { bucketId, fileBlob, filename, folderPath } = { ...defaults, ...options };
     const filePath = folderPath ? `${folderPath}/${filename}` : `${filename}`;
-    const { data, error } = await this.storage.from(bucketId).upload(filePath, fileBlob, fileOptions);
+    const { data, error } = await storage.from(bucketId).upload(filePath, fileBlob, fileOptions);
     if (error) {
       throw error;
     }
@@ -137,11 +122,15 @@ export class SupabaseStorageService extends PicsaAsyncService {
   }
 
   public async deleteFile(bucketId: string, filePath: string) {
-    return this.storage.from(bucketId).remove([filePath]);
+    const { storage } = await this.getClient;
+    return storage.from(bucketId).remove([filePath]);
   }
 
   /** Return the link to a file in a public bucket */
   public getPublicLink(bucketId: string, objectPath: string) {
+    if (!this.storage) {
+      throw new Error('Storage client not initialised, cannot return public link');
+    }
     return this.storage.from(bucketId).getPublicUrl(objectPath).data.publicUrl;
   }
 }
