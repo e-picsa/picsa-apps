@@ -7,9 +7,6 @@ const config: CapacitorConfig = {
   appName: 'PICSA App',
   webDir: '../../../dist/apps/picsa-apps/app',
   zoomEnabled: true,
-  android: {
-    adjustMarginsForEdgeToEdge: 'auto',
-  },
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
@@ -43,12 +40,16 @@ const config: CapacitorConfig = {
     PushNotifications: {
       presentationOptions: ['alert'],
     },
-    // Use dark text on light background 
+    // Use dark text on light background
     StatusBar: {
       style: 'LIGHT',
     },
     // Config handled at runtime
     EdgeToEdge: {},
+    // Disable in favor of @capawesome/capacitor-android-edge-to-edge-support
+    SystemBars: {
+      insetsHandling: 'disable',
+    },
   },
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
