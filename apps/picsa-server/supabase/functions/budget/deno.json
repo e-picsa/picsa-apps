@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.93.3",
-    "zod": "npm:zod@4/v4",
-    "hono": "jsr:@hono/hono@4"
-  }
-}
