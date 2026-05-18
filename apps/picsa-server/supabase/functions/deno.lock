@@ -25,6 +25,14 @@
     "https://deno.land/x/djwt@v2.8/mod.ts": "7abba8518688e88648882a95161b42391ac6043c142b1ab491b36f712189e1e1",
     "https://deno.land/x/djwt@v2.8/signature.ts": "a5649368a4b433b2810e7d47f53661fe3b0f7fe1778cb49234ceae3d6e861185",
     "https://deno.land/x/djwt@v2.8/util.ts": "0d78272bd23a4656ceabe137d496fcca37cf3de36212477642aa5d85a880d87a",
+    "https://deno.land/x/xml@2.1.1/mod.ts": "4a314a7a28d1ec92f899ce4c6991f0356c77550a75955ec3f4a36733f08548e8",
+    "https://deno.land/x/xml@2.1.1/parse.ts": "614b8648345ae93c641368836947484d321c7ac9312ae12ec750434353cd7385",
+    "https://deno.land/x/xml@2.1.1/stringify.ts": "930d35431f153b29d36549cff08fcfbe978e52ccb56af1e3baa2e0760f418b04",
+    "https://deno.land/x/xml@2.1.1/utils/parser.ts": "7f3b00aefabdd6d47e17061cbc35c3c4d44cc1ed174180b7eb70184e56bb5ba6",
+    "https://deno.land/x/xml@2.1.1/utils/stream.ts": "056e2f368d47932d77e431bbc4a8292359171cc9ce881ea31ce0aae30d763e68",
+    "https://deno.land/x/xml@2.1.1/utils/streamable.ts": "1603a5f10c859b95d4e9502365a0fba0b19d5d068356e20d5a6813cd37fee780",
+    "https://deno.land/x/xml@2.1.1/utils/stringifier.ts": "c701b506835237c0c6c0a08fd94e0a012b644def3f4c819c64788daf2e649ea3",
+    "https://deno.land/x/xml@2.1.1/utils/types.ts": "ecaf7785e54a6f1da6f8e56da2bce9853407ceb7d5b3b70f0a60a0890151fe4c",
     "https://esm.sh/@supabase/auth-js@2.93.3/denonext/auth-js.mjs": "6141ddd120e72168995fe8179b53fc75e7d52293db41351edb2d27f3572dde68",
     "https://esm.sh/@supabase/functions-js@2.93.3/denonext/functions-js.mjs": "4f5ca656b1dfd3042d9ace2ce5bbca1bd2b0039951fec6f70da0621f55c7441c",
     "https://esm.sh/@supabase/postgrest-js@2.93.3/denonext/postgrest-js.mjs": "1048378d78abee53f804268601c5c15f2e57b6841b130466350fb7fd14846c17",
@@ -40,7 +48,8 @@
     "members": {
       "budget": {
         "dependencies": [
-          "jsr:@hono/hono@4"
+          "jsr:@hono/hono@4",
+          "npm:zod@4"
         ]
       },
       "dashboard": {
