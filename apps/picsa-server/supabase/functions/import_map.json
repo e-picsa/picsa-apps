@@ -1,8 +1,0 @@
-{
-  "imports": {
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.93.3",
-    "djwt": "https://deno.land/x/djwt@v2.8/mod.ts",
-    "@picsa/shared-utils": "../../../../libs/shared/src/utils/role.utils.ts",
-    "zod": "npm:zod@4/v4"
-  }
-}
