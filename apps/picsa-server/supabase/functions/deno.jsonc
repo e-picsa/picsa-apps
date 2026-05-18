@@ -1,8 +1,7 @@
 {
-  "workspace": ["./geo", "./budget"],
   "test": {
     "include": ["**/*.test.ts", "tests/test-utils.ts"],
     "exclude": [],
   },
-  "importMap": "./import_map.json",
+  "workspace": ["./budget", "./dashboard", "./geo", "./kobo-sync", "./test-fn"],
 }

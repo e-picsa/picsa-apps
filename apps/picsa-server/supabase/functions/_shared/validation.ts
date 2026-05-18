@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'npm:zod@4/v4';
 import { ErrorResponse } from './response.ts';
 
 export async function validateBody<T extends z.ZodType>(req: Request, schema: T): Promise<z.infer<T>> {
