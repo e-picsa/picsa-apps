@@ -1,3 +1,7 @@
 {
+  "test": {
+    "include": ["**/*.test.ts", "tests/test-utils.ts"],
+    "exclude": [],
+  },
   "workspace": ["./budget", "./dashboard", "./geo", "./kobo-sync", "./test-fn"],
 }
