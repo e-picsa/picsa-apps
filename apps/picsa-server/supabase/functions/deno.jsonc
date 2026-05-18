@@ -1,0 +1,3 @@
+{
+  "workspace": ["./budget", "./dashboard", "./geo", "./kobo-sync", "./test-fn"],
+}
