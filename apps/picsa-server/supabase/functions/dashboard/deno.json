@@ -1,5 +1,7 @@
 {
   "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.93.3",
+    "djwt": "https://deno.land/x/djwt@v2.8/mod.ts",
     "openapi-fetch": "npm:openapi-fetch@0.8.2"
   }
 }
