@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@hono/hono@4": "4.6.10",
     "jsr:@std/assert@*": "1.0.19",
     "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.13",
@@ -11,6 +12,9 @@
     "npm:zod@4": "4.3.6"
   },
   "jsr": {
+    "@hono/hono@4.6.10": {
+      "integrity": "dae93ac8bb49881f99506aa8e01e5536d5d72cc3c2b556bde2816fdf25ca609c"
+    },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b"
     },
@@ -138,6 +142,11 @@
         "dependencies": [
           "jsr:@hono/hono@4",
           "npm:zod@4"
+        ]
+      },
+      "dashboard": {
+        "dependencies": [
+          "npm:openapi-fetch@0.8.2"
         ]
       }
     }
