@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "openapi-fetch": "npm:openapi-fetch@0.8.2"
+  }
+}

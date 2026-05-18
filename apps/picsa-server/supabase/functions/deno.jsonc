@@ -1,5 +1,11 @@
 {
-  "workspace": ["./geo", "./budget"],
+  "workspace": [
+    "./geo",
+    "./budget",
+    "./dashboard",
+    "./kobo-sync",
+    "./test-fn"
+  ],
   "test": {
     "include": ["**/*.test.ts", "tests/test-utils.ts"],
     "exclude": [],
