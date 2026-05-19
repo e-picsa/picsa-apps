@@ -7,7 +7,14 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig"],
+      "inputs": [
+        "default",
+        "^production",
+        "supabaseConfig",
+        "{workspaceRoot}/libs/shared-assets/**/*",
+        "{workspaceRoot}/libs/i18n/assets/**/*",
+        "{workspaceRoot}/libs/data/**/*"
+      ],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {

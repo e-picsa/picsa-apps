@@ -7,7 +7,14 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig", "libs"],
+      "inputs": [
+        "default",
+        "^production",
+        "supabaseConfig",
+        "{workspaceRoot}/libs/shared-assets/**/*",
+        "{workspaceRoot}/libs/i18n/assets/**/*",
+        "{workspaceRoot}/libs/data/**/*"
+      ],
       "allowedCommonJsDependencies": ["*"],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
