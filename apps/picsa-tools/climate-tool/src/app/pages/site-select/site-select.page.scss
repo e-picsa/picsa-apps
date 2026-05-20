@@ -17,6 +17,7 @@
 }
 .view-toggle {
   @apply absolute right-2 top-2 z-10 h-10 md:!hidden text-primary  bg-white;
+  margin-top: var(--status-bar-height);
 }
 .site-select-container {
   @apply absolute bottom-8 w-full z-10 flex;

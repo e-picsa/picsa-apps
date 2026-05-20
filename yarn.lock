@@ -2773,79 +2773,79 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-community/firebase-analytics@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "@capacitor-community/firebase-analytics@npm:7.0.1"
+"@capacitor-community/firebase-analytics@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "@capacitor-community/firebase-analytics@npm:8.0.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/3d4f22324d1564a94e630f86aaef51dc768af791d7022931798252683352aa365927d189caab8c9bd0ff8cb66d4e07adc692722819134cd2d7f6061a0937b7c0
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/313a5ce890a67fba0e32664cebbec73d80f446c907abd186e64080d4310c40fd089f7d5d2b22cd501f4bd796dfcf7060d033e20f19a3e2db99963f4c52e805f0
   languageName: node
   linkType: hard
 
-"@capacitor-firebase/crashlytics@npm:^7.2.0":
-  version: 7.5.0
-  resolution: "@capacitor-firebase/crashlytics@npm:7.5.0"
+"@capacitor-firebase/crashlytics@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "@capacitor-firebase/crashlytics@npm:8.2.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
+    "@capacitor/core": ">=8.0.0"
   peerDependenciesMeta:
     firebase:
       optional: true
-  checksum: 10c0/05eab5943e11c5eaddd330a9f0a095b1c495c3fb4deed791a6e5d184981306a6d3ecf0433800ecd148111e5d4ef6bef2bbfd1b4877d4fb6b7235fa3744481a38
+  checksum: 10c0/e7c89856788534440ced0ff9f82ffb8d5a45ddf4604dc80f68458c1aba3035a898355892dd4ee74f8a2cd27da07b88619481caec53ce67894dc6024186a7f035
   languageName: node
   linkType: hard
 
-"@capacitor-firebase/performance@npm:^7.2.0":
-  version: 7.5.0
-  resolution: "@capacitor-firebase/performance@npm:7.5.0"
+"@capacitor-firebase/performance@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "@capacitor-firebase/performance@npm:8.2.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-    firebase: ^11.2.0
+    "@capacitor/core": ">=8.0.0"
+    firebase: ^12.6.0
   peerDependenciesMeta:
     firebase:
       optional: true
-  checksum: 10c0/5923dc0f6b9b04e0aabde72a9ac2f97885c3b9df851789118c18f89054542f7f27934bb08ed90ff80626831ffbc8b9e4068b741fcc239f3f25ce9f588e9d6d76
+  checksum: 10c0/ff437a2e0ec121d042ad9c82e10761f8932ffa1f8a14d3ce982db3e8fc699af248b756ff13dcc961b3b46a6277361c09e19443bbcf46fd8390f6f8b24261f527
   languageName: node
   linkType: hard
 
-"@capacitor/android@npm:^7.4.2":
-  version: 7.6.2
-  resolution: "@capacitor/android@npm:7.6.2"
+"@capacitor/android@npm:^8.0.0":
+  version: 8.3.4
+  resolution: "@capacitor/android@npm:8.3.4"
   peerDependencies:
-    "@capacitor/core": ^7.6.0
-  checksum: 10c0/ea6488f9f03ea02a74b8dc1247777c7e551edb7ef0f620f5c32a7740e0baadb8f23d49c1c1b202904f5c4ae3eb503cd0141eabb632e1f5cda2dba45a7471b37f
+    "@capacitor/core": ^8.3.0
+  checksum: 10c0/c24c0ad18df8de1ef63bc22392cc8e3934acbff72a7cbd97eb1710f38617cc42728c410cd9e2f74c62d93da09d678ce2dac96a819005343c1c0a8ad8ee629cb1
   languageName: node
   linkType: hard
 
-"@capacitor/app@npm:^7.0.1":
-  version: 7.1.2
-  resolution: "@capacitor/app@npm:7.1.2"
+"@capacitor/app@npm:^8.0.0":
+  version: 8.1.0
+  resolution: "@capacitor/app@npm:8.1.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/f021839167ff2ada3cf7e7ce1a2c3f9c6314648dd2635385bdb12e34bd7bdb177601eb66eaedf0a71ef7276567774640382bb65fa6da588293886ecaeb1ced0e
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/670a5bc3f0c1706f9d09ad03873836ac9b56e1ca6c9853e283d43b4ff04c7295b30801d49f563206aadcf882245025be1ecdc12c22c7d479c636b34123e9a0d3
   languageName: node
   linkType: hard
 
-"@capacitor/browser@npm:^7.0.1":
-  version: 7.0.5
-  resolution: "@capacitor/browser@npm:7.0.5"
+"@capacitor/browser@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "@capacitor/browser@npm:8.0.3"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/d88cdfb2d0368e8b6edaf894989b1f9d957965d34fd8b5002b0fff05eee1b51d7a7cfa048624f13bd0e41530262655aa632f4cb8621f77ac789a642738081981
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/c4dea47e4035a54f4697f062f176285d66015812fd544c18f39b6c2f4fdfb327011c603abc6fafee6af5a1399777e5cf1e0c5c19e6e6c1a2f4af8bdaf9b5d2cf
   languageName: node
   linkType: hard
 
-"@capacitor/camera@npm:^7.0.1":
-  version: 7.0.5
-  resolution: "@capacitor/camera@npm:7.0.5"
+"@capacitor/camera@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "@capacitor/camera@npm:8.2.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/05613e7f57a246f911f49c4650e0ea6aa448ba3598a5b13727712dc815afc4fafe0fe231b3a648e288c14a19676688a6c3b57d9a1bc1c2e18043e1472cf0e3c4
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/8f94d8abdd4c10eeefe924e5edb6fdec98fccf8fbc672b2399b00aefaa1b654a9d008efc1f775d1ae679e85421793ca947e6a9e7ad6dbed9d2b2ff8341c99eda
   languageName: node
   linkType: hard
 
-"@capacitor/cli@npm:^7.4.2":
-  version: 7.6.2
-  resolution: "@capacitor/cli@npm:7.6.2"
+"@capacitor/cli@npm:^8.0.0":
+  version: 8.3.4
+  resolution: "@capacitor/cli@npm:8.3.4"
   dependencies:
     "@ionic/cli-framework-output": "npm:^2.2.8"
     "@ionic/utils-subprocess": "npm:^3.0.1"
@@ -2867,51 +2867,51 @@ __metadata:
   bin:
     cap: bin/capacitor
     capacitor: bin/capacitor
-  checksum: 10c0/bbe6e13eb5961f0dc2dba0eeeae340f58ba28268868811f3dcc5122243238f7d26efb353090b6c700402db448e4572e5e2a8959e9d71ebf20e2403fb498d3015
+  checksum: 10c0/e9f8f4bbd10f1eb4cd80b450cab75c12a78490fed2caa540f5fc7b7ba9cb61e309e0d214bc4b30085f686eda1de4da72ed0ea84902a9129d257deffff65797c7
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:^7.4.2":
-  version: 7.6.2
-  resolution: "@capacitor/core@npm:7.6.2"
+"@capacitor/core@npm:^8.0.0":
+  version: 8.3.4
+  resolution: "@capacitor/core@npm:8.3.4"
   dependencies:
     tslib: "npm:^2.1.0"
-  checksum: 10c0/6554fede03f6f04a299d1401896ee732852c831cda408a4754342615f86d4447a390ba3de5a91e14b1b5e8d189e957263ab6d8300d09b24aba4bcc34a9cfbbb8
+  checksum: 10c0/12341743e5d4c532cdfe1f3a145ac0f278f9006a46cd9a31f79c9169cfce6d86b77c60082230975bf265882a84e7dce7a4d5b137a5841a5b86d1b9d230f67995
   languageName: node
   linkType: hard
 
-"@capacitor/device@npm:^7.0.1":
-  version: 7.0.5
-  resolution: "@capacitor/device@npm:7.0.5"
+"@capacitor/device@npm:^8.0.0":
+  version: 8.0.2
+  resolution: "@capacitor/device@npm:8.0.2"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/18a236a512f566e8d3b966f4051912876501b11c28ff258a545c235ca4fbe7561a5a01dd52318af7823637450ac35471e206563554a49cdbcd2c5e74362fedeb
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/af86583b1c77e93fbd7fb504e08c45dc1f138ea7f76fce2786235797271a5f6d855a8e76dbada3c40a2789f19ff3f068c2343ae311e64bf7839d559d4785b6ce
   languageName: node
   linkType: hard
 
-"@capacitor/filesystem@npm:^7.1.2":
-  version: 7.1.8
-  resolution: "@capacitor/filesystem@npm:7.1.8"
+"@capacitor/filesystem@npm:^8.0.0":
+  version: 8.1.2
+  resolution: "@capacitor/filesystem@npm:8.1.2"
   dependencies:
-    "@capacitor/synapse": "npm:^1.0.3"
+    "@capacitor/synapse": "npm:^1.0.4"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/f93c9c5ffa1bdad70516ce78c21132bf3791ddceccab2e503d1951d7dc2639ac3096b883039ec889c6b9868ca94e127eee63ad7f4f54b48ba4de372da7bdbd7e
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/09e21108f9ef7d106719a4e927bab0657b004aeb7f2c894113339026c620bbe023ac48233fdfb9fd0cde07c30c84e0634e438a06466c3f19b16700682a7c3c3c
   languageName: node
   linkType: hard
 
-"@capacitor/geolocation@npm:^7.1.4":
-  version: 7.1.8
-  resolution: "@capacitor/geolocation@npm:7.1.8"
+"@capacitor/geolocation@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "@capacitor/geolocation@npm:8.2.0"
   dependencies:
-    "@capacitor/synapse": "npm:^1.0.3"
+    "@capacitor/synapse": "npm:^1.0.4"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/7c986cd7dd6211526b5eeacda9953590ba2a25af5e163135c485b82b6f1117db6d7cd7d08b858d61673603a3d9ad85669a1926bec27a8dbc7ec51508468c98ce
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/3d715008cb89d763fa59dee632c71213e178c016820f9febe0b537ebb57eeb140b9148e8fc2362c609430735321936e7ec0a95788957c4cc03ace9442bd0a12d
   languageName: node
   linkType: hard
 
-"@capacitor/haptics@npm:^8.0.1":
+"@capacitor/haptics@npm:^8.0.0":
   version: 8.0.2
   resolution: "@capacitor/haptics@npm:8.0.2"
   peerDependencies:
@@ -2920,73 +2920,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/network@npm:^7.0.1":
-  version: 7.0.4
-  resolution: "@capacitor/network@npm:7.0.4"
+"@capacitor/network@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "@capacitor/network@npm:8.0.1"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/8b50905ec0c37db8cf098b275240ce0fd8c69604cb50290685fc8ed26e95d68fc917f1daadd893d7e6a332fd7d9b5d7a40e3f4cbd61dfde3814512d2caa06095
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/3eaf5e1e80140e635afc28e02af99ac31ef655e580716179e2f3cb5a508aa9afaca076fc61e453595a3243dc49e0511c06e1126276600403669409648523b3be
   languageName: node
   linkType: hard
 
-"@capacitor/push-notifications@npm:^7.0.1":
-  version: 7.0.6
-  resolution: "@capacitor/push-notifications@npm:7.0.6"
+"@capacitor/push-notifications@npm:^8.0.0":
+  version: 8.1.1
+  resolution: "@capacitor/push-notifications@npm:8.1.1"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/146d004c5ef224e480c4d7043c77742c270101ee750da38eaa6439bf76d2f750095d3553606b932b65221cc9eb2e6c9d8eb21df57af86f75995a83ade9756db3
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/4641fd997e03385676c12848c9ba3bb36a180450926614efb1769d8e6579c60641365e1018f8d846979c5c411f9152b50be4bac7c2e4d06dbf7c1954c07e181c
   languageName: node
   linkType: hard
 
-"@capacitor/screen-orientation@npm:^7.0.1":
-  version: 7.0.4
-  resolution: "@capacitor/screen-orientation@npm:7.0.4"
+"@capacitor/screen-orientation@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "@capacitor/screen-orientation@npm:8.0.1"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/d1988bc1bc8ac55fa2aec5595c34a8852463e0c6a28ddd86e4afe94094506911a00a20072ed112630102fbe2aa6474dcc677753b4bdd84faf4a74faafb789950
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/5c352cf09fecc3496babba7fde5226b281af57be1d6dd5e2f406003643017d6bf0f626a37e4de3dd6b736cefa4e57740759086cc1600814f07a8ad9c9e011686
   languageName: node
   linkType: hard
 
-"@capacitor/share@npm:^7.0.1":
-  version: 7.0.4
-  resolution: "@capacitor/share@npm:7.0.4"
+"@capacitor/share@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "@capacitor/share@npm:8.0.1"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/aff234dc1cdab045ecb193f01a8c3172eba9aa73101a82c430622bfdc4d6ea40665574d6539111a8dc69e363317f1bad5114512a0b0cd3020a4f228fbde84766
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/a615b85c79bbd3bfeb5e2ee2ac119e7ba8b8184ebcaad3b019467103e4ffc24130e1c1af42910498342fb495e0e297edf72169fa801963e34883d8bd4a42e514
   languageName: node
   linkType: hard
 
-"@capacitor/status-bar@npm:^7.0.1":
-  version: 7.0.6
-  resolution: "@capacitor/status-bar@npm:7.0.6"
-  peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/d2de1dd7b32681fab24974f09c05a4c17a71a6d77efff39f8bc47ed9d20dc50be4d770946993ede91e51f71b4b278096743f89d0818efe83ffaf52d161aaaa03
-  languageName: node
-  linkType: hard
-
-"@capacitor/synapse@npm:^1.0.3":
+"@capacitor/synapse@npm:^1.0.4":
   version: 1.0.4
   resolution: "@capacitor/synapse@npm:1.0.4"
   checksum: 10c0/83f37d06ebdb4234596f123417043aae8b0fd3b5905d399fe8bb7f1d7c3352c8449bef093793b01a0b3c4a59208ac27aec5b1ed7cf5e399c5c3004cc0ca74646
   languageName: node
   linkType: hard
 
-"@capawesome/capacitor-android-edge-to-edge-support@npm:^7.2.2":
-  version: 7.2.3
-  resolution: "@capawesome/capacitor-android-edge-to-edge-support@npm:7.2.3"
+"@capawesome/capacitor-app-update@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "@capawesome/capacitor-app-update@npm:8.0.3"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/444740e887f6f00d3bceeb65ddb8a33677dcf92cb950f71424e32007fb82df0cd50b51041a365a66af4b51fefb527751f75e5b4e75232d017c012fa7c8280d13
-  languageName: node
-  linkType: hard
-
-"@capawesome/capacitor-app-update@npm:^7.0.1":
-  version: 7.2.0
-  resolution: "@capawesome/capacitor-app-update@npm:7.2.0"
-  peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/a8050ef182a5bc53a629332c8c310ae3d9098dc242cd14696af8d458dfea32da36d92cd60f99ecefac2a89b58bd96d150b2c917f0aa8f266784e9c8fab88453c
+    "@capacitor/core": ">=8.0.0"
+  checksum: 10c0/6ed32eac5b8d650e8cf03ed5532a2003460502e988163d7a4acd0e9c1f05ef9bc9786152e04b574a4b1566f60636502df032254274da2522729ee21974434427
   languageName: node
   linkType: hard
 
@@ -14506,13 +14488,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:@picsa/capacitor-video-player@^7.2.3":
-  version: 7.2.3
-  resolution: "@picsa/capacitor-video-player@npm:7.2.3"
+"capacitor-video-player@npm:@picsa/capacitor-video-player@^8":
+  version: 8.0.0
+  resolution: "@picsa/capacitor-video-player@npm:8.0.0"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
+    "@capacitor/core": ">=8.0.0"
     hls.js: ^1.4.0
-  checksum: 10c0/7560ca0eb84f5fcd8cd4dba26c2a058e81dad6ea9533454b9620e48cc6ec5bb8c25794860bf7300bcee80770ce2e0e3b5859895c3a95acd19b661a582afd12ae
+  checksum: 10c0/7c9cab19b3cf2466a281f4950d776484a8e10feeec0be893daa01220ce6da73184511d25e6e0ebb2315f57d2d4b4033c2f437cd758f4268488d950ff7d7424c3
   languageName: node
   linkType: hard
 
@@ -25867,26 +25849,24 @@ __metadata:
     "@awesome-cordova-plugins/network": "npm:^6.14.0"
     "@awesome-cordova-plugins/social-sharing": "npm:^6.14.0"
     "@biesbjerg/ngx-translate-extract-marker": "npm:^1.0.0"
-    "@capacitor-community/firebase-analytics": "npm:^7.0.1"
-    "@capacitor-firebase/crashlytics": "npm:^7.2.0"
-    "@capacitor-firebase/performance": "npm:^7.2.0"
-    "@capacitor/android": "npm:^7.4.2"
-    "@capacitor/app": "npm:^7.0.1"
-    "@capacitor/browser": "npm:^7.0.1"
-    "@capacitor/camera": "npm:^7.0.1"
-    "@capacitor/cli": "npm:^7.4.2"
-    "@capacitor/core": "npm:^7.4.2"
-    "@capacitor/device": "npm:^7.0.1"
-    "@capacitor/filesystem": "npm:^7.1.2"
-    "@capacitor/geolocation": "npm:^7.1.4"
-    "@capacitor/haptics": "npm:^8.0.1"
-    "@capacitor/network": "npm:^7.0.1"
-    "@capacitor/push-notifications": "npm:^7.0.1"
-    "@capacitor/screen-orientation": "npm:^7.0.1"
-    "@capacitor/share": "npm:^7.0.1"
-    "@capacitor/status-bar": "npm:^7.0.1"
-    "@capawesome/capacitor-android-edge-to-edge-support": "npm:^7.2.2"
-    "@capawesome/capacitor-app-update": "npm:^7.0.1"
+    "@capacitor-community/firebase-analytics": "npm:^8.0.0"
+    "@capacitor-firebase/crashlytics": "npm:^8.0.0"
+    "@capacitor-firebase/performance": "npm:^8.0.0"
+    "@capacitor/android": "npm:^8.0.0"
+    "@capacitor/app": "npm:^8.0.0"
+    "@capacitor/browser": "npm:^8.0.0"
+    "@capacitor/camera": "npm:^8.0.0"
+    "@capacitor/cli": "npm:^8.0.0"
+    "@capacitor/core": "npm:^8.0.0"
+    "@capacitor/device": "npm:^8.0.0"
+    "@capacitor/filesystem": "npm:^8.0.0"
+    "@capacitor/geolocation": "npm:^8.0.0"
+    "@capacitor/haptics": "npm:^8.0.0"
+    "@capacitor/network": "npm:^8.0.0"
+    "@capacitor/push-notifications": "npm:^8.0.0"
+    "@capacitor/screen-orientation": "npm:^8.0.0"
+    "@capacitor/share": "npm:^8.0.0"
+    "@capawesome/capacitor-app-update": "npm:^8.0.0"
     "@ngx-translate/core": "npm:~16.0.4"
     "@ngx-translate/http-loader": "npm:~16.0.1"
     "@nx/angular": "npm:22.3.3"
@@ -25938,7 +25918,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "npm:@picsa/capacitor-video-player@^7.2.3"
+    capacitor-video-player: "npm:@picsa/capacitor-video-player@^8"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"

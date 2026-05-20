@@ -5,6 +5,8 @@ header {
   align-items: center;
   height: 3.5rem;
   line-height: 3.5rem;
+  // Use padding to account for underlay in layout.html
+  padding-top: var(--status-bar-height);
   -webkit-transition: background-color 0.5s ease;
   -moz-transition: background-color 0.5s ease;
   -o-transition: background-color 0.5s ease;

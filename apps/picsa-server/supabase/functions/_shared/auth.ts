@@ -1,4 +1,4 @@
-import { decode } from 'djwt';
+import { decode } from 'https://deno.land/x/djwt@v2.8/mod.ts';
 import { assignImplicitRoles } from '../../utils/auth.utils.ts';
 import { getServiceRoleClient } from './client.ts';
 import type { AppRole } from '../../types/index.ts';

@@ -3,7 +3,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 import { getClient } from '../_shared/client.ts';
-import { deleteKoboSubmissionByUUID, extractSubmissionXML, upsertKoboSubmission } from '../_kobo/kobo-utils.ts';
+import { deleteKoboSubmissionByUUID, extractSubmissionXML, upsertKoboSubmission } from './kobo-utils.ts';
 import type { Database } from '../../types/db.types.ts';
 
 type TableRecord = Database['public']['Tables']['kobo_sync']['Row'];

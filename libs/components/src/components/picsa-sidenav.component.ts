@@ -84,6 +84,8 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
       .sidenav-container {
         height: calc(100% - 16px);
+        padding-top: var(--status-bar-height);
+        padding-bottom: var(--nav-bar-height);
         padding-left: 1rem;
         &[data-mobile='true'] {
           padding-right: 1rem;

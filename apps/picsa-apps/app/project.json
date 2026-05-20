@@ -7,7 +7,16 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig", "libs"],
+      "inputs": [
+        "production",
+        "^production",
+        "supabaseConfig",
+        "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json",
+        "{workspaceRoot}/apps/picsa-tools/*/src/assets/**/*",
+        "{workspaceRoot}/libs/shared-assets/**/*",
+        "{workspaceRoot}/libs/i18n/assets/**/*",
+        "{workspaceRoot}/libs/data/**/*"
+      ],
       "allowedCommonJsDependencies": ["*"],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],

@@ -92,6 +92,7 @@ input.mat-mdc-input-element.mdc-text-field__input {
   width: 100%;
   color: var(--color-primary) !important;
   text-align: center;
+  background-color: unset;
 }
 //  Increase size and set primary colour for select
 mat-select.mat-mdc-select {

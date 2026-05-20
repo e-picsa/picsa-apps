@@ -4,6 +4,11 @@ body {
   height: 100vh;
   overflow: hidden;
 
+  // Variables populated from android code to try and be consistent across devices, source:
+  // apps/picsa-apps/app-native/android/app/src/main/java/io/picsa/extension/SafeAreaPolyfill.java
+  --status-bar-height: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --nav-bar-height: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+
   // Add page padding for different breakpoints
   // Store as variable so can also used to calculate positioning on nested elements
   --page-padding: 0px;
@@ -33,6 +38,8 @@ body {
   position: relative;
   z-index: 1;
   padding: var(--page-padding);
+  // Ensure page bottom also includes size if using fixed navbar
+  // padding-bottom: calc(var(--page-padding) + $navBarSize) !important;
 }
 
 .no-padding {
@@ -51,6 +58,7 @@ $footer-height: 5em;
   position: static;
   height: $footer-height;
   top: calc(100vh - #{$footer-height});
+  margin-bottom: var(--nav-bar-height);
   left: 0;
   width: 100%;
   background: white;
