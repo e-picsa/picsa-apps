@@ -2,7 +2,7 @@ import { readdirSync } from 'fs-extra';
 import { extname, relative, resolve } from 'path';
 import { loadAsync } from 'jszip';
 import { readFileSync } from 'fs';
-import { xmlToJson } from '../../../../libs/utils/xml';
+import { xmlToJson } from '@picsa/utils/xml';
 import { IWordXMLJSON } from './types';
 import { PATHS } from './paths';
 import { ensureWrite, flattenJSON } from './utils';
@@ -79,13 +79,13 @@ export class DocExtractor {
     const countryFolders = readdirSync(basePath, { withFileTypes: true }).filter((dir) => dir.isDirectory());
 
     for (const countryFolder of countryFolders) {
-      const districtFolderPath = resolve(countryFolder.path, countryFolder.name);
+      const districtFolderPath = resolve(countryFolder.parentPath, countryFolder.name);
 
       const districtFolders = readdirSync(districtFolderPath, { withFileTypes: true }).filter((dir) =>
         dir.isDirectory(),
       );
       for (const districtFolder of districtFolders) {
-        const sheetsFolderPath = resolve(districtFolder.path, districtFolder.name);
+        const sheetsFolderPath = resolve(districtFolder.parentPath, districtFolder.name);
         const sheetNames = readdirSync(sheetsFolderPath).filter(
           (docName) => EXTENSIONS.includes(extname(docName)) && !docName.startsWith('~$'),
         );
@@ -129,10 +129,13 @@ export class DocExtractor {
 
   /** */
   private extractDistrictId(countryId: string, text: string) {
-    if (countryId !== 'mw')
-      throw new Error(`No district information available for "${countryId}"\nPlease include in local data folder`);
+    const districtsHashmap = DISTRICTS[countryId];
+    if (!districtsHashmap) {
+      console.warn(`No district information available for "${countryId}"\nPlease include in local data folder`);
+      return '';
+    }
+    const districts = Object.values<{ id: string }>(districtsHashmap);
 
-    const districts = Object.values(DISTRICTS.mw);
     const matchText = text.toLowerCase().replace(/[^a-z]/g, '_');
     const matched = districts.find(({ id }) => matchText.indexOf(id) > -1);
     if (!matched) throw new Error(`Coud not find matching district for "${matchText}"`);
