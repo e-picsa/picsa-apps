@@ -24,6 +24,10 @@ export class FarmerContentShareComponent implements OnDestroy {
     this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
   }
 
+  public goBack() {
+    this.router.navigate(['farmer']);
+  }
+
   public selectInstalledAnswer(hasAppInstalled: boolean) {
     if (hasAppInstalled) {
       this.router.navigate(['farmer', 'share', 'videos']);
