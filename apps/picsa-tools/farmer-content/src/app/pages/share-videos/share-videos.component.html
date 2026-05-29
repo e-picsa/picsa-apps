@@ -7,25 +7,81 @@
   </div>
 
   <div class="videos-body">
-    @for (video of videoItems(); track video.resourceId) {
-      <div class="video-item" (click)="toggleSelection(video.resourceId)">
-        <div class="thumb-wrap">
-          <video class="thumb-video" [src]="video.previewUrl" preload="metadata" muted playsinline></video>
-          <mat-icon class="play-icon">play_circle</mat-icon>
+    @for (video of videoItems(); track video.id) {
+      <article
+        class="video-card"
+        [class.video-card--selected]="isSelected(video.id)"
+        (click)="toggleSelection(video.id)"
+      >
+        <div class="video-card-main">
+          <div class="thumb-wrap">
+            <video
+              class="thumb-video"
+              [src]="activePreviewUrl(video)"
+              preload="metadata"
+              muted
+              playsinline
+            ></video>
+            <mat-icon class="play-icon">play_arrow</mat-icon>
+          </div>
+
+          <div class="video-info">
+            <h2 class="video-title">{{ video.title | translate }}</h2>
+            <p class="video-meta">{{ video.moduleTitle | translate }}</p>
+          </div>
+
+          <button
+            type="button"
+            class="share-one-btn"
+            [attr.aria-label]="'Share' | translate"
+            (click)="shareVideo($event, video)"
+          >
+            <mat-icon>share</mat-icon>
+          </button>
         </div>
-        <div class="video-title">{{ video.title | translate }}</div>
-        <mat-checkbox
-          class="video-checkbox"
-          [checked]="isSelected(video.resourceId)"
-          (click)="$event.stopPropagation()"
-          (change)="toggleSelection(video.resourceId)"
-        ></mat-checkbox>
-      </div>
+
+        <div class="video-card-footer">
+          @if (video.languages.length > 1) {
+            <button
+              mat-button
+              type="button"
+              class="language-select"
+              [matMenuTriggerFor]="langMenu"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="language-select-inner">
+                <mat-icon>language</mat-icon>
+                <span>{{ activeLanguage(video)?.language_label }}</span>
+                <mat-icon class="language-caret">arrow_drop_down</mat-icon>
+              </div>
+            </button>
+            <mat-menu #langMenu="matMenu">
+              @for (option of video.languages; track option.resourceId) {
+                <button mat-menu-item (click)="setVideoLanguage(video.id, option.resourceId, $event)">
+                  {{ option.locale.language_label }}
+                </button>
+              }
+            </mat-menu>
+          } @else {
+            <mat-icon class="language-icon">language</mat-icon>
+            <span>{{ video.languages[0].locale.language_label }}</span>
+          }
+        </div>
+      </article>
     }
 
-    <button mat-raised-button color="primary" class="share-btn" (click)="shareSelectedVideos()">
+    <button
+      mat-raised-button
+      color="primary"
+      class="share-btn"
+      [disabled]="selectedVideoIds().length === 0"
+      (click)="shareSelectedVideos()"
+    >
       <mat-icon>share</mat-icon>
       {{ 'Share selected videos' | translate }}
+      @if (selectedVideoIds().length > 0) {
+        <span class="share-count">({{ selectedVideoIds().length }})</span>
+      }
     </button>
 
     @if (shareStatus() !== 'idle') {
