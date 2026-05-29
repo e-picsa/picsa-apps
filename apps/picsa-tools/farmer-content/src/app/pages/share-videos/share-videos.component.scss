@@ -1,17 +1,86 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .videos-page {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0;
 }
 
-.videos-page h1 {
-  margin: 0 0 0.5rem;
+.page-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.back-btn {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  margin: 0;
+  min-width: 0;
+  padding-inline-start: 0.125rem;
+  padding-inline-end: 0.25rem;
+  color: var(--color-primary);
+  --mdc-text-button-label-text-color: var(--color-primary);
+}
+
+.back-btn mat-icon {
+  margin-inline-end: 0.125rem;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+}
+
+.title {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: #7c1332;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  padding-inline: 5rem;
+  padding-block: 0;
+}
+
+.videos-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 0.75rem 1rem;
 }
 
 .video-item {
   display: grid;
-  grid-template-columns: 112px 1fr auto;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.75rem;
   border: 1px solid #ddd;
@@ -19,6 +88,7 @@
   background: #fff;
   padding: 0.5rem 0.6rem;
   cursor: pointer;
+  min-width: 0;
 }
 
 .thumb-wrap {
@@ -48,18 +118,16 @@
 .video-title {
   font-size: 1.05rem;
   font-weight: 500;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .share-btn {
-  --mdc-filled-button-container-color: #a50f45;
+  --mdc-filled-button-container-color: var(--color-primary);
   align-self: center;
   width: min(100%, 24rem);
   min-height: 3rem;
-}
-
-.back-btn {
-  align-self: flex-start;
-  padding-left: 0;
+  box-sizing: border-box;
 }
 
 .status {
@@ -76,8 +144,13 @@
 }
 
 @media (max-width: 420px) {
+  .title {
+    padding-inline: 3.5rem;
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+  }
+
   .video-item {
-    grid-template-columns: 92px 1fr auto;
+    grid-template-columns: 92px minmax(0, 1fr) auto;
   }
 
   .thumb-wrap {
@@ -86,5 +159,10 @@
 
   .video-title {
     font-size: 1rem;
+  }
+
+  .share-btn {
+    width: min(92%, 21rem);
+    min-height: 2.875rem;
   }
 }

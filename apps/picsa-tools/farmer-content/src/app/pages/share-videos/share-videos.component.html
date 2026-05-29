@@ -1,30 +1,36 @@
 <div class="videos-page">
-  <h1>{{ 'Share downloaded videos' | translate }}</h1>
+  <div class="page-header">
+    <button mat-button type="button" class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'Back' | translate }}
+    </button>
+    <h1 class="title">{{ 'Share downloaded videos' | translate }}</h1>
+  </div>
 
-  @for (video of videoItems(); track video.resourceId) {
-    <div class="video-item" (click)="toggleSelection(video.resourceId)">
-      <div class="thumb-wrap">
-        <video class="thumb-video" [src]="video.previewUrl" preload="metadata" muted playsinline></video>
-        <mat-icon class="play-icon">play_circle</mat-icon>
+  <div class="videos-body">
+    @for (video of videoItems(); track video.resourceId) {
+      <div class="video-item" (click)="toggleSelection(video.resourceId)">
+        <div class="thumb-wrap">
+          <video class="thumb-video" [src]="video.previewUrl" preload="metadata" muted playsinline></video>
+          <mat-icon class="play-icon">play_circle</mat-icon>
+        </div>
+        <div class="video-title">{{ video.title | translate }}</div>
+        <mat-checkbox
+          class="video-checkbox"
+          [checked]="isSelected(video.resourceId)"
+          (click)="$event.stopPropagation()"
+          (change)="toggleSelection(video.resourceId)"
+        ></mat-checkbox>
       </div>
-      <div class="video-title">{{ video.title | translate }}</div>
-      <mat-checkbox
-        class="video-checkbox"
-        [checked]="isSelected(video.resourceId)"
-        (click)="$event.stopPropagation()"
-        (change)="toggleSelection(video.resourceId)"
-      ></mat-checkbox>
-    </div>
-  }
+    }
 
-  <button mat-raised-button color="primary" class="share-btn" (click)="shareSelectedVideos()">
-    <mat-icon>share</mat-icon>
-    {{ 'Share selected videos' | translate }}
-  </button>
+    <button mat-raised-button color="primary" class="share-btn" (click)="shareSelectedVideos()">
+      <mat-icon>share</mat-icon>
+      {{ 'Share selected videos' | translate }}
+    </button>
 
-  <button mat-button class="back-btn" (click)="goBack()">{{ 'Back' | translate }}</button>
-
-  @if (shareStatus() !== 'idle') {
-    <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
-  }
+    @if (shareStatus() !== 'idle') {
+      <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
+    }
+  </div>
 </div>

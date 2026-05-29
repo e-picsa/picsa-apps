@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -22,14 +23,23 @@ interface IShareVideoItem {
   styleUrl: './share-videos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FarmerContentShareVideosComponent {
+export class FarmerContentShareVideosComponent implements OnDestroy {
   private router = inject(Router);
   private resourcesService = inject(ResourcesToolService);
+  private componentsService = inject(PicsaCommonComponentsService);
 
   public readonly shareStatus = signal<'idle' | 'success' | 'error'>('idle');
   public readonly shareStatusLabel = signal('');
   public readonly canShare = computed(() => typeof navigator !== 'undefined' && typeof navigator.share === 'function');
   public readonly selectedIds = signal<string[]>([]);
+
+  constructor() {
+    this.componentsService.patchHeader({ hideHeader: true, hideBackButton: true });
+  }
+
+  ngOnDestroy() {
+    this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
+  }
 
   private dbFiles$ = this.resourcesService.ready$.pipe(switchMap(() => this.resourcesService.dbFiles.find().$));
   private allResourceFileDocs = toSignal(this.dbFiles$, { initialValue: [] });
