@@ -1,14 +1,18 @@
 <div class="share-page">
-  <div class="top-row">
+  <!-- <div class="top-row">
     <button mat-icon-button class="back-icon-btn" (click)="goBack()" aria-label="Back">
       <mat-icon>arrow_back</mat-icon>
     </button>
-  </div>
+  </div> -->
 
   <div class="share-card">
     <div class="section-header">{{ 'Share via Bluetooth' | translate }}</div>
 
     <div class="content">
+      <div class="icon-wrap">
+        <img class="install-hero-image" src="/assets/images/mobile.svg" alt="" />
+      </div>
+
       <button mat-raised-button color="primary" class="action-btn" (click)="shareAppApk()">
         <mat-icon>android</mat-icon>
         {{ 'Share the E-PICSA app' | translate }}

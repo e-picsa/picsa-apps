@@ -19,7 +19,7 @@
 
 .share-card {
   width: min(100%, 34rem);
-  margin: 0 auto;
+  margin: 3.5rem auto 0;
   background: #fff;
   border: 1px solid #d9d9d9;
 }
@@ -37,6 +37,22 @@
   gap: 0.75rem;
   width: 100%;
   padding: 1rem 0.75rem 0.75rem;
+}
+
+.icon-wrap {
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.25rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.install-hero-image {
+  width: clamp(140px, 42vw, 220px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .action-btn {
