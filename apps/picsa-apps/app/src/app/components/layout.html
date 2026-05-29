@@ -33,6 +33,12 @@
             <span>{{ 'Digital Skills' | translate}}</span>
           </div>
         </a>
+        <a mat-list-item routerLink="/farmer/share" (click)="drawer.close()">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">share</mat-icon>
+            <span>{{ 'Share videos' | translate}}</span>
+          </div>
+        </a>
         }
         <a mat-list-item routerLink="/resources/downloads" (click)="drawer.close()">
           <div style="display: flex; align-items: center">
