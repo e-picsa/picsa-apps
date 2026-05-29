@@ -85,6 +85,11 @@ export class FarmerContentShareVideosComponent implements OnDestroy {
   });
 
   public goBack() {
+    const returnTo = history.state?.['shareVideosReturnTo'];
+    if (returnTo === 'bluetooth') {
+      this.router.navigate(['farmer', 'share', 'bluetooth']);
+      return;
+    }
     this.router.navigate(['farmer', 'share']);
   }
 

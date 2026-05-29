@@ -30,7 +30,7 @@ export class FarmerContentShareComponent implements OnDestroy {
 
   public selectInstalledAnswer(hasAppInstalled: boolean) {
     if (hasAppInstalled) {
-      this.router.navigate(['farmer', 'share', 'videos']);
+      this.router.navigate(['farmer', 'share', 'videos'], { state: { shareVideosReturnTo: 'share' } });
       return;
     }
     this.router.navigate(['farmer', 'share', 'app']);

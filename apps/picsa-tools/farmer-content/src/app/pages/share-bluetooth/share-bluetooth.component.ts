@@ -33,7 +33,7 @@ export class FarmerContentShareBluetoothComponent implements OnDestroy {
   }
 
   public goToVideoShare() {
-    this.router.navigate(['farmer', 'share', 'videos']);
+    this.router.navigate(['farmer', 'share', 'videos'], { state: { shareVideosReturnTo: 'bluetooth' } });
   }
 
   public async shareAppApk() {
