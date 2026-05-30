@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { FARMER_CONTENT_DATA, ILocaleDataEntry } from '@picsa/data';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';

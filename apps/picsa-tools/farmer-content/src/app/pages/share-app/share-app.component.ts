@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 @Component({

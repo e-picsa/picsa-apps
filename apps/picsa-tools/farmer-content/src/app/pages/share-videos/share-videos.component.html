@@ -1,6 +1,6 @@
 <div class="videos-page">
   <div class="page-header">
-    <button mat-button type="button" class="back-btn" (click)="goBack()">
+    <button matButton type="button" class="back-btn" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       {{ 'Share downloaded videos' | translate }}
     </button>
@@ -43,7 +43,7 @@
         <div class="video-card-footer">
           @if (video.languages.length > 1) {
             <button
-              mat-button
+              matButton
               type="button"
               class="language-select"
               [matMenuTriggerFor]="langMenu"
@@ -71,7 +71,7 @@
     }
 
     <button
-      mat-raised-button
+      matButton="elevated"
       color="primary"
       class="share-btn"
       [disabled]="selectedVideoIds().length === 0"

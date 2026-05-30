@@ -1,6 +1,6 @@
 <div class="share-page">
   <div class="page-header">
-    <button mat-button type="button" class="back-btn" (click)="goBack()">
+    <button matButton type="button" class="back-btn" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       {{ 'Share the E-PICSA App' | translate }}
     </button>
@@ -13,7 +13,7 @@
       </div>
       <h2 class="option-title">{{ 'Bluetooth' | translate }}</h2>
       <p class="option-description">{{ 'Share the application files with a nearby device.' | translate }}</p>
-      <button mat-raised-button color="primary" class="option-btn" (click)="shareViaBluetooth()">
+      <button matButton="elevated" color="primary" class="option-btn" (click)="shareViaBluetooth()">
         <mat-icon>bluetooth</mat-icon>
         {{ 'Share via Bluetooth' | translate }}
       </button>
@@ -25,7 +25,7 @@
       </div>
       <h2 class="option-title">{{ 'WhatsApp' | translate }}</h2>
       <p class="option-description">{{ 'Send an install link using WhatsApp.' | translate }}</p>
-      <button mat-raised-button color="primary" class="option-btn" (click)="shareViaWhatsApp()">
+      <button matButton="elevated" color="primary" class="option-btn" (click)="shareViaWhatsApp()">
         <mat-icon>chat</mat-icon>
         {{ 'Share via WhatsApp' | translate }}
       </button>
