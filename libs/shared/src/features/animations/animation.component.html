@@ -2,6 +2,12 @@
 
 <ng-template #dialogTemplate>
   <div class="animation-background">
-    <ng-lottie id="animation-container" [options]="options" (loopComplete)="loopComplete($event)"></ng-lottie>
+    @if (options(); as animationOptions) {
+      <ng-lottie
+        id="animation-container"
+        [options]="animationOptions"
+        (loopComplete)="loopComplete($event)"
+      ></ng-lottie>
+    }
   </div>
 </ng-template>

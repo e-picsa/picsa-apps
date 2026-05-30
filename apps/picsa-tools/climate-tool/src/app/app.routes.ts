@@ -1,11 +1,9 @@
-import { inject, NgModule } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   ActivatedRoute,
   ActivatedRouteSnapshot,
   CanActivateFn,
-  PreloadAllModules,
   Router,
-  RouterModule,
   RouterStateSnapshot,
   Routes,
 } from '@angular/router';
@@ -42,7 +40,7 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: ':siteId',
-    loadChildren: () => import('./pages/site-view/site-view.module').then((mod) => mod.ClimateSiteViewPageModule),
+    loadComponent: () => import('./pages/site-view/site-view.page').then((mod) => mod.ClimateSiteViewComponent),
     data: {
       headerStyle: 'inverted',
     },

@@ -1,19 +1,15 @@
 {
   "version": "4",
   "specifiers": {
-    "npm:openapi-fetch@0.8.2": "0.8.2",
+    "jsr:@hono/hono@4": "4.6.10",
     "npm:zod@4": "4.3.6"
   },
+  "jsr": {
+    "@hono/hono@4.6.10": {
+      "integrity": "dae93ac8bb49881f99506aa8e01e5536d5d72cc3c2b556bde2816fdf25ca609c"
+    }
+  },
   "npm": {
-    "openapi-fetch@0.8.2": {
-      "integrity": "sha512-4g+NLK8FmQ51RW6zLcCBOVy/lwYmFJiiT+ckYZxJWxUxH4XFhsNcX2eeqVMfVOi+mDNFja6qDXIZAz2c5J/RVw==",
-      "dependencies": [
-        "openapi-typescript-helpers"
-      ]
-    },
-    "openapi-typescript-helpers@0.0.5": {
-      "integrity": "sha512-MRffg93t0hgGZbYTxg60hkRIK2sRuEOHEtCUgMuLgbCC33TMQ68AmxskzUlauzZYD47+ENeGV/ElI7qnWqrAxA=="
-    },
     "zod@4.3.6": {
       "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="
     }
@@ -47,5 +43,25 @@
     "https://esm.sh/iceberg-js@0.8.1/denonext/iceberg-js.mjs": "d839d81a2e3966500ca2cdd0c1cb458e9608bacfc91f7bb67a69b2e878dcdb4f",
     "https://esm.sh/iceberg-js@0.8.1?target=denonext": "58c849d7fe2bf4eca4a84eb501e83c161a7d8c34ca1bec15a962b3bec3062633",
     "https://esm.sh/tslib@2.8.1/denonext/tslib.mjs": "c38da5dd6da6281964435002ce204cd586634fe3bdfb24a0ee116f48cf3292e9"
+  },
+  "workspace": {
+    "members": {
+      "budget": {
+        "dependencies": [
+          "jsr:@hono/hono@4",
+          "npm:zod@4"
+        ]
+      },
+      "dashboard": {
+        "dependencies": [
+          "npm:zod@4"
+        ]
+      },
+      "geo": {
+        "dependencies": [
+          "npm:zod@4"
+        ]
+      }
+    }
   }
 }

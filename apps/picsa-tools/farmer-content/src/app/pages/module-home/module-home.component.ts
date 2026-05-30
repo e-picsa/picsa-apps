@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';

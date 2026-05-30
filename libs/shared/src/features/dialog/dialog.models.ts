@@ -2,16 +2,10 @@ import { MatDialogConfig } from '@angular/material/dialog';
 
 import { IPicsaLoaders } from '../loading/loading';
 
-export interface IPicsaDialogButtons {
+interface IPicsaDialogButtons {
   text: string;
   value?: any;
   focus?: boolean;
-}
-
-export interface IPicsaDialogSelectOption {
-  image?: string;
-  text: string;
-  data?: any;
 }
 
 export interface IPicsaDialogData {
@@ -19,7 +13,6 @@ export interface IPicsaDialogData {
   html?: string;
   loader?: IPicsaLoaders;
   buttons?: IPicsaDialogButtons[];
-  selectOptions?: IPicsaDialogSelectOption[];
 }
 
 // note, supported as of typescript 3.5, however at time of

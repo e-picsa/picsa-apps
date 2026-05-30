@@ -4,13 +4,13 @@
       <div style="display: flex; align-items: center">
         <h2 style="flex: 1">{{ 'Forms' | translate }}</h2>
         @if (service.pendingSyncCount >= 1) {
-          <button mat-stroked-button color="primary" style="margin-left: auto" (click)="syncPending()">
+          <button matButton="outlined" color="primary" style="margin-left: auto" (click)="syncPending()">
             <mat-icon>cloud_upload</mat-icon>
             <span> {{ 'Submit' | translate }} {{ service.pendingSyncCount }} {{ 'Records' | translate }} </span>
           </button>
         }
         @if (service.pendingSyncCount <= 0) {
-          <button mat-stroked-button color="primary" style="margin-left: auto" (click)="syncPending()">
+          <button matButton="outlined" color="primary" style="margin-left: auto" (click)="syncPending()">
             <mat-icon>task_alt</mat-icon>
             {{ 'All Submitted' | translate }}
           </button>

@@ -12,9 +12,9 @@ import {
 import { FieldState, form, FormField } from '@angular/forms/signals';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { FormNumberValueAccessor } from '@picsa/forms/directives/numberValueAccessor';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ENTERPRISES_BY_ID, INVESTMENT_TYPES, PERFORMANCE_CONDITIONS, STEPPER_STEPS } from '../../data';

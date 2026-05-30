@@ -11,7 +11,6 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=number][formField]',
-  standalone: true,
   host: {
     '(input)': 'handleInput($event)', // Pass the event here
     '(blur)': 'onTouched()',

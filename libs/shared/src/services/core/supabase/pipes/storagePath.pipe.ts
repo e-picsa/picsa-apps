@@ -1,4 +1,4 @@
-import { inject,Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 
 import { SupabaseStorageService } from '../services/supabase-storage.service';
 
@@ -11,7 +11,6 @@ import { SupabaseStorageService } from '../services/supabase-storage.service';
  */
 @Pipe({
   name: 'storagePath',
-  standalone: true,
 })
 export class StoragePathPipe implements PipeTransform {
   private storageService = inject(SupabaseStorageService);

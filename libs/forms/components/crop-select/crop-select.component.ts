@@ -22,7 +22,6 @@ import { PicsaFormBaseSelectComponent } from '../base/select';
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, MatIconModule, PicsaTranslateModule],
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {

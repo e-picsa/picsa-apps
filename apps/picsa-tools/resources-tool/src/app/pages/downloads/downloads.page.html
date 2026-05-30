@@ -30,7 +30,7 @@
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">
         @if(downloaded){
-        <button mat-icon-button>
+        <button matIconButton>
           <mat-icon>download_done</mat-icon>
         </button>
         } @else {
@@ -47,7 +47,7 @@
       <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
       <ng-template #_actions let-actions let-row="row">
         @if(actions.delete){
-        <button mat-icon-button (click)="deleteDownload(row,$event)">
+        <button matIconButton (click)="deleteDownload(row,$event)">
           <mat-icon>delete_outline</mat-icon>
         </button>
         }

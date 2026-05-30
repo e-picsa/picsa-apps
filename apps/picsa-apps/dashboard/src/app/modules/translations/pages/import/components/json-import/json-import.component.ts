@@ -172,8 +172,13 @@ export class TranslationsJSONImportComponent {
     for (const [id, entry] of Object.entries(server)) {
       const localEntry = local[id];
       if (!localEntry) {
-        const { tool, context, text } = entry;
-        summary.archive.push({ id, tool, text, context: context || undefined });
+        const { tool, context, text, archived } = entry;
+        if (!archived) {
+          summary.archive.push({ id, tool, text, context: context || undefined });
+        } else {
+          // Already archived, so no action required
+          summary.skip.push({ id, tool, text, context: context || undefined });
+        }
       }
     }
     return summary;

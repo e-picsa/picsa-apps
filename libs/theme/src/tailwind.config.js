@@ -36,14 +36,13 @@ const configBase = {
 /**
  * Generate a list of all filepath dependencies for a given project
  * This includes child dependencies (e.g. picsa-tools or common libs) as extracted by NX
- * It excludes webcomponents which bundle their own code
  *
  * This list is used by tailwind to identify what classes to include/exclude in bundling
  */
-const getContentDependencies = (dirname) =>
-  [join(dirname, 'src/**/!(*.stories|*.spec).{ts,html}'), ...createGlobPatternsForDependencies(dirname)].filter(
-    (p) => !p.includes('webcomponents'),
-  );
+const getContentDependencies = (dirname) => [
+  join(dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
+  ...createGlobPatternsForDependencies(dirname),
+];
 
 /**
  * Generate a full tailwind configuration to use within any project or lib

@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortable, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { capitalise } from '@picsa/utils';
+import { capitalise } from '@picsa/utils/data';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 
@@ -55,7 +55,6 @@ export const formatHeaderDefault = (v: string) => v.split('_').map(capitalise).j
  * used to modify cell values in a pure way
  */
 @Pipe({
-  standalone: true,
   name: 'formatValue',
 })
 export class FormatValuePipe implements PipeTransform {

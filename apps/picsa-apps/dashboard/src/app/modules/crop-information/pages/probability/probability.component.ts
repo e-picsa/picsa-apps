@@ -3,7 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
@@ -14,17 +15,23 @@ import {
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
+import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../services';
 
 interface ICropDataDownscaledTableData {
   // include admin_4 location if location specifies
   admin_4?: string;
   admin_5?: string;
   location: string;
+  station: string | null;
   total_crops: number;
   total_varieties: number;
 }
-const TABLE_DISPLAY_COLUMNS: (keyof ICropDataDownscaledTableData)[] = ['location', 'total_crops', 'total_varieties'];
+const TABLE_DISPLAY_COLUMNS: (keyof ICropDataDownscaledTableData)[] = [
+  'location',
+  'station',
+  'total_crops',
+  'total_varieties',
+];
 
 @Component({
   selector: 'dashboard-crop-probability',
@@ -66,12 +73,12 @@ export class CropProbabilityComponent {
 
   private async generateDownscaledTableData(country_code: CountryCodeLegacy) {
     const { data, error } = await this.service.cropDataDownscaledTable
-      .select<'*', ICropDataDownscaled['Row']>('*')
+      .select('*,climate_stations(station_name)')
       .eq('country_code', country_code);
     if (error) throw error;
 
     if (data) {
-      const tableData = data.map(({ location_id, water_requirements }) => {
+      const tableData = data.map(({ location_id, water_requirements, climate_stations }) => {
         const waterRequirements = water_requirements as ICropDataDownscaledWaterRequirements;
         let total_crops = 0;
         let total_varieties = 0;
@@ -79,7 +86,12 @@ export class CropProbabilityComponent {
           total_crops++;
           total_varieties = total_varieties + Object.keys(cropData).length;
         }
-        const entry: ICropDataDownscaledTableData = { location: location_id, total_crops, total_varieties };
+        const entry: ICropDataDownscaledTableData = {
+          location: location_id,
+          station: climate_stations?.station_name || null,
+          total_crops,
+          total_varieties,
+        };
         return entry;
       });
       const merged = this.mergeDetailedLocationData(country_code, tableData);
@@ -91,7 +103,7 @@ export class CropProbabilityComponent {
 
   /** Merge crop location id with lookup geojson data  **/
   private mergeDetailedLocationData(country_code: string, data: ICropDataDownscaledTableData[]) {
-    const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
+    const { admin_4, admin_5 } = getGeoLocationData(country_code as ICountryCode);
     const isAdmin5Location = admin_5 ? true : false;
     const admin4Hashmap = arrayToHashmap(admin_4.locations, 'id');
 

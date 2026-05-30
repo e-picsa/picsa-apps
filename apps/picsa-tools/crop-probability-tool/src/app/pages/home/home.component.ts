@@ -1,8 +1,8 @@
-import { Component, computed, effect, inject,OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { IGelocationData } from '@picsa/data/geoLocation';
+import { IGeolocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTourButton, TourService } from '@picsa/shared/services/core/tour';
 import { map } from 'rxjs';
@@ -23,7 +23,6 @@ const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: true,
   imports: [PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
 })
 export class HomeComponent implements OnInit {
@@ -73,7 +72,7 @@ export class HomeComponent implements OnInit {
   }
 
   /** Modify locations to only include values that have probability data */
-  public locationModifier(data: IGelocationData, country_code: string): IGelocationData {
+  public locationModifier(data: IGeolocationData, country_code: string): IGeolocationData {
     const allData: IProbabilityTable[] = PROBABILITY_TABLE_DATA[country_code] || [];
     // track locations of existing probability tables, which have id in format admin_4/admin_5
     const availableLocations = { admin_4: [] as string[], admin_5: [] as string[] };

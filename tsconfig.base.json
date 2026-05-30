@@ -25,6 +25,7 @@
       "@picsa/budget/*": ["apps/picsa-tools/budget-tool/*"],
       "@picsa/climate/*": ["apps/picsa-tools/climate-tool/*"],
       "@picsa/components": ["libs/components/src/index.ts"],
+      "@picsa/components/*": ["libs/components/src/components/*"],
       "@picsa/configuration": ["libs/configuration/src/index.ts"],
       "@picsa/crop-probability/*": ["apps/picsa-tools/crop-probability-tool/*"],
       "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
@@ -35,6 +36,7 @@
       "@picsa/forecasts/*": ["apps/picsa-tools/forecasts-tool/src/app/*"],
       "@picsa/forms": ["libs/forms"],
       "@picsa/i18n": ["libs/i18n/src/index.ts"],
+      "@picsa/i18n/*": ["libs/i18n/src/*"],
       "@picsa/manual/*": ["apps/picsa-tools/manual-tool/*"],
       "@picsa/migrations": ["libs/migrations/index.ts"],
       "@picsa/models": ["libs/models/src/index.ts"],
@@ -45,10 +47,7 @@
       "@picsa/server-types": ["apps/picsa-server/supabase/types/index.ts"],
       "@picsa/server-utils": ["apps/picsa-server/supabase/utils/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"],
-      "@picsa/theme": ["libs/theme/src/index.ts"],
-      "@picsa/webcomponents": ["libs/webcomponents"],
-      "@picsa/webcomponents-ngx": ["libs/webcomponents-ngx/src/index.ts"],
-      "@picsa/webcomponents/loader": ["dist/libs/webcomponents/loader"]
+      "@picsa/theme": ["libs/theme/src/index.ts"]
     }
   },
   // Default (strict) angular compiler options

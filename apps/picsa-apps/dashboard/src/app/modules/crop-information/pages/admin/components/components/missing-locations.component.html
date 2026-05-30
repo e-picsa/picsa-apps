@@ -3,7 +3,9 @@
     <mat-icon>error</mat-icon>
     <div class="flex-1">
       <p>{{ missingLocations().length }} locations do not have entries</p>
-      <button mat-stroked-button (click)="addPlaceholderLocations(missingLocations())">Add Placeholder Entries</button>
+      <button matButton="outlined" (click)="addPlaceholderLocations(missingLocations())">
+        Add Placeholder Entries
+      </button>
     </div>
   } @else {
     @if (emptyLocations().length > 0) {

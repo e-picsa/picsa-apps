@@ -1,9 +1,13 @@
-import { AfterViewInit, Component, inject,Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, viewChild } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
+import { LineToolComponent } from '../chart-tools/line-tool/line-tool.component';
+import { ProbabilityToolComponent } from '../chart-tools/probability-tool/probability-tool';
+import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-tool.component';
 
 /******************************************************************
  * Component to display highly customised charts for climate data
@@ -14,18 +18,31 @@ import { ClimateToolService } from '../../services/climate-tool.service';
   selector: 'climate-chart-layout',
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
-  standalone: false,
+  imports: [
+    PicsaTranslateModule,
+    PicsaChartComponent,
+    LineToolComponent,
+    ProbabilityToolComponent,
+    TercilesToolComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.has-line-tool]': 'toolService.enabled().line',
+  },
 })
 export class ClimateChartLayoutComponent implements AfterViewInit {
   chartService = inject(ClimateChartService);
   toolService = inject(ClimateToolService);
 
-  @Input() definition: IChartMeta;
+  readonly definition = input.required<IChartMeta>();
 
-  @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
+  readonly picsaChart = viewChild<PicsaChartComponent>('picsaChart');
 
   ngAfterViewInit() {
-    this.chartService.registerChartComponent(this.picsaChart);
+    const chart = this.picsaChart();
+    if (chart) {
+      this.chartService.registerChartComponent(chart);
+    }
   }
 }
 

@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
 import { Subject, takeUntil } from 'rxjs';
 
 /** Custom header component for datepicker. */
 @Component({
-  selector: 'climte-line-date-picker-header',
+  selector: 'climate-line-date-picker-header',
   styles: [
     `
       .line-date-picker-header {
@@ -28,17 +30,17 @@ import { Subject, takeUntil } from 'rxjs';
   ],
   template: `
     <div class="line-date-picker-header">
-      <button mat-icon-button (click)="previousClicked('month')">
+      <button matIconButton (click)="previousClicked('month')">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
       <span class="line-date-picker-header-label">{{ periodLabel }}</span>
-      <button mat-icon-button (click)="nextClicked('month')">
+      <button matIconButton (click)="nextClicked('month')">
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [MatButtonModule, MatIconModule],
 })
 export class LineDatePickerHeaderComponent<D> implements OnDestroy {
   private _calendar = inject<MatCalendar<D>>(MatCalendar);

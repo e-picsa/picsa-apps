@@ -15,9 +15,9 @@ Please refer to the following files in `.agent/rules/` for deep context:
 
 - **[Codebase Map](.agent/codebase-map.md)**: Architecture, directory structure, and relationship between the Super App and tools.
 - **[Tech Stack](.agent/rules/tech-stack.md)**: Detailed stack info, constraints (MobX, Tailwind preferences), and library versions.
-- **[Best Practices](.agent/rules/angular.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
+- **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
-- **[UI & Theming](.agent/rules/ui-theming.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
+- **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
 
 ## Core Principles
 
@@ -37,6 +37,10 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 
 1. These rule files are the **SAME FILE**. Do not read more than one of them to conserve context window.
 2. You **MUST** still reference the detailed documentation files in the `.agent/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
+
+### Planning Mode Requirements
+
+- **Respect Planning Mode in all cases**: Avoid making code changes without presenting a plan and receiving explicit approval, unless explicitly given permission to do so by the user. This ensures strict adherence to the planning workflow across all tasks.
 
 ### Tool Usage Requirements (Crucial for Context Preservation)
 

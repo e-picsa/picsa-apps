@@ -1,9 +1,9 @@
-import { computed, inject,Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
-import { arrayToHashmap, loadCSV } from '@picsa/utils';
+import { arrayToHashmap, deepClone, loadCSV } from '@picsa/utils';
 
-import * as DATA from '../data';
+import { CLIMATE_STATIONS_META } from '../data/stations';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateDataService {
@@ -12,25 +12,21 @@ export class ClimateDataService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  /** Store populated station data to in-memory cache for fast future retrieval*/
-  private stationDataCache: { [name: string]: IStationMeta } = {};
-
   /** List of all stations for current  */
   public stations = computed(() => {
     const { climateTool, country_code } = this.configurationService.deploymentSettings();
+    const stations = CLIMATE_STATIONS_META[country_code] || [];
     const filterFn = climateTool?.station_filter;
     if (filterFn) {
-      return DATA.HARDCODED_STATIONS.filter((station) => filterFn(station));
+      return stations.filter((station) => filterFn(station));
     } else {
-      return DATA.HARDCODED_STATIONS.filter((station) => station.countryCode === country_code && !station.draft);
+      return stations.filter((station) => !station.draft);
     }
   });
 
   private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));
 
-  constructor() {
-    this.stationDataCache = arrayToHashmap(DATA.HARDCODED_STATIONS, 'id');
-  }
+  private loadedStationData: Record<string, IStationData[]> = {};
 
   /** Retrieve the preferred station ID from user settings */
   public getPreferredStation(): string | undefined {
@@ -50,19 +46,26 @@ export class ClimateDataService {
   }
 
   public async getStationMeta(stationID: string): Promise<IStationMeta> {
-    const station = this.stationDataCache[stationID];
+    const station = this.stationHashmap()[stationID];
     if (!station) {
       console.error('No data for station');
-      return { data: [] as any[], name: 'Data not found' } as IStationMeta;
+      return { name: 'Data not found' } as IStationMeta;
     }
-    if (!station.data) {
-      console.log('[Climate] Load Data', stationID);
-      const summaries = await this.loadStationSummaries(stationID);
-      const cleaned = this.hackCleanMissingValues(summaries);
-      this.stationDataCache[stationID].data = cleaned;
-    }
+
     // HACK - ensure chart definitions don't persist across sites
-    return JSON.parse(JSON.stringify(this.stationDataCache[stationID]));
+    return deepClone(station);
+  }
+  public async getStationData(stationId: string) {
+    const data = this.loadedStationData[stationId];
+    if (data) {
+      return data;
+    } else {
+      console.log('[Climate] Load Data', stationId);
+      const summaries = await this.loadStationSummaries(stationId);
+      const cleaned = this.hackCleanMissingValues(summaries);
+      this.loadedStationData[stationId] = cleaned;
+      return cleaned;
+    }
   }
 
   /**

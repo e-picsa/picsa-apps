@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -10,27 +20,38 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   imports: [PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClimatePrintLayoutComponent implements OnInit, OnDestroy {
+export class ClimatePrintLayoutComponent {
   private chartService = inject(ClimateChartService);
+  private destroyRef = inject(DestroyRef);
 
-  public stationName: string;
-  public chartName: string;
-  public chartDefinition: string;
+  readonly chartPngBlob = input.required<Blob>();
 
-  public chartPngBlob = input.required<Blob>();
-  public pngSrc: string;
+  // Derive metadata from chart service signals
+  readonly stationName = computed(() => this.chartService.station()?.name ?? '');
+  readonly chartDefinition = computed(() => this.chartService.chartDefinition()?.definition ?? '');
+  readonly chartName = computed(() => this.chartService.chartDefinition()?.name ?? '');
 
-  ngOnInit(): void {
-    this.pngSrc = URL.createObjectURL(this.chartPngBlob());
+  readonly pngSrc = signal<string>('');
 
-    const { station } = this.chartService;
-    if (station) {
-      this.stationName = station.name;
-      this.chartDefinition = this.chartService.chartDefinition?.definition || '';
-      this.chartName = this.chartService.chartDefinition?.name || '';
-    }
+  constructor() {
+    effect(() => {
+      const blob = this.chartPngBlob();
+      if (blob) {
+        this.setPngSrcBlob(blob);
+      }
+    });
+
+    this.destroyRef.onDestroy(() => this.revokePngSrc());
   }
-  ngOnDestroy(): void {
-    URL.revokeObjectURL(this.pngSrc);
+  private setPngSrcBlob(blob: Blob) {
+    this.revokePngSrc();
+    this.pngSrc.set(URL.createObjectURL(blob));
+  }
+  private revokePngSrc() {
+    // Clean up object URL when component is destroyed
+    const url = untracked(() => this.pngSrc());
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
   }
 }

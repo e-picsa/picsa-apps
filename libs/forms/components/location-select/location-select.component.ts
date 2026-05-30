@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
@@ -19,7 +20,6 @@ import { isEqual } from '@picsa/utils/object.utils';
  */
 @Component({
   selector: 'picsa-form-location-select',
-  standalone: true,
   imports: [CommonModule, MatFormFieldModule, MatSelectModule],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',
@@ -31,7 +31,7 @@ export class FormLocationSelectComponent {
   public value = input<(string | undefined)[]>([]);
 
   /** Optional method to apply to data before rendering locations in list */
-  public locationModifier = input<(data: IGelocationData, countryCode: string) => IGelocationData>((data) => data);
+  public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
   public valueChanged = output<(string | undefined)[]>();
 
@@ -52,7 +52,7 @@ export class FormLocationSelectComponent {
     return computedValue[4] ? true : false;
   });
 
-  public locationData = computed<IGelocationData>(() => {
+  public locationData = computed<IGeolocationData>(() => {
     const countryCode = this.countryCode();
     return this.getLocationData(countryCode);
   });
@@ -87,14 +87,9 @@ export class FormLocationSelectComponent {
     return value;
   }
 
-  private getLocationData(country_code: string): IGelocationData {
-    const locationData: IGelocationData = GEO_LOCATION_DATA[country_code];
-    if (locationData) {
-      return this.locationModifier()(locationData, country_code);
-    } else {
-      console.error('[Location Select] no data for country', country_code);
-      return { admin_4: { label: '', locations: [], topoJson: () => null as any } };
-    }
+  private getLocationData(country_code: string): IGeolocationData {
+    const locationData = getGeoLocationData(country_code as ICountryCode);
+    return this.locationModifier()(locationData, country_code);
   }
 
   /** Update admin 5 options/selected when admin 4 changes */

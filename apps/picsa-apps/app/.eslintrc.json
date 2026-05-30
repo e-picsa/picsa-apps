@@ -25,7 +25,7 @@
         ],
         "@angular-eslint/component-class-suffix": ["warn"],
         "@typescript-eslint/no-explicit-any": ["warn"],
-        "@angular-eslint/prefer-standalone": "off"
+        "@angular-eslint/prefer-standalone": ["warn"]
       }
     },
     {

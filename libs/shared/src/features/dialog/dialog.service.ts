@@ -21,9 +21,9 @@ export class PicsaDialogService {
   /**********************************************************************
    *  Public Methods
    ***********************************************************************/
-
+  // TODO - only delete dialog currently in use, could consider renaming public method accordingly
   async open(
-    template: ICustomTemplate = 'blank',
+    template: ICustomTemplate = 'delete',
     customData: IPicsaDialogData = {},
     customConfig: IPicsaDialogConfig = {},
   ) {

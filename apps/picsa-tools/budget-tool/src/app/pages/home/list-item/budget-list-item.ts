@@ -14,7 +14,6 @@ import { BudgetStore } from '../../../store/budget.store';
   selector: 'budget-list-item',
   templateUrl: './budget-list-item.html',
   styleUrls: ['./budget-list-item.scss'],
-  standalone: true,
   imports: [
     FormsModule,
     BudgetMaterialModule,

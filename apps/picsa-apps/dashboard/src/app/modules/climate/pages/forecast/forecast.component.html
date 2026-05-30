@@ -2,7 +2,13 @@
   <div style="display: flex; align-items: center">
     <h2 class="mr-2">Forecasts</h2>
     <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
-    <button mat-stroked-button color="primary" *roleRequired="'climate.admin'" class="ml-auto" (click)="addForecast()">
+    <button
+      matButton="outlined"
+      color="primary"
+      *roleRequired="'climate.admin'"
+      class="ml-auto"
+      (click)="addForecast()"
+    >
       <mat-icon>add</mat-icon>
       <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
     </button>
@@ -30,7 +36,7 @@
 <ng-template #created_at let-value> {{ value | date }} </ng-template>
 <ng-template #storage_file let-value let-row="row">
   @let status = activeDownloads()[row.id];
-  <button mat-icon-button [disabled]="status === 'pending'">
+  <button matIconButton [disabled]="status === 'pending'">
     @if (value || status === 'complete') {
       <mat-icon>open_in_new</mat-icon>
     } @else if (status === 'pending') {

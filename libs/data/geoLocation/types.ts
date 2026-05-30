@@ -1,11 +1,11 @@
-export interface IGelocationData {
+export interface IGeolocationData {
+  topoJson: () => Promise<ITopoJson>;
   /**
    * Osm admin_4 typically represents district/province level data
    * https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative
    **/
   admin_4: {
     label: string;
-    topoJson: () => Promise<ITopoJson>;
     locations: { id: string; label: string }[];
   };
   admin_5?: {
@@ -16,6 +16,7 @@ export interface IGelocationData {
 
 export interface IGeoJsonData<T = Record<string, string>> {
   type: string;
+  bbox?: number[];
   crs: { type: string; properties: { name: string } };
   features: {
     type: string;
@@ -31,7 +32,8 @@ export type IBoundaryData = Record<string, number[][]>;
 
 export type ITopoJson = {
   type: string;
-  arcs: number[][][] | number[][] | number[];
+  bbox?: number[];
+  arcs: number[][][];
   transform: {
     scale: number[];
     translate: number[];
@@ -42,13 +44,13 @@ export type ITopoJson = {
 interface ITopoJsonObject {
   type: string;
   geometries: {
-    arcs: number[][][] | number[][] | number[];
-    type: string;
+    arcs?: number[][][] | number[][] | number[];
+    type: string | null;
     // all other properties should be removed to reduce file size
     properties: {
-      '@id': string;
+      id: number;
       name: string;
+      admin_level?: string | number;
     };
-    id: string;
   }[];
 }

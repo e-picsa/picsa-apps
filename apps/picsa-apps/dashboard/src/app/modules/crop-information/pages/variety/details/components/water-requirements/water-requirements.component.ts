@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -111,7 +111,7 @@ export class DashboardCropWaterRequirementsComponent {
     const { downscaled } = data;
     const country_code = this.deploymentService.activeDeployment()?.country_code;
     if (!country_code) return [];
-    const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
+    const { admin_4, admin_5 } = getGeoLocationData(country_code);
     const { label: admin_4_label } = admin_4;
     const admin4Hashmap = arrayToHashmap(admin_4.locations, 'id');
     if (admin_5) {

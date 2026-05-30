@@ -4,7 +4,7 @@
   (rowClick)="editWaterRequirement($event)"
 ></picsa-data-table>
 
-<button mat-stroked-button (click)="editWaterRequirement()" class="block mt-4 w-full">
+<button matButton="outlined" (click)="editWaterRequirement()" class="block mt-4 w-full">
   <mat-icon>add</mat-icon>New Entry
 </button>
 
@@ -18,7 +18,7 @@
         (valueChanged)="handleFormLocationChange($event)"
       ></picsa-form-location-select>
       <mat-dialog-actions align="start">
-        <button mat-button mat-dialog-close>Cancel</button>
+        <button matButton mat-dialog-close>Cancel</button>
       </mat-dialog-actions>
     </div>
 
@@ -38,9 +38,9 @@
         />
       </mat-form-field>
       <mat-dialog-actions align="start">
-        <button mat-button (click)="handleFormLocationChange([])">Cancel</button>
+        <button matButton (click)="handleFormLocationChange([])">Cancel</button>
         <button
-          mat-button
+          matButton
           [disabled]="waterInput.value === selectedEntry()?.water_requirement?.toString()"
           mat-dialog-close
           (click)="save(waterInput.value)"

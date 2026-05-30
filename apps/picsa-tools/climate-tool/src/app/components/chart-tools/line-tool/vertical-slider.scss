@@ -1,15 +1,73 @@
-input[type='range'][orient='vertical'] {
-  writing-mode: bt-lr;
-  appearance: slider-vertical;
+#lineToolSlider {
+  /* 1. Define Design Tokens */
+  --slider-track-bg: var(--color-primary);
+  --slider-track-width: 6px;
+  --slider-thumb-color: var(--color-primary);
+  --slider-thumb-size: 24px;
+  --slider-focus-ring: var(--color-primary-950);
+
+  /* 2. Base Layout & Orientation */
+  flex: 1;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+
+  /* 3. Strip native OS styling */
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  outline: none;
 }
 
-// custom slider styling
-// https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
-// https://www.cssportal.com/style-input-range/
+/* --------------------------------------
+   TRACK IMPLEMENTATION
+--------------------------------------- */
+#lineToolSlider::-webkit-slider-runnable-track {
+  width: var(--slider-track-width);
+  height: 100%;
+  background: var(--slider-track-bg);
+  border-radius: calc(var(--slider-track-width) / 2);
+}
 
-// CC NOTE - for testing in browser dev tools will need 'show user agent shadow dom'
-// https://css-tricks.com/sliding-nightmare-understanding-range-input/
+#lineToolSlider::-moz-range-track {
+  width: var(--slider-track-width);
+  height: 100%;
+  background: var(--slider-track-bg);
+  border-radius: calc(var(--slider-track-width) / 2);
+}
 
-// However, thumb styles do not work in chrome and are inconsistent in firefox, so
-// likely better to use default styling (replace with custom element in future if required)
-// https://bugs.chromium.org/p/chromium/issues/detail?id=341071
+/* --------------------------------------
+   THUMB IMPLEMENTATION
+--------------------------------------- */
+#lineToolSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: var(--slider-thumb-size);
+  width: var(--slider-thumb-size);
+  border-radius: 50%;
+  background: var(--slider-thumb-color);
+
+  /* Calculate centering dynamically based on tokens */
+  margin-left: calc((var(--slider-thumb-size) - var(--slider-track-width)) / 2 * -1);
+}
+
+#lineToolSlider::-moz-range-thumb {
+  height: var(--slider-thumb-size);
+  width: var(--slider-thumb-size);
+  border: none;
+  border-radius: 50%;
+  background: var(--slider-thumb-color);
+}
+
+/* --------------------------------------
+   FOCUS STATES
+--------------------------------------- */
+#lineToolSlider:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--slider-focus-ring);
+}
+#lineToolSlider:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--slider-focus-ring);
+}

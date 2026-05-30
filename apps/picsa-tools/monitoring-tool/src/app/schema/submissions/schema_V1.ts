@@ -1,6 +1,6 @@
+import type { IEnketoFormEntry } from '@picsa/enketo-webform';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
-import { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxJsonSchema } from 'rxdb';
 
 /**

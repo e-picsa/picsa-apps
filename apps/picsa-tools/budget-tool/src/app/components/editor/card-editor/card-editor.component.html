@@ -2,7 +2,7 @@
   <!-- Card summary and delete button -->
   <div style="position: relative; display: flex">
     <budget-card [card]="card" [showCustomCardDelete]="false"></budget-card>
-    <button mat-stroked-button color="primary" class="delete-button" (click)="deleteClicked.emit(card)">
+    <button matButton="outlined" color="primary" class="delete-button" (click)="deleteClicked.emit(card)">
       <mat-icon class="delete-button-icon">close</mat-icon>
     </button>
   </div>

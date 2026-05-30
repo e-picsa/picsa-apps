@@ -10,13 +10,13 @@
     </mat-select>
   </mat-form-field>
   <button
-    mat-stroked-button
+    matButton="outlined"
     (click)="stationSelected.emit(select.value)"
     [disabled]="downscaledData().station_id === select.value"
   >
     Update
   </button>
-  <button mat-stroked-button (click)="stationSelected.emit(undefined)">Cancel</button>
+  <button matButton="outlined" (click)="stationSelected.emit(undefined)">Cancel</button>
 </div>
 
 <!-- TODO - map select component -->

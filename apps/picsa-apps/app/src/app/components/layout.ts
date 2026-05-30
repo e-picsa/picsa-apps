@@ -1,5 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -20,10 +21,12 @@ import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@pics
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { filter, map } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-app-layout',
   templateUrl: 'layout.html',
   styleUrl: 'layout.scss',
@@ -38,6 +41,7 @@ import { filter, map } from 'rxjs';
     PicsaLoadingComponent,
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
+    PicsaScrollRestoreDirective,
   ],
 })
 export class AppLayoutComponent {

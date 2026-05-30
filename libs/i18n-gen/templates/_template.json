@@ -75,15 +75,15 @@
     "context": "activities"
   },
   {
+    "text": "and",
+    "tool": "option"
+  },
+  {
     "text": "You decide and make a plan",
     "tool": "farmer_content"
   },
   {
     "text": "Year",
-    "tool": "common"
-  },
-  {
-    "text": "Who is using?",
     "tool": "common"
   },
   {
@@ -199,6 +199,10 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Terms of Use",
+    "tool": "common"
+  },
+  {
     "text": "Temperature (°C)",
     "tool": "climate",
     "context": "chart"
@@ -239,6 +243,10 @@
     "context": "videos"
   },
   {
+    "text": "Share",
+    "tool": "budget"
+  },
+  {
     "text": "Sesame",
     "tool": "common_crops"
   },
@@ -265,11 +273,6 @@
     "text": "Seasonal Calendar",
     "tool": "resources",
     "context": "videos"
-  },
-  {
-    "text": "Save",
-    "tool": "common",
-    "context": "buttons"
   },
   {
     "text": "Saturday",
@@ -327,6 +330,10 @@
   {
     "text": "Probability",
     "tool": "common"
+  },
+  {
+    "text": "Privacy Policy",
+    "tool": "extension-content"
   },
   {
     "text": "Potatoes",
@@ -411,14 +418,6 @@
   {
     "text": "No photos added",
     "tool": "common"
-  },
-  {
-    "text": "New Profile",
-    "tool": "common"
-  },
-  {
-    "text": "Name",
-    "tool": "seasonal-calendar"
   },
   {
     "text": "Monitoring",
@@ -640,18 +639,6 @@
     "tool": "common"
   },
   {
-    "text": "Farmer",
-    "tool": "manual"
-  },
-  {
-    "text": "Extension",
-    "tool": "manual"
-  },
-  {
-    "text": "Edit Profiles",
-    "tool": "common"
-  },
-  {
     "text": "Draw Here",
     "tool": "common"
   },
@@ -701,6 +688,11 @@
     "tool": "common_weather"
   },
   {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
     "text": "Climate",
     "tool": "common"
   },
@@ -735,6 +727,10 @@
   },
   {
     "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "common"
+  },
+  {
+    "text": "By continuing, you agree to our",
     "tool": "common"
   },
   {
@@ -811,18 +807,6 @@
     "tool": "extension"
   },
   {
-    "text": "Something went wrong...",
-    "tool": "extension"
-  },
-  {
-    "text": "Reload",
-    "tool": "extension"
-  },
-  {
-    "text": "Privacy Policy",
-    "tool": "extension-content"
-  },
-  {
     "text": "Downloads",
     "tool": "extension"
   },
@@ -831,7 +815,7 @@
     "tool": "extension"
   },
   {
-    "text": "Click on the button below to retry",
+    "text": "App Terms",
     "tool": "extension"
   },
   {
@@ -872,6 +856,10 @@
   },
   {
     "text": "No saved calendars",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Name",
     "tool": "seasonal-calendar"
   },
   {
@@ -952,10 +940,6 @@
     "tool": "option"
   },
   {
-    "text": "and",
-    "tool": "option"
-  },
-  {
     "text": "Who makes decisions",
     "tool": "option"
   },
@@ -1000,6 +984,10 @@
     "tool": "option"
   },
   {
+    "text": "Positive",
+    "tool": "option"
+  },
+  {
     "text": "Performance in high, mid and low rainfall",
     "tool": "option"
   },
@@ -1018,6 +1006,10 @@
   },
   {
     "text": "Neutral",
+    "tool": "option"
+  },
+  {
+    "text": "Negative",
     "tool": "option"
   },
   {
@@ -1077,10 +1069,6 @@
     "tool": "option"
   },
   {
-    "text": "Good",
-    "tool": "option"
-  },
-  {
     "text": "Finish",
     "tool": "option"
   },
@@ -1114,10 +1102,6 @@
   },
   {
     "text": "Benefits",
-    "tool": "option"
-  },
-  {
-    "text": "Bad",
     "tool": "option"
   },
   {
@@ -1211,11 +1195,6 @@
   {
     "text": "Create New",
     "tool": "monitoring"
-  },
-  {
-    "text": "Close",
-    "tool": "common",
-    "context": "buttons"
   },
   {
     "text": "Click the Create New button to add a submission",
@@ -1394,7 +1373,15 @@
     "tool": "manual"
   },
   {
+    "text": "Farmer",
+    "tool": "manual"
+  },
+  {
     "text": "F",
+    "tool": "manual"
+  },
+  {
+    "text": "Extension",
     "tool": "manual"
   },
   {
@@ -1562,10 +1549,6 @@
     "tool": "climate"
   },
   {
-    "text": "Share",
-    "tool": "budget"
-  },
-  {
     "text": "Select a site",
     "tool": "climate"
   },
@@ -1583,10 +1566,6 @@
   },
   {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Analyse",
     "tool": "climate"
   },
   {
@@ -1677,6 +1656,11 @@
   {
     "text": "Save your budget",
     "tool": "budget"
+  },
+  {
+    "text": "Save",
+    "tool": "common",
+    "context": "buttons"
   },
   {
     "text": "Quantity",

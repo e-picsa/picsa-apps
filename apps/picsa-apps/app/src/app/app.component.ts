@@ -1,4 +1,4 @@
-import { Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
@@ -22,10 +22,10 @@ import { _wait } from '@picsa/utils';
 import { AppLayoutComponent } from './components/layout';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: true,
   imports: [AppLayoutComponent, RouterModule],
 })
 export class AppComponent implements OnInit {

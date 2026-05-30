@@ -13,7 +13,7 @@ import { DashboardAuthService } from '../services/auth.service';
  * ```
  */
 // eslint-disable-next-line @angular-eslint/directive-selector
-@Directive({ selector: '[roleRequired]', standalone: true })
+@Directive({ selector: '[roleRequired]' })
 export class AuthRoleRequiredDirective {
   private templateRef = inject(TemplateRef);
   private viewContainer = inject(ViewContainerRef);

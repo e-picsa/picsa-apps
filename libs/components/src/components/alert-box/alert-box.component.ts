@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -15,6 +15,7 @@ const COLOR_MAPPING: { [type in IAlertType]: number[] } = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-alert-box',
   templateUrl: './alert-box.component.html',
   styleUrls: ['./alert-box.component.scss'],
@@ -27,21 +28,23 @@ const COLOR_MAPPING: { [type in IAlertType]: number[] } = {
 export class AlertBoxComponent {
   private element = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  public icon: string;
+  public icon = signal('');
 
-  @Input() set type(type: IAlertType) {
-    if (!type) {
-      type = 'info';
-    }
-    this.icon = ICON_MAPPING[type];
-    const [h, s, l] = COLOR_MAPPING[type];
-    this.element.nativeElement.style.setProperty('--alert-color', `hsl(${h},${s}%,${l}%)`);
-    this.element.nativeElement.style.setProperty('--alert-color-bg', `hsl(${h},${s}%,${l}%,${0.15})`);
-    if (!this.title) {
-      this.title = capitaliseString(type);
-    }
+  type = input<IAlertType>('info');
+
+  title = input<string>('');
+
+  displayTitle = computed(() => this.title() || capitaliseString(this.type()));
+
+  constructor() {
+    effect(() => {
+      const type = this.type();
+      this.icon.set(ICON_MAPPING[type]);
+      const [h, s, l] = COLOR_MAPPING[type];
+      this.element.nativeElement.style.setProperty('--alert-color', `hsl(${h},${s}%,${l}%)`);
+      this.element.nativeElement.style.setProperty('--alert-color-bg', `hsl(${h},${s}%,${l}%,${0.15})`);
+    });
   }
-  @Input() title: string;
 }
 function capitaliseString(s = '') {
   return s[0].toUpperCase() + s.substring(1);

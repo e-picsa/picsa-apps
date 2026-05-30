@@ -12,7 +12,6 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
   templateUrl: './weather-select-multiple.component.html',
   styleUrls: ['./weather-select.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule],
 })
 export class FormWeatherSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<IWeatherDataEntry> {

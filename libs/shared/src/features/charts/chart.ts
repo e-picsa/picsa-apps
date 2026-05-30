@@ -1,16 +1,17 @@
 import {
   Component,
+  effect,
   ElementRef,
   HostListener,
   inject,
-  Input,
-  SimpleChanges,
+  input,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { IChartConfig } from '@picsa/models';
+import type { IChartConfig } from '@picsa/models/src/climate.models';
 import * as c3 from 'c3';
 
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'picsa-chart',
   template: ` <div data-cy="chart-container" #chart class="chart-container"></div> `,
@@ -31,22 +32,14 @@ export class PicsaChartComponent {
   @ViewChild('chart', { static: true })
   chartContainer: ElementRef<HTMLDivElement>;
 
-  /**
-   * Optional data override to trigger force unload/reload
-   * NOTE - initial data should be populated while generated config
-   * TODO - review if still required (data usually populated to config)
-   */
-  @Input() data: c3.Data = {
-    columns: [],
-  };
-  @Input() config: IChartConfig = {};
+  config = input.required<IChartConfig>();
 
   // dispatch resize event to trigger chart resize on orientation change
   @HostListener('window:orientationchange', [])
   onOrientationChange() {
     if (this.chart) {
       setTimeout(() => {
-        this.create();
+        this.create(this.config());
       }, 200);
     }
   }
@@ -55,47 +48,24 @@ export class PicsaChartComponent {
   chartRerender() {
     if (this.chart) {
       setTimeout(() => {
-        this.create();
+        this.create(this.config());
       }, 200);
     }
   }
-
-  /**********************************************************************************
-   *  Custom creation and change event handling
-   *  Note - whilst reactive binding has been added for data, better functionality
-   *  exists by simply accessing the api methods on this.chart, such as load() or unload()
-   **********************************************************************************/
-
-  // note, only detects object change, not content (so array push ignored)
-  // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.config?.currentValue) {
-      if (this.chart) {
-        if (changes['config']) {
-          // handle core changes which require chart rebuild
-          this.create();
-        } else if (changes['data']) {
-          // difficult to detect full changes (ids as well as if values changed within)
-          // therefore just unload all data and load all new
-          this.chart.unload();
-          // need to wait after unload before reload as animation gets blocked
-          setTimeout(() => {
-            this.chart.load(changes.data.currentValue);
-          }, 300);
-        }
-      } else {
-        this.create();
-      }
-    }
+  constructor() {
+    effect(() => {
+      const config = this.config();
+      this.create(config);
+    });
   }
 
   // use create method to populate div which will also be available before viewInit
-  private create() {
+  private create(config: Partial<c3.ChartConfiguration>) {
     this.chart = c3.generate({
-      ...this.config,
+      ...config,
       bindto: this.chartContainer.nativeElement,
-      data: this.config.data || this.data,
-      size: this.config.size || {
+      data: config.data || {},
+      size: config.size || {
         height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
       },
       oninit: function () {

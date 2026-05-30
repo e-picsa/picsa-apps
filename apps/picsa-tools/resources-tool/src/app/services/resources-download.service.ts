@@ -88,7 +88,7 @@ export class ResourcesDownloadService {
       if (entry) {
         const existingUri = this.uris.get(id);
         if (existingUri) {
-          URL.revokeObjectURL(existingUri);
+          this.attachmentService.revokeFileAttachmentURIs([id]);
           this.uris.delete(id);
         }
         this.map.delete(id);

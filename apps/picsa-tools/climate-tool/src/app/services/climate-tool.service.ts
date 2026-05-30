@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 type IToolName = 'line' | 'terciles';
@@ -27,24 +27,27 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
-  public tools = TOOL_DEFAULTS;
+  public tools = signal(TOOL_DEFAULTS);
 
   /** Track enabled tools separately to other settings for easier change detection */
-  public enabled: { [key in IToolName]: boolean } = {
+  public enabled = signal<{ [key in IToolName]: boolean }>({
     line: false,
     terciles: false,
-  };
+  });
 
   public disableAll() {
-    this.enabled = { line: false, terciles: false };
+    this.enabled.set({ line: false, terciles: false });
   }
 
   public toggleEnabled(tool: IToolName) {
-    this.enabled[tool] = !this.enabled[tool];
+    this.enabled.update((e) => ({ ...e, [tool]: !e[tool] }));
   }
 
   public setValue(tool: IToolName, value: any) {
-    this.tools[tool].value = value;
+    this.tools.update((t) => ({
+      ...t,
+      [tool]: { ...t[tool], value },
+    }));
   }
 }
 

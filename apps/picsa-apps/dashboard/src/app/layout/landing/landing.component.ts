@@ -9,7 +9,6 @@ import { DashboardSignInComponent } from '../../modules/auth/components/sign-in/
 
 @Component({
   selector: 'dashboard-landing-page',
-  standalone: true,
   imports: [ReactiveFormsModule, DashboardSignInComponent, MatCardModule, MatToolbarModule, MatButtonModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',

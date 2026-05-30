@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -6,8 +6,7 @@ import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { IPicsaVideoData, RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
-import { PicsaVideoPlayerModule } from '@picsa/shared/features';
-import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
+import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -20,10 +19,11 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
  * and support for child resources integrated into main resource components
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'farmer-step-video-player',
   templateUrl: 'step-video-player.html',
   styleUrl: 'step-video-player.scss',
-  imports: [PicsaVideoPlayerModule, ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule],
+  imports: [ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule, PicsaVideoPlayerComponent],
 })
 export class FarmerStepVideoPlayerComponent {
   public video = input.required<IPicsaVideoData>();
@@ -66,7 +66,7 @@ export class FarmerStepVideoPlayerComponent {
     }
   }
 
-  public playerComponent = viewChild<VideoPlayerComponent>('videoPlayer');
+  public playerComponent = viewChild<PicsaVideoPlayerComponent>('videoPlayer');
   public downloaderComponent = viewChild<ResourceDownloadComponent>('dl');
 
   // Expose public click handler to allow programattic click from playlist

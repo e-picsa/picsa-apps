@@ -21,7 +21,6 @@ import { DashboardMapService } from '../../map.service';
 
 @Component({
   selector: 'dashboard-map-home',
-  standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './map-home.component.html',
   styleUrls: ['./map-home.component.scss'],
@@ -112,7 +111,7 @@ export class MapHomeComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      const geojson = topoJsonToGeoJson(topojsonObj as never);
+      const geojson = topoJsonToGeoJson(topojsonObj as never, row.admin_level);
       let validFeatures = false;
       if (geojson) {
         if (geojson.type === 'FeatureCollection') {

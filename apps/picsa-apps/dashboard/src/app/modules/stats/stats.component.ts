@@ -3,7 +3,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'dashboard-app-stats',
-  standalone: true,
   templateUrl: 'stats.component.html',
   styleUrl: 'stats.component.scss',
   imports: [],

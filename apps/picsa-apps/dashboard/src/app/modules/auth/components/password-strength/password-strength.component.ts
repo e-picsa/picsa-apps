@@ -4,7 +4,6 @@ import zxcvbn from 'zxcvbn';
 
 @Component({
   selector: 'dashboard-password-strength',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="flex flex-col gap-1 mb-3 mt-[-10px] min-h-[36px]">

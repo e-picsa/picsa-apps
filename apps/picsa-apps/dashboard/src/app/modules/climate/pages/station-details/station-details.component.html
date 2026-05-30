@@ -2,7 +2,7 @@
   @if (service.activeStation(); as station) {
     <div class="flex items-center">
       <h2 class="flex-1">{{ station.station_name }}</h2>
-      <button mat-stroked-button (click)="refreshData(station)">
+      <button matButton="outlined" (click)="refreshData(station)">
         Refresh Data
         <mat-icon>autorenew</mat-icon>
       </button>

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, si
 import { FieldTree, form, FormField, max, min, required } from '@angular/forms/signals'; // Angular 21 Signal Forms
 import { MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { markAllAsTouched, PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { CalendarDataEntry } from '../../schema';
 import { SeasonalCalendarMaterialModule } from '../material.module';

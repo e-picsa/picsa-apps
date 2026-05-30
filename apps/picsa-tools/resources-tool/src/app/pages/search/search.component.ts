@@ -84,7 +84,7 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
     const collectionDocs = await this.service.dbCollections.find().exec();
     const allResources = [...fileDocs, ...linkDocs, ...collectionDocs].map((doc) => doc._data);
     // TODO - add support for translations
-    this.fuse = new Fuse(allResources, this.fuseOptions);
+    this.fuse = new Fuse(allResources as IResourceBase[], this.fuseOptions);
   }
 
   private subscribeToQueryParams() {
@@ -98,7 +98,7 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
     // Display filtered results when more than 2 characters specified, default to all docs
     const searchResults =
       this.query.length > 2 ? this.fuse.search(this.query) : this.fuse['_docs'].map((item) => ({ item }));
-    this.setSearchResultsByType(searchResults);
+    this.setSearchResultsByType(searchResults as FuseResult<IResourceBase>[]);
     this.totalResults = searchResults.length;
     this.setRouteSearchParam(this.query || undefined);
     this.cdr.markForCheck();

@@ -11,12 +11,11 @@ import { SupabaseService } from '../../supabase.service';
 /**
  * Directive that can be added to any component to launch storage file picker component
  * ```
- *  <button mat-button supabaseStoragePicker storageBucketName='mw' >Pick File</button>
+ *  <button matButton supabaseStoragePicker storageBucketName='mw' >Pick File</button>
  * ```
  */
 @Directive({
   selector: '[supabaseStoragePicker]',
-  standalone: true,
 })
 export class SupabaseStoragePickerDirective {
   private dialog = inject(MatDialog);
@@ -92,7 +91,7 @@ export class SupabaseStorageFilePickerComponent {
     return a.name === b.name;
   }
 
-  public handleFileSelect() {
+  public async handleFileSelect() {
     const [entry] = this.selected;
     if (this.selected) {
       this.previewUrl = this.storage.getPublicLink(entry.bucket_id as string, entry.name as string);

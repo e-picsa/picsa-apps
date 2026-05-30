@@ -1,13 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject,signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
-import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import {
+  formatHeaderDefault,
+  IDataTableOptions,
+  PicsaDataTableComponent,
+} from '@picsa/shared/features/data-table/data-table.component';
+import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
 
@@ -19,7 +24,6 @@ const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarke
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatIconModule, PicsaMapComponent, PicsaDataTableComponent],
 })
@@ -35,8 +39,6 @@ export class SiteSelectPage {
 
   mapReady = signal(false);
 
-  // main options handled by featuredCountry
-  mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
@@ -66,10 +68,19 @@ export class SiteSelectPage {
     });
   });
 
-  public tableOptions: IDataTableOptions = {
-    displayColumns: ['map', 'name', 'district'],
-    sort: { id: 'district', start: 'asc' },
-  };
+  public tableOptions = computed(() => {
+    // map location to correct admin 4 name (e.g. province/district)
+    const country_code = this.userCountryCode();
+    const geoData = getGeoLocationData(country_code);
+    return {
+      displayColumns: ['map', 'name', 'location'],
+      formatHeader: (v) => {
+        if (v === 'location') return geoData.admin_4.label;
+        return formatHeaderDefault(v);
+      },
+      sort: { id: 'location', start: 'asc' },
+    } satisfies IDataTableOptions;
+  });
 
   private nearestStation = signal<IStationMeta | undefined>(undefined);
 
@@ -124,7 +135,13 @@ export class SiteSelectPage {
 
   public handleRowClick(station: IStationMeta) {
     if (station?.id) {
-      this.selectedStation.set(station);
+      if (station.id === this.selectedStation()?.id) {
+        // second tap on same station go to page
+        this.goToSite(station);
+      } else {
+        // first tap on station set selected to zoom to
+        this.selectedStation.set(station);
+      }
     }
   }
   public handleMarkerClick(e: IMapMarker) {
@@ -164,10 +181,11 @@ export class SiteSelectPage {
 
   /** Load country boundaries from geojson */
   private async loadCountryAdminBoundaries(map: Map, country_code: string) {
-    const metadata: IGelocationData = GEO_LOCATION_DATA[country_code];
-    if (!metadata) return;
-    const topojson = await metadata.admin_4.topoJson();
-    const feature = topoJsonToGeoJson(topojson);
+    const metadata = getGeoLocationData(country_code as ICountryCode);
+    const topojson = await metadata.topoJson();
+    // TODO - hardcoded level 4 could be configured to either
+    // show a mix of levels or different levels depending on country config
+    const feature = topoJsonToGeoJson(topojson, 4);
     geoJSON(feature as any)
       .setStyle({ fill: false, color: 'brown', opacity: 0.5 })
       .addTo(map);

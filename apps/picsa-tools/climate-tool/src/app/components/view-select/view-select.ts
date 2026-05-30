@@ -1,7 +1,9 @@
-import { Component, inject,OnDestroy, OnInit } from '@angular/core';
-import { IsActiveMatchOptions } from '@angular/router';
-import { IChartMeta } from '@picsa/models/src';
-import { Subject, takeUntil } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { IsActiveMatchOptions, RouterLink, RouterLinkActive } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
+import { IChartMeta } from '@picsa/models';
+import { isEqual } from '@picsa/utils/object.utils';
 
 import { IReportMeta } from '../../models';
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -10,16 +12,11 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   selector: 'climate-view-select',
   templateUrl: './view-select.html',
   styleUrls: ['./view-select.scss'],
-  standalone: false,
+  imports: [MatCardModule, RouterLink, RouterLinkActive, PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ViewSelectComponent implements OnInit, OnDestroy {
+export class ViewSelectComponent {
   private chartService = inject(ClimateChartService);
-
-  /** List of charts available for display */
-  public availableCharts: IChartMeta[] = [];
-
-  /** DEPRECATED - to confirm if plan to bring back */
-  public availableReports: IReportMeta[] = [];
 
   /** Ensure router link matches station id from parameters */
   public routerLinkActiveOptions: IsActiveMatchOptions = {
@@ -29,21 +26,17 @@ export class ViewSelectComponent implements OnInit, OnDestroy {
     queryParams: 'exact',
   };
 
-  private componentDestroyed$ = new Subject();
+  readonly availableCharts = computed<IChartMeta[]>(
+    () => {
+      const station = this.chartService.station();
+      if (!station) return [];
+      const definitions = station.definitions;
+      if (!definitions) return [];
+      return Object.values(definitions).filter((v) => v && !v.disabled);
+    },
+    { equal: isEqual },
+  );
 
-  ngOnInit(): void {
-    this.subscribeToStationChanges();
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
-  }
-
-  /** Update list of available charts when station changes */
-  private subscribeToStationChanges() {
-    this.chartService.station$.pipe(takeUntil(this.componentDestroyed$)).subscribe((station) => {
-      this.availableCharts = station ? Object.values(station.definitions).filter((v) => !v.disabled) : [];
-    });
-  }
+  /** DEPRECATED - to confirm if plan to bring back */
+  readonly availableReports = computed<IReportMeta[]>(() => []);
 }

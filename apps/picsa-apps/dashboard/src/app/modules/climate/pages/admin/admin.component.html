@@ -3,11 +3,11 @@
   <div style="display: flex; align-items: center; gap: 2em">
     <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
     <!-- Data Download -->
-    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
+    <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
       <mat-icon>download</mat-icon>Download All
     </button>
     <!-- Data Refresh -->
-    <button mat-stroked-button color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
+    <button matButton="outlined" color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
       <mat-icon>refresh</mat-icon>
       <span>
         @if (refreshCount() > -1) {
@@ -41,7 +41,7 @@
           @for (statusUpdate of row.updateSignal().statuses; track $index) {
             @let status = statusUpdate.status;
             <button
-              mat-icon-button
+              matIconButton
               [matTooltip]="statusUpdate.id"
               class="status-icon"
               [attr.data-status]="status"
@@ -63,7 +63,7 @@
         } @else {
           <!-- Product download summary -->
           @for (product of products; track $index) {
-            <button mat-icon-button [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
+            <button matIconButton [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
               @if (product.available) {
                 <mat-icon color="primary">check</mat-icon>
               } @else {
@@ -85,7 +85,7 @@
     <!-- CSV download column  -->
     <ng-template #downloadTemplate let-row="row">
       <div class="flex gap-2 items-center">
-        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
+<button matIconButton (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
           <mat-icon>download</mat-icon>
         </button>
       </div>

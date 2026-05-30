@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IGelocationData } from '@picsa/data/geoLocation';
+import { IGeolocationData } from '@picsa/data/geoLocation';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
@@ -55,7 +55,7 @@ export class CropMissingLocationsComponent {
   }
 
   /** */
-  private calcMissingLocationData(downscaledData: ICropDataDownscaled['Row'][] = [], locationData: IGelocationData) {
+  private calcMissingLocationData(downscaledData: ICropDataDownscaled['Row'][] = [], locationData: IGeolocationData) {
     if (downscaledData.length > 0) {
       const locations = locationData.admin_5?.locations || locationData.admin_4?.locations;
 

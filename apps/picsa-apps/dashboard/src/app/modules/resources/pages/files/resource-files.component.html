@@ -1,7 +1,7 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2>File Resources</h2>
-    <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem; margin-left: auto">
+    <button matButton="outlined" color="primary" routerLink="create" style="margin-top: 1rem; margin-left: auto">
       <mat-icon>add</mat-icon>
       Add Resource
     </button>
@@ -74,7 +74,7 @@
     <ng-template #externalUrlTemplate let-url>
       @if (url) {
         <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
-          <button mat-icon-button style="color: black; margin: auto; display: block">
+          <button matIconButton style="color: black; margin: auto">
             <mat-icon>open_in_new</mat-icon>
           </button>
         </a>

@@ -19,7 +19,6 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
   templateUrl: './crop-select-multiple.component.html',
   styleUrls: ['./crop-select.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, MatIconModule, PicsaTranslateModule],
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {

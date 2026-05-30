@@ -4,7 +4,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'dashboard-server-error-layout',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './server-error.component.html',
   styleUrl: './server-error.component.scss',

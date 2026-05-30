@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
 import { SeasonalCalendarMaterialModule } from '../../components/material.module';

@@ -15,7 +15,6 @@ import { startWith, Subscription } from 'rxjs';
 
 @Component({
   selector: 'dashboard-profile-form',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
   templateUrl: './profile-form.component.html',
   styleUrls: ['./profile-form.component.scss'],

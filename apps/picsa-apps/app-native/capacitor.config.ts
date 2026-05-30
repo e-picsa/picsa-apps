@@ -1,5 +1,4 @@
 /// <reference types="@capacitor/push-notifications" />
-/// <reference types="@capacitor/status-bar" />
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
@@ -7,9 +6,6 @@ const config: CapacitorConfig = {
   appName: 'PICSA App',
   webDir: '../../../dist/apps/picsa-apps/app',
   zoomEnabled: true,
-  android: {
-    adjustMarginsForEdgeToEdge: 'auto',
-  },
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
@@ -21,7 +17,6 @@ const config: CapacitorConfig = {
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
     // capacitor
-    '@capawesome/capacitor-android-edge-to-edge-support',
     '@capacitor/app',
     '@capacitor/browser',
     '@capacitor/core',
@@ -36,19 +31,16 @@ const config: CapacitorConfig = {
     '@capacitor/screen-orientation',
     '@capacitor/camera',
     '@capacitor/share',
-    '@capacitor/status-bar',
     '@capacitor/push-notifications',
   ],
   plugins: {
     PushNotifications: {
       presentationOptions: ['alert'],
     },
-    // Use dark text on light background 
-    StatusBar: {
-      style: 'LIGHT',
+    SystemBars: {
+      insetsHandling: 'css',
+      style: 'DARK',
     },
-    // Config handled at runtime
-    EdgeToEdge: {},
   },
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http

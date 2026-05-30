@@ -1,13 +1,16 @@
-import { ChangeDetectionStrategy, Component, effect, inject,signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/configuration';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 @Component({
   selector: 'picsa-app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PicsaConfigurationSelectComponent],
+  imports: [PicsaConfigurationSelectComponent, FormsModule, PicsaTranslateModule, PicsaCommonComponentsModule],
 })
 export class HomePageComponent {
   configurationService = inject(ConfigurationService);

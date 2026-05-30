@@ -18,7 +18,6 @@ import { ProfileFormComponent } from '../../components/profile-form/profile-form
 
 @Component({
   selector: 'dashboard-user-profile',
-  standalone: true,
   imports: [
     DeploymentItemComponent,
     ProfileFormComponent,

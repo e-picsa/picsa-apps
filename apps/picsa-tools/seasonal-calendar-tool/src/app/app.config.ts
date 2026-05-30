@@ -3,7 +3,7 @@ import { ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/i18n/src';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDb_V2_Module } from '@picsa/shared/modules';
 
 import { appRoutes } from './app.routes';

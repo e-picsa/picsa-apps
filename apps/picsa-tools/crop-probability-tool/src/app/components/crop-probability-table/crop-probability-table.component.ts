@@ -13,7 +13,6 @@ import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '.
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
   imports: [FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent implements OnInit {

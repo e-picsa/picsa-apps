@@ -17,7 +17,6 @@ export type ApiStatusState = 'PENDING' | 'LOADING' | 'SUCCESS' | 'ERROR';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'dashboard-api-status',
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

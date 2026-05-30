@@ -1,5 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { _wait } from '@picsa/utils';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 
@@ -7,7 +9,8 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   selector: 'climate-share-dialog',
   templateUrl: './share-dialog.component.html',
   styleUrls: ['./share-dialog.component.scss'],
-  standalone: false,
+  imports: [MatButtonModule, MatDialogModule, PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**
  *
@@ -16,43 +19,41 @@ import { ClimateChartService } from '../../services/climate-chart.service';
 export class ClimateShareDialogComponent {
   private chartService = inject(ClimateChartService);
 
-  public status = '';
-  public disabled = false;
-  public shareCode: string;
+  readonly status = signal('');
+  readonly disabled = signal(false);
 
   public async sharePicture() {
-    this.disabled = true;
-    this.status = 'Preparing image....';
-    await _wait(200);
+    this.disabled.set(true);
+    this.status.set('Preparing image....');
+    await this.delay(200);
 
     try {
-      this.status = 'Generating print version...';
+      this.status.set('Generating print version...');
       await this.chartService.generatePrintVersion();
-      this.disabled = false;
-      this.status = '';
-    } catch (error: any) {
-      this.status = error?.message || 'Unable to share';
-      this.disabled = false;
+      this.disabled.set(false);
+      this.status.set('');
+    } catch (error: unknown) {
+      this.status.set(error instanceof Error ? error.message : 'Unable to share');
+      this.disabled.set(false);
     }
   }
 
   public async shareLink() {
-    this.disabled = true;
-    this.status = 'Preparing link....';
-    await _wait(200);
+    this.disabled.set(true);
+    this.status.set('Preparing link....');
+    await this.delay(200);
     try {
       // const shareCode = await this.store.shareAsLink();
       // this.shareCode = shareCode;
-      this.disabled = false;
-      this.status = '';
-    } catch (error: any) {
-      this.status = error?.message || 'Unable to share';
-      this.disabled = false;
+      this.disabled.set(false);
+      this.status.set('');
+    } catch (error: unknown) {
+      this.status.set(error instanceof Error ? error.message : 'Unable to share');
+      this.disabled.set(false);
     }
   }
 
-  /*****************************************************************************
-   * Download and Share
-   *
-   ****************************************************************************/
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }

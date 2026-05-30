@@ -1,6 +1,6 @@
 <div class="status-container" *roleRequired="requiredRole()">
   <button
-    mat-icon-button
+    matIconButton
     (click)="runApi()"
     [disabled]="status() === 'LOADING'"
     [color]="status() === 'ERROR' ? 'warn' : 'primary'"

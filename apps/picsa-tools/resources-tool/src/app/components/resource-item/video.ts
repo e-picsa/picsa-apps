@@ -1,33 +1,32 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
 
 import { IResourceFile } from '../../schemas';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'resource-item-video',
   template: `
-    @if (resource.title) {
-      <h2>{{ resource.title | translate }}</h2>
+    @if (resource().title; as title) {
+      <h2>{{ title | translate }}</h2>
     }
     <picsa-video-player
-      [source]="fileURI"
+      [source]="fileURI()"
       #videoPlayer
-      [thumbnail]="resource.cover?.image"
-      [onlineVideoUrl]="resource.url"
-      [id]="resource.id"
+      [thumbnail]="resource().cover?.image"
+      [onlineVideoUrl]="resource().url"
+      [id]="resource().id"
     >
     </picsa-video-player>
-    @if (resource.description) {
-      <p>{{ resource.description | translate }}</p>
+    @if (resource().description; as description) {
+      <p>{{ description | translate }}</p>
     }
   `,
-  imports: [PicsaVideoPlayerModule, PicsaTranslateModule],
+  imports: [PicsaVideoPlayerComponent, PicsaTranslateModule],
 })
 export class ResourceItemVideoComponent {
-  public videoSource: string;
+  fileURI = input<string | null>(null);
 
-  @Input() fileURI: string | null;
-
-  @Input() resource: IResourceFile;
+  resource = input.required<IResourceFile>();
 }

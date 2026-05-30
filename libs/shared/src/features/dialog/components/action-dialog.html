@@ -7,11 +7,11 @@
   <div mat-dialog-actions>
     <!-- HACK - want to disable autofocus on first element so provide conditional focus element -->
     @for (button of data.buttons; track button) { @if (!button.focus) {
-    <button class="picsa-dialog-button" mat-button [mat-dialog-close]="button.value">
+    <button class="picsa-dialog-button" matButton [mat-dialog-close]="button.value">
       {{ button.text | translate}}
     </button>
     } @if (button.focus) {
-    <button mat-button [mat-dialog-close]="button.value" cdkFocusInitial>{{ button.text| translate }}</button>
+    <button matButton [mat-dialog-close]="button.value" cdkFocusInitial>{{ button.text| translate }}</button>
     } }
   </div>
   }

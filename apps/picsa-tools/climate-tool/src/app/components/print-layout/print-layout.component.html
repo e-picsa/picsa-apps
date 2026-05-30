@@ -1,8 +1,8 @@
 <div id="picsaClimatePrintLayout" class="print-container">
-  <h1>{{ stationName }}</h1>
-  <h2>{{ chartName | translate }}</h2>
+  <h1>{{ stationName() }}</h1>
+  <h2>{{ chartName() | translate }}</h2>
   <div class="img-container">
-    <img [src]="pngSrc" />
+    <img [src]="pngSrc()" />
   </div>
-  <p style="text-align: center">{{ chartDefinition | translate }}</p>
+  <p style="text-align: center">{{ chartDefinition() | translate }}</p>
 </div>

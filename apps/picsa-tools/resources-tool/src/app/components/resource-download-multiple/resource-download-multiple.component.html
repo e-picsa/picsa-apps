@@ -1,9 +1,9 @@
 @if (status() === 'downloading') {
-  <button mat-stroked-button class="ml-4" (click)="stopDownload()">
+  <button matButton="outlined" class="ml-4" (click)="stopDownload()">
     <mat-icon>cancel</mat-icon> {{ 'Downloading' | translate }} {{ message() }}
   </button>
 } @else {
-  <button mat-stroked-button class="ml-4" (click)="startDownload()" [disabled]="!pendingDownloadsSize()">
+  <button matButton="outlined" class="ml-4" (click)="startDownload()" [disabled]="!pendingDownloadsSize()">
     <mat-icon>download</mat-icon> {{ 'Download All' | translate }} {{ pendingDownloadsSize() | sizeMB }} MB
   </button>
 }

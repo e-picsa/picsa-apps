@@ -7,9 +7,7 @@ import { PicsaBaseControlValueAccessor } from './cva.base';
 /**
  * Base component representing a standard multiple form control using Angular 21 Signal forms.
  */
-@Directive({
-  standalone: true,
-})
+@Directive({})
 // Extend the generic base class and tell it to expect an array of strings
 export abstract class PicsaFormBaseSelectMultipleComponent<
   T extends { id: string },

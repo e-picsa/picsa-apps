@@ -72,14 +72,12 @@ While Signals are preferred for synchronous state, RxJS is still the standard fo
 
 ## 4. Component Architecture
 
-- **Standalone Components**: All components must be `standalone: true`.
 - **File Structure**: Always use separate files for logic (`.ts`), template (`.html`), and styles (`.scss`). **NEVER** use inline `template` or `styles`.
 - **Imports**: explicity import only what you need.
 - **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush`.
   ```typescript
   @Component({
       selector: 'app-feature',
-      standalone: true,
       imports: [CommonModule, MatButtonModule],
       templateUrl: './feature.component.html',
       changeDetection: ChangeDetectionStrategy.OnPush
@@ -114,7 +112,7 @@ While Signals are preferred for synchronous state, RxJS is still the standard fo
 
 ## 8. Internationalization (i18n)
 
-The app is translated into over 20 languages. **NEVER** hardcode user-facing text in templates or components.
+The app is translated into over 20 languages. **NEVER** hardcode user-facing text in templates or components, **EXCEPT** for files within the `apps/picsa-apps/dashboard` application, which does not require strict translation enforcement.
 
 - **Templates**: Always use the `translate` pipe.
 
@@ -125,3 +123,11 @@ The app is translated into over 20 languages. **NEVER** hardcode user-facing tex
   <!-- DON'T -->
   <button>Share</button>
   ```
+
+## 9. Angular Material & UI Components
+
+This project uses **Angular Material 21** with specific design patterns. Standard legacy Angular Material directives (like `mat-button`) have been superseded or abstracted in this project.
+
+- **Buttons**: ALWAYS use the `matButton` directive with its specific variants (e.g., `<button matButton="filled" color="primary">`).
+- **CRITICAL**: Do **NOT** use or recommend legacy directives like `mat-button`, `mat-raised-button`, etc.
+- **CRITICAL**: Do **NOT** flag `matButton` as a "duplicate attribute" or "incorrect directive selector". In this architecture, `matButton` is the strictly correct and expected directive selector.
