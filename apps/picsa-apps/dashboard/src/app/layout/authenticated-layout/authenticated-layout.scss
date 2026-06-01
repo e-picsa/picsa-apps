@@ -2,6 +2,10 @@
   display: contents;
 }
 
+mat-sidenav-content {
+  @apply flex flex-col;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
