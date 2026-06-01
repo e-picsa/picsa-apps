@@ -81,3 +81,4 @@ libs/features/map/tiles/**/*.png
 .nx/cache
 .vercel
 .nx
+.temp

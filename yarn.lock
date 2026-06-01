@@ -26000,6 +26000,9 @@ __metadata:
     zod: "npm:^4.1.5"
     zone.js: "npm:0.16.0"
     zxcvbn: "npm:^4.4.2"
+  dependenciesMeta:
+    supabase:
+      built: true
   languageName: unknown
   linkType: soft
 
