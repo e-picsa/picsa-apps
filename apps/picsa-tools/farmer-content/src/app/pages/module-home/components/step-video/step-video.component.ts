@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
@@ -9,6 +11,8 @@ import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
+
+import { StepVideoLanguageSelectComponent } from '../step-video-language-select/step-video-language-select.component';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -20,7 +24,15 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
  */
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, MatListModule, MatDivider, ResourceDownloadComponent, PicsaVideoPlayerModule],
+  imports: [
+    CommonModule,
+    MatIcon,
+    MatListModule,
+    MatDivider,
+    ResourceDownloadComponent,
+    PicsaVideoPlayerModule,
+    StepVideoLanguageSelectComponent,
+  ],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })
@@ -28,11 +40,27 @@ export class FarmerStepVideoComponent {
   /** */
   viewMode = input<'single' | 'playlist'>('single');
 
-  videos = input.required<IPicsaVideoData[]>();
+  video = input.required<IPicsaVideoData>();
 
-  public videoResources = computed(() => this.toVideoResources(this.videos()));
+  public rankedVideos = computed(() => this.rankVideos(this.video()));
 
-  constructor(private configurationService: ConfigurationService) {}
+  public selectedVideoResource = computed(() => {
+    const [topRanked] = this.rankedVideos();
+    if (topRanked) {
+      return RESOURCE_VIDEO_HASHMAP[topRanked.id];
+    }
+    return undefined;
+  });
+
+  /** */
+  public videoVariantOptions = computed(() => {
+    return this.rankedVideos().map((v) => ({ label: v.locale_codes.join(','), value: v.id }));
+  });
+
+  constructor(
+    public dialog: MatDialog,
+    private configurationService: ConfigurationService,
+  ) {}
 
   public handleItemClick(dlComponent: ResourceDownloadComponent, videoPlayer: VideoPlayerComponent) {
     if (dlComponent.downloadStatus() === 'ready') {
@@ -43,12 +71,12 @@ export class FarmerStepVideoComponent {
     }
   }
 
-  private toVideoResources(videos: IPicsaVideoData[]) {
+  private rankVideos(video: IPicsaVideoData) {
     const userSettings = this.configurationService.userSettings();
-    return videos
-      .map((video) => getRankedChildVideos(video, userSettings))
-      .map(([topRanked]) => RESOURCE_VIDEO_HASHMAP[topRanked?.id])
-      .filter((resource) => resource !== undefined);
+    const ranked = getRankedChildVideos(video, userSettings);
+    // Ensure only returning child videos that have mapped resource data
+    // TODO - refactor to use video format and not resource format
+    return ranked.filter((v) => Boolean(v) && RESOURCE_VIDEO_HASHMAP[v.id]);
   }
 }
 
@@ -65,7 +93,6 @@ function getRankedChildVideos(video: IPicsaVideoData, userSettings: IUserSetting
 
   return video.children
     .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
-    .filter(({ _rank }) => _rank > 0)
     .sort((a, b) => a._rank - b._rank);
 }
 
