@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable, untracked } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { arrayToHashmap, deepClone, loadCSV } from '@picsa/utils';
@@ -28,10 +28,27 @@ export class ClimateDataService {
 
   private loadedStationData: Record<string, IStationData[]> = {};
 
+  constructor() {
+    effect(() => {
+      const stations = this.stations();
+      const userSettings = this.configurationService.userSettings();
+      const stationId = userSettings.climate_tool?.station_id;
+      if (stationId && !this.stationHashmap()[stationId]) {
+        untracked(() => {
+          this.setPreferredStation('');
+        });
+      }
+    });
+  }
+
   /** Retrieve the preferred station ID from user settings */
   public getPreferredStation(): string | undefined {
     const userSettings = this.configurationService.userSettings();
-    return userSettings.climate_tool?.station_id;
+    const stationId = userSettings.climate_tool?.station_id;
+    if (stationId && this.stationHashmap()[stationId]) {
+      return stationId;
+    }
+    return undefined;
   }
 
   /** Allow user to set preferred station */
