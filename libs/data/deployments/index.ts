@@ -55,7 +55,7 @@ const DEPLOYMENTS_BASE = {
   zm: generate({
     country_code: 'zm',
     budgetTool: {
-      currency: 'ZMK',
+      currency: 'ZMW',
       currencyBaseValue: 10,
     },
     theme: 'picsa-zm',
@@ -63,7 +63,7 @@ const DEPLOYMENTS_BASE = {
   zw: generate({
     country_code: 'zw',
     budgetTool: {
-      currency: 'ZMD',
+      currency: 'ZWD',
       currencyBaseValue: 100,
     },
     theme: 'picsa-zw',
