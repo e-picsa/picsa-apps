@@ -129,7 +129,7 @@ export class ClimateChartService {
     }
 
     // 2. Validate active view ID against available charts
-    const available = this.availableCharts();
+    const available = untracked(() => this.availableCharts());
     if (available.length > 0) {
       const isValid = viewId && available.some((c) => c._id === viewId);
       if (!isValid) {
