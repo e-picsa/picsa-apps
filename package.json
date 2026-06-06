@@ -62,7 +62,7 @@
     "@ngx-translate/core": "~16.0.4",
     "@ngx-translate/http-loader": "~16.0.1",
     "@nx/angular": "22.3.3",
-    "@picsa/enketo-webform": "1.4.1",
+    "@picsa/enketo-webform": "1.4.2",
     "@supabase/supabase-js": "^2.93.3",
     "@uppy/angular": "^0.6.1",
     "@uppy/core": "^3.7.1",

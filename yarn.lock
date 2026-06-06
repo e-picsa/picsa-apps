@@ -9263,9 +9263,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@picsa/enketo-webform@npm:1.4.1":
-  version: 1.4.1
-  resolution: "@picsa/enketo-webform@npm:1.4.1"
+"@picsa/enketo-webform@npm:1.4.2":
+  version: 1.4.2
+  resolution: "@picsa/enketo-webform@npm:1.4.2"
   dependencies:
     fast-xml-parser: "npm:^5.7.2"
     form-data: "npm:^4.0.5"
@@ -9275,7 +9275,7 @@ __metadata:
     lit: "npm:^3.3.2"
     mergexml: "npm:^1.2.4"
     signature_pad: "npm:^5.1.3"
-  checksum: 10c0/b2a5153804477fbf2e8d9ec16cec75039925e3ba8419446e77dd43871ae0b8adf67e807ae289c1b313dd16da18d057f07d06fc71477302bd64e5db0ca17b75ff
+  checksum: 10c0/6570c3ae0a2a46fdcf07088fc90d05e407de7f99649773888a65259a77ae865a0f7204d987e8a2c9df6d22268ea570971cec517e54ced5e5de15b75be610f789
   languageName: node
   linkType: hard
 
@@ -25878,7 +25878,7 @@ __metadata:
     "@nx/nest": "npm:22.3.3"
     "@nx/web": "npm:22.3.3"
     "@nx/workspace": "npm:22.3.3"
-    "@picsa/enketo-webform": "npm:1.4.1"
+    "@picsa/enketo-webform": "npm:1.4.2"
     "@schematics/angular": "npm:21.0.5"
     "@supabase/supabase-js": "npm:^2.93.3"
     "@swc-node/register": "npm:1.9.2"
