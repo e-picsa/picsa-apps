@@ -76,20 +76,37 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
 
   constructor() {
     effect(async () => {
-      const viewId = this.viewId() || 'rainfall';
+      const viewId = this.viewId();
       const siteId = this.siteId();
-      if (siteId && viewId) {
-        // same site, just view changed
-        if (siteId === this._siteId) {
-          await this.loadView(viewId);
-        }
-        // site changed
-        else {
+      if (siteId) {
+        // 1. If site changed, update station & load station data
+        if (siteId !== this._siteId) {
           this._siteId = siteId;
           await this.chartService.setStation(siteId);
-          await this.loadView(viewId);
           await _wait(50);
           this.checkOrientation();
+        }
+
+        // 2. Validate active view ID against available charts
+        const available = this.chartService.availableCharts();
+        if (available.length > 0) {
+          const isValid = viewId && available.some((c) => c._id === viewId);
+          if (!isValid) {
+            // Redirect to the first available chart if current view is invalid
+            const fallbackViewId = available[0]._id;
+            await this.router.navigate([], {
+              relativeTo: this.route,
+              queryParams: { view: fallbackViewId },
+              queryParamsHandling: 'merge',
+              replaceUrl: true,
+            });
+            return;
+          }
+        }
+
+        // 3. Load the validated view
+        if (viewId) {
+          await this.loadView(viewId);
         }
       }
     });
