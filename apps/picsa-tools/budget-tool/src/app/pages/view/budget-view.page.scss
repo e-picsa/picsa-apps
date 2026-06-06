@@ -1,5 +1,8 @@
 :host {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
 .editor-popup {
@@ -9,14 +12,19 @@
   height: 100vh;
   top: 0;
   left: 0;
+  display: none;
+}
+
+.editor-popup.active {
   display: flex;
-  transition: transform 0.3s ease-in-out;
+  animation: slide-up 0.3s ease-in-out forwards;
 }
 
-.slide-in {
-  transform: translateY(100vh);
-}
-
-.slide-in.active {
-  transform: translateY(0);
+@keyframes slide-up {
+  from {
+    transform: translateY(100vh);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
