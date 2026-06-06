@@ -9,6 +9,7 @@ import {
   OnDestroy,
   signal,
   TemplateRef,
+  untracked,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -17,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IChartId, IChartMeta } from '@picsa/models/src';
+import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
@@ -78,16 +79,11 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     effect(() => {
       const viewId = this.viewId();
       const siteId = this.siteId();
-      const availableCharts = this.chartService.availableCharts();
-      this.handleSiteOrViewChange(siteId, viewId, availableCharts);
+      this.handleSiteOrViewChange(siteId, viewId);
     });
   }
 
-  private async handleSiteOrViewChange(
-    siteId: string | undefined,
-    viewId: IChartId | undefined,
-    availableCharts: IChartMeta[]
-  ) {
+  private async handleSiteOrViewChange(siteId: string | undefined, viewId: IChartId | undefined) {
     if (!siteId) return;
 
     // 1. If site changed, update station & load station data
@@ -96,8 +92,10 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
       await this.chartService.setStation(siteId);
       await _wait(50);
       this.checkOrientation();
-      return;
     }
+
+    // Read availableCharts without registering a dependency in the effect
+    const availableCharts = untracked(() => this.chartService.availableCharts());
 
     // 2. Validate active view ID against available charts
     if (availableCharts.length > 0) {
