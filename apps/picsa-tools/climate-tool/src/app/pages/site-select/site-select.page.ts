@@ -41,6 +41,7 @@ export class SiteSelectPage {
 
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
+    fallbackSrc: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     maxNativeZoom: 8,
   };
 

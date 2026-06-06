@@ -5,6 +5,7 @@ import {
   Component,
   effect,
   EventEmitter,
+  inject,
   input,
   OnInit,
   Output,
@@ -13,6 +14,7 @@ import {
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { IStationMeta } from '@picsa/models/src/climate.models';
+import { NetworkService } from '@picsa/shared/services/core/network.service';
 import * as L from 'leaflet';
 
 @Component({
@@ -27,6 +29,12 @@ export class PicsaMapComponent implements OnInit {
   @Output() onMapReady = new EventEmitter<L.Map>();
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
+
+  private networkService = inject(NetworkService);
+
+  private activeBasemap: L.TileLayer | null = null;
+  private onlineLayer: L.TileLayer | null = null;
+  private offlineLayer: L.TileLayer | null = null;
 
   mapOptions = input<L.MapOptions>({});
   basemapOptions = input<Partial<IBasemapOptions>>({});
@@ -68,15 +76,98 @@ export class PicsaMapComponent implements OnInit {
         observer.disconnect();
       });
     });
+    // Reactively swap basemap layers based on connection status from NetworkService
+    effect(() => {
+      const map = this.map();
+      const isOnline = this.networkService.isOnline();
+      if (!map || !this.onlineLayer || !this.offlineLayer || isOnline === undefined) {
+        return;
+      }
+      const layerToRemove = isOnline ? this.offlineLayer : this.onlineLayer;
+      const layerToAdd = isOnline ? this.onlineLayer : this.offlineLayer;
+
+      if (map.hasLayer(layerToRemove)) {
+        map.removeLayer(layerToRemove);
+      }
+      if (!map.hasLayer(layerToAdd)) {
+        map.addLayer(layerToAdd);
+      }
+      this.activeBasemap = layerToAdd;
+    });
   }
 
   ngOnInit() {
     // the user provides basemap options separate to general map options, so combine here
     // define the basemap layer and then bind to the view component
-    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions };
-    const basemap = L.tileLayer(basemapOptions.src, basemapOptions);
-    const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
-    this._mapOptions.set({ ...mapOptions, layers: [basemap] });
+    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions() };
+
+    if (basemapOptions.fallbackSrc) {
+      // Offline layer - maxNativeZoom: 8 to stretch offline tiles beyond zoom 8
+      const offlineOpts = {
+        ...basemapOptions,
+        maxNativeZoom: basemapOptions.maxNativeZoom || 8,
+      };
+      this.offlineLayer = L.tileLayer(basemapOptions.src, offlineOpts);
+
+      // Online layer - no maxNativeZoom so it can request full-resolution online tiles
+      const hybridOpts = {
+        ...basemapOptions,
+      };
+      delete (hybridOpts as any).maxNativeZoom;
+
+      const hybridLayer = L.tileLayer(basemapOptions.src, hybridOpts);
+
+      // Override getTileUrl to direct requests above zoom 8 straight to the online provider
+      hybridLayer.getTileUrl = function (coords) {
+        if (coords.z > 8) {
+          const subdomainsOpt = hybridOpts.subdomains || 'abc';
+          const subdomains = typeof subdomainsOpt === 'string' ? subdomainsOpt.split('') : subdomainsOpt;
+          const s = subdomains[Math.abs(coords.x + coords.y) % subdomains.length];
+          return hybridOpts
+            .fallbackSrc!.replace('{s}', s)
+            .replace('{z}', String(coords.z))
+            .replace('{x}', String(coords.x))
+            .replace('{y}', String(coords.y));
+        }
+        return L.TileLayer.prototype.getTileUrl.call(this, coords);
+      };
+
+      // Fallback on tile error for zoom levels <= 8 (in case a packaged tile is missing)
+      hybridLayer.on('tileerror', (error: any) => {
+        const tile = error.tile;
+        if (!tile || tile.getAttribute('data-fallback-tried')) {
+          return;
+        }
+        tile.setAttribute('data-fallback-tried', 'true');
+
+        const coords = error.coords;
+        if (coords) {
+          const subdomainsOpt = hybridOpts.subdomains || 'abc';
+          const subdomains = typeof subdomainsOpt === 'string' ? subdomainsOpt.split('') : subdomainsOpt;
+          const s = subdomains[Math.abs(coords.x + coords.y) % subdomains.length];
+          let fallbackUrl = hybridOpts.fallbackSrc!;
+
+          fallbackUrl = fallbackUrl
+            .replace('{s}', s)
+            .replace('{z}', String(coords.z))
+            .replace('{x}', String(coords.x))
+            .replace('{y}', String(coords.y));
+
+          tile.src = fallbackUrl;
+        }
+      });
+
+      this.onlineLayer = hybridLayer;
+
+      // Determine initial layer based on connection status
+      const isOnline = this.networkService.isOnline() ?? true;
+      this.activeBasemap = isOnline ? this.onlineLayer : this.offlineLayer;
+    } else {
+      this.activeBasemap = L.tileLayer(basemapOptions.src, basemapOptions);
+    }
+
+    const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions() };
+    this._mapOptions.set({ ...mapOptions, layers: [this.activeBasemap] });
   }
 
   /** Programatically set the active map marker and trigger click callback */
@@ -213,6 +304,7 @@ export interface IMapMarker<T = IStationMeta> {
 }
 export interface IBasemapOptions extends L.TileLayerOptions {
   src: string;
+  fallbackSrc?: string;
 }
 export type IMapOptions = L.MapOptions;
 
