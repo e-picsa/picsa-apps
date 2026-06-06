@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
@@ -74,10 +74,11 @@ const ADDITIONAL_LINKS: IPageLink[] = [
     ...TOOLS_DATA_HASHMAP.farmer,
     tourId: 'farmer',
   },
-  {
-    ...TOOLS_DATA_HASHMAP.monitoring,
-    tourId: 'monitoring',
-  },
+
+  // {
+  //   ...TOOLS_DATA_HASHMAP.monitoring,
+  //   tourId: 'monitoring',
+  // },
 
   // {
   //   name: translateMarker('Discussions'),
@@ -102,6 +103,7 @@ if (!ENVIRONMENT.production) {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'extension-home',
   imports: [
     ExtensionToolkitMaterialModule,
