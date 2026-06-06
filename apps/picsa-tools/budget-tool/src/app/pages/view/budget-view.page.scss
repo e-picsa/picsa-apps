@@ -1,14 +1,22 @@
+:host {
+  display: contents;
+}
+
 .editor-popup {
-  position: absolute;
-  z-index: 2;
-  width: 100%;
-  top: 100vh;
+  position: fixed;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
   left: 0;
   display: flex;
-  height: 100vh;
   transition: transform 0.3s ease-in-out;
 }
 
+.slide-in {
+  transform: translateY(100vh);
+}
+
 .slide-in.active {
-  transform: translateY(-100vh);
+  transform: translateY(0);
 }
