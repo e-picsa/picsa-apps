@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../schemas';
@@ -18,7 +28,7 @@ import { ResourceItemVideoComponent } from '../video';
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   private service = inject(ResourcesToolService);
 
-  @Input() resource: IResourceFile;
+  readonly resource = input.required<IResourceFile>();
 
   public dbDoc = signal<RxDocument<IResourceFile> | null>(null);
   public fileUri = signal<string | null>(null);
@@ -28,7 +38,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.service.ready();
 
-    const dbDoc = await this.service.dbFiles.findOne(this.resource.id).exec();
+    const dbDoc = await this.service.dbFiles.findOne(this.resource().id).exec();
     this.dbDoc.set(dbDoc);
   }
 
@@ -41,21 +51,18 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   }
 
   /** Display file in resource link format */
-  public get resourceLink() {
-    const link: IResourceLink = {
-      ...this.resource,
-      subtype: 'internal',
-      type: 'link',
-    };
-    return link;
-  }
+  readonly resourceLink = computed<IResourceLink>(() => ({
+    ...this.resource(),
+    subtype: 'internal',
+    type: 'link',
+  }));
 
   /** Generic file opener */
-  public async handleFileLinkClick(e: Event) {
+  public async handleFileLinkClick() {
     const uri = await this.downloader().uri();
     const doc = this.dbDoc();
     if (uri && doc) {
-      this.service.openFileResource(uri, doc.type, this.resource.id);
+      this.service.openFileResource(uri, doc.type, this.resource().id);
     }
   }
 
