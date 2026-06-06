@@ -11,7 +11,8 @@
             [card]="card"
             (click)="enterpriseTypeClicked(card.id)"
             [selected]="enterpriseType === card.id"
-            @fadeInOut
+            animate.enter="fade-in-delayed"
+            animate.leave="fade-out-delayed"
           ></budget-card>
           }
         </div>
@@ -32,7 +33,7 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
         @if (filteredEnterprises.length) {
-        <h2 @fadeInOut>{{ 'Select Enterprise' | translate }}</h2>
+        <h2 animate.enter="fade-in-delayed" animate.leave="fade-out-delayed">{{ 'Select Enterprise' | translate }}</h2>
         }
         <div class="card-list">
           @for (enterprise of filteredEnterprises; track enterprise) {
@@ -40,7 +41,8 @@
             [card]="enterprise"
             (click)="setEnterprise(enterprise)"
             [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
-            @fadeInOut
+            animate.enter="fade-in-delayed"
+            animate.leave="fade-out-delayed"
           >
           </budget-card>
           }

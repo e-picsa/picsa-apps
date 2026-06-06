@@ -1,0 +1,66 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100vh);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 250ms ease-in forwards;
+  opacity: 0;
+}
+
+.fade-out {
+  animation: fadeOut 150ms ease-out forwards;
+}
+
+.fade-in-delayed {
+  animation: fadeIn 200ms 500ms ease-in forwards;
+  opacity: 0;
+}
+
+.fade-out-delayed {
+  animation: fadeOut 100ms ease-out forwards;
+}
+
+.fade-in-200 {
+  animation: fadeIn 250ms 200ms ease-in forwards;
+  opacity: 0;
+}
+
+.slide-in-up {
+  animation: slideUp 300ms ease-in-out forwards;
+}
+
+.slide-out-down {
+  animation: slideDown 300ms ease-in-out forwards;
+}

@@ -9,19 +9,5 @@
   position: fixed;
   z-index: 100;
   inset: 0; // ensure fills full screen on mobile and desktop
-  display: none;
-}
-
-.editor-popup.active {
   display: flex;
-  animation: slide-up 0.3s ease-in-out forwards;
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(100vh);
-  }
-  to {
-    transform: translateY(0);
-  }
 }
