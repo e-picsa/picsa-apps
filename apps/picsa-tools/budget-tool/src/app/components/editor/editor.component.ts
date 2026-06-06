@@ -58,11 +58,7 @@ export class BudgetEditorComponent implements OnDestroy {
   constructor() {
     effect(() => {
       const type = this.service.activeType();
-      const data = this.data();
-      if (type && data) {
-        this.loadBudgetCards(type);
-        this.scrollToType(type);
-      }
+      this.handleTypeChange(type);
     });
     effect(() => {
       const period = this.service.activePeriod();
@@ -74,6 +70,13 @@ export class BudgetEditorComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cardSubscription?.unsubscribe();
+  }
+  private handleTypeChange(type?: keyof IBudgetPeriodData) {
+    const data = this.data();
+    if (type && data) {
+      this.loadBudgetCards(type);
+      this.scrollToType(type);
+    }
   }
 
   private async loadBudgetCards(type: IBudgetPeriodType) {
