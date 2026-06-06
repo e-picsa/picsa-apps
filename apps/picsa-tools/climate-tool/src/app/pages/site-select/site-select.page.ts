@@ -151,9 +151,7 @@ export class SiteSelectPage {
   }
 
   private handleStationSelected(selectedStation: IStationMeta, picsaMap: PicsaMapComponent) {
-    if (this.dataService.getPreferredStation() !== selectedStation.id) {
-      this.dataService.setPreferredStation(selectedStation.id);
-    }
+    this.dataService.setPreferredStation(selectedStation.id);
 
     const marker = this.mapMarkers().find((m) => m.data?.id === selectedStation.id);
     if (marker) {
