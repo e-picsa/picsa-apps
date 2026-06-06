@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IChartId } from '@picsa/models/src';
+import { IChartId, IChartMeta } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
@@ -75,24 +75,50 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   @ViewChild('headerPortal') headerPortal: TemplateRef<unknown>;
 
   constructor() {
-    effect(async () => {
-      const viewId = this.viewId() || 'rainfall';
+    effect(() => {
+      const viewId = this.viewId();
       const siteId = this.siteId();
-      if (siteId && viewId) {
-        // same site, just view changed
-        if (siteId === this._siteId) {
-          await this.loadView(viewId);
-        }
-        // site changed
-        else {
-          this._siteId = siteId;
-          await this.chartService.setStation(siteId);
-          await this.loadView(viewId);
-          await _wait(50);
-          this.checkOrientation();
-        }
-      }
+      const availableCharts = this.chartService.availableCharts();
+      this.handleSiteOrViewChange(siteId, viewId, availableCharts);
     });
+  }
+
+  private async handleSiteOrViewChange(
+    siteId: string | undefined,
+    viewId: IChartId | undefined,
+    availableCharts: IChartMeta[]
+  ) {
+    if (!siteId) return;
+
+    // 1. If site changed, update station & load station data
+    if (siteId !== this._siteId) {
+      this._siteId = siteId;
+      await this.chartService.setStation(siteId);
+      await _wait(50);
+      this.checkOrientation();
+      return;
+    }
+
+    // 2. Validate active view ID against available charts
+    if (availableCharts.length > 0) {
+      const isValid = viewId && availableCharts.some((c) => c._id === viewId);
+      if (!isValid) {
+        // Redirect to the first available chart if current view is invalid
+        const fallbackViewId = availableCharts[0]._id;
+        await this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { view: fallbackViewId },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
+        return;
+      }
+    }
+
+    // 3. Load the validated view
+    if (viewId) {
+      await this.loadView(viewId);
+    }
   }
 
   ngAfterViewInit() {

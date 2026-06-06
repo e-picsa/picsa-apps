@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import { _wait } from '@picsa/utils';
+import { isEqual } from '@picsa/utils/object.utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -25,6 +26,11 @@ export class ClimateChartService {
   readonly chartConfig = signal<IChartConfig | undefined>(undefined);
   readonly chartSeriesData = signal<number[]>([]);
   readonly stationData = signal<IStationData[]>([]);
+
+  readonly availableCharts = computed<IChartMeta[]>(
+    () => this.calculateAvailableCharts(this.station(), this.stationData()),
+    { equal: isEqual },
+  );
 
   // PNG blob for print version
   readonly chartPngBlob = signal<Blob | undefined>(undefined);
@@ -221,6 +227,28 @@ export class ClimateChartService {
    */
   public getPointColour(d: DataPoint): string | undefined {
     return;
+  }
+
+  /**
+   * Identify which charts should be available based on the data
+   */
+  private calculateAvailableCharts(station: IStationMeta | undefined, data: IStationData[]): IChartMeta[] {
+    if (!station) return [];
+    const definitions = station.definitions;
+    if (!definitions) return [];
+
+    return Object.values(definitions).filter((chart) => {
+      if (!chart) return false;
+      if (chart.disabled) return false;
+
+      const hasData = data.some((row) =>
+        chart.keys.some((key) => {
+          const val = row[key];
+          return val !== undefined && val !== null && (val as any) !== '';
+        }),
+      );
+      return hasData;
+    });
   }
 
   public convertDateToDayNumber(d: Date) {

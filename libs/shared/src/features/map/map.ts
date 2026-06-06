@@ -169,7 +169,6 @@ export class PicsaMapComponent implements OnInit {
         return;
       }
       this.selected = { marker, renderedMarker };
-      console.log('fly to marker', marker);
       // Fly map to marker
       const latLng = renderedMarker.getLatLng();
       requestAnimationFrame(() => {
