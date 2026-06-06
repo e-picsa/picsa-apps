@@ -61,3 +61,14 @@
   height: 1px;
   width: 100%;
 }
+
+mat-form-field.card-input-field {
+  --mat-form-field-filled-with-label-container-padding-bottom: 0;
+  --mat-form-field-filled-with-label-container-padding-top: 20px;
+}
+// HACK - use deep selector to reduce padding as no style token available
+mat-form-field.card-input-field ::ng-deep {
+  .mdc-text-field {
+    padding: 0 8px;
+  }
+}
