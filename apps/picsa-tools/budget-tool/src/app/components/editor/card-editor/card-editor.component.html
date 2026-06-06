@@ -10,11 +10,11 @@
   <!-- Inputs/Outputs Editor -->
   @if (type === 'inputs' || type === 'outputs') {
     <div class="input-values">
-      <mat-form-field class="card-input-field quantity no-padding">
+      <mat-form-field class="card-input-field quantity">
         <mat-label>{{ 'Quantity' | translate }}</mat-label>
         <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
       </mat-form-field>
-      <mat-form-field class="card-input-field cost no-padding">
+      <mat-form-field class="card-input-field cost">
         <mat-label>{{ 'Cost' | translate }}</mat-label>
         <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
         <span matTextPrefix>{{ currency }} &nbsp;</span>

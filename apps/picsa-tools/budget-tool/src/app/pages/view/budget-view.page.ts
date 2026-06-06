@@ -1,7 +1,6 @@
-import { Component, inject,OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { FadeInOut, OpenClosed } from '@picsa/shared/animations';
 
 import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { IBudgetPeriodType } from '../../models/budget-tool.models';
@@ -12,7 +11,6 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-view',
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
-  animations: [FadeInOut({ inDelay: 200 }), OpenClosed],
   standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix

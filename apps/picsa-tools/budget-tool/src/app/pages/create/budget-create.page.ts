@@ -12,7 +12,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
@@ -27,7 +26,6 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [BudgetMaterialModule, FormsModule, ReactiveFormsModule, BudgetToolComponentsModule, PicsaTranslateModule],
 })
