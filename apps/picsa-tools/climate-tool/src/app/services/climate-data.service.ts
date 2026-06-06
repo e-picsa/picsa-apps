@@ -30,13 +30,12 @@ export class ClimateDataService {
 
   constructor() {
     effect(() => {
-      const stations = this.stations();
+      // trigger effect when list of stations changes
+      this.stations();
       const userSettings = this.configurationService.userSettings();
       const stationId = userSettings.climate_tool?.station_id;
       if (stationId && !this.stationHashmap()[stationId]) {
-        untracked(() => {
-          this.setPreferredStation('');
-        });
+        this.setPreferredStation('');
       }
     });
   }
@@ -53,12 +52,19 @@ export class ClimateDataService {
 
   /** Allow user to set preferred station */
   public setPreferredStation(stationID: string) {
-    const currentSettings = this.configurationService.userSettings();
-    this.configurationService.updateUserSettings({
-      climate_tool: {
-        ...currentSettings.climate_tool,
-        station_id: stationID,
-      },
+    // ensure any parent effects that are used to configure are not re-triggered
+    // following changes to user settings (signal effects track dependencies within function invocation).
+    // NOTE - this is only required for sync functions, async would not track within invocations
+    untracked(() => {
+      const currentSettings = this.configurationService.userSettings();
+      if (stationID !== currentSettings.climate_tool?.station_id) {
+        this.configurationService.updateUserSettings({
+          climate_tool: {
+            ...currentSettings.climate_tool,
+            station_id: stationID,
+          },
+        });
+      }
     });
   }
 

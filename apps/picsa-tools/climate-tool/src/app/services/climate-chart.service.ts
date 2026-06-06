@@ -65,11 +65,7 @@ export class ClimateChartService {
     effect(() => {
       const station = this.station();
       if (station && station.id) {
-        untracked(() => {
-          if (this.dataService.getPreferredStation() !== station.id) {
-            this.dataService.setPreferredStation(station.id);
-          }
-        });
+        this.dataService.setPreferredStation(station.id);
       }
     });
   }
