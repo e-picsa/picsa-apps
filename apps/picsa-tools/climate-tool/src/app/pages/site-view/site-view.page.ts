@@ -7,9 +7,7 @@ import {
   effect,
   inject,
   OnDestroy,
-  signal,
   TemplateRef,
-  untracked,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -19,7 +17,6 @@ import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models/src';
-import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
 import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';
@@ -28,7 +25,6 @@ import { PicsaClimateMaterialModule } from '../../components/material.module';
 import { ClimatePrintLayoutComponent } from '../../components/print-layout/print-layout.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
-import { ClimateToolService } from '../../services/climate-tool.service';
 
 interface ISiteViewQueryParams {
   view?: IChartId;
@@ -54,13 +50,10 @@ interface ISiteViewParams {
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   chartService = inject(ClimateChartService);
   private dataService = inject(ClimateDataService);
-  private toolService = inject(ClimateToolService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
-
-  readonly showRotateAnimation = signal(false);
 
   readonly stationSelectOptions = computed(() => {
     const stations = this.dataService.stations();
@@ -71,7 +64,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
 
   private viewId = toSignal(this.route.queryParams.pipe(map(({ view }: ISiteViewQueryParams) => view)));
   private siteId = toSignal(this.route.params.pipe(map(({ siteId }: ISiteViewParams) => siteId)));
-  private _siteId: string;
 
   @ViewChild('headerPortal') headerPortal: TemplateRef<unknown>;
 
@@ -79,44 +71,11 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     effect(() => {
       const viewId = this.viewId();
       const siteId = this.siteId();
-      this.handleSiteOrViewChange(siteId, viewId);
+      // Watch the stations list to trigger validation if country or stations list changes
+      this.dataService.stations();
+
+      this.chartService.loadStationAndChart(siteId, viewId);
     });
-  }
-
-  private async handleSiteOrViewChange(siteId: string | undefined, viewId: IChartId | undefined) {
-    if (!siteId) return;
-
-    // 1. If site changed, update station & load station data
-    if (siteId !== this._siteId) {
-      this._siteId = siteId;
-      await this.chartService.setStation(siteId);
-      await _wait(50);
-      this.checkOrientation();
-    }
-
-    // Read availableCharts without registering a dependency in the effect
-    const availableCharts = untracked(() => this.chartService.availableCharts());
-
-    // 2. Validate active view ID against available charts
-    if (availableCharts.length > 0) {
-      const isValid = viewId && availableCharts.some((c) => c._id === viewId);
-      if (!isValid) {
-        // Redirect to the first available chart if current view is invalid
-        const fallbackViewId = availableCharts[0]._id;
-        await this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { view: fallbackViewId },
-          queryParamsHandling: 'merge',
-          replaceUrl: true,
-        });
-        return;
-      }
-    }
-
-    // 3. Load the validated view
-    if (viewId) {
-      await this.loadView(viewId);
-    }
   }
 
   ngAfterViewInit() {
@@ -138,25 +97,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  private async loadView(viewId: IChartId) {
-    this.toolService.disableAll();
-    await _wait(50);
-    await this.chartService.setChart(viewId);
-  }
-
-  private checkOrientation() {
-    const shouldRotate = window.innerHeight > window.innerWidth;
-    this.showRotateAnimation.set(shouldRotate);
-  }
-
   goToSiteSelect() {
-    // Store preferred to temp to allow map to also load (need to remove from config to prevent redirect)
-    localStorage.setItem('picsa_climate_station_temp', `${this.siteId()}`);
-    // Clear the preferred station to prevent automatic redirect
-    this.dataService.setPreferredStation('');
-    this.router.navigate(['../'], {
-      replaceUrl: true,
-      relativeTo: this.route,
-    });
+    this.chartService.goToSiteSelect(this.siteId() as string);
   }
 }
