@@ -94,20 +94,25 @@ export class PicsaMapComponent implements OnInit {
   ngOnInit() {
     const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions() };
 
-    const localOpts = {
-      ...basemapOptions,
-      maxNativeZoom: basemapOptions.maxNativeZoom || 8,
-      maxZoom: basemapOptions.maxZoom,
-    };
-    this.localLayer = L.tileLayer(basemapOptions.src, localOpts);
-
     if (basemapOptions.fallbackSrc) {
+      // Hybrid offline/online map configuration
+      const localOpts = {
+        ...basemapOptions,
+        maxNativeZoom: basemapOptions.maxNativeZoom || 8,
+        maxZoom: 12,
+      };
+      this.localLayer = L.tileLayer(basemapOptions.src, localOpts);
+
       this.onlineLayer = (L as any).maplibreGL({
         style: basemapOptions.fallbackSrc,
         minZoom: 9,
-        maxZoom: basemapOptions.maxZoom,
+        maxZoom: 18,
+        maxNativeZoom: 12,
         pane: 'onlinePane',
       });
+    } else {
+      // Standard online map configuration
+      this.localLayer = L.tileLayer(basemapOptions.src, basemapOptions);
     }
   }
 
@@ -261,7 +266,8 @@ export class PicsaMapComponent implements OnInit {
  *  Default values and interfaces
  ***********************************************************************/
 const BASEMAP_DEFAULTS: IBasemapOptions = {
-  src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
+  fallbackSrc: 'https://tiles.openfreemap.org/styles/liberty',
   maxZoom: 12,
   maxNativeZoom: 8,
   attribution: 'Map data © OpenStreetMap contributors',
