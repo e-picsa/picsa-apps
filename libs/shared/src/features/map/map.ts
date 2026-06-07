@@ -100,12 +100,11 @@ export class PicsaMapComponent implements OnInit {
     });
 
     // 2. Online layer: OpenFreeMap vector styles
-    // minZoom 9, maxZoom 18, maxNativeZoom 12
+    // minZoom 9, maxZoom 18
     this.onlineLayer = (L as any).maplibreGL({
       style: 'https://tiles.openfreemap.org/styles/liberty',
       minZoom: 9,
       maxZoom: 18,
-      maxNativeZoom: 12,
       pane: 'onlinePane',
     });
   }
