@@ -134,6 +134,7 @@
         ],
         "styles": [
           "node_modules/leaflet/dist/leaflet.css",
+          "node_modules/maplibre-gl/dist/maplibre-gl.css",
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "apps/picsa-tools/budget-tool/src/styles.scss",
           "apps/picsa-tools/resources-tool/src/styles.scss",
