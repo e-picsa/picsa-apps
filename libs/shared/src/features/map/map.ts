@@ -241,7 +241,7 @@ export class PicsaMapComponent implements OnInit {
       // Fly map to marker
       const latLng = renderedMarker.getLatLng();
       requestAnimationFrame(() => {
-        this.map().flyTo(latLng, BASEMAP_DEFAULTS.maxNativeZoom);
+        this.map().flyTo(latLng, 8);
 
         // Programatically updated classnames on current and previous
         // selected marker. Use CDR to ensure updated
