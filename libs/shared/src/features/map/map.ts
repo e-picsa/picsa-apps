@@ -41,7 +41,6 @@ export class PicsaMapComponent implements OnInit {
   private onlineLayer: L.Layer | null = null;
 
   mapOptions = input<L.MapOptions>({});
-  basemapOptions = input<Partial<IBasemapOptions>>({});
   markers = input<IMapMarker[]>([]);
 
   // make native map element available directly as signal
@@ -92,23 +91,22 @@ export class PicsaMapComponent implements OnInit {
   }
 
   ngOnInit() {
-    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions() };
+    // 1. Local/Asset layer: local raster WebP tiles
+    // maxZoom 12, maxNativeZoom 8
+    this.localLayer = L.tileLayer('assets/mapTiles/raw/{z}/{x}/{y}.webp', {
+      maxNativeZoom: 8,
+      maxZoom: 12,
+      attribution: 'Map data © OpenStreetMap contributors',
+    });
 
-    const localOpts = {
-      ...basemapOptions,
-      maxNativeZoom: basemapOptions.maxNativeZoom || 8,
-      maxZoom: basemapOptions.maxZoom,
-    };
-    this.localLayer = L.tileLayer(basemapOptions.src, localOpts);
-
-    if (basemapOptions.fallbackSrc) {
-      this.onlineLayer = (L as any).maplibreGL({
-        style: basemapOptions.fallbackSrc,
-        minZoom: 9,
-        maxZoom: basemapOptions.maxZoom,
-        pane: 'onlinePane',
-      });
-    }
+    // 2. Online layer: OpenFreeMap vector styles
+    // minZoom 9, maxZoom 18
+    this.onlineLayer = (L as any).maplibreGL({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      minZoom: 9,
+      maxZoom: 18,
+      pane: 'onlinePane',
+    });
   }
 
   /** Programatically set the active map marker and trigger click callback */
@@ -242,7 +240,7 @@ export class PicsaMapComponent implements OnInit {
       // Fly map to marker
       const latLng = renderedMarker.getLatLng();
       requestAnimationFrame(() => {
-        this.map().flyTo(latLng, BASEMAP_DEFAULTS.maxNativeZoom);
+        this.map().flyTo(latLng, 8);
 
         // Programatically updated classnames on current and previous
         // selected marker. Use CDR to ensure updated
@@ -260,13 +258,6 @@ export class PicsaMapComponent implements OnInit {
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
-const BASEMAP_DEFAULTS: IBasemapOptions = {
-  src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  maxZoom: 12,
-  maxNativeZoom: 8,
-  attribution: 'Map data © OpenStreetMap contributors',
-};
-
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 2,
@@ -281,10 +272,6 @@ export interface IMapMarker<T = IStationMeta> {
   data?: T;
   /** Index of station when rendered */
   _index: number;
-}
-export interface IBasemapOptions extends L.TileLayerOptions {
-  src: string;
-  fallbackSrc?: string;
 }
 export type IMapOptions = L.MapOptions;
 
