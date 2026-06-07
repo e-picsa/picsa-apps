@@ -18,6 +18,12 @@ const shouldShowSiteSelect: CanActivateFn = async (next: ActivatedRouteSnapshot,
   const router = inject(Router);
   const activatedRoute = inject(ActivatedRoute);
 
+  // If user navigated via back/forward browser button, bypass the redirect and show site select
+  const navigation = router.currentNavigation();
+  if (navigation?.trigger === 'popstate') {
+    return true;
+  }
+
   // If preferred station saved redirect to that station and block loading the site select page
   const station_id = dataService.getPreferredStation();
   if (station_id) {
