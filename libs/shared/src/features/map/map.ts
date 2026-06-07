@@ -41,7 +41,6 @@ export class PicsaMapComponent implements OnInit {
   private onlineLayer: L.Layer | null = null;
 
   mapOptions = input<L.MapOptions>({});
-  basemapOptions = input<Partial<IBasemapOptions>>({});
   markers = input<IMapMarker[]>([]);
 
   // make native map element available directly as signal
@@ -92,28 +91,23 @@ export class PicsaMapComponent implements OnInit {
   }
 
   ngOnInit() {
-    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions() };
+    // 1. Local/Asset layer: local raster WebP tiles
+    // maxZoom 12, maxNativeZoom 8
+    this.localLayer = L.tileLayer('assets/mapTiles/raw/{z}/{x}/{y}.webp', {
+      maxNativeZoom: 8,
+      maxZoom: 12,
+      attribution: 'Map data © OpenStreetMap contributors',
+    });
 
-    if (basemapOptions.fallbackSrc) {
-      // Hybrid offline/online map configuration
-      const localOpts = {
-        ...basemapOptions,
-        maxNativeZoom: basemapOptions.maxNativeZoom || 8,
-        maxZoom: 12,
-      };
-      this.localLayer = L.tileLayer(basemapOptions.src, localOpts);
-
-      this.onlineLayer = (L as any).maplibreGL({
-        style: basemapOptions.fallbackSrc,
-        minZoom: 9,
-        maxZoom: 18,
-        maxNativeZoom: 12,
-        pane: 'onlinePane',
-      });
-    } else {
-      // Standard online map configuration
-      this.localLayer = L.tileLayer(basemapOptions.src, basemapOptions);
-    }
+    // 2. Online layer: OpenFreeMap vector styles
+    // minZoom 9, maxZoom 18, maxNativeZoom 12
+    this.onlineLayer = (L as any).maplibreGL({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      minZoom: 9,
+      maxZoom: 18,
+      maxNativeZoom: 12,
+      pane: 'onlinePane',
+    });
   }
 
   /** Programatically set the active map marker and trigger click callback */
@@ -265,14 +259,6 @@ export class PicsaMapComponent implements OnInit {
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
-const BASEMAP_DEFAULTS: IBasemapOptions = {
-  src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
-  fallbackSrc: 'https://tiles.openfreemap.org/styles/liberty',
-  maxZoom: 12,
-  maxNativeZoom: 8,
-  attribution: 'Map data © OpenStreetMap contributors',
-};
-
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 2,
@@ -287,10 +273,6 @@ export interface IMapMarker<T = IStationMeta> {
   data?: T;
   /** Index of station when rendered */
   _index: number;
-}
-export interface IBasemapOptions extends L.TileLayerOptions {
-  src: string;
-  fallbackSrc?: string;
 }
 export type IMapOptions = L.MapOptions;
 

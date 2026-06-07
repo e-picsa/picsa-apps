@@ -12,7 +12,7 @@ import {
   IDataTableOptions,
   PicsaDataTableComponent,
 } from '@picsa/shared/features/data-table/data-table.component';
-import { IBasemapOptions, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
 
@@ -38,12 +38,6 @@ export class SiteSelectPage {
   picsaMap = viewChild<PicsaMapComponent>('picsaMap');
 
   mapReady = signal(false);
-
-  basemapOptions: IBasemapOptions = {
-    src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
-    fallbackSrc: 'https://tiles.openfreemap.org/styles/liberty',
-    maxNativeZoom: 8,
-  };
 
   view = signal<'list' | 'map'>('map');
 
