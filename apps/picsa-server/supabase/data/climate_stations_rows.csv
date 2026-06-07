@@ -70,8 +70,8 @@ mansa_met,zm_workshops,MANSA MET,-11.1,28.85,1259,Mansa
 mfuwe_met,zm_workshops,Mfuwe Met,-13.26,31.93,570,Mambwe
 msekera_agromet,zm_workshops,Msekera Agromet,-13.65,32.56,1025,Chipata
 petauke_met,zm_workshops,Petauke Met,-14.25,31.28,1036,Petauke
-buffalo_range,zw,Buffalo Range,-21.017,31.583,,
-chisumbanje,zw,Chisumbanje,-20.825,32.204,,
-masvingo,zw,Masvingo,-20.067,30.867,,
-mt_darwin,zw,Mt Darwin,-16.783,31.583,,
-plumtree,zw,Plumtree,-20.483,27.8,,
+buffalo_range,zw,Buffalo Range,-21.017,31.583,,Masvingo
+chisumbanje,zw,Chisumbanje,-20.825,32.204,,Manicaland
+masvingo,zw,Masvingo,-20.067,30.867,,Masvingo
+mt_darwin,zw,Mt Darwin,-16.783,31.583,,Mashonaland Central
+plumtree,zw,Plumtree,-20.483,27.8,,Matabeleland South
