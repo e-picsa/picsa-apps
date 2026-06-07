@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// eslint-disable-next-line simple-import-sort/imports
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   EventEmitter,
   inject,
@@ -15,11 +17,9 @@ import {
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { IStationMeta } from '@picsa/models/src/climate.models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
+
 import * as L from 'leaflet';
-import * as maplibregl from 'maplibre-gl';
-if (typeof window !== 'undefined') {
-  (window as any).maplibregl = maplibregl;
-}
+import './maplibre-shim';
 import '@maplibre/maplibre-gl-leaflet';
 
 @Component({
@@ -37,8 +37,8 @@ export class PicsaMapComponent implements OnInit {
 
   private networkService = inject(NetworkService);
 
-  private localLayer: L.TileLayer = null as any;
-  private onlineLayer: L.Layer = null as any;
+  private localLayer: L.TileLayer | null = null;
+  private onlineLayer: L.Layer | null = null;
 
   mapOptions = input<L.MapOptions>({});
   basemapOptions = input<Partial<IBasemapOptions>>({});
@@ -51,7 +51,11 @@ export class PicsaMapComponent implements OnInit {
   public L = L;
 
   /** Full set of map options merged from input options and default */
-  public _mapOptions = signal<L.MapOptions>(null as any);
+  public _mapOptions = computed(() => ({
+    ...MAP_DEFAULTS,
+    ...this.mapOptions(),
+    layers: [],
+  }));
 
   /** Track markers that have been rendered to the map to programatically update styles */
   private renderedMarkers: L.Marker<any>[] = [];
@@ -79,14 +83,6 @@ export class PicsaMapComponent implements OnInit {
       cleanup(() => {
         observer.disconnect();
       });
-    });
-    // Initialize map options
-    effect(() => {
-      if (this._mapOptions()) {
-        return;
-      }
-      const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions() };
-      this._mapOptions.set({ ...mapOptions, layers: [] });
     });
 
     // Reactively swap basemap layers based on connection status from NetworkService
@@ -265,7 +261,7 @@ export class PicsaMapComponent implements OnInit {
  *  Default values and interfaces
  ***********************************************************************/
 const BASEMAP_DEFAULTS: IBasemapOptions = {
-  src: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   maxZoom: 12,
   maxNativeZoom: 8,
   attribution: 'Map data © OpenStreetMap contributors',
