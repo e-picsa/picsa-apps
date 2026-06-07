@@ -101,7 +101,7 @@ export class PicsaMapComponent implements OnInit {
     const localOpts = {
       ...basemapOptions,
       maxNativeZoom: basemapOptions.maxNativeZoom || 8,
-      maxZoom: basemapOptions.maxZoom || 18,
+      maxZoom: basemapOptions.maxZoom,
     };
     this.localLayer = L.tileLayer(basemapOptions.src, localOpts);
 
@@ -109,7 +109,7 @@ export class PicsaMapComponent implements OnInit {
       this.onlineLayer = (L as any).maplibreGL({
         style: basemapOptions.fallbackSrc,
         minZoom: 9,
-        maxZoom: basemapOptions.maxZoom || 18,
+        maxZoom: basemapOptions.maxZoom,
         pane: 'onlinePane',
       });
     }
@@ -246,7 +246,7 @@ export class PicsaMapComponent implements OnInit {
       // Fly map to marker
       const latLng = renderedMarker.getLatLng();
       requestAnimationFrame(() => {
-        this.map().flyTo(latLng, 12);
+        this.map().flyTo(latLng, BASEMAP_DEFAULTS.maxNativeZoom);
 
         // Programatically updated classnames on current and previous
         // selected marker. Use CDR to ensure updated
@@ -266,7 +266,8 @@ export class PicsaMapComponent implements OnInit {
  ***********************************************************************/
 const BASEMAP_DEFAULTS: IBasemapOptions = {
   src: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  maxZoom: 18,
+  maxZoom: 12,
+  maxNativeZoom: 8,
   attribution: 'Map data © OpenStreetMap contributors',
 };
 
