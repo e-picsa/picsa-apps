@@ -32,6 +32,7 @@ const CROP_SORT_PRIORITY: ICropName[] = [
   'sorghum',
   'beans',
   'groundnuts',
+  'roundnuts',
   'soya-beans',
   'sunflower',
   'cowpeas',
