@@ -2,4 +2,5 @@
 
 export * from './app-update';
 export * from './print';
+export * from './safe-area';
 export * from './storage-service';

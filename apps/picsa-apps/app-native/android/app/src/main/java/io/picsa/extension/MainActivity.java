@@ -13,6 +13,7 @@ import android.graphics.Color;
 public class MainActivity extends BridgeActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    registerPlugin(SafeAreaPlugin.class);
     SafeAreaPolyfill.enableEdgeToEdge(this);
 
     // Track how long app startup takes to adjust how long to keep splash screen displayed

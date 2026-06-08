@@ -29,7 +29,6 @@ public class SafeAreaPolyfill {
         // This listener explicitly injects them for older Androids so the CSS fallback works universally.
         // NOTE: On Android 15+ with outdated WebViews (< v140), Capacitor will gracefully 
         // fall back to a letterboxed layout and inject 0px to prevent double padding.
-        if (Build.VERSION.SDK_INT >= 35) return; // 35 = VANILLA_ICE_CREAM
 
         ViewCompat.setOnApplyWindowInsetsListener(activity.getWindow().getDecorView(), (v, insets) -> {
             if (activity.getBridge() != null && activity.getBridge().getWebView() != null) {
