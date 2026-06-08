@@ -19,6 +19,7 @@ const CROPS_DATA_BASE = {
   potato: { label: translateMarker('Potatoes'), icon: 'assets/svgs/crops/potato.svg' },
   pumpkins: { label: translateMarker('Pumpkins'), icon: 'assets/svgs/crops/pumpkins.svg' },
   rice: { label: translateMarker('Rice'), icon: 'assets/svgs/crops/rice.svg' },
+  roundnuts: { label: translateMarker('Roundnuts'), icon: 'assets/svgs/crops/roundnuts.svg' },
   sesame: { label: translateMarker('Sesame'), icon: 'assets/svgs/crops/sesame.svg' },
   sorghum: { label: translateMarker('Sorghum'), icon: 'assets/svgs/crops/sorghum.svg' },
   'soya-beans': { label: translateMarker('Soya Beans'), icon: 'assets/svgs/crops/soya-beans.svg' },
