@@ -6,7 +6,7 @@ $icon-size: 48px;
 
 .icons-container {
   display: flex;
-  flex-flow: row wrap;
+  overflow: auto;
   gap: 8px;
 }
 .icons-container[data-disabled='true'] {
