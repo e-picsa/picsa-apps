@@ -157,6 +157,25 @@ export class CropProbabilityTableComponent {
           console.warn(`no variety data found for [${crop}/${variety}]`);
         }
       }
+
+      // Sort varieties within this crop by days to maturity midpoint (shorter days first)
+      entry.data.sort((a, b) => {
+        const aData = cropDataHashmap[`${entry.crop}/${a.variety}`];
+        const bData = cropDataHashmap[`${entry.crop}/${b.variety}`];
+        if (!aData || !bData) return 0;
+
+        const aMid = (aData.days_lower + aData.days_upper) / 2;
+        const bMid = (bData.days_lower + bData.days_upper) / 2;
+
+        if (aMid !== bMid) {
+          return aMid - bMid;
+        }
+        if (aData.days_lower !== bData.days_lower) {
+          return aData.days_lower - bData.days_lower;
+        }
+        return a.variety.localeCompare(b.variety);
+      });
+
       entries.push(entry);
     }
 
@@ -199,9 +218,30 @@ export class CropProbabilityTableComponent {
     const waterRounded = roundToNearest(water, WATER_REQUIREMENT_ROUNDING);
     const daysRounded = roundToNearest(days, DAY_REQUIREMENT_ROUNDING);
     const probabilities: number[] = [];
-    for (const value of plantDates) {
-      const probability = this.probabilityHashmap()[waterRounded]?.[daysRounded]?.[value];
-      probabilities.push(probability);
+
+    const waterEntry = this.probabilityHashmap()[waterRounded];
+    if (waterEntry) {
+      // Find the closest plant_length key within a 10-day tolerance
+      const plantLengths = Object.keys(waterEntry).map(Number);
+      let bestLength = daysRounded;
+      let minDiff = Infinity;
+      for (const len of plantLengths) {
+        const diff = Math.abs(len - daysRounded);
+        if (diff < minDiff && diff <= 10) {
+          minDiff = diff;
+          bestLength = len;
+        }
+      }
+
+      const lengthEntry = waterEntry[bestLength];
+      for (const value of plantDates) {
+        const probability = lengthEntry?.[value];
+        probabilities.push(probability);
+      }
+    } else {
+      for (const value of plantDates) {
+        probabilities.push(undefined as any);
+      }
     }
 
     return probabilities;
