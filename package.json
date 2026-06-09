@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "5.4.3",
+  "version": "5.4.4",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
