@@ -148,3 +148,17 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 1. **Ready Race Condition**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` resolves. In `SupabaseService`, the client and database property (`db`) were initialized in an Angular `effect()` inside the constructor reacting to `isAvailable` signal changes. Since effects run asynchronously in the next change detection/microtask cycle, `ready()` could resolve *before* the effect ran, leaving `db` undefined. The fix was to initialize clients synchronously inside `init()`.
 2. **Offline Mode & Null Checks**: When the Supabase server is offline (detected via health check ping), `isAvailable` is set to `false` and the client/database properties are not created. Consequently, all queries hitting `supabaseService.db` directly would throw a `TypeError`. Every database service interacting with Supabase (such as `AppUserService`, `PicsaDatabaseSyncService`, and `ForecastService`) must check `isAvailable()` before performing any operations on `supabaseService.db`.
 3. **Async Effects in Angular**: Avoid writing asynchronous effects like `effect(async () => { await this.ready(); ... })`. Because Angular tracks dependencies synchronously, any signal accessed after the first `await` is not tracked. It also allows multiple instances of the asynchronous payload to execute concurrently, leading to race conditions. Instead, trigger the initialization of the service in the constructor and react to `this.readySignal()` synchronously in the effect, delegating asynchronous work to methods using cancellation tokens/trackers.
+
+### Angular 21 Signal Forms and OnPush Change Detection
+
+**Date**: 2026-06-09
+**Context**: Fixing select options not updating UI when selecting options inside material overlay panels in components configured with `ChangeDetectionStrategy.OnPush`.
+**Learning**:
+1. **Overlay Change Detection Issue**: Angular Material components like `mat-select` render their option lists in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's template DOM tree. Under `OnPush`, event-based change detection is not triggered in the host component because select events do not bubble up through the component's DOM tree.
+2. **Signal Forms Solution**: Instead of using standard `FormGroup`/`ReactiveFormsModule` with manual `ChangeDetectorRef` triggers, use Angular 21's modern Signal Forms (`@angular/forms/signals`).
+3. **Usage**:
+   - Define a writable signal to hold the model state: `public readonly model = signal<T>(initialState);`
+   - Define a signal form tree with validation: `public readonly budgetForm = form(this.model, (path) => { required(path.field); });`
+   - Bind inputs in the template using `[formField]="budgetForm.field"` (importing `FormField` directive from `@angular/forms/signals`).
+   - Read values reactively in the template via the model signal: `model().field`. Since the template reads a signal, any value changes automatically trigger change detection on the component view, regardless of DOM tree hierarchy or overlays.
+
