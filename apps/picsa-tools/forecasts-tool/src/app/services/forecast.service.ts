@@ -46,6 +46,9 @@ export class ForecastService extends PicsaAsyncService {
   private activeCountryLoad?: { country_code: ICountryCode; cancelled: boolean };
   private activeDownscaledLoad?: { locationKey: string; cancelled: boolean };
 
+  public loadingForecasts = signal(false);
+  public loadingDownscaled = signal(false);
+
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
     //        Should try move to time-based filter/query instead, or better table replication
@@ -78,6 +81,7 @@ export class ForecastService extends PicsaAsyncService {
         this.seasonalForecastDocs.set([]);
         this.weeklyForecastDocs.set([]);
         this.dailyForecastDocs.set([]);
+        this.loadingForecasts.set(false);
       }
     });
 
@@ -93,6 +97,7 @@ export class ForecastService extends PicsaAsyncService {
           this.activeDownscaledLoad.cancelled = true;
         }
         this.downscaledForecastDocs.set([]);
+        this.loadingDownscaled.set(false);
       }
     });
   }
@@ -144,6 +149,8 @@ export class ForecastService extends PicsaAsyncService {
     const currentLoad = { country_code, cancelled: false };
     this.activeCountryLoad = currentLoad;
 
+    this.loadingForecasts.set(true);
+
     try {
       await Promise.all(
         this.loaderConfigs.map(async (config) => {
@@ -179,6 +186,10 @@ export class ForecastService extends PicsaAsyncService {
       );
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
+    } finally {
+      if (!currentLoad.cancelled) {
+        this.loadingForecasts.set(false);
+      }
     }
   }
 
@@ -230,6 +241,8 @@ export class ForecastService extends PicsaAsyncService {
     const currentLoad = { locationKey, cancelled: false };
     this.activeDownscaledLoad = currentLoad;
 
+    this.loadingDownscaled.set(true);
+
     try {
       const filters: ((v: IForecastRow) => boolean)[] = [
         (v) => v.forecast_type === 'downscaled',
@@ -243,6 +256,10 @@ export class ForecastService extends PicsaAsyncService {
       this.downscaledForecastDocs.set(dbDocs);
     } catch (err) {
       console.error('[ForecastService] Error loading downscaled forecasts', err);
+    } finally {
+      if (!currentLoad.cancelled) {
+        this.loadingDownscaled.set(false);
+      }
     }
   }
 

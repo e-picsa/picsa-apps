@@ -74,6 +74,9 @@ export class ForecastComponent implements OnDestroy {
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
+  public loading = computed(() => this.service.loadingForecasts());
+  public loadingDownscaled = computed(() => this.service.loadingDownscaled());
+
   public resourceLinks = computed<IResourceLink[]>(() => {
     const { country_code } = this.configurationService.userSettings();
     return CLIMATE_RESOURCES[country_code] || [];
