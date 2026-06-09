@@ -36,7 +36,7 @@
         <h2 animate.enter="fade-in-delayed" animate.leave="fade-out-delayed">{{ 'Select Enterprise' | translate }}</h2>
         }
         <div class="card-list">
-          @for (enterprise of filteredEnterprises(); track enterprise) {
+          @for (enterprise of filteredEnterprises(); track enterprise.id) {
           <budget-card
             [card]="enterprise"
             (click)="setEnterprise(enterprise)"

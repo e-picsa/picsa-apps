@@ -63,7 +63,6 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     required(path.monthStart);
   });
 
-  enterpriseToggle = signal(false);
   enterpriseType = signal<string | undefined>(undefined);
   enterpriseType$ = new Subject<string>();
   filteredEnterprises = signal<IBudgetCard[]>([]);
@@ -96,16 +95,10 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     this.enterpriseType.set(type);
     this.enterpriseType$.next(type);
 
-    this.enterpriseToggle.set(false);
     this.budgetModel.update((meta) => ({
       ...meta,
       enterprise: { ...meta.enterprise, type: type as IBudgetCardType },
     }));
-
-    setTimeout(async () => {
-      this.enterpriseToggle.set(true);
-      this.cdr.markForCheck();
-    }, 200);
   }
 
   setEnterprise(enterprise: IBudgetCard) {
