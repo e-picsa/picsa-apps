@@ -4,6 +4,7 @@ import android.graphics.Color;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class SafeAreaPolyfill {
@@ -17,6 +18,16 @@ public class SafeAreaPolyfill {
         WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), false);
         activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
         activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
+
+        // NOTE: We control the status/navigation bar icon styles natively here instead of using the
+        // Capacitor SystemBars plugin configuration. Doing this programmatically provides 100% native control, 
+        // bypasses plugin loading order bugs (which can override custom layouts), and ensures that status bar
+        // icons remain white (light) on our dark primary header background, regardless of device system theme.
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(activity.getWindow(), activity.getWindow().getDecorView());
+        if (controller != null) {
+            controller.setAppearanceLightStatusBars(false); // false = light icons for dark backgrounds
+            controller.setAppearanceLightNavigationBars(false);
+        }
     }
 
     /**
@@ -34,7 +45,8 @@ public class SafeAreaPolyfill {
         }
 
         android.view.View webView = activity.getBridge().getWebView();
-        android.view.View parentView = (android.view.View) webView.getParent();
+        android.view.ViewParent parent = webView.getParent();
+        android.view.View parentView = parent instanceof android.view.View ? (android.view.View) parent : null;
 
         ViewCompat.setOnApplyWindowInsetsListener(parentView != null ? parentView : webView, (v, insets) -> {
             float density = activity.getResources().getDisplayMetrics().density;
@@ -43,13 +55,20 @@ public class SafeAreaPolyfill {
             int left = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).left / density);
             int right = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).right / density);
             
-            // Force WebView and its parent view to occupy full screen bounds with zero padding/margins
-            webView.setPadding(0, 0, 0, 0);
-            v.setPadding(0, 0, 0, 0);
+            // Force WebView and its parent view to occupy full screen bounds with zero padding/margins,
+            // only setting them if they are not already zero to prevent redundant layout requests.
+            if (webView.getPaddingLeft() != 0 || webView.getPaddingTop() != 0 || webView.getPaddingRight() != 0 || webView.getPaddingBottom() != 0) {
+                webView.setPadding(0, 0, 0, 0);
+            }
+            if (v.getPaddingLeft() != 0 || v.getPaddingTop() != 0 || v.getPaddingRight() != 0 || v.getPaddingBottom() != 0) {
+                v.setPadding(0, 0, 0, 0);
+            }
             if (webView.getLayoutParams() instanceof android.view.ViewGroup.MarginLayoutParams) {
                 android.view.ViewGroup.MarginLayoutParams lp = (android.view.ViewGroup.MarginLayoutParams) webView.getLayoutParams();
-                lp.setMargins(0, 0, 0, 0);
-                webView.setLayoutParams(lp);
+                if (lp.leftMargin != 0 || lp.topMargin != 0 || lp.rightMargin != 0 || lp.bottomMargin != 0) {
+                    lp.setMargins(0, 0, 0, 0);
+                    webView.setLayoutParams(lp);
+                }
             }
             
             String script = String.format(

@@ -15,6 +15,14 @@ public class SafeAreaPlugin extends Plugin {
     public void getInsets(PluginCall call) {
         JSObject ret = new JSObject();
         try {
+            if (getActivity() == null || getActivity().getWindow() == null || getContext() == null) {
+                ret.put("top", 0);
+                ret.put("bottom", 0);
+                ret.put("left", 0);
+                ret.put("right", 0);
+                call.resolve(ret);
+                return;
+            }
             float density = getContext().getResources().getDisplayMetrics().density;
             android.view.View decorView = getActivity().getWindow().getDecorView();
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(decorView);
