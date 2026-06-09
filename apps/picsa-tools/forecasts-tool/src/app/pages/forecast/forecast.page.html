@@ -12,54 +12,70 @@
 
   <!-- Short Term (Weekly + Daily) -->
   <h2>{{'Short Term' | translate}}</h2>
-  <div class="flex flex-wrap items-center gap-4 w-full">
-    @if (loading()) {
-      <div class="mx-auto w-24 mt-4">
+  <div class="w-full">
+    @if (loading() && dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
+      <div class="mx-auto w-24 mt-4 mb-2">
         <mat-progress-bar mode="query"></mat-progress-bar>
       </div>
-    } @else if (!countryCode()) {
-      <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-        {{ 'Please select a location to view forecasts' | translate }}
-      </div>
-    } @else if (dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
-      <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-        {{ 'No short term forecasts found' | translate }}
-      </div>
+    } @else if (loading()) {
+      <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
     } @else {
-      @for(forecast of weeklyForecasts(); track forecast.id){
-        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-      }
-      @for(forecast of dailyForecasts(); track forecast.id){
-        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-      }
+      <div class="h-1 mb-2"></div>
     }
+
+    <div class="flex flex-wrap items-center gap-4 w-full">
+      @if (!countryCode()) {
+        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
+          {{ 'Please select a location to view forecasts' | translate }}
+        </div>
+      } @else if (dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
+        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
+          {{ 'No short term forecasts found' | translate }}
+        </div>
+      } @else {
+        @for(forecast of weeklyForecasts(); track forecast.id){
+          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+        }
+        @for(forecast of dailyForecasts(); track forecast.id){
+          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+        }
+      }
+    </div>
   </div>
 
   <!-- Seasonal Forecasts -->
   <h2>{{'Seasonal' | translate}}</h2>
-  <div class="mt-2 flex flex-wrap items-center gap-4 w-full">
-    @if (loading() || loadingDownscaled()) {
-      <div class="mx-auto w-24 mt-4">
+  <div class="w-full">
+    @if ((loading() || loadingDownscaled()) && downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
+      <div class="mx-auto w-24 mt-4 mb-2">
         <mat-progress-bar mode="query"></mat-progress-bar>
       </div>
-    } @else if (!countryCode()) {
-      <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-        {{ 'Please select a location to view forecasts' | translate }}
-      </div>
-    } @else if (downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
-      <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-        {{ 'No seasonal forecasts found' | translate }}
-      </div>
+    } @else if (loading() || loadingDownscaled()) {
+      <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
     } @else {
-      <!-- Downscaled -->
-      @for(forecast of downscaledForecasts(); track forecast.id){
-        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-      }
-      <!-- National -->
-      @for(forecast of seasonalForecasts(); track forecast.id){
-        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-      }
+      <div class="h-1 mb-2"></div>
     }
+
+    <div class="mt-2 flex flex-wrap items-center gap-4 w-full">
+      @if (!countryCode()) {
+        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
+          {{ 'Please select a location to view forecasts' | translate }}
+        </div>
+      } @else if (downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
+        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
+          {{ 'No seasonal forecasts found' | translate }}
+        </div>
+      } @else {
+        <!-- Downscaled -->
+        @for(forecast of downscaledForecasts(); track forecast.id){
+          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+        }
+        <!-- National -->
+        @for(forecast of seasonalForecasts(); track forecast.id){
+          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+        }
+      }
+    </div>
   </div>
 
   <!-- Resources -->

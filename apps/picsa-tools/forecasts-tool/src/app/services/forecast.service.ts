@@ -149,26 +149,40 @@ export class ForecastService extends PicsaAsyncService {
     const currentLoad = { country_code, cancelled: false };
     this.activeCountryLoad = currentLoad;
 
-    this.loadingForecasts.set(true);
+    // Filter out downscaled config from country load because it is loaded by the specific location effect
+    const countryConfigs = this.loaderConfigs.filter((c) => c.type !== 'downscaled');
 
     try {
-      await Promise.all(
-        this.loaderConfigs.map(async (config) => {
+      // 1. Load cached data first (extremely fast local queries)
+      const cachedData = await Promise.all(
+        countryConfigs.map(async (config) => {
           if (config.type === 'seasonal') {
             const seasonalForecasts = FORECASTS_DB.filter(
               (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
             );
             const dbDocs = await this.storeHardcodedData(seasonalForecasts);
-            if (currentLoad.cancelled) return;
-            config.signal.set(dbDocs);
-            return;
+            return { config, data: dbDocs };
           }
-
           const cached = await this.loadCachedForecasts(country_code, config.type, config.limit || 1);
-          if (currentLoad.cancelled) return;
-          config.signal.set(cached);
+          return { config, data: cached };
+        }),
+      );
 
-          if (config.includeStorage) {
+      if (currentLoad.cancelled) return;
+
+      // 2. Set the cached data to signals immediately
+      for (const { config, data } of cachedData) {
+        config.signal.set(data);
+      }
+
+      // 3. Now start loading from server (which might take time)
+      const serverConfigs = countryConfigs.filter((c) => c.includeStorage);
+      if (serverConfigs.length > 0) {
+        this.loadingForecasts.set(true);
+
+        await Promise.all(
+          serverConfigs.map(async (config) => {
+            const cached = config.signal();
             const serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
             if (currentLoad.cancelled) return;
 
@@ -181,9 +195,9 @@ export class ForecastService extends PicsaAsyncService {
               }
               config.signal.update((v) => [...success, ...v].slice(0, config.limit));
             }
-          }
-        }),
-      );
+          }),
+        );
+      }
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
     } finally {
