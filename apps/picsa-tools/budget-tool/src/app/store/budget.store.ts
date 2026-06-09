@@ -158,7 +158,7 @@ export class BudgetStore {
   public async editorAddTimePeriod() {
     const { data, meta } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
-    data.push(PERIOD_DATA_TEMPLATE);
+    data.push(deepClone(PERIOD_DATA_TEMPLATE));
     await this.patchBudget({ data });
   }
   public async editorDeleteTimePeriod(index: number) {
@@ -186,7 +186,7 @@ export class BudgetStore {
 
   createNewBudget() {
     const budget: IBudget = {
-      ...NEW_BUDGET_TEMPLATE,
+      ...deepClone(NEW_BUDGET_TEMPLATE),
       ...generateDBMeta(),
     };
     this.valueCounters = this._generateValueCounters(budget);

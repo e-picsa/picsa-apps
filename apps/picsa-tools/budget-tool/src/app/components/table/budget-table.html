@@ -21,7 +21,7 @@
     </div>
 
     <!-- Time periods (calculated vertically) -->
-    @for (column of store.activeBudget.data; track column; let columnIndex = $index) {
+    @for (column of store.activeBudget.data; track $index; let columnIndex = $index) {
     <div class="time-period">
       <div class="time-period-title cell top-row">
         <!-- Editor - Delete -->
