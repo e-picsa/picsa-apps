@@ -142,7 +142,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   async save() {
     const meta = this.budgetModel();
     // generate period data
-    const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
+    const data = Array.from({ length: meta.lengthTotal }, () => deepClone(PERIOD_DATA_TEMPLATE));
     await this.store.patchBudget({ data, meta });
     this.dialogRef.close(this.store.activeBudget._key);
   }
