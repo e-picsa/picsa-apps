@@ -193,7 +193,16 @@ export class ForecastService extends PicsaAsyncService {
                 console.error(error);
                 throw new Error(`[Forecast] failed to load ${config.type} forecasts`);
               }
-              config.signal.update((v) => [...success, ...v].slice(0, config.limit));
+              config.signal.update((v) => {
+                const seen = new Set<string>();
+                return [...success, ...v]
+                  .filter((doc) => {
+                    if (seen.has(doc.id)) return false;
+                    seen.add(doc.id);
+                    return true;
+                  })
+                  .slice(0, config.limit);
+              });
             }
           }),
         );
