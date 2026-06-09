@@ -33,9 +33,9 @@ public class SafeAreaPlugin extends Plugin {
             int right = 0;
             
             if (insets != null) {
-                androidx.core.graphics.Insets systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                androidx.core.graphics.Insets systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
                 top = (int) (systemBarInsets.top / density);
-                bottom = (int) (systemBarInsets.bottom / density);
+                bottom = insets.isVisible(WindowInsetsCompat.Type.ime()) ? 0 : (int) (systemBarInsets.bottom / density);
                 left = (int) (systemBarInsets.left / density);
                 right = (int) (systemBarInsets.right / density);
             }

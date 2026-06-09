@@ -50,10 +50,11 @@ public class SafeAreaPolyfill {
 
         ViewCompat.setOnApplyWindowInsetsListener(parentView != null ? parentView : webView, (v, insets) -> {
             float density = activity.getResources().getDisplayMetrics().density;
-            int top = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).top / density);
-            int bottom = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom / density);
-            int left = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).left / density);
-            int right = (int) (insets.getInsets(WindowInsetsCompat.Type.systemBars()).right / density);
+            androidx.core.graphics.Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            int top = (int) (systemBars.top / density);
+            int bottom = insets.isVisible(WindowInsetsCompat.Type.ime()) ? 0 : (int) (systemBars.bottom / density);
+            int left = (int) (systemBars.left / density);
+            int right = (int) (systemBars.right / density);
             
             // Force WebView and its parent view to occupy full screen bounds with zero padding/margins,
             // only setting them if they are not already zero to prevent redundant layout requests.
@@ -72,17 +73,16 @@ public class SafeAreaPolyfill {
             }
             
             String script = String.format(
+                java.util.Locale.US,
                 "document.documentElement.style.setProperty('--safe-area-inset-top', '%dpx');" +
                 "document.documentElement.style.setProperty('--safe-area-inset-bottom', '%dpx');" +
                 "document.documentElement.style.setProperty('--safe-area-inset-left', '%dpx');" +
                 "document.documentElement.style.setProperty('--safe-area-inset-right', '%dpx');",
                 top, bottom, left, right
             );
-            webView.post(() -> {
-                if (activity.getBridge() != null && activity.getBridge().getWebView() != null) {
-                    activity.getBridge().getWebView().evaluateJavascript(script, null);
-                }
-            });
+            if (activity.getBridge() != null && activity.getBridge().getWebView() != null) {
+                activity.getBridge().getWebView().evaluateJavascript(script, null);
+            }
             
             return WindowInsetsCompat.CONSUMED;
         });
