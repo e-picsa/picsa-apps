@@ -1,25 +1,23 @@
 package io.picsa.extension;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.getcapacitor.BridgeActivity;
 
 import androidx.annotation.Nullable;
-import androidx.core.view.WindowCompat;
-import android.graphics.Color;
 
 public class MainActivity extends BridgeActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    SafeAreaPolyfill.enableEdgeToEdge(this);
+    registerPlugin(SafeAreaPlugin.class);
 
     // Track how long app startup takes to adjust how long to keep splash screen displayed
     long START_TIME = System.currentTimeMillis();
 
     super.onCreate(savedInstanceState);
 
+    SafeAreaPolyfill.enableEdgeToEdge(this);
     SafeAreaPolyfill.applyListener(this);
     final View content = findViewById(android.R.id.content);
 

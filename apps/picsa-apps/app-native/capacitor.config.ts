@@ -38,7 +38,9 @@ const config: CapacitorConfig = {
       presentationOptions: ['alert'],
     },
     SystemBars: {
-      insetsHandling: 'css',
+      // Disable automatic inset padding to allow custom full-screen edge-to-edge
+      // layout (insets and padding are handled manually in SafeAreaPolyfill.java)
+      insetsHandling: 'disable',
       style: 'DARK',
     },
   },
