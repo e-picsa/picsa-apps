@@ -45,10 +45,10 @@
             animate.leave="fade-out-delayed"
           >
           </budget-card>
-          } @if(enterpriseType(); as enterprise){
+          } @if(enterpriseType(); as type){
           <budget-card-new
             type="enterprise"
-            [groupings]="[enterprise]"
+            [groupings]="[type]"
             (cardSaved)="customEnterpriseCreated($event)"
           ></budget-card-new>
           }
@@ -73,8 +73,8 @@
         <h2>{{ 'How long is your budget for?' | translate }}</h2>
         <div class="length-container">
           <!-- Length Total Selector -->
-          <mat-form-field>
-            <mat-select class="value-select" #periodTotalSelect [formField]="budgetForm.lengthTotal">
+          <mat-form-field class="max-w-24">
+            <mat-select class="value-select" [formField]="budgetForm.lengthTotal">
               @for (n of periodTotalOptions; track n) {
               <mat-option [value]="n">{{ n }}</mat-option>
               }
@@ -82,7 +82,7 @@
           </mat-form-field>
           <!-- Length Scale Selector -->
           <mat-form-field>
-            <mat-select class="value-select" #periodTotalSelect [formField]="budgetForm.lengthScale">
+            <mat-select class="value-select" [formField]="budgetForm.lengthScale">
               @for (option of periodScaleOptions; track option) {
               <mat-option [value]="option">{{ option | translate }}</mat-option>
               }
@@ -91,8 +91,8 @@
 
           <!-- Month Start Selector -->
           @if (budgetModel().lengthScale === 'months') {
-          <div>{{ 'starting' | translate }}</div>
-          <mat-form-field>
+          <span class="text-xl">{{ 'starting' | translate }}</span>
+          <mat-form-field class="max-w-32">
             <mat-select class="value-select" [formField]="budgetForm.monthStart">
               @for (option of periodTotalOptions; track option) {
               <mat-option [value]="option">{{ periodLabelOptions[option - 1] | translate }}</mat-option>
@@ -113,12 +113,18 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
         <h2>{{ 'Save your budget' | translate }}</h2>
-        <input matInput [placeholder]="'Title' | translate" [formField]="budgetForm.title" />
-        <textarea
-          matInput
-          [placeholder]="'Description (optional)' | translate"
-          [formField]="budgetForm.description"
-        ></textarea>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'Title' | translate }}</mat-label>
+          <input matInput [placeholder]="'Title' | translate" [formField]="budgetForm.title" />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'Description (optional)' | translate }}</mat-label>
+          <textarea
+            matInput
+            [placeholder]="'Description (optional)' | translate"
+            [formField]="budgetForm.description"
+          ></textarea>
+        </mat-form-field>
         <div class="sticky-footer">
           <button
             matStepperNext

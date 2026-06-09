@@ -4,7 +4,6 @@ textarea {
   max-width: 500px;
   display: block;
   font-size: 1.5em;
-  margin-bottom: 1em;
 }
 .card-list {
   @apply flex flex-wrap gap-2 sm:gap-4;
@@ -12,7 +11,7 @@ textarea {
 .length-container {
   @apply flex flex-wrap items-center gap-4;
 }
-mat-form-field {
+.length-container mat-form-field {
   height: 80px;
   display: flex;
   justify-content: center;
