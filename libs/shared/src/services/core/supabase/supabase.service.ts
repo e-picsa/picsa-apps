@@ -39,21 +39,13 @@ export class SupabaseService extends PicsaAsyncService {
 
   private supabase: SupabaseClient<Database>;
 
-  constructor() {
-    super();
-    effect(() => {
-      const isAvailable = this.isAvailable();
-      if (isAvailable && !this.supabase) {
-        this.createClients();
-      }
-    });
-  }
-
   public override async init(): Promise<void> {
     this.config = await this.loadConfig();
     const isServerAvailable = await checkBackendAvailability(this.config.apiUrl);
     this.isAvailable.set(isServerAvailable);
-    // client config will be handled by effect
+    if (isServerAvailable) {
+      this.createClients();
+    }
   }
 
   private createClients() {
