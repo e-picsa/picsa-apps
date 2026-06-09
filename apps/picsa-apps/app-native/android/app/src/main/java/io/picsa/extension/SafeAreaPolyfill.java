@@ -84,7 +84,7 @@ public class SafeAreaPolyfill {
                 activity.getBridge().getWebView().evaluateJavascript(script, null);
             }
             
-            return WindowInsetsCompat.CONSUMED;
+            return ViewCompat.onApplyWindowInsets(v, insets);
         });
     }
 }
