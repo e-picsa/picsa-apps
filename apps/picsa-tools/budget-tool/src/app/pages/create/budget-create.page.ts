@@ -5,19 +5,22 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { form, FormField, required } from '@angular/forms/signals';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { deepClone } from '@picsa/utils';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 import { BudgetMaterialModule } from '../../material.module';
 import { IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
-import { IBudgetCard } from '../../schema';
+import { IBudgetCard, IBudgetCardType } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
 import { BudgetCardService } from '../../store/budget-card.service';
 import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
@@ -27,20 +30,42 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BudgetMaterialModule, FormsModule, ReactiveFormsModule, BudgetToolComponentsModule, PicsaTranslateModule],
+  imports: [BudgetMaterialModule, FormsModule, FormField, BudgetToolComponentsModule, PicsaTranslateModule],
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
   store = inject(BudgetStore);
   private cardService = inject(BudgetCardService);
   private dialogRef = inject<MatDialogRef<BudgetCreatePage>>(MatDialogRef);
   private cdr = inject(ChangeDetectorRef);
 
-  budgetMetaForm: FormGroup;
-  enterpriseToggle = false;
-  enterpriseType: string;
+  // Define the writable signal model initialized with empty defaults
+  public readonly budgetModel = signal<IBudgetMeta>({
+    title: '',
+    description: '',
+    lengthScale: 'months',
+    lengthTotal: 5,
+    monthStart: 9,
+    valueScale: 1,
+    enterprise: {
+      id: '',
+      label: '',
+      type: null as any,
+      groupings: [],
+      imgType: 'svg',
+    },
+  });
+
+  // Define the Signal Form tree with validation
+  public readonly budgetForm = form(this.budgetModel, (path) => {
+    required(path.title);
+    required(path.lengthScale);
+    required(path.enterprise);
+    required(path.monthStart);
+  });
+
+  enterpriseType = signal<string | undefined>(undefined);
   enterpriseType$ = new Subject<string>();
-  filteredEnterprises: IBudgetCard[] = [];
+  filteredEnterprises = signal<IBudgetCard[]>([]);
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTH_DATA.map((m) => m.labelShort)];
@@ -50,11 +75,12 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.store.createNewBudget();
-    this.generateBudgetForm();
+    this.budgetModel.set(deepClone(this.store.activeBudget.meta));
     this.enterpriseTypeCards = this.cardService.enterpriseGroups;
     this.subscribeToEnterpriseChanges();
     this.cdr.markForCheck();
   }
+
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
@@ -66,28 +92,24 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
 
   async enterpriseTypeClicked(type: string) {
     // reset form on new type selected
-    this.enterpriseType = type;
+    this.enterpriseType.set(type);
     this.enterpriseType$.next(type);
 
-    this.enterpriseToggle = false;
-    this.budgetMetaForm.patchValue({ enterprise: { type } });
-
-    setTimeout(async () => {
-      this.enterpriseToggle = true;
-    }, 200);
+    this.budgetModel.update((meta) => ({
+      ...meta,
+      enterprise: { ...meta.enterprise, type: type as IBudgetCardType },
+    }));
   }
 
   setEnterprise(enterprise: IBudgetCard) {
-    // TODO - defaults no longer set for each enterprise,
-    // possibly find a way to store somewhere and lookup
-    this.budgetMetaForm.patchValue({
-      enterprise: enterprise,
-    });
+    this.budgetModel.update((meta) => ({
+      ...meta,
+      enterprise,
+    }));
   }
 
   async customEnterpriseCreated(enterprise: IBudgetCard) {
     this.setEnterprise(enterprise);
-    this.cdr.markForCheck();
   }
 
   /**
@@ -105,14 +127,15 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
         takeUntil(this.componentDestroyed$),
       )
       .subscribe((enterprises) => {
-        this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
-        this.cdr.markForCheck();
+        const type = this.enterpriseType();
+        this.filteredEnterprises.set(enterprises.filter((e) => e.groupings?.includes(type as any)));
       });
   }
+
   async save() {
-    const meta = this.budgetMetaForm.value as IBudgetMeta;
+    const meta = this.budgetModel();
     // generate period data
-    const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
+    const data = Array.from({ length: meta.lengthTotal }, () => deepClone(PERIOD_DATA_TEMPLATE));
     await this.store.patchBudget({ data, meta });
     this.dialogRef.close(this.store.activeBudget._key);
   }
@@ -120,28 +143,4 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   public trackByFn(index: number, item: IBudgetCard) {
     return item.id;
   }
-
-  /**************************************************************************
-   *  Private Generators & Helpers
-   **************************************************************************/
-
-  // create general form with formgroups for all budget fields
-  // add required vaildation for fields which must be completed in this page
-  private generateBudgetForm() {
-    const requiredFields1: IBudgetMetaKey[] = ['enterprise', 'title', 'lengthScale'];
-    this.budgetMetaForm = this._generateFormFromValues(this.store.activeBudget.meta, requiredFields1);
-  }
-
-  // custom method to generate simple form from json object and populate with provided initial values
-  // accepts array of fields to add required validators too
-  private _generateFormFromValues(v: any, requiredFields: string[] = []) {
-    const fieldGroup = {};
-    Object.keys(v).forEach(
-      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null]),
-    );
-    return this.fb.group(fieldGroup);
-  }
 }
-
-// need to specify only string keys as technically could be numbers (change in ts 2.9)
-type IBudgetMetaKey = Extract<keyof IBudgetMeta, string>;

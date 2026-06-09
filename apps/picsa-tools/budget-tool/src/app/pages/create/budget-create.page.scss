@@ -4,31 +4,21 @@ textarea {
   max-width: 500px;
   display: block;
   font-size: 1.5em;
-  margin-bottom: 1em;
 }
 .card-list {
   @apply flex flex-wrap gap-2 sm:gap-4;
 }
-
-.variable-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 80px;
-  font-size: 30px;
-  height: 80px !important;
-  margin: 0 20px 20px 0;
+.length-container {
+  @apply flex flex-wrap items-center gap-4;
 }
-
-.variable-container.editable {
+.length-container mat-form-field {
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+mat-select.value-select {
   color: var(--ion-color-primary);
-  outline: 2px solid var(--ion-color-primary);
   font-weight: bold;
-}
-.variable-value {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  min-width: 100px;
+  font-size: 30px;
 }

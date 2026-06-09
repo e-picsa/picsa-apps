@@ -1,5 +1,5 @@
 <div class="page-content" style="padding: 0 0 16px 0">
-  <form [formGroup]="budgetMetaForm">
+  <form>
     <mat-horizontal-stepper linear #stepper class="responsive-content-padding">
       <!-- Step 1 - handled with custom elements-->
       <mat-step>
@@ -10,7 +10,7 @@
           <budget-card
             [card]="card"
             (click)="enterpriseTypeClicked(card.id)"
-            [selected]="enterpriseType === card.id"
+            [selected]="enterpriseType() === card.id"
             animate.enter="fade-in-delayed"
             animate.leave="fade-out-delayed"
           ></budget-card>
@@ -22,7 +22,7 @@
             color="primary"
             matButton="elevated"
             class="footer-button"
-            [disabled]="!budgetMetaForm.value.enterprise || !budgetMetaForm.value.enterprise.type"
+            [disabled]="!budgetModel().enterprise || !budgetModel().enterprise.type"
           >
             {{ 'Next' | translate }}
             <mat-icon iconPositionEnd>arrow_forward</mat-icon>
@@ -32,25 +32,26 @@
       <!-- Step 2 - enterprise select -->
       <mat-step>
         <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
-        @if (filteredEnterprises.length) {
+        @if (filteredEnterprises().length) {
         <h2 animate.enter="fade-in-delayed" animate.leave="fade-out-delayed">{{ 'Select Enterprise' | translate }}</h2>
         }
         <div class="card-list">
-          @for (enterprise of filteredEnterprises; track enterprise) {
+          @for (enterprise of filteredEnterprises(); track enterprise.id) {
           <budget-card
             [card]="enterprise"
             (click)="setEnterprise(enterprise)"
-            [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
+            [selected]="budgetModel().enterprise?.id === enterprise.id"
             animate.enter="fade-in-delayed"
             animate.leave="fade-out-delayed"
           >
           </budget-card>
-          }
+          } @if(enterpriseType(); as type){
           <budget-card-new
             type="enterprise"
-            [groupings]="[enterpriseType]"
+            [groupings]="[type]"
             (cardSaved)="customEnterpriseCreated($event)"
           ></budget-card-new>
+          }
         </div>
         <div class="sticky-footer">
           <button
@@ -58,7 +59,7 @@
             color="primary"
             matButton="elevated"
             class="footer-button"
-            [disabled]="!budgetMetaForm.value.enterprise.id"
+            [disabled]="!budgetModel().enterprise?.id"
           >
             {{ 'Next' | translate }}
             <mat-icon iconPositionEnd>arrow_forward</mat-icon>
@@ -70,37 +71,34 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
         <h2>{{ 'How long is your budget for?' | translate }}</h2>
-        <div class="flex flex-wrap items-center">
-          <button matButton class="variable-container editable" (click)="periodTotalSelect.open()">
-            <span class="variable-value">{{ budgetMetaForm.value.lengthTotal }}</span>
-            <mat-select class="select--hidden" #periodTotalSelect formControlName="lengthTotal" style="opacity: 0">
+        <div class="length-container">
+          <!-- Length Total Selector -->
+          <mat-form-field class="max-w-24">
+            <mat-select class="value-select" [formField]="budgetForm.lengthTotal">
               @for (n of periodTotalOptions; track n) {
               <mat-option [value]="n">{{ n }}</mat-option>
               }
             </mat-select>
-          </button>
-
-          <button matButton class="variable-container editable" (click)="periodScaleSelect.open()">
-            <span class="variable-value">{{ budgetMetaForm.value.lengthScale | translate }}</span>
-            <mat-select class="select--hidden" #periodScaleSelect formControlName="lengthScale" style="opacity: 0">
+          </mat-form-field>
+          <!-- Length Scale Selector -->
+          <mat-form-field>
+            <mat-select class="value-select" [formField]="budgetForm.lengthScale">
               @for (option of periodScaleOptions; track option) {
               <mat-option [value]="option">{{ option | translate }}</mat-option>
               }
             </mat-select>
-          </button>
-          @if (budgetMetaForm.value.lengthScale === 'months') {
-          <div class="variable-container">{{ 'starting in' | translate }}</div>
-          } @if (budgetMetaForm.value.lengthScale === 'months') {
-          <button matButton class="variable-container editable" (click)="periodStartSelect.open()">
-            <span class="variable-value"
-              >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] | translate }}</span
-            >
-            <mat-select class="select--hidden" #periodStartSelect formControlName="monthStart" style="opacity: 0">
+          </mat-form-field>
+
+          <!-- Month Start Selector -->
+          @if (budgetModel().lengthScale === 'months') {
+          <span class="text-xl">{{ 'starting' | translate }}</span>
+          <mat-form-field class="max-w-32">
+            <mat-select class="value-select" [formField]="budgetForm.monthStart">
               @for (option of periodTotalOptions; track option) {
               <mat-option [value]="option">{{ periodLabelOptions[option - 1] | translate }}</mat-option>
               }
             </mat-select>
-          </button>
+          </mat-form-field>
           }
         </div>
         <div class="sticky-footer">
@@ -115,18 +113,24 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
         <h2>{{ 'Save your budget' | translate }}</h2>
-        <input matInput [placeholder]="'Title' | translate" formControlName="title" />
-        <textarea
-          matInput
-          [placeholder]="'Description (optional)' | translate"
-          formControlName="description"
-        ></textarea>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'Title' | translate }}</mat-label>
+          <input matInput [placeholder]="'Title' | translate" [formField]="budgetForm.title" />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'Description (optional)' | translate }}</mat-label>
+          <textarea
+            matInput
+            [placeholder]="'Description (optional)' | translate"
+            [formField]="budgetForm.description"
+          ></textarea>
+        </mat-form-field>
         <div class="sticky-footer">
           <button
             matStepperNext
             color="primary"
             matButton="elevated"
-            [disabled]="budgetMetaForm.invalid"
+            [disabled]="!budgetForm().valid()"
             class="footer-button"
             (click)="save()"
           >
