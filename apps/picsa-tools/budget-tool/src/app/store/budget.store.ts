@@ -270,11 +270,11 @@ export class BudgetStore {
       budget_key: this.activeBudget._key,
     };
 
-    // Write the share code document directly to the server, bypassing local cache
-    await this.db.setServerDoc('budgetTool/default/shareCodes', budgetCodeDoc);
-
     // Write the budget document directly to the server, bypassing local cache
     await this.db.setServerDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue);
+
+    // Write the share code document directly to the server, bypassing local cache
+    await this.db.setServerDoc('budgetTool/default/shareCodes', budgetCodeDoc);
 
     // Also save the budget document to the local cache normally (without server sync) to keep local copy updated
     await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, false);
