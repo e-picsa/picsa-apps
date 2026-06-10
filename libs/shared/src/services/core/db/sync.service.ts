@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
 import { BehaviorSubject } from 'rxjs';
 
@@ -40,34 +40,39 @@ export class DBSyncService {
   private async processWrites() {
     if (!this._isSyncing) {
       this._isSyncing = true;
-      const pending = await this.getPendingWrites();
-      if (pending.length > 0) {
-        const writeEntries: IServerWriteBatchEntry[] = [];
-        // retrieve full docs from db
-        for (const p of pending) {
-          const doc = await this.getDoc(p.endpoint, p._key);
-          if (doc) {
-            writeEntries.push({ endpoint: p.endpoint, data: doc });
+      try {
+        const pending = await this.getPendingWrites();
+        if (pending.length > 0) {
+          const writeEntries: IServerWriteBatchEntry[] = [];
+          // retrieve full docs from db
+          for (const p of pending) {
+            const doc = await this.getDoc(p.endpoint, p._key);
+            if (doc) {
+              writeEntries.push({ endpoint: p.endpoint, data: doc });
+            }
           }
-        }
-        // batch write docs
+          // batch write docs
 
-        await this.server.setMultiple(writeEntries);
+          await this.server.setMultiple(writeEntries);
 
-        // retrieve full doc again to check hasn't been updated
-        // if no updates remove from pending writes
-        const deletableKeys: string[] = [];
-        for (const p of pending) {
-          const latest = await this.getDoc('_pendingWrites', p._key);
-          if (latest?.['_random'] === p._random) {
-            deletableKeys.push(p._key);
+          // retrieve full doc again to check hasn't been updated
+          // if no updates remove from pending writes
+          const deletableKeys: string[] = [];
+          for (const p of pending) {
+            const latest = await this.getDoc('_pendingWrites', p._key);
+            if (latest?.['_random'] === p._random) {
+              deletableKeys.push(p._key);
+            }
           }
+          await this.cache.deleteDocs('_pendingWrites', deletableKeys);
+          this._isSyncing = false;
+          return this.processWrites();
         }
-        await this.cache.deleteDocs('_pendingWrites', deletableKeys);
+      } catch (error: any) {
+        console.error('Error during database sync processWrites:', error);
+      } finally {
         this._isSyncing = false;
-        return this.processWrites();
       }
-      this._isSyncing = false;
     }
   }
   private async getDoc(endpoint: IDBEndpoint, key: string) {

@@ -41,7 +41,14 @@ export class BudgetShareDialogComponent {
       this.disabled = false;
       this.status = '';
     } catch (error: any) {
-      this.status = error?.message || 'Unable to share';
+      console.error('Failed to share budget:', error);
+      let errorMsg = 'Unable to share';
+      if (error?.code === 'permission-denied') {
+        errorMsg = 'Permission denied by server. Please check Firestore rules.';
+      } else if (error?.message) {
+        errorMsg = `Share failed: ${error.message}`;
+      }
+      this.status = errorMsg;
       this.disabled = false;
     }
   }
