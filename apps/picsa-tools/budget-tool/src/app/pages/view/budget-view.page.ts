@@ -1,6 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { IBudgetPeriodType } from '../../models/budget-tool.models';
@@ -19,6 +20,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   store = inject(BudgetStore);
   service = inject(BudgetService);
   private dialog = inject(MatDialog);
+  private notificationService = inject(PicsaNotificationService);
 
   public editorOpen = signal(false);
 
@@ -42,6 +44,11 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   async loadBudget() {
     const budgetKey = this.route.snapshot.params.budgetKey;
-    await this.store.loadBudgetByKey(budgetKey);
+    try {
+      await this.store.loadBudgetByKey(budgetKey);
+    } catch (error: any) {
+      console.error('Failed to load budget:', error);
+      this.notificationService.showErrorNotification('Failed to load budget: ' + (error?.message || error));
+    }
   }
 }

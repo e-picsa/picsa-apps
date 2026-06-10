@@ -258,20 +258,28 @@ export class BudgetStore {
   }
 
   public async shareAsLink() {
-    const { shareCode } = this.activeBudget;
+    let { shareCode } = this.activeBudget;
     if (!shareCode) {
-      const code = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
-      // TODO ensure share code doesn't already exist
-      const budgetCodeDoc: IBudgetCodeDoc = {
-        ...generateDBMeta(),
-        _key: code,
-        budget_key: this.activeBudget._key,
-      };
-      await this.db.setDoc('budgetTool/default/shareCodes', budgetCodeDoc, true);
-      this.activeBudget.shareCode = code;
+      shareCode = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+      this.activeBudget.shareCode = shareCode;
     }
-    await this.saveBudget();
-    return this.activeBudget.shareCode as string;
+
+    const budgetCodeDoc: IBudgetCodeDoc = {
+      ...generateDBMeta(),
+      _key: shareCode,
+      budget_key: this.activeBudget._key,
+    };
+
+    // Write the budget document directly to the server, bypassing local cache
+    await this.db.setServerDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue);
+
+    // Write the share code document directly to the server, bypassing local cache
+    await this.db.setServerDoc('budgetTool/default/shareCodes', budgetCodeDoc);
+
+    // Also save the budget document to the local cache normally (without server sync) to keep local copy updated
+    await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, false);
+
+    return shareCode;
   }
 
   /**************************************************************************
