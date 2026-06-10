@@ -78,7 +78,7 @@ export class PicsaDbService implements AbstractDBService {
     // assume fine if delete action queued assuming will be deleted from client
     // alternatively could add sync methods like doc addition
     if (deleteServer) {
-      await this.server.deleteDocs(endpoint, keys);
+      this.server.deleteDocs(endpoint, keys);
     }
   }
 

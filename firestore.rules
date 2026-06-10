@@ -10,7 +10,7 @@ service cloud.firestore {
 
     // Fine-grained write access to only required collections
     match /budgetTool/default/shareCodes/{code} {
-      allow write: if true;
+      allow create: if true;
     }
 
     match /budgetTool/{group}/budgets/{budgetId} {

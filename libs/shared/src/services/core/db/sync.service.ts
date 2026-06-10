@@ -36,43 +36,46 @@ export class DBSyncService {
   }
 
   // get table of pending writes and process in batch
-  // TODO - refactor into smaller chunks
+  // Uses a while loop instead of recursion to keep the `_isSyncing` lock active
+  // until all items are fully processed, avoiding try-finally race conditions.
   private async processWrites() {
-    if (!this._isSyncing) {
-      this._isSyncing = true;
-      try {
-        const pending = await this.getPendingWrites();
-        if (pending.length > 0) {
-          const writeEntries: IServerWriteBatchEntry[] = [];
-          // retrieve full docs from db
-          for (const p of pending) {
-            const doc = await this.getDoc(p.endpoint, p._key);
-            if (doc) {
-              writeEntries.push({ endpoint: p.endpoint, data: doc });
-            }
+    if (this._isSyncing) {
+      return;
+    }
+    this._isSyncing = true;
+    try {
+      let pending = await this.getPendingWrites();
+      while (pending.length > 0) {
+        const writeEntries: IServerWriteBatchEntry[] = [];
+        // retrieve full docs from db
+        for (const p of pending) {
+          const doc = await this.getDoc(p.endpoint, p._key);
+          if (doc) {
+            writeEntries.push({ endpoint: p.endpoint, data: doc });
           }
-          // batch write docs
-
-          await this.server.setMultiple(writeEntries);
-
-          // retrieve full doc again to check hasn't been updated
-          // if no updates remove from pending writes
-          const deletableKeys: string[] = [];
-          for (const p of pending) {
-            const latest = await this.getDoc('_pendingWrites', p._key);
-            if (latest?.['_random'] === p._random) {
-              deletableKeys.push(p._key);
-            }
-          }
-          await this.cache.deleteDocs('_pendingWrites', deletableKeys);
-          this._isSyncing = false;
-          return this.processWrites();
         }
-      } catch (error: any) {
-        console.error('Error during database sync processWrites:', error);
-      } finally {
-        this._isSyncing = false;
+        // batch write docs
+
+        await this.server.setMultiple(writeEntries);
+
+        // retrieve full doc again to check hasn't been updated
+        // if no updates remove from pending writes
+        const deletableKeys: string[] = [];
+        for (const p of pending) {
+          const latest = await this.getDoc('_pendingWrites', p._key);
+          if (latest?.['_random'] === p._random) {
+            deletableKeys.push(p._key);
+          }
+        }
+        await this.cache.deleteDocs('_pendingWrites', deletableKeys);
+
+        // Re-fetch pending writes for the next iteration
+        pending = await this.getPendingWrites();
       }
+    } catch (error: any) {
+      console.error('Error during database sync processWrites:', error);
+    } finally {
+      this._isSyncing = false;
     }
   }
   private async getDoc(endpoint: IDBEndpoint, key: string) {
