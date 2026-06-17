@@ -220,7 +220,7 @@ export class DashboardCropAdminComponent {
 
         // Find parent region ID and name
         const match = locations.find((v) => v.id === row.location_id) as IGeolocationAdmin5Location;
-        const parentId = match?.admin_4 || match?.id || '';
+        const parentId = match?.admin_4 || '';
         const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
         const label = match?.label || row.location_id;
         const station_label = station.station_name as string;
