@@ -58,6 +58,7 @@ export function plantDayToDateLabel(plantDate: number): string {
  * @param data - Array of observed values
  */
 export function cumulativeDistribution(data: number[]): number[] {
+  if (!data || data.length === 0) return [];
   // Step 1: Count occurrences of each number.
   // Use array length Max + 1 for number 0, 1, ... MAX
   const MAX = Math.max(...data);
