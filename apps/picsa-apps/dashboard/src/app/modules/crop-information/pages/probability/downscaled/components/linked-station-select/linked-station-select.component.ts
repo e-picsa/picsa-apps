@@ -78,28 +78,11 @@ export class CropLinkedStationSelectComponent {
   }
 
   constructor() {
-    effect(async (onCleanup) => {
+    effect(() => {
       const countryCode = this.deploymentService.activeDeploymentCountry();
       const locationId = this.locationId();
       if (countryCode && locationId) {
-        let active = true;
-        onCleanup(() => {
-          active = false;
-        });
-
-        try {
-          const stations = await this.fetchStations(countryCode);
-          if (active) {
-            this.allStations.set(stations);
-          }
-
-          const geoJsonFeature = await this.fetchMapData(countryCode, locationId);
-          if (active) {
-            this.locationGeoJson.set(geoJsonFeature);
-          }
-        } catch (e) {
-          console.error('Failed to load stations/map data:', e);
-        }
+        this.handleLocationChange(countryCode, locationId);
       }
     });
 
@@ -168,6 +151,13 @@ export class CropLinkedStationSelectComponent {
     });
   }
 
+  private async handleLocationChange(countryCode: CountryCodeLegacy, locationId: string) {
+    const stations = await this.fetchStations(countryCode);
+    this.allStations.set(stations);
+    const geoJsonFeature = await this.fetchMapData(countryCode, locationId);
+    this.locationGeoJson.set(geoJsonFeature);
+  }
+
   /** Retrieve list of climate stations from db */
   private async fetchStations(countryCode: CountryCodeLegacy): Promise<IStationRow[]> {
     await this.supabaseService.ready();
@@ -205,8 +195,8 @@ export class CropLinkedStationSelectComponent {
       .replace(/[^a-z0-9]/g, '');
   }
 
-  public onSelectOpened(opened: boolean) {
-    if (opened) {
+  public handleOpenChanged(isOpen: boolean) {
+    if (isOpen) {
       setTimeout(() => {
         this.searchInput()?.nativeElement.focus();
       });
@@ -222,7 +212,7 @@ export class CropLinkedStationSelectComponent {
   public onMarkerClicked(marker: IMapMarker) {
     const { _index } = marker;
     const station = this.stationsWithCoords()[_index];
-    if (station && station.id) {
+    if (station?.id) {
       this.selectedStationId.set(station.id);
 
       // Also highlight/select the marker visual if map available
