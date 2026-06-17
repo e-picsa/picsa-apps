@@ -198,8 +198,8 @@ export class CropLinkedStationSelectComponent {
     return undefined;
   }
 
-  private normalizeName(name: string): string {
-    return name
+  private normalizeName(name: string | undefined | null): string {
+    return (name || '')
       .toLowerCase()
       .replace(/\b(district|province)\b/g, '')
       .replace(/[^a-z0-9]/g, '');
