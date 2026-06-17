@@ -15,7 +15,8 @@
           [value]="selectedStationId()"
           (selectionChange)="selectedStationId.set($event.value)"
           #select
-          (openedChange)="handleOpenChanged($event)"
+          (opened)="handleStationSelectOpen()"
+          (closed)="handleStationSelectClose()"
         >
           <!-- Custom Display for Selected Option -->
           <mat-select-trigger>
@@ -25,9 +26,11 @@
           <!-- Sticky Search Box -->
           <div class="sticky top-0 bg-white z-10 px-3 py-2 border-b border-gray-100 select-search-container">
             <input
+              matInput
               #searchInput
               type="text"
               placeholder="Search stations..."
+              aria-label="Filter station list"
               class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               (input)="searchTerm.set(searchInput.value)"
               (keydown)="$event.stopPropagation()"

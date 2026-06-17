@@ -195,17 +195,17 @@ export class CropLinkedStationSelectComponent {
       .replace(/[^a-z0-9]/g, '');
   }
 
-  public handleOpenChanged(isOpen: boolean) {
-    if (isOpen) {
-      setTimeout(() => {
-        this.searchInput()?.nativeElement.focus();
-      });
-    } else {
-      this.searchTerm.set('');
-      const inputEl = this.searchInput()?.nativeElement;
-      if (inputEl) {
-        inputEl.value = '';
-      }
+  public handleStationSelectOpen() {
+    setTimeout(() => {
+      this.searchInput()?.nativeElement.focus();
+    });
+  }
+
+  public handleStationSelectClose() {
+    this.searchTerm.set('');
+    const inputEl = this.searchInput()?.nativeElement;
+    if (inputEl) {
+      inputEl.value = '';
     }
   }
 
