@@ -170,14 +170,6 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     data: async () => import('./eastern--vubwi.json').then((v) => v.default as IStationCropData[]),
   },
   {
-    id: 'north_western/chavuma',
-    label: 'Chavuma',
-    station_label: 'ZAMBEZI MET',
-    dateHeadings: ['16-Oct', '31-Oct', '15-Nov', '30-Nov'],
-    seasonProbabilities: ['1 / 10', '5 / 10', '8 / 10', '10 / 10'],
-    data: async () => import('./north_western--chavuma.json').then((v) => v.default as IStationCropData[]),
-  },
-  {
     id: 'muchinga/chinsali',
     label: 'Chinsali',
     station_label: 'CHINSALI FTC',
