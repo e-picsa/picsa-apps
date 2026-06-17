@@ -16,32 +16,18 @@ import { AlertBoxComponent } from '@picsa/components/alert-box/alert-box.compone
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type { IProbabilityTableMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
-import { ICropName } from '@picsa/data';
+import type { IProbabilityTableMeta } from '@picsa/crop-probability/src/app/models';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
-import { CropInformationService, ICropData, ICropDataDownscaledWaterRequirements } from '../../../../../services';
+import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../../services';
+import {
+  generateProbabilityHashmap,
+  generateTable,
+  ISeasonStartProbability,
+  toProbabilityOutOfTen,
+} from '../../../../../utils/probability.utils';
 import { CropProbabilityLanguageSelectComponent } from '../language-select/language-select.component';
-
-const WATER_REQUIREMENT_ROUNDING = 25;
-const DAY_REQUIREMENT_ROUNDING = 15;
-
-const CROP_SORT_PRIORITY: ICropName[] = [
-  'maize',
-  'sorghum',
-  'beans',
-  'groundnuts',
-  'roundnuts',
-  'soya-beans',
-  'sunflower',
-  'cowpeas',
-  'cotton',
-  'tobacco',
-  'sweet-potatoes',
-];
-
-export type ISeasonStartProbability = { plantDate: number; label: string; probability: number };
 
 @Component({
   selector: 'dashboard-crop-probability-table',
@@ -78,13 +64,14 @@ export class CropProbabilityTableComponent {
   private tableComponentRef = viewChild(CropProbabilityTableFrontend, { read: ElementRef });
 
   private cropDataHashmap = computed(() => arrayToHashmap(this.service.cropData(), 'id'));
-  private probabilityHashmap = computed(() => this.generateProbabilityHashmap(this.stationProbabilities()));
+  private probabilityHashmap = computed(() => generateProbabilityHashmap(this.stationProbabilities()));
 
   public tableData = computed(() => {
     const cropDataHashmap = this.cropDataHashmap();
     const waterRequirements = this.waterRequirements() || {};
     const startProbabilities = this.startProbabilities() || [];
-    return this.generateTable({ cropDataHashmap, waterRequirements, startProbabilities });
+    const probabilityHashmap = this.probabilityHashmap() || {};
+    return generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
   });
 
   public tableMeta = computed<IProbabilityTableMeta>(() => {
@@ -122,131 +109,6 @@ export class CropProbabilityTableComponent {
       return;
     }
   }
-
-  private generateTable(params: {
-    cropDataHashmap: Record<string, ICropData['Row']>;
-    waterRequirements: ICropDataDownscaledWaterRequirements;
-    startProbabilities: ISeasonStartProbability[];
-  }) {
-    const { cropDataHashmap, waterRequirements, startProbabilities } = params;
-    const entries: IStationCropData[] = [];
-    const plantDates = startProbabilities.map((v) => v.plantDate);
-    for (const [crop, requirements] of Object.entries(waterRequirements)) {
-      const entry: IStationCropData = {
-        crop: crop as ICropName,
-        data: [],
-      };
-      for (const [variety, waterRequirement] of Object.entries(requirements)) {
-        const varietyData = cropDataHashmap[`${crop}/${variety}`];
-        if (varietyData) {
-          const { days_lower, days_upper } = varietyData;
-          const days = { lower: days_lower, upper: days_upper };
-          const probabilities = {
-            lower: this.getCropSuccessProbability(waterRequirement, days_lower, plantDates),
-            upper: this.getCropSuccessProbability(waterRequirement, days_upper, plantDates),
-          };
-          const probabilityText = this.generateProbabilityEntryText(probabilities, plantDates);
-          // HACK - convert to legacy table format
-          // TODO - review and possibly tidy up
-          entry.data.push({
-            days: [...new Set([days.lower, days_upper])].join(' - '),
-            variety,
-            probabilities: probabilityText,
-            water: [waterRequirement],
-          });
-        } else {
-          console.warn(`no variety data found for [${crop}/${variety}]`);
-        }
-      }
-
-      // Sort varieties within this crop by days to maturity midpoint (shorter days first)
-      entry.data.sort((a, b) => {
-        const aData = cropDataHashmap[`${entry.crop}/${a.variety}`];
-        const bData = cropDataHashmap[`${entry.crop}/${b.variety}`];
-        if (!aData || !bData) return 0;
-
-        const aMid = (aData.days_lower + aData.days_upper) / 2;
-        const bMid = (bData.days_lower + bData.days_upper) / 2;
-
-        if (aMid !== bMid) {
-          return aMid - bMid;
-        }
-        if (aData.days_lower !== bData.days_lower) {
-          return aData.days_lower - bData.days_lower;
-        }
-        return a.variety.localeCompare(b.variety);
-      });
-
-      entries.push(entry);
-    }
-
-    // sort by crop priority and replace crop name with label
-    return entries.sort(this.sortByPriorityCrops);
-  }
-
-  private sortByPriorityCrops(a: IStationCropData, b: IStationCropData) {
-    const aPriority = CROP_SORT_PRIORITY.includes(a.crop) ? CROP_SORT_PRIORITY.indexOf(a.crop) : 99;
-    const bPriority = CROP_SORT_PRIORITY.includes(b.crop) ? CROP_SORT_PRIORITY.indexOf(b.crop) : 99;
-    return aPriority - bPriority;
-  }
-
-  /** Create a hashmap or probabilities nested by water requirement and plant length */
-  private generateProbabilityHashmap(entries: ICropSuccessEntry[]) {
-    const hashmap: { [water_req: number]: { [plant_length: number]: { [plant_day: number]: number } } } = {};
-    for (const entry of entries) {
-      const { plant_day, plant_length, total_rain, prop_success_no_start } = entry;
-      hashmap[total_rain] ??= {};
-      hashmap[total_rain][plant_length] ??= {};
-      hashmap[total_rain][plant_length][plant_day] = prop_success_no_start;
-    }
-    return hashmap;
-  }
-
-  private generateProbabilityEntryText(probabilities: { upper: number[]; lower: number[] }, plantDates: number[]) {
-    return plantDates.map((v, i) => {
-      const lower = probabilities.lower[i];
-      const upper = probabilities.upper[i];
-      if (typeof lower === 'number' && typeof upper === 'number') {
-        const mean = (probabilities.lower[i] + probabilities.upper[i]) / 2;
-        return `${toProbabilityOutOfTen(mean)} / 10`;
-      }
-      // If probability NaN simply return as empty string
-      return '';
-    });
-  }
-
-  private getCropSuccessProbability(water: number, days: number, plantDates: number[]) {
-    const waterRounded = roundToNearest(water, WATER_REQUIREMENT_ROUNDING);
-    const daysRounded = roundToNearest(days, DAY_REQUIREMENT_ROUNDING);
-    const probabilities: number[] = [];
-
-    const waterEntry = this.probabilityHashmap()[waterRounded];
-    if (waterEntry) {
-      // Find the closest plant_length key within a 10-day tolerance
-      const plantLengths = Object.keys(waterEntry).map(Number);
-      let bestLength = daysRounded;
-      let minDiff = Infinity;
-      for (const len of plantLengths) {
-        const diff = Math.abs(len - daysRounded);
-        if (diff < minDiff && diff <= 10) {
-          minDiff = diff;
-          bestLength = len;
-        }
-      }
-
-      const lengthEntry = waterEntry[bestLength];
-      for (const value of plantDates) {
-        const probability = lengthEntry?.[value];
-        probabilities.push(probability);
-      }
-    } else {
-      for (const value of plantDates) {
-        probabilities.push(undefined as any);
-      }
-    }
-
-    return probabilities;
-  }
 }
 
 /**
@@ -283,13 +145,6 @@ function copyTableWithClipboardApi(tableEl: HTMLTableElement) {
       'text/plain': textBlob,
     }),
   ]);
-}
-
-function roundToNearest(value: number, n: number) {
-  return Math.round(value / n) * n;
-}
-function toProbabilityOutOfTen(value: number) {
-  return Math.round(value * 10);
 }
 
 function inlineElementStyles<T extends Element>(element: T) {
