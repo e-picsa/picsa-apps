@@ -1,0 +1,510 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "days": "90 - 100",
+        "variety": "SC-303",
+        "probabilities": [
+          "5 / 10",
+          "7 / 10",
+          "7 / 10",
+          "6 / 10"
+        ],
+        "water": [
+          485
+        ]
+      },
+      {
+        "days": "100 - 110",
+        "variety": "ETG-401",
+        "probabilities": [
+          "5 / 10",
+          "8 / 10",
+          "7 / 10",
+          "6 / 10"
+        ],
+        "water": [
+          505
+        ]
+      },
+      {
+        "days": "110 - 115",
+        "variety": "DKC80-33",
+        "probabilities": [
+          "6 / 10",
+          "7 / 10",
+          "6 / 10",
+          "4 / 10"
+        ],
+        "water": [
+          535
+        ]
+      },
+      {
+        "days": "110 - 125",
+        "variety": "SY-4052",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "6 / 10",
+          "4 / 10"
+        ],
+        "water": [
+          540
+        ]
+      },
+      {
+        "days": "115 - 120",
+        "variety": "DK777",
+        "probabilities": [
+          "7 / 10",
+          "7 / 10",
+          "6 / 10",
+          "2 / 10"
+        ],
+        "water": [
+          560
+        ]
+      },
+      {
+        "days": "110 - 129",
+        "variety": "KKS607",
+        "probabilities": [
+          "5 / 10",
+          "6 / 10",
+          "3 / 10",
+          "3 / 10"
+        ],
+        "water": [
+          595
+        ]
+      },
+      {
+        "days": "110 - 130",
+        "variety": "PHB-30G19",
+        "probabilities": [
+          "5 / 10",
+          "6 / 10",
+          "4 / 10",
+          "3 / 10"
+        ],
+        "water": [
+          565
+        ]
+      },
+      {
+        "days": "115 - 130",
+        "variety": "SC-403",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          585
+        ]
+      },
+      {
+        "days": "120 - 130",
+        "variety": "DKC90-89",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          585
+        ]
+      },
+      {
+        "days": "120 - 130",
+        "variety": "SC-419",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          585
+        ]
+      },
+      {
+        "days": "125 - 130",
+        "variety": "PAN-53",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          590
+        ]
+      },
+      {
+        "days": "125 - 130",
+        "variety": "SY5944",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          610
+        ]
+      },
+      {
+        "days": "125 - 130",
+        "variety": "ZMS-638",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          590
+        ]
+      },
+      {
+        "days": "130 - 135",
+        "variety": "PAN-7M-81",
+        "probabilities": [
+          "4 / 10",
+          "5 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          665
+        ]
+      },
+      {
+        "days": "130 - 135",
+        "variety": "SC-647",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          595
+        ]
+      },
+      {
+        "days": "130 - 135",
+        "variety": "SY-6250",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          610
+        ]
+      },
+      {
+        "days": "130 - 135",
+        "variety": "SY-6444",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          610
+        ]
+      },
+      {
+        "days": "130 - 136",
+        "variety": "SC-637",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          610
+        ]
+      },
+      {
+        "days": "130 - 140",
+        "variety": "SC657",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          620
+        ]
+      },
+      {
+        "days": "135 - 140",
+        "variety": "LAKE-601",
+        "probabilities": [
+          "5 / 10",
+          "5 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          645
+        ]
+      },
+      {
+        "days": "135 - 145",
+        "variety": "P-3812W",
+        "probabilities": [
+          "5 / 10",
+          "4 / 10",
+          "1 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          640
+        ]
+      },
+      {
+        "days": "145 - 150",
+        "variety": "SC-719",
+        "probabilities": [
+          "6 / 10",
+          "2 / 10",
+          "0 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          670
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "days": "100 - 110",
+        "variety": "KUYUMA",
+        "probabilities": [
+          "7 / 10",
+          "9 / 10",
+          "8 / 10",
+          "6 / 10"
+        ],
+        "water": [
+          440
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "beans",
+    "data": [
+      {
+        "days": "75 - 80",
+        "variety": "KABULANGETI",
+        "probabilities": [
+          "3 / 10",
+          "6 / 10",
+          "8 / 10",
+          "8 / 10"
+        ],
+        "water": [
+          370
+        ]
+      },
+      {
+        "days": "80 - 85",
+        "variety": "MBERESHI",
+        "probabilities": [
+          "4 / 10",
+          "6 / 10",
+          "8 / 10",
+          "8 / 10"
+        ],
+        "water": [
+          395
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "days": "120 - 130",
+        "variety": "MGV8",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          590
+        ]
+      },
+      {
+        "days": "125 - 130",
+        "variety": "MGV5",
+        "probabilities": [
+          "6 / 10",
+          "6 / 10",
+          "4 / 10",
+          "1 / 10"
+        ],
+        "water": [
+          610
+        ]
+      },
+      {
+        "days": "130 - 140",
+        "variety": "CHALIMBANA",
+        "probabilities": [
+          "5 / 10",
+          "5 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          640
+        ]
+      },
+      {
+        "days": "130 - 140",
+        "variety": "MGV4",
+        "probabilities": [
+          "5 / 10",
+          "5 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          640
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "days": "90 - 120",
+        "variety": "KAFUE",
+        "probabilities": [
+          "3 / 10",
+          "5 / 10",
+          "5 / 10",
+          "3 / 10"
+        ],
+        "water": [
+          570
+        ]
+      },
+      {
+        "days": "135 - 140",
+        "variety": "DINA",
+        "probabilities": [
+          "7 / 10",
+          "6 / 10",
+          "2 / 10",
+          "0 / 10"
+        ],
+        "water": [
+          560
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "days": "100 - 110",
+        "variety": "MILIKA",
+        "probabilities": [
+          "5 / 10",
+          "8 / 10",
+          "7 / 10",
+          "6 / 10"
+        ],
+        "water": [
+          495
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "days": "60 - 70",
+        "variety": "MUSANDILE",
+        "probabilities": [
+          "5 / 10",
+          "6 / 10",
+          "8 / 10",
+          "9 / 10"
+        ],
+        "water": [
+          305
+        ]
+      },
+      {
+        "days": "63 - 70",
+        "variety": "BUBEBE",
+        "probabilities": [
+          "3 / 10",
+          "6 / 10",
+          "8 / 10",
+          "8 / 10"
+        ],
+        "water": [
+          315
+        ]
+      },
+      {
+        "days": "110 - 115",
+        "variety": "LUTEMBWE",
+        "probabilities": [
+          "8 / 10",
+          "8 / 10",
+          "7 / 10",
+          "4 / 10"
+        ],
+        "water": [
+          470
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "days": "85 - 120",
+        "variety": "ORANGE",
+        "probabilities": [
+          "4 / 10",
+          "5 / 10",
+          "5 / 10",
+          "3 / 10"
+        ],
+        "water": [
+          540
+        ]
+      }
+    ]
+  }
+]
