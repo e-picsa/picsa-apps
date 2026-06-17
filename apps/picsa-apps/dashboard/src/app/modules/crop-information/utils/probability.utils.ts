@@ -152,7 +152,7 @@ export function generateTable(params: {
   startProbabilities: ISeasonStartProbability[];
   probabilityHashmap: IProbabilityHashmap;
 }): IStationCropData[] {
-  const { cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap } = params;
+  const { cropDataHashmap, waterRequirements = {}, startProbabilities, probabilityHashmap } = params;
   const entries: IStationCropData[] = [];
   const plantDates = startProbabilities.map((v) => v.plantDate);
   for (const [crop, requirements] of Object.entries(waterRequirements)) {
