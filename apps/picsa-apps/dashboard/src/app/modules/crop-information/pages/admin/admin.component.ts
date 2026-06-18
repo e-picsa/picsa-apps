@@ -234,7 +234,7 @@ export class DashboardCropAdminComponent {
           label,
           station_label,
           dateHeadings: startProbabilities.map((v) => v.label),
-          seasonProbabilities: startProbabilities.map((v) => Math.round(v.probability * 20) / 20),
+          seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.01)),
           fileName,
         });
       }
@@ -421,7 +421,7 @@ export class DashboardCropAdminComponent {
 
     // round water requirement to nearest 5
     const water_requirement_parsed = Number(water_requirement);
-    if (isNaN(water_requirement_parsed)) {
+    if (Number.isNan(water_requirement_parsed)) {
       el._error = `Invalid water requirement: ${water_requirement}`;
     } else {
       const water_requirement_cleaned = roundToNearest(water_requirement_parsed, 5);

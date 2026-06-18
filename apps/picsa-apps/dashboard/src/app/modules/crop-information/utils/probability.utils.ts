@@ -30,12 +30,16 @@ export const CROP_SORT_PRIORITY: ICropName[] = [
 
 export type IProbabilityHashmap = Record<number, Record<number, Record<number, number>>>;
 
-export function toProbabilityOutOfTen(value: number): number {
-  return Math.round(value * 10);
-}
-
 export function roundToNearest(value: number, n: number): number {
-  return Math.round(value / n) * n;
+  if (n === 0) return value; // Prevent division by zero
+
+  const result = Math.round(value / n) * n;
+
+  // Determine decimal places of step 'n' to clean up floating point noise
+  const stepString = n.toString();
+  const decimalPlaces = stepString.includes('.') ? stepString.split('.')[1].length : 0;
+
+  return decimalPlaces > 0 ? parseFloat(result.toFixed(decimalPlaces)) : result;
 }
 
 // HACK - current data system hardcodes ranges, so try to match
@@ -124,10 +128,6 @@ export function getCropSuccessProbability(
   return probabilities;
 }
 
-export function roundToNearest05(value: number): number {
-  return Math.round(value * 20) / 20;
-}
-
 export function generateProbabilityEntryValues(
   probabilities: { upper: (number | undefined)[]; lower: (number | undefined)[] },
   plantDates: number[],
@@ -137,7 +137,7 @@ export function generateProbabilityEntryValues(
     const upper = probabilities.upper[i];
     if (typeof lower === 'number' && typeof upper === 'number') {
       const mean = (lower + upper) / 2;
-      return roundToNearest05(mean);
+      return roundToNearest(mean, 10);
     }
     // If probability NaN simply return as null
     return null;

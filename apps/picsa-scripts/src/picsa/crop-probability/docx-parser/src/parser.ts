@@ -67,11 +67,11 @@ export class DocParser {
       if (cleaned.includes('/')) {
         const [num, den] = cleaned.split('/').map(Number);
         const val = den ? num / den : 0;
-        return Math.round(val * 20) / 20;
+        return Math.round(val * 10) / 10;
       }
       const val = Number(cleaned);
-      if (isNaN(val)) return null;
-      return Math.round(val * 20) / 20;
+      if (Number.isNan(val)) return null;
+      return Math.round(val * 10) / 10;
     });
   }
 

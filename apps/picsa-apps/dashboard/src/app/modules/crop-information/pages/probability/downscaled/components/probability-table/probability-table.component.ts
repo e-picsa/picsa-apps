@@ -25,6 +25,7 @@ import {
   generateProbabilityHashmap,
   generateTable,
   ISeasonStartProbability,
+  roundToNearest,
 } from '../../../../../utils/probability.utils';
 import { CropProbabilityLanguageSelectComponent } from '../language-select/language-select.component';
 
@@ -79,7 +80,7 @@ export class CropProbabilityTableComponent {
       label: this.locationName(),
       station_label: this.station().station_name as string,
       dateHeadings: this.startProbabilities().map((v) => v.label),
-      seasonProbabilities: this.startProbabilities().map((v) => Math.round(v.probability * 20) / 20),
+      seasonProbabilities: this.startProbabilities().map((v) => roundToNearest(v.probability, 10)),
     };
   });
 

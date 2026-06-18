@@ -27,18 +27,20 @@ type ICSVEntry = typeof mockEntry;
 
 function parseProbabilityValue(val: any): number | null {
   if (val === undefined || val === null || val === '') return null;
+  let result: number;
   if (typeof val === 'number') {
-    return Math.round(val * 20) / 20;
+    result = val;
+  } else {
+    const cleaned = String(val).trim();
+    if (cleaned.includes('/')) {
+      const [num, den] = cleaned.split('/').map(Number);
+      result = den ? num / den : 0;
+    } else {
+      const parsed = Number(cleaned);
+      result = Number.isNan(parsed) ? 0 : parsed;
+    }
   }
-  const cleaned = String(val).trim();
-  if (cleaned.includes('/')) {
-    const [num, den] = cleaned.split('/').map(Number);
-    const result = den ? num / den : 0;
-    return Math.round(result * 20) / 20;
-  }
-  const parsed = Number(cleaned);
-  const result = isNaN(parsed) ? 0 : parsed;
-  return Math.round(result * 20) / 20;
+  return Math.round(result * 10) / 10;
 }
 
 /**
