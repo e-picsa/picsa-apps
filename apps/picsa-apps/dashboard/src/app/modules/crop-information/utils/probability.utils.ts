@@ -124,19 +124,23 @@ export function getCropSuccessProbability(
   return probabilities;
 }
 
-export function generateProbabilityEntryText(
+export function roundToNearest05(value: number): number {
+  return Math.round(value * 20) / 20;
+}
+
+export function generateProbabilityEntryValues(
   probabilities: { upper: (number | undefined)[]; lower: (number | undefined)[] },
   plantDates: number[],
-): string[] {
+): (number | null)[] {
   return plantDates.map((v, i) => {
     const lower = probabilities.lower[i];
     const upper = probabilities.upper[i];
     if (typeof lower === 'number' && typeof upper === 'number') {
       const mean = (lower + upper) / 2;
-      return `${toProbabilityOutOfTen(mean)} / 10`;
+      return roundToNearest05(mean);
     }
-    // If probability NaN simply return as empty string
-    return '';
+    // If probability NaN simply return as null
+    return null;
   });
 }
 
@@ -169,13 +173,13 @@ export function generateTable(params: {
           lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
           upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
         };
-        const probabilityText = generateProbabilityEntryText(probabilities, plantDates);
+        const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
         // HACK - convert to legacy table format
         // TODO - review and possibly tidy up
         entry.data.push({
           days: [...new Set([days.lower, days_upper])].join(' - '),
           variety,
-          probabilities: probabilityText,
+          probabilities: probabilityValues,
           water: [waterRequirement],
         });
       } else {

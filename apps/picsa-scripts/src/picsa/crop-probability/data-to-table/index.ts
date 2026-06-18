@@ -25,6 +25,22 @@ const mockEntry = {
 
 type ICSVEntry = typeof mockEntry;
 
+function parseProbabilityValue(val: any): number | null {
+  if (val === undefined || val === null || val === '') return null;
+  if (typeof val === 'number') {
+    return Math.round(val * 20) / 20;
+  }
+  const cleaned = String(val).trim();
+  if (cleaned.includes('/')) {
+    const [num, den] = cleaned.split('/').map(Number);
+    const result = den ? num / den : 0;
+    return Math.round(result * 20) / 20;
+  }
+  const parsed = Number(cleaned);
+  const result = isNaN(parsed) ? 0 : parsed;
+  return Math.round(result * 20) / 20;
+}
+
 /**
  * Convert flat crop probability water requirement entries
  * to format used by crop probability table
@@ -63,8 +79,8 @@ async function cropProbabilityToTable() {
         const cropDataItemWithStart: IStationCropDataItem = {
           days: `${plant_length}`,
           variety: `with start`,
-          probabilities: waterRequirementEntries.map((v) => v.prop_success_with_start),
-          water: [waterRequirement],
+          probabilities: waterRequirementEntries.map((v) => parseProbabilityValue(v.prop_success_with_start)),
+          water: [Number(waterRequirement)],
         };
         stationCropDataWithStart.data.push(cropDataItemWithStart);
       }
@@ -76,8 +92,8 @@ async function cropProbabilityToTable() {
         const cropDataItemNoStart: IStationCropDataItem = {
           days: `${plant_length}`,
           variety: `no start`,
-          probabilities: waterRequirementEntries.map((v) => v.prop_success_no_start),
-          water: [waterRequirement],
+          probabilities: waterRequirementEntries.map((v) => parseProbabilityValue(v.prop_success_no_start)),
+          water: [Number(waterRequirement)],
         };
         stationCropDataNoStart.data.push(cropDataItemNoStart);
       }

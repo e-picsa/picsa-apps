@@ -21,7 +21,6 @@ import {
   generateTable,
   plantDayToDateLabel,
   roundToNearest,
-  toProbabilityOutOfTen,
 } from '../../utils/probability.utils';
 import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
 
@@ -235,7 +234,7 @@ export class DashboardCropAdminComponent {
           label,
           station_label,
           dateHeadings: startProbabilities.map((v) => v.label),
-          seasonProbabilities: startProbabilities.map((v) => toProbabilityOutOfTen(v.probability) + ' / 10'),
+          seasonProbabilities: startProbabilities.map((v) => Math.round(v.probability * 20) / 20),
           fileName,
         });
       }

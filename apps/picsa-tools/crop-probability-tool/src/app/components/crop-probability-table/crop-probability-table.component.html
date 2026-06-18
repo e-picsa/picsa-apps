@@ -43,7 +43,7 @@
         <td mat-header-cell *matHeaderCellDef>{{ column.label }}</td>
       </ng-container>
       <ng-container [matColumnDef]="'prob-value-' + $index">
-        <td mat-header-cell *matHeaderCellDef>{{ tableMeta().seasonProbabilities[$index] }}</td>
+        <td mat-header-cell *matHeaderCellDef>{{ formatProbability(tableMeta().seasonProbabilities[$index]) }}</td>
       </ng-container>
     }
 
@@ -88,7 +88,7 @@
         {{ 'Crop Water Requirement' | translate }}*<br />(mm)
       </th>
       <td mat-cell *matCellDef="let element">
-        @let water = element.water.join('-');
+        @let water = (element.water || []).join('-');
         <div>{{ water | translate }} mm</div>
       </td>
     </ng-container>
@@ -97,7 +97,7 @@
     @for (column of probabilityColumns(); track column) {
       <ng-container [matColumnDef]="column.name">
         <th mat-header-cell *matHeaderCellDef class="probability-cell">{{ column.label }}</th>
-        <td *matCellDef="let element" class="probability-cell">{{ element[column.name] }}</td>
+        <td *matCellDef="let element" class="probability-cell">{{ formatProbability(element[column.name]) }}</td>
       </ng-container>
     }
 
