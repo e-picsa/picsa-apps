@@ -13,7 +13,7 @@ function parseFraction(cleaned: string): number | null {
     return Math.round(val * 10) / 10; // Round to nearest 0.1
   }
   const val = Number(cleaned);
-  if (Number.isNan(val)) return null;
+  if (Number.isNaN(val)) return null;
   return Math.round(val * 10) / 10; // Round to nearest 0.1
 }
 
@@ -42,7 +42,7 @@ async function migrateData() {
                 if (item.water && Array.isArray(item.water)) {
                   item.water = item.water.map((w: any) => {
                     const parsed = Number(w);
-                    return Number.isNan(parsed) ? 0 : parsed;
+                    return Number.isNaN(parsed) ? 0 : parsed;
                   });
                   modified = true;
                 }

@@ -421,7 +421,7 @@ export class DashboardCropAdminComponent {
 
     // round water requirement to nearest 5
     const water_requirement_parsed = Number(water_requirement);
-    if (Number.isNan(water_requirement_parsed)) {
+    if (Number.isNaN(water_requirement_parsed)) {
       el._error = `Invalid water requirement: ${water_requirement}`;
     } else {
       const water_requirement_cleaned = roundToNearest(water_requirement_parsed, 5);

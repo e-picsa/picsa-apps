@@ -37,7 +37,7 @@ function parseProbabilityValue(val: any): number | null {
       result = den ? num / den : 0;
     } else {
       const parsed = Number(cleaned);
-      result = Number.isNan(parsed) ? 0 : parsed;
+      result = Number.isNaN(parsed) ? 0 : parsed;
     }
   }
   return Math.round(result * 10) / 10;

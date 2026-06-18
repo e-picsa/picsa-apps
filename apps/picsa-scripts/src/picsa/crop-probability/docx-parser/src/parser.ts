@@ -70,7 +70,7 @@ export class DocParser {
         return Math.round(val * 10) / 10;
       }
       const val = Number(cleaned);
-      if (Number.isNan(val)) return null;
+      if (Number.isNaN(val)) return null;
       return Math.round(val * 10) / 10;
     });
   }
