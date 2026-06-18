@@ -137,7 +137,7 @@ export function generateProbabilityEntryValues(
     const upper = probabilities.upper[i];
     if (typeof lower === 'number' && typeof upper === 'number') {
       const mean = (lower + upper) / 2;
-      return roundToNearest(mean, 10);
+      return roundToNearest(mean, 0.1);
     }
     // If probability NaN simply return as null
     return null;

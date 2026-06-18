@@ -59,7 +59,7 @@ export class DocParser {
     return removeLinebreaks(lower).replace(/ /g, '-');
   }
 
-  /** Parse string probabilities to numbers rounded to the nearest 0.05 */
+  /** Parse string probabilities to numbers rounded to the nearest 0.1 */
   private parseProbabilities(entries: string[]): (number | null)[] {
     return entries.map((text) => {
       const cleaned = removeLinebreaks(text).trim();
