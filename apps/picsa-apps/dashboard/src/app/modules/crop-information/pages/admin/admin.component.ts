@@ -234,7 +234,7 @@ export class DashboardCropAdminComponent {
           label,
           station_label,
           dateHeadings: startProbabilities.map((v) => v.label),
-          seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.01)),
+          seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
           fileName,
         });
       }
