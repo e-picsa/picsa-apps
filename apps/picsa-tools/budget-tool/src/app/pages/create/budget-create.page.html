@@ -1,143 +1,137 @@
-<div class="page-content" style="padding: 0 0 16px 0">
-  <form>
-    <mat-horizontal-stepper linear #stepper class="responsive-content-padding">
-      <!-- Step 1 - handled with custom elements-->
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
-        <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
-        <div class="card-list">
-          @for (card of enterpriseTypeCards; track trackByFn($index, card)) {
-          <budget-card
-            [card]="card"
-            (click)="enterpriseTypeClicked(card.id)"
-            [selected]="enterpriseType() === card.id"
-            animate.enter="fade-in-delayed"
-            animate.leave="fade-out-delayed"
-          ></budget-card>
-          }
-        </div>
-        <div class="sticky-footer">
-          <button
-            matStepperNext
-            color="primary"
-            matButton="elevated"
-            class="footer-button"
-            [disabled]="!budgetModel().enterprise || !budgetModel().enterprise.type"
-          >
-            {{ 'Next' | translate }}
-            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-          </button>
-        </div>
-      </mat-step>
-      <!-- Step 2 - enterprise select -->
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
-        @if (filteredEnterprises().length) {
-        <h2 animate.enter="fade-in-delayed" animate.leave="fade-out-delayed">{{ 'Select Enterprise' | translate }}</h2>
-        }
-        <div class="card-list">
-          @for (enterprise of filteredEnterprises(); track enterprise.id) {
-          <budget-card
-            [card]="enterprise"
-            (click)="setEnterprise(enterprise)"
-            [selected]="budgetModel().enterprise?.id === enterprise.id"
-            animate.enter="fade-in-delayed"
-            animate.leave="fade-out-delayed"
-          >
-          </budget-card>
-          } @if(enterpriseType(); as type){
-          <budget-card-new
-            type="enterprise"
-            [groupings]="[type]"
-            (cardSaved)="customEnterpriseCreated($event)"
-          ></budget-card-new>
-          }
-        </div>
-        <div class="sticky-footer">
-          <button
-            matStepperNext
-            color="primary"
-            matButton="elevated"
-            class="footer-button"
-            [disabled]="!budgetModel().enterprise?.id"
-          >
-            {{ 'Next' | translate }}
-            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-          </button>
-        </div>
-      </mat-step>
+<mat-horizontal-stepper linear #stepper class="responsive-content-padding h-full">
+  <!-- Step 1 - handled with custom elements-->
+  <mat-step>
+    <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
+    <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
+    <div class="card-list">
+      @for (card of enterpriseTypeCards; track trackByFn($index, card)) {
+      <budget-card
+        [card]="card"
+        (click)="enterpriseTypeClicked(card.id)"
+        [selected]="enterpriseType() === card.id"
+        animate.enter="fade-in-delayed"
+        animate.leave="fade-out-delayed"
+      ></budget-card>
+      }
+    </div>
+    <div class="sticky-footer">
+      <button
+        matStepperNext
+        color="primary"
+        matButton="elevated"
+        class="footer-button"
+        [disabled]="!budgetModel().enterprise || !budgetModel().enterprise.type"
+      >
+        {{ 'Next' | translate }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </mat-step>
+  <!-- Step 2 - enterprise select -->
+  <mat-step>
+    <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
+    @if (filteredEnterprises().length) {
+    <h2 animate.enter="fade-in-delayed" animate.leave="fade-out-delayed">{{ 'Select Enterprise' | translate }}</h2>
+    }
+    <div class="card-list">
+      @for (enterprise of filteredEnterprises(); track enterprise.id) {
+      <budget-card
+        [card]="enterprise"
+        (click)="setEnterprise(enterprise)"
+        [selected]="budgetModel().enterprise?.id === enterprise.id"
+        animate.enter="fade-in-delayed"
+        animate.leave="fade-out-delayed"
+      >
+      </budget-card>
+      } @if(enterpriseType(); as type){
+      <budget-card-new
+        type="enterprise"
+        [groupings]="[type]"
+        (cardSaved)="customEnterpriseCreated($event)"
+      ></budget-card-new>
+      }
+    </div>
+    <button
+      matStepperNext
+      color="primary"
+      matButton="elevated"
+      class="footer-button"
+      [disabled]="!budgetModel().enterprise?.id"
+    >
+      {{ 'Next' | translate }}
+      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+    </button>
+  </mat-step>
 
-      <!-- Step 3 - handled with form controls -->
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
-        <h2>{{ 'How long is your budget for?' | translate }}</h2>
-        <div class="length-container">
-          <!-- Length Total Selector -->
-          <mat-form-field class="max-w-24">
-            <mat-select class="value-select" [formField]="budgetForm.lengthTotal">
-              @for (n of periodTotalOptions; track n) {
-              <mat-option [value]="n">{{ n }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <!-- Length Scale Selector -->
-          <mat-form-field>
-            <mat-select class="value-select" [formField]="budgetForm.lengthScale">
-              @for (option of periodScaleOptions; track option) {
-              <mat-option [value]="option">{{ option | translate }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Month Start Selector -->
-          @if (budgetModel().lengthScale === 'months') {
-          <span class="text-xl">{{ 'starting' | translate }}</span>
-          <mat-form-field class="max-w-32">
-            <mat-select class="value-select" [formField]="budgetForm.monthStart">
-              @for (option of periodTotalOptions; track option) {
-              <mat-option [value]="option">{{ periodLabelOptions[option - 1] | translate }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+  <!-- Step 3 - handled with form controls -->
+  <mat-step>
+    <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
+    <h2>{{ 'How long is your budget for?' | translate }}</h2>
+    <div class="length-container">
+      <!-- Length Total Selector -->
+      <mat-form-field class="max-w-24">
+        <mat-select class="value-select" [formField]="budgetForm.lengthTotal">
+          @for (n of periodTotalOptions; track n) {
+          <mat-option [value]="n">{{ n }}</mat-option>
           }
-        </div>
-        <div class="sticky-footer">
-          <button matStepperNext color="primary" matButton="elevated" class="footer-button">
-            {{ 'Next' | translate }}
-            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-          </button>
-        </div>
-      </mat-step>
+        </mat-select>
+      </mat-form-field>
+      <!-- Length Scale Selector -->
+      <mat-form-field>
+        <mat-select class="value-select" [formField]="budgetForm.lengthScale">
+          @for (option of periodScaleOptions; track option) {
+          <mat-option [value]="option">{{ option | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-      <!-- Step 3 -->
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
-        <h2>{{ 'Save your budget' | translate }}</h2>
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'Title' | translate }}</mat-label>
-          <input matInput [placeholder]="'Title' | translate" [formField]="budgetForm.title" />
-        </mat-form-field>
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'Description (optional)' | translate }}</mat-label>
-          <textarea
-            matInput
-            [placeholder]="'Description (optional)' | translate"
-            [formField]="budgetForm.description"
-          ></textarea>
-        </mat-form-field>
-        <div class="sticky-footer">
-          <button
-            matStepperNext
-            color="primary"
-            matButton="elevated"
-            [disabled]="!budgetForm().valid()"
-            class="footer-button"
-            (click)="save()"
-          >
-            {{ 'Save' | translate }}
-          </button>
-        </div>
-      </mat-step>
-    </mat-horizontal-stepper>
-  </form>
-</div>
+      <!-- Month Start Selector -->
+      @if (budgetModel().lengthScale === 'months') {
+      <span class="text-xl">{{ 'starting' | translate }}</span>
+      <mat-form-field class="max-w-32">
+        <mat-select class="value-select" [formField]="budgetForm.monthStart">
+          @for (option of periodTotalOptions; track option) {
+          <mat-option [value]="option">{{ periodLabelOptions[option - 1] | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+    </div>
+    <div class="sticky-footer">
+      <button matStepperNext color="primary" matButton="elevated" class="footer-button">
+        {{ 'Next' | translate }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </mat-step>
+
+  <!-- Step 3 -->
+  <mat-step>
+    <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
+    <h2>{{ 'Save your budget' | translate }}</h2>
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'Title' | translate }}</mat-label>
+      <input matInput [placeholder]="'Title' | translate" [formField]="budgetForm.title" />
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <mat-label>{{ 'Description (optional)' | translate }}</mat-label>
+      <textarea
+        matInput
+        [placeholder]="'Description (optional)' | translate"
+        [formField]="budgetForm.description"
+      ></textarea>
+    </mat-form-field>
+    <div class="sticky-footer">
+      <button
+        matStepperNext
+        color="primary"
+        matButton="elevated"
+        [disabled]="!budgetForm().valid()"
+        class="footer-button"
+        (click)="save()"
+      >
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

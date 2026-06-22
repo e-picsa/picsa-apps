@@ -49,7 +49,9 @@ export class BudgetHomePage implements OnInit {
     this.matDialog.open(BudgetImportDialogComponent);
   }
   public showBudgetCreate() {
-    const dialog = this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
+    const dialog = this.matDialog.open(BudgetCreatePage, {
+      panelClass: 'no-padding',
+    });
     dialog.afterClosed().subscribe((budgetKey) => {
       if (budgetKey) {
         this.router.navigate([budgetKey], { relativeTo: this.route });
