@@ -5,288 +5,158 @@
       {
         "days": "100 - 110",
         "variety": "ETG-M401",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          460
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [460]
       },
       {
         "days": "105 - 120",
         "variety": "WH101",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          465
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [465]
       },
       {
         "days": "110 - 115",
         "variety": "DKC80-33",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          465
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [465]
       },
       {
         "days": "115 - 120",
         "variety": "DK777",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          470
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [470]
       },
       {
         "days": "110 - 130",
         "variety": "PHB30G19",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          500
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [500]
       },
       {
         "days": "115 - 130",
         "variety": "SC-403",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          390
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [390]
       },
       {
         "days": "120 - 130",
         "variety": "DKC90-89",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          500
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [500]
       },
       {
         "days": "120 - 130",
         "variety": "KAM-618",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          525
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [525]
       },
       {
         "days": "120 - 130",
         "variety": "WH-507",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          525
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [525]
       },
       {
         "days": "120 - 130",
         "variety": "WH-509",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          465
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [465]
       },
       {
         "days": "125 - 130",
         "variety": "ETG-M-601",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          500
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [500]
       },
       {
         "days": "125 - 130",
         "variety": "LAKE-606",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          570
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [570]
       },
       {
         "days": "125 - 130",
         "variety": "PAN-53",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          500
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [500]
       },
       {
         "days": "125 - 130",
         "variety": "ZMS-606",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          500
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [500]
       },
       {
         "days": "125 - 135",
         "variety": "PAN7M-83",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          525
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [525]
       },
       {
         "days": "120 - 145",
         "variety": "PAN7M-81",
-        "probabilities": [
-          "7 / 10",
-          "4 / 10"
-        ],
-        "water": [
-          570
-        ]
+        "probabilities": [0.7, 0.4],
+        "water": [570]
       },
       {
         "days": "130 - 135",
         "variety": "MRI-624",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          445
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [445]
       },
       {
         "days": "130 - 135",
         "variety": "SC-647",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          525
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [525]
       },
       {
         "days": "130 - 135",
         "variety": "SY-6250",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          445
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [445]
       },
       {
         "days": "130 - 135",
         "variety": "SY6444",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          525
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [525]
       },
       {
         "days": "130 - 136",
         "variety": "SC-637",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          530
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [530]
       },
       {
         "days": "130 - 140",
         "variety": "SC-657",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          540
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [540]
       },
       {
         "days": "135 - 145",
         "variety": "P3812W",
-        "probabilities": [
-          "7 / 10",
-          "4 / 10"
-        ],
-        "water": [
-          570
-        ]
+        "probabilities": [0.7, 0.4],
+        "water": [570]
       },
       {
         "days": "140 - 150",
         "variety": "ZMS-721",
-        "probabilities": [
-          "7 / 10",
-          "4 / 10"
-        ],
-        "water": [
-          585
-        ]
+        "probabilities": [0.7, 0.4],
+        "water": [585]
       },
       {
         "days": "145 - 150",
         "variety": "SC-719",
-        "probabilities": [
-          "7 / 10",
-          "1 / 10"
-        ],
-        "water": [
-          585
-        ]
+        "probabilities": [0.7, 0.1],
+        "water": [585]
       },
       {
         "days": "150 - 155",
         "variety": "SC-727",
-        "probabilities": [
-          "7 / 10",
-          "1 / 10"
-        ],
-        "water": [
-          590
-        ]
+        "probabilities": [0.7, 0.1],
+        "water": [590]
       }
     ]
   },
@@ -296,24 +166,14 @@
       {
         "days": "75 - 80",
         "variety": "KABULANGETI",
-        "probabilities": [
-          "7 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          370
-        ]
+        "probabilities": [0.7, 0.8],
+        "water": [370]
       },
       {
         "days": "80 - 85",
         "variety": "MBERESHI",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          370
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [370]
       }
     ]
   },
@@ -323,24 +183,14 @@
       {
         "days": "90 - 100",
         "variety": "NATAL-COMMON",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          440
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [440]
       },
       {
         "days": "125 - 130",
         "variety": "MGV5",
-        "probabilities": [
-          "8 / 10",
-          "7 / 10"
-        ],
-        "water": [
-          540
-        ]
+        "probabilities": [0.8, 0.7],
+        "water": [540]
       }
     ]
   },
@@ -350,13 +200,8 @@
       {
         "days": "90 - 120",
         "variety": "KAFUE",
-        "probabilities": [
-          "7 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          515
-        ]
+        "probabilities": [0.7, 0.8],
+        "water": [515]
       }
     ]
   },
@@ -366,24 +211,14 @@
       {
         "days": "100 - 110",
         "variety": "MILIKA",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          445
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [445]
       },
       {
         "days": "110 - 120",
         "variety": "RECORD",
-        "probabilities": [
-          "8 / 10",
-          "8 / 10"
-        ],
-        "water": [
-          485
-        ]
+        "probabilities": [0.8, 0.8],
+        "water": [485]
       }
     ]
   }

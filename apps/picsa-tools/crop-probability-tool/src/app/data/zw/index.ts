@@ -6,7 +6,7 @@ const ZW_CROP_DATA: IProbabilityTable[] = [
     label: 'Masvingo',
     station_label: 'MASVINGO',
     dateHeadings: ['1-Nov', '16-Nov', '1-Dec', '16-Dec', '31-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '8 / 10', '9 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.8, 0.9],
     data: async () => import('./masvingo.json').then((v) => v.default as IStationCropData[]),
   },
 ];
