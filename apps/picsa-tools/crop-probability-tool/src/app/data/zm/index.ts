@@ -6,7 +6,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chadiza',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--chadiza.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -14,7 +14,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chama',
     station_label: 'ISOKA MET',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--chama.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -22,7 +22,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chasefu',
     station_label: 'LUNDAZI MET',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['2 / 10', '5 / 10', '9 / 10'],
+    seasonProbabilities: [0.2, 0.5, 0.9],
     data: async () => import('./eastern--chasefu.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -30,7 +30,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chipangali',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--chipangali.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -38,7 +38,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chipata',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--chipata.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -46,7 +46,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Choma',
     station_label: 'CHOMA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '8 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.8, 0.9, 1],
     data: async () => import('./southern--choma.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -54,7 +54,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Isoka',
     station_label: 'ISOKA MET',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.4, 0.7, 0.9, 1],
     data: async () => import('./muchinga--isoka.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -62,7 +62,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Kabwe',
     station_label: 'KABWE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '8 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.8, 0.9, 1],
     data: async () => import('./central--kabwe.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -70,7 +70,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Kasenengwa',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--kasenengwa.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -78,7 +78,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Katete',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--katete.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -86,7 +86,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Kawambwa',
     station_label: 'KAWAMBWA MET',
     dateHeadings: ['16-Oct', '31-Oct', '15-Nov', '30-Nov'],
-    seasonProbabilities: ['3 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.3, 0.7, 0.9, 1],
     data: async () => import('./luapula--kawambwa.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -94,7 +94,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Lumezi',
     station_label: 'LUNDAZI MET',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['2 / 10', '5 / 10', '9 / 10'],
+    seasonProbabilities: [0.2, 0.5, 0.9],
     data: async () => import('./eastern--lumezi.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -102,7 +102,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Lundazi',
     station_label: 'LUNDAZI MET',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['2 / 10', '5 / 10', '9 / 10'],
+    seasonProbabilities: [0.2, 0.5, 0.9],
     data: async () => import('./eastern--lundazi.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -110,7 +110,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Lusaka',
     station_label: 'LUSAKA CITY AIRPOR',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['4 / 10', '7 / 10', '9 / 10'],
+    seasonProbabilities: [0.4, 0.7, 0.9],
     data: async () => import('./lusaka--lusaka.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -118,7 +118,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Lusangazi',
     station_label: 'MFUWE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 1],
     data: async () => import('./eastern--lusangazi.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -126,7 +126,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Mambwe',
     station_label: 'MFUWE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 1],
     data: async () => import('./eastern--mambwe.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -134,7 +134,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Mansa',
     station_label: 'MANSA MET',
     dateHeadings: ['16-Oct', '31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '2 / 10', '6 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.2, 0.6, 0.9, 1],
     data: async () => import('./luapula--mansa.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -142,7 +142,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Nyimba',
     station_label: 'PETAUKE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '8 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.8, 1],
     data: async () => import('./eastern--nyimba.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -150,7 +150,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Petauke',
     station_label: 'PETAUKE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '8 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.8, 1],
     data: async () => import('./eastern--petauke.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -158,7 +158,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Sinda',
     station_label: 'PETAUKE MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '8 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.8, 1],
     data: async () => import('./eastern--sinda.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -166,7 +166,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Vubwi',
     station_label: 'CHIPATA MET',
     dateHeadings: ['31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
-    seasonProbabilities: ['1 / 10', '4 / 10', '7 / 10', '9 / 10', '10 / 10'],
+    seasonProbabilities: [0.1, 0.4, 0.7, 0.9, 1],
     data: async () => import('./eastern--vubwi.json').then((v) => v.default as IStationCropData[]),
   },
   {
@@ -174,7 +174,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     label: 'Chinsali',
     station_label: 'CHINSALI FTC',
     dateHeadings: ['15-Nov', '30-Nov'],
-    seasonProbabilities: ['4 / 10', '8 / 10'],
+    seasonProbabilities: [0.4, 0.8],
     data: async () => import('./muchinga--chinsali.json').then((v) => v.default as IStationCropData[]),
   },
 ];
