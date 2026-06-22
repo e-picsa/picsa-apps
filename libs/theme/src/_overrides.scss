@@ -52,8 +52,7 @@ mat-card-content.mat-mdc-card-content {
 }
 
 // Ensure dialog setup to fill screen with safe padding
-mat-dialog-container.mat-mdc-dialog-container {
-  height: 100vh;
+.cdk-overlay-pane.mat-mdc-dialog-panel {
   max-height: 100vh;
   // Respect top, bottom, left, and right safe areas with fallback defaults
   padding-top: max(8px, env(safe-area-inset-top)) !important;
