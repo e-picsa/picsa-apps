@@ -166,8 +166,8 @@ export class BudgetStore {
       if (shouldDelete) {
         const { meta, data } = this.activeBudget;
         this.activeBudget.meta.lengthTotal = meta.lengthTotal - 1;
-        data.splice(index, 1);
-        await this.patchBudget({ data });
+        const updated = data.filter((_, i) => i !== index);
+        await this.patchBudget({ data: deepClone(updated) });
       }
     });
   }
