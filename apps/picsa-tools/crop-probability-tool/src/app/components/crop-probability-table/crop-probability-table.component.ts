@@ -122,9 +122,7 @@ export class CropProbabilityTableComponent implements OnInit {
     if (typeof val === 'string' && val.includes('/')) return val;
     const num = Number(val);
     if (Number.isNaN(num)) return '';
-    if (num === 0) return '0';
     const outOfTen = Math.round(num * 10);
-    if (outOfTen === 0) return '0';
     return `${outOfTen}/10`;
   }
 }
