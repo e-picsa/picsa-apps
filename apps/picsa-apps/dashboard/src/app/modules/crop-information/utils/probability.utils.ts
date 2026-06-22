@@ -30,12 +30,16 @@ export const CROP_SORT_PRIORITY: ICropName[] = [
 
 export type IProbabilityHashmap = Record<number, Record<number, Record<number, number>>>;
 
-export function toProbabilityOutOfTen(value: number): number {
-  return Math.round(value * 10);
-}
-
 export function roundToNearest(value: number, n: number): number {
-  return Math.round(value / n) * n;
+  if (n === 0) return value; // Prevent division by zero
+
+  const result = Math.round(value / n) * n;
+
+  // Determine decimal places of step 'n' to clean up floating point noise
+  const stepString = n.toString();
+  const decimalPlaces = stepString.includes('.') ? stepString.split('.')[1].length : 0;
+
+  return decimalPlaces > 0 ? parseFloat(result.toFixed(decimalPlaces)) : result;
 }
 
 // HACK - current data system hardcodes ranges, so try to match
@@ -124,19 +128,19 @@ export function getCropSuccessProbability(
   return probabilities;
 }
 
-export function generateProbabilityEntryText(
+export function generateProbabilityEntryValues(
   probabilities: { upper: (number | undefined)[]; lower: (number | undefined)[] },
   plantDates: number[],
-): string[] {
+): (number | null)[] {
   return plantDates.map((v, i) => {
     const lower = probabilities.lower[i];
     const upper = probabilities.upper[i];
     if (typeof lower === 'number' && typeof upper === 'number') {
       const mean = (lower + upper) / 2;
-      return `${toProbabilityOutOfTen(mean)} / 10`;
+      return roundToNearest(mean, 0.1);
     }
-    // If probability NaN simply return as empty string
-    return '';
+    // If probability NaN simply return as null
+    return null;
   });
 }
 
@@ -169,13 +173,13 @@ export function generateTable(params: {
           lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
           upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
         };
-        const probabilityText = generateProbabilityEntryText(probabilities, plantDates);
+        const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
         // HACK - convert to legacy table format
         // TODO - review and possibly tidy up
         entry.data.push({
           days: [...new Set([days.lower, days_upper])].join(' - '),
           variety,
-          probabilities: probabilityText,
+          probabilities: probabilityValues,
           water: [waterRequirement],
         });
       } else {

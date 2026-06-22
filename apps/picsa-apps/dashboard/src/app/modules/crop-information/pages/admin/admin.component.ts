@@ -21,7 +21,6 @@ import {
   generateTable,
   plantDayToDateLabel,
   roundToNearest,
-  toProbabilityOutOfTen,
 } from '../../utils/probability.utils';
 import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
 
@@ -235,7 +234,7 @@ export class DashboardCropAdminComponent {
           label,
           station_label,
           dateHeadings: startProbabilities.map((v) => v.label),
-          seasonProbabilities: startProbabilities.map((v) => toProbabilityOutOfTen(v.probability) + ' / 10'),
+          seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
           fileName,
         });
       }
@@ -422,7 +421,7 @@ export class DashboardCropAdminComponent {
 
     // round water requirement to nearest 5
     const water_requirement_parsed = Number(water_requirement);
-    if (isNaN(water_requirement_parsed)) {
+    if (Number.isNaN(water_requirement_parsed)) {
       el._error = `Invalid water requirement: ${water_requirement}`;
     } else {
       const water_requirement_cleaned = roundToNearest(water_requirement_parsed, 5);

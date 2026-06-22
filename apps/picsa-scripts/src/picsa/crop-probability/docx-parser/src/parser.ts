@@ -2,7 +2,7 @@ import type {
   IStationCropData,
   IStationCropDataItem,
   IStationCropInformation,
-} from '@picsa/crop-probability/src/models';
+} from '@picsa/crop-probability/src/app/models';
 
 export class DocParser {
   constructor(public rowData: string[][]) {}
@@ -42,7 +42,7 @@ export class DocParser {
       cropData[currentCropType].push({
         variety: removeLinebreaks(variety, ' '),
         days,
-        water: [water],
+        water: [Number(removeLinebreaks(water).trim())],
         probabilities: this.parseProbabilities(probabilities),
       });
     }
@@ -59,9 +59,20 @@ export class DocParser {
     return removeLinebreaks(lower).replace(/ /g, '-');
   }
 
-  /** Ensure linebreaks remove from probabilities */
-  private parseProbabilities(entries: string[]) {
-    return entries.map((text) => removeLinebreaks(text));
+  /** Parse string probabilities to numbers rounded to the nearest 0.1 */
+  private parseProbabilities(entries: string[]): (number | null)[] {
+    return entries.map((text) => {
+      const cleaned = removeLinebreaks(text).trim();
+      if (!cleaned) return null;
+      if (cleaned.includes('/')) {
+        const [num, den] = cleaned.split('/').map(Number);
+        const val = den ? num / den : 0;
+        return Math.round(val * 10) / 10;
+      }
+      const val = Number(cleaned);
+      if (Number.isNaN(val)) return null;
+      return Math.round(val * 10) / 10;
+    });
   }
 
   /** Ensure linebreaks removed from dates */
