@@ -15,7 +15,7 @@
         <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
       </mat-form-field>
       <mat-form-field class="card-input-field cost">
-        <mat-label>{{ 'Cost' | translate }}</mat-label>
+        <mat-label>{{ 'Unit Cost' | translate }}</mat-label>
         <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
         <span matTextPrefix>{{ currency }} &nbsp;</span>
       </mat-form-field>

@@ -158,8 +158,7 @@ export class BudgetStore {
   public async editorAddTimePeriod() {
     const { data, meta } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
-    data.push(deepClone(PERIOD_DATA_TEMPLATE));
-    await this.patchBudget({ data });
+    await this.patchBudget({ data: deepClone([...data, PERIOD_DATA_TEMPLATE]) });
   }
   public async editorDeleteTimePeriod(index: number) {
     const dialogRef = await this.dialogService.open('delete');
@@ -167,8 +166,8 @@ export class BudgetStore {
       if (shouldDelete) {
         const { meta, data } = this.activeBudget;
         this.activeBudget.meta.lengthTotal = meta.lengthTotal - 1;
-        data.splice(index, 1);
-        await this.patchBudget({ data });
+        const updated = data.filter((_, i) => i !== index);
+        await this.patchBudget({ data: deepClone(updated) });
       }
     });
   }
