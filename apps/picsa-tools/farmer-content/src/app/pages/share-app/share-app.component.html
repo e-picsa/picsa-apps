@@ -1,0 +1,38 @@
+<div class="share-page">
+  <div class="page-header">
+    <button matButton type="button" class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'Share the E-PICSA App' | translate }}
+    </button>
+  </div>
+
+  <div class="share-options">
+    <article class="share-option-card">
+      <div class="option-icon-wrap">
+        <mat-icon class="option-icon">bluetooth</mat-icon>
+      </div>
+      <h2 class="option-title">{{ 'Bluetooth' | translate }}</h2>
+      <p class="option-description">{{ 'Share the application files with a nearby device.' | translate }}</p>
+      <button matButton="elevated" color="primary" class="option-btn" (click)="shareViaBluetooth()">
+        <mat-icon>bluetooth</mat-icon>
+        {{ 'Share via Bluetooth' | translate }}
+      </button>
+    </article>
+
+    <article class="share-option-card">
+      <div class="option-icon-wrap">
+        <mat-icon class="option-icon">chat</mat-icon>
+      </div>
+      <h2 class="option-title">{{ 'WhatsApp' | translate }}</h2>
+      <p class="option-description">{{ 'Send an install link using WhatsApp.' | translate }}</p>
+      <button matButton="elevated" color="primary" class="option-btn" (click)="shareViaWhatsApp()">
+        <mat-icon>chat</mat-icon>
+        {{ 'Share via WhatsApp' | translate }}
+      </button>
+    </article>
+  </div>
+
+  @if (shareStatus() !== 'idle') {
+    <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
+  }
+</div>

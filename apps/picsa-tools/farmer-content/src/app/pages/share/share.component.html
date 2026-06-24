@@ -1,0 +1,27 @@
+<div class="share-page">
+  <div class="page-header">
+    <button matButton type="button" class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'Does the user have the E-PICSA App installed?' | translate }}
+    </button>
+    <h1 class="title">{{ 'App Installation Check' | translate }}</h1>
+  </div>
+
+  <div class="share-card">
+    <div class="icon-wrap">
+      <img class="install-hero-image" src="/assets/images/mobile.svg" alt="" />
+    </div>
+
+    <!-- <p class="question">{{ 'Does the user have the E-PICSA App installed?' | translate }}</p> -->
+
+    <button matButton="elevated" color="primary" class="action-btn" (click)="selectInstalledAnswer(true)">
+      <mat-icon>check</mat-icon>
+      {{ 'Yes' | translate }}
+    </button>
+
+    <button matButton="elevated" color="primary" class="action-btn" (click)="selectInstalledAnswer(false)">
+      <mat-icon>close</mat-icon>
+      {{ 'No' | translate }}
+    </button>
+  </div>
+</div>

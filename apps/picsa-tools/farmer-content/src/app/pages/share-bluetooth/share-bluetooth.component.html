@@ -1,0 +1,46 @@
+<div class="share-page">
+  <div class="page-header">
+    <button matButton type="button" class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'Share via Bluetooth' | translate }}
+    </button>
+  </div>
+
+  <div class="share-steps">
+    <article class="share-step-card">
+      <div class="step-card-header">{{ 'Share App' | translate }}</div>
+      <div class="step-card-body">
+        <div class="option-icon-wrap">
+          <mat-icon class="option-icon">bluetooth</mat-icon>
+        </div>
+        <h2 class="option-title">{{ "No, they don't have the app" | translate }}</h2>
+        <p class="option-description">
+          {{ 'Share the application with the user using Bluetooth' | translate }}
+        </p>
+        <button matButton="elevated" color="primary" class="option-btn" (click)="shareAppApk()">
+          <!-- <mat-icon>bluetooth</mat-icon> -->
+          {{ 'Share App via Bluetooth' | translate }}
+        </button>
+      </div>
+    </article>
+
+    <article class="share-step-card">
+      <div class="step-card-header">{{ 'Share Resources' | translate }}</div>
+      <div class="step-card-body">
+        <div class="option-icon-wrap">
+          <mat-icon class="option-icon">video_library</mat-icon>
+        </div>
+        <h2 class="option-title">{{ 'Yes, they have the app' | translate }}</h2>
+        <p class="option-description">{{ 'Share downloaded videos with the user' | translate }}</p>
+        <button matButton="elevated" color="primary" class="option-btn" (click)="goToVideoShare()">
+          <!-- <mat-icon>video_library</mat-icon> -->
+          {{ 'Share Videos' | translate }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  @if (shareStatus() !== 'idle') {
+    <p class="status" [attr.data-status]="shareStatus()">{{ shareStatusLabel() | translate }}</p>
+  }
+</div>
