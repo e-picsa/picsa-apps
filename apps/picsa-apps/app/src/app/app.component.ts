@@ -17,6 +17,7 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
+import { SafeAreaService } from '@picsa/shared/services/native/safe-area';
 import { _wait } from '@picsa/utils';
 
 import { AppLayoutComponent } from './components/layout';
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
   private monitoringService = inject(MonitoringToolService);
   private migrationService = inject(PicsaMigrationService);
   private appUpdateService = inject(AppUpdateService);
+  private safeAreaService = inject(SafeAreaService);
   private pushNotificationService = inject(PicsaPushNotificationService);
   private injector = inject(Injector);
   private appUserService = inject(AppUserService);
@@ -55,6 +57,8 @@ export class AppComponent implements OnInit {
         this.translateService.setLanguage(language_code);
       }
     });
+
+    this.safeAreaService.initialize();
   }
 
   async ngOnInit() {

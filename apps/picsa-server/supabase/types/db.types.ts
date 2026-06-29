@@ -1169,7 +1169,7 @@ export type Database = {
         | 'translations.admin'
         | 'translations.editor'
         | 'app.admin';
-      country_code: 'global' | 'mw' | 'zm' | 'tj';
+      country_code: 'global' | 'mw' | 'zm' | 'tj' | 'zw';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
         | 'global_en'
@@ -1962,7 +1962,7 @@ export const Constants = {
         'translations.editor',
         'app.admin',
       ],
-      country_code: ['global', 'mw', 'zm', 'tj'],
+      country_code: ['global', 'mw', 'zm', 'tj', 'zw'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
       locale_code: [
         'global_en',

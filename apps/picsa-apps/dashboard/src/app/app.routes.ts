@@ -46,10 +46,10 @@ export const appRoutes: Route[] = [
     loadChildren: () =>
       import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
-  {
-    path: MonitoringFeature.ROOT_PATH,
-    loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
-  },
+  // {
+  //   path: MonitoringFeature.ROOT_PATH,
+  //   loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
+  // },
   {
     path: 'profile',
     loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),

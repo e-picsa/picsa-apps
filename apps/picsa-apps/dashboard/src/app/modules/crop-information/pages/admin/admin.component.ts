@@ -1,16 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { IGeolocationAdmin5Location } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
 import { isObjectLiteral } from '@picsa/utils/object.utils';
 import download from 'downloadjs';
+import JSZip from 'jszip';
 
 import { DataImportComponent } from '../../../../components/data-import/data-import.component';
 import { DashboardMaterialModule } from '../../../../material.module';
+import type { IAnnualRainfallSummariesData, ICropSuccessEntry } from '../../../climate/types';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
+import {
+  cumulativeDistribution,
+  generateProbabilityHashmap,
+  generateTable,
+  plantDayToDateLabel,
+  roundToNearest,
+} from '../../utils/probability.utils';
 import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
 
 interface ICropDataImport {
@@ -54,7 +65,10 @@ interface ICropDataImport {
 export class DashboardCropAdminComponent {
   private service = inject(CropInformationService);
   private deploymentService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
   dialog = inject(MatDialog);
+
+  public exporting = signal(false);
 
   public errors = signal<ICropDataImport[]>([]);
   public errorTableOptions: IDataTableOptions = {
@@ -96,7 +110,7 @@ export class DashboardCropAdminComponent {
     });
   }
 
-  public handleDataLoad(data: any) {
+  public handleDataLoad(data: ICropDataImport[]) {
     const { rows, errors, duplicates } = this.qualityControlData(data);
     this.errors.set(errors);
     this.duplicates.set(duplicates);
@@ -106,11 +120,11 @@ export class DashboardCropAdminComponent {
   public downloadTemplate(selectedLocation: (string | undefined)[]) {
     const cropData = this.service.cropData();
     const location_id = selectedLocation.filter((v) => v !== undefined).pop() as string;
-    const dummyRows: ICropDataImport[] = cropData.map(({ crop, variety }) => ({
+    const dummyRows = cropData.map(({ crop, variety }) => ({
       location_id,
       crop,
       variety,
-      water_requirement: '' as any,
+      water_requirement: '',
     }));
     const csv = jsonToCSV(dummyRows);
     download(csv, `crop-water-requirements.${location_id}.csv`);
@@ -120,10 +134,155 @@ export class DashboardCropAdminComponent {
     return this.service.upsertDownscaled(rows);
   }
 
+  public async exportCropProbabilityTables() {
+    this.exporting.set(true);
+    try {
+      const activeDeployment = this.deploymentService.activeDeployment();
+      if (!activeDeployment) {
+        this.notificationService.showErrorNotification('No active deployment found');
+        this.exporting.set(false);
+        return;
+      }
+      const countryCode = activeDeployment.country_code;
+
+      await this.service.ready();
+
+      // Fetch downscaled crop data with station joined
+      const mergedSelect = '*, station:climate_stations!station_id (*)';
+      const { data: downscaledRows, error: downscaledError } = await this.service.cropDataDownscaledTable
+        .select(mergedSelect)
+        .eq('country_code', countryCode);
+
+      if (downscaledError) {
+        throw downscaledError;
+      }
+
+      // Fetch station climate data
+      const { data: stationDataRows, error: stationDataError } = await this.service.stationDataTable
+        .select('*')
+        .eq('country_code', countryCode);
+
+      if (stationDataError) {
+        throw stationDataError;
+      }
+
+      const stationDataHashmap = arrayToHashmap(stationDataRows || [], 'station_id');
+      const cropData = this.service.cropData();
+      const cropDataHashmap = arrayToHashmap(cropData, 'id');
+
+      const zip = new JSZip();
+      const exportEntries: any[] = [];
+
+      const locationData = this.deploymentService.activeDeploymentLocationData();
+      const locations = locationData.admin_5?.locations || locationData.admin_4?.locations || [];
+
+      for (const row of downscaledRows || []) {
+        if (!row.station_id || !row.water_requirements) continue;
+
+        const station = row.station;
+        if (!station) continue;
+
+        const stationData = stationDataHashmap[row.station_id];
+        if (!stationData) continue;
+
+        const cropProbabilityData = stationData.crop_probability_data as ICropSuccessEntry[];
+        const rainfallData = stationData.annual_rainfall_data as IAnnualRainfallSummariesData[];
+        if (!cropProbabilityData || !rainfallData) continue;
+
+        // Calculate season start probabilities
+        const allStartDates = rainfallData.map((d) => d.start_rains_doy).filter((v) => typeof v === 'number');
+        if (allStartDates.length === 0) continue;
+        const uniquePlantDates = [...new Set(cropProbabilityData.map((v) => v.plant_day))];
+        const cdf = cumulativeDistribution(allStartDates);
+        const total = allStartDates.length;
+
+        const startProbabilities = uniquePlantDates
+          .map((plantDate) => ({
+            plantDate,
+            probability: cdf[plantDate + 1] / total,
+            label: plantDayToDateLabel(plantDate),
+          }))
+          .filter(({ probability }) => probability >= 0.05);
+
+        if (startProbabilities.length === 0) continue;
+
+        // Generate probability hashmap
+        const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
+
+        // Generate table data
+        const tableData = generateTable({
+          cropDataHashmap,
+          waterRequirements: row.water_requirements as ICropDataDownscaledWaterRequirements,
+          startProbabilities,
+          probabilityHashmap,
+        });
+
+        // Find parent region ID and name
+        const match = locations.find((v) => v.id === row.location_id) as IGeolocationAdmin5Location;
+        const parentId = match?.admin_4 || '';
+        const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
+        const label = match?.label || row.location_id;
+        const station_label = station.station_name as string;
+
+        const fileName = parentId ? `${parentId}--${row.location_id}` : row.location_id;
+
+        // Add file to zip
+        zip.file(`${fileName}.json`, JSON.stringify(tableData, null, 2));
+
+        exportEntries.push({
+          id,
+          label,
+          station_label,
+          dateHeadings: startProbabilities.map((v) => v.label),
+          seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
+          fileName,
+        });
+      }
+
+      if (exportEntries.length === 0) {
+        this.notificationService.showErrorNotification('No stations with crop probability data found for export');
+        this.exporting.set(false);
+        return;
+      }
+
+      // Generate index.ts
+      let indexContent = `import { IProbabilityTable, IStationCropData } from '../../models';\n\n`;
+      const variableName = `${countryCode.toUpperCase()}_CROP_DATA`;
+      indexContent += `const ${variableName}: IProbabilityTable[] = [\n`;
+
+      const doubleToSingleQuote = (str: string) => str.replace(/"/g, "'");
+
+      for (const entry of exportEntries) {
+        indexContent += `  {\n`;
+        indexContent += `    id: '${entry.id}',\n`;
+        indexContent += `    label: '${entry.label.replace(/'/g, "\\'")}',\n`;
+        indexContent += `    station_label: '${entry.station_label.replace(/'/g, "\\'")}',\n`;
+        indexContent += `    dateHeadings: ${doubleToSingleQuote(JSON.stringify(entry.dateHeadings))},\n`;
+        indexContent += `    seasonProbabilities: ${doubleToSingleQuote(JSON.stringify(entry.seasonProbabilities))},\n`;
+        indexContent += `    data: async () => import('./${entry.fileName}.json').then((v) => v.default as IStationCropData[]),\n`;
+        indexContent += `  },\n`;
+      }
+
+      indexContent += `];\n\nexport default ${variableName};\n`;
+
+      zip.file('index.ts', indexContent);
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      download(blob, `${countryCode}_crop_probabilities.zip`);
+
+      this.notificationService.showSuccessNotification('Crop probability tables exported successfully');
+    } catch (e) {
+      console.error(e);
+      this.notificationService.showErrorNotification(`Export failed: ${(e as Record<string, string>).message || e}`);
+    } finally {
+      this.exporting.set(false);
+    }
+  }
+
   private async prepareImport(rows: ICropDataImport[]) {
     const { country_code } = this.deploymentService.activeDeployment();
 
-    const { data, error } = await this.service.cropDataDownscaledTable
+    const { data } = await this.service.cropDataDownscaledTable
       .select<'*', ICropDataDownscaled['Row']>('*')
       .eq('country_code', country_code);
 
@@ -190,7 +349,7 @@ export class DashboardCropAdminComponent {
     const duplicates: ICropDataImport[] = [];
 
     if (!Array.isArray(data)) {
-      errors.push({ _error: 'Data Invalid' } as any);
+      errors.push({ _error: 'Data Invalid' } as ICropDataImport);
       return { rows, duplicates, errors };
     }
 
@@ -262,7 +421,7 @@ export class DashboardCropAdminComponent {
 
     // round water requirement to nearest 5
     const water_requirement_parsed = Number(water_requirement);
-    if (isNaN(water_requirement_parsed)) {
+    if (Number.isNaN(water_requirement_parsed)) {
       el._error = `Invalid water requirement: ${water_requirement}`;
     } else {
       const water_requirement_cleaned = roundToNearest(water_requirement_parsed, 5);
@@ -271,8 +430,4 @@ export class DashboardCropAdminComponent {
 
     return el;
   }
-}
-
-function roundToNearest(value: number, n: number) {
-  return Math.round(value / n) * n;
 }

@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  signal,
+  viewChildren,
+} from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -35,6 +44,7 @@ interface IForecastSummary {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './forecast.page.html',
   styleUrls: ['./forecast.page.scss'],
   imports: [
@@ -64,6 +74,9 @@ export class ForecastComponent implements OnDestroy {
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
+  public loading = computed(() => this.service.loadingForecasts());
+  public loadingDownscaled = computed(() => this.service.loadingDownscaled());
+
   public resourceLinks = computed<IResourceLink[]>(() => {
     const { country_code } = this.configurationService.userSettings();
     return CLIMATE_RESOURCES[country_code] || [];
@@ -72,16 +85,12 @@ export class ForecastComponent implements OnDestroy {
   // Utility to add type-safety to implicit ng-template data
   public toForecastType = (data: any) => data as IForecastSummary;
 
-  public FORECAST_HEADINGS = {};
-
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
   constructor() {
-    const configurationService = this.configurationService;
-
     effect(() => {
-      const { location } = configurationService.userSettings();
+      const { location } = this.configurationService.userSettings();
       this.service.setForecastLocation(location);
     });
   }

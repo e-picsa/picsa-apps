@@ -50,26 +50,40 @@ mat-card-content.mat-mdc-card-content {
 .mat-mdc-dialog-surface {
   padding: 24px;
 }
-// Allow dialog content to scroll (e.g. configuration select)
-mat-dialog-container.mat-mdc-dialog-container {
+
+// Ensure dialog setup to fill screen with safe padding
+.cdk-overlay-pane.mat-mdc-dialog-panel {
   max-height: 100vh;
-  overflow: auto;
+  // Respect top, bottom, left, and right safe areas with fallback defaults
+  padding-top: max(8px, env(safe-area-inset-top)) !important;
+  padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  padding-left: max(8px, env(safe-area-inset-left)) !important;
+  padding-right: max(8px, env(safe-area-inset-right)) !important;
+
+  // Ensure the dialog content box sizing recalculates appropriately
+  box-sizing: border-box;
 }
-// Add override to remove dialog padding
-.cdk-overlay-pane.no-padding {
+// `panelClass: 'no-padding'` custom dialog
+.cdk-overlay-pane.mat-mdc-dialog-panel.no-padding {
   .mat-mdc-dialog-surface {
     padding: 0;
   }
 }
-
 // Increase dialog overlay width on small devices (600px)
 .cdk-overlay-pane.mat-mdc-dialog-panel {
   --mat-dialog-container-small-max-width: calc(100vw - theme(spacing.4));
+
   // Budget tool picker full screen
   &.budget-dialog {
     --mat-dialog-container-small-max-width: 100vw;
     width: 100vw;
     @apply max-w-screen-md;
+
+    // Prevent double padding if sticky footers also apply safe area margin inside the dialog
+    .sticky-footer {
+      margin-bottom: 0;
+    }
+    // remove padding (can't include no-padding class)
     .mat-mdc-dialog-surface {
       padding: 0;
     }

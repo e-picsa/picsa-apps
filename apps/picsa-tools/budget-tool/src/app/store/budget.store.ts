@@ -158,8 +158,7 @@ export class BudgetStore {
   public async editorAddTimePeriod() {
     const { data, meta } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
-    data.push(PERIOD_DATA_TEMPLATE);
-    await this.patchBudget({ data });
+    await this.patchBudget({ data: deepClone([...data, PERIOD_DATA_TEMPLATE]) });
   }
   public async editorDeleteTimePeriod(index: number) {
     const dialogRef = await this.dialogService.open('delete');
@@ -167,8 +166,8 @@ export class BudgetStore {
       if (shouldDelete) {
         const { meta, data } = this.activeBudget;
         this.activeBudget.meta.lengthTotal = meta.lengthTotal - 1;
-        data.splice(index, 1);
-        await this.patchBudget({ data });
+        const updated = data.filter((_, i) => i !== index);
+        await this.patchBudget({ data: deepClone(updated) });
       }
     });
   }
@@ -186,7 +185,7 @@ export class BudgetStore {
 
   createNewBudget() {
     const budget: IBudget = {
-      ...NEW_BUDGET_TEMPLATE,
+      ...deepClone(NEW_BUDGET_TEMPLATE),
       ...generateDBMeta(),
     };
     this.valueCounters = this._generateValueCounters(budget);
@@ -258,20 +257,28 @@ export class BudgetStore {
   }
 
   public async shareAsLink() {
-    const { shareCode } = this.activeBudget;
+    let { shareCode } = this.activeBudget;
     if (!shareCode) {
-      const code = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
-      // TODO ensure share code doesn't already exist
-      const budgetCodeDoc: IBudgetCodeDoc = {
-        ...generateDBMeta(),
-        _key: code,
-        budget_key: this.activeBudget._key,
-      };
-      await this.db.setDoc('budgetTool/default/shareCodes', budgetCodeDoc, true);
-      this.activeBudget.shareCode = code;
+      shareCode = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+      this.activeBudget.shareCode = shareCode;
     }
-    await this.saveBudget();
-    return this.activeBudget.shareCode as string;
+
+    const budgetCodeDoc: IBudgetCodeDoc = {
+      ...generateDBMeta(),
+      _key: shareCode,
+      budget_key: this.activeBudget._key,
+    };
+
+    // Write the budget document directly to the server, bypassing local cache
+    await this.db.setServerDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue);
+
+    // Write the share code document directly to the server, bypassing local cache
+    await this.db.setServerDoc('budgetTool/default/shareCodes', budgetCodeDoc);
+
+    // Also save the budget document to the local cache normally (without server sync) to keep local copy updated
+    await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, false);
+
+    return shareCode;
   }
 
   /**************************************************************************

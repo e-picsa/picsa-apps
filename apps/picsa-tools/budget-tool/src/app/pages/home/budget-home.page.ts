@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';
 import { BudgetMaterialModule } from '../../material.module';
@@ -25,6 +26,7 @@ export class BudgetHomePage implements OnInit {
   private matDialog = inject(MatDialog);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private notificationService = inject(PicsaNotificationService);
 
   sharedDisabled: boolean;
   budgetDownloadMessage: string;
@@ -47,7 +49,9 @@ export class BudgetHomePage implements OnInit {
     this.matDialog.open(BudgetImportDialogComponent);
   }
   public showBudgetCreate() {
-    const dialog = this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
+    const dialog = this.matDialog.open(BudgetCreatePage, {
+      panelClass: 'no-padding',
+    });
     dialog.afterClosed().subscribe((budgetKey) => {
       if (budgetKey) {
         this.router.navigate([budgetKey], { relativeTo: this.route });
@@ -70,8 +74,13 @@ export class BudgetHomePage implements OnInit {
   }
 
   async deleteBudget(budget: IBudget) {
-    await this.store.deleteBudget(budget);
-    await this.loadBudgets();
+    try {
+      await this.store.deleteBudget(budget);
+      await this.loadBudgets();
+    } catch (error: any) {
+      console.error('Failed to delete budget:', error);
+      this.notificationService.showErrorNotification('Failed to delete budget: ' + (error?.message || error));
+    }
   }
 
   private async loadBudgets() {

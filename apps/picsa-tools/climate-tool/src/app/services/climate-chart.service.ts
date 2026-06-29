@@ -1,23 +1,28 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import { _wait } from '@picsa/utils';
+import { isEqual } from '@picsa/utils/object.utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { firstValueFrom, Subject } from 'rxjs';
 
 import { generateChartConfig } from '../utils';
 import { ClimateDataService } from './climate-data.service';
+import { ClimateToolService } from './climate-tool.service';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateChartService {
   private translateService = inject(PicsaTranslateService);
   private dataService = inject(ClimateDataService);
   private printProvider = inject(PrintProvider);
+  private toolService = inject(ClimateToolService);
+  private router = inject(Router);
 
   // SIGNALS - single source of truth for application state
   readonly station = signal<IStationMeta | undefined>(undefined);
@@ -25,6 +30,11 @@ export class ClimateChartService {
   readonly chartConfig = signal<IChartConfig | undefined>(undefined);
   readonly chartSeriesData = signal<number[]>([]);
   readonly stationData = signal<IStationData[]>([]);
+
+  readonly availableCharts = computed<IChartMeta[]>(
+    () => this.calculateAvailableCharts(this.station(), this.stationData()),
+    { equal: isEqual },
+  );
 
   // PNG blob for print version
   readonly chartPngBlob = signal<Blob | undefined>(undefined);
@@ -50,6 +60,14 @@ export class ClimateChartService {
       this.translateService.locale();
       this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
     });
+
+    // Reactively synchronize preferred station configuration when active station changes
+    effect(() => {
+      const station = this.station();
+      if (station && station.id) {
+        this.dataService.setPreferredStation(station.id);
+      }
+    });
   }
 
   /**
@@ -69,6 +87,71 @@ export class ClimateChartService {
    */
   public registerChartComponent(chart: PicsaChartComponent) {
     this.chartComponent = chart;
+  }
+
+  /**
+   * Clear preferred station and redirect to parent path (site selection page).
+   */
+  public async goToSiteSelect(siteId: string) {
+    localStorage.setItem('picsa_climate_station_temp', siteId);
+    this.dataService.setPreferredStation('');
+    const parentUrl = this.router.url.split('?')[0].split('/').slice(0, -1).join('/');
+    await this.router.navigate([parentUrl], { replaceUrl: true });
+  }
+
+  /**
+   * Load station and chart view reactively while validating that the station is correct
+   * for the country/deployment and the chart is available.
+   * Returns true if loaded successfully, or false if a redirect was triggered.
+   */
+  public async loadStationAndChart(siteId?: string, viewId?: IChartId): Promise<boolean> {
+    if (!siteId) {
+      this.dataService.setPreferredStation('');
+      const parentUrl = this.router.url.split('?')[0].split('/').slice(0, -1).join('/');
+      await this.router.navigate([parentUrl], { replaceUrl: true });
+      return false;
+    }
+
+    const stations = this.dataService.stations();
+    const currentStation = this.station();
+    const isStationInvalid =
+      !currentStation || !stations.some((s) => s.id === siteId && s.countryCode === currentStation.countryCode);
+
+    // 1. If site changed or is invalid for the current country, update station & load station data
+    if (currentStation?.id !== siteId || isStationInvalid) {
+      await this.setStation(siteId);
+
+      const station = this.station();
+      if (!station || !station.id) {
+        await this.goToSiteSelect(siteId);
+        return false;
+      }
+    }
+
+    // 2. Validate active view ID against available charts
+    const available = untracked(() => this.availableCharts());
+    if (available.length > 0) {
+      const isValid = viewId && available.some((c) => c._id === viewId);
+      if (!isValid) {
+        // Redirect to the first available chart if current view is invalid
+        const fallbackViewId = available[0]._id;
+        await this.router.navigate([], {
+          queryParams: { view: fallbackViewId },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
+        return false;
+      }
+    }
+
+    // 3. Load the validated view
+    if (viewId) {
+      this.toolService.disableAll();
+      await _wait(50);
+      await this.setChart(viewId);
+    }
+
+    return true;
   }
 
   /**
@@ -221,6 +304,28 @@ export class ClimateChartService {
    */
   public getPointColour(d: DataPoint): string | undefined {
     return;
+  }
+
+  /**
+   * Identify which charts should be available based on the data
+   */
+  private calculateAvailableCharts(station: IStationMeta | undefined, data: IStationData[]): IChartMeta[] {
+    if (!station) return [];
+    const definitions = station.definitions;
+    if (!definitions) return [];
+
+    return Object.values(definitions).filter((chart) => {
+      if (!chart) return false;
+      if (chart.disabled) return false;
+
+      const hasData = data.some((row) =>
+        chart.keys.some((key) => {
+          const val = row[key];
+          return val !== undefined && val !== null && (val as any) !== '';
+        }),
+      );
+      return hasData;
+    });
   }
 
   public convertDateToDayNumber(d: Date) {

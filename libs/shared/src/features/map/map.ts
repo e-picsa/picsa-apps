@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// eslint-disable-next-line simple-import-sort/imports
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   EventEmitter,
+  inject,
   input,
   OnInit,
   Output,
@@ -13,7 +16,11 @@ import {
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { IStationMeta } from '@picsa/models/src/climate.models';
+import { NetworkService } from '@picsa/shared/services/core/network.service';
+
 import * as L from 'leaflet';
+import './maplibre-shim';
+import '@maplibre/maplibre-gl-leaflet';
 
 @Component({
   imports: [LeafletModule],
@@ -28,8 +35,12 @@ export class PicsaMapComponent implements OnInit {
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
 
+  private networkService = inject(NetworkService);
+
+  private localLayer: L.TileLayer | null = null;
+  private onlineLayer: L.Layer | null = null;
+
   mapOptions = input<L.MapOptions>({});
-  basemapOptions = input<Partial<IBasemapOptions>>({});
   markers = input<IMapMarker[]>([]);
 
   // make native map element available directly as signal
@@ -39,7 +50,11 @@ export class PicsaMapComponent implements OnInit {
   public L = L;
 
   /** Full set of map options merged from input options and default */
-  public _mapOptions = signal<L.MapOptions>(null as any);
+  public _mapOptions = computed(() => ({
+    ...MAP_DEFAULTS,
+    ...this.mapOptions(),
+    layers: [],
+  }));
 
   /** Track markers that have been rendered to the map to programatically update styles */
   private renderedMarkers: L.Marker<any>[] = [];
@@ -68,15 +83,30 @@ export class PicsaMapComponent implements OnInit {
         observer.disconnect();
       });
     });
+
+    // Reactively swap basemap layers based on connection status from NetworkService
+    effect(() => {
+      this.updateLayers();
+    });
   }
 
   ngOnInit() {
-    // the user provides basemap options separate to general map options, so combine here
-    // define the basemap layer and then bind to the view component
-    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions };
-    const basemap = L.tileLayer(basemapOptions.src, basemapOptions);
-    const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
-    this._mapOptions.set({ ...mapOptions, layers: [basemap] });
+    // 1. Local/Asset layer: local raster WebP tiles
+    // maxZoom 12, maxNativeZoom 8
+    this.localLayer = L.tileLayer('assets/mapTiles/raw/{z}/{x}/{y}.webp', {
+      maxNativeZoom: 8,
+      maxZoom: 12,
+      attribution: 'Map data © OpenStreetMap contributors',
+    });
+
+    // 2. Online layer: OpenFreeMap vector styles
+    // minZoom 9, maxZoom 18
+    this.onlineLayer = (L as any).maplibreGL({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      minZoom: 9,
+      maxZoom: 18,
+      pane: 'onlinePane',
+    });
   }
 
   /** Programatically set the active map marker and trigger click callback */
@@ -125,7 +155,45 @@ export class PicsaMapComponent implements OnInit {
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
     this.map.set(map);
+
+    // Create custom pane for the online vector layer to ensure correct z-index ordering
+    if (!map.getPane('onlinePane')) {
+      const pane = map.createPane('onlinePane');
+      pane.style.zIndex = '250';
+    }
+
+    map.on('zoomend', () => this.updateLayers());
     this.onMapReady.emit(map);
+  }
+
+  private updateLayers() {
+    const map = this.map();
+    const isOnline = this.networkService.isOnline();
+    if (!map || isOnline === undefined || !this.localLayer) {
+      return;
+    }
+
+    // Always ensure the local raster layer is added to the map.
+    if (!map.hasLayer(this.localLayer)) {
+      map.addLayer(this.localLayer);
+    }
+
+    if (!this.onlineLayer) {
+      return;
+    }
+
+    const currentZoom = map.getZoom();
+    const shouldShowOnline = isOnline && currentZoom >= 9;
+
+    if (shouldShowOnline) {
+      if (!map.hasLayer(this.onlineLayer)) {
+        map.addLayer(this.onlineLayer);
+      }
+    } else {
+      if (map.hasLayer(this.onlineLayer)) {
+        map.removeLayer(this.onlineLayer);
+      }
+    }
   }
 
   /** Calculate a bounding rectangle that covers all points and fit within map */
@@ -169,11 +237,10 @@ export class PicsaMapComponent implements OnInit {
         return;
       }
       this.selected = { marker, renderedMarker };
-      console.log('fly to marker', marker);
       // Fly map to marker
       const latLng = renderedMarker.getLatLng();
       requestAnimationFrame(() => {
-        this.map().flyTo(latLng, 12);
+        this.map().flyTo(latLng, 8);
 
         // Programatically updated classnames on current and previous
         // selected marker. Use CDR to ensure updated
@@ -191,12 +258,6 @@ export class PicsaMapComponent implements OnInit {
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
-const BASEMAP_DEFAULTS: IBasemapOptions = {
-  src: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  maxZoom: 18,
-  attribution: 'Map data © OpenStreetMap contributors',
-};
-
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 2,
@@ -211,9 +272,6 @@ export interface IMapMarker<T = IStationMeta> {
   data?: T;
   /** Index of station when rendered */
   _index: number;
-}
-export interface IBasemapOptions extends L.TileLayerOptions {
-  src: string;
 }
 export type IMapOptions = L.MapOptions;
 

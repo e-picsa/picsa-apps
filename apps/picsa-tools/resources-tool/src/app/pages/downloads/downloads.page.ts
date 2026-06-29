@@ -1,4 +1,4 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -35,6 +35,7 @@ const DISPLAY_COLUMNS = [
   selector: 'resource-downloads',
   templateUrl: './downloads.page.html',
   styleUrls: ['./downloads.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
     MatMenuModule,

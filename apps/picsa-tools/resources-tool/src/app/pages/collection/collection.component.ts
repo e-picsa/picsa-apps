@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
@@ -15,6 +15,7 @@ interface ICollectionPageRouteParams {
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.scss'],
   imports: [ResourceCollectionComponent, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

@@ -11,7 +11,7 @@ export interface IProbabilityTableMeta {
   /** Station name used in disclaimer for source of data */
   station_label: string;
   /** Probabilities to display in header row for start of season */
-  seasonProbabilities: string[];
+  seasonProbabilities: (number | null)[];
   /** Text to display for heading columns */
   dateHeadings: string[];
 }
@@ -26,7 +26,7 @@ export interface IStationCropInformation {
   station_name: string;
   data: IStationCropData[];
   dates: string[];
-  season_probabilities: string[];
+  season_probabilities: (number | null)[];
   notes: string[];
 }
 
@@ -38,7 +38,6 @@ export interface IStationCropData {
 export interface IStationCropDataItem {
   variety: string;
   days: string;
-  // TODO - use only numbers, migrate legacy mw data
-  water?: (string | number)[];
-  probabilities?: string[];
+  water?: number[];
+  probabilities?: (number | null)[];
 }
