@@ -12,7 +12,57 @@ export interface ISeasonStartProbability {
 }
 
 export const WATER_REQUIREMENT_ROUNDING = 25;
-export const DAY_REQUIREMENT_ROUNDING = 15;
+
+/**
+ * Strategy interface for interpolating crop success probability values.
+ * Allows decoupling the interpolation math from database traversal logic.
+ */
+export type IProbabilityInterpolationStrategy = (
+  target: number,
+  lowerKey: number,
+  upperKey: number,
+  lowerValue: number,
+  upperValue: number,
+) => number;
+
+/**
+ * Standard linear interpolation (weighted average) implementation.
+ */
+export const linearInterpolationStrategy: IProbabilityInterpolationStrategy = (
+  target,
+  lower,
+  upper,
+  valLower,
+  valUpper,
+) => {
+  if (lower === upper) return valLower;
+  const fraction = (target - lower) / (upper - lower);
+  return valLower + fraction * (valUpper - valLower);
+};
+
+/**
+ * Performs a single-pass search to find the sorted keys directly surrounding a target value.
+ * Returns identical keys if target is an exact match or falls out of bounds (capping behavior).
+ */
+export function findSurroundingKeys(target: number, keys: number[]): { lower: number; upper: number } {
+  if (keys.length === 0) {
+    throw new Error('Keys array cannot be empty');
+  }
+  const sorted = [...keys].sort((a, b) => a - b);
+  const len = sorted.length;
+
+  if (target <= sorted[0]) return { lower: sorted[0], upper: sorted[0] };
+  if (target >= sorted[len - 1]) return { lower: sorted[len - 1], upper: sorted[len - 1] };
+
+  for (let i = 0; i < len - 1; i++) {
+    if (sorted[i] === target) return { lower: sorted[i], upper: sorted[i] };
+    if (target > sorted[i] && target < sorted[i + 1]) {
+      return { lower: sorted[i], upper: sorted[i + 1] };
+    }
+  }
+
+  return { lower: sorted[len - 1], upper: sorted[len - 1] };
+}
 
 export const CROP_SORT_PRIORITY: ICropName[] = [
   'maize',
@@ -90,34 +140,49 @@ export function generateProbabilityHashmap(entries: ICropSuccessEntry[]): IProba
   return hashmap;
 }
 
+/**
+ * Fetches and interpolates the crop success probability for a given water requirement and plant length.
+ * Decouples lookup and math strategies, supporting nearest-neighbor/clipping bounds and sparse database fallbacks.
+ */
 export function getCropSuccessProbability(
   water: number,
   days: number,
   plantDates: number[],
   probabilityHashmap: IProbabilityHashmap,
+  strategy: IProbabilityInterpolationStrategy = linearInterpolationStrategy,
 ): (number | undefined)[] {
   const waterRounded = roundToNearest(water, WATER_REQUIREMENT_ROUNDING);
-  const daysRounded = roundToNearest(days, DAY_REQUIREMENT_ROUNDING);
+  const targetDays = days;
   const probabilities: (number | undefined)[] = [];
 
   const waterEntry = probabilityHashmap[waterRounded];
   if (waterEntry) {
-    // Find the closest plant_length key within a 10-day tolerance
     const plantLengths = Object.keys(waterEntry).map(Number);
-    let bestLength = daysRounded;
-    let minDiff = Infinity;
-    for (const len of plantLengths) {
-      const diff = Math.abs(len - daysRounded);
-      if (diff < minDiff && diff <= 10) {
-        minDiff = diff;
-        bestLength = len;
-      }
+    if (plantLengths.length === 0) {
+      return new Array(plantDates.length).fill(undefined);
     }
 
-    const lengthEntry = waterEntry[bestLength];
-    for (const value of plantDates) {
-      const probability = lengthEntry?.[value];
-      probabilities.push(probability);
+    // Find the surrounding keys directly above and below targetDays
+    const { lower, upper } = findSurroundingKeys(targetDays, plantLengths);
+
+    const lowerEntry = waterEntry[lower];
+    const upperEntry = waterEntry[upper];
+
+    for (const date of plantDates) {
+      const probLower = lowerEntry?.[date];
+      const probUpper = upperEntry?.[date];
+
+      // Interpolate if both values are valid numbers, otherwise fall back to nearest boundary (sparse data)
+      if (typeof probLower === 'number' && typeof probUpper === 'number') {
+        const interpolated = strategy(targetDays, lower, upper, probLower, probUpper);
+        probabilities.push(interpolated);
+      } else if (typeof probLower === 'number') {
+        probabilities.push(probLower);
+      } else if (typeof probUpper === 'number') {
+        probabilities.push(probUpper);
+      } else {
+        probabilities.push(undefined);
+      }
     }
   } else {
     for (let i = 0; i < plantDates.length; i++) {
