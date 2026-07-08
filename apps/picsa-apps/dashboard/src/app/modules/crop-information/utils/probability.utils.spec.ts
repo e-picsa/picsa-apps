@@ -54,5 +54,17 @@ describe('probability.utils', () => {
       const result = getCropSuccessProbability(500, 60, [100, 200], mockHashmap);
       expect(result).toEqual([undefined, undefined]);
     });
+
+    it('should fall back to nearest boundary if one of the values is missing (sparse data)', () => {
+      const sparseHashmap = {
+        250: {
+          45: { 100: 0.2 },
+          75: { 200: 0.8 },
+        },
+      };
+      const result = getCropSuccessProbability(250, 60, [100, 200], sparseHashmap);
+      expect(result[0]).toBe(0.2);
+      expect(result[1]).toBe(0.8);
+    });
   });
 });

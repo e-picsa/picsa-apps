@@ -51,17 +51,21 @@ export function findSurroundingKeys(target: number, keys: number[]): { lower: nu
   const sorted = [...keys].sort((a, b) => a - b);
   const len = sorted.length;
 
-  if (target <= sorted[0]) return { lower: sorted[0], upper: sorted[0] };
-  if (target >= sorted[len - 1]) return { lower: sorted[len - 1], upper: sorted[len - 1] };
+  const index = sorted.findIndex((key) => key >= target);
 
-  for (let i = 0; i < len - 1; i++) {
-    if (sorted[i] === target) return { lower: sorted[i], upper: sorted[i] };
-    if (target > sorted[i] && target < sorted[i + 1]) {
-      return { lower: sorted[i], upper: sorted[i + 1] };
-    }
+  if (index === 0) {
+    return { lower: sorted[0], upper: sorted[0] };
+  }
+  if (index === -1) {
+    return { lower: sorted[len - 1], upper: sorted[len - 1] };
   }
 
-  return { lower: sorted[len - 1], upper: sorted[len - 1] };
+  const upper = sorted[index];
+  if (upper === target) {
+    return { lower: upper, upper };
+  }
+
+  return { lower: sorted[index - 1], upper };
 }
 
 export const CROP_SORT_PRIORITY: ICropName[] = [
