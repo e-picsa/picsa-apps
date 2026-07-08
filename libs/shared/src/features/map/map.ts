@@ -18,7 +18,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { IStationMeta } from '@picsa/models/src/climate.models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
 
-import * as L from 'leaflet';
+import L from 'leaflet';
 import './maplibre-shim';
 import '@maplibre/maplibre-gl-leaflet';
 

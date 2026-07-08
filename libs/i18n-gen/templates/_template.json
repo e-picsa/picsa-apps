@@ -261,10 +261,6 @@
     "context": "month_short_09"
   },
   {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
-    "tool": "common"
-  },
-  {
     "text": "Seasonal Forecast",
     "tool": "resources",
     "context": "videos"
@@ -283,6 +279,10 @@
     "text": "Sat",
     "tool": "common_days",
     "context": "day_short_6"
+  },
+  {
+    "text": "Roundnuts",
+    "tool": "common_crops"
   },
   {
     "text": "Rice",
@@ -333,7 +333,7 @@
   },
   {
     "text": "Privacy Policy",
-    "tool": "extension-content"
+    "tool": "extension"
   },
   {
     "text": "Potatoes",
@@ -621,10 +621,6 @@
     "tool": "extension"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
-    "tool": "common"
-  },
-  {
     "text": "February",
     "tool": "common_months",
     "context": "month_02"
@@ -717,17 +713,9 @@
     "tool": "common_crops"
   },
   {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
-    "tool": "common"
-  },
-  {
     "text": "Cancel",
     "tool": "common",
     "context": "buttons"
-  },
-  {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "common"
   },
   {
     "text": "By continuing, you agree to our",
