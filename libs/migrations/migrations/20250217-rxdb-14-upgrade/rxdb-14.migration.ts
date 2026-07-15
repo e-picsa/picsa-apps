@@ -55,8 +55,8 @@ const rxdb14CollectionMeta: Record<(typeof DB_COLLECTION_NAMES)[number], IMigrat
   seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION, strategy: 'migrate' },
   video_player: { creator: VIDEO_COLLECTION, strategy: 'migrate' },
   // skip
-  monitoring_tool_submissions: { creator: placeholderCreator, strategy: 'skip' },
-  monitoring_tool_forms: { creator: placeholderCreator, strategy: 'skip' }, // recreated by service
+  monitoring_tool_submissions: { creator: placeholderCreator, strategy: 'skip' }, // removed from app
+  monitoring_tool_forms: { creator: placeholderCreator, strategy: 'skip' }, // removed from app
   resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' }, // recreated by service
   resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' }, // recreated by service
   sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' }, // migration errors, fine to drop
