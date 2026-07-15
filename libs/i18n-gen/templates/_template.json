@@ -420,10 +420,6 @@
     "tool": "common"
   },
   {
-    "text": "Monitoring",
-    "tool": "common"
-  },
-  {
     "text": "Monday",
     "tool": "common_days",
     "context": "day_1"
@@ -1105,106 +1101,6 @@
     "tool": "budget"
   },
   {
-    "text": "Unlock",
-    "tool": "monitoring"
-  },
-  {
-    "text": "This form requires an access code to unlock",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Submit",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Submissions",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Submission not found",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Status",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Restricted Form",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Records",
-    "tool": "monitoring"
-  },
-  {
-    "text": "No submissions found",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Loading submissions...",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Loading form...",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Incorrect access code. Please try again.",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Forms",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Form submitted successfully",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Form saved successfully",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Form not found",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Form deleted",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Error loading form",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Enter access code",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Create New",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Click the Create New button to add a submission",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Authenticating...",
-    "tool": "monitoring"
-  },
-  {
-    "text": "An error occurred",
-    "tool": "monitoring"
-  },
-  {
-    "text": "All Submitted",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Access Code",
-    "tool": "monitoring"
-  },
-  {
     "text": "What does the farmer currently do?",
     "tool": "manual"
   },
@@ -1429,6 +1325,18 @@
     "tool": "forecasts"
   },
   {
+    "text": "Please select a location to view forecasts",
+    "tool": "forecasts"
+  },
+  {
+    "text": "No short term forecasts found",
+    "tool": "forecasts"
+  },
+  {
+    "text": "No seasonal forecasts found",
+    "tool": "forecasts"
+  },
+  {
     "text": "National",
     "tool": "forecasts"
   },
@@ -1561,7 +1469,7 @@
     "tool": "budget"
   },
   {
-    "text": "starting in",
+    "text": "starting",
     "tool": "budget"
   },
   {
@@ -1602,6 +1510,10 @@
     "tool": "budget"
   },
   {
+    "text": "Unit Cost",
+    "tool": "budget"
+  },
+  {
     "text": "Total",
     "tool": "budget"
   },
@@ -1615,10 +1527,6 @@
   },
   {
     "text": "Show More",
-    "tool": "budget"
-  },
-  {
-    "text": "Show All Budgets",
     "tool": "budget"
   },
   {
@@ -1688,7 +1596,7 @@
     "tool": "budget"
   },
   {
-    "text": "Import Budget Code",
+    "text": "Import Code",
     "tool": "budget"
   },
   {
@@ -1728,11 +1636,7 @@
     "tool": "budget"
   },
   {
-    "text": "Create New Budget",
-    "tool": "budget"
-  },
-  {
-    "text": "Cost",
+    "text": "Create New",
     "tool": "budget"
   },
   {
