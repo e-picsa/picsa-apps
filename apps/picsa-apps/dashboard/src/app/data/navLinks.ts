@@ -3,7 +3,6 @@ import { CropFeature } from '../modules/crop-information/crop.routes';
 import { DeploymentFeature } from '../modules/deployment/deployment.routes';
 import { HomeFeature } from '../modules/home/home.routes';
 import { MapFeature } from '../modules/map/map.routes';
-// import { MonitoringFeature } from '../modules/monitoring/monitoring.routes';
 import { ResourcesFeature } from '../modules/resources/resources.routes';
 import { StatsFeature } from '../modules/stats/stats.routes';
 import { TranslationsFeature } from '../modules/translations/translations.routes';
@@ -13,7 +12,6 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   ...HomeFeature.NAV_LINKS,
   ...ClimateFeature.NAV_LINKS,
   ...CropFeature.NAV_LINKS,
-  // ...MonitoringFeature.NAV_LINKS,
   ...TranslationsFeature.NAV_LINKS,
   ...ResourcesFeature.NAV_LINKS,
 ];

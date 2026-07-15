@@ -5,7 +5,6 @@ import { CropFeature } from './modules/crop-information/crop.routes';
 import { DeploymentFeature } from './modules/deployment/deployment.routes';
 import { HomeFeature } from './modules/home/home.routes';
 import { MapFeature } from './modules/map/map.routes';
-import { MonitoringFeature } from './modules/monitoring/monitoring.routes';
 import { ResourcesFeature } from './modules/resources/resources.routes';
 import { StatsFeature } from './modules/stats/stats.routes';
 import { TranslationsFeature } from './modules/translations/translations.routes';
@@ -46,10 +45,6 @@ export const appRoutes: Route[] = [
     loadChildren: () =>
       import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
-  // {
-  //   path: MonitoringFeature.ROOT_PATH,
-  //   loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
-  // },
   {
     path: 'profile',
     loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),

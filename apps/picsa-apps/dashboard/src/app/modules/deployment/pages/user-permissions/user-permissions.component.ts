@@ -99,17 +99,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
   public deploymentUsers = computed(() => this.allUsers().filter((u) => u.isMember));
 
   public matrixTableOptions: IDataTableOptions = {
-    displayColumns: [
-      'email',
-      'admin',
-      'climate',
-      'resources',
-      'crop',
-      'monitoring',
-      'translations',
-      'deployments',
-      'actions',
-    ],
+    displayColumns: ['email', 'admin', 'climate', 'resources', 'crop', 'translations', 'deployments', 'actions'],
     formatHeader: (header) => {
       if (header === 'actions') return '';
       if (header === 'admin') return 'Global Admin';

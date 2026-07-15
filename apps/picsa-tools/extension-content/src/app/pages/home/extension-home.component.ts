@@ -7,8 +7,6 @@ import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { TourService } from '@picsa/shared/services/core/tour';
 
 import { ExtensionToolkitMaterialModule } from '../../material.module';
@@ -76,11 +74,6 @@ const ADDITIONAL_LINKS: IPageLink[] = [
   },
 
   // {
-  //   ...TOOLS_DATA_HASHMAP.monitoring,
-  //   tourId: 'monitoring',
-  // },
-
-  // {
   //   name: translateMarker('Discussions'),
   //   svgIcon: 'picsa_discussions',
   //   url: '/discussions',
@@ -116,7 +109,6 @@ if (!ENVIRONMENT.production) {
   styleUrl: './extension-home.component.scss',
 })
 export class ExtensionHomeComponent {
-  monitoringService = inject(MonitoringToolService);
   private router = inject(Router);
   private tourService = inject(TourService);
   private configurationService = inject(ConfigurationService);
