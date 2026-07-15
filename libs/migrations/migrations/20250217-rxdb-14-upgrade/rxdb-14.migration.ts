@@ -30,6 +30,8 @@ interface IMigrateMeta {
 const DB_COLLECTION_NAMES = [
   'attachments',
   'budget_cards',
+  'monitoring_tool_forms',
+  'monitoring_tool_submissions',
   'options_tool',
   'photos',
   'resources_tool_collections',
@@ -39,6 +41,9 @@ const DB_COLLECTION_NAMES = [
   'sync_delete',
   'video_player',
 ] as const;
+
+// Empty creator to use for skipped migrations that no longer exist in codebase (e.g. monitoring)
+const placeholderCreator = {} as IPicsaCollectionCreator<any>;
 
 const rxdb14CollectionMeta: Record<(typeof DB_COLLECTION_NAMES)[number], IMigrateMeta> = {
   // migrate
@@ -50,6 +55,8 @@ const rxdb14CollectionMeta: Record<(typeof DB_COLLECTION_NAMES)[number], IMigrat
   seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION, strategy: 'migrate' },
   video_player: { creator: VIDEO_COLLECTION, strategy: 'migrate' },
   // skip
+  monitoring_tool_submissions: { creator: placeholderCreator, strategy: 'skip' },
+  monitoring_tool_forms: { creator: placeholderCreator, strategy: 'skip' }, // recreated by service
   resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' }, // recreated by service
   resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' }, // recreated by service
   sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' }, // migration errors, fine to drop
