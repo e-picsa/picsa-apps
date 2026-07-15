@@ -7,8 +7,6 @@ import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateService } from '@picsa/i18n';
 import { PicsaMigrationService } from '@picsa/migrations';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
@@ -35,7 +33,6 @@ export class AppComponent implements OnInit {
   private performanceService = inject(PerformanceService);
   private crashlyticsService = inject(CrashlyticsService);
   private resourcesService = inject(ResourcesToolService);
-  private monitoringService = inject(MonitoringToolService);
   private migrationService = inject(PicsaMigrationService);
   private appUpdateService = inject(AppUpdateService);
   private safeAreaService = inject(SafeAreaService);
@@ -102,8 +99,6 @@ export class AppComponent implements OnInit {
       this.analyticsService.init(this.router).catch((err) => this.errorService.handleError(err)),
       // eagerly load resources service to populate hardcoded resources
       this.resourcesService.ready().catch((err) => this.errorService.handleError(err)),
-      // eagerly load monitoring service to sync form data
-      this.monitoringService.ready().catch((err) => this.errorService.handleError(err)),
     ];
     Promise.allSettled(ops);
   }
