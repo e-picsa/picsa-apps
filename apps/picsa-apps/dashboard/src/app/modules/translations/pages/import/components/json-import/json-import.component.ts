@@ -16,17 +16,21 @@ import { arrayToHashmap } from '@picsa/utils';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 
-import { TranslationDashboardService } from '../../../../translations.service';
+import { ITranslationInsert, TranslationDashboardService } from '../../../../translations.service';
 
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
 interface ITranslationFileEntry {
+  /** custom id if specified */
+  id?: string;
   /** case-sensitive string representation for translation */
   text: string;
   /** associated tool for context */
   tool: string;
   /** additional context related to tool */
   context?: string;
+  /** country code if specified */
+  country_code?: string | null;
 }
 
 interface ITranslationImportEntry extends ITranslationFileEntry {
@@ -102,7 +106,7 @@ export class TranslationsJSONImportComponent {
       this.importCounter.update((v) => v + 1);
     }
     for (const entry of add) {
-      await this.service.addTranslation(entry);
+      await this.service.addTranslation(entry as ITranslationInsert);
       this.importCounter.update((v) => v + 1);
     }
   }
@@ -137,7 +141,7 @@ export class TranslationsJSONImportComponent {
     }
     const localHashmap: Record<string, ITranslationFileEntry> = {};
     for (const entry of entries) {
-      const id = this.service.generateTranslationID(entry as ITranslationRow);
+      const id = entry.id || this.service.generateTranslationID(entry as ITranslationRow);
       localHashmap[id] = entry;
     }
     await this.service.ready();
@@ -172,12 +176,12 @@ export class TranslationsJSONImportComponent {
     for (const [id, entry] of Object.entries(server)) {
       const localEntry = local[id];
       if (!localEntry) {
-        const { tool, context, text, archived } = entry;
+        const { tool, context, text, archived, country_code } = entry;
         if (!archived) {
-          summary.archive.push({ id, tool, text, context: context || undefined });
+          summary.archive.push({ id, tool, text, context: context || undefined, country_code });
         } else {
           // Already archived, so no action required
-          summary.skip.push({ id, tool, text, context: context || undefined });
+          summary.skip.push({ id, tool, text, context: context || undefined, country_code });
         }
       }
     }

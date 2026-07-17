@@ -7,6 +7,8 @@ import { arrayToHashmap } from '@picsa/utils';
 import download from 'downloadjs';
 import JSZip from 'jszip';
 
+import { DeploymentDashboardService } from '../deployment/deployment.service';
+
 type ITranslationDB = Database['public']['Tables']['translations'];
 export type ITranslationRow = ITranslationDB['Row'];
 export type ITranslationInsert = ITranslationDB['Insert'];
@@ -14,6 +16,7 @@ export type ITranslationInsert = ITranslationDB['Insert'];
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
+  private deploymentService = inject(DeploymentDashboardService);
 
   public translations = signal<ITranslationRow[]>([]);
 
@@ -30,13 +33,25 @@ export class TranslationDashboardService extends PicsaAsyncService {
   }
 
   public async listTranslations() {
-    const { data, error } = await this.supabaseService.db.table('translations').select<'*', ITranslationRow>('*');
+    const activeDeployment = this.deploymentService.activeDeployment();
+    const countryCode = activeDeployment?.country_code;
+
+    let query = this.supabaseService.db.table('translations').select<'*', ITranslationRow>('*');
+
+    if (countryCode && countryCode !== 'global') {
+      query = query.or(`country_code.eq.${countryCode},country_code.is.null,country_code.eq.global`);
+    } else {
+      query = query.or('country_code.is.null,country_code.eq.global');
+    }
+
+    const { data, error } = await query;
     if (error) {
       throw error;
     }
     this.translations.set(data || []);
     this.translationsHashmap = arrayToHashmap(data, 'id');
   }
+
   // update a translation record by ID
   public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>) {
     // Save to DB
@@ -85,7 +100,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
 
   // In your TranslationDashboardService
   public async addTranslation(translation: ITranslationInsert): Promise<string> {
-    translation.id = this.generateTranslationID(translation);
+    translation.id = translation.id || this.generateTranslationID(translation);
     const { data, error } = await this.supabaseService.db.table('translations').insert([translation]);
 
     if (error) {
@@ -119,27 +134,25 @@ export class TranslationDashboardService extends PicsaAsyncService {
     const translations = new Map<string, string>();
     const sortedData = data.sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
 
-    for (const { text, ...columns } of sortedData) {
-      const existingTranslation = translations.get(text);
-      if (!existingTranslation) {
-        // Add placeholder to track missing translations
-        translations.set(text, '');
-      }
+    for (const row of sortedData) {
+      const { text, id } = row;
+      const translatedText = row[locale];
 
-      // Store translated text
-      const translatedText = columns[locale];
-      if (translatedText !== null) {
-        if (existingTranslation && translatedText !== existingTranslation) {
-          console.warn('Duplicate translation skipped', { text, translatedText, existingTranslation });
-        } else {
-          translations.set(text, translatedText);
+      if (translatedText !== null && translatedText !== undefined && translatedText !== '') {
+        translations.set(text, translatedText);
+
+        const generatedId = this.generateTranslationID(row);
+        if (id && id !== generatedId) {
+          translations.set(id, translatedText);
         }
-      }
-    }
-    // Replace missing translations with marker fallback
-    for (const [key, value] of translations.entries()) {
-      if (value === '') {
-        translations.set(key, `•${key}•`);
+      } else {
+        if (!translations.has(text)) {
+          translations.set(text, `•${text}•`);
+        }
+        const generatedId = this.generateTranslationID(row);
+        if (id && id !== generatedId && !translations.has(id)) {
+          translations.set(id, `•${id}•`);
+        }
       }
     }
     const json = Object.fromEntries(translations);
