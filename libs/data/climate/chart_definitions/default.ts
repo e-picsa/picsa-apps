@@ -1,9 +1,9 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
-import merge from 'deepmerge';
+import { deepClone } from '@picsa/utils';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import merge from 'deepmerge';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
-import { deepClone } from '@picsa/utils';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
@@ -25,13 +25,13 @@ const AXES_DEFAULT: IChartMeta['axes'] = {
 const definitions: IChartDefinitions = {
   rainfall: {
     _id: 'rainfall',
-    name: 'Seasonal Rainfall',
-    shortname: 'Rain',
+    name: translateMarker('Seasonal Rainfall'),
+    shortname: translateMarker('Rain'),
     image: 'assets/climate-icons/season-rainfall.png',
     keys: ['Rainfall'],
     colors: ['#377eb8'],
     yFormat: 'value',
-    yLabel: 'Seasonal Total Rainfall (mm)',
+    yLabel: translateMarker('Seasonal Total Rainfall (mm)'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -46,13 +46,13 @@ const definitions: IChartDefinitions = {
   },
   start: {
     _id: 'start',
-    name: 'Start of Season',
-    shortname: 'Start',
+    name: translateMarker('Start of Season'),
+    shortname: translateMarker('Start'),
     image: 'assets/climate-icons/season-start.png',
     keys: ['Start'],
     colors: ['#e41a1c'],
     yFormat: 'date-from-July',
-    yLabel: 'Start of Season',
+    yLabel: translateMarker('Start of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -65,8 +65,8 @@ const definitions: IChartDefinitions = {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
       probability: {
-        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
-        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        above: { color: LINE_TOOL_COLORS.red, label: translateMarker('After') },
+        below: { color: LINE_TOOL_COLORS.purple, label: translateMarker('Before') },
         reverse: true,
       },
     }),
@@ -75,13 +75,13 @@ const definitions: IChartDefinitions = {
   },
   end: {
     _id: 'end',
-    name: 'End of Season',
-    shortname: 'End',
+    name: translateMarker('End of Season'),
+    shortname: translateMarker('End'),
     image: 'assets/climate-icons/season-end.png',
     keys: ['End'],
     colors: ['#984ea3'],
     yFormat: 'date-from-July',
-    yLabel: 'End of Season',
+    yLabel: translateMarker('End of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -104,13 +104,13 @@ const definitions: IChartDefinitions = {
   },
   length: {
     _id: 'length',
-    name: 'Length of Season',
-    shortname: 'Length',
+    name: translateMarker('Length of Season'),
+    shortname: translateMarker('Length'),
     image: 'assets/climate-icons/season-length.png',
     keys: ['Length'],
     colors: ['#4daf4a'],
     yFormat: 'value',
-    yLabel: 'Length of Season',
+    yLabel: translateMarker('Length of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -120,19 +120,18 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'days',
-    definition:
-      'Length of season is defined as the total days from the start of the season until the end of the season as defined',
+    definition: '',
   },
   extreme_rainfall_days: {
     _id: 'extreme_rainfall_days',
     disabled: true,
-    name: 'Extreme Rainfall',
-    shortname: 'Extreme',
+    name: translateMarker('Extreme Rainfall'),
+    shortname: translateMarker('Extreme'),
     image: 'assets/climate-icons/extreme-rainfall.svg',
     keys: ['Extreme_events'],
     colors: ['#0a3a62'],
     yFormat: 'value',
-    yLabel: 'Frequency of Extreme',
+    yLabel: translateMarker('Frequency of Extreme'),
     xLabel: 'Year',
     xVar: 'Year',
     axes: {
@@ -142,21 +141,21 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'days',
-    definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',
+    definition: '',
   },
   temp_min: {
     _id: 'temp_min',
-    name: 'Minimum Temperatures',
-    shortname: 'Min Temps',
+    name: translateMarker('Minimum Temperatures'),
+    shortname: translateMarker('Min Temps'),
     image: 'assets/climate-icons/temp_min.svg',
     keys: ['min_tmin', 'mean_tmin'],
     data_labels: {
-      min_tmin: 'Lowest minimum daily temp',
-      mean_tmin: 'Mean minimum daily temp',
+      min_tmin: translateMarker('Lowest minimum daily temp'),
+      mean_tmin: translateMarker('Mean minimum daily temp'),
     },
     colors: ['#005b85', '#42c3ff'],
     yFormat: 'value',
-    yLabel: 'Temperature (°C)',
+    yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -168,21 +167,21 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: 'The mean minimum and lowest minimum daily temperatures per year',
+    definition: '',
   },
   temp_max: {
     _id: 'temp_max',
-    name: 'Maximum Temperatures',
-    shortname: 'Max Temps',
+    name: translateMarker('Maximum Temperatures'),
+    shortname: translateMarker('Max Temps'),
     image: 'assets/climate-icons/temp_max.svg',
     keys: ['mean_tmax', 'max_tmax'],
     data_labels: {
-      mean_tmax: 'Mean maximum daily temp',
-      max_tmax: 'Highest maximum daily temp',
+      mean_tmax: translateMarker('Mean maximum daily temp'),
+      max_tmax: translateMarker('Highest maximum daily temp'),
     },
     colors: ['#f76e6e', '#850000'],
     yFormat: 'value',
-    yLabel: 'Temperature (°C)',
+    yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -194,7 +193,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: 'The mean maximum and highest maximum daily temperatures per year',
+    definition: '',
   },
 };
 

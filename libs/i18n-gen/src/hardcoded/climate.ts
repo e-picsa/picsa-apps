@@ -1,4 +1,3 @@
-import type { ICountryCode } from '@picsa/data';
 import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { IChartMeta } from '@picsa/models';
@@ -9,43 +8,24 @@ const entries = new Map<string, ITranslationEntry>();
 
 const { default: defaultDefs, ...allCountryDefs } = CLIMATE_CHART_DEFINITIONS;
 
-const extractedKeys: (keyof IChartMeta)[] = ['definition', 'name', 'shortname', 'xLabel', 'yLabel'];
+const extractedKeys: (keyof IChartMeta)[] = ['definition'];
 
 // populate default entries
-for (const [defId, def] of Object.entries(defaultDefs)) {
+for (const chartId of Object.keys(defaultDefs)) {
   for (const key of extractedKeys) {
-    const value = def[key];
-    if (typeof value === 'string') {
-      const id = `climate:chart:${defId}:${key}`;
-      entries.set(id, {
-        text: value,
-        tool: 'climate',
-      });
+    const id = `climate:chart:${chartId}:${key}`;
+    const overrides = {};
+    // get country overrides
+    for (const [countryCode, countryDefs] of Object.entries(allCountryDefs)) {
+      overrides[countryCode] = countryDefs[chartId]?.[key];
     }
-  }
-}
 
-// assign country overrides
-for (const [countryCode, countryDefs] of Object.entries(allCountryDefs)) {
-  for (const [defId, def] of Object.entries(countryDefs)) {
-    for (const key of extractedKeys) {
-      const value = def[key];
-      if (typeof value === 'string') {
-        const id = `climate:chart:${defId}:${key}`;
-        const entry = entries.get(id);
-        if (entry && entry.text !== value) {
-          entries.set(id, {
-            id,
-            text: entry.text,
-            tool: 'climate',
-            overrides: {
-              ...(entry.overrides || {}),
-              [countryCode as ICountryCode]: value,
-            },
-          });
-        }
-      }
-    }
+    entries.set(id, {
+      id,
+      text: '',
+      tool: 'climate',
+      overrides,
+    });
   }
 }
 

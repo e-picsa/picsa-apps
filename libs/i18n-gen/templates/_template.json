@@ -83,10 +83,6 @@
     "tool": "farmer_content"
   },
   {
-    "text": "Year",
-    "tool": "common"
-  },
-  {
     "text": "What is happening to the climate in your area?",
     "tool": "farmer_content"
   },
@@ -185,16 +181,6 @@
     "context": "day_short_4"
   },
   {
-    "text": "The mean minimum and lowest minimum daily temperatures per year",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "The mean maximum and highest maximum daily temperatures per year",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
     "text": "Testimonials",
     "tool": "farmer_content"
   },
@@ -204,8 +190,7 @@
   },
   {
     "text": "Temperature (°C)",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Sweet Potatoes",
@@ -224,6 +209,14 @@
     "text": "Sun",
     "tool": "common_days",
     "context": "day_short_7"
+  },
+  {
+    "text": "Start of Season",
+    "tool": "climate"
+  },
+  {
+    "text": "Start",
+    "tool": "climate"
   },
   {
     "text": "Soya Beans",
@@ -259,6 +252,14 @@
     "text": "Sep",
     "tool": "common_months",
     "context": "month_short_09"
+  },
+  {
+    "text": "Seasonal Total Rainfall (mm)",
+    "tool": "climate"
+  },
+  {
+    "text": "Seasonal Rainfall",
+    "tool": "climate"
   },
   {
     "text": "Seasonal Forecast",
@@ -311,8 +312,7 @@
   },
   {
     "text": "Rain",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Pumpkins",
@@ -431,21 +431,19 @@
   },
   {
     "text": "Minimum Temperatures",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Min Temps",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Mean minimum daily temp",
-    "tool": "common"
+    "tool": "climate"
   },
   {
     "text": "Mean maximum daily temp",
-    "tool": "common"
+    "tool": "climate"
   },
   {
     "text": "May",
@@ -454,13 +452,11 @@
   },
   {
     "text": "Maximum Temperatures",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Max Temps",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "March",
@@ -486,7 +482,7 @@
   },
   {
     "text": "Lowest minimum daily temp",
-    "tool": "common"
+    "tool": "climate"
   },
   {
     "text": "Loading",
@@ -495,6 +491,14 @@
   {
     "text": "Light Rain",
     "tool": "common_weather"
+  },
+  {
+    "text": "Length of Season",
+    "tool": "climate"
+  },
+  {
+    "text": "Length",
+    "tool": "budget"
   },
   {
     "text": "Land Preparation",
@@ -592,7 +596,7 @@
   },
   {
     "text": "Highest maximum daily temp",
-    "tool": "common"
+    "tool": "climate"
   },
   {
     "text": "Heavy Rain",
@@ -613,6 +617,10 @@
     "context": "day_short_5"
   },
   {
+    "text": "Frequency of Extreme",
+    "tool": "climate"
+  },
+  {
     "text": "Forecasts",
     "tool": "extension"
   },
@@ -629,6 +637,22 @@
   {
     "text": "Farmer Activities",
     "tool": "common"
+  },
+  {
+    "text": "Extreme Rainfall",
+    "tool": "climate"
+  },
+  {
+    "text": "Extreme",
+    "tool": "climate"
+  },
+  {
+    "text": "End of Season",
+    "tool": "climate"
+  },
+  {
+    "text": "End",
+    "tool": "climate"
   },
   {
     "text": "Draw Here",
@@ -727,7 +751,11 @@
   },
   {
     "text": "Below",
-    "tool": "common"
+    "tool": "climate"
+  },
+  {
+    "text": "Before",
+    "tool": "climate"
   },
   {
     "text": "Beans",
@@ -775,12 +803,16 @@
     "tool": "common_crop_activity"
   },
   {
+    "text": "After",
+    "tool": "climate"
+  },
+  {
     "text": "Add Photo",
     "tool": "common"
   },
   {
     "text": "Above",
-    "tool": "common"
+    "tool": "climate"
   },
   {
     "text": "Switch to Farmer",
@@ -1579,11 +1611,6 @@
     "tool": "budget"
   },
   {
-    "text": "Length",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
     "text": "Legend",
     "tool": "budget"
   },
@@ -1662,81 +1689,6 @@
   {
     "text": "Add Card",
     "tool": "budget"
-  },
-  {
-    "text": "Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Frequency of Extreme",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Extreme",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Extreme Rainfall",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Length of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "End of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "End",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Seasonal Total Rainfall (mm)",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Seasonal Rainfall",
-    "tool": "climate",
-    "context": "chart"
   },
   {
     "text": "purchase",
@@ -2087,5 +2039,75 @@
     "text": "cowpeas",
     "tool": "budget",
     "context": "enterprise"
+  },
+  {
+    "id": "climate:chart:temp_max:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "The mean maximum and highest maximum daily temperatures per year",
+      "zm": "The mean maximum and highest maximum daily temperatures per year",
+      "zw": "The mean maximum and highest maximum daily temperatures per year"
+    }
+  },
+  {
+    "id": "climate:chart:temp_min:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "The mean minimum and lowest minimum daily temperatures per year",
+      "zm": "The mean minimum and lowest minimum daily temperatures per year",
+      "zw": "The mean minimum and lowest minimum daily temperatures per year"
+    }
+  },
+  {
+    "id": "climate:chart:extreme_rainfall_days:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "Rainy days with at least 50mm",
+      "zm": "",
+      "zw": ""
+    }
+  },
+  {
+    "id": "climate:chart:length:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "Number of days between start and end of the rains",
+      "zm": "Number of days between start of the rains and end of the season",
+      "zw": "Number of days from Start of Season to End of Season"
+    }
+  },
+  {
+    "id": "climate:chart:end:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "Last occurance between 1 Oct and 30 Apr with 10 mm rainfall",
+      "zm": "First occurance from 1 Mar where water balance reduces to 0.5 mm from an initial capacity of 100mm with an assumed evaporation rate of 5mm/day",
+      "zw": "First occasion, after end of rains and before 30 June when soil moisture level is less than zero"
+    }
+  },
+  {
+    "id": "climate:chart:start:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "First occurance from 1 Oct with at least 25 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+      "zm": "First occurance from 1 Oct with at least 20 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+      "zw": "First occasion, from 1 Oct to 31 Jan, with more than 20 mm of rainfall in 3 days"
+    }
+  },
+  {
+    "id": "climate:chart:rainfall:definition",
+    "text": "",
+    "tool": "climate",
+    "overrides": {
+      "mw": "Total rainfall per year from start of the rains to end of the season",
+      "zm": "Total rainfall per year from start of the rains to end of the season",
+      "zw": "Seasonal rainfall totalled from 1 Oct to 30 Apr"
+    }
   }
 ]
