@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { LOCALES_DATA } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
@@ -21,12 +22,16 @@ import { TranslationDashboardService } from '../../../../translations.service';
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
 interface ITranslationFileEntry {
+  /** optional stable id for custom/override entries */
+  id?: string;
   /** case-sensitive string representation for translation */
   text: string;
   /** associated tool for context */
   tool: string;
   /** additional context related to tool */
-  context?: string;
+  context?: string | null;
+  /** country-specific override translations */
+  overrides?: Partial<Record<string, string>>;
 }
 
 interface ITranslationImportEntry extends ITranslationFileEntry {
@@ -38,11 +43,28 @@ enum ImportActions {
   add = 'add',
   archive = 'archive',
   restore = 'restore',
+  update = 'update',
 }
 type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] };
 
+/** Map country overrides to database columns */
+function mapOverridesToRow(entry: ITranslationFileEntry): Partial<ITranslationRow> {
+  const { overrides, ...rest } = entry;
+  const row: any = { ...rest };
+  if (overrides) {
+    for (const [countryCode, value] of Object.entries(overrides)) {
+      const countryLocales = LOCALES_DATA.filter((v) => v.country_code === countryCode);
+      const targetLocale = countryLocales.find((v) => v.language_code === 'en') || countryLocales[0];
+      if (targetLocale) {
+        row[targetLocale.id] = value || null;
+      }
+    }
+  }
+  return row;
+}
+
 /**
- * Supoprt the import of source `template.json` app file that lists all string for translations
+ * Support the import of source `template.json` app file that lists all strings for translations
  * Handles upload to DB and population from legacy data
  */
 @Component({
@@ -92,13 +114,19 @@ export class TranslationsJSONImportComponent {
     });
   }
   public async processImport() {
-    const { add, archive, restore } = this.importSummary();
+    const { add, archive, restore, update } = this.importSummary();
     for (const entry of archive) {
       await this.service.updateTranslationById(entry.id, { archived: true });
       this.importCounter.update((v) => v + 1);
     }
     for (const entry of restore) {
       await this.service.updateTranslationById(entry.id, { archived: null });
+      this.importCounter.update((v) => v + 1);
+    }
+    for (const entry of update) {
+      const { id, ...updatedFields } = entry;
+      delete (updatedFields as any).overrides;
+      await this.service.updateTranslationById(id, updatedFields);
       this.importCounter.update((v) => v + 1);
     }
     for (const entry of add) {
@@ -137,7 +165,7 @@ export class TranslationsJSONImportComponent {
     }
     const localHashmap: Record<string, ITranslationFileEntry> = {};
     for (const entry of entries) {
-      const id = this.service.generateTranslationID(entry as ITranslationRow);
+      const id = entry.id || this.service.generateTranslationID(entry as ITranslationRow);
       localHashmap[id] = entry;
     }
     await this.service.ready();
@@ -145,19 +173,36 @@ export class TranslationsJSONImportComponent {
     const summary = this.generateSourceSummary(localHashmap, serverHashmap);
 
     this.importSummary.set(summary);
-    this.importTotal.set(summary.add.length + summary.archive.length + summary.restore.length);
+    this.importTotal.set(summary.add.length + summary.archive.length + summary.restore.length + summary.update.length);
   }
 
   /** Compare local translation import with server and generate action summary */
   private generateSourceSummary(local: Record<string, ITranslationFileEntry>, server: Record<string, ITranslationRow>) {
-    const summary: ImportActionSummary = { add: [], restore: [], archive: [], skip: [] };
+    const summary: ImportActionSummary = { add: [], restore: [], archive: [], skip: [], update: [] };
     for (const [id, entry] of Object.entries(local)) {
       const serverEntry = server[id];
       if (serverEntry) {
         const { archived } = serverEntry;
+        const mappedLocal = mapOverridesToRow(entry);
+
+        // Check if there are any differences between mappedLocal and serverEntry
+        let hasChanges = false;
+        const updatePayload: Partial<ITranslationRow> = {};
+        for (const [key, val] of Object.entries(mappedLocal)) {
+          if (key === 'id' || key === 'overrides') continue;
+          if (serverEntry[key] !== val) {
+            hasChanges = true;
+            updatePayload[key] = val;
+          }
+        }
+
         // RESTORE - server entry marked as archived
         if (archived) {
           summary.restore.push({ ...entry, id });
+        }
+        // UPDATE - mapped fields differ from server
+        else if (hasChanges) {
+          summary.update.push({ ...entry, ...updatePayload, id });
         }
         // SKIP - server entry not marked as archived
         else {
@@ -165,7 +210,8 @@ export class TranslationsJSONImportComponent {
         }
       } else {
         // ADD - no server entry
-        summary.add.push({ ...entry, id });
+        const mappedLocal = mapOverridesToRow(entry);
+        summary.add.push({ ...mappedLocal, id } as any);
       }
     }
     // ARCHIVE - entries that appear on server but not locally

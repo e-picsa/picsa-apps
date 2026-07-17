@@ -37,7 +37,13 @@ type ImportSummary = {
 };
 
 /** Entries imported from CSV include language labels in columns with English translations alongside */
-type ImportTranslationEntry = { tool: string; context: string; English: string; [language_label: string]: string };
+type ImportTranslationEntry = {
+  id?: string;
+  tool: string;
+  context: string;
+  English: string;
+  [language_label: string]: string | undefined;
+};
 
 @Component({
   selector: 'dashboard-translation-xlsx-import',
@@ -119,16 +125,18 @@ export class TranslationsXLSXImportComponent {
   public exportTemplate() {
     const translations = this.service.translations().filter((v) => !v.archived);
     const countryCode = this.deploymentService.activeDeploymentCountry();
+    const englishLocale = LOCALES_DATA.find((v) => v.country_code === countryCode && v.language_code === 'en');
     const countryLocales = LOCALES_DATA.filter(
       (v) => v.country_code === countryCode && !v.language_code.includes('en'),
     );
     const exportRows: ImportTranslationEntry[] = [];
     // Prepare columns for xlsx export - including label columns for country locales
     for (const translation of translations) {
-      const { context, tool, text: English } = translation;
-      const baseRow: ImportTranslationEntry = { context: context as string, tool, English };
-      for (const { id, language_label } of countryLocales) {
-        baseRow[language_label] = translation[id];
+      const { id, context, tool, text: English } = translation;
+      const sourceText = English || (englishLocale ? translation[englishLocale.id] : '');
+      const baseRow: ImportTranslationEntry = { id, context: context as string, tool, English: sourceText };
+      for (const { id: locId, language_label } of countryLocales) {
+        baseRow[language_label] = translation[locId];
       }
       exportRows.push(baseRow);
     }
@@ -170,7 +178,7 @@ export class TranslationsXLSXImportComponent {
 
     // Extract available languages from first data row
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { tool, context, English, ...languageEntries } = translationData[0];
+    const { id, tool, context, English, ...languageEntries } = translationData[0];
     const allLocales = LOCALES_DATA.filter((v) => v.country_code === targetCode);
     const localesByLabel = arrayToHashmap(allLocales, 'language_label');
     const localeOptions = Object.keys(languageEntries)
@@ -184,8 +192,8 @@ export class TranslationsXLSXImportComponent {
     const rows: ITranslation['Insert'][] = [];
 
     // Extract translation entries
-    for (const { tool, context, English, ...languageEntries } of data) {
-      const rowBase: ITranslation['Insert'] = { tool, context, text: English, id: '' };
+    for (const { id, tool, context, English, ...languageEntries } of data) {
+      const rowBase: ITranslation['Insert'] = { tool, context, text: English, id: id || '' };
       rowBase.id = this.service.generateTranslationID(rowBase);
       const translation = languageEntries[locale.language_label];
       // trim whitespace and remove any accidental duplicate spaces (2 or more)

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JsonImportComponent } from './json-import.component';
+import { TranslationsJSONImportComponent } from './json-import.component';
 
-describe('JsonImportComponent', () => {
-  let component: JsonImportComponent;
-  let fixture: ComponentFixture<JsonImportComponent>;
+describe('TranslationsJSONImportComponent', () => {
+  let component: TranslationsJSONImportComponent;
+  let fixture: ComponentFixture<TranslationsJSONImportComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [JsonImportComponent],
+      imports: [TranslationsJSONImportComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(JsonImportComponent);
+    fixture = TestBed.createComponent(TranslationsJSONImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
