@@ -104,6 +104,10 @@
     "tool": "budget"
   },
   {
+    "text": "Length",
+    "tool": "budget"
+  },
+  {
     "text": "Male Member",
     "tool": "budget"
   },
@@ -674,61 +678,101 @@
     "context": "inputs"
   },
   {
+    "id": "mw:climate.chart.end.definition",
+    "text": "Last occurence between 1 Oct and 30 Apr with 10 mm rainfall",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.extreme_rainfall_days.definition",
+    "text": "Rainy days with at least 50mm",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.length.definition",
+    "text": "Number of days between start and end of the rains",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.rainfall.definition",
+    "text": "Total rainfall per year from start of the rains to end of the season",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.start.definition",
+    "text": "First occurence from 1 Oct with at least 25 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.temp_max.definition",
+    "text": "The mean maximum and highest maximum daily temperatures per year",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "id": "mw:climate.chart.temp_min.definition",
+    "text": "The mean minimum and lowest minimum daily temperatures per year",
+    "tool": "climate",
+    "country_code": "mw"
+  },
+  {
+    "text": "Above",
+    "tool": "climate"
+  },
+  {
+    "text": "After",
+    "tool": "climate"
+  },
+  {
+    "text": "Before",
+    "tool": "climate"
+  },
+  {
+    "text": "Below",
+    "tool": "climate"
+  },
+  {
     "text": "Chart",
     "tool": "climate"
   },
   {
     "text": "End",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "End of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Extreme",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Extreme Rainfall",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Frequency of Extreme",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
-    "text": "Length",
-    "tool": "climate",
-    "context": "chart"
+    "text": "Highest maximum daily temp",
+    "tool": "climate"
   },
   {
     "text": "Length of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Line",
+    "tool": "climate"
+  },
+  {
+    "text": "Lowest minimum daily temp",
     "tool": "climate"
   },
   {
@@ -737,23 +781,27 @@
   },
   {
     "text": "Max Temps",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Maximum Temperatures",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
+  },
+  {
+    "text": "Mean maximum daily temp",
+    "tool": "climate"
+  },
+  {
+    "text": "Mean minimum daily temp",
+    "tool": "climate"
   },
   {
     "text": "Min Temps",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Minimum Temperatures",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Print Version",
@@ -761,23 +809,15 @@
   },
   {
     "text": "Rain",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Seasonal Rainfall",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Seasonal Total Rainfall (mm)",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Select a site",
@@ -797,37 +837,19 @@
   },
   {
     "text": "Start",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Start of Season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Temperature (°C)",
-    "tool": "climate",
-    "context": "chart"
+    "tool": "climate"
   },
   {
     "text": "Terciles",
     "tool": "climate"
-  },
-  {
-    "text": "The mean maximum and highest maximum daily temperatures per year",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "The mean minimum and lowest minimum daily temperatures per year",
-    "tool": "climate",
-    "context": "chart"
   },
   {
     "text": "out of",
@@ -838,8 +860,46 @@
     "tool": "climate"
   },
   {
-    "text": "Above",
-    "tool": "common"
+    "id": "zm:climate.chart.end.definition",
+    "text": "First occurence from 1 Mar where water balance reduces to 0.5 mm from an initial capacity of 100mm with an assumed evaporation rate of 5mm/day",
+    "tool": "climate",
+    "country_code": "zm"
+  },
+  {
+    "id": "zm:climate.chart.length.definition",
+    "text": "Number of days between start of the rains and end of the season",
+    "tool": "climate",
+    "country_code": "zm"
+  },
+  {
+    "id": "zm:climate.chart.start.definition",
+    "text": "First occurence from 1 Oct with at least 20 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+    "tool": "climate",
+    "country_code": "zm"
+  },
+  {
+    "id": "zw:climate.chart.end.definition",
+    "text": "First occasion, after end of rains and before 30 June when soil moisture level is less than zero",
+    "tool": "climate",
+    "country_code": "zw"
+  },
+  {
+    "id": "zw:climate.chart.length.definition",
+    "text": "Number of days from Start of Season to End of Season",
+    "tool": "climate",
+    "country_code": "zw"
+  },
+  {
+    "id": "zw:climate.chart.rainfall.definition",
+    "text": "Seasonal rainfall totalled from 1 Oct to 30 Apr",
+    "tool": "climate",
+    "country_code": "zw"
+  },
+  {
+    "id": "zw:climate.chart.start.definition",
+    "text": "First occasion, from 1 Oct to 31 Jan, with more than 20 mm of rainfall in 3 days",
+    "tool": "climate",
+    "country_code": "zw"
   },
   {
     "text": "Add Photo",
@@ -855,25 +915,13 @@
     "context": "buttons"
   },
   {
-    "text": "Below",
-    "tool": "common"
-  },
-  {
     "text": "By continuing, you agree to our",
-    "tool": "common"
-  },
-  {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
     "tool": "common"
   },
   {
     "text": "Cancel",
     "tool": "common",
     "context": "buttons"
-  },
-  {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
-    "tool": "common"
   },
   {
     "text": "Choose country",
@@ -923,14 +971,6 @@
     "tool": "common"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
-    "tool": "common"
-  },
-  {
-    "text": "Highest maximum daily temp",
-    "tool": "common"
-  },
-  {
     "text": "I'm a farmer",
     "tool": "common"
   },
@@ -943,19 +983,7 @@
     "tool": "common"
   },
   {
-    "text": "Lowest minimum daily temp",
-    "tool": "common"
-  },
-  {
     "text": "Manual",
-    "tool": "common"
-  },
-  {
-    "text": "Mean maximum daily temp",
-    "tool": "common"
-  },
-  {
-    "text": "Mean minimum daily temp",
     "tool": "common"
   },
   {
@@ -997,10 +1025,6 @@
     "context": "buttons"
   },
   {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
-    "tool": "common"
-  },
-  {
     "text": "Terms of Use",
     "tool": "common"
   },
@@ -1014,10 +1038,6 @@
   },
   {
     "text": "What best describes you?",
-    "tool": "common"
-  },
-  {
-    "text": "Year",
     "tool": "common"
   },
   {
