@@ -1012,6 +1012,7 @@ export type Database = {
           created_at: string;
           id: string;
           ke_sw: string | null;
+          mw_en: string | null;
           mw_ny: string | null;
           mw_tum: string | null;
           text: string;
@@ -1019,12 +1020,14 @@ export type Database = {
           tool: string;
           updated_at: string | null;
           zm_bem: string | null;
+          zm_en: string | null;
           zm_kqn: string | null;
           zm_loz: string | null;
           zm_lue: string | null;
           zm_lun: string | null;
           zm_ny: string | null;
           zm_toi: string | null;
+          zw_en: string | null;
         };
         Insert: {
           archived?: boolean | null;
@@ -1032,6 +1035,7 @@ export type Database = {
           created_at?: string;
           id: string;
           ke_sw?: string | null;
+          mw_en?: string | null;
           mw_ny?: string | null;
           mw_tum?: string | null;
           text: string;
@@ -1039,12 +1043,14 @@ export type Database = {
           tool: string;
           updated_at?: string | null;
           zm_bem?: string | null;
+          zm_en?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
           zm_lue?: string | null;
           zm_lun?: string | null;
           zm_ny?: string | null;
           zm_toi?: string | null;
+          zw_en?: string | null;
         };
         Update: {
           archived?: boolean | null;
@@ -1052,6 +1058,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           ke_sw?: string | null;
+          mw_en?: string | null;
           mw_ny?: string | null;
           mw_tum?: string | null;
           text?: string;
@@ -1059,12 +1066,14 @@ export type Database = {
           tool?: string;
           updated_at?: string | null;
           zm_bem?: string | null;
+          zm_en?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
           zm_lue?: string | null;
           zm_lun?: string | null;
           zm_ny?: string | null;
           zm_toi?: string | null;
+          zw_en?: string | null;
         };
         Relationships: [];
       };

@@ -45,11 +45,14 @@ function generateTranslationTemplates() {
   }
   // sort and remove duplicates
   const ordered = entries
-    .filter(({ text }) => text !== '')
+    // Keep entry if it has any country-specific override value
+    .filter((entry) => entry.text || entry.overrides)
     .sort((a, b) => {
       // context priority
       let aScore = 0;
       let bScore = 0;
+      if (a.id) aScore += 1000;
+      if (b.id) bScore += 1000;
       if (a.context) aScore += 100;
       if (b.context) bScore += 100;
       if (a.tool !== 'common') aScore += 10;
@@ -60,17 +63,17 @@ function generateTranslationTemplates() {
   // as entries will be sorted by lowest to highest score simply
   // allow higher score to override lower and form unique list
   for (const el of ordered) {
-    unique[el.text] = el;
+    const key = el.id || el.text;
+    if (key) {
+      unique[key] = el;
+    }
   }
   const output = Object.values(unique);
   writeFileSync(TEMPLATE_PATH, JSON.stringify(output, null, 2));
 }
 
 function stringToTranslationEntry(text: string, tool: string, context?: string) {
-  const entry: ITranslationEntry = {
-    text,
-    tool: tool as any,
-  };
+  const entry: ITranslationEntry = { text, tool };
   if (context) entry.context = context;
   return entry;
 }

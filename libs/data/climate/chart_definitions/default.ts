@@ -42,8 +42,7 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'mm',
-    definition:
-      'Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season',
+    definition: '',
   },
   start: {
     _id: 'start',
@@ -72,8 +71,7 @@ const definitions: IChartDefinitions = {
       },
     }),
     units: '',
-    definition:
-      'Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days',
+    definition: '',
   },
   end: {
     _id: 'end',
@@ -102,8 +100,7 @@ const definitions: IChartDefinitions = {
       },
     }),
     units: '',
-    definition:
-      'End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.',
+    definition: '',
   },
   length: {
     _id: 'length',
@@ -149,19 +146,19 @@ const definitions: IChartDefinitions = {
   },
   temp_min: {
     _id: 'temp_min',
-    name: translateMarker('Minimum Temperatures'),
-    shortname: translateMarker('Min Temps'),
+    name: 'Minimum Temperatures',
+    shortname: 'Min Temps',
     image: 'assets/climate-icons/temp_min.svg',
     keys: ['min_tmin', 'mean_tmin'],
     data_labels: {
-      min_tmin: translateMarker('Lowest minimum daily temp'),
-      mean_tmin: translateMarker('Mean minimum daily temp'),
+      min_tmin: 'Lowest minimum daily temp',
+      mean_tmin: 'Mean minimum daily temp',
     },
     colors: ['#005b85', '#42c3ff'],
     yFormat: 'value',
-    yLabel: translateMarker('Temperature (°C)'),
+    yLabel: 'Temperature (°C)',
     xLabel: '',
-    xVar: translateMarker('Year'),
+    xVar: 'Year',
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
@@ -171,23 +168,23 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean minimum and lowest minimum daily temperatures per year'),
+    definition: 'The mean minimum and lowest minimum daily temperatures per year',
   },
   temp_max: {
     _id: 'temp_max',
-    name: translateMarker('Maximum Temperatures'),
-    shortname: translateMarker('Max Temps'),
+    name: 'Maximum Temperatures',
+    shortname: 'Max Temps',
     image: 'assets/climate-icons/temp_max.svg',
     keys: ['mean_tmax', 'max_tmax'],
     data_labels: {
-      mean_tmax: translateMarker('Mean maximum daily temp'),
-      max_tmax: translateMarker('Highest maximum daily temp'),
+      mean_tmax: 'Mean maximum daily temp',
+      max_tmax: 'Highest maximum daily temp',
     },
     colors: ['#f76e6e', '#850000'],
     yFormat: 'value',
-    yLabel: translateMarker('Temperature (°C)'),
+    yLabel: 'Temperature (°C)',
     xLabel: '',
-    xVar: translateMarker('Year'),
+    xVar: 'Year',
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
@@ -197,7 +194,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean maximum and highest maximum daily temperatures per year'),
+    definition: 'The mean maximum and highest maximum daily temperatures per year',
   },
 };
 

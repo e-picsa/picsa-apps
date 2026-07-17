@@ -1,5 +1,5 @@
-import type { Database } from './db.types.ts';
-export type { Database };
+import type { Database, Json } from './db.types.ts';
+export type { Database, Json };
 
 import type { CountryCode, CountryCodeLegacy, LocaleCode, LocaleCodeLegacy } from './db-derived.types.ts';
 export type { CountryCode, CountryCodeLegacy, LocaleCode, LocaleCodeLegacy };

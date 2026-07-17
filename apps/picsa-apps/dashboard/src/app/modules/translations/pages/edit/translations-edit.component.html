@@ -2,13 +2,13 @@
   <!-- Short text input -->
   @if (text.length < 20) {
     <mat-form-field style="width: 320px">
-      <mat-label>{{ text }}</mat-label>
+      <mat-label>{{ text() }}</mat-label>
       <input matInput formControlName="value" cdkFocusInitial />
     </mat-form-field>
   } @else {
     <!-- Longer textarea input -->
     <mat-form-field style="width: 320px">
-      <p>{{ text }}</p>
+      <p>{{ text() }}</p>
       <textarea matInput formControlName="value" cdkFocusInitial></textarea>
     </mat-form-field>
   }
