@@ -132,7 +132,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   public exportJson(locale: string, shouldDownload = false) {
     const data = this.translations();
     const translations = new Map<string, string>();
-    const sortedData = data.sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
+    const sortedData = [...data].sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
 
     for (const row of sortedData) {
       const { text, id } = row;
