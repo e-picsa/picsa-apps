@@ -123,9 +123,11 @@ export class TranslationsPageComponent {
 
   private getTargetTranslationLanguages(country_code: string) {
     if (country_code === 'global') {
-      return LOCALES_DATA;
+      return LOCALES_DATA.filter((o) => o.language_code !== 'en' || o.id === 'global_en');
     }
-    const filtered = LOCALES_DATA.filter((o) => o.country_code === country_code);
+    const filtered = LOCALES_DATA.filter(
+      (o) => o.country_code === country_code && (o.language_code !== 'en' || o.id === 'global_en'),
+    );
     if (filtered.length === 0) {
       console.warn(`[Translations] no language codes for ${country_code}`);
       return [LOCALES_DATA_HASHMAP.global_en];
@@ -135,14 +137,12 @@ export class TranslationsPageComponent {
 
   private generateTableOptions(locale: string): IDataTableOptions {
     return {
-      exportFilename: 'translations',
       formatHeader: (v) => {
+        if (v === 'text') return 'English';
         const languageData: ILocaleDataEntry = LOCALES_DATA_HASHMAP[v];
         if (languageData) {
-          const { language_label, country_code } = languageData;
-          const { label: country_label } = COUNTRIES_DATA_HASHMAP[country_code];
-          if (country_code === 'global') return capitalise(language_label);
-          return capitalise(country_label) + ' - ' + capitalise(language_label);
+          const { language_label } = languageData;
+          return capitalise(language_label);
         }
         return formatHeaderDefault(v);
       },

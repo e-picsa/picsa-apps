@@ -1,20 +1,32 @@
-<form [formGroup]="form">
-  <!-- Short text input -->
-  @if (text.length < 20) {
-    <mat-form-field style="width: 320px">
-      <mat-label>{{ text }}</mat-label>
-      <input matInput formControlName="value" cdkFocusInitial />
-    </mat-form-field>
-  } @else {
-    <!-- Longer textarea input -->
-    <mat-form-field style="width: 320px">
-      <p>{{ text }}</p>
-      <textarea matInput formControlName="value" cdkFocusInitial></textarea>
-    </mat-form-field>
-  }
-  <!-- Action buttons -->
-  <mat-dialog-actions>
-    <button matButton mat-dialog-close>Cancel</button>
-    <button matButton mat-dialog-close (click)="save()" [disabled]="form.invalid || form.pristine">Save</button>
-  </mat-dialog-actions>
-</form>
+<h2 mat-dialog-title class="!text-lg !font-semibold">Edit Translation</h2>
+
+<mat-dialog-content class="!pb-6">
+  <form [formGroup]="form" class="flex flex-col gap-4 min-w-[320px] max-w-[500px]">
+    <!-- English Source -->
+    <div class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">English</span>
+      <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-200 select-all whitespace-pre-wrap max-h-[160px] overflow-y-auto">
+        {{ text }}
+      </div>
+    </div>
+
+    <!-- Translation Input -->
+    <div class="flex flex-col gap-1.5 mt-2">
+      <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        {{ translationLanguageLabel }}
+      </span>
+      <mat-form-field appearance="outline" class="w-full">
+        @if (text.length < 20) {
+          <input matInput formControlName="value" cdkFocusInitial placeholder="Enter translation" />
+        } @else {
+          <textarea matInput formControlName="value" cdkFocusInitial placeholder="Enter translation" rows="4"></textarea>
+        }
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="!px-6 !pb-4">
+  <button matButton mat-dialog-close>Cancel</button>
+  <button matButton="filled" color="primary" mat-dialog-close (click)="save()" [disabled]="form.invalid || form.pristine">Save</button>
+</mat-dialog-actions>
