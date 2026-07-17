@@ -679,7 +679,7 @@
   },
   {
     "id": "mw:climate.chart.end.definition",
-    "text": "Last occurence between 1 Oct and 30 Apr with 10 mm rainfall",
+    "text": "Last occurrence between 1 Oct and 30 Apr with 10 mm rainfall",
     "tool": "climate",
     "country_code": "mw"
   },
@@ -703,7 +703,7 @@
   },
   {
     "id": "mw:climate.chart.start.definition",
-    "text": "First occurence from 1 Oct with at least 25 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+    "text": "First occurrence from 1 Oct with at least 25 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
     "tool": "climate",
     "country_code": "mw"
   },
@@ -861,7 +861,7 @@
   },
   {
     "id": "zm:climate.chart.end.definition",
-    "text": "First occurence from 1 Mar where water balance reduces to 0.5 mm from an initial capacity of 100mm with an assumed evaporation rate of 5mm/day",
+    "text": "First occurrence from 1 Mar where water balance reduces to 0.5 mm from an initial capacity of 100mm with an assumed evaporation rate of 5mm/day",
     "tool": "climate",
     "country_code": "zm"
   },
@@ -873,7 +873,7 @@
   },
   {
     "id": "zm:climate.chart.start.definition",
-    "text": "First occurence from 1 Oct with at least 20 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
+    "text": "First occurrence from 1 Oct with at least 20 mm of rainfall over 3 consecutive days (with no dry spell of length 9 in the next 21 days)",
     "tool": "climate",
     "country_code": "zm"
   },
