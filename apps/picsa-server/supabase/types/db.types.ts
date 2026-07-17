@@ -1009,6 +1009,7 @@ export type Database = {
         Row: {
           archived: boolean | null;
           context: string | null;
+          country_code: Database['public']['Enums']['country_code'] | null;
           created_at: string;
           id: string;
           ke_sw: string | null;
@@ -1029,6 +1030,7 @@ export type Database = {
         Insert: {
           archived?: boolean | null;
           context?: string | null;
+          country_code?: Database['public']['Enums']['country_code'] | null;
           created_at?: string;
           id: string;
           ke_sw?: string | null;
@@ -1049,6 +1051,7 @@ export type Database = {
         Update: {
           archived?: boolean | null;
           context?: string | null;
+          country_code?: Database['public']['Enums']['country_code'] | null;
           created_at?: string;
           id?: string;
           ke_sw?: string | null;
@@ -1408,7 +1411,6 @@ export type Database = {
           created_at: string | null;
           id: string;
           last_accessed_at: string | null;
-          level: number | null;
           metadata: Json | null;
           name: string | null;
           owner: string | null;
@@ -1423,7 +1425,6 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
@@ -1438,7 +1439,6 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
@@ -1458,38 +1458,6 @@ export type Database = {
           },
         ];
       };
-      prefixes: {
-        Row: {
-          bucket_id: string;
-          created_at: string | null;
-          level: number;
-          name: string;
-          updated_at: string | null;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string | null;
-          level?: number;
-          name: string;
-          updated_at?: string | null;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string | null;
-          level?: number;
-          name?: string;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'prefixes_bucketId_fkey';
-            columns: ['bucket_id'];
-            isOneToOne: false;
-            referencedRelation: 'buckets';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       s3_multipart_uploads: {
         Row: {
           bucket_id: string;
@@ -1497,6 +1465,7 @@ export type Database = {
           id: string;
           in_progress_size: number;
           key: string;
+          metadata: Json | null;
           owner_id: string | null;
           upload_signature: string;
           user_metadata: Json | null;
@@ -1508,6 +1477,7 @@ export type Database = {
           id: string;
           in_progress_size?: number;
           key: string;
+          metadata?: Json | null;
           owner_id?: string | null;
           upload_signature: string;
           user_metadata?: Json | null;
@@ -1519,6 +1489,7 @@ export type Database = {
           id?: string;
           in_progress_size?: number;
           key?: string;
+          metadata?: Json | null;
           owner_id?: string | null;
           upload_signature?: string;
           user_metadata?: Json | null;
@@ -1637,28 +1608,25 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      add_prefixes: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: undefined;
+      allow_any_operation: {
+        Args: { expected_operations: string[] };
+        Returns: boolean;
+      };
+      allow_only_operation: {
+        Args: { expected_operation: string };
+        Returns: boolean;
       };
       can_insert_object: {
         Args: { bucketid: string; metadata: Json; name: string; owner: string };
         Returns: undefined;
       };
-      delete_leaf_prefixes: {
-        Args: { bucket_ids: string[]; names: string[] };
-        Returns: undefined;
-      };
-      delete_prefix: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: boolean;
-      };
       extension: { Args: { name: string }; Returns: string };
       filename: { Args: { name: string }; Returns: string };
       foldername: { Args: { name: string }; Returns: string[] };
-      get_level: { Args: { name: string }; Returns: number };
-      get_prefix: { Args: { name: string }; Returns: string };
-      get_prefixes: { Args: { name: string }; Returns: string[] };
+      get_common_prefix: {
+        Args: { p_delimiter: string; p_key: string; p_prefix: string };
+        Returns: string;
+      };
       get_size_by_bucket: {
         Args: never;
         Returns: {
@@ -1683,64 +1651,25 @@ export type Database = {
       };
       list_objects_with_delimiter: {
         Args: {
-          bucket_id: string;
+          _bucket_id: string;
           delimiter_param: string;
           max_keys?: number;
           next_token?: string;
           prefix_param: string;
+          sort_order?: string;
           start_after?: string;
         };
         Returns: {
+          created_at: string;
           id: string;
+          last_accessed_at: string;
           metadata: Json;
           name: string;
           updated_at: string;
         }[];
-      };
-      lock_top_prefixes: {
-        Args: { bucket_ids: string[]; names: string[] };
-        Returns: undefined;
       };
       operation: { Args: never; Returns: string };
-      search:
-        | {
-            Args: {
-              bucketname: string;
-              levels?: number;
-              limits?: number;
-              offsets?: number;
-              prefix: string;
-            };
-            Returns: {
-              created_at: string;
-              id: string;
-              last_accessed_at: string;
-              metadata: Json;
-              name: string;
-              updated_at: string;
-            }[];
-          }
-        | {
-            Args: {
-              bucketname: string;
-              levels?: number;
-              limits?: number;
-              offsets?: number;
-              prefix: string;
-              search?: string;
-              sortcolumn?: string;
-              sortorder?: string;
-            };
-            Returns: {
-              created_at: string;
-              id: string;
-              last_accessed_at: string;
-              metadata: Json;
-              name: string;
-              updated_at: string;
-            }[];
-          };
-      search_legacy_v1: {
+      search: {
         Args: {
           bucketname: string;
           levels?: number;
@@ -1760,65 +1689,48 @@ export type Database = {
           updated_at: string;
         }[];
       };
-      search_v1_optimised: {
+      search_by_timestamp: {
         Args: {
-          bucketname: string;
-          levels?: number;
-          limits?: number;
-          offsets?: number;
-          prefix: string;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
+          p_bucket_id: string;
+          p_level: number;
+          p_limit: number;
+          p_prefix: string;
+          p_sort_column: string;
+          p_sort_column_after: string;
+          p_sort_order: string;
+          p_start_after: string;
         };
         Returns: {
           created_at: string;
           id: string;
+          key: string;
           last_accessed_at: string;
           metadata: Json;
           name: string;
           updated_at: string;
         }[];
       };
-      search_v2:
-        | {
-            Args: {
-              bucket_name: string;
-              levels?: number;
-              limits?: number;
-              prefix: string;
-              start_after?: string;
-            };
-            Returns: {
-              created_at: string;
-              id: string;
-              key: string;
-              metadata: Json;
-              name: string;
-              updated_at: string;
-            }[];
-          }
-        | {
-            Args: {
-              bucket_name: string;
-              levels?: number;
-              limits?: number;
-              prefix: string;
-              sort_column?: string;
-              sort_column_after?: string;
-              sort_order?: string;
-              start_after?: string;
-            };
-            Returns: {
-              created_at: string;
-              id: string;
-              key: string;
-              last_accessed_at: string;
-              metadata: Json;
-              name: string;
-              updated_at: string;
-            }[];
-          };
+      search_v2: {
+        Args: {
+          bucket_name: string;
+          levels?: number;
+          limits?: number;
+          prefix: string;
+          sort_column?: string;
+          sort_column_after?: string;
+          sort_order?: string;
+          start_after?: string;
+        };
+        Returns: {
+          created_at: string;
+          id: string;
+          key: string;
+          last_accessed_at: string;
+          metadata: Json;
+          name: string;
+          updated_at: string;
+        }[];
+      };
     };
     Enums: {
       buckettype: 'STANDARD' | 'ANALYTICS' | 'VECTOR';
