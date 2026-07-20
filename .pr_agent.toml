@@ -10,7 +10,9 @@ model = "gemini/gemini-3.5-flash"
 fallback_models = ["gemini/gemini-3.1-pro"]
 
 [pr_description]
-publish_description_as_comment = true
+publish_description_as_comment = false
+keep_original_user_description = true
+use_description_markers = true
 inline_code_comments = true
 
 # Review Tool Customization (/review)
