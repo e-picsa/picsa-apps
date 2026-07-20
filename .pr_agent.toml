@@ -10,17 +10,25 @@ model = "gemini/gemini-3.5-flash"
 fallback_models = ["openrouter/google/gemini-3.5-flash", "openrouter/minimax/minimax-m3"]
 ai_timeout = 180
 
+# 1. Controls /describe tool
 [pr_description]
 publish_description_as_comment = false
 keep_original_user_description = true
 use_description_markers = true
-inline_code_comments = true
 
-# Review Tool Customization (/review)
+# 2. Controls /review tool
 [pr_reviewer]
-enable_inline_comments = true
-num_code_suggestions = 4
+enable_inline_comments = false
+num_code_suggestions = 3
+extra_instructions = """
+Focus strictly on material issues: logic errors, race conditions, edge cases, missing error boundaries, and security vulnerabilities.
+Ignore minor style formatting, variable naming preferences, and cosmetic refactoring.
+"""
 
-# Code Improvement Tool Customization (/improve)
+# 3. Controls /improve tool
 [pr_code_suggestions]
-num_code_suggestions = 4
+num_code_suggestions_per_chunk = 4
+committable_code_comments = false
+extra_instructions = """
+Only offer code suggestions if they directly fix a bug, improve performance significantly, or eliminate a security risk.
+"""
