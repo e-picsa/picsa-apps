@@ -63,48 +63,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
           github_action_config.auto_review: 'true'
           github_action_config.auto_describe: 'true'
           github_action_config.auto_improve: 'true'
           github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
           # github_action_config.config_branch: 'feat/pr-agent'
 
-      - name: Cooldown before Retry
-        if: steps.pragent.outcome == 'failure' || steps.pragent.outputs.review == ''
-        run: |
-          echo "PR Agent attempt 1 failed or generated empty output. Cooling down for 15s..."
-          sleep 30
-
-      - name: PR Agent Action (Attempt 2)
-        if: steps.pragent.outcome == 'failure' || steps.pragent.outputs.review == ''
-        uses: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
-        id: pragent_retry
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          github_action_config.auto_review: 'true'
-          github_action_config.auto_describe: 'true'
-          github_action_config.auto_improve: 'true'
-          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
-
       - name: Verify PR Agent Output & Track Failures
         if: always()
         run: |
-          OUTCOME1="${{ steps.pragent.outcome }}"
-          OUTCOME2="${{ steps.pragent_retry.outcome }}"
-          REVIEW1="${{ steps.pragent.outputs.review }}"
-          REVIEW2="${{ steps.pragent_retry.outputs.review }}"
+          OUTCOME="${{ steps.pragent.outcome }}"
+          REVIEW="${{ steps.pragent.outputs.review }}"
 
-          echo "Attempt 1: outcome=$OUTCOME1 review_length=${#REVIEW1}"
-          echo "Attempt 2: outcome=$OUTCOME2 review_length=${#REVIEW2}"
+          echo "Outcome: outcome=$OUTCOME review_length=${#REVIEW}"
 
-          if [ "$OUTCOME1" = "success" ] && [ -n "$REVIEW1" ]; then
-            echo "PR Agent completed successfully on attempt 1."
-          elif [ "$OUTCOME2" = "success" ] && [ -n "$REVIEW2" ]; then
-            echo "PR Agent completed successfully on attempt 2 (retry)."
+          if [ "$OUTCOME" = "success" ] && [ -n "$REVIEW" ]; then
+            echo "PR Agent completed successfully."
           else
-            echo "### ❌ PR Agent Action Failed after Retries" >> $GITHUB_STEP_SUMMARY
-            echo "Attempt 1 outcome: **$OUTCOME1** (review output populated: $([ -n "$REVIEW1" ] && echo "yes" || echo "no"))" >> $GITHUB_STEP_SUMMARY
-            echo "Attempt 2 outcome: **$OUTCOME2** (review output populated: $([ -n "$REVIEW2" ] && echo "yes" || echo "no"))" >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ PR Agent Action Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Outcome: **$OUTCOME** (review output populated: $([ -n "$REVIEW" ] && echo "yes" || echo "no"))" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi

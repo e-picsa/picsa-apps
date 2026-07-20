@@ -7,7 +7,7 @@
 
 [config]
 model = "gemini/gemini-3.5-flash"
-fallback_models = ["gemini/gemini-3.1-pro-preview", "gemini/gemini-3-flash-preview", "gemini/gemini-3.1-flash-lite"]
+fallback_models = ["openrouter/google/gemini-3.5-flash", "openrouter/minimax/minimax-m3"]
 ai_timeout = 180
 
 [pr_description]
