@@ -23,8 +23,8 @@ jobs:
         id: pragent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GOOGLE_AI_STUDIO_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CONFIG.MODEL: 'gemini/gemini-3.5-flash'
-          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: 'true'
-          PR_REVIEWER.REQUIRE_CAN_BE_SHARED_PROMPT: 'true'
-          PR_REVIEWER.INLINE_CODE_COMMENTS: 'true'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          github_action_config.auto_review: 'true'
+          github_action_config.auto_describe: 'true'
+          github_action_config.auto_improve: 'true'
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested"]'

@@ -1,9 +1,9 @@
 # PR-Agent Configuration
 # Documentation: https://docs.pr-agent.ai/
 
-https://docs.pr-agent.ai/installation/github/?h=fallback_models#using-configuration-files
+# https://docs.pr-agent.ai/installation/github/?h=fallback_models#using-configuration-files
 
-https://docs.pr-agent.ai/tools/describe/#configuration-options
+# https://docs.pr-agent.ai/tools/describe/#configuration-options
 
 [config]
 model = "gemini/gemini-3.5-flash"
@@ -11,6 +11,7 @@ fallback_models = ["gemini/gemini-3.1-pro"]
 
 [pr_description]
 publish_description_as_comment = true
+inline_code_comments = true
 
 # Review Tool Customization (/review)
 [pr_reviewer]
