@@ -1,0 +1,30 @@
+# PR-Agent GitHub Action Workflow
+# Documentation: https://docs.pr-agent.ai/installation/github/
+
+name: Gemini PR Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  pr_agent_job:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+    steps:
+      # NOTE - does not require checkout
+      - name: PR Agent Action
+        uses: the-pr-agent/pr-agent@main
+        id: pragent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOGLE_AI_STUDIO_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CONFIG.MODEL: 'gemini/gemini-3.5-flash'
+          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: 'true'
+          PR_REVIEWER.REQUIRE_CAN_BE_SHARED_PROMPT: 'true'
+          PR_REVIEWER.INLINE_CODE_COMMENTS: 'true'
