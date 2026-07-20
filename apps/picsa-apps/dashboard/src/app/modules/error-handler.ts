@@ -71,14 +71,14 @@ export class DashboardErrorHandler implements ErrorHandler {
   }
 
   private extractErrorMessage(error: unknown): string {
-    if (typeof error === 'string') {
+    if (typeof error === 'string' && error.trim() !== '') {
       return error;
     }
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
     if (typeof error === 'object' && error !== null && 'message' in error) {
-      return String((error as { message: unknown }).message);
+      const message = (error as { message: unknown }).message;
+      if (typeof message === 'string' && message.trim() !== '') {
+        return message;
+      }
     }
     return 'An unexpected error occurred';
   }
