@@ -9,9 +9,14 @@ on:
   issue_comment:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pr_agent_job:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
@@ -52,8 +57,13 @@ jobs:
             }
 
       - name: PR Agent Action
-        uses: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
+        uses: Wandalen/wretry.action@v3.8.0
         id: pragent
+        with:
+          action: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
+          attempt_limit: 3
+          attempt_delay: 15000 # 15 seconds cooldown between attempts
+          retry_condition: steps._this.outcome == 'failure' || steps._this.outputs.review == ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -62,3 +72,15 @@ jobs:
           github_action_config.auto_improve: 'true'
           github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
           # github_action_config.config_branch: 'feat/pr-agent'
+
+      - name: Verify PR Agent Output & Track Failures
+        if: always()
+        run: |
+          OUTCOME="${{ steps.pragent.outcome }}"
+          echo "PR Agent Step Outcome: $OUTCOME"
+
+          if [ "$OUTCOME" != "success" ]; then
+            echo "### ❌ PR Agent Action Failed after Retries" >> $GITHUB_STEP_SUMMARY
+            echo "Step outcome was: **$OUTCOME**" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
