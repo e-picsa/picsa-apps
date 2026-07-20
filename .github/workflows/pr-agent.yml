@@ -9,14 +9,23 @@ on:
   issue_comment:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pr_agent_job:
+    # Prevent bot loops when PR-Agent or dependabot posts comments
+    if: ${{ github.event.sender.type != 'Bot' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
       issues: write
+
     steps:
+      # Optional: Only needed if you rely on root repository context files (e.g. AGENTS.md, .pr_agent.toml)
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -54,11 +63,25 @@ jobs:
       - name: PR Agent Action
         uses: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
         id: pragent
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          github_action_config.auto_review: 'true'
+          OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          
+          # 1. Automatic actions run when PR is FIRST opened/reopened
           github_action_config.auto_describe: 'true'
+          github_action_config.auto_review: 'true'
           github_action_config.auto_improve: 'true'
-          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
-          # github_action_config.config_branch: 'feat/pr-agent'
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review"]'
+
+          # 2. Controls behavior when new commits are pushed (synchronize)
+          # Setting handle_push_trigger to false prevents auto_improve from running on pushes
+          github_action_config.handle_push_trigger: 'false'
+
+      - name: Track Action Failures
+        if: always() && steps.pragent.outcome != 'success'
+        run: |
+          echo "### ❌ PR Agent Action Failed" >> $GITHUB_STEP_SUMMARY
+          echo "Workflow outcome: **${{ steps.pragent.outcome }}**" >> $GITHUB_STEP_SUMMARY
+          exit 1
