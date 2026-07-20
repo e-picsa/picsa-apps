@@ -1,35 +1,59 @@
 import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
+/** Minimal structural interface to safely extract error properties */
+interface ErrorWithStack {
+  message?: string;
+  stack?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardErrorHandler implements ErrorHandler {
-  private notificationService = inject(PicsaNotificationService);
+  private readonly notificationService = inject(PicsaNotificationService);
 
   constructor() {
-    // Ensure errors handled if thrown globally
-    // https://github.com/angular/angular/issues/56240
-    window.addEventListener('unhandledrejection', (e) => {
-      if (this.isAppError(e.reason)) {
-        this.handleError(e.reason);
-        e.preventDefault();
-      }
+    // Capture unhandled rejections outside Angular zone / zoneless
+    window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+      this.handleError(event.reason);
+      // Optional: stop standard browser error logging if handled
+      // event.preventDefault();
     });
-    window.addEventListener('error', (event) => {
-      if (this.isAppError(event.error, event.filename)) {
-        this.handleError(event.error);
-        event.preventDefault();
-      }
+
+    window.addEventListener('error', (event: ErrorEvent) => {
+      this.handleError(event.error, event.filename);
+      // Optional: stop standard browser error logging if handled
+      // event.preventDefault();
     });
   }
 
-  private isAppError(error: any, filename?: string): boolean {
-    if (!error) return false;
+  handleError(error: unknown, filename?: string): void {
+    if (!this.isAppError(error, filename)) {
+      return;
+    }
 
-    const stack = error?.stack || '';
-    const message = typeof error === 'string' ? error : error?.message || '';
+    const message = this.extractErrorMessage(error);
 
-    // 1. Ignore browser extension content scripts (Chrome, Firefox, Safari)
-    if (/chrome-extension:|moz-extension:|safari-extension:/i.test(stack || filename || '')) {
+    console.error(error);
+    this.notificationService.showErrorNotification(message);
+  }
+
+  /**
+   * Type guard / filter for valid application errors
+   */
+  private isAppError(error: unknown, filename?: string): boolean {
+    if (error == null) {
+      return false;
+    }
+
+    const errObj = typeof error === 'object' ? (error as ErrorWithStack) : null;
+    const message = typeof error === 'string' ? error : (errObj?.message ?? '');
+    const stack = errObj?.stack ?? '';
+
+    // Combined stack + filename string for extension check
+    const traceSource = `${stack} ${filename ?? ''}`;
+
+    // 1. Ignore browser extension content scripts
+    if (/(chrome|moz|safari)-extension:/i.test(traceSource)) {
       return false;
     }
 
@@ -38,7 +62,7 @@ export class DashboardErrorHandler implements ErrorHandler {
       return false;
     }
 
-    // 3. If filename exists and belongs to external domain (e.g. analytics CDN), ignore
+    // 3. Ignore external script origins (e.g., analytics CDNs)
     if (filename && filename.startsWith('http') && !filename.includes(window.location.origin)) {
       return false;
     }
@@ -46,11 +70,16 @@ export class DashboardErrorHandler implements ErrorHandler {
     return true;
   }
 
-  handleError(error: any) {
-    if (!this.isAppError(error)) return;
-
-    const message = typeof error === 'string' ? error : error?.message || 'An unexpected error occurred';
-    console.error(error);
-    this.notificationService.showErrorNotification(message);
+  private extractErrorMessage(error: unknown): string {
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      return String((error as { message: unknown }).message);
+    }
+    return 'An unexpected error occurred';
   }
 }
