@@ -10,6 +10,7 @@ export const GLOBAL_ORGANISATIONS: IOrganisation[] = [
   { id: 'UOR', label: 'University of Reading' },
   { id: 'GIZ', label: 'Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ)' },
   { id: 'IDEMS', label: 'IDEMS' },
+  { id: 'C2DEV', label: 'C2Dev' },
   { id: 'OTHER', label: 'Other' },
 ];
 
