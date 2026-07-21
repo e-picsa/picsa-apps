@@ -24,6 +24,7 @@
         [data]="pendingRequestsDetails()"
         [options]="pendingRequestsTableOptions"
         [valueTemplates]="{
+          user: userTemplate,
           created_at: dateTemplate,
           actions: pendingActionsTemplate,
         }"
@@ -45,6 +46,7 @@
     [data]="deploymentUsers()"
     [options]="matrixTableOptions"
     [valueTemplates]="{
+      user: userTemplate,
       admin: permissionTemplate,
       climate: permissionTemplate,
       resources: permissionTemplate,
@@ -54,6 +56,23 @@
       actions: actionsTemplate,
     }"
   >
+    <ng-template #userTemplate let-row="row">
+      <div class="flex flex-col py-1">
+        <div class="font-medium">
+          {{ row.full_name || row.email || 'Unknown User' }}
+        </div>
+        <div class="text-xs text-secondary">
+          @if (row.full_name && row.organisation) {
+            {{ row.organisation }}<br />{{ row.email }}
+          } @else if (row.organisation) {
+            {{ row.organisation }}
+          } @else if (row.full_name) {
+            {{ row.email }}
+          }
+        </div>
+      </div>
+    </ng-template>
+
     <ng-template #permissionTemplate let-column="column" let-row="row">
       <div class="flex justify-center">
         <!-- Use matIconButton for interactive elements -->
@@ -124,7 +143,10 @@
     <picsa-data-table
       [data]="allUsers()"
       [options]="allUserTableOptions"
-      [valueTemplates]="{ isMember: memberTemplate }"
+      [valueTemplates]="{
+        user: userTemplate,
+        isMember: memberTemplate,
+      }"
     >
       <ng-template #memberTemplate let-isMember let-row="row">
         <button matButton [disabled]="isMember" mat-dialog-close (click)="addUser(row)">

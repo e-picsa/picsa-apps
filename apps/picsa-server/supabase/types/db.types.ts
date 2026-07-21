@@ -1142,8 +1142,10 @@ export type Database = {
         Returns: {
           email: string;
           email_confirmed_at: string;
+          full_name: string;
           id: string;
           last_sign_in_at: string;
+          organisation: string;
         }[];
       };
       user_has_role: {
