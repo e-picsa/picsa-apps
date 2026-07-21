@@ -15,6 +15,7 @@ import { arrayToHashmap, loadCSV } from '@picsa/utils';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 
+import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
 import { TranslationDashboardService } from '../../../../translations.service';
 
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
@@ -35,6 +36,7 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
 })
 export class TranslationsCSVImportComponent {
   private service = inject(TranslationDashboardService);
+  private deploymentService = inject(DeploymentDashboardService);
 
   public importSummary = signal<ActionSummary>(this.prepareActions([], []));
   public importTotal = computed(() => {
@@ -98,11 +100,17 @@ export class TranslationsCSVImportComponent {
    * that already exist on server (i.e. update, skip, archive, restore)
    */
   private prepareActions(rows: ITranslationRow[], locales: ILocaleCode[]) {
+    const activeCountry = this.deploymentService.activeDeploymentCountry();
+    const relevantRows = rows.filter((row) => {
+      if (!row.country_code || row.country_code === 'global') return true;
+      return activeCountry ? row.country_code === activeCountry : true;
+    });
+
     const serverHashmap = arrayToHashmap(this.service.translations(), 'id');
     const actions: ActionSummary = { update: [], add: [], skip: [] };
-    for (const row of rows) {
+    for (const row of relevantRows) {
       // NOTE - csv does not contain row by default
-      row.id = this.service.generateTranslationID(row);
+      row.id = row.id || this.service.generateTranslationID(row);
       if (row.id in serverHashmap) {
         // TODO - detect which locales updated (for now assume all)
         const updated = { ...serverHashmap[row.id], ...row };
