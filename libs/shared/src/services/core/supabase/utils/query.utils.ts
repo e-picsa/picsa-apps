@@ -31,9 +31,17 @@ type Tables = Database['public']['Tables'];
 type TableRow<T extends keyof Tables> = Tables[T]['Row'];
 type MaybeSignal<T> = T | Signal<T>;
 
-/* --- caching: share live queries with identical parameters --- */
+/* --- caching: share live queries per SupabaseClient instance --- */
+const clientQueryCaches = new WeakMap<SupabaseClient<any>, Map<string, Observable<any>>>();
 
-const liveQueryCache = new Map<string, Observable<any>>();
+function getClientLiveQueryCache(client: SupabaseClient<any>): Map<string, Observable<any>> {
+  let cache = clientQueryCaches.get(client);
+  if (!cache) {
+    cache = new Map<string, Observable<any>>();
+    clientQueryCaches.set(client, cache);
+  }
+  return cache;
+}
 
 /** Generate a deterministic cache key for query options. Use JSON.stringify to avoid object/array `[object Object]` collisions. */
 function getLiveQueryCacheKey(tableName: string, opts: LiveQueryOpts<any>): string {
@@ -57,9 +65,10 @@ function liveQuery$<T extends Record<string, any>>(
   tableName: keyof Database['public']['Tables'],
   opts: LiveQueryOpts<T> = {},
 ): Observable<T[]> {
+  const liveQueryCache = getClientLiveQueryCache(supabase as SupabaseClient<any>);
   const cacheKey = getLiveQueryCacheKey(tableName as string, opts);
 
-  // Return active shared observable if a query with identical parameters is already in flight
+  // Return active shared observable if a query with identical parameters is already in flight for this client
   if (liveQueryCache.has(cacheKey)) {
     return liveQueryCache.get(cacheKey)!;
   }

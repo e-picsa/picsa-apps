@@ -104,5 +104,25 @@ describe('query.utils', () => {
 
       sub2.unsubscribe();
     });
+
+    it('isolates query caches per SupabaseClient instance', () => {
+      const secondMockClient: jest.Mocked<SupabaseClient<Database>> = {
+        from: jest.fn().mockReturnValue({ ...mockQueryBuilder }),
+        channel: jest.fn().mockReturnValue(mockChannel),
+        removeChannel: jest.fn(),
+      } as any;
+
+      const table1 = tableWithLive(injector, mockSupabaseClient, 'deployment_access_requests');
+      const table2 = tableWithLive(injector, secondMockClient, 'deployment_access_requests');
+
+      const query1$ = table1.liveQuery$({ filter: { status: 'pending' } });
+      const query2$ = table2.liveQuery$({ filter: { status: 'pending' } });
+
+      const sub1 = query1$.subscribe();
+
+      expect(query1$).not.toBe(query2$);
+
+      sub1.unsubscribe();
+    });
   });
 });
