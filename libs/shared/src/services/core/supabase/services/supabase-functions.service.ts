@@ -60,8 +60,8 @@ export class SupabaseFunctionsService extends SupabaseDeferredClient {
     const isOffline =
       error instanceof FunctionsFetchError ||
       error instanceof FunctionsRelayError ||
-      errorMessage?.toLowerCase().includes('name resolution failed') ||
-      errorMessage?.toLowerCase().includes('failed to send a request to the edge function');
+      errorMessage?.toLowerCase()?.includes('name resolution failed') ||
+      errorMessage?.toLowerCase()?.includes('failed to send a request to the edge function');
 
     if (!ENVIRONMENT.production && isOffline) {
       throw new Error(
@@ -69,6 +69,6 @@ export class SupabaseFunctionsService extends SupabaseDeferredClient {
       );
     }
 
-    throw new Error(errorMessage);
+    throw new Error(errorMessage || error.message || 'An unknown error occurred');
   }
 }
