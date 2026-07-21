@@ -47,20 +47,6 @@ jobs:
               console.log('Failed to add reaction:', err.message);
             }
 
-      # Rewrites `/summary` to `/describe` in the event payload so PR-Agent processes it natively
-      - name: Alias /summary to /describe
-        if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '/summary')
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const eventPath = process.env.GITHUB_EVENT_PATH;
-            const eventData = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
-            if (eventData.comment && eventData.comment.body) {
-              eventData.comment.body = eventData.comment.body.replace('/summary', '/describe');
-              fs.writeFileSync(eventPath, JSON.stringify(eventData, null, 2));
-            }
-
       - name: PR Agent Action
         uses: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
         id: pragent

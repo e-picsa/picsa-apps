@@ -66,6 +66,17 @@ describe('TranslationDashboardService', () => {
     expect(mockSupabase.lastInsert[0].id).toBe('budget-inputs-vaccine');
   });
 
+  it('should include country code in generated translation ID if country_code is set', async () => {
+    const entry = {
+      tool: 'climate',
+      context: 'chart',
+      text: 'Rainfall',
+      country_code: 'mwi',
+    };
+    await service.addTranslation(entry as any);
+    expect(mockSupabase.lastInsert[0].id).toBe('mwi-climate-chart-rainfall');
+  });
+
   it('should preserve custom translation ID if present', async () => {
     const entry = {
       id: 'custom:id:for:vaccine',

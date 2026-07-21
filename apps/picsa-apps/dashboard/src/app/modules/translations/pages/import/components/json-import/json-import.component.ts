@@ -16,6 +16,7 @@ import { arrayToHashmap } from '@picsa/utils';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 
+import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
 import { ITranslationInsert, TranslationDashboardService } from '../../../../translations.service';
 
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
@@ -58,6 +59,7 @@ type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] }
 })
 export class TranslationsJSONImportComponent {
   private service = inject(TranslationDashboardService);
+  private deploymentService = inject(DeploymentDashboardService);
 
   public importSummary = signal<ImportActionSummary>(this.generateSourceSummary({}, {}));
   public importCounter = signal(0);
@@ -139,8 +141,14 @@ export class TranslationsJSONImportComponent {
       console.error(entries);
       throw new Error('Data is not formatted correctly');
     }
+    const activeCountry = this.deploymentService.activeDeploymentCountry();
+    const relevantEntries = entries.filter((entry) => {
+      if (!entry.country_code || entry.country_code === 'global') return true;
+      return activeCountry ? entry.country_code === activeCountry : true;
+    });
+
     const localHashmap: Record<string, ITranslationFileEntry> = {};
-    for (const entry of entries) {
+    for (const entry of relevantEntries) {
       const id = entry.id || this.service.generateTranslationID(entry as ITranslationRow);
       localHashmap[id] = entry;
     }
