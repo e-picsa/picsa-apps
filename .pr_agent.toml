@@ -7,7 +7,7 @@
 
 [config]
 model = "gemini/gemini-3.5-flash"
-fallback_models = ["openrouter/google/gemini-3.5-flash", "openrouter/minimax/minimax-m3"]
+fallback_models = ["openrouter/minimax/minimax-m3", "openrouter/google/gemini-3.5-flash"]
 # max tokens required for newer models not known by current version of pr-agent used in actions 
 # use lowest common of fallback models
 custom_model_max_tokens = 1048576
