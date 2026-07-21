@@ -71,7 +71,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          yarn nx run picsa-server:supabase link --project-ref ${{ vars.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASSWORD }}
+          yarn nx run picsa-server:supabase link --project-ref ${{ vars.SUPABASE_PROJECT_ID }}
           yarn nx run picsa-server:supabase migration up --linked
 
         # Required build script defined in dashboard project `vercel.json`
