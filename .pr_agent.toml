@@ -31,7 +31,8 @@ Ignore minor style formatting, variable naming preferences, and cosmetic refacto
 # 3. Controls /improve tool
 [pr_code_suggestions]
 num_code_suggestions_per_chunk = 4
-committable_code_comments = false
+suggestions_score_threshold=6
 extra_instructions = """
 Only offer code suggestions if they directly fix a bug, improve performance significantly, or eliminate a security risk.
 """
+dual_publishing_score_threshold = 8
