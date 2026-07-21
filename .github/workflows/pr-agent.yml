@@ -55,6 +55,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER__API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           
           # 1. Automatic actions run when PR is FIRST opened/reopened
           github_action_config.auto_describe: 'true'
