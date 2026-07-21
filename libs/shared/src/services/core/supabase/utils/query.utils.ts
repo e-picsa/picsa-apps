@@ -35,12 +35,13 @@ type MaybeSignal<T> = T | Signal<T>;
 
 const liveQueryCache = new Map<string, Observable<any>>();
 
+/** Generate a deterministic cache key for query options. Use JSON.stringify to avoid object/array `[object Object]` collisions. */
 function getLiveQueryCacheKey(tableName: string, opts: LiveQueryOpts<any>): string {
   const filterStr = opts.filter
     ? Object.entries(opts.filter)
         .filter(([, v]) => v !== undefined)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}=${v}`)
+        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
         .join('&')
     : '';
   const orderByStr = opts.orderBy ? `${String(opts.orderBy.column)}:${opts.orderBy.ascending ?? true}` : '';
@@ -57,6 +58,8 @@ function liveQuery$<T extends Record<string, any>>(
   opts: LiveQueryOpts<T> = {},
 ): Observable<T[]> {
   const cacheKey = getLiveQueryCacheKey(tableName as string, opts);
+
+  // Return active shared observable if a query with identical parameters is already in flight
   if (liveQueryCache.has(cacheKey)) {
     return liveQueryCache.get(cacheKey)!;
   }
@@ -113,9 +116,13 @@ function liveQuery$<T extends Record<string, any>>(
           : state;
       return state;
     }, []),
+    // Evict cache key when refCount drops to 0, but only if the cache entry still points to this instance
     finalize(() => {
-      liveQueryCache.delete(cacheKey);
+      if (liveQueryCache.get(cacheKey) === query$) {
+        liveQueryCache.delete(cacheKey);
+      }
     }),
+    // Multicast with refCount: true to teardown realtime channel when all subscribers disconnect
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
