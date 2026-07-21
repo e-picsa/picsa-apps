@@ -11,6 +11,7 @@ returns table (
 )
 language sql
 security definer
+set search_path = ''
 as $$
   select
     u.id,
