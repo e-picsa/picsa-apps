@@ -4,6 +4,7 @@
 
 mat-sidenav-content {
   @apply flex flex-col;
+  transition: margin-left 0.2s ease-in-out;
 }
 
 .nav-item {
@@ -17,4 +18,47 @@ mat-sidenav-content {
 }
 ::ng-deep .mat-expansion-panel-body {
   padding: 0 0 16px 0;
+}
+
+::ng-deep {
+  mat-expansion-panel-header.active-link,
+  .mat-expansion-panel-header.mdc-list-item--activated,
+  a.active-link {
+    background-color: rgba(25, 118, 210, 0.08) !important;
+
+    .mat-panel-title,
+    .link-label,
+    mat-icon {
+      color: var(--mat-sys-primary, var(--mdc-theme-primary, #1976d2)) !important;
+    }
+  }
+}
+
+mat-sidenav.is-collapsed {
+  width: 64px !important;
+  transition:
+    width 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+
+  ::ng-deep {
+    .mat-expansion-panel-header {
+      padding: 0 12px !important;
+    }
+    .mdc-list-item {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
+  }
+
+  &.is-hovered {
+    width: 256px !important;
+    z-index: 20;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+mat-sidenav-container:has(mat-sidenav.is-collapsed) {
+  mat-sidenav-content {
+    margin-left: 64px !important;
+  }
 }
