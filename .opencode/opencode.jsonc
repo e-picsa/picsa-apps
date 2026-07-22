@@ -12,26 +12,23 @@
   "provider": {
     "openrouter": {
       "models": {
-        "google/gemini-3.1-flash-lite-preview": {
-          "name": "Gemini Flash Lite 3.1"
+        "google/gemini-3.6-flash": {
+          "name": "Gemini 3.6 Flash",
         },
-        "z-ai/glm-4.5": {
-          "name": "GLM 4.5"
-        },
-        "anthropic/claude-sonnet-4.6": {
-          "name": "Claude Sonnet 4.6"
+        "minimax/MiniMax-M3": {
+          "name": "MiniMax-M3",
         },
         "openrouter/free": {
-          "name": "OpenRouter Free"
-        }
-      }
-    }
+          "name": "OpenRouter Free",
+        },
+      },
+    },
   },
   "instructions": ["AGENTS.md", "./.agent/**/*.md"],
   // ask to access any external directories
   "permission": {
     "external_directory": {
-      "*": "ask"
+      "*": "ask",
     },
     // prevent read of .env and generated files
     "read": {
@@ -39,7 +36,7 @@
       "**/node_modules/**": "deny",
       "**/dist/**": "deny",
       "**/.git/**": "deny",
-      "*": "allow"
+      "*": "allow",
     },
     "bash": {
       // Deny destructive commands
@@ -94,7 +91,7 @@
       "Write-Output": "allow",
 
       // Ask for everything else
-      "*": "ask"
-    }
-  }
+      "*": "ask",
+    },
+  },
 }

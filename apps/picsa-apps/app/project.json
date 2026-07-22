@@ -97,11 +97,6 @@
           },
           {
             "glob": "**/*",
-            "input": "apps/picsa-tools/monitoring-tool/src/assets",
-            "output": "assets"
-          },
-          {
-            "glob": "**/*",
             "input": "apps/picsa-tools/option-tool/src/assets",
             "output": "assets"
           },

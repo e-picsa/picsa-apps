@@ -2,7 +2,18 @@ import { effect, Injector, isSignal, runInInjectionContext, Signal } from '@angu
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Database } from '@picsa/server-types';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { defer, map, merge, Observable, scan, shareReplay, Subject, switchMap } from 'rxjs';
+import {
+  defer,
+  distinctUntilChanged,
+  finalize,
+  map,
+  merge,
+  Observable,
+  scan,
+  shareReplay,
+  Subject,
+  switchMap,
+} from 'rxjs';
 
 /* --- types --- */
 
@@ -20,6 +31,33 @@ type Tables = Database['public']['Tables'];
 type TableRow<T extends keyof Tables> = Tables[T]['Row'];
 type MaybeSignal<T> = T | Signal<T>;
 
+/* --- caching: share live queries per SupabaseClient instance --- */
+const clientQueryCaches = new WeakMap<SupabaseClient<any>, Map<string, Observable<any>>>();
+
+function getClientLiveQueryCache(client: SupabaseClient<any>): Map<string, Observable<any>> {
+  let cache = clientQueryCaches.get(client);
+  if (!cache) {
+    cache = new Map<string, Observable<any>>();
+    clientQueryCaches.set(client, cache);
+  }
+  return cache;
+}
+
+/** Generate a deterministic cache key for query options. Use JSON.stringify to avoid object/array `[object Object]` collisions. */
+function getLiveQueryCacheKey(tableName: string, opts: LiveQueryOpts<any>): string {
+  const filterStr = opts.filter
+    ? Object.entries(opts.filter)
+        .filter(([, v]) => v !== undefined)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
+        .join('&')
+    : '';
+  const orderByStr = opts.orderBy ? `${String(opts.orderBy.column)}:${opts.orderBy.ascending ?? true}` : '';
+  return [tableName, filterStr, opts.select ?? '*', opts.schema ?? 'public', opts.primaryKey ?? 'id', orderByStr].join(
+    '|',
+  );
+}
+
 /* --- core: Observable-based live query --- */
 
 function liveQuery$<T extends Record<string, any>>(
@@ -27,6 +65,14 @@ function liveQuery$<T extends Record<string, any>>(
   tableName: keyof Database['public']['Tables'],
   opts: LiveQueryOpts<T> = {},
 ): Observable<T[]> {
+  const liveQueryCache = getClientLiveQueryCache(supabase as SupabaseClient<any>);
+  const cacheKey = getLiveQueryCacheKey(tableName as string, opts);
+
+  // Return active shared observable if a query with identical parameters is already in flight for this client
+  if (liveQueryCache.has(cacheKey)) {
+    return liveQueryCache.get(cacheKey)!;
+  }
+
   const { filter = {}, orderBy, primaryKey = 'id' as keyof T & string, select, schema = 'public' } = opts;
 
   const init$ = defer(async () => {
@@ -65,7 +111,7 @@ function liveQuery$<T extends Record<string, any>>(
     return () => supabase.removeChannel(ch);
   });
 
-  return merge(init$, changes$).pipe(
+  const query$ = merge(init$, changes$).pipe(
     scan<Change<T>, T[]>((state, ev) => {
       if (ev.type === 'init') return ev.rows;
       if (ev.type === 'insert') return ev.new ? [ev.new, ...state] : state;
@@ -79,8 +125,18 @@ function liveQuery$<T extends Record<string, any>>(
           : state;
       return state;
     }, []),
+    // Evict cache key when refCount drops to 0, but only if the cache entry still points to this instance
+    finalize(() => {
+      if (liveQueryCache.get(cacheKey) === query$) {
+        liveQueryCache.delete(cacheKey);
+      }
+    }),
+    // Multicast with refCount: true to teardown realtime channel when all subscribers disconnect
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  liveQueryCache.set(cacheKey, query$);
+  return query$;
 }
 
 /* --- table wrapper: adds liveQuery$ and liveSignal with MaybeSignals --- */
@@ -162,6 +218,7 @@ export function tableWithLive<T extends keyof Tables>(injector: Injector, client
       );
 
       const rows$ = params$.pipe(
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
         map((p) => ({
           opts: {
             filter: p.filter,

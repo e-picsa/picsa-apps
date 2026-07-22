@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { ILocaleCode } from '@picsa/data';
+import { ILocaleCode, LOCALES_DATA_HASHMAP } from '@picsa/data';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { ITranslationRow, TranslationDashboardService } from '../../translations.service';
@@ -23,6 +23,11 @@ export class TranslationsEditComponent {
   private fb = inject(FormBuilder);
 
   public text: string;
+
+  public get translationLanguageLabel(): string {
+    const localeEntry = LOCALES_DATA_HASHMAP[this.data.locale];
+    return localeEntry ? localeEntry.language_label : 'Translation';
+  }
 
   public form = this.fb.group({ value: [''] });
 

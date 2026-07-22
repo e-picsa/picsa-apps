@@ -4,6 +4,7 @@
 
 mat-sidenav-content {
   @apply flex flex-col;
+  transition: margin-left 0.2s ease-in-out;
 }
 
 .nav-item {
@@ -15,6 +16,71 @@ mat-sidenav-content {
   line-height: 24px;
   font-weight: 500;
 }
-::ng-deep .mat-expansion-panel-body {
-  padding: 0 0 16px 0;
+
+mat-sidenav {
+  --mat-sidenav-container-width: 204px;
+  // Inactive state - lighter gray consistency across all links, headers, and icons
+  .nav-item,
+  .mat-icon,
+  .link-label {
+    color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+  }
+
+  ::ng-deep {
+    .mat-expansion-panel-body {
+      padding: 0 !important;
+    }
+
+    // Active parent links get background tint + primary color
+    .parent-link.active-link,
+    .parent-link.mdc-list-item--activated {
+      background-color: rgba(25, 118, 210, 0.08) !important;
+    }
+
+    // Active child links get text/icon primary color ONLY (no background tint)
+    .child-link.active-link,
+    .child-link.mdc-list-item--activated {
+      background-color: transparent !important;
+    }
+
+    // Primary text/icon color for all active items
+    .active-link,
+    .mdc-list-item--activated {
+      .nav-item,
+      .mat-panel-title,
+      .link-label,
+      mat-icon {
+        color: var(--mat-sys-primary, var(--mdc-theme-primary, #1976d2)) !important;
+      }
+    }
+  }
+}
+// Collapsed State
+mat-sidenav.is-collapsed {
+  width: 64px !important;
+  transition:
+    width 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+
+  ::ng-deep {
+    .mat-expansion-panel-header {
+      padding: 0 12px !important;
+    }
+    .mdc-list-item {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
+  }
+
+  &.is-hovered {
+    width: var(--mat-sidenav-container-width) !important;
+    z-index: 20;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+mat-sidenav-container:has(mat-sidenav.is-collapsed) {
+  mat-sidenav-content {
+    margin-left: 64px !important;
+  }
 }

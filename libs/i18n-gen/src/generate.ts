@@ -62,7 +62,12 @@ function generateTranslationTemplates() {
   for (const el of ordered) {
     unique[el.text] = el;
   }
-  const output = Object.values(unique);
+  // Reorder alphabetically by tool
+  const output = Object.values(unique).sort((a, b) => {
+    const keyA = `${a.tool}.${a.id}.${a.text}`;
+    const keyB = `${b.tool}.${b.id}.${b.text}`;
+    return keyA > keyB ? 1 : -1;
+  });
   writeFileSync(TEMPLATE_PATH, JSON.stringify(output, null, 2));
 }
 

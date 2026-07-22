@@ -63,8 +63,8 @@ const DEPLOYMENTS_BASE = {
   zw: generate({
     country_code: 'zw',
     budgetTool: {
-      currency: 'ZWD',
-      currencyBaseValue: 100,
+      currency: 'ZWG',
+      currencyBaseValue: 10,
     },
     theme: 'picsa-zw',
   }),

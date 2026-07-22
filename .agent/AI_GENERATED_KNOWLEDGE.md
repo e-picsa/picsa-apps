@@ -163,3 +163,22 @@ This file is a shared knowledge base for AI agents operating on this codebase.
    - Define a signal form tree with validation: `public readonly budgetForm = form(this.model, (path) => { required(path.field); });`
    - Bind inputs in the template using `[formField]="budgetForm.field"` (importing `FormField` directive from `@angular/forms/signals`).
    - Read values reactively in the template via the model signal: `model().field`. Since the template reads a signal, any value changes automatically trigger change detection on the component view, regardless of DOM tree hierarchy or overlays.
+
+### Leaflet Plugins and ES Module Namespace Wrapper Issue in Production Build
+
+**Date**: 2026-07-08
+**Context**: Fixing `typeError: Ai.maplibreGL is not a function` in production build when loading the climate map.
+**Learning**:
+
+1. **Namespace Import vs Plugins**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object (`Ai` in output chunk) under production bundling with esbuild.
+2. **Dynamic Extension Mismatch**: Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) are usually packaged as CommonJS/UMD. At runtime they obtain the underlying Leaflet exports object via `require('leaflet')` and dynamically add functions to it (e.g. `L.maplibreGL`).
+3. **Broken Bindings**: Because the ESM wrapper namespace object is sealed and created _before_ the plugin adds properties to the Leaflet export object, the newly added plugin methods are not visible on the ESM wrapper namespace `L`.
+4. **Resolution**: By importing Leaflet as a default export (`import L from 'leaflet'`) and using `esModuleInterop: true`, the import resolves directly to the actual mutable Leaflet module exports object. The plugin and component code then reference the exact same object, ensuring that dynamically added properties/methods (like `maplibreGL`) are visible and functional.
+
+### Supabase PostgREST 204 Responses and Auth Metadata Sync
+
+**Date**: 2026-07-21
+**Context**: Fixing non-persisting updates when admins edit user profiles from dashboard tables or table editors.
+**Learning**:
+
+1. **PostgREST 204 Silent No-Op**: When PostgREST receives an `UPDATE` request on a table with RLS enabled, if no RLS `UPDATE` policy matches the current user's role/ID, PostgREST updates 0 rows and returns `HTTP 204 No Content` (with minimal return header) without raising an error. Always ensure tables like `user_profiles` have explicit `UPDATE` and `INSERT` policies for admins (`public.user_is_global_admin()`).
