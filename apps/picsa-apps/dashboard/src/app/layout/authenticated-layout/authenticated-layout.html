@@ -23,7 +23,7 @@
     (mouseenter)="onMouseEnter()"
     (mouseleave)="onMouseLeave()"
   >
-    <mat-nav-list [class]="isEffectiveExpanded() ? 'w-48 lg:w-64 flex-1' : 'w-16 flex-1'">
+    <mat-nav-list class="w-full flex-1">
       @for (link of navLinks; track link.href) { @if (link.children) {
       <!-- Nested nav items -->
       <mat-expansion-panel
@@ -35,6 +35,7 @@
       >
         <mat-expansion-panel-header
           style="padding: 0 16px"
+          class="parent-link"
           [routerLink]="link.href"
           routerLinkActive="mdc-list-item--activated active-link"
           #rla="routerLinkActive"
@@ -49,11 +50,12 @@
         @if (isEffectiveExpanded()) { @for (child of link.children || []; track $index) {
         <a
           mat-list-item
+          class="child-link"
           [routerLink]="child.href"
           routerLinkActive="mdc-list-item--activated active-link"
           *roleRequired="child.roleRequired"
         >
-          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: child }"></ng-container>
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: child, isChild: true }"></ng-container>
         </a>
         } }
       </mat-expansion-panel>
@@ -61,6 +63,7 @@
       <!-- Single nav item -->
       <a
         mat-list-item
+        class="parent-link"
         [routerLink]="link.href"
         routerLinkActive="mdc-list-item--activated active-link"
         *roleRequired="link.roleRequired"
@@ -71,13 +74,14 @@
       </a>
       } }
     </mat-nav-list>
-    <mat-nav-list [class]="isEffectiveExpanded() ? 'w-48 lg:w-64 mt-auto' : 'w-16 mt-auto'">
+    <mat-nav-list class="w-full mt-auto">
       <mat-divider></mat-divider>
       <div mat-subheader></div>
       <mat-divider></mat-divider>
       @for (link of adminLinks; track link.href) {
       <a
         mat-list-item
+        class="parent-link"
         [routerLink]="link.href"
         routerLinkActive="mdc-list-item--activated active-link"
         *roleRequired="link.roleRequired"
@@ -90,7 +94,7 @@
     </mat-nav-list>
     @if (isEffectiveExpanded()) {
     <mat-divider></mat-divider>
-    <dashboard-footer [isSidebar]="true" class="w-48 lg:w-64" />
+    <dashboard-footer [isSidebar]="true" />
     }
   </mat-sidenav>
   <!-- Main Content -->
@@ -101,11 +105,11 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<ng-template #linkTemplate let-link>
-  <div class="nav-item flex items-center" [class.justify-center]="!isEffectiveExpanded()">
+<ng-template #linkTemplate let-link let-isChild="isChild">
+  <div class="nav-item flex items-center" [class.pl-6]="isChild">
     @if (link.matIcon) {
-    <mat-icon [style.margin-right]="isEffectiveExpanded() ? '8px' : '0'">{{ link.matIcon }}</mat-icon>
-    } @else { @if (isEffectiveExpanded()) {
+    <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+    } @else { @if (isEffectiveExpanded() && !isChild) {
     <span style="width: 32px"></span>
     } } @if (isEffectiveExpanded()) {
     <span class="link-label">{{ link.label }}</span>

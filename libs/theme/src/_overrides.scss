@@ -100,6 +100,12 @@ div.mdc-dialog__actions {
   display: flex;
   flex-direction: column;
 }
+// Remove scrollbars from collapsed sidebar
+mat-sidenav-container:has(mat-sidenav.is-collapsed) {
+  .mat-drawer-inner-container {
+    overflow-x: hidden !important;
+  }
+}
 // Increase size and set primary colour for text inputs
 input.mat-mdc-input-element.mdc-text-field__input {
   font-size: 30px;
