@@ -57,6 +57,7 @@ export class AuthenticatedLayoutComponent {
       }
       return next;
     });
+    this.isHovered.set(false);
   }
 
   onMouseEnter() {
