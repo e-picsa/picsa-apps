@@ -2,12 +2,13 @@
 # Documentation: https://docs.pr-agent.ai/
 
 # https://docs.pr-agent.ai/installation/github/?h=fallback_models#using-configuration-files
-
 # https://docs.pr-agent.ai/tools/describe/#configuration-options
 
+# https://ai.google.dev/gemini-api/docs/models
+
 [config]
-model = "gemini/gemini-3.5-flash"
-fallback_models = ["openrouter/minimax/minimax-m3", "openrouter/google/gemini-3.5-flash"]
+model = "gemini/gemini-3.6-flash"
+fallback_models = ["openrouter/minimax/minimax-m3", "openrouter/google/gemini-3.6-flash"]
 # max tokens required for newer models not known by current version of pr-agent used in actions 
 # use lowest common of fallback models
 custom_model_max_tokens = 1048576
