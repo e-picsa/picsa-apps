@@ -1,0 +1,1 @@
+import{p as o,b as t}from"./p-365aa648.js";export{s as setNonce}from"./p-365aa648.js";import{g as a}from"./p-e1255160.js";(()=>{const s=import.meta.url,t={};return""!==s&&(t.resourcesUrl=new URL(".",s).href),o(t)})().then((async o=>(await a(),t([["p-0b780dac",[[0,"enketo-webform",{form:[1],model:[1],showButtons:[4,"show-buttons"]}]]]],o))));
