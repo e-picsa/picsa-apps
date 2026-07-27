@@ -28,5 +28,3 @@ pr_agent:walkthrough
 ### Diagram
 
 pr_agent:diagram
-
-#
