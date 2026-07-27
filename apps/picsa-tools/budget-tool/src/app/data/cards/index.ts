@@ -416,4 +416,11 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     groupings: ['livestock'],
     imgType: 'svg',
   },
+  {
+    type: 'activities',
+    label: 'pest scouting',
+    id: 'pest-scout',
+    groupings: ['crop'],
+    imgType: 'svg',
+  },
 ];
