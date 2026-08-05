@@ -345,6 +345,7 @@ export type Database = {
         Row: {
           additional_data: Json;
           additional_info: string | null;
+          country_code: CountryCodeLegacy;
           created_at: string;
           crop: string;
           days_lower: number;
@@ -357,6 +358,7 @@ export type Database = {
         Insert: {
           additional_data?: Json;
           additional_info?: string | null;
+          country_code: CountryCodeLegacy;
           created_at?: string;
           crop: string;
           days_lower: number;
@@ -369,6 +371,7 @@ export type Database = {
         Update: {
           additional_data?: Json;
           additional_info?: string | null;
+          country_code?: CountryCodeLegacy;
           created_at?: string;
           crop?: string;
           days_lower?: number;

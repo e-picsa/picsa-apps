@@ -168,7 +168,7 @@ export class DashboardCropAdminComponent {
 
       const stationDataHashmap = arrayToHashmap(stationDataRows || [], 'station_id');
       const cropData = this.service.cropData();
-      const cropDataHashmap = arrayToHashmap(cropData, 'id');
+      const cropDataHashmap = arrayToHashmap(cropData, 'id', (v) => `${v.crop}/${v.variety}`);
 
       const zip = new JSZip();
       const exportEntries: any[] = [];

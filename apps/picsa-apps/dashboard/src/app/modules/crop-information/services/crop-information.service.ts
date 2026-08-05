@@ -1,4 +1,4 @@
-import { computed, inject,Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -109,7 +109,7 @@ export class CropInformationService extends PicsaAsyncService {
   private async loadCropData() {
     const { country_code } = this.dashboardService.activeDeployment();
     const promises = [
-      this.cropDataTable.select<'*', ICropData['Row']>('*').order('id'),
+      this.cropDataTable.select<'*', ICropData['Row']>('*').eq('country_code', country_code).order('id'),
       this.cropDataDownscaledTable.select<'*', ICropDataDownscaled['Row']>('*').eq('country_code', country_code),
     ];
     // wait for both requests to resolve successfully with data before updating signals
@@ -132,7 +132,7 @@ export class CropInformationService extends PicsaAsyncService {
   private mergeData(data: ICropData['Row'][] = [], downscaled: ICropDataDownscaled['Row'][] = []) {
     // Create placeholder merged data for better type inference
     const mergedData: ICropDataMerged[] = data.map((v) => ({ ...v, downscaled: [] }));
-    const mergedHashmap = arrayToHashmap(mergedData, 'id');
+    const mergedHashmap = arrayToHashmap(mergedData, 'id', (v) => `${v.crop}/${v.variety}`);
 
     // Extract individual crop probabilities from downscaled data and merge into crop data
     const missing = {};
