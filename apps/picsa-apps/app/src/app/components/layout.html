@@ -39,6 +39,12 @@
             <span>{{ 'Share videos' | translate}}</span>
           </div>
         </a>
+        <a mat-list-item routerLink="/farmer/share/receive" (click)="drawer.close()">
+          <div class="flex items-center">
+            <mat-icon class="me-2">file_download</mat-icon>
+            <span>{{ 'Receive shared content' | translate}}</span>
+          </div>
+        </a>
         }
         <a mat-list-item routerLink="/resources/downloads" (click)="drawer.close()">
           <div class="flex items-center">

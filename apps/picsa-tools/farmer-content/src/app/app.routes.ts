@@ -49,6 +49,12 @@ export function buildFarmerRoutes(nestedTools: Routes): Routes {
       title: 'PICSA',
     },
     {
+      path: 'share/receive',
+      loadComponent: () =>
+        import('./pages/share-receive/share-receive.component').then((mod) => mod.FarmerContentShareReceiveComponent),
+      title: 'Receive Shared Content',
+    },
+    {
       path: ':slug',
       loadComponent: () =>
         import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),

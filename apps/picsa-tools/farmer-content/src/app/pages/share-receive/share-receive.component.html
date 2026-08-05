@@ -1,0 +1,25 @@
+<div class="share-page">
+  <p class="intro">{{ 'Videos shared with you' | translate }}</p>
+
+  <div class="videos-body">
+    @for (video of receivedVideos(); track video.id) {
+      <article class="video-card">
+        <div class="thumb-wrap">
+          <mat-icon class="thumb-icon">movie</mat-icon>
+        </div>
+
+        <div class="video-info">
+          <h2 class="video-title">{{ video.title | translate }}</h2>
+          <p class="video-meta">{{ video.moduleTitle | translate }}</p>
+        </div>
+
+        <div class="received-badge">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ 'Added to your downloads' | translate }}</span>
+        </div>
+      </article>
+    } @empty {
+      <p class="empty-state">{{ 'No videos have been shared with you yet.' | translate }}</p>
+    }
+  </div>
+</div>
