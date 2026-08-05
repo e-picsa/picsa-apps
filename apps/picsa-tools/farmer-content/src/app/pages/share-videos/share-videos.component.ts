@@ -12,6 +12,7 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { switchMap } from 'rxjs';
 
+import { FarmerContentHomeFabComponent } from '../share-flow/home-fab.component';
 import { FarmerShareFlowService } from '../share-flow/share-flow.service';
 
 interface IShareVideoLanguageOption {
@@ -29,7 +30,7 @@ interface IShareVideoItem {
 
 @Component({
   selector: 'farmer-content-share-videos',
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, PicsaTranslateModule],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, PicsaTranslateModule, FarmerContentHomeFabComponent],
   templateUrl: './share-videos.component.html',
   styleUrl: './share-videos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

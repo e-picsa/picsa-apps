@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
+import { FarmerContentHomeFabComponent } from '../share-flow/home-fab.component';
 import { FarmerShareFlowService } from '../share-flow/share-flow.service';
 
 @Component({
   selector: 'farmer-content-share',
-  imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
+  imports: [MatButtonModule, MatIconModule, PicsaTranslateModule, FarmerContentHomeFabComponent],
   templateUrl: './share.component.html',
   styleUrl: './share.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

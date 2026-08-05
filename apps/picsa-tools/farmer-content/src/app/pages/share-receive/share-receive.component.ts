@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
+import { FarmerContentHomeFabComponent } from '../share-flow/home-fab.component';
+
 interface IReceivedVideoItem {
   id: string;
   title: string;
@@ -17,7 +19,7 @@ const MOCK_RECEIVED_VIDEOS: IReceivedVideoItem[] = [
 
 @Component({
   selector: 'farmer-content-share-receive',
-  imports: [MatIconModule, PicsaTranslateModule],
+  imports: [MatIconModule, PicsaTranslateModule, FarmerContentHomeFabComponent],
   templateUrl: './share-receive.component.html',
   styleUrl: './share-receive.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
