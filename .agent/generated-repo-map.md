@@ -1,0 +1,1082 @@
+# AI Generated Codebase & Symbol Map
+
+> Automatically generated via `yarn ai:gen-codemap`. Do not edit manually.
+
+## TypeScript Path Aliases (`@picsa/*`)
+
+| Alias | Target Path |
+| :--- | :--- |
+| `@picsa/*` | `libs/*` |
+| `@picsa/budget/*` | `apps/picsa-tools/budget-tool/*` |
+| `@picsa/climate/*` | `apps/picsa-tools/climate-tool/*` |
+| `@picsa/components` | `libs/components/src/index.ts` |
+| `@picsa/components/*` | `libs/components/src/components/*` |
+| `@picsa/configuration` | `libs/configuration/src/index.ts` |
+| `@picsa/crop-probability/*` | `apps/picsa-tools/crop-probability-tool/*` |
+| `@picsa/dashboard/*` | `apps/sites/dashboard/*` |
+| `@picsa/data` | `libs/data/index.ts` |
+| `@picsa/environments` | `libs/environments/src/index.ts` |
+| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*` |
+| `@picsa/farmer-content/*` | `apps/picsa-tools/farmer-content/*` |
+| `@picsa/forecasts/*` | `apps/picsa-tools/forecasts-tool/src/app/*` |
+| `@picsa/forms` | `libs/forms` |
+| `@picsa/i18n` | `libs/i18n/src/index.ts` |
+| `@picsa/i18n/*` | `libs/i18n/src/*` |
+| `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
+| `@picsa/migrations` | `libs/migrations/index.ts` |
+| `@picsa/models` | `libs/models/src/index.ts` |
+| `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
+| `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
+| `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
+| `@picsa/server-types` | `apps/picsa-server/supabase/types/index.ts` |
+| `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
+| `@picsa/shared/*` | `libs/shared/src/*` |
+| `@picsa/theme` | `libs/theme/src/index.ts` |
+
+## Codebase Symbol Index (410 files scanned)
+
+### `apps/picsa-apps`
+
+- **[app.component.ts](../apps/picsa-apps/app/src/app/app.component.ts)** (`apps/picsa-apps/app/src/app/app.component.ts`)
+  - `Component` **AppComponent** (methods: [ngOnInit, showDebugInfo])
+- **[app.config.ts](../apps/picsa-apps/app/src/app/app.config.ts)** (`apps/picsa-apps/app/src/app/app.config.ts`)
+  - `Function` **HttpLoaderFactory**
+- **[layout.ts](../apps/picsa-apps/app/src/app/components/layout.ts)** (`apps/picsa-apps/app/src/app/components/layout.ts`)
+  - `Component` **AppLayoutComponent** (methods: [toggleUserType])
+- **[home.page.ts](../apps/picsa-apps/app/src/app/pages/home/home.page.ts)** (`apps/picsa-apps/app/src/app/pages/home/home.page.ts`)
+  - `Component` **HomePageComponent**
+- **[privacy-routing.module.ts](../apps/picsa-apps/app/src/app/pages/privacy/privacy-routing.module.ts)** (`apps/picsa-apps/app/src/app/pages/privacy/privacy-routing.module.ts`)
+  - `Class` **PrivacyRoutingModule**
+- **[privacy.component.ts](../apps/picsa-apps/app/src/app/pages/privacy/privacy.component.ts)** (`apps/picsa-apps/app/src/app/pages/privacy/privacy.component.ts`)
+  - `Component` **PrivacyComponent**
+- **[terms.component.ts](../apps/picsa-apps/app/src/app/pages/terms/terms.component.ts)** (`apps/picsa-apps/app/src/app/pages/terms/terms.component.ts`)
+  - `Component` **TermsComponent**
+- **[initial-state.ts](../apps/picsa-apps/app-native-e2e/src/fixtures/initial-state.ts)** (`apps/picsa-apps/app-native-e2e/src/fixtures/initial-state.ts`)
+  - `Type` **UserSettingName**
+- **[driver-utils.ts](../apps/picsa-apps/app-native-e2e/src/utils/driver-utils.ts)** (`apps/picsa-apps/app-native-e2e/src/utils/driver-utils.ts`)
+  - `Function` **switchToContext**
+- **[picsa-utils.ts](../apps/picsa-apps/app-native-e2e/src/utils/picsa-utils.ts)** (`apps/picsa-apps/app-native-e2e/src/utils/picsa-utils.ts`)
+  - `Function` **loadPicsaConfig**
+- **[version-utils.ts](../apps/picsa-apps/app-native-e2e/src/utils/version-utils.ts)** (`apps/picsa-apps/app-native-e2e/src/utils/version-utils.ts`)
+  - `Function` **getDeviceStatus**
+  - `Function` **isLegacyDevice**
+  - `Function` **skipOnLegacyDevices**
+  - `Function` **skipOnModernDevices**
+- **[wdio-commands.ts](../apps/picsa-apps/app-native-e2e/src/utils/wdio-commands.ts)** (`apps/picsa-apps/app-native-e2e/src/utils/wdio-commands.ts`)
+  - `Function` **setLocalStorage**
+  - `Function` **appNavigateTo**
+- **[app.component.ts](../apps/picsa-apps/dashboard/src/app/app.component.ts)** (`apps/picsa-apps/dashboard/src/app/app.component.ts`)
+  - `Component` **AppComponent** (methods: [ngAfterViewInit])
+- **[clipboard-paste.component.ts](../apps/picsa-apps/dashboard/src/app/components/data-import/adaptors/clipboard-paste.component.ts)** (`apps/picsa-apps/dashboard/src/app/components/data-import/adaptors/clipboard-paste.component.ts`)
+  - `Component` **DataImportClipboardPasteComponent** (methods: [handlePaste])
+- **[file-drop.component.ts](../apps/picsa-apps/dashboard/src/app/components/data-import/adaptors/file-drop.component.ts)** (`apps/picsa-apps/dashboard/src/app/components/data-import/adaptors/file-drop.component.ts`)
+  - `Component` **DataImportFileDropComponent**
+- **[data-import.component.ts](../apps/picsa-apps/dashboard/src/app/components/data-import/data-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/components/data-import/data-import.component.ts`)
+  - `Component` **DataImportComponent**
+- **[authenticated-layout.ts](../apps/picsa-apps/dashboard/src/app/layout/authenticated-layout/authenticated-layout.ts)** (`apps/picsa-apps/dashboard/src/app/layout/authenticated-layout/authenticated-layout.ts`)
+  - `Component` **AuthenticatedLayoutComponent** (methods: [toggleSidebar, onMouseEnter, onMouseLeave])
+- **[deployment-select.component.ts](../apps/picsa-apps/dashboard/src/app/layout/deployment-select/deployment-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/deployment-select/deployment-select.component.ts`)
+  - `Component` **DeploymentSelectLayoutComponent** (methods: [onRequestAccess, onJoinPublic])
+- **[email-confirmation-layout.component.ts](../apps/picsa-apps/dashboard/src/app/layout/email-confirmation/email-confirmation-layout.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/email-confirmation/email-confirmation-layout.component.ts`)
+  - `Component` **EmailConfirmationLayoutComponent** (methods: [resendConfirmation, logout])
+- **[footer.component.ts](../apps/picsa-apps/dashboard/src/app/layout/footer/footer.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/footer/footer.component.ts`)
+  - `Component` **DashboardFooterComponent**
+- **[landing.component.ts](../apps/picsa-apps/dashboard/src/app/layout/landing/landing.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/landing/landing.component.ts`)
+  - `Component` **LandingPageComponent**
+- **[server-error.component.ts](../apps/picsa-apps/dashboard/src/app/layout/server-error/server-error.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/server-error/server-error.component.ts`)
+  - `Component` **ServerErrorLayoutComponent** (methods: [retryConnection])
+- **[material.module.ts](../apps/picsa-apps/dashboard/src/app/material.module.ts)** (`apps/picsa-apps/dashboard/src/app/material.module.ts`)
+  - `Class` **DashboardMaterialModule** (methods: [registerIcons])
+- **[password-input.component.ts](../apps/picsa-apps/dashboard/src/app/modules/auth/components/password-input/password-input.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/auth/components/password-input/password-input.component.ts`)
+  - `Component` **PasswordInputComponent**
+- **[password-strength.component.ts](../apps/picsa-apps/dashboard/src/app/modules/auth/components/password-strength/password-strength.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/auth/components/password-strength/password-strength.component.ts`)
+  - `Component` **PasswordStrengthComponent**
+- **[sign-in.component.ts](../apps/picsa-apps/dashboard/src/app/modules/auth/components/sign-in/sign-in.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/auth/components/sign-in/sign-in.component.ts`)
+  - `Class` **showErrorAfterInteraction** (methods: [isErrorState])
+  - `Component` **DashboardSignInComponent** (methods: [passwordStrengthValidator, onLogin, onRegister, onForgotPassword])
+- **[authRoleRequired.directive.ts](../apps/picsa-apps/dashboard/src/app/modules/auth/directives/authRoleRequired.directive.ts)** (`apps/picsa-apps/dashboard/src/app/modules/auth/directives/authRoleRequired.directive.ts`)
+  - `Directive` **AuthRoleRequiredDirective**
+- **[auth.service.ts](../apps/picsa-apps/dashboard/src/app/modules/auth/services/auth.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/auth/services/auth.service.ts`)
+  - `Service` **DashboardAuthService** (methods: [setActiveDeploymentId, hasRole, reloadPermissions])
+- **[climate-api.mapping.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate-api.mapping.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate-api.mapping.ts`)
+  - `Type` **IApiMapping**
+  - `Type` **IApiMappingName**
+  - `Type` **ApiParams**
+  - `Type` **ApiRequest**
+- **[climate.module.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.module.ts`)
+  - `Class` **ClimateModule**
+- **[climate.service.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.service.ts`)
+  - `Service` **ClimateService** (methods: [init, getStationData, getAllStationData, updateStationData, updateStationDataFromApi])
+  - `Interface` **IDataRefreshStatus**
+- **[climate.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts`)
+  - `Function` **hackConvertStationDataForDisplay**
+- **[api-status.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/components/api-status/api-status.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/components/api-status/api-status.component.ts`)
+  - `Component` **ApiStatusComponent** (methods: [runApi])
+  - `Type` **ApiStatusState**
+- **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts`)
+  - `Component` **ClimateAdminPageComponent** (methods: [downloadAllStationsCSV, downloadStationCSV, refreshStation, refreshAllStations, handleSummaryClick])
+- **[forecast-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts`)
+  - `Component` **ForecastFormComponent** (methods: [save, handleFileDropped])
+  - `Type` **IForecastDialogData**
+- **[forecast.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts`)
+  - `Component` **ClimateForecastPageComponent** (methods: [handleRefreshClick, handleStorageClick, handleTabChange, addForecast])
+- **[month-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts`)
+  - `Component` **DashboardClimateMonthSelectComponent** (methods: [setMonthAndYear])
+- **[station.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts`)
+  - `Component` **ClimateStationPageComponent** (methods: [handleMarkerClick])
+- **[chart-summary.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts`)
+  - `Component` **ChartSummaryComponent**
+- **[crop-probabilities.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/crop-probabilities/crop-probabilities.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/crop-probabilities/crop-probabilities.component.ts`)
+  - `Component` **CropProbabilitiesComponent** (methods: [formatPlantDateLabel])
+- **[data-grid.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/crop-probabilities/data-grid/data-grid/data-grid.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/crop-probabilities/data-grid/data-grid/data-grid.component.ts`)
+  - `Component` **DashboardClimateDataGridComponent**
+  - `Interface` **DataPoint**
+- **[data-summary.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/data-summary/data-summary.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/data-summary/data-summary.ts`)
+  - `Component` **DataSummaryComponent**
+- **[location-summary.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/location-summary/location-summary/location-summary.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/location-summary/location-summary/location-summary.component.ts`)
+  - `Component` **LocationSummaryComponent**
+- **[station-details.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/station-details.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/station-details.component.ts`)
+  - `Component` **StationDetailsPageComponent** (methods: [refreshData])
+- **[db.d.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/types/db.d.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/types/db.d.ts`)
+  - `Type` **IClimateStationData**
+  - `Type` **IForecastRow**
+  - `Type` **IForecastInsert**
+  - `Type` **IForecastUpdate**
+  - `Type` **IStationRow**
+  - `Type` **IStationInsert**
+  - `Type` **IClimateSummaryProbabilities**
+- **[index.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/types/index.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/types/index.ts`)
+  - `Type` **IAnnualRainfallSummariesData**
+  - `Type` **IAnnualRainfallSummariesMetadata**
+  - `Type` **IAnnualTemperatureSummariesData**
+  - `Type` **IAnnualTemperatureSummariesMetadata**
+  - `Type` **IAPICountryCode**
+  - `Type` **ICropSuccessEntry**
+  - `Type` **ForecastType**
+- **[crop-information.module.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/crop-information.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/crop-information.module.ts`)
+  - `Class` **CropInformationModule**
+- **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts`)
+  - `Component` **DashboardCropAdminComponent** (methods: [handleDataLoad, downloadTemplate, processImport, exportCropProbabilityTables])
+- **[missing-locations.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts`)
+  - `Component` **CropMissingLocationsComponent** (methods: [addPlaceholderLocations])
+- **[language-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts`)
+  - `Component` **CropProbabilityLanguageSelectComponent**
+- **[linked-station-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts`)
+  - `Component` **CropLinkedStationSelectComponent** (methods: [getSelectedStationName, handleStationSelectOpen, handleStationSelectClose, onMarkerClicked])
+- **[probability-table.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/probability-table/probability-table.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/probability-table/probability-table.component.ts`)
+  - `Component` **CropProbabilityTableComponent** (methods: [exportAppJson, copyToClipboard])
+- **[probability-downscaled.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/probability-downscaled.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/probability-downscaled.component.ts`)
+  - `Component` **ProbabilityDownscaledComponent** (methods: [updateLinkedStation])
+- **[probability.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/probability.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/probability.component.ts`)
+  - `Component` **CropProbabilityComponent** (methods: [goToDownscaled])
+- **[variety-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/variety-form/variety-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/variety-form/variety-form.component.ts`)
+  - `Component` **DashboardCropVarietyFormComponent**
+- **[water-requirements.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/water-requirements/water-requirements.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/water-requirements/water-requirements.component.ts`)
+  - `Component` **DashboardCropWaterRequirementsComponent** (methods: [save, editWaterRequirement, handleFormLocationChange])
+- **[variety-details.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/variety-details.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/variety-details.component.ts`)
+  - `Component` **CropVarietyDetailsComponent** (methods: [submitForm, handleDelete])
+- **[variety.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/variety.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/variety.component.ts`)
+  - `Component` **CropVarietyComponent** (methods: [ngOnInit])
+- **[crop-information.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-information.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-information.service.ts`)
+  - `Service` **CropInformationService** (methods: [init, delete, insert, upsert, upsertDownscaled])
+  - `Type` **ICropData**
+  - `Type` **ICropDataDownscaled**
+  - `Type` **ICropDataDownscaledWaterRequirements**
+  - `Type` **ICropDataMergedWaterRequirement**
+  - `Type` **ICropDataMerged**
+- **[probability.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts`)
+  - `Interface` **ISeasonStartProbability**
+  - `Type` **IProbabilityInterpolationStrategy**
+  - `Type` **IProbabilityHashmap**
+  - `Function` **findSurroundingKeys**
+  - `Function` **roundToNearest**
+  - `Function` **plantDayToDateLabel**
+  - `Function` **cumulativeDistribution**
+  - `Function` **generateProbabilityHashmap**
+  - `Function` **getCropSuccessProbability**
+  - `Function` **generateProbabilityEntryValues**
+- **[admin-overview.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts`)
+  - `Component` **DeploymentAdminSummaryComponent**
+- **[deployment-item.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts`)
+  - `Component` **DeploymentItemComponent**
+- **[deployment-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-select/deployment-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-select/deployment-select.component.ts`)
+  - `Component` **DeploymentSelectComponent** (methods: [clearActiveDeployment])
+- **[deployment.module.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/deployment.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/deployment.module.ts`)
+  - `Class` **DeploymentModule**
+- **[deployment.service.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/deployment.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/deployment.service.ts`)
+  - `Service` **DeploymentDashboardService** (methods: [setActiveDeployment, ensureActiveDeployment, requestAccess, joinPublicDeployment, getDeploymentAccessRequests])
+  - `Interface` **IAccessRequest**
+- **[deployment-list.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/pages/list/deployment-list.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/pages/list/deployment-list.component.ts`)
+  - `Component` **DeploymentListComponent**
+- **[user-permissions.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/pages/user-permissions/user-permissions.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/pages/user-permissions/user-permissions.component.ts`)
+  - `Component` **DeploymentUserPermissionsComponent** (methods: [ngOnInit, addUser, approveRequest, rejectRequest, openResponseDialog])
+- **[index.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/types/index.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/types/index.ts`)
+  - `Type` **IDeploymentRow**
+  - `Type` **DeploymentAccessRequest**
+- **[error-handler.ts](../apps/picsa-apps/dashboard/src/app/modules/error-handler.ts)** (`apps/picsa-apps/dashboard/src/app/modules/error-handler.ts`)
+  - `Service` **DashboardErrorHandler** (methods: [handleError])
+- **[overviewComponents.ts](../apps/picsa-apps/dashboard/src/app/modules/home/components/overviewComponents.ts)** (`apps/picsa-apps/dashboard/src/app/modules/home/components/overviewComponents.ts`)
+  - `Type` **HomeOverviewComponent**
+- **[home.component.ts](../apps/picsa-apps/dashboard/src/app/modules/home/home.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/home/home.component.ts`)
+  - `Component` **DashboardHomeComponent**
+- **[privacy-policy.component.ts](../apps/picsa-apps/dashboard/src/app/modules/legal/privacy-policy/privacy-policy.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/legal/privacy-policy/privacy-policy.component.ts`)
+  - `Component` **PrivacyPolicyComponent**
+- **[terms-of-service.component.ts](../apps/picsa-apps/dashboard/src/app/modules/legal/terms-of-service/terms-of-service.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/legal/terms-of-service/terms-of-service.component.ts`)
+  - `Component` **TermsOfServiceComponent**
+- **[map.service.ts](../apps/picsa-apps/dashboard/src/app/modules/map/map.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/map/map.service.ts`)
+  - `Service` **DashboardMapService** (methods: [fetchBoundaries, generateBoundaries, updateAdminLevelLabel])
+  - `Interface` **AdminBoundariesPayload**
+- **[map-home.component.ts](../apps/picsa-apps/dashboard/src/app/modules/map/pages/map-home/map-home.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/map/pages/map-home/map-home.component.ts`)
+  - `Component` **MapHomeComponent** (methods: [ngAfterViewInit, ngOnDestroy, getBoundaryForLevel, getLabelForLevel, selectLevel])
+- **[edit-profile-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/components/edit-profile-dialog/edit-profile-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/components/edit-profile-dialog/edit-profile-dialog.component.ts`)
+  - `Component` **AdminEditProfileDialogComponent** (methods: [ngOnInit, loadProfile, saveProfile])
+  - `Interface` **EditProfileDialogData**
+- **[profile-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/components/profile-form/profile-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/components/profile-form/profile-form.component.ts`)
+  - `Component` **ProfileFormComponent**
+- **[profile-menu.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/components/profile-menu/profile-menu.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/components/profile-menu/profile-menu.component.ts`)
+  - `Component` **ProfileMenuComponent** (methods: [ngAfterViewInit])
+- **[password-reset.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/pages/password-reset/password-reset.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/pages/password-reset/password-reset.component.ts`)
+  - `Class` **showErrorAfterInteraction** (methods: [isErrorState])
+  - `Component` **PasswordResetComponent** (methods: [handlePasswordReset])
+- **[user-profile.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/pages/user-profile/user-profile.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/pages/user-profile/user-profile.component.ts`)
+  - `Component` **UserProfileComponent** (methods: [loadProfile, saveProfile, resendVerificationEmail])
+- **[profile.module.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts`)
+  - `Class` **ProfileModule**
+- **[resource-collection-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts`)
+  - `Component` **ResourceCollectionEditComponent**
+- **[resource-collections.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts`)
+  - `Component` **ResourceCollectionsComponent** (methods: [ngOnInit])
+- **[resource-file-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts`)
+  - `Component` **ResourceFileEditComponent** (methods: [ngOnInit, saveResource, openExternalResource, promptDelete, handleUploadComplete])
+- **[resource-files.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts`)
+  - `Component` **ResourceFilesComponent** (methods: [ngOnInit, handleCollectionClick])
+- **[resource-link-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/edit/resource-link-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/edit/resource-link-edit.component.ts`)
+  - `Component` **ResourceLinkEditComponent** (methods: [ngOnInit, saveResource])
+- **[resource-links.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/resource-links.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/resource-links.component.ts`)
+  - `Component` **ResourceLinksComponent** (methods: [ngOnInit])
+- **[resources.module.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/resources.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/resources.module.ts`)
+  - `Class` **ResourcesPageModule**
+- **[resources.service.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/resources.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/resources.service.ts`)
+  - `Service` **ResourcesDashboardService** (methods: [refresh, init, getChildResources, getResourceCollections])
+- **[index.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/types/index.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/types/index.ts`)
+  - `Type` **IResourceCollectionRow**
+  - `Type` **IResourceFileRow**
+  - `Type` **IResourceFileChildRow**
+  - `Type` **IResourceLinkRow**
+- **[resources.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts`)
+  - `Function` **getCollectionHierarchy**
+  - `Function` **wipAnalyzeCollections**
+- **[stats.component.ts](../apps/picsa-apps/dashboard/src/app/modules/stats/stats.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/stats/stats.component.ts`)
+  - `Component` **DashboardStatsComponent** (methods: [onLoad])
+- **[stats.module.ts](../apps/picsa-apps/dashboard/src/app/modules/stats/stats.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/stats/stats.module.ts`)
+  - `Class` **StatsModule**
+- **[storage-link.component.ts](../apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-link/storage-link.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-link/storage-link.component.ts`)
+  - `Component` **DashboardStorageLinkComponent** (methods: [ngOnInit, handleLinkClick])
+- **[storage.service.ts](../apps/picsa-apps/dashboard/src/app/modules/storage/services/storage.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/storage/services/storage.service.ts`)
+  - `Service` **DashboardStorageService** (methods: [init, getStorageFileByPath])
+  - `Interface` **IDashboardStorageEntry**
+- **[translations-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/edit/translations-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/edit/translations-edit.component.ts`)
+  - `Component` **TranslationsEditComponent** (methods: [save])
+- **[translations.page.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/home/translations.page.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/home/translations.page.ts`)
+  - `Component` **TranslationsPageComponent** (methods: [showEditDialog])
+  - `Type` **ITranslationRow**
+- **[csv-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/csv-import/csv-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/csv-import/csv-import.component.ts`)
+  - `Component` **TranslationsCSVImportComponent** (methods: [processImport])
+- **[json-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/json-import/json-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/json-import/json-import.component.ts`)
+  - `Component` **TranslationsJSONImportComponent** (methods: [processImport])
+- **[xlsx-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/xlsx-import/xlsx-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/xlsx-import/xlsx-import.component.ts`)
+  - `Component` **TranslationsXLSXImportComponent** (methods: [processImport, exportTemplate])
+- **[translations-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/translations-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/translations-import.component.ts`)
+  - `Component` **TranslationsImportComponent**
+- **[translations.module.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/translations.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/translations.module.ts`)
+  - `Class` **TranslationsPageModule**
+- **[translations.service.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/translations.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/translations.service.ts`)
+  - `Service` **TranslationDashboardService** (methods: [init, listTranslations, updateTranslationById, getTranslationById, deleteTranslationById])
+  - `Type` **ITranslationRow**
+  - `Type` **ITranslationInsert**
+- **[route-utils.ts](../apps/picsa-apps/dashboard/src/app/utils/route-utils.ts)** (`apps/picsa-apps/dashboard/src/app/utils/route-utils.ts`)
+  - `Interface` **INavLink**
+  - `Interface` **NavConfig**
+  - `Interface` **RecursiveFeatureNode**
+  - `Interface` **FeatureDefinition**
+  - `Function` **defineFeature**
+
+### `apps/picsa-server/scripts/backup`
+
+- **[backup-storage.ts](../apps/picsa-server/scripts/backup/backup-storage.ts)** (`apps/picsa-server/scripts/backup/backup-storage.ts`)
+  - `Function` **backupStorage**
+
+### `apps/picsa-server/scripts/db-seed`
+
+- **[db-seed.config.ts](../apps/picsa-server/scripts/db-seed/db-seed.config.ts)** (`apps/picsa-server/scripts/db-seed/db-seed.config.ts`)
+  - `Interface` **ISeedDataConfiguration**
+
+### `apps/picsa-server/scripts/utils`
+
+- **[file.utils.ts](../apps/picsa-server/scripts/utils/file.utils.ts)** (`apps/picsa-server/scripts/utils/file.utils.ts`)
+  - `Function` **zipFolderContents**
+- **[supabase.utils.ts](../apps/picsa-server/scripts/utils/supabase.utils.ts)** (`apps/picsa-server/scripts/utils/supabase.utils.ts`)
+  - `Function` **getSupabaseClient**
+
+### `apps/picsa-server/supabase/functions`
+
+- **[auth.ts](../apps/picsa-server/supabase/functions/_shared/auth.ts)** (`apps/picsa-server/supabase/functions/_shared/auth.ts`)
+  - `Function` **getRequestDeploymentId**
+  - `Function` **hasAuthRole**
+- **[debug.ts](../apps/picsa-server/supabase/functions/_shared/debug.ts)** (`apps/picsa-server/supabase/functions/_shared/debug.ts`)
+  - `Function` **writeDebugLog**
+- **[email.ts](../apps/picsa-server/supabase/functions/_shared/email.ts)** (`apps/picsa-server/supabase/functions/_shared/email.ts`)
+  - `Interface` **EmailOptions**
+  - `Function` **sendEmail**
+- **[fetch.ts](../apps/picsa-server/supabase/functions/_shared/fetch.ts)** (`apps/picsa-server/supabase/functions/_shared/fetch.ts`)
+  - `Function` **fetchWithRetry**
+- **[response.ts](../apps/picsa-server/supabase/functions/_shared/response.ts)** (`apps/picsa-server/supabase/functions/_shared/response.ts`)
+  - `Function` **ErrorResponse**
+  - `Function` **JSONResponse**
+- **[template.ts](../apps/picsa-server/supabase/functions/_shared/template.ts)** (`apps/picsa-server/supabase/functions/_shared/template.ts`)
+  - `Function` **renderTemplate**
+- **[validation.ts](../apps/picsa-server/supabase/functions/_shared/validation.ts)** (`apps/picsa-server/supabase/functions/_shared/validation.ts`)
+  - `Function` **validateBody**
+- **[share.ts](../apps/picsa-server/supabase/functions/budget/share.ts)** (`apps/picsa-server/supabase/functions/budget/share.ts`)
+  - `Function` **generateUniqueShareCode**
+  - `Function` **generateShareCode**
+- **[types.ts](../apps/picsa-server/supabase/functions/budget/types.ts)** (`apps/picsa-server/supabase/functions/budget/types.ts`)
+  - `Type` **BudgetDB**
+  - `Type` **BudgetShareResponse**
+  - `Type` **BudgetImportResponse**
+- **[types.ts](../apps/picsa-server/supabase/functions/dashboard/admin/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/admin/types.ts`)
+  - `Type` **IAdminListUsersResponse**
+  - `Type` **IAdminListUserRolesResponse**
+- **[types.ts](../apps/picsa-server/supabase/functions/dashboard/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/types.ts`)
+  - `Type` **climateApiPaths**
+  - `Type` **climateApiComponents**
+  - `Type` **IDBClimateForecastRow**
+  - `Type` **IDBClimateForecastInsert**
+  - `Type` **IApiClimateForecast**
+  - `Type` **IForecastDBAPIResponse**
+- **[admin-boundaries.ts](../apps/picsa-server/supabase/functions/geo/admin-boundaries.ts)** (`apps/picsa-server/supabase/functions/geo/admin-boundaries.ts`)
+  - `Type` **AdminBoundariesSchema**
+- **[kobo-utils.ts](../apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts)** (`apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts`)
+  - `Function` **createKoboSubmission**
+  - `Function` **upsertKoboSubmission**
+  - `Function` **getKoboSubmission**
+  - `Function` **deleteKoboSubmissionByUUID**
+  - `Function` **extractSubmissionXML**
+- **[test-utils.ts](../apps/picsa-server/supabase/functions/tests/test-utils.ts)** (`apps/picsa-server/supabase/functions/tests/test-utils.ts`)
+  - `Function` **setupTestEnv**
+  - `Function` **invokeSupabaseFunctionFetch**
+  - `Function` **invokeSupabaseFunction**
+  - `Function` **mockSupabaseRequest**
+
+### `apps/picsa-server/supabase/types`
+
+- **[climate-api.types.ts](../apps/picsa-server/supabase/types/climate-api.types.ts)** (`apps/picsa-server/supabase/types/climate-api.types.ts`)
+  - `Interface` **paths**
+  - `Interface` **components**
+  - `Interface` **operations**
+  - `Type` **webhooks**
+  - `Type` **$defs**
+  - `Type` **external**
+- **[db-derived.types.ts](../apps/picsa-server/supabase/types/db-derived.types.ts)** (`apps/picsa-server/supabase/types/db-derived.types.ts`)
+  - `Type` **CountryCode**
+  - `Type` **CountryCodeLegacy**
+  - `Type` **LocaleCode**
+  - `Type` **LocaleCodeLegacy**
+- **[db.types.ts](../apps/picsa-server/supabase/types/db.types.ts)** (`apps/picsa-server/supabase/types/db.types.ts`)
+  - `Type` **Json**
+  - `Type` **Database**
+  - `Type` **Tables**
+  - `Type` **TablesInsert**
+  - `Type` **TablesUpdate**
+  - `Type` **Enums**
+  - `Type` **CompositeTypes**
+- **[functions.types.ts](../apps/picsa-server/supabase/types/functions.types.ts)** (`apps/picsa-server/supabase/types/functions.types.ts`)
+  - `Type` **FunctionResponses**
+- **[index.ts](../apps/picsa-server/supabase/types/index.ts)** (`apps/picsa-server/supabase/types/index.ts`)
+  - `Type` **AppRole**
+
+### `apps/picsa-server/supabase/utils`
+
+- **[auth.utils.ts](../apps/picsa-server/supabase/utils/auth.utils.ts)** (`apps/picsa-server/supabase/utils/auth.utils.ts`)
+  - `Function` **assignImplicitRoles**
+
+### `apps/picsa-tools`
+
+- **[app.component.ts](../apps/picsa-tools/budget-tool/src/app/app.component.ts)** (`apps/picsa-tools/budget-tool/src/app/app.component.ts`)
+  - `Component` **PicsaBudgetTool**
+- **[dot-value.ts](../apps/picsa-tools/budget-tool/src/app/components/balance/balance-dot-value/dot-value.ts)** (`apps/picsa-tools/budget-tool/src/app/components/balance/balance-dot-value/dot-value.ts`)
+  - `Component` **BudgetBalanceDotValueComponent** (methods: [generateRepresentation])
+- **[balance-legend.ts](../apps/picsa-tools/budget-tool/src/app/components/balance/balance-legend/balance-legend.ts)** (`apps/picsa-tools/budget-tool/src/app/components/balance/balance-legend/balance-legend.ts`)
+  - `Component` **BudgetBalanceLegendComponent** (methods: [scaleValues])
+- **[budget-summary.component.ts](../apps/picsa-tools/budget-tool/src/app/components/budget-summary/budget-summary.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/budget-summary/budget-summary.component.ts`)
+  - `Component` **BudgetSummaryComponent** (methods: [ngOnInit, calculateSummary, updateProduceSummary, getImagePath])
+- **[budget-tool.components.ts](../apps/picsa-tools/budget-tool/src/app/components/budget-tool.components.ts)** (`apps/picsa-tools/budget-tool/src/app/components/budget-tool.components.ts`)
+  - `Class` **BudgetToolComponentsModule**
+- **[budget-card.ts](../apps/picsa-tools/budget-tool/src/app/components/card/budget-card.ts)** (`apps/picsa-tools/budget-tool/src/app/components/card/budget-card.ts`)
+  - `Component` **BudgetCardComponent** (methods: [promptCustomDelete])
+- **[budget-card-image.ts](../apps/picsa-tools/budget-tool/src/app/components/card/card-image/budget-card-image.ts)** (`apps/picsa-tools/budget-tool/src/app/components/card/card-image/budget-card-image.ts`)
+  - `Component` **BudgetCardImageComponent** (methods: [ngOnInit, ngOnDestroy])
+- **[card-new-dialog.ts](../apps/picsa-tools/budget-tool/src/app/components/card/card-new/card-new-dialog.ts)** (`apps/picsa-tools/budget-tool/src/app/components/card/card-new/card-new-dialog.ts`)
+  - `Component` **BudgetCardNewDialog** (methods: [setBudgetDrawing, save])
+- **[card-new.ts](../apps/picsa-tools/budget-tool/src/app/components/card/card-new/card-new.ts)** (`apps/picsa-tools/budget-tool/src/app/components/card/card-new/card-new.ts`)
+  - `Component` **BudgetCardNew** (methods: [showCardDialog])
+- **[card-placeholder.component.ts](../apps/picsa-tools/budget-tool/src/app/components/card/card-placeholder/card-placeholder.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/card/card-placeholder/card-placeholder.component.ts`)
+  - `Component` **BudgetCardPlaceholderComponent**
+- **[cell.ts](../apps/picsa-tools/budget-tool/src/app/components/cell/cell.ts)** (`apps/picsa-tools/budget-tool/src/app/components/cell/cell.ts`)
+  - `Component` **BudgetCellComponent** (methods: [ngOnInit, ngOnChanges, getCellValue, ngOnDestroy])
+- **[card-editor.component.ts](../apps/picsa-tools/budget-tool/src/app/components/editor/card-editor/card-editor.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/editor/card-editor/card-editor.component.ts`)
+  - `Component` **BudgetCardEditorComponent** (methods: [setValue, setProduceConsumed])
+- **[card-select.ts](../apps/picsa-tools/budget-tool/src/app/components/editor/card-select/card-select.ts)** (`apps/picsa-tools/budget-tool/src/app/components/editor/card-select/card-select.ts`)
+  - `Component` **BudgetCellEditorCardSelectComponent** (methods: [filterCards, setValues, onCardCreated, onCardClicked])
+- **[family-labour.ts](../apps/picsa-tools/budget-tool/src/app/components/editor/card-select/family-labour/family-labour.ts)** (`apps/picsa-tools/budget-tool/src/app/components/editor/card-select/family-labour/family-labour.ts`)
+  - `Component` **BudgetCellEditorFamilyLabourComponent** (methods: [addMember, removeMember, setValue, createFamilyCard])
+- **[editor.component.ts](../apps/picsa-tools/budget-tool/src/app/components/editor/editor.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/editor/editor.component.ts`)
+  - `Component` **BudgetEditorComponent** (methods: [ngOnDestroy, showCardsList, removeSelectedCard, updateCardValue, onEditorChange])
+- **[editor-sidebar.component.ts](../apps/picsa-tools/budget-tool/src/app/components/editor-sidebar/editor-sidebar.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/editor-sidebar/editor-sidebar.component.ts`)
+  - `Component` **BudgetEditorSidebarComponent** (methods: [toggleEditorMode, goToBudgetHome, showShareDialog])
+- **[import-dialog.component.ts](../apps/picsa-tools/budget-tool/src/app/components/import-dialog/import-dialog.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/import-dialog/import-dialog.component.ts`)
+  - `Component` **BudgetImportDialogComponent** (methods: [handleImport, handleKeyup, handleKeydown, handlePaste])
+- **[share-dialog.component.ts](../apps/picsa-tools/budget-tool/src/app/components/share-dialog/share-dialog.component.ts)** (`apps/picsa-tools/budget-tool/src/app/components/share-dialog/share-dialog.component.ts`)
+  - `Component` **BudgetShareDialogComponent** (methods: [sharePicture, shareLink])
+- **[budget-table.ts](../apps/picsa-tools/budget-tool/src/app/components/table/budget-table.ts)** (`apps/picsa-tools/budget-tool/src/app/components/table/budget-table.ts`)
+  - `Component` **BudgetTableComponent** (methods: [emitCellClicked])
+- **[enterprises.ts](../apps/picsa-tools/budget-tool/src/app/data/cards/enterprises.ts)** (`apps/picsa-tools/budget-tool/src/app/data/cards/enterprises.ts`)
+  - `Type` **IEnterpriseGroupType**
+- **[material.module.ts](../apps/picsa-tools/budget-tool/src/app/material.module.ts)** (`apps/picsa-tools/budget-tool/src/app/material.module.ts`)
+  - `Class` **BudgetMaterialModule** (methods: [registerIcons])
+- **[budget-tool.models.ts](../apps/picsa-tools/budget-tool/src/app/models/budget-tool.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/budget-tool.models.ts`)
+  - `Interface` **IBudget**
+  - `Interface` **IBudgetPeriodData**
+  - `Interface` **IBudgetMeta**
+  - `Interface` **IBudgetQueryParams**
+  - `Interface` **IBudgetActiveCell**
+  - `Interface` **IBudgetDatabase**
+  - `Interface` **IBudgetCodeDoc**
+  - `Type` **IBudgetPeriodType**
+  - `Type` **IEnterpriseScaleLentgh**
+  - `Type` **IBudgetValueScale**
+- **[v1.models.ts](../apps/picsa-tools/budget-tool/src/app/models/legacy/v1.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/legacy/v1.models.ts`)
+  - `Interface` **V1Budget**
+- **[v2.models.ts](../apps/picsa-tools/budget-tool/src/app/models/legacy/v2.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/legacy/v2.models.ts`)
+  - `Interface` **IV2Budget**
+- **[v3.models.ts](../apps/picsa-tools/budget-tool/src/app/models/legacy/v3.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/legacy/v3.models.ts`)
+  - `Interface` **IV3Budget**
+- **[budget-create.page.ts](../apps/picsa-tools/budget-tool/src/app/pages/create/budget-create.page.ts)** (`apps/picsa-tools/budget-tool/src/app/pages/create/budget-create.page.ts`)
+  - `Component` **BudgetCreatePage** (methods: [ngOnInit, ngOnDestroy, enterpriseTypeClicked, setEnterprise, customEnterpriseCreated])
+- **[budget-home.page.ts](../apps/picsa-tools/budget-tool/src/app/pages/home/budget-home.page.ts)** (`apps/picsa-tools/budget-tool/src/app/pages/home/budget-home.page.ts`)
+  - `Component` **BudgetHomePage** (methods: [ngOnInit, promptDelete, importBudgetCode, showBudgetCreate, handleBudgetCopy])
+- **[budget-list-item.ts](../apps/picsa-tools/budget-tool/src/app/pages/home/list-item/budget-list-item.ts)** (`apps/picsa-tools/budget-tool/src/app/pages/home/list-item/budget-list-item.ts`)
+  - `Component` **BudgetListItemComponent** (methods: [showCopyDialog, showRenameDialog])
+- **[budget-view.module.ts](../apps/picsa-tools/budget-tool/src/app/pages/view/budget-view.module.ts)** (`apps/picsa-tools/budget-tool/src/app/pages/view/budget-view.module.ts`)
+  - `Class` **BudgetViewPageModule**
+- **[budget-view.page.ts](../apps/picsa-tools/budget-tool/src/app/pages/view/budget-view.page.ts)** (`apps/picsa-tools/budget-tool/src/app/pages/view/budget-view.page.ts`)
+  - `Component` **BudgetViewPage** (methods: [ngOnInit, ngOnDestroy, handleCellClicked, showShareDialog, loadBudget])
+- **[common.ts](../apps/picsa-tools/budget-tool/src/app/schema/cards/common.ts)** (`apps/picsa-tools/budget-tool/src/app/schema/cards/common.ts`)
+  - `Interface` **IBudgetCardWithValues**
+  - `Interface` **IBudgetCardCustomMeta**
+  - `Interface` **IBudgetCardValues**
+  - `Type` **IBudgetCardType**
+- **[index.ts](../apps/picsa-tools/budget-tool/src/app/schema/cards/index.ts)** (`apps/picsa-tools/budget-tool/src/app/schema/cards/index.ts`)
+  - `Type` **IBudgetCard**
+- **[schema_V2.ts](../apps/picsa-tools/budget-tool/src/app/schema/cards/schema_V2.ts)** (`apps/picsa-tools/budget-tool/src/app/schema/cards/schema_V2.ts`)
+  - `Type` **IBudgetCard_V2**
+- **[schema_v1.ts](../apps/picsa-tools/budget-tool/src/app/schema/cards/schema_v1.ts)** (`apps/picsa-tools/budget-tool/src/app/schema/cards/schema_v1.ts`)
+  - `Type` **IBudgetCard_v1**
+- **[budget-card.service.ts](../apps/picsa-tools/budget-tool/src/app/store/budget-card.service.ts)** (`apps/picsa-tools/budget-tool/src/app/store/budget-card.service.ts`)
+  - `Service` **BudgetCardService** (methods: [init, saveCustomCard, deleteCustomCard])
+- **[budget.service.ts](../apps/picsa-tools/budget-tool/src/app/store/budget.service.ts)** (`apps/picsa-tools/budget-tool/src/app/store/budget.service.ts`)
+  - `Service` **BudgetService**
+- **[budget.store.ts](../apps/picsa-tools/budget-tool/src/app/store/budget.store.ts)** (`apps/picsa-tools/budget-tool/src/app/store/budget.store.ts`)
+  - `Service` **BudgetStore** (methods: [setActiveBudget, unloadActiveBudget, patchBudget, saveEditor, scaleValueCounters])
+  - `Type` **IBudgetCounterSVGIcons**
+- **[templates.ts](../apps/picsa-tools/budget-tool/src/app/store/templates.ts)** (`apps/picsa-tools/budget-tool/src/app/store/templates.ts`)
+  - `Interface` **IBudgetPeriodRow**
+- **[app.component.ts](../apps/picsa-tools/climate-tool/src/app/app.component.ts)** (`apps/picsa-tools/climate-tool/src/app/app.component.ts`)
+  - `Component` **PicsaClimateTool**
+- **[chart-layout.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-layout/chart-layout.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-layout/chart-layout.ts`)
+  - `Component` **ClimateChartLayoutComponent** (methods: [ngAfterViewInit])
+- **[line-date-picker-header.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker-header.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker-header.ts`)
+  - `Component` **LineDatePickerHeaderComponent** (methods: [ngOnDestroy, previousClicked, nextClicked])
+- **[line-date-picker.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker.ts`)
+  - `Service` **LineDatePickerSelectionStrategy** (methods: [selectionFinished, createPreview])
+- **[line-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-tool.component.ts`)
+  - `Component` **LineToolComponent** (methods: [setLineToolFromDate, setLineToolValue])
+- **[probability-tool.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/probability-tool/probability-tool.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/probability-tool/probability-tool.ts`)
+  - `Component` **ProbabilityToolComponent** (methods: [calculateProbabilities, numberToArray])
+- **[terciles-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/terciles-tool/terciles-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/terciles-tool/terciles-tool.component.ts`)
+  - `Component` **TercilesToolComponent** (methods: [ngOnDestroy])
+- **[tool-select.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts`)
+  - `Component` **ToolSelectComponent**
+- **[climate-chart-options.component.ts](../apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts`)
+  - `Component` **ClimateChartOptionsComponent** (methods: [showShareDialog])
+- **[material.module.ts](../apps/picsa-tools/climate-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/climate-tool/src/app/components/material.module.ts`)
+  - `Class` **PicsaClimateMaterialModule**
+- **[print-layout.component.ts](../apps/picsa-tools/climate-tool/src/app/components/print-layout/print-layout.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/print-layout/print-layout.component.ts`)
+  - `Component` **ClimatePrintLayoutComponent**
+- **[share-dialog.component.ts](../apps/picsa-tools/climate-tool/src/app/components/share-dialog/share-dialog.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/share-dialog/share-dialog.component.ts`)
+  - `Component` **ClimateShareDialogComponent** (methods: [sharePicture, shareLink])
+- **[view-select.ts](../apps/picsa-tools/climate-tool/src/app/components/view-select/view-select.ts)** (`apps/picsa-tools/climate-tool/src/app/components/view-select/view-select.ts`)
+  - `Component` **ViewSelectComponent**
+- **[index.ts](../apps/picsa-tools/climate-tool/src/app/models/index.ts)** (`apps/picsa-tools/climate-tool/src/app/models/index.ts`)
+  - `Interface` **IProbabilities**
+- **[report.models.ts](../apps/picsa-tools/climate-tool/src/app/models/report.models.ts)** (`apps/picsa-tools/climate-tool/src/app/models/report.models.ts`)
+  - `Interface` **IReportMeta**
+  - `Type` **IReportType**
+- **[site-select.page.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-select/site-select.page.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-select/site-select.page.ts`)
+  - `Component` **SiteSelectPage** (methods: [toggleView, goToSite, handleRowClick, handleMarkerClick])
+- **[site-view.page.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-view/site-view.page.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-view/site-view.page.ts`)
+  - `Component` **ClimateSiteViewComponent** (methods: [ngAfterViewInit, ngOnDestroy, handleStationSelect, goToSiteSelect])
+- **[climate-chart.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts`)
+  - `Service` **ClimateChartService** (methods: [clearChartData, registerChartComponent, goToSiteSelect, loadStationAndChart, setStation])
+- **[climate-data.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-data.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-data.service.ts`)
+  - `Service` **ClimateDataService** (methods: [getPreferredStation, setPreferredStation, getStationMeta, getStationData])
+- **[climate-tool.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts`)
+  - `Service` **ClimateToolService** (methods: [disableAll, toggleEnabled, setValue])
+  - `Function` **calcPercentile**
+- **[chart.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts`)
+  - `Function` **generateChartConfig**
+- **[app.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/app.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/app.component.ts`)
+  - `Component` **PicsaCropProbabilityTool**
+- **[crop-probability-table.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts`)
+  - `Component` **CropProbabilityTableComponent** (methods: [ngOnInit, formatProbability])
+- **[index.ts](../apps/picsa-tools/crop-probability-tool/src/app/models/index.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/models/index.ts`)
+  - `Interface` **IProbabilityTableMeta**
+  - `Interface` **IStationCropInformation**
+  - `Interface` **IStationCropData**
+  - `Interface` **IStationCropDataItem**
+  - `Type` **IProbabilityTable**
+- **[home.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts`)
+  - `Component` **HomeComponent** (methods: [ngOnInit, locationModifier, handleLocationChange])
+- **[app.component.ts](../apps/picsa-tools/extension-content/src/app/app.component.ts)** (`apps/picsa-tools/extension-content/src/app/app.component.ts`)
+  - `Component` **PicsaExtensionContent**
+- **[material.module.ts](../apps/picsa-tools/extension-content/src/app/material.module.ts)** (`apps/picsa-tools/extension-content/src/app/material.module.ts`)
+  - `Class` **ExtensionToolkitMaterialModule**
+- **[extension-home.component.ts](../apps/picsa-tools/extension-content/src/app/pages/home/extension-home.component.ts)** (`apps/picsa-tools/extension-content/src/app/pages/home/extension-home.component.ts`)
+  - `Component` **ExtensionHomeComponent** (methods: [linkClicked, startTour])
+- **[app.component.ts](../apps/picsa-tools/farmer-content/src/app/app.component.ts)** (`apps/picsa-tools/farmer-content/src/app/app.component.ts`)
+  - `Component` **PicsaFarmerContent**
+- **[app.routes.ts](../apps/picsa-tools/farmer-content/src/app/app.routes.ts)** (`apps/picsa-tools/farmer-content/src/app/app.routes.ts`)
+  - `Function` **buildFarmerRoutes**
+- **[farmer-home.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/home/farmer-home.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/home/farmer-home.component.ts`)
+  - `Component` **FarmerContentHomeComponent**
+- **[step-video-player.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/player/step-video-player.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/player/step-video-player.ts`)
+  - `Component` **FarmerStepVideoPlayerComponent** (methods: [handleDlStatusChange, handleItemClick])
+- **[step-video.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts`)
+  - `Component` **FarmerStepVideoComponent**
+- **[module-home.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts`)
+  - `Component` **FarmerContentModuleHomeComponent** (methods: [ngOnDestroy, showTool, hideTool, goToModule, handlePhotoShareClick])
+- **[farmer-tool.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts`)
+  - `Component` **FarmerToolPlaceholderComponent**
+- **[app.component.ts](../apps/picsa-tools/forecasts-tool/src/app/app.component.ts)** (`apps/picsa-tools/forecasts-tool/src/app/app.component.ts`)
+  - `Component` **PicsaForecastsTool**
+- **[forecast-viewer.component.ts](../apps/picsa-tools/forecasts-tool/src/app/components/forecast-viewer/forecast-viewer.component.ts)** (`apps/picsa-tools/forecasts-tool/src/app/components/forecast-viewer/forecast-viewer.component.ts`)
+  - `Component` **ForecastViewerComponent** (methods: [ngOnDestroy])
+- **[forecast.page.ts](../apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast.page.ts)** (`apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast.page.ts`)
+  - `Component` **ForecastComponent** (methods: [ngOnDestroy, handleLocationUpdate, handleForecastClick])
+- **[index.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/index.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/index.ts`)
+  - `Type` **IForecast**
+- **[schema_v0.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v0.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v0.ts`)
+  - `Interface` **IForecast_V0**
+- **[schema_v1.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v1.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v1.ts`)
+  - `Interface` **IForecast_V1**
+- **[schema_v2.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v2.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v2.ts`)
+  - `Interface` **IForecast_V2**
+- **[forecast.service.ts](../apps/picsa-tools/forecasts-tool/src/app/services/forecast.service.ts)** (`apps/picsa-tools/forecasts-tool/src/app/services/forecast.service.ts`)
+  - `Service` **ForecastService** (methods: [init, setForecastLocation, downloadForecastFile])
+- **[forecast.types.ts](../apps/picsa-tools/forecasts-tool/src/app/types/forecast.types.ts)** (`apps/picsa-tools/forecasts-tool/src/app/types/forecast.types.ts`)
+  - `Type` **IForecastRow**
+- **[app.component.ts](../apps/picsa-tools/manual-tool/src/app/app.component.ts)** (`apps/picsa-tools/manual-tool/src/app/app.component.ts`)
+  - `Component` **PicsaManualTool**
+- **[manual-select.component.ts](../apps/picsa-tools/manual-tool/src/app/components/manualSelect/manual-select.component.ts)** (`apps/picsa-tools/manual-tool/src/app/components/manualSelect/manual-select.component.ts`)
+  - `Component` **ManualSelectComponent**
+- **[material.module.ts](../apps/picsa-tools/manual-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/manual-tool/src/app/components/material.module.ts`)
+  - `Class` **ManualToolMaterialModule** (methods: [registerIcons])
+- **[stepsContainer.component.ts](../apps/picsa-tools/manual-tool/src/app/components/stepsContainer/stepsContainer.component.ts)** (`apps/picsa-tools/manual-tool/src/app/components/stepsContainer/stepsContainer.component.ts`)
+  - `Component` **StepsContainerComponent** (methods: [goToStep])
+- **[manual.models.ts](../apps/picsa-tools/manual-tool/src/app/models/manual.models.ts)** (`apps/picsa-tools/manual-tool/src/app/models/manual.models.ts`)
+  - `Interface` **IManualPeriodEntry**
+  - `Interface` **IManualStep**
+  - `Interface` **IManualStepLocalised**
+  - `Type` **IManualPeriodEntryLocalised**
+  - `Type` **IManualVariant**
+- **[home.component.ts](../apps/picsa-tools/manual-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/manual-tool/src/app/pages/home/home.component.ts`)
+  - `Component` **HomeComponent** (methods: [handleDlStatusChange, handleManualSelected, ngOnDestroy])
+- **[app.component.ts](../apps/picsa-tools/option-tool/src/app/app.component.ts)** (`apps/picsa-tools/option-tool/src/app/app.component.ts`)
+  - `Component` **PicsaOptionTool**
+- **[editor.component.ts](../apps/picsa-tools/option-tool/src/app/components/editor/editor.component.ts)** (`apps/picsa-tools/option-tool/src/app/components/editor/editor.component.ts`)
+  - `Component` **EditorComponent** (methods: [ngOnInit, setFormBenefit, formArrayPush, formArrayRemove, submitForm])
+- **[gender-input.ts](../apps/picsa-tools/option-tool/src/app/components/editor/inputs/gender/gender-input.ts)** (`apps/picsa-tools/option-tool/src/app/components/editor/inputs/gender/gender-input.ts`)
+  - `Component` **GenderInputComponent**
+- **[investment-input.ts](../apps/picsa-tools/option-tool/src/app/components/editor/inputs/investment/investment-input.ts)** (`apps/picsa-tools/option-tool/src/app/components/editor/inputs/investment/investment-input.ts`)
+  - `Component` **InvestmentInputComponent**
+- **[performance-input.ts](../apps/picsa-tools/option-tool/src/app/components/editor/inputs/performance/performance-input.ts)** (`apps/picsa-tools/option-tool/src/app/components/editor/inputs/performance/performance-input.ts`)
+  - `Component` **PerformanceInputComponent**
+- **[material.module.ts](../apps/picsa-tools/option-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/option-tool/src/app/components/material.module.ts`)
+  - `Class` **OptionMaterialModule** (methods: [registerIcons])
+- **[enterprise-select.component.ts](../apps/picsa-tools/option-tool/src/app/pages/enterprise-select/enterprise-select.component.ts)** (`apps/picsa-tools/option-tool/src/app/pages/enterprise-select/enterprise-select.component.ts`)
+  - `Component` **EnterpriseSelectComponent**
+- **[home.component.ts](../apps/picsa-tools/option-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/option-tool/src/app/pages/home/home.component.ts`)
+  - `Component` **HomeComponent** (methods: [ngAfterViewInit, sharePicture, openDialog, closeDialog, onDataTransfer])
+- **[schema.ts](../apps/picsa-tools/option-tool/src/app/schemas/schema.ts)** (`apps/picsa-tools/option-tool/src/app/schemas/schema.ts`)
+  - `Interface` **IOptionsToolEntry**
+  - `Function` **ENTRY_TEMPLATE**
+- **[types.ts](../apps/picsa-tools/option-tool/src/app/schemas/types.ts)** (`apps/picsa-tools/option-tool/src/app/schemas/types.ts`)
+  - `Interface` **IOptionsToolEntry_v0**
+  - `Interface` **IOptionsToolEntry_v2**
+  - `Interface` **IOptionsToolEntry_v3**
+  - `Interface` **IOptionsToolEntry_v4**
+  - `Interface` **IOptionsToolEntry_v5**
+  - `Type` **IOptionsToolEntry_v1**
+- **[options-tool.service.ts](../apps/picsa-tools/option-tool/src/app/services/options-tool.service.ts)** (`apps/picsa-tools/option-tool/src/app/services/options-tool.service.ts`)
+  - `Service` **OptionsToolService** (methods: [init, addORUpdateData, deleteOption, shareAsImage])
+- **[app.component.ts](../apps/picsa-tools/resources-tool/src/app/app.component.ts)** (`apps/picsa-tools/resources-tool/src/app/app.component.ts`)
+  - `Component` **PicsaResourcesTool**
+- **[resource-collection.component.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-collection/resource-collection.component.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-collection/resource-collection.component.ts`)
+  - `Component` **ResourceCollectionComponent**
+- **[resource-download.component.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-download/resource-download.component.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-download/resource-download.component.ts`)
+  - `Component` **ResourceDownloadComponent** (methods: [ngOnDestroy, download, cancelDownload, uri])
+- **[resource-download-multiple.component.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-download-multiple/resource-download-multiple.component.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-download-multiple/resource-download-multiple.component.ts`)
+  - `Component` **ResourceDownloadMultipleComponent** (methods: [startDownload, stopDownload])
+- **[collection.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/collection/collection.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/collection/collection.ts`)
+  - `Component` **ResourceItemCollectionComponent**
+- **[file.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/file/file.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/file/file.ts`)
+  - `Component` **ResourceItemFileComponent** (methods: [ngOnInit, ngOnDestroy, handleFileLinkClick, handleDownloadStatusChange])
+- **[link.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/link/link.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/link/link.ts`)
+  - `Component` **ResourceItemLinkComponent** (methods: [handleClick])
+- **[video.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/video.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/video.ts`)
+  - `Component` **ResourceItemVideoComponent**
+- **[resource-share.component.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-share/resource-share.component.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-share/resource-share.component.ts`)
+  - `Component` **ResourceShareComponent**
+- **[generator.ts](../apps/picsa-tools/resources-tool/src/app/data/generator.ts)** (`apps/picsa-tools/resources-tool/src/app/data/generator.ts`)
+  - `Class` **ResourcesGenerator**
+- **[locations.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/locations.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/locations.ts`)
+  - `Interface` **IWeatherLocation**
+- **[meteoBlue.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/meteoBlue.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/meteoBlue.ts`)
+  - `Class` **MeteoBlueGenerator**
+- **[wmo.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/wmo.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/wmo.ts`)
+  - `Class` **WMOGenerator**
+  - `Class` **MeteoBlueGenerator**
+- **[material.module.ts](../apps/picsa-tools/resources-tool/src/app/material.module.ts)** (`apps/picsa-tools/resources-tool/src/app/material.module.ts`)
+  - `Class` **ResourcesMaterialModule** (methods: [registerIcons])
+- **[collection-routing.module.ts](../apps/picsa-tools/resources-tool/src/app/pages/collection/collection-routing.module.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/collection/collection-routing.module.ts`)
+  - `Class` **CollectionRoutingModule**
+- **[collection.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts`)
+  - `Component` **CollectionComponent** (methods: [ngOnDestroy, ngOnInit, handleCollectionLoaded])
+- **[downloads.page.ts](../apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts`)
+  - `Component` **DownloadsPageComponent** (methods: [deleteDownload, handleRowClick])
+- **[home.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts`)
+  - `Component` **HomeComponent** (methods: [ngOnInit])
+- **[search.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts`)
+  - `Component` **ResourceSearchComponent** (methods: [ngOnInit, ngOnDestroy, onSearchInputChange])
+- **[index.ts](../apps/picsa-tools/resources-tool/src/app/schemas/base/index.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/base/index.ts`)
+  - `Type` **IResourceBase**
+- **[schema_v0.ts](../apps/picsa-tools/resources-tool/src/app/schemas/base/schema_v0.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/base/schema_v0.ts`)
+  - `Interface` **IResourceBase_v0**
+- **[index.ts](../apps/picsa-tools/resources-tool/src/app/schemas/collection/index.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/collection/index.ts`)
+  - `Type` **IResourceCollection**
+- **[schema_v0.ts](../apps/picsa-tools/resources-tool/src/app/schemas/collection/schema_v0.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/collection/schema_v0.ts`)
+  - `Interface` **IResourceCollection_v0**
+- **[index.ts](../apps/picsa-tools/resources-tool/src/app/schemas/file/index.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/file/index.ts`)
+  - `Type` **IResourceFile**
+- **[schema_v0.ts](../apps/picsa-tools/resources-tool/src/app/schemas/file/schema_v0.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/file/schema_v0.ts`)
+  - `Interface` **IResourceFile_v0**
+- **[index.ts](../apps/picsa-tools/resources-tool/src/app/schemas/link/index.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/link/index.ts`)
+  - `Type` **IResourceLink**
+- **[schema_v0.ts](../apps/picsa-tools/resources-tool/src/app/schemas/link/schema_v0.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/link/schema_v0.ts`)
+  - `Interface` **IResourceLink**
+- **[resources-download.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-download.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-download.service.ts`)
+  - `Service` **ResourcesDownloadService** (methods: [register, queueMultiple, unregister])
+  - `Interface` **DownloadEntry**
+  - `Type` **DownloadId**
+- **[resources-tool.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts`)
+  - `Service` **ResourcesToolService** (methods: [init, filterLocalisedResources, openFileResource, getFileAttachmentURI, revokeFileAttachmentURIs])
+  - `Type` **IDownloadStatus**
+- **[data.utils.ts](../apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts)** (`apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts`)
+  - `Function` **filterHashmap**
+  - `Function` **addHashmapPrefix**
+- **[app.component.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/app.component.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/app.component.ts`)
+  - `Component` **PicsaSeasonalCalendarTool**
+- **[calendar-editor.component.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/components/calendar-editor/calendar-editor.component.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/components/calendar-editor/calendar-editor.component.ts`)
+  - `Component` **CalendarEditorComponent** (methods: [ngOnInit, validate])
+- **[material.module.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/components/material.module.ts`)
+  - `Class` **SeasonalCalendarMaterialModule**
+- **[calendar-table.component.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/pages/calendar-table/calendar-table.component.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/pages/calendar-table/calendar-table.component.ts`)
+  - `Component` **CalendarTableComponent** (methods: [sharePicture])
+- **[create-calendar.component.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/pages/create-calendar/create-calendar.component.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/pages/create-calendar/create-calendar.component.ts`)
+  - `Component` **CreateCalendarComponent** (methods: [handleSubmit])
+- **[home.component.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/pages/home/home.component.ts`)
+  - `Component` **HomeComponent** (methods: [ngOnDestroy, handleMenuClick, promptDelete, saveCopy])
+- **[form.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/schema/form.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/schema/form.ts`)
+  - `Function` **createForm**
+- **[schema.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/schema/schema.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/schema/schema.ts`)
+  - `Type` **CalendarDataEntry**
+  - `Function` **ENTRY_TEMPLATE**
+- **[types.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/schema/types.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/schema/types.ts`)
+  - `Interface` **CalendarDataEntry_v0**
+  - `Interface` **CalendarDataEntry_v1**
+- **[calendar.data.service.ts](../apps/picsa-tools/seasonal-calendar-tool/src/app/services/calendar.data.service.ts)** (`apps/picsa-tools/seasonal-calendar-tool/src/app/services/calendar.data.service.ts`)
+  - `Service` **SeasonCalendarService** (methods: [init, save, getCalendarById, shareAsImage])
+
+### `libs/components`
+
+- **[alert-box.component.ts](../libs/components/src/components/alert-box/alert-box.component.ts)** (`libs/components/src/components/alert-box/alert-box.component.ts`)
+  - `Component` **AlertBoxComponent**
+- **[back-button.component.ts](../libs/components/src/components/back-button.component.ts)** (`libs/components/src/components/back-button.component.ts`)
+  - `Component` **PicsaBackButtonComponent**
+- **[info-tooltip.component.ts](../libs/components/src/components/info-tooltip/info-tooltip.component.ts)** (`libs/components/src/components/info-tooltip/info-tooltip.component.ts`)
+  - `Component` **PicsaInfoTooltipComponent**
+- **[picsa-breadcrumbs.component.ts](../libs/components/src/components/picsa-breadcrumbs.component.ts)** (`libs/components/src/components/picsa-breadcrumbs.component.ts`)
+  - `Component` **PicsaBreadcrumbsComponent** (methods: [ngOnInit, ngOnDestroy])
+- **[picsa-header.component.ts](../libs/components/src/components/picsa-header.component.ts)** (`libs/components/src/components/picsa-header.component.ts`)
+  - `Component` **PicsaHeaderComponent** (methods: [ngOnInit, ngOnDestroy])
+- **[picsa-sidenav.component.ts](../libs/components/src/components/picsa-sidenav.component.ts)** (`libs/components/src/components/picsa-sidenav.component.ts`)
+  - `Component` **PicsaSidenavComponent** (methods: [ngOnInit, ngOnDestroy, toggle, close, handleSidenavChange])
+- **[refresh-spinner.component.ts](../libs/components/src/components/refresh-spinner/refresh-spinner.component.ts)** (`libs/components/src/components/refresh-spinner/refresh-spinner.component.ts`)
+  - `Component` **RefreshSpinnerComponent**
+- **[module.ts](../libs/components/src/module.ts)** (`libs/components/src/module.ts`)
+  - `Class` **PicsaCommonComponentsModule**
+- **[components.service.ts](../libs/components/src/services/components.service.ts)** (`libs/components/src/services/components.service.ts`)
+  - `Service` **PicsaCommonComponentsService** (methods: [setHeader, patchHeader, updateBreadcrumbOptions, toggleSidenav, registerSidenav])
+  - `Interface` **IHeaderOptions**
+  - `Interface` **IBreadcrumbOptions**
+- **[navStack.service.ts](../libs/components/src/services/navStack.service.ts)** (`libs/components/src/services/navStack.service.ts`)
+  - `Service` **NavigationStackService** (methods: [back])
+
+### `libs/configuration`
+
+- **[configuration-select.component.ts](../libs/configuration/src/components/configuration-select/configuration-select.component.ts)** (`libs/configuration/src/components/configuration-select/configuration-select.component.ts`)
+  - `Component` **PicsaConfigurationSelectComponent** (methods: [ngOnInit, setCountry, setLanguage, setUserType])
+- **[configuration-summary.ts](../libs/configuration/src/components/configuration-summary/configuration-summary.ts)** (`libs/configuration/src/components/configuration-summary/configuration-summary.ts`)
+  - `Component` **PicsaConfigurationSummaryComponent**
+- **[provider.ts](../libs/configuration/src/provider.ts)** (`libs/configuration/src/provider.ts`)
+  - `Service` **ConfigurationService** (methods: [resetUserSettings, updateUserSettings])
+  - `Interface` **IUserSettings**
+
+### `libs/i18n`
+
+- **[translate.module.ts](../libs/i18n/src/translate.module.ts)** (`libs/i18n/src/translate.module.ts`)
+  - `Class` **_PicsaTranslateRootModule**
+  - `Class` **_PicsaTranslateChildModule**
+  - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
+  - `Function` **HttpLoaderFactory**
+- **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
+  - `Service` **PicsaTranslateService** (methods: [setLanguage, translateText, translateArray])
+
+### `libs/i18n-gen`
+
+- **[types.ts](../libs/i18n-gen/src/types.ts)** (`libs/i18n-gen/src/types.ts`)
+  - `Interface` **ITranslationEntry**
+
+### `libs/models`
+
+- **[climate.models.ts](../libs/models/src/climate.models.ts)** (`libs/models/src/climate.models.ts`)
+  - `Interface` **ICropRequirement**
+  - `Interface` **IStationMeta**
+  - `Interface` **IStationData**
+  - `Interface` **IChartMeta**
+  - `Interface` **ILineToolOptions**
+  - `Interface` **IProbabilityToolOptions**
+  - `Type` **IChartConfig**
+  - `Type` **IChartId**
+  - `Type` **IChartDefinitions**
+- **[db.models.ts](../libs/models/src/db.models.ts)** (`libs/models/src/db.models.ts`)
+  - `Interface` **IDBDoc**
+  - `Interface` **IAppMeta**
+  - `Type` **IDBEndpoint**
+  - `Function` **keyReplace**
+- **[models.ts](../libs/models/src/models.ts)** (`libs/models/src/models.ts`)
+  - `Interface` **IGroupSettings**
+  - `Interface` **IRegionLang**
+  - `Interface` **ICurrencyCounters**
+  - `Interface` **IFirebaseConfig**
+  - `Interface` **IEnvironment**
+  - `Type` **IAppVariants**
+  - `Type` **LanguageCode**
+
+### `libs/shared`
+
+- **[animations.ts](../libs/shared/src/animations/animations.ts)** (`libs/shared/src/animations/animations.ts`)
+  - `Function` **FadeInOut**
+  - `Function` **FlyInOut**
+  - `Function` **getAnimationTimings**
+- **[autofocus.ts](../libs/shared/src/directives/autofocus.ts)** (`libs/shared/src/directives/autofocus.ts`)
+  - `Directive` **AutofocusDirective** (methods: [ngAfterViewInit])
+- **[scroll-restore.ts](../libs/shared/src/directives/scroll-restore.ts)** (`libs/shared/src/directives/scroll-restore.ts`)
+  - `Directive` **PicsaScrollRestoreDirective** (methods: [ngOnInit, ngOnDestroy])
+- **[touch-gestures.ts](../libs/shared/src/directives/touch-gestures.ts)** (`libs/shared/src/directives/touch-gestures.ts`)
+  - `Directive` **PicsaTouchGesturesDirective** (methods: [ngOnInit])
+- **[animation.component.ts](../libs/shared/src/features/animations/animation.component.ts)** (`libs/shared/src/features/animations/animation.component.ts`)
+  - `Component` **PicsaAnimationComponent** (methods: [ngOnInit, loopComplete])
+- **[animation.provider.ts](../libs/shared/src/features/animations/animation.provider.ts)** (`libs/shared/src/features/animations/animation.provider.ts`)
+  - `Function` **provideSharedAnimations**
+- **[models.ts](../libs/shared/src/features/animations/models.ts)** (`libs/shared/src/features/animations/models.ts`)
+  - `Type` **IAvailableAnimations**
+- **[audio-playback.component.ts](../libs/shared/src/features/audio-playback/audio-playback.component.ts)** (`libs/shared/src/features/audio-playback/audio-playback.component.ts`)
+  - `Component` **AudioPlaybackComponent** (methods: [togglePlayback, ngOnDestroy])
+- **[audio-playback.service.ts](../libs/shared/src/features/audio-playback/audio-playback.service.ts)** (`libs/shared/src/features/audio-playback/audio-playback.service.ts`)
+  - `Service` **AudioService** (methods: [playAudio, pauseAudio, isPlaying, stop])
+- **[chart.ts](../libs/shared/src/features/charts/chart.ts)** (`libs/shared/src/features/charts/chart.ts`)
+  - `Component` **PicsaChartComponent** (methods: [onOrientationChange, chartRerender])
+  - `Type` **c3ChartAPI**
+  - `Type` **c3ChartConfiguration**
+- **[data-table.component.ts](../libs/shared/src/features/data-table/data-table.component.ts)** (`libs/shared/src/features/data-table/data-table.component.ts`)
+  - `Pipe` **FormatValuePipe** (methods: [transform])
+  - `Component` **PicsaDataTableComponent** (methods: [ngOnChanges, handleRowClick, applyFilter, handleExport])
+  - `Interface` **IDataTableOptions**
+- **[TEMPLATES.ts](../libs/shared/src/features/dialog/components/TEMPLATES.ts)** (`libs/shared/src/features/dialog/components/TEMPLATES.ts`)
+  - `Type` **ICustomTemplate**
+- **[dialog.ts](../libs/shared/src/features/dialog/components/dialog.ts)** (`libs/shared/src/features/dialog/components/dialog.ts`)
+  - `Component` **PicsaActionDialogComponent**
+- **[dialog.models.ts](../libs/shared/src/features/dialog/dialog.models.ts)** (`libs/shared/src/features/dialog/dialog.models.ts`)
+  - `Interface` **IPicsaDialogData**
+  - `Type` **IPicsaDialogConfig**
+- **[dialog.service.ts](../libs/shared/src/features/dialog/dialog.service.ts)** (`libs/shared/src/features/dialog/dialog.service.ts`)
+  - `Service` **PicsaDialogService** (methods: [open, closeAll])
+- **[drawing.component.ts](../libs/shared/src/features/drawing/drawing.component.ts)** (`libs/shared/src/features/drawing/drawing.component.ts`)
+  - `Component` **PicsaDrawingComponent** (methods: [handlePointerDown, handlePointerMove, handlePointerUp, clearDraw, undoSvgStroke])
+- **[loading.ts](../libs/shared/src/features/loading/loading.ts)** (`libs/shared/src/features/loading/loading.ts`)
+  - `Component` **PicsaLoadingComponent** (methods: [ngOnInit])
+  - `Type` **IPicsaLoaders**
+- **[map.ts](../libs/shared/src/features/map/map.ts)** (`libs/shared/src/features/map/map.ts`)
+  - `Component` **PicsaMapComponent** (methods: [ngOnInit, setActiveMarker, setLocationMarker, _onMapReady])
+  - `Interface` **IMapMarker**
+  - `Type` **IMapOptions**
+- **[pdf-viewer.component.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts`)
+  - `Component` **PdfViewerComponent** (methods: [ngAfterViewInit, restartApp])
+- **[pdf-viewer.service.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts`)
+  - `Service` **PicsaPDFViewerService** (methods: [init])
+- **[photo-debug.component.ts](../libs/shared/src/features/photo/components/photo-debug/photo-debug.component.ts)** (`libs/shared/src/features/photo/components/photo-debug/photo-debug.component.ts`)
+  - `Component` **PhotoDebugComponent** (methods: [handlePhotoShareClick])
+- **[photo-input.component.ts](../libs/shared/src/features/photo/components/photo-input/photo-input.component.ts)** (`libs/shared/src/features/photo/components/photo-input/photo-input.component.ts`)
+  - `Component` **PhotoInputComponent** (methods: [ngOnInit, takeOrChoosePicture])
+- **[photo-list.component.ts](../libs/shared/src/features/photo/components/photo-list/photo-list.component.ts)** (`libs/shared/src/features/photo/components/photo-list/photo-list.component.ts`)
+  - `Component` **PhotoListComponent** (methods: [handlePhotoTap, handlePhotoLongPress, selectAll, toggleSelected])
+- **[photo-view.component.ts](../libs/shared/src/features/photo/components/photo-view/photo-view.component.ts)** (`libs/shared/src/features/photo/components/photo-view/photo-view.component.ts`)
+  - `Component` **PhotoViewComponent** (methods: [openPhotoDialog, handlePreviewClick, promptShare, promptDelete])
+- **[photo.service.ts](../libs/shared/src/features/photo/photo.service.ts)** (`libs/shared/src/features/photo/photo.service.ts`)
+  - `Service` **PhotoService** (methods: [init, getPhotoAttachment, sharePhoto, sharePhotos, revokePhotoAttachment])
+- **[index.ts](../libs/shared/src/features/photo/schema/index.ts)** (`libs/shared/src/features/photo/schema/index.ts`)
+  - `Type` **IPhotoEntry**
+- **[schema_v0.ts](../libs/shared/src/features/photo/schema/schema_v0.ts)** (`libs/shared/src/features/photo/schema/schema_v0.ts`)
+  - `Interface` **IPhotoEntry_V0**
+- **[video-player.base.ts](../libs/shared/src/features/video-player/player/video-player.base.ts)** (`libs/shared/src/features/video-player/player/video-player.base.ts`)
+  - `Component` **VideoPlayerBaseComponent**
+  - `Interface` **IVideoPlayerProgressEvent**
+- **[video-player.native.ts](../libs/shared/src/features/video-player/player/video-player.native.ts)** (`libs/shared/src/features/video-player/player/video-player.native.ts`)
+  - `Component` **VideoPlayerNativeComponent** (methods: [play])
+- **[video-player.web.ts](../libs/shared/src/features/video-player/player/video-player.web.ts)** (`libs/shared/src/features/video-player/player/video-player.web.ts`)
+  - `Component` **VideoPlayerWebComponent** (methods: [ngOnInit, play, pause])
+- **[index.ts](../libs/shared/src/features/video-player/schema/index.ts)** (`libs/shared/src/features/video-player/schema/index.ts`)
+  - `Type` **IVideoPlayerEntry**
+- **[schema_v0.ts](../libs/shared/src/features/video-player/schema/schema_v0.ts)** (`libs/shared/src/features/video-player/schema/schema_v0.ts`)
+  - `Interface` **IVideoPlayerEntry_V0**
+- **[schema_v1.ts](../libs/shared/src/features/video-player/schema/schema_v1.ts)** (`libs/shared/src/features/video-player/schema/schema_v1.ts`)
+  - `Interface` **IVideoPlayerEntry_V1**
+- **[video-player.component.ts](../libs/shared/src/features/video-player/video-player.component.ts)** (`libs/shared/src/features/video-player/video-player.component.ts`)
+  - `Component` **PicsaVideoPlayerComponent** (methods: [ngOnInit, handlePlaybackProgressChanged, playVideo])
+- **[video-player.service.ts](../libs/shared/src/features/video-player/video-player.service.ts)** (`libs/shared/src/features/video-player/video-player.service.ts`)
+  - `Service` **VideoPlayerService** (methods: [init, updateVideoState, getVideoState, saveThumbnail])
+- **[video-thumbnail.component.ts](../libs/shared/src/features/video-player/video-thumbnail/video-thumbnail.component.ts)** (`libs/shared/src/features/video-player/video-thumbnail/video-thumbnail.component.ts`)
+  - `Component` **VideoThumbnailComponent** (methods: [ngOnInit, ngOnDestroy])
+- **[db.mock.ts](../libs/shared/src/mocks/db.mock.ts)** (`libs/shared/src/mocks/db.mock.ts`)
+  - `Class` **MockDB** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
+- **[mock-http.interceptor.ts](../libs/shared/src/mocks/mock-http.interceptor.ts)** (`libs/shared/src/mocks/mock-http.interceptor.ts`)
+  - `Service` **MockHttpInterceptor** (methods: [intercept])
+- **[db.module.ts](../libs/shared/src/modules/database_v2/db.module.ts)** (`libs/shared/src/modules/database_v2/db.module.ts`)
+  - `Class` **PicsaDb_V2_Module** (methods: [forRoot])
+- **[db.module.ts](../libs/shared/src/modules/db.module.ts)** (`libs/shared/src/modules/db.module.ts`)
+  - `Class` **PicsaDbModule** (methods: [forRoot])
+- **[app-open-prompt.component.ts](../libs/shared/src/modules/deep-links/app-open-prompt.component.ts)** (`libs/shared/src/modules/deep-links/app-open-prompt.component.ts`)
+  - `Component` **AppOpenPromptComponent** (methods: [triggerTour, dismiss])
+- **[deep-links.module.ts](../libs/shared/src/modules/deep-links/deep-links.module.ts)** (`libs/shared/src/modules/deep-links/deep-links.module.ts`)
+  - `Class` **PicsaDeepLinksModule** (methods: [forRoot])
+- **[deep-links.service.ts](../libs/shared/src/modules/deep-links/deep-links.service.ts)** (`libs/shared/src/modules/deep-links/deep-links.service.ts`)
+  - `Class` **DeepLinksServiceConfig**
+  - `Service` **DeepLinksService** (methods: [init])
+- **[google-play-badge.component.ts](../libs/shared/src/modules/deep-links/google-play-badge.component.ts)** (`libs/shared/src/modules/deep-links/google-play-badge.component.ts`)
+  - `Component` **GooglePlayBadgeComponent**
+- **[native.ts](../libs/shared/src/modules/native.ts)** (`libs/shared/src/modules/native.ts`)
+  - `Class` **PicsaNativeModule** (methods: [forRoot])
+- **[sizeMB.ts](../libs/shared/src/pipes/sizeMB.ts)** (`libs/shared/src/pipes/sizeMB.ts`)
+  - `Pipe` **SizeMBPipe** (methods: [transform])
+- **[asyncService.service.ts](../libs/shared/src/services/asyncService.service.ts)** (`libs/shared/src/services/asyncService.service.ts`)
+  - `Class` **PicsaAsyncService** (methods: [init])
+- **[analytics.service.ts](../libs/shared/src/services/core/analytics.service.ts)** (`libs/shared/src/services/core/analytics.service.ts`)
+  - `Service` **AnalyticsService** (methods: [init, trackVideoPlay, trackResourceOpen])
+- **[appUser.service.ts](../libs/shared/src/services/core/appUser.service.ts)** (`libs/shared/src/services/core/appUser.service.ts`)
+  - `Service` **AppUserService**
+- **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
+  - `Service` **CrashlyticsService** (methods: [init])
+- **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
+  - `Service` **DBCacheService** (methods: [getCollection, getDoc, getDocs, setDoc, setDocs])
+- **[_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
+  - `Service` **DBServerService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
+  - `Interface` **IServerWriteBatchEntry**
+- **[abstract.db.ts](../libs/shared/src/services/core/db/abstract.db.ts)** (`libs/shared/src/services/core/db/abstract.db.ts`)
+  - `Class` **AbstractDBService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
+- **[db.service.ts](../libs/shared/src/services/core/db/db.service.ts)** (`libs/shared/src/services/core/db/db.service.ts`)
+  - `Service` **PicsaDbService** (methods: [getCollection, getDoc, setDoc, setDocs, setServerDoc])
+  - `Function` **generateID**
+- **[sync.service.ts](../libs/shared/src/services/core/db/sync.service.ts)** (`libs/shared/src/services/core/db/sync.service.ts`)
+  - `Service` **DBSyncService** (methods: [addWrites, getPendingWrites])
+- **[db-attachment.service.ts](../libs/shared/src/services/core/db_v2/db-attachment.service.ts)** (`libs/shared/src/services/core/db_v2/db-attachment.service.ts`)
+  - `Service` **PicsaDatabaseAttachmentService** (methods: [init, getAttachmentDoc, getFileAttachmentURI, revokeFileAttachmentURIs, putAttachment])
+- **[db-sync.service.ts](../libs/shared/src/services/core/db_v2/db-sync.service.ts)** (`libs/shared/src/services/core/db_v2/db-sync.service.ts`)
+  - `Service` **PicsaDatabaseSyncService** (methods: [registerDB, registerCollection, syncPendingDocs])
+  - `Interface` **ISyncPushEntry**
+- **[db.service.ts](../libs/shared/src/services/core/db_v2/db.service.ts)** (`libs/shared/src/services/core/db_v2/db.service.ts`)
+  - `Service` **PicsaDatabase_V2_Service** (methods: [init, ensureCollections, activeUserQuery])
+- **[db.types.ts](../libs/shared/src/services/core/db_v2/db.types.ts)** (`libs/shared/src/services/core/db_v2/db.types.ts`)
+  - `Type` **IDBCollectionName**
+- **[db.utils.ts](../libs/shared/src/services/core/db_v2/db.utils.ts)** (`libs/shared/src/services/core/db_v2/db.utils.ts`)
+  - `Function` **handleCollectionModifiers**
+- **[indexeddb.utils.ts](../libs/shared/src/services/core/db_v2/indexeddb.utils.ts)** (`libs/shared/src/services/core/db_v2/indexeddb.utils.ts`)
+  - `Function` **getIndexedDBData**
+  - `Function` **removeIndexedDB**
+- **[index.ts](../libs/shared/src/services/core/db_v2/models/index.ts)** (`libs/shared/src/services/core/db_v2/models/index.ts`)
+  - `Interface` **IPicsaCollectionCreator**
+- **[index.ts](../libs/shared/src/services/core/db_v2/schemas/attachments/index.ts)** (`libs/shared/src/services/core/db_v2/schemas/attachments/index.ts`)
+  - `Type` **IAttachment**
+- **[schema_v0.ts](../libs/shared/src/services/core/db_v2/schemas/attachments/schema_v0.ts)** (`libs/shared/src/services/core/db_v2/schemas/attachments/schema_v0.ts`)
+  - `Interface` **IAttachment_V0**
+- **[index.ts](../libs/shared/src/services/core/db_v2/schemas/sync_delete/index.ts)** (`libs/shared/src/services/core/db_v2/schemas/sync_delete/index.ts`)
+  - `Type` **ISyncDeleteEntry**
+- **[schema_V0.ts](../libs/shared/src/services/core/db_v2/schemas/sync_delete/schema_V0.ts)** (`libs/shared/src/services/core/db_v2/schemas/sync_delete/schema_V0.ts`)
+  - `Interface` **ISyncDelete_V0**
+- **[error-handler.service.ts](../libs/shared/src/services/core/error-handler.service.ts)** (`libs/shared/src/services/core/error-handler.service.ts`)
+  - `Service` **ErrorHandlerService** (methods: [handleError])
+- **[file.service.ts](../libs/shared/src/services/core/file.service.ts)** (`libs/shared/src/services/core/file.service.ts`)
+  - `Service` **FileService** (methods: [readAssetFile, readAssetContents, downloadFile])
+  - `Interface` **IStorageFileEntry**
+  - `Type` **IStorageFilesHashmap**
+- **[firebase.service.ts](../libs/shared/src/services/core/firebase.service.ts)** (`libs/shared/src/services/core/firebase.service.ts`)
+  - `Service` **PicsaFirebaseService**
+- **[network.service.ts](../libs/shared/src/services/core/network.service.ts)** (`libs/shared/src/services/core/network.service.ts`)
+  - `Service` **NetworkService** (methods: [isNetworkError])
+- **[notification.service.ts](../libs/shared/src/services/core/notification.service.ts)** (`libs/shared/src/services/core/notification.service.ts`)
+  - `Service` **PicsaNotificationService** (methods: [showErrorNotification, showSuccessNotification, showUserNotification])
+  - `Component` **SnackBarWithIconComponent**
+- **[performance.service.ts](../libs/shared/src/services/core/performance.service.ts)** (`libs/shared/src/services/core/performance.service.ts`)
+  - `Service` **PerformanceService** (methods: [init])
+- **[push-notifications.service.ts](../libs/shared/src/services/core/push-notifications.service.ts)** (`libs/shared/src/services/core/push-notifications.service.ts`)
+  - `Service` **PicsaPushNotificationService** (methods: [initializePushNotifications])
+- **[share.service.ts](../libs/shared/src/services/core/share.service.ts)** (`libs/shared/src/services/core/share.service.ts`)
+  - `Service` **ShareService** (methods: [shareFromAttachments])
+- **[supabase-storage-download.component.ts](../libs/shared/src/services/core/supabase/components/storage-download/supabase-storage-download.component.ts)** (`libs/shared/src/services/core/supabase/components/storage-download/supabase-storage-download.component.ts`)
+  - `Component` **SupabaseStorageDownloadComponent** (methods: [start, stop])
+- **[storage-file-picker.component.ts](../libs/shared/src/services/core/supabase/components/storage-file-picker/storage-file-picker.component.ts)** (`libs/shared/src/services/core/supabase/components/storage-file-picker/storage-file-picker.component.ts`)
+  - `Directive` **SupabaseStoragePickerDirective** (methods: [pickerOpen])
+  - `Component` **SupabaseStorageFilePickerComponent** (methods: [ngOnInit, compareFn, handleFileSelect])
+- **[supabase-upload.component.ts](../libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts)** (`libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts`)
+  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, renameFile, startUpload])
+  - `Interface` **IUploadResult**
+  - `Type` **FileDropFile**
+- **[storagePath.pipe.ts](../libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts)** (`libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts`)
+  - `Pipe` **StoragePathPipe** (methods: [transform])
+- **[deferred-client.ts](../libs/shared/src/services/core/supabase/services/deferred-client.ts)** (`libs/shared/src/services/core/supabase/services/deferred-client.ts`)
+  - `Class` **SupabaseDeferredClient** (methods: [registerSupabaseClient, handleClientRegistered])
+- **[supabase-auth.service.ts](../libs/shared/src/services/core/supabase/services/supabase-auth.service.ts)** (`libs/shared/src/services/core/supabase/services/supabase-auth.service.ts`)
+  - `Service` **SupabaseAuthService** (methods: [handleClientRegistered, signInUser, signUpUser, reloadUserPermissions, resetEmailPassword])
+  - `Type` **IAuthUser**
+- **[supabase-functions.service.ts](../libs/shared/src/services/core/supabase/services/supabase-functions.service.ts)** (`libs/shared/src/services/core/supabase/services/supabase-functions.service.ts`)
+  - `Service` **SupabaseFunctionsService** (methods: [setHeaders, invoke])
+- **[supabase-storage.service.ts](../libs/shared/src/services/core/supabase/services/supabase-storage.service.ts)** (`libs/shared/src/services/core/supabase/services/supabase-storage.service.ts`)
+  - `Service` **SupabaseStorageService** (methods: [handleClientRegistered, list, getFile, getFileAlt, putFile])
+  - `Interface` **IStorageEntry**
+- **[supabase.service.ts](../libs/shared/src/services/core/supabase/supabase.service.ts)** (`libs/shared/src/services/core/supabase/supabase.service.ts`)
+  - `Service` **SupabaseService** (methods: [init, invokeFunction])
+- **[query.utils.ts](../libs/shared/src/services/core/supabase/utils/query.utils.ts)** (`libs/shared/src/services/core/supabase/utils/query.utils.ts`)
+  - `Type` **LiveQueryOpts**
+  - `Type` **TableWithLive**
+  - `Function` **tableWithLive**
+- **[supabase.stubs.ts](../libs/shared/src/services/core/supabase/utils/supabase.stubs.ts)** (`libs/shared/src/services/core/supabase/utils/supabase.stubs.ts`)
+  - `Function` **checkBackendAvailability**
+  - `Function` **createOfflineSupabaseClient**
+- **[tour-button.component.ts](../libs/shared/src/services/core/tour/tour-button.component.ts)** (`libs/shared/src/services/core/tour/tour-button.component.ts`)
+  - `Component` **PicsaTourButton** (methods: [startTour])
+- **[tour.service.ts](../libs/shared/src/services/core/tour/tour.service.ts)** (`libs/shared/src/services/core/tour/tour.service.ts`)
+  - `Service` **TourService** (methods: [registerTour, pauseTour, resumeTour, startTourById, startTour])
+- **[tour.types.ts](../libs/shared/src/services/core/tour/tour.types.ts)** (`libs/shared/src/services/core/tour/tour.types.ts`)
+  - `Interface` **ITourStep**
+- **[user.service.ts](../libs/shared/src/services/core/user.service.ts)** (`libs/shared/src/services/core/user.service.ts`)
+  - `Service` **PicsaUserService** (methods: [setActiveUser, deleteUser, createOrUpdateUser])
+  - `Interface` **IPicsaUser**
+- **[youtube-service.ts](../libs/shared/src/services/core/youtube-service.ts)** (`libs/shared/src/services/core/youtube-service.ts`)
+  - `Service` **YoutubeService** (methods: [createPlayer, onPlayerReady, onPlayerStateChange, loadPlayer, setupPlayer])
+- **[app-update.ts](../libs/shared/src/services/native/app-update.ts)** (`libs/shared/src/services/native/app-update.ts`)
+  - `Service` **AppUpdateService** (methods: [checkForUpdates])
+- **[print.ts](../libs/shared/src/services/native/print.ts)** (`libs/shared/src/services/native/print.ts`)
+  - `Service` **PrintProvider** (methods: [shareHtmlDom, sharePNGImage, svgToPngBlob])
+- **[safe-area.ts](../libs/shared/src/services/native/safe-area.ts)** (`libs/shared/src/services/native/safe-area.ts`)
+  - `Service` **SafeAreaService** (methods: [getInsets, initialize])
+  - `Interface` **SafeAreaInsets**
+  - `Interface` **SafeAreaPlugin**
+- **[storage-service.ts](../libs/shared/src/services/native/storage-service.ts)** (`libs/shared/src/services/native/storage-service.ts`)
+  - `Service` **NativeStorageService** (methods: [init, openFile, openFileURI, writeFile, copyFileToCache])
+- **[promptToHomePageService.service.ts](../libs/shared/src/services/promptToHomePageService.service.ts)** (`libs/shared/src/services/promptToHomePageService.service.ts`)
+  - `Service` **CommunicationService** (methods: [triggerUserEvent])
+- **[ngsw.service.ts](../libs/shared/src/services/pwa/ngsw.service.ts)** (`libs/shared/src/services/pwa/ngsw.service.ts`)
+  - `Service` **DEPRECATED_ServiceWorkerService** (methods: [initialiseSw])
+- **[syncService.service.ts](../libs/shared/src/services/syncService.service.ts)** (`libs/shared/src/services/syncService.service.ts`)
+  - `Class` **PicsaSyncService** (methods: [init])
+
+### `apps/picsa-server/supabase/migrations`
+
+- **[20250820173508_merged_schema.sql](../apps/picsa-server/supabase/migrations/20250820173508_merged_schema.sql)** (`apps/picsa-server/supabase/migrations/20250820173508_merged_schema.sql`)
+  - `Tables` **17 table(s)** ([public.app_users, public.climate_station_data, public.climate_stations, public.crop_data, public.crop_data_downscaled])
+  - `SQLFunctions` **7 function(s)** ([private.get_secret, public.add_kobo_sync_entry, public.call_edge_function, public.custom_access_token_hook, public.sync_deleted_storage_object])
+- **[20250821134300_app_users_update.sql](../apps/picsa-server/supabase/migrations/20250821134300_app_users_update.sql)** (`apps/picsa-server/supabase/migrations/20250821134300_app_users_update.sql`)
+  - `Migration` **20250821134300_app_users_update.sql**
+- **[20250823112700_non_anon_users.sql](../apps/picsa-server/supabase/migrations/20250823112700_non_anon_users.sql)** (`apps/picsa-server/supabase/migrations/20250823112700_non_anon_users.sql`)
+  - `SQLFunctions` **1 function(s)** ([public.get_non_anonymous_users])
+- **[20250906184900_audit_schema.sql](../apps/picsa-server/supabase/migrations/20250906184900_audit_schema.sql)** (`apps/picsa-server/supabase/migrations/20250906184900_audit_schema.sql`)
+  - `Tables` **2 table(s)** ([to, audit.audit_log])
+- **[20250906184901_audit_functions.sql](../apps/picsa-server/supabase/migrations/20250906184901_audit_functions.sql)** (`apps/picsa-server/supabase/migrations/20250906184901_audit_functions.sql`)
+  - `SQLFunctions` **3 function(s)** ([audit.prevent_noop_update, audit.jsonb_recursive_diff, audit.audit_with_diff])
+- **[20250906184902_audit_utils.sql](../apps/picsa-server/supabase/migrations/20250906184902_audit_utils.sql)** (`apps/picsa-server/supabase/migrations/20250906184902_audit_utils.sql`)
+  - `SQLFunctions` **5 function(s)** ([audit.enable_table_audit, audit.disable_table_audit, audit.create_audit_view, audit.get_audit_history, audit.cleanup_old_records])
+- **[20250906190000_climate_data_audit.sql](../apps/picsa-server/supabase/migrations/20250906190000_climate_data_audit.sql)** (`apps/picsa-server/supabase/migrations/20250906190000_climate_data_audit.sql`)
+  - `Migration` **20250906190000_climate_data_audit.sql**
+- **[20250922150700_forecast_update.sql](../apps/picsa-server/supabase/migrations/20250922150700_forecast_update.sql)** (`apps/picsa-server/supabase/migrations/20250922150700_forecast_update.sql`)
+  - `Migration` **20250922150700_forecast_update.sql**
+- **[20251030113300_language_update.sql](../apps/picsa-server/supabase/migrations/20251030113300_language_update.sql)** (`apps/picsa-server/supabase/migrations/20251030113300_language_update.sql`)
+  - `Migration` **20251030113300_language_update.sql**
+- **[20251121123600_climate_admin_role.sql](../apps/picsa-server/supabase/migrations/20251121123600_climate_admin_role.sql)** (`apps/picsa-server/supabase/migrations/20251121123600_climate_admin_role.sql`)
+  - `Migration` **20251121123600_climate_admin_role.sql**
+- **[20260128102700_deploment_admin.sql](../apps/picsa-server/supabase/migrations/20260128102700_deploment_admin.sql)** (`apps/picsa-server/supabase/migrations/20260128102700_deploment_admin.sql`)
+  - `Migration` **20260128102700_deploment_admin.sql**
+- **[20260129000000_admin_permission_utils.sql](../apps/picsa-server/supabase/migrations/20260129000000_admin_permission_utils.sql)** (`apps/picsa-server/supabase/migrations/20260129000000_admin_permission_utils.sql`)
+  - `SQLFunctions` **2 function(s)** ([public.user_is_admin, public.user_has_role])
+- **[20260129134800_rls_updates.sql](../apps/picsa-server/supabase/migrations/20260129134800_rls_updates.sql)** (`apps/picsa-server/supabase/migrations/20260129134800_rls_updates.sql`)
+  - `Migration` **20260129134800_rls_updates.sql**
+- **[20260201000000_rls_updates additional.sql](../apps/picsa-server/supabase/migrations/20260201000000_rls_updates additional.sql)** (`apps/picsa-server/supabase/migrations/20260201000000_rls_updates additional.sql`)
+  - `Migration` **20260201000000_rls_updates additional.sql**
+- **[20260208094100_user_role_simplification.sql](../apps/picsa-server/supabase/migrations/20260208094100_user_role_simplification.sql)** (`apps/picsa-server/supabase/migrations/20260208094100_user_role_simplification.sql`)
+  - `SQLFunctions` **1 function(s)** ([public.user_has_role])
+- **[20260210152000_global_auth_role.sql](../apps/picsa-server/supabase/migrations/20260210152000_global_auth_role.sql)** (`apps/picsa-server/supabase/migrations/20260210152000_global_auth_role.sql`)
+  - `SQLFunctions` **1 function(s)** ([public.user_is_global_admin])
+- **[20260210153000_user_profiles.sql](../apps/picsa-server/supabase/migrations/20260210153000_user_profiles.sql)** (`apps/picsa-server/supabase/migrations/20260210153000_user_profiles.sql`)
+  - `Tables` **1 table(s)** ([public.user_profiles])
+  - `SQLFunctions` **1 function(s)** ([public.handle_new_user])
+- **[20260213123000_deployment_access_requests.sql](../apps/picsa-server/supabase/migrations/20260213123000_deployment_access_requests.sql)** (`apps/picsa-server/supabase/migrations/20260213123000_deployment_access_requests.sql`)
+  - `Tables` **1 table(s)** ([public.deployment_access_requests])
+  - `SQLFunctions` **1 function(s)** ([public.handle_new_deployment_access_request])
+- **[20260225214500_debug_logs.sql](../apps/picsa-server/supabase/migrations/20260225214500_debug_logs.sql)** (`apps/picsa-server/supabase/migrations/20260225214500_debug_logs.sql`)
+  - `Tables` **1 table(s)** ([public.debug_logs])
+- **[20260304165801_geo_schemas.sql](../apps/picsa-server/supabase/migrations/20260304165801_geo_schemas.sql)** (`apps/picsa-server/supabase/migrations/20260304165801_geo_schemas.sql`)
+  - `Tables` **3 table(s)** ([geo.countries, geo.locales, geo.boundaries])
+- **[20260304165802_geo_data.sql](../apps/picsa-server/supabase/migrations/20260304165802_geo_data.sql)** (`apps/picsa-server/supabase/migrations/20260304165802_geo_data.sql`)
+  - `Migration` **20260304165802_geo_data.sql**
+- **[20260425120000_budget_sharing.sql](../apps/picsa-server/supabase/migrations/20260425120000_budget_sharing.sql)** (`apps/picsa-server/supabase/migrations/20260425120000_budget_sharing.sql`)
+  - `Tables` **1 table(s)** ([budget.budgets])
+- **[20260607151600_add_zw_country_code.sql](../apps/picsa-server/supabase/migrations/20260607151600_add_zw_country_code.sql)** (`apps/picsa-server/supabase/migrations/20260607151600_add_zw_country_code.sql`)
+  - `Migration` **20260607151600_add_zw_country_code.sql**
+- **[20260715115100_monitoring_rls.sql](../apps/picsa-server/supabase/migrations/20260715115100_monitoring_rls.sql)** (`apps/picsa-server/supabase/migrations/20260715115100_monitoring_rls.sql`)
+  - `Migration` **20260715115100_monitoring_rls.sql**
+- **[20260717161900_add_country_code_to_translations.sql](../apps/picsa-server/supabase/migrations/20260717161900_add_country_code_to_translations.sql)** (`apps/picsa-server/supabase/migrations/20260717161900_add_country_code_to_translations.sql`)
+  - `Migration` **20260717161900_add_country_code_to_translations.sql**
+- **[20260721130000_get_non_anonymous_users_profiles.sql](../apps/picsa-server/supabase/migrations/20260721130000_get_non_anonymous_users_profiles.sql)** (`apps/picsa-server/supabase/migrations/20260721130000_get_non_anonymous_users_profiles.sql`)
+  - `SQLFunctions` **1 function(s)** ([public.get_non_anonymous_users])
+- **[20260721153000_user_profiles_admin_rls.sql](../apps/picsa-server/supabase/migrations/20260721153000_user_profiles_admin_rls.sql)** (`apps/picsa-server/supabase/migrations/20260721153000_user_profiles_admin_rls.sql`)
+  - `Migration` **20260721153000_user_profiles_admin_rls.sql**
+

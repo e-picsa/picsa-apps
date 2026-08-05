@@ -14,6 +14,7 @@ The architecture consists of a "Super App" (`apps/picsa-apps/app`) that acts as 
 Please refer to the following files in `.agent/rules/` for deep context:
 
 - **[Codebase Map](.agent/codebase-map.md)**: Architecture, directory structure, and relationship between the Super App and tools.
+- **[Generated Symbol Map](.agent/generated-repo-map.md)**: Automatically generated symbol graph, `@picsa/*` path aliases, and component/service declarations. Run `yarn ai:gen-codemap` to update.
 - **[Tech Stack](.agent/rules/tech-stack.md)**: Detailed stack info, constraints (MobX, Tailwind preferences), and library versions.
 - **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
@@ -52,9 +53,16 @@ To avoid overloading the context window and consuming excessive tokens, all AI/A
   - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.
 - **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
 
-## Self-Documentation
+## Self-Documentation & Codebase Map Maintenance
 
 As an intelligent agent, you are encouraged to improve your own workflow and help future agents.
 
 1.  **Check Knowledge Base**: Before starting a task, check `.agent/AI_GENERATED_KNOWLEDGE.md` for learnings from previous sessions.
 2.  **Record Learnings**: If you solve a particularly tricky problem or discover a useful pattern, append a new entry to `.agent/AI_GENERATED_KNOWLEDGE.md` following the format in that file.
+3.  **Regenerate Codebase Map on Structural Additions**:
+    - **When to regenerate**: Do NOT run `yarn ai:gen-codemap` for minor bug fixes or method updates. ONLY regenerate when creating new structural elements that require extraction:
+      - New `@picsa/*` libraries or TypeScript path aliases in `tsconfig.base.json`.
+      - New Angular services (`@Injectable`), components (`@Component`), directives (`@Directive`), or pipes (`@Pipe`).
+      - New Supabase edge functions (`apps/picsa-server/supabase/functions/`), server utils, or database SQL migrations (`apps/picsa-server/supabase/migrations/*.sql`).
+      - New tools in `apps/picsa-tools/` or deployable apps in `apps/picsa-apps/`.
+    - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agent/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.
