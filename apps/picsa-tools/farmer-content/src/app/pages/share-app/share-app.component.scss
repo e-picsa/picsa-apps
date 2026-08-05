@@ -7,17 +7,13 @@
 }
 
 .share-option-card {
+  @include share-page.share-card-surface;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   min-width: 0;
   padding: 1.5rem 1.25rem 1.25rem;
-  border-radius: 0.875rem;
-  border: 1px solid #d4dbe3;
-  background: #fff;
-  box-shadow: none;
-  box-sizing: border-box;
   text-align: center;
 
   @media (min-width: 768px) {
