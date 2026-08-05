@@ -9,6 +9,13 @@
     </button>
   </div>
 
+  <div class="flex items-center mt-2">
+    <p class="flex-1">Export app crop probability tables for all stations in current country</p>
+    <button class="ml-2" matButton="outlined" (click)="exportCropProbabilityTables()" [disabled]="exporting()">
+      <mat-icon>download</mat-icon>Export App Data
+    </button>
+  </div>
+
   <dashboard-data-import (dataLoaded)="handleDataLoad($event)"></dashboard-data-import>
 
   <mat-accordion class="mt-4" multi>

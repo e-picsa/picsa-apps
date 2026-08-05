@@ -11,7 +11,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FadeInOut } from '@picsa/shared/animations';
 import { _wait, deepClone } from '@picsa/utils';
 import { Subscription } from 'rxjs';
 
@@ -26,7 +25,6 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   selector: 'budget-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  animations: [FadeInOut({})],
   standalone: false,
   // TODO - need full table detection on push to track propertly changes
   // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +34,7 @@ export class BudgetEditorComponent implements OnDestroy {
   store = inject(BudgetStore);
   cardService = inject(BudgetCardService);
   private dialog = inject(MatDialog);
+  private elRef = inject(ElementRef);
 
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
@@ -59,10 +58,7 @@ export class BudgetEditorComponent implements OnDestroy {
   constructor() {
     effect(() => {
       const type = this.service.activeType();
-      if (type) {
-        this.loadBudgetCards(type);
-        this.scrollToType(type);
-      }
+      this.handleTypeChange(type);
     });
     effect(() => {
       const period = this.service.activePeriod();
@@ -74,6 +70,13 @@ export class BudgetEditorComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cardSubscription?.unsubscribe();
+  }
+  private handleTypeChange(type?: keyof IBudgetPeriodData) {
+    const data = this.data();
+    if (type && data) {
+      this.loadBudgetCards(type);
+      this.scrollToType(type);
+    }
   }
 
   private async loadBudgetCards(type: IBudgetPeriodType) {
@@ -105,15 +108,14 @@ export class BudgetEditorComponent implements OnDestroy {
   }
 
   private async scrollToType(type: IBudgetPeriodType) {
-    const scrollContainer = document.getElementById('editorContainer');
-    const scrollTarget = document.getElementById(`edit-${type}`);
     // provide delay whilst editor flying in
-    await _wait(200);
+    await _wait(350);
+    const hostEl = this.elRef.nativeElement as HTMLElement;
+    const scrollContainer = hostEl.querySelector('#editorContainer') as HTMLElement;
+    const scrollTarget = hostEl.querySelector(`#edit-${type}`) as HTMLElement;
     if (scrollContainer && scrollTarget) {
-      // calculate relative element offset instead of using scrollIntoView
-      // as seems to perform more consistently whilst flyInOut animation occuring
-      // include additional offset just to keep obvious there's scrollable content above
-      const elementPosition = Math.max(scrollTarget.offsetTop - 16, 0);
+      // calculate relative element offset inside the scrollContainer
+      const elementPosition = Math.max(scrollTarget.offsetTop - scrollContainer.offsetTop - 16, 0);
       scrollContainer.scrollTo({
         top: elementPosition,
         behavior: 'smooth',

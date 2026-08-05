@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
 
@@ -63,6 +63,13 @@ export class PicsaDbService implements AbstractDBService {
       );
     }
     return dbDocs;
+  }
+
+  /** Write a document directly to the Firestore server database, bypassing the local cache completely */
+  async setServerDoc<T>(endpoint: IDBEndpoint, doc: T, keepModified = false) {
+    endpoint = this._mapEndpoint(endpoint);
+    const dbDoc = { ...doc, ...generateDBMeta(doc, keepModified) };
+    return this.server.setDoc(endpoint, dbDoc);
   }
   async deleteDocs(endpoint: IDBEndpoint, keys: string[], deleteServer = true) {
     endpoint = this._mapEndpoint(endpoint);

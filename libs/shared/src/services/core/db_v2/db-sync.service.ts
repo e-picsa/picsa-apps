@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Network } from '@capacitor/network';
 import { _wait } from '@picsa/utils';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
@@ -124,6 +124,9 @@ export class PicsaDatabaseSyncService {
 
   private async pushDeletionsToSupabase() {
     await this.supabaseService.ready();
+    if (!this.supabaseService.isAvailable()) {
+      return;
+    }
     const pendingDeleteDocs = await this.syncDeleteCollection.find().exec();
     const ops = pendingDeleteDocs.map(async (doc) => {
       const { collectionName, documentId } = doc._data;
@@ -141,6 +144,9 @@ export class PicsaDatabaseSyncService {
 
   private async pushDocsToSupabase(docs: RxDocument<ISyncPushEntry>[], collection: RxCollection) {
     await this.supabaseService.ready();
+    if (!this.supabaseService.isAvailable()) {
+      return { status: 503, error: { message: 'Supabase server not available' } } as any;
+    }
     const records = docs.map((d) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { _meta, _rev, _sync_push_status, _sync_push_timestamp, ...keptFields } = d._data as ISyncPushEntry;

@@ -65,7 +65,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
   });
 
   public allUserTableOptions: IDataTableOptions = {
-    displayColumns: ['email', 'isMember'],
+    displayColumns: ['user', 'isMember'],
     formatHeader: (header) => {
       if (header === 'isMember') return '';
       return formatHeaderDefault(header);
@@ -82,12 +82,14 @@ export class DeploymentUserPermissionsComponent implements OnInit {
       return {
         ...r,
         email: u ? u.email : 'Unknown User',
+        full_name: u?.full_name,
+        organisation: u?.organisation,
       };
     });
   });
 
   public pendingRequestsTableOptions: IDataTableOptions = {
-    displayColumns: ['email', 'created_at', 'actions'],
+    displayColumns: ['user', 'created_at', 'actions'],
     formatHeader: (header) => {
       if (header === 'actions') return '';
       if (header === 'created_at') return 'Requested At';
@@ -99,17 +101,7 @@ export class DeploymentUserPermissionsComponent implements OnInit {
   public deploymentUsers = computed(() => this.allUsers().filter((u) => u.isMember));
 
   public matrixTableOptions: IDataTableOptions = {
-    displayColumns: [
-      'email',
-      'admin',
-      'climate',
-      'resources',
-      'crop',
-      'monitoring',
-      'translations',
-      'deployments',
-      'actions',
-    ],
+    displayColumns: ['user', 'admin', 'climate', 'resources', 'crop', 'translations', 'deployments', 'actions'],
     formatHeader: (header) => {
       if (header === 'actions') return '';
       if (header === 'admin') return 'Global Admin';

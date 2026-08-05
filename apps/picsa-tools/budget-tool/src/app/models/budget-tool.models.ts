@@ -26,7 +26,7 @@ export interface IBudgetMeta {
   description: string;
   lengthScale: IEnterpriseScaleLentgh;
   lengthTotal: number;
-  monthStart?: number;
+  monthStart: number;
   valueScale: IBudgetValueScale;
   enterprise: IBudgetCard;
 }

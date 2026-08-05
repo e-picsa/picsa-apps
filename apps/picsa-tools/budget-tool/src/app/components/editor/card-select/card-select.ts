@@ -1,5 +1,4 @@
-import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
-import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 
 import { IBudgetCard, IBudgetCardType, IBudgetCardWithValues } from '../../../schema';
 import { BudgetStore } from '../../../store/budget.store';
@@ -8,7 +7,6 @@ import { BudgetStore } from '../../../store/budget.store';
   selector: 'budget-cell-editor-card-select',
   templateUrl: './card-select.html',
   styleUrls: ['./card-select.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)],
   standalone: false,
 })
 export class BudgetCellEditorCardSelectComponent {

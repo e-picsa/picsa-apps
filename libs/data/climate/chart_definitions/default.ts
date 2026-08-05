@@ -1,9 +1,9 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
-import merge from 'deepmerge';
+import { deepClone } from '@picsa/utils';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import merge from 'deepmerge';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
-import { deepClone } from '@picsa/utils';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
@@ -25,13 +25,13 @@ const AXES_DEFAULT: IChartMeta['axes'] = {
 const definitions: IChartDefinitions = {
   rainfall: {
     _id: 'rainfall',
-    name: 'Seasonal Rainfall',
-    shortname: 'Rain',
+    name: translateMarker('Seasonal Rainfall'),
+    shortname: translateMarker('Rain'),
     image: 'assets/climate-icons/season-rainfall.png',
     keys: ['Rainfall'],
     colors: ['#377eb8'],
     yFormat: 'value',
-    yLabel: 'Seasonal Total Rainfall (mm)',
+    yLabel: translateMarker('Seasonal Total Rainfall (mm)'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -42,18 +42,17 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'mm',
-    definition:
-      'Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season',
+    definition: '',
   },
   start: {
     _id: 'start',
-    name: 'Start of Season',
-    shortname: 'Start',
+    name: translateMarker('Start of Season'),
+    shortname: translateMarker('Start'),
     image: 'assets/climate-icons/season-start.png',
     keys: ['Start'],
     colors: ['#e41a1c'],
     yFormat: 'date-from-July',
-    yLabel: 'Start of Season',
+    yLabel: translateMarker('Start of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -66,24 +65,23 @@ const definitions: IChartDefinitions = {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
       probability: {
-        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
-        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        above: { color: LINE_TOOL_COLORS.red, label: translateMarker('After') },
+        below: { color: LINE_TOOL_COLORS.purple, label: translateMarker('Before') },
         reverse: true,
       },
     }),
     units: '',
-    definition:
-      'Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days',
+    definition: '',
   },
   end: {
     _id: 'end',
-    name: 'End of Season',
-    shortname: 'End',
+    name: translateMarker('End of Season'),
+    shortname: translateMarker('End'),
     image: 'assets/climate-icons/season-end.png',
     keys: ['End'],
     colors: ['#984ea3'],
     yFormat: 'date-from-July',
-    yLabel: 'End of Season',
+    yLabel: translateMarker('End of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -102,18 +100,17 @@ const definitions: IChartDefinitions = {
       },
     }),
     units: '',
-    definition:
-      'End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.',
+    definition: '',
   },
   length: {
     _id: 'length',
-    name: 'Length of Season',
-    shortname: 'Length',
+    name: translateMarker('Length of Season'),
+    shortname: translateMarker('Length'),
     image: 'assets/climate-icons/season-length.png',
     keys: ['Length'],
     colors: ['#4daf4a'],
     yFormat: 'value',
-    yLabel: 'Length of Season',
+    yLabel: translateMarker('Length of Season'),
     xLabel: '',
     xVar: 'Year',
     axes: {
@@ -123,19 +120,18 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'days',
-    definition:
-      'Length of season is defined as the total days from the start of the season until the end of the season as defined',
+    definition: '',
   },
   extreme_rainfall_days: {
     _id: 'extreme_rainfall_days',
     disabled: true,
-    name: 'Extreme Rainfall',
-    shortname: 'Extreme',
+    name: translateMarker('Extreme Rainfall'),
+    shortname: translateMarker('Extreme'),
     image: 'assets/climate-icons/extreme-rainfall.svg',
     keys: ['Extreme_events'],
     colors: ['#0a3a62'],
     yFormat: 'value',
-    yLabel: 'Frequency of Extreme',
+    yLabel: translateMarker('Frequency of Extreme'),
     xLabel: 'Year',
     xVar: 'Year',
     axes: {
@@ -145,7 +141,7 @@ const definitions: IChartDefinitions = {
     },
     tools,
     units: 'days',
-    definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',
+    definition: '',
   },
   temp_min: {
     _id: 'temp_min',
@@ -161,7 +157,7 @@ const definitions: IChartDefinitions = {
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
-    xVar: translateMarker('Year'),
+    xVar: 'Year',
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
@@ -171,7 +167,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean minimum and lowest minimum daily temperatures per year'),
+    definition: '',
   },
   temp_max: {
     _id: 'temp_max',
@@ -187,7 +183,7 @@ const definitions: IChartDefinitions = {
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
-    xVar: translateMarker('Year'),
+    xVar: 'Year',
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
@@ -197,7 +193,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean maximum and highest maximum daily temperatures per year'),
+    definition: '',
   },
 };
 

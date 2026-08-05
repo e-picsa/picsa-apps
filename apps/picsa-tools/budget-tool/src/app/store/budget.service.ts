@@ -23,7 +23,7 @@ export class BudgetService {
   /*********************************************************************************************************************
    *                        Budget Data
    *********************************************************************************************************************/
-  public budgetData = signal<IBudgetPeriodData[]>([]);
+  public budgetData = signal<IBudgetPeriodData[]>([], { equal: isEqual });
 
   private inputs = computed(() => this.budgetData().map((v) => v.inputs), { equal: isEqual });
   private outputs = computed(() => this.budgetData().map((v) => v.outputs), { equal: isEqual });

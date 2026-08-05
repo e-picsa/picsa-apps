@@ -1,5 +1,9 @@
+:host {
+  display: contents;
+}
+
 .app-stats-wrapper {
-  @apply relative flex-1 w-full m-auto  shadow-md;
+  @apply relative flex flex-col flex-1 w-full m-auto shadow-md;
 }
 
 /* Iframe styling */

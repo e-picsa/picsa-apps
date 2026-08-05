@@ -19,7 +19,8 @@
                   [type]="editorStep.type"
                   (deleteClicked)="removeSelectedCard(editorStep.type, $index)"
                   (valueChanged)="updateCardValue(editorStep.type, $index, $event)"
-                  @fadeInOut
+                  animate.enter="fade-in"
+                  animate.leave="fade-out"
                 >
                 </budget-card-editor>
               }
@@ -46,7 +47,8 @@
             @case ('familyLabour') {
               <!-- Family Labour -->
               <budget-cell-editor-family-labour
-                @fadeInOut
+                animate.enter="fade-in"
+                animate.leave="fade-out"
                 [values]="data.familyLabour"
                 (valueChanged)="onEditorChange($event, 'familyLabour')"
               ></budget-cell-editor-family-labour>

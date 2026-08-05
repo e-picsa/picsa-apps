@@ -30,12 +30,24 @@ export class BudgetImportDialogComponent {
     this.status = 'Importing...';
     this.disabled = true;
     await _wait(200);
-    const budget = await this.store.loadBudgetByShareCode(code);
-    if (budget) {
-      this.router.navigate([location.pathname, budget._key]);
-      this.status = 'Import success ';
-    } else {
-      this.status = 'Code not found';
+    try {
+      const budget = await this.store.loadBudgetByShareCode(code);
+      if (budget) {
+        this.router.navigate([location.pathname, budget._key]);
+        this.status = 'Import success ';
+      } else {
+        this.status = 'Code not found';
+        this.disabled = false;
+      }
+    } catch (error: any) {
+      console.error('Failed to import budget:', error);
+      let errorMsg = 'Failed to import';
+      if (error?.code === 'permission-denied') {
+        errorMsg = 'Permission denied by server. Please check Firestore rules.';
+      } else if (error?.message) {
+        errorMsg = `Import failed: ${error.message}`;
+      }
+      this.status = errorMsg;
       this.disabled = false;
     }
   }

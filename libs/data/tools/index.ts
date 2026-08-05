@@ -10,7 +10,6 @@ const TOOLS_DATA_BASE = {
   forecasts: { label: translateMarker('Forecasts'), url: '/forecasts' },
   option: { label: translateMarker('Options'), url: '/option' },
   manual: { label: translateMarker('Manual'), url: '/manual' },
-  monitoring: { label: translateMarker('Monitoring'), url: '/monitoring' },
   resources: { label: translateMarker('Resources'), url: '/resources' },
   seasonal_calendar: { label: translateMarker('Seasonal Calendar'), url: '/seasonal-calendar' },
 } as const;

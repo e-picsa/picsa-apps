@@ -66,7 +66,7 @@ export class DashboardCropWaterRequirementsComponent {
       const { data, error } = await this.service.cropDataDownscaledTable
         .select<'*', ICropDataDownscaled['Row']>('*')
         .eq('id', parentId)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       if (data) {
         let { water_requirements } = data;
@@ -77,9 +77,25 @@ export class DashboardCropWaterRequirementsComponent {
         if (error) {
           throw error;
         }
-        this.notificationService.showSuccessNotification(`Water Requirement Updated`);
-        await this.service['loadCropData']();
+      } else {
+        const water_requirements = {
+          [crop]: {
+            [variety]: Number(waterRequirementInput),
+          },
+        };
+        const country_code = this.countryCode;
+        if (!country_code) throw new Error('Country code is not available');
+        const { error } = await this.service.cropDataDownscaledTable.insert({
+          country_code,
+          location_id,
+          water_requirements,
+        });
+        if (error) {
+          throw error;
+        }
       }
+      this.notificationService.showSuccessNotification(`Water Requirement Updated`);
+      await this.service['loadCropData']();
     }
   }
 
@@ -133,7 +149,7 @@ export class DashboardCropWaterRequirementsComponent {
       // Otherwise just include admin_4 label column
       return downscaled.map(({ location_id, water_requirement }) => {
         return {
-          [admin_4_label]: admin4Hashmap[location_id],
+          [admin_4_label]: admin4Hashmap[location_id]?.label,
           location_id,
           water_requirement: water_requirement,
           location_hash: `${country_code}/${location_id}`,

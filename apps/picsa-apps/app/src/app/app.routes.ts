@@ -20,10 +20,6 @@ const TOOL_ROUTES: Routes = [
     loadComponent: () => import('@picsa/forecasts/pages/forecast/forecast.page').then((mod) => mod.ForecastComponent),
   },
   {
-    path: 'monitoring',
-    loadChildren: () => import('@picsa/monitoring/src/app/app.routes').then((mod) => mod.MONITORING_ROUTES),
-  },
-  {
     path: 'manual',
     loadChildren: () => import('@picsa/manual/src/app/app.routes').then((mod) => mod.MANUAL_ROUTES),
   },

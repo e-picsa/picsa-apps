@@ -1,70 +1,101 @@
-<mat-toolbar color="primary" class="mat-elevation-z2 flex items-center">
+<mat-toolbar color="primary" class="mat-elevation-z2 flex items-center gap-2">
+  <button
+    matIconButton
+    (click)="toggleSidebar()"
+    [matTooltip]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    aria-label="Toggle sidebar"
+  >
+    <mat-icon>{{ isCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
+  </button>
   <dashboard-deployment-select />
   <dashboard-profile-menu class="ml-auto" />
 </mat-toolbar>
 <mat-sidenav-container style="flex: 1">
   <!-- Sidenav -->
-  <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
-    <mat-nav-list class="w-48 lg:w-64 flex-1">
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    opened
+    [fixedInViewport]="true"
+    fixedTopGap="64"
+    [class.is-collapsed]="isCollapsed()"
+    [class.is-hovered]="isCollapsed() && isHovered()"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+  >
+    <mat-nav-list class="w-full flex-1">
       @for (link of navLinks; track link.href) { @if (link.children) {
       <!-- Nested nav items -->
       <mat-expansion-panel
         class="mat-elevation-z0"
         hideToggle
-        [expanded]="rla.isActive"
+        [expanded]="isEffectiveExpanded() && rla.isActive"
+        [disabled]="!isEffectiveExpanded()"
         *roleRequired="link.roleRequired"
       >
         <mat-expansion-panel-header
           style="padding: 0 16px"
+          class="parent-link"
           [routerLink]="link.href"
-          routerLinkActive
+          routerLinkActive="mdc-list-item--activated active-link"
           #rla="routerLinkActive"
           [routerLinkActiveOptions]="{ exact: false }"
+          [matTooltip]="!isEffectiveExpanded() ? link.label : ''"
+          matTooltipPosition="right"
         >
           <mat-panel-title>
             <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
           </mat-panel-title>
         </mat-expansion-panel-header>
-        @for (child of link.children || []; track $index) {
+        @if (isEffectiveExpanded()) { @for (child of link.children || []; track $index) {
         <a
           mat-list-item
+          class="child-link"
           [routerLink]="child.href"
           routerLinkActive="mdc-list-item--activated active-link"
           *roleRequired="child.roleRequired"
         >
-          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: child }"></ng-container>
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: child, isChild: true }"></ng-container>
         </a>
-        }
+        } }
       </mat-expansion-panel>
       } @else {
       <!-- Single nav item -->
       <a
         mat-list-item
+        class="parent-link"
         [routerLink]="link.href"
         routerLinkActive="mdc-list-item--activated active-link"
         *roleRequired="link.roleRequired"
+        [matTooltip]="!isEffectiveExpanded() ? link.label : ''"
+        matTooltipPosition="right"
       >
         <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
       </a>
       } }
     </mat-nav-list>
-    <mat-nav-list class="w-48 lg:w-64 mt-auto">
+    <mat-nav-list class="w-full mt-auto">
       <mat-divider></mat-divider>
       <div mat-subheader></div>
       <mat-divider></mat-divider>
       @for (link of adminLinks; track link.href) {
       <a
         mat-list-item
+        class="parent-link"
         [routerLink]="link.href"
         routerLinkActive="mdc-list-item--activated active-link"
         *roleRequired="link.roleRequired"
+        [matTooltip]="!isEffectiveExpanded() ? link.label : ''"
+        matTooltipPosition="right"
       >
         <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
       </a>
       }
     </mat-nav-list>
+    @if (isEffectiveExpanded()) {
     <mat-divider></mat-divider>
-    <dashboard-footer [isSidebar]="true" class="w-48 lg:w-64" />
+    <dashboard-footer [isSidebar]="true" />
+    }
   </mat-sidenav>
   <!-- Main Content -->
   <mat-sidenav-content>
@@ -74,13 +105,14 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<ng-template #linkTemplate let-link>
-  <div class="nav-item">
+<ng-template #linkTemplate let-link let-isChild="isChild">
+  <div class="nav-item flex items-center" [class.pl-6]="isChild">
     @if (link.matIcon) {
     <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
-    } @else {
+    } @else { @if (isEffectiveExpanded() && !isChild) {
     <span style="width: 32px"></span>
-    }
+    } } @if (isEffectiveExpanded()) {
     <span class="link-label">{{ link.label }}</span>
+    }
   </div>
 </ng-template>

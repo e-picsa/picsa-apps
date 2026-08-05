@@ -10,10 +10,6 @@ export const HOME_TOUR: ITourStep[] = [
     text: 'This is where you’ll find helpful resources that will guide your work.',
   },
   {
-    id: 'monitoring',
-    text: 'In here, field staff can make records of visits with farmers and provide data on everything they monitored.',
-  },
-  {
     id: 'climate',
     text: 'This is the climate tool which provides automatically updated, locally specific climate information graphs. A way for you to analyse the changing climate in your region.',
   },

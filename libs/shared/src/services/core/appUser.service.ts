@@ -1,4 +1,4 @@
-import { computed, effect, inject,Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments/src/version';
@@ -65,6 +65,7 @@ export class AppUserService {
     effect(async () => {
       if (!this.enabled()) return;
       await this.supabaseService.ready();
+      if (!this.supabaseService.isAvailable()) return;
       const isOnline = this.networkService.isOnline();
       const userId = this.userId();
       if (isOnline && !userId) {
@@ -75,6 +76,8 @@ export class AppUserService {
     // When user is online attempt to load profile from DB (create if does not exist)
     effect(async () => {
       if (!this.enabled()) return;
+      await this.supabaseService.ready();
+      if (!this.supabaseService.isAvailable()) return;
       const userId = this.userId();
       const isOnline = this.networkService.isOnline();
       if (isOnline && userId && !this.dbProfile()) {
@@ -90,6 +93,8 @@ export class AppUserService {
     // When user is online attempt sync pending update
     effect(async () => {
       if (!this.enabled()) return;
+      await this.supabaseService.ready();
+      if (!this.supabaseService.isAvailable()) return;
       const userId = this.userId();
       const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
@@ -100,6 +105,7 @@ export class AppUserService {
   }
 
   private async loadDbUserProfile(user_id: string) {
+    if (!this.supabaseService.isAvailable()) return null;
     const { data, error } = await this.table.select('*').eq('user_id', user_id).maybeSingle();
     if (error) {
       this.errorService.handleError(error);
@@ -108,6 +114,7 @@ export class AppUserService {
   }
 
   private async createUserProfile(user_id: string) {
+    if (!this.supabaseService.isAvailable()) return;
     const userProfile = this.userProfile();
     const { data, error } = await this.table
       .insert({ ...userProfile, user_id })
@@ -123,6 +130,7 @@ export class AppUserService {
   }
 
   private async updateUserProfile(user_id: string) {
+    if (!this.supabaseService.isAvailable()) return;
     const userProfile = this.userProfile();
     const dbProfile = this.dbProfile();
 

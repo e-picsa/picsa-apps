@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { IResourceCollection, IResourceLink } from '../../../schemas';
 import { ResourceItemLinkComponent } from '../link/link';
@@ -8,19 +8,16 @@ import { ResourceItemLinkComponent } from '../link/link';
   templateUrl: 'collection.html',
   styleUrls: ['collection.scss'],
   imports: [ResourceItemLinkComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceItemCollectionComponent implements OnInit {
+export class ResourceItemCollectionComponent {
   // Collections are simply rendered as a link to the collection
-  public collectionLink: IResourceLink;
+  readonly collection = input.required<IResourceCollection>();
 
-  @Input() collection: IResourceCollection;
-
-  ngOnInit() {
-    this.collectionLink = {
-      ...this.collection,
-      subtype: 'internal',
-      url: `/resources/collection/${this.collection.id}`,
-      type: 'link',
-    };
-  }
+  readonly collectionLink = computed<IResourceLink>(() => ({
+    ...this.collection(),
+    subtype: 'internal',
+    url: `/resources/collection/${this.collection().id}`,
+    type: 'link',
+  }));
 }

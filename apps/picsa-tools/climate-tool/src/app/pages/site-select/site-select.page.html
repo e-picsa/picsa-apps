@@ -21,7 +21,6 @@ strings.showMap;
     <div class="map-container" [attr.data-view]="view()">
       <picsa-map
         (onMarkerClick)="handleMarkerClick($event)"
-        [basemapOptions]="basemapOptions"
         [markers]="mapMarkers()"
         (onMapReady)="mapReady.set(true)"
         #picsaMap

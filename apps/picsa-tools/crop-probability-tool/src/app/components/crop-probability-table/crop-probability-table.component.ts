@@ -105,7 +105,8 @@ export class CropProbabilityTableComponent implements OnInit {
       data.forEach((item, index) => {
         const { probabilities, ...rest } = item;
         for (const { index, name } of this.probabilityColumns()) {
-          rest[name] = probabilities?.[index] || '';
+          const val = probabilities?.[index];
+          rest[name] = val !== undefined ? val : null;
         }
         // set first row of each to span all crop rows (other rows set to 0 to omit)
         const cropNameRowspan = index === 0 ? data.length : 0;
@@ -113,6 +114,16 @@ export class CropProbabilityTableComponent implements OnInit {
       });
     }
     return entries;
+  }
+
+  public formatProbability(val: number | string | null | undefined): string {
+    if (val === undefined || val === null || val === '') return '';
+    // already formated / 10
+    if (typeof val === 'string' && val.includes('/')) return val;
+    const num = Number(val);
+    if (Number.isNaN(num)) return '';
+    const outOfTen = Math.round(num * 10);
+    return `${outOfTen}/10`;
   }
 }
 

@@ -1,3 +1,9 @@
+export interface IGeolocationAdmin5Location {
+  id: string;
+  label: string;
+  admin_4: string;
+}
+
 export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
   /**
@@ -10,7 +16,7 @@ export interface IGeolocationData {
   };
   admin_5?: {
     label: string;
-    locations: { id: string; label: string; admin_4: string }[];
+    locations: IGeolocationAdmin5Location[];
   };
 }
 

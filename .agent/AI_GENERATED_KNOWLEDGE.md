@@ -139,3 +139,46 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 **Date**: 2026-04-24
 **Context**: Refactoring components to standalone and importing the translate pipe.
 **Learning**: Never import `TranslatePipe` directly from `@ngx-translate/core`. The correct pattern for this project is to import `PicsaTranslateModule` from `@picsa/i18n` and add it to the `imports` array of your standalone component.
+
+### Supabase and RxDB Async Initialization Race Conditions
+
+**Date**: 2026-06-09
+**Context**: Fixing race conditions and TypeError exceptions when querying `SupabaseService.db` before it was defined, or when the database was offline.
+**Learning**:
+
+1. **Ready Race Condition**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` resolves. In `SupabaseService`, the client and database property (`db`) were initialized in an Angular `effect()` inside the constructor reacting to `isAvailable` signal changes. Since effects run asynchronously in the next change detection/microtask cycle, `ready()` could resolve _before_ the effect ran, leaving `db` undefined. The fix was to initialize clients synchronously inside `init()`.
+2. **Offline Mode & Null Checks**: When the Supabase server is offline (detected via health check ping), `isAvailable` is set to `false` and the client/database properties are not created. Consequently, all queries hitting `supabaseService.db` directly would throw a `TypeError`. Every database service interacting with Supabase (such as `AppUserService`, `PicsaDatabaseSyncService`, and `ForecastService`) must check `isAvailable()` before performing any operations on `supabaseService.db`.
+3. **Async Effects in Angular**: Avoid writing asynchronous effects like `effect(async () => { await this.ready(); ... })`. Because Angular tracks dependencies synchronously, any signal accessed after the first `await` is not tracked. It also allows multiple instances of the asynchronous payload to execute concurrently, leading to race conditions. Instead, trigger the initialization of the service in the constructor and react to `this.readySignal()` synchronously in the effect, delegating asynchronous work to methods using cancellation tokens/trackers.
+
+### Angular 21 Signal Forms and OnPush Change Detection
+
+**Date**: 2026-06-09
+**Context**: Fixing select options not updating UI when selecting options inside material overlay panels in components configured with `ChangeDetectionStrategy.OnPush`.
+**Learning**:
+
+1. **Overlay Change Detection Issue**: Angular Material components like `mat-select` render their option lists in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's template DOM tree. Under `OnPush`, event-based change detection is not triggered in the host component because select events do not bubble up through the component's DOM tree.
+2. **Signal Forms Solution**: Instead of using standard `FormGroup`/`ReactiveFormsModule` with manual `ChangeDetectorRef` triggers, use Angular 21's modern Signal Forms (`@angular/forms/signals`).
+3. **Usage**:
+   - Define a writable signal to hold the model state: `public readonly model = signal<T>(initialState);`
+   - Define a signal form tree with validation: `public readonly budgetForm = form(this.model, (path) => { required(path.field); });`
+   - Bind inputs in the template using `[formField]="budgetForm.field"` (importing `FormField` directive from `@angular/forms/signals`).
+   - Read values reactively in the template via the model signal: `model().field`. Since the template reads a signal, any value changes automatically trigger change detection on the component view, regardless of DOM tree hierarchy or overlays.
+
+### Leaflet Plugins and ES Module Namespace Wrapper Issue in Production Build
+
+**Date**: 2026-07-08
+**Context**: Fixing `typeError: Ai.maplibreGL is not a function` in production build when loading the climate map.
+**Learning**:
+
+1. **Namespace Import vs Plugins**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object (`Ai` in output chunk) under production bundling with esbuild.
+2. **Dynamic Extension Mismatch**: Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) are usually packaged as CommonJS/UMD. At runtime they obtain the underlying Leaflet exports object via `require('leaflet')` and dynamically add functions to it (e.g. `L.maplibreGL`).
+3. **Broken Bindings**: Because the ESM wrapper namespace object is sealed and created _before_ the plugin adds properties to the Leaflet export object, the newly added plugin methods are not visible on the ESM wrapper namespace `L`.
+4. **Resolution**: By importing Leaflet as a default export (`import L from 'leaflet'`) and using `esModuleInterop: true`, the import resolves directly to the actual mutable Leaflet module exports object. The plugin and component code then reference the exact same object, ensuring that dynamically added properties/methods (like `maplibreGL`) are visible and functional.
+
+### Supabase PostgREST 204 Responses and Auth Metadata Sync
+
+**Date**: 2026-07-21
+**Context**: Fixing non-persisting updates when admins edit user profiles from dashboard tables or table editors.
+**Learning**:
+
+1. **PostgREST 204 Silent No-Op**: When PostgREST receives an `UPDATE` request on a table with RLS enabled, if no RLS `UPDATE` policy matches the current user's role/ID, PostgREST updates 0 rows and returns `HTTP 204 No Content` (with minimal return header) without raising an error. Always ensure tables like `user_profiles` have explicit `UPDATE` and `INSERT` policies for admins (`public.user_is_global_admin()`).

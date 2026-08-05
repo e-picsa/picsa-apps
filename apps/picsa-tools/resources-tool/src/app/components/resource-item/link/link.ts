@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,13 +6,13 @@ import { Browser } from '@capacitor/browser';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { IResourceLink } from '../../../schemas';
-import { ResourceShareComponent } from '../../resource-share/resource-share.component';
 
 @Component({
   selector: 'resource-item-link',
   templateUrl: 'link.html',
   styleUrls: ['link.scss'],
-  imports: [MatCardModule, MatIconModule, PicsaTranslateModule, ResourceShareComponent],
+  imports: [MatCardModule, MatIconModule, PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceItemLinkComponent {
   private router = inject(Router);

@@ -6,9 +6,15 @@ service cloud.firestore {
     match /budgetTool/{allPaths=**} {
       // Allow public read access to everything under budgetTool
       allow read: if true;
-      
-      // Keep writes restricted unless specifically needed
-      allow write: if false;
+    }
+
+    // Fine-grained write access to only required collections
+    match /budgetTool/default/shareCodes/{code} {
+      allow create: if true;
+    }
+
+    match /budgetTool/{group}/budgets/{budgetId} {
+      allow write: if true;
     }
 
     // Explicitly deny all other collections for security

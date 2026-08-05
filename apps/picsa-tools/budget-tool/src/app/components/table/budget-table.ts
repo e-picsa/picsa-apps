@@ -1,6 +1,6 @@
-import { Component, inject,Input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 
-import { IBudget, IBudgetPeriodType } from '../../models/budget-tool.models';
+import { IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetService } from '../../store/budget.service';
 import { BudgetStore } from '../../store/budget.store';
 import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
@@ -10,12 +10,13 @@ import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
   templateUrl: 'budget-table.html',
   styleUrls: ['./budget-table.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetTableComponent {
   store = inject(BudgetStore);
   service = inject(BudgetService);
 
-  @Input() budget: IBudget;
+  data = input.required<IBudgetPeriodData[]>();
   rows = BUDGET_PERIOD_ROWS;
 
   cellClicked = output<{ activePeriod: number; activeType: IBudgetPeriodType }>();

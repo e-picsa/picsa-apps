@@ -17,9 +17,6 @@
             <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
             <div class="nav-text">{{ link.label | translate }}</div>
           </div>
-          @if (link.tourId === 'monitoring' && monitoringService.pendingSyncCount > 0) {
-            <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
-          }
         </div>
       }
     </div>
@@ -40,9 +37,6 @@
             <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
             <div class="nav-text">{{ link.label | translate }}</div>
           </div>
-          @if (link.tourId === 'monitoring' && monitoringService.pendingSyncCount > 0) {
-            <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
-          }
         </div>
       }
       <!-- Dev Links -->

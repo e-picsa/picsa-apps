@@ -1,14 +1,13 @@
-.editor-popup {
-  position: absolute;
-  z-index: 2;
-  width: 100%;
-  top: 100vh;
-  left: 0;
+:host {
   display: flex;
-  height: 100vh;
-  transition: transform 0.3s ease-in-out;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
-.slide-in.active {
-  transform: translateY(-100vh);
+.editor-popup {
+  position: fixed;
+  z-index: 100;
+  inset: 0; // ensure fills full screen on mobile and desktop
+  display: flex;
 }

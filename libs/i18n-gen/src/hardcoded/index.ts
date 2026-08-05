@@ -49,4 +49,8 @@ export const EXTRACTED_PROJECTS: { path: string; tool: string; context?: string 
     path: 'libs',
     tool: 'common',
   },
+  {
+    path: 'libs/data/climate',
+    tool: 'climate',
+  },
 ];

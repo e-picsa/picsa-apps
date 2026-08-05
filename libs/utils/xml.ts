@@ -1,8 +1,3 @@
-/**
- * NOTE - Utils duplicated from @picsa/enketo-webform
- * Should migrate with tests
- */
-
 // NOTE - previously used https://www.npmjs.com/package/xml-js
 // however requires node polyfills and output formatting not ideal
 import { X2jOptions, XMLBuilder, XMLParser } from 'fast-xml-parser';

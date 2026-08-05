@@ -40,7 +40,8 @@ export class CropVarietyDetailsComponent {
     effect(() => {
       if (!this.service.readySignal()) return;
       const cropId = this.cropId();
-      if (cropId === 'add') {
+      const isAddPath = cropId === 'add' || this.route.snapshot.routeConfig?.path === 'variety/add';
+      if (isAddPath) {
         this.isNewEntry.set(true);
         this.editMode.set(true);
         return;

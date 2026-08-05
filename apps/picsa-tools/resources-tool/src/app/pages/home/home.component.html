@@ -13,7 +13,7 @@
         </button>
       </div>
       <div class="list-container">
-        @for (collection of collections; track collection.id) {
+        @for (collection of collections(); track collection.id) {
           <resource-item-collection [collection]="collection"> </resource-item-collection>
         }
       </div>

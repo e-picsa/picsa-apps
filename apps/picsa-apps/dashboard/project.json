@@ -55,6 +55,11 @@
             "output": "assets/climate-icons"
           },
           {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/climate-tool/src/assets/mapTiles",
+            "output": "assets/mapTiles"
+          },
+          {
             "glob": "*.json",
             "input": "libs/i18n/assets",
             "output": "assets/i18n"
@@ -68,6 +73,7 @@
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",
           "node_modules/leaflet/dist/leaflet.css",
+          "node_modules/maplibre-gl/dist/maplibre-gl.css",
           "node_modules/@uppy/core/dist/style.min.css",
           "node_modules/@uppy/drag-drop/dist/style.min.css",
           "node_modules/@uppy/dashboard/dist/style.min.css"

@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable, untracked } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { arrayToHashmap, deepClone, loadCSV } from '@picsa/utils';
@@ -28,20 +28,43 @@ export class ClimateDataService {
 
   private loadedStationData: Record<string, IStationData[]> = {};
 
+  constructor() {
+    effect(() => {
+      // trigger effect when list of stations changes
+      this.stations();
+      const userSettings = this.configurationService.userSettings();
+      const stationId = userSettings.climate_tool?.station_id;
+      if (stationId && !this.stationHashmap()[stationId]) {
+        this.setPreferredStation('');
+      }
+    });
+  }
+
   /** Retrieve the preferred station ID from user settings */
   public getPreferredStation(): string | undefined {
     const userSettings = this.configurationService.userSettings();
-    return userSettings.climate_tool?.station_id;
+    const stationId = userSettings.climate_tool?.station_id;
+    if (stationId && this.stationHashmap()[stationId]) {
+      return stationId;
+    }
+    return undefined;
   }
 
   /** Allow user to set preferred station */
   public setPreferredStation(stationID: string) {
-    const currentSettings = this.configurationService.userSettings();
-    this.configurationService.updateUserSettings({
-      climate_tool: {
-        ...currentSettings.climate_tool,
-        station_id: stationID,
-      },
+    // ensure any parent effects that are used to configure are not re-triggered
+    // following changes to user settings (signal effects track dependencies within function invocation).
+    // NOTE - this is only required for sync functions, async would not track within invocations
+    untracked(() => {
+      const currentSettings = this.configurationService.userSettings();
+      if (stationID !== currentSettings.climate_tool?.station_id) {
+        this.configurationService.updateUserSettings({
+          climate_tool: {
+            ...currentSettings.climate_tool,
+            station_id: stationID,
+          },
+        });
+      }
     });
   }
 

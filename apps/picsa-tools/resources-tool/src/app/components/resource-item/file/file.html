@@ -17,7 +17,7 @@
     <div class="mat-elevation-z8; border-radius: 8px;">
       <resource-download
         #dl
-        [resource]="resource"
+        [resource]="resource()"
         class="download-button"
         styleVariant="white"
         [size]="36"
@@ -28,11 +28,11 @@
   </div>
 
   <!-- send online video Url -->
-  @switch (resource.subtype) { @case ('video') {
-  <resource-item-video [resource]="resource" [fileURI]="fileUri()"></resource-item-video>
+  @switch (resource().subtype) { @case ('video') {
+  <resource-item-video [resource]="resource()" [fileURI]="fileUri()"></resource-item-video>
 
   } @default {
-  <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">
+  <resource-item-link [resource]="resourceLink()" (click)="handleFileLinkClick()" style="height: 100%">
   </resource-item-link>
 
   } } }

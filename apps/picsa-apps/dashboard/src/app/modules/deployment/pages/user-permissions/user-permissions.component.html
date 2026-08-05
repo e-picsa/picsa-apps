@@ -15,6 +15,24 @@
     </div>
   </div>
 
+  <!-- User table entry template (used in multiple tables) -->
+  <ng-template #userTemplate let-row="row">
+    <div class="flex flex-col py-1">
+      <div class="font-medium">
+        {{ row.full_name || row.email || 'Unknown User' }}
+      </div>
+      <div class="text-xs text-secondary">
+        @if (row.full_name && row.organisation) {
+          {{ row.organisation }}<br />{{ row.email }}
+        } @else if (row.organisation) {
+          {{ row.organisation }}
+        } @else if (row.full_name) {
+          {{ row.email }}
+        }
+      </div>
+    </div>
+  </ng-template>
+
   @if (pendingRequestsDetails().length > 0) {
     <div class="mb-8">
       <h3 class="text-warn mb-4 flex items-center gap-2">
@@ -24,6 +42,7 @@
         [data]="pendingRequestsDetails()"
         [options]="pendingRequestsTableOptions"
         [valueTemplates]="{
+          user: userTemplate,
           created_at: dateTemplate,
           actions: pendingActionsTemplate,
         }"
@@ -45,11 +64,11 @@
     [data]="deploymentUsers()"
     [options]="matrixTableOptions"
     [valueTemplates]="{
+      user: userTemplate,
       admin: permissionTemplate,
       climate: permissionTemplate,
       resources: permissionTemplate,
       crop: permissionTemplate,
-      monitoring: permissionTemplate,
       translations: permissionTemplate,
       deployments: permissionTemplate,
       actions: actionsTemplate,
@@ -125,7 +144,10 @@
     <picsa-data-table
       [data]="allUsers()"
       [options]="allUserTableOptions"
-      [valueTemplates]="{ isMember: memberTemplate }"
+      [valueTemplates]="{
+        user: userTemplate,
+        isMember: memberTemplate,
+      }"
     >
       <ng-template #memberTemplate let-isMember let-row="row">
         <button matButton [disabled]="isMember" mat-dialog-close (click)="addUser(row)">

@@ -8,15 +8,15 @@
     @if (store.activeBudget) {
     <budget-table
       class="h-full"
-      [budget]="store.activeBudget"
-      @fadeInOut
+      animate.enter="fade-in-200"
+      [data]="service.budgetData()"
       (cellClicked)="handleCellClicked($event)"
     ></budget-table>
     }
   </ng-container>
 </picsa-sidenav-layout>
-<div class="editor-popup slide-in" [class.active]="editorOpen()">
-  @if (store.activeBudget && store.activeBudget.data) {
+@if (editorOpen() && store.activeBudget && store.activeBudget.data) {
+<div class="editor-popup" animate.enter="slide-in-up" animate.leave="slide-out-down">
   <budget-editor (nextClicked)="editorOpen.set(false)"></budget-editor>
-  }
 </div>
+}
