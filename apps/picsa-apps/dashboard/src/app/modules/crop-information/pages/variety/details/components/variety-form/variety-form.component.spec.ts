@@ -12,6 +12,7 @@ describe('VarietyFormComponent', () => {
   beforeEach(async () => {
     mockDeployment = {
       activeDeployment: signal({ country_code: 'zm' }),
+      activeDeploymentCountry: signal('zm'),
     };
 
     await TestBed.configureTestingModule({
@@ -31,6 +32,7 @@ describe('VarietyFormComponent', () => {
 
   it('should include active deployment country_code when getting form value', () => {
     mockDeployment.activeDeployment.set({ country_code: 'mw' });
+    mockDeployment.activeDeploymentCountry.set('mw');
     fixture.detectChanges();
 
     component.form.patchValue({
