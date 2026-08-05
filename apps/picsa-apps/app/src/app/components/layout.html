@@ -2,52 +2,52 @@
   <mat-drawer #drawer mode="over">
     <div class="page-content draw-content">
       <button matIconButton (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
-      <div style="margin-top: 4rem"></div>
+      <div class="mt-16"></div>
       <!-- Version toggle -->
       <mat-nav-list>
         @if(userType()==='farmer'){
         <a mat-list-item (click)="toggleUserType()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">switch_account</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">switch_account</mat-icon>
             <span>{{ 'Switch to Extension' | translate}}</span>
           </div>
         </a>
         } @if(userType()==='extension') {
         <a mat-list-item (click)="toggleUserType()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">switch_account</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">switch_account</mat-icon>
             <span>{{ 'Switch to Farmer'| translate }}</span>
           </div>
         </a>
         }
         <a mat-list-item routerLink="/forecasts" (click)="drawer.close()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">cloud</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">cloud</mat-icon>
             <span>{{ 'Forecasts' | translate}}</span>
           </div>
         </a>
         @if(userType()==='farmer'){
         <a mat-list-item routerLink="/farmer/beyond-picsa" (click)="drawer.close()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">remember_me</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">remember_me</mat-icon>
             <span>{{ 'Digital Skills' | translate}}</span>
           </div>
         </a>
         <a mat-list-item routerLink="/farmer/share" (click)="drawer.close()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">share</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">share</mat-icon>
             <span>{{ 'Share videos' | translate}}</span>
           </div>
         </a>
         }
         <a mat-list-item routerLink="/resources/downloads" (click)="drawer.close()">
-          <div style="display: flex; align-items: center">
-            <mat-icon style="margin-right: 8px">download</mat-icon>
+          <div class="flex items-center">
+            <mat-icon class="me-2">download</mat-icon>
             <span>{{ 'Downloads' | translate}}</span>
           </div>
         </a>
       </mat-nav-list>
-      <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
+      <picsa-configuration-summary class="mt-auto p-1" (click)="drawer.close()" />
       <footer>
         <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
         <a routerLink="/terms">{{ 'App Terms' | translate }}</a>

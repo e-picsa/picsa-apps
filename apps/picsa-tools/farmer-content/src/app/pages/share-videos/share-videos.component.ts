@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { FARMER_CONTENT_DATA, ILocaleDataEntry } from '@picsa/data';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
@@ -12,6 +11,8 @@ import { IPicsaVideo } from '@picsa/data/resources';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { switchMap } from 'rxjs';
+
+import { FarmerShareFlowService } from '../share-flow/share-flow.service';
 
 interface IShareVideoLanguageOption {
   resourceId: string;
@@ -36,17 +37,16 @@ interface IShareVideoItem {
 export class FarmerContentShareVideosComponent implements OnDestroy {
   private router = inject(Router);
   private resourcesService = inject(ResourcesToolService);
-  private componentsService = inject(PicsaCommonComponentsService);
+  private shareFlow = inject(FarmerShareFlowService);
   private configurationService = inject(ConfigurationService);
 
-  public readonly shareStatus = signal<'idle' | 'success' | 'error'>('idle');
-  public readonly shareStatusLabel = signal('');
-  public readonly canShare = computed(() => typeof navigator !== 'undefined' && typeof navigator.share === 'function');
+  public readonly shareStatus = this.shareFlow.shareStatus;
+  public readonly shareStatusLabel = this.shareFlow.shareStatusLabel;
   public readonly selectedVideoIds = signal<string[]>([]);
   public readonly selectedResourceByVideoId = signal<Record<string, string>>({});
 
   constructor() {
-    this.componentsService.patchHeader({ hideHeader: true, hideBackButton: true });
+    this.shareFlow.enterShareFlow();
 
     effect(() => {
       const items = this.videoItems();
@@ -71,7 +71,7 @@ export class FarmerContentShareVideosComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
+    this.shareFlow.exitShareFlow();
   }
 
   private dbFiles$ = this.resourcesService.ready$.pipe(switchMap(() => this.resourcesService.dbFiles.find().$));
@@ -197,33 +197,18 @@ export class FarmerContentShareVideosComponent implements OnDestroy {
   }
 
   private async shareResourceIds(resourceIds: string[]) {
-    if (!this.canShare()) {
-      this.shareStatus.set('error');
-      this.shareStatusLabel.set('Sharing is not available on this device');
-      return;
-    }
-
     if (resourceIds.length === 0) {
-      this.shareStatus.set('error');
-      this.shareStatusLabel.set('Select at least one video');
+      this.shareFlow.setShareError('Select at least one video');
       return;
     }
 
-    try {
+    await this.shareFlow.runShareAction(async () => {
       for (const resourceId of resourceIds) {
         const doc = this.downloadedVideoDocsById().get(resourceId);
         if (doc) {
           await this.resourcesService.shareFile(doc);
         }
       }
-      this.shareStatus.set('success');
-      this.shareStatusLabel.set('Shared successfully');
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-      this.shareStatus.set('error');
-      this.shareStatusLabel.set('Unable to share');
-    }
+    });
   }
 }

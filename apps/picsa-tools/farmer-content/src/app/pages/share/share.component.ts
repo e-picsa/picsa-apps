@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/i18n';
+
+import { FarmerShareFlowService } from '../share-flow/share-flow.service';
 
 @Component({
   selector: 'farmer-content-share',
@@ -14,14 +15,14 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 })
 export class FarmerContentShareComponent implements OnDestroy {
   private router = inject(Router);
-  private componentsService = inject(PicsaCommonComponentsService);
+  private shareFlow = inject(FarmerShareFlowService);
 
   constructor() {
-    this.componentsService.patchHeader({ hideHeader: true, hideBackButton: true });
+    this.shareFlow.enterShareFlow();
   }
 
   ngOnDestroy() {
-    this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
+    this.shareFlow.exitShareFlow();
   }
 
   public goBack() {

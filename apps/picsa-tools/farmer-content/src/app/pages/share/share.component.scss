@@ -1,60 +1,9 @@
-:host {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
+@use '../share-flow/share-page' as share-page;
 
-.share-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 0.75rem 0 1rem;
-}
+@include share-page.share-page-layout;
 
 .page-header {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.75rem;
-  width: 100%;
-  min-width: 0;
-  padding: 1.25rem 0.75rem 0.75rem;
-  box-sizing: border-box;
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: flex-start;
-  align-self: flex-start;
-  margin: 0;
-  min-width: 0;
-  max-width: 100%;
-  height: auto;
-  padding: 0.25rem 0.125rem;
-  font-size: 1.15rem;
-  font-weight: 500;
-  line-height: 1.4;
-  text-align: start;
-  white-space: normal;
-  color: var(--color-primary);
-  --mdc-text-button-label-text-color: var(--color-primary);
-}
-
-.back-btn mat-icon {
-  margin-inline-end: 0.25rem;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  flex-shrink: 0;
 }
 
 .share-card {
@@ -95,15 +44,6 @@
   object-fit: contain;
 }
 
-.question {
-  margin: 0;
-  text-align: center;
-  font-size: 1.25rem;
-  color: #0f3b58;
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-
 .action-btn {
   width: min(100%, 24rem);
   align-self: center;
@@ -113,26 +53,14 @@
 }
 
 @media (min-width: 768px) {
-  .share-page {
-    padding: 1rem 0 1.5rem;
-  }
-
   .share-card {
     margin-top: 2.75rem;
   }
 }
 
 @media (max-width: 420px) {
-  .back-btn {
-    font-size: 1.05rem;
-  }
-
   .title {
     font-size: 1.05rem;
-  }
-
-  .question {
-    font-size: 1.1rem;
   }
 
   .action-btn {
