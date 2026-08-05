@@ -1,4 +1,4 @@
-<div class="videos-page">
+<div class="share-page">
   <div class="page-header">
     <button matButton type="button" class="back-btn" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
@@ -8,6 +8,7 @@
 
   <div class="videos-body">
     @for (video of videoItems(); track video.id) {
+      @let activeLanguage = activeLanguageOption(video);
       <article
         class="video-card"
         [class.video-card--selected]="isSelected(video.id)"
@@ -17,7 +18,7 @@
           <div class="thumb-wrap">
             <video
               class="thumb-video"
-              [src]="activePreviewUrl(video)"
+              [src]="activeLanguage.previewUrl"
               preload="metadata"
               muted
               playsinline
@@ -51,7 +52,7 @@
             >
               <div class="language-select-inner">
                 <mat-icon>language</mat-icon>
-                <span>{{ activeLanguage(video)?.language_label }}</span>
+                <span>{{ activeLanguage.locale.language_label }}</span>
                 <mat-icon class="language-caret">arrow_drop_down</mat-icon>
               </div>
             </button>

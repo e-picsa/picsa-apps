@@ -1,4 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { Share } from '@capacitor/share';
 import { PicsaCommonComponentsService } from '@picsa/components';
 
 export type ShareFlowStatus = 'idle' | 'success' | 'error';
@@ -9,7 +10,6 @@ export class FarmerShareFlowService {
 
   public readonly shareStatus = signal<ShareFlowStatus>('idle');
   public readonly shareStatusLabel = signal('');
-  public readonly canShare = computed(() => typeof navigator !== 'undefined' && typeof navigator.share === 'function');
 
   public enterShareFlow() {
     this.shareStatus.set('idle');
@@ -31,33 +31,18 @@ export class FarmerShareFlowService {
     this.shareStatusLabel.set(message);
   }
 
-  public async shareAppInstallLink() {
-    if (!this.canShare()) {
-      this.setShareError('Sharing is not available on this device');
-      return;
-    }
-
-    try {
-      await navigator.share({
+  public shareAppInstallLink() {
+    return this.runShareAction(() =>
+      Share.share({
         title: 'E-PICSA App',
         text: 'Install the E-PICSA App',
         url: window.location.origin,
-      });
-      this.setShareSuccess();
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-      this.setShareError('Unable to share');
-    }
+        dialogTitle: 'Share E-PICSA App',
+      }),
+    );
   }
 
-  public async runShareAction(action: () => Promise<void>) {
-    if (!this.canShare()) {
-      this.setShareError('Sharing is not available on this device');
-      return;
-    }
-
+  public async runShareAction(action: () => Promise<unknown>) {
     try {
       await action();
       this.setShareSuccess();

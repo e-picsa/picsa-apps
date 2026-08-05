@@ -126,18 +126,13 @@ export class FarmerContentShareVideosComponent implements OnDestroy {
     this.router.navigate(['farmer', 'share']);
   }
 
+  public activeLanguageOption(video: IShareVideoItem) {
+    const resourceId = this.selectedResourceByVideoId()[video.id] ?? video.languages[0]?.resourceId;
+    return video.languages.find((language) => language.resourceId === resourceId) ?? video.languages[0];
+  }
+
   public activeResourceId(video: IShareVideoItem) {
-    return this.selectedResourceByVideoId()[video.id] ?? video.languages[0]?.resourceId;
-  }
-
-  public activePreviewUrl(video: IShareVideoItem) {
-    const resourceId = this.activeResourceId(video);
-    return video.languages.find((language) => language.resourceId === resourceId)?.previewUrl ?? '';
-  }
-
-  public activeLanguage(video: IShareVideoItem) {
-    const resourceId = this.activeResourceId(video);
-    return video.languages.find((language) => language.resourceId === resourceId)?.locale;
+    return this.activeLanguageOption(video).resourceId;
   }
 
   public isSelected(videoId: string) {

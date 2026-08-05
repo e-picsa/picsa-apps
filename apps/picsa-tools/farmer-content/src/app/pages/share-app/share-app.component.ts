@@ -35,8 +35,4 @@ export class FarmerContentShareAppComponent implements OnDestroy {
   public shareViaBluetooth() {
     this.router.navigate(['farmer', 'share', 'bluetooth']);
   }
-
-  public shareViaWhatsApp() {
-    return this.shareFlow.shareAppInstallLink();
-  }
 }

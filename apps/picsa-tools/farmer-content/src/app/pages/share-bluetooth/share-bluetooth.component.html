@@ -17,8 +17,7 @@
         <p class="option-description">
           {{ 'Share the application with the user using Bluetooth' | translate }}
         </p>
-        <button matButton="elevated" color="primary" class="option-btn" (click)="shareAppApk()">
-          <!-- <mat-icon>bluetooth</mat-icon> -->
+        <button matButton="elevated" color="primary" class="option-btn" (click)="shareFlow.shareAppInstallLink()">
           {{ 'Share App via Bluetooth' | translate }}
         </button>
       </div>
@@ -33,7 +32,6 @@
         <h2 class="option-title">{{ 'Yes, they have the app' | translate }}</h2>
         <p class="option-description">{{ 'Share downloaded videos with the user' | translate }}</p>
         <button matButton="elevated" color="primary" class="option-btn" (click)="goToVideoShare()">
-          <!-- <mat-icon>video_library</mat-icon> -->
           {{ 'Share Videos' | translate }}
         </button>
       </div>

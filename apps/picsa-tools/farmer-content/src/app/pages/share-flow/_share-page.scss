@@ -71,7 +71,7 @@
     width: 2.35rem;
     height: 2.35rem;
     line-height: 2.35rem;
-    color: #0f3b58;
+    color: var(--color-secondary);
   }
 
   .option-title {
@@ -110,7 +110,7 @@
   }
 
   .status[data-status='error'] {
-    color: #c62828;
+    color: var(--color-warn);
   }
 
   @media (min-width: 768px) {
