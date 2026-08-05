@@ -7,13 +7,13 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { FarmerShareFlowService } from '../share-flow/share-flow.service';
 
 @Component({
-  selector: 'farmer-content-share-app',
+  selector: 'farmer-content-share-whatsapp',
   imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
-  templateUrl: './share-app.component.html',
-  styleUrl: './share-app.component.scss',
+  templateUrl: './share-whatsapp.component.html',
+  styleUrl: './share-whatsapp.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FarmerContentShareAppComponent implements OnDestroy {
+export class FarmerContentShareWhatsappComponent implements OnDestroy {
   private router = inject(Router);
   protected shareFlow = inject(FarmerShareFlowService);
 
@@ -29,14 +29,10 @@ export class FarmerContentShareAppComponent implements OnDestroy {
   }
 
   public goBack() {
-    this.router.navigate(['farmer', 'share']);
+    this.router.navigate(['farmer', 'share', 'app']);
   }
 
-  public shareViaBluetooth() {
-    this.router.navigate(['farmer', 'share', 'bluetooth']);
-  }
-
-  public shareViaWhatsApp() {
-    this.router.navigate(['farmer', 'share', 'whatsapp']);
+  public goToVideoShare() {
+    this.router.navigate(['farmer', 'share', 'videos'], { state: { shareVideosReturnTo: 'whatsapp' } });
   }
 }

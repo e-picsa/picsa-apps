@@ -35,6 +35,14 @@ export function buildFarmerRoutes(nestedTools: Routes): Routes {
       title: 'PICSA',
     },
     {
+      path: 'share/whatsapp',
+      loadComponent: () =>
+        import('./pages/share-whatsapp/share-whatsapp.component').then(
+          (mod) => mod.FarmerContentShareWhatsappComponent,
+        ),
+      title: 'PICSA',
+    },
+    {
       path: 'share/videos',
       loadComponent: () =>
         import('./pages/share-videos/share-videos.component').then((mod) => mod.FarmerContentShareVideosComponent),
