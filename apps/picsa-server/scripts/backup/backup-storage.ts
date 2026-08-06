@@ -18,7 +18,7 @@ const backupDir = path.resolve(__dirname, './backups');
 const omitDirs = ['forecasts'];
 
 /** List of buckets to exclude from local backup */
-const omitBuckets: string[] = [];
+const omitBuckets: string[] = ['apk-releases'];
 
 /** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
