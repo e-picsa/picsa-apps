@@ -3,7 +3,7 @@ import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
 import { zipFolderContents } from '../utils/file.utils';
-import { getSupabaseClient } from '../utils/supabase.utils';
+import { getRemoteSupabaseClient } from '../utils/supabase.utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
@@ -69,7 +69,7 @@ async function syncFiles(remoteFiles: IFileMeta[]) {
   }
 }
 async function syncFile(remoteFile: IFileMeta) {
-  const supabase = getSupabaseClient();
+  const supabase = getRemoteSupabaseClient();
   const status = { downloaded: false, skipped: false, error: null as any };
   const { filePath, created_at, updated_at, bucketName, metadata } = remoteFile;
   const localFilePath = path.join(localDir, bucketName, filePath);
@@ -118,19 +118,20 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
 
   const baseDir = resolve(localDir, bucketName);
 
+  if (!fs.existsSync(baseDir)) {
+    return;
+  }
+
   const remoteHashmap = remoteFiles.reduce((map, f) => {
     map.set(f.filePath, f);
     return map;
   }, new Map<string, IFileMeta>());
 
   function walkDir(dir: string) {
+    if (!fs.existsSync(dir)) return;
     const files = fs.readdirSync(dir, { withFileTypes: true });
-    // Remove empty directories
-    if (files.length === 0) {
-      fs.rmdirSync(dir);
-    }
     for (const file of files) {
-      const childPath = resolve(file.parentPath, file.name);
+      const childPath = resolve(dir, file.name);
       if (file.isDirectory()) {
         walkDir(childPath);
       } else {
@@ -141,6 +142,11 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
           removedCount++;
         }
       }
+    }
+    // Clean up empty subdirectories (except base directory)
+    const remainingFiles = fs.readdirSync(dir);
+    if (remainingFiles.length === 0 && dir !== baseDir) {
+      fs.rmdirSync(dir);
     }
   }
 
@@ -161,7 +167,7 @@ function calculateMD5(filePath: string) {
 }
 
 async function listBuckets() {
-  const supabase = getSupabaseClient();
+  const supabase = getRemoteSupabaseClient();
   const { data, error } = await supabase.storage.listBuckets();
 
   if (error) {
@@ -176,7 +182,7 @@ async function listBuckets() {
 
 // List all files in the bucket (recursively)
 async function listFiles(bucketName: string, prefix = '') {
-  const supabase = getSupabaseClient();
+  const supabase = getRemoteSupabaseClient();
   // skip list of omitted files
   if (omitDirs.includes(prefix)) return [];
 
@@ -202,4 +208,8 @@ async function listFiles(bucketName: string, prefix = '') {
   }
 
   return allFiles;
+}
+
+if (require.main === module) {
+  backupStorage();
 }
