@@ -175,10 +175,10 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 3. **Broken Bindings**: Because the ESM wrapper namespace object is sealed and created _before_ the plugin adds properties to the Leaflet export object, the newly added plugin methods are not visible on the ESM wrapper namespace `L`.
 4. **Resolution**: By importing Leaflet as a default export (`import L from 'leaflet'`) and using `esModuleInterop: true`, the import resolves directly to the actual mutable Leaflet module exports object. The plugin and component code then reference the exact same object, ensuring that dynamically added properties/methods (like `maplibreGL`) are visible and functional.
 
-### Supabase PostgREST 204 Responses and Auth Metadata Sync
+### Supabase PostgreSQL Generated Columns and Per-Country Crop Variety Queries
 
-**Date**: 2026-07-21
-**Context**: Fixing non-persisting updates when admins edit user profiles from dashboard tables or table editors.
+**Date**: 2026-08-05
+**Context**: Adding `country_code` column to `crop_data` table, updating primary key, and filtering dashboard queries by country.
 **Learning**:
 
-1. **PostgREST 204 Silent No-Op**: When PostgREST receives an `UPDATE` request on a table with RLS enabled, if no RLS `UPDATE` policy matches the current user's role/ID, PostgREST updates 0 rows and returns `HTTP 204 No Content` (with minimal return header) without raising an error. Always ensure tables like `user_profiles` have explicit `UPDATE` and `INSERT` policies for admins (`public.user_is_global_admin()`).
+1. **Generated Column Nullability in PostgreSQL**: When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`). Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.

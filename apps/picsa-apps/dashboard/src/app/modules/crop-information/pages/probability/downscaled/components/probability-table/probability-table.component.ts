@@ -63,7 +63,9 @@ export class CropProbabilityTableComponent {
 
   private tableComponentRef = viewChild(CropProbabilityTableFrontend, { read: ElementRef });
 
-  private cropDataHashmap = computed(() => arrayToHashmap(this.service.cropData(), 'id'));
+  private cropDataHashmap = computed(() =>
+    arrayToHashmap(this.service.cropData(), 'id', (v) => `${v.crop}/${v.variety}`),
+  );
   private probabilityHashmap = computed(() => generateProbabilityHashmap(this.stationProbabilities()));
 
   public tableData = computed(() => {

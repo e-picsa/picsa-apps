@@ -5,6 +5,7 @@ import { CROPS_DATA } from '@picsa/data';
 import { PICSAFormValidators } from '@picsa/forms';
 
 import { DashboardMaterialModule } from '../../../../../../../material.module';
+import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
 import { ICropData } from '../../../../../services';
 
 @Component({
@@ -16,6 +17,7 @@ import { ICropData } from '../../../../../services';
 })
 export class DashboardCropVarietyFormComponent {
   private formBuilder = inject(FormBuilder);
+  private deploymentService = inject(DeploymentDashboardService);
 
   public editable = input(false);
   public initialValue = input<ICropData['Insert'] | undefined>(undefined);
@@ -67,7 +69,8 @@ export class DashboardCropVarietyFormComponent {
 
   /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
   public get value() {
-    const entry: ICropData['Insert'] = this.form.getRawValue();
+    const country_code = this.deploymentService.activeDeploymentCountry();
+    const entry: ICropData['Insert'] = { ...this.form.getRawValue(), country_code };
     return entry;
   }
 }
