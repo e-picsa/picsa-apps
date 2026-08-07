@@ -82,6 +82,34 @@
         "commands": ["npx supabase"],
         "cwd": "apps/picsa-server"
       }
+    },
+    "backup": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "yarn tsx scripts/backup/backup.ts",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "backup-db": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "yarn tsx scripts/backup/backup-db.ts",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "backup-storage": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "yarn tsx scripts/backup/backup-storage.ts",
+        "cwd": "apps/picsa-server"
+      }
     }
   }
 }
+
