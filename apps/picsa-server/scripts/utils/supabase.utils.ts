@@ -29,12 +29,8 @@ export function loadEnvLocal() {
   const serverDir = path.resolve(__dirname, '../../');
   const envLocalPath = path.resolve(serverDir, '.env.local');
   if (fs.existsSync(envLocalPath)) {
-    try {
-      const dotenv = require('dotenv');
-      dotenv.config({ path: envLocalPath, override: true });
-    } catch {
-      // Ignore if dotenv is not available
-    }
+    const dotenv = require('dotenv');
+    dotenv.config({ path: envLocalPath, override: true });
   }
 }
 
@@ -61,7 +57,10 @@ export function getLinkedProjectRef(): string | null {
  * Retrieve Supabase client specifically targeting REMOTE instance for storage backups.
  * Checks for remote credentials in environment or .env.local:
  * - SUPABASE_REMOTE_URL (or derived https://<projectRef>.supabase.co)
- * - SUPABASE_REMOTE_ANON_KEY / SUPABASE_REMOTE_SERVICE_ROLE_KEY / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY
+ * - SUPABASE_REMOTE_ANON_KEY
+ *
+ * NOTE - currently configured just for anon access. Could also be configured for service-role
+ * access in future if required
  */
 export function getRemoteSupabaseClient() {
   if (remoteSupabase) return remoteSupabase;
@@ -89,22 +88,11 @@ export function getRemoteSupabaseClient() {
     process.exit(1);
   }
 
-  const apiKey =
-    process.env.SUPABASE_REMOTE_ANON_KEY ||
-    process.env.SUPABASE_REMOTE_SERVICE_ROLE_KEY ||
-    (process.env.SUPABASE_ANON_KEY && !process.env.SUPABASE_ANON_KEY.includes('eyJpc3MiOiJzdXBhYmFzZS1kZW1v')
-      ? process.env.SUPABASE_ANON_KEY
-      : '') ||
-    (process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('eyJpc3MiOiJzdXBhYmFzZS1kZW1v')
-      ? process.env.SUPABASE_SERVICE_ROLE_KEY
-      : '');
+  const apiKey = process.env.SUPABASE_REMOTE_ANON_KEY;
 
   if (!apiKey) {
     console.error('\n❌ Error: Remote Supabase API key is missing.');
-    console.error(
-      '  Please set SUPABASE_REMOTE_ANON_KEY (or SUPABASE_REMOTE_SERVICE_ROLE_KEY) in apps/picsa-server/.env.local',
-    );
+    console.error('  Please set SUPABASE_REMOTE_ANON_KEY in apps/picsa-server/.env.local');
     console.error(`  Target Remote URL: ${remoteUrl}\n`);
     process.exit(1);
   }
