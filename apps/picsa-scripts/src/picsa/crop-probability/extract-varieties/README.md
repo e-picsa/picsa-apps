@@ -6,7 +6,7 @@ Historically, crop variety details and maturity durations (days) for weather sta
 
 The primary goal of this tool is to **retrofit and structure this historical data** to populate the central database with clean, standardized crop variety information. By storing individual crop varieties and maturity days (`days_lower` and `days_upper`) in the database, PICSA can **automatically recalculate crop probability tables** whenever updated climate or station data becomes available.
 
-This script parses existing station JSON files (in Malawi `mw` and Zimbabwe `zw`), extracts individual crop varieties from compound strings, normalizes maturity durations, resolves multi-range discrepancies via modal selection, and exports DB-ready primary and downscaled CSV files.
+This script parses existing station JSON files (in Malawi `mw` and Zimbabwe `zw`), extracts individual crop varieties from compound strings, normalizes maturity durations, resolves multi-range discrepancies via modal selection, aggregates station water requirements to 1 downscaled record per district, and exports DB-ready primary and downscaled CSV files.
 
 ---
 
@@ -14,14 +14,15 @@ This script parses existing station JSON files (in Malawi `mw` and Zimbabwe `zw`
 
 All files for this script are co-located in this directory:
 
-- **`index.ts`**: The main runner script. Reads station JSON files, parses variety strings, performs modal frequency range selection, formats DB CSV rows, and writes output files.
+- **`index.ts`**: The main runner script. Reads station JSON files, parses variety strings, performs modal frequency range selection, aggregates district-level downscaled water requirements (1 row per district), formats DB CSV rows, and writes output files.
 - **`parser.ts`**: Utility functions (`parseVarietyString`, `parseDaysRange`, `roundToNearest`) containing tokenizers, prefix carry-over logic, and parenthetical alias protection rules.
 - **`cleaning-rules.ts`**: Dedicated data cleaning module for explicit pre-processing regexes, brand prefix splitting, space-to-hyphen formatting, and crop remapping.
 - **`parser.spec.ts`**: Self-contained unit test suite validating variety string tokenization, prefix carry-over, local name extraction, and days range parsing.
 - **`.gitignore`**: Excludes temporary `output/` files from source control.
 - **`output/`** *(Generated at runtime, git-ignored)*:
   - `crop_data_rows.[country].csv`: Primary database catalog CSV (`country_code,crop,variety,maturity_period,days_lower,days_upper,additional_info,additional_data`).
-  - `crop_data_downscaled_rows.[country].csv`: Secondary station downscaled water requirements CSV (`country_code,location_id,water_requirements,override_data,station_id`).
+  - `crop_data_downscaled_rows.[country].csv`: Secondary station downscaled water requirements CSV (1 row per district: `country_code,location_id,water_requirements,override_data,station_id`).
+  - `sublocation_discrepancies.json`: Audit log of sublocation variations within each district prior to merging.
 
 ---
 
@@ -60,12 +61,14 @@ The script outputs database-ready CSV artifacts inside `output/`:
 
 2. **`crop_data_downscaled_rows.mw.csv` & `crop_data_downscaled_rows.zw.csv`**:
    - Secondary station-level downscaled water requirements matching Supabase `crop_data_downscaled` table schema.
-   - Maps station IDs to JSON objects `{ "[crop]": { "[standardized_variety]": rounded_water_mm } }`.
+   - **Tidied to 1 row per district/location** (e.g. `chikwawa`, `dedza`, `dowa`, `kasungu`, `lilongwe`, `nkhata_bay`, `nkhotakota`, `salima`, `masvingo`).
+   - Maps station IDs (`mw/[district_id]`) to JSON objects `{ "[crop]": { "[standardized_variety]": rounded_water_mm } }`.
 
 ---
 
 ## Key Parsing Rules & Enhancements
 
+- **District Downscaled Consolidation**: Combines crop water requirements from sublocation stations into 1 row per district (`location_id`), preserving 100% of crop varieties.
 - **Prefix Carry-Over for Numbered Varieties**: Bare numbers or number-led tokens inherit the brand/series prefix from preceding varieties in the same entry (e.g. `"SC 777, 529"` -> `SC-777`, `SC-529` | `"SC719, 725 Njovu"` -> `SC-719`, `SC-725`).
 - **Local Name Extraction**: Bracketed local names (e.g. `(Mbidzi)`, `(Kalulu)`, `(Kanyani)`) are extracted into `local_name` and stored in `additional_data` JSON (`"local_name": "MBIDZI"`), keeping canonical variety IDs clean (`SC-537`).
 - **Variety Naming Standardization**: Converted to **UPPERCASE** with hyphens separating brand prefixes and model numbers (e.g. `SC 419` -> `SC-419`, `PAN 3M-01` -> `PAN-3M-01`, `PEACOCK 10` -> `PEACOCK-10`).
