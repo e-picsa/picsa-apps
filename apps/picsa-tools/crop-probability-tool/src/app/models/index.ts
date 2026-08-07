@@ -38,6 +38,8 @@ export interface IStationCropData {
 export interface IStationCropDataItem {
   variety: string;
   days: string;
+  days_lower?: number;
+  days_upper?: number;
   water?: number[];
   probabilities?: (number | null)[];
 }

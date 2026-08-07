@@ -1,3 +1,9 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import {
+  getDaysBounds,
+  groupAndSortCropDataItems,
+} from '@picsa/crop-probability/src/app/utils/probability-table.utils';
+
 import { findSurroundingKeys, getCropSuccessProbability, linearInterpolationStrategy } from './probability.utils';
 
 describe('probability.utils', () => {
@@ -65,6 +71,94 @@ describe('probability.utils', () => {
       const result = getCropSuccessProbability(250, 60, [100, 200], sparseHashmap);
       expect(result[0]).toBe(0.2);
       expect(result[1]).toBe(0.8);
+    });
+  });
+
+  describe('getDaysBounds', () => {
+    it('should use numeric days_lower and days_upper directly', () => {
+      expect(getDaysBounds({ variety: 'V1', days: '130 - 135', days_lower: 130, days_upper: 135 })).toEqual({
+        minDays: 130,
+        maxDays: 135,
+        midpoint: 132.5,
+      });
+    });
+
+    it('should fallback to parsing string if numeric properties are missing', () => {
+      expect(getDaysBounds({ variety: 'V1', days: '90' })).toEqual({
+        minDays: 90,
+        maxDays: 90,
+        midpoint: 90,
+      });
+      expect(getDaysBounds({ variety: 'V1', days: '130 - 135' })).toEqual({
+        minDays: 130,
+        maxDays: 135,
+        midpoint: 132.5,
+      });
+    });
+  });
+
+  describe('groupAndSortCropDataItems', () => {
+    it('should group items with identical water and probability requirements into a single row', () => {
+      const input = [
+        {
+          variety: 'SC600',
+          days: '130',
+          days_lower: 130,
+          days_upper: 130,
+          water: [364],
+          probabilities: [0.6, 0.2, 0, 0],
+        },
+        {
+          variety: 'PHB 30 G 19',
+          days: '135',
+          days_lower: 135,
+          days_upper: 135,
+          water: [364],
+          probabilities: [0.6, 0.2, 0, 0],
+        },
+      ];
+
+      const result = groupAndSortCropDataItems(input);
+      expect(result.length).toBe(1);
+      expect(result[0].variety).toBe('SC600, PHB 30 G 19');
+      expect(result[0].days).toBe('130 - 135');
+      expect(result[0].days_lower).toBe(130);
+      expect(result[0].days_upper).toBe(135);
+      expect(result[0].water).toEqual([364]);
+      expect(result[0].probabilities).toEqual([0.6, 0.2, 0, 0]);
+    });
+
+    it('should sort grouped items in ascending order of days midpoint', () => {
+      const input = [
+        {
+          variety: 'Late Variety',
+          days: '130 - 135',
+          days_lower: 130,
+          days_upper: 135,
+          water: [364],
+          probabilities: [0.6, 0.2, 0, 0],
+        },
+        {
+          variety: 'Early Variety',
+          days: '90',
+          days_lower: 90,
+          days_upper: 90,
+          water: [252],
+          probabilities: [1, 1, 0.8, 0.6],
+        },
+        {
+          variety: 'Medium Variety',
+          days: '110',
+          days_lower: 110,
+          days_upper: 110,
+          water: [308],
+          probabilities: [1, 0.8, 0.5, 0.1],
+        },
+      ];
+
+      const result = groupAndSortCropDataItems(input);
+      expect(result.map((r) => r.variety)).toEqual(['Early Variety', 'Medium Variety', 'Late Variety']);
+      expect(result.map((r) => r.days)).toEqual(['90', '110', '130 - 135']);
     });
   });
 });

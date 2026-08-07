@@ -1,5 +1,7 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IStationCropData } from '@picsa/crop-probability/src/app/models';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { groupAndSortCropDataItems } from '@picsa/crop-probability/src/app/utils/probability-table.utils';
 import { ICropName, MONTH_DATA } from '@picsa/data';
 
 import type { IAnnualRainfallSummariesData, ICropSuccessEntry } from '../../climate/types';
@@ -243,10 +245,10 @@ export function generateTable(params: {
           upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
         };
         const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
-        // HACK - convert to legacy table format
-        // TODO - review and possibly tidy up
         entry.data.push({
           days: [...new Set([days.lower, days_upper])].join(' - '),
+          days_lower: days.lower,
+          days_upper: days.upper,
           variety,
           probabilities: probabilityValues,
           water: [waterRequirement],
@@ -256,24 +258,7 @@ export function generateTable(params: {
       }
     }
 
-    // Sort varieties within this crop by days to maturity midpoint (shorter days first)
-    entry.data.sort((a, b) => {
-      const aData = cropDataHashmap[`${entry.crop}/${a.variety}`];
-      const bData = cropDataHashmap[`${entry.crop}/${b.variety}`];
-      if (!aData || !bData) return 0;
-
-      const aMid = (aData.days_lower + aData.days_upper) / 2;
-      const bMid = (bData.days_lower + bData.days_upper) / 2;
-
-      if (aMid !== bMid) {
-        return aMid - bMid;
-      }
-      if (aData.days_lower !== bData.days_lower) {
-        return aData.days_lower - bData.days_lower;
-      }
-      return a.variety.localeCompare(b.variety);
-    });
-
+    entry.data = groupAndSortCropDataItems(entry.data);
     entries.push(entry);
   }
 

@@ -7,6 +7,7 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '../../models';
+import { groupAndSortCropDataItems } from '../../utils/probability-table.utils';
 
 @Component({
   selector: 'crop-probability-table',
@@ -102,14 +103,15 @@ export class CropProbabilityTableComponent implements OnInit {
 
     const entries: ITableRow[] = [];
     for (const { crop, data } of stationData) {
-      data.forEach((item, index) => {
+      const groupedData = groupAndSortCropDataItems(data || []);
+      groupedData.forEach((item, index) => {
         const { probabilities, ...rest } = item;
         for (const { index, name } of this.probabilityColumns()) {
           const val = probabilities?.[index];
           rest[name] = val !== undefined ? val : null;
         }
         // set first row of each to span all crop rows (other rows set to 0 to omit)
-        const cropNameRowspan = index === 0 ? data.length : 0;
+        const cropNameRowspan = index === 0 ? groupedData.length : 0;
         entries.push({ ...rest, crop, cropNameRowspan });
       });
     }
