@@ -1,4 +1,8 @@
+import { provideHttpClient } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { HomeComponent } from './home.component';
 
@@ -8,7 +12,8 @@ describe('HomeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HomeComponent],
+      imports: [HomeComponent],
+      providers: [provideHttpClient(), provideRouter([]), importProvidersFrom(PicsaTranslateModule.forRoot())],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeComponent);

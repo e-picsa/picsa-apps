@@ -1,33 +1,26 @@
+import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 
-import { AppComponent } from './app.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { PicsaCropProbabilityTool } from './app.component';
 
-describe('AppComponent', () => {
+describe('PicsaCropProbabilityTool', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [AppComponent, NxWelcomeComponent],
+      imports: [PicsaCropProbabilityTool],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(PicsaCropProbabilityTool);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'picsa-tools-crop-probability-tool'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  it(`should have as title 'crop-probability-tool'`, () => {
+    const fixture = TestBed.createComponent(PicsaCropProbabilityTool);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('picsa-tools-crop-probability-tool');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Welcome picsa-tools-crop-probability-tool');
+    expect(app.title).toEqual('crop-probability-tool');
   });
 });
