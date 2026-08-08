@@ -351,7 +351,7 @@ export type Database = {
           days_lower: number;
           days_upper: number;
           id: string;
-          maturity_period: string;
+          maturity_period: string | null;
           updated_at: string;
           variety: string;
         };
@@ -364,7 +364,7 @@ export type Database = {
           days_lower: number;
           days_upper: number;
           id?: string;
-          maturity_period: string;
+          maturity_period?: string | null;
           updated_at?: string;
           variety: string;
         };
@@ -377,7 +377,7 @@ export type Database = {
           days_lower?: number;
           days_upper?: number;
           id?: string;
-          maturity_period?: string;
+          maturity_period?: string | null;
           updated_at?: string;
           variety?: string;
         };
