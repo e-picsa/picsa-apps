@@ -26,7 +26,7 @@ export class DashboardCropVarietyFormComponent {
     id: new FormControl(), // populated by server or on edit
     crop: ['', Validators.required],
     variety: ['', Validators.required],
-    maturity_period: ['', Validators.required],
+    maturity_period: new FormControl<string | null>(null),
     days_lower: [0, PICSAFormValidators.minMax(1, 1000)],
     days_upper: [0, PICSAFormValidators.minMax(1, 1000)],
     additional_info: new FormControl<string | null>(null),
