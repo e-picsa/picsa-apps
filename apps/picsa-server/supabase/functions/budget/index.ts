@@ -11,7 +11,7 @@ app.use(
   '*',
   cors({
     origin: '*', // api restriction handled at supabase function invocation layer
-    allowHeaders: ['authorization', 'x-client-info', 'apikey', 'content-type'],
+    allowHeaders: ['authorization', 'x-client-info', 'apikey', 'content-type', 'x-picsa-deployment-id'],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
   }),
 );

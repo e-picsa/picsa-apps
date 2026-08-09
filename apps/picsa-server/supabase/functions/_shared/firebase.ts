@@ -25,6 +25,17 @@ type FirestoreRunQueryResponse = {
 
 const FIRESTORE_IN_FILTER_LIMIT = 30;
 
+export type FirestoreFieldFilter = {
+  fieldPath: string;
+  op: 'LESS_THAN_OR_EQUAL';
+  value: { stringValue: string };
+};
+
+export type FirestoreQueryOptions = {
+  config?: FirebaseConfig;
+  additionalFilters?: FirestoreFieldFilter[];
+};
+
 export type FirebaseConfig = {
   apiKey: string;
   projectId: string;
@@ -63,19 +74,31 @@ export function getFirebaseConfigFromEnv(): FirebaseConfig {
 export async function queryFirestoreCollectionWhereFieldNotNull<T = Record<string, unknown>>(
   collectionPath: string,
   fieldPath: string,
-  config = getFirebaseConfigFromEnv(),
+  options: FirestoreQueryOptions = {},
 ): Promise<FirestoreDocument<T>[]> {
   const { parentPath, collectionId } = parseCollectionPath(collectionPath);
-
-  return runFirestoreStructuredQuery<T>(config, parentPath, {
-    from: [{ collectionId }],
-    where: {
+  const config = options.config || getFirebaseConfigFromEnv();
+  const additionalFilters = options.additionalFilters || [];
+  const filters = [
+    {
       unaryFilter: {
         field: { fieldPath },
         op: 'IS_NOT_NULL',
       },
     },
-    orderBy: [{ field: { fieldPath }, direction: 'ASCENDING' }],
+    ...additionalFilters.map((filter) => ({
+      fieldFilter: {
+        field: { fieldPath: filter.fieldPath },
+        op: filter.op,
+        value: filter.value,
+      },
+    })),
+  ];
+
+  return runFirestoreStructuredQuery<T>(config, parentPath, {
+    from: [{ collectionId }],
+    where: buildWhereFilter(filters),
+    orderBy: getOrderBy(fieldPath, additionalFilters),
   });
 }
 
@@ -83,29 +106,40 @@ export async function queryFirestoreCollectionWhereFieldIn<T = Record<string, un
   collectionPath: string,
   fieldPath: string,
   values: string[],
-  config = getFirebaseConfigFromEnv(),
+  options: FirestoreQueryOptions = {},
 ): Promise<FirestoreDocument<T>[]> {
   const uniqueValues = [...new Set(values.filter(Boolean))];
   if (uniqueValues.length === 0) return [];
 
   const { parentPath, collectionId } = parseCollectionPath(collectionPath);
+  const config = options.config || getFirebaseConfigFromEnv();
+  const additionalFilters = options.additionalFilters || [];
   const chunks = chunkArray(uniqueValues, FIRESTORE_IN_FILTER_LIMIT);
   const chunkResults = await Promise.all(
     chunks.map((chunk) =>
       runFirestoreStructuredQuery<T>(config, parentPath, {
         from: [{ collectionId }],
-        where: {
-          fieldFilter: {
-            field: { fieldPath },
-            op: 'IN',
-            value: {
-              arrayValue: {
-                values: chunk.map((value) => ({ stringValue: value })),
+        where: buildWhereFilter([
+          {
+            fieldFilter: {
+              field: { fieldPath },
+              op: 'IN',
+              value: {
+                arrayValue: {
+                  values: chunk.map((value) => ({ stringValue: value })),
+                },
               },
             },
           },
-        },
-        orderBy: [{ field: { fieldPath }, direction: 'ASCENDING' }],
+          ...additionalFilters.map((filter) => ({
+            fieldFilter: {
+              field: { fieldPath: filter.fieldPath },
+              op: filter.op,
+              value: filter.value,
+            },
+          })),
+        ]),
+        orderBy: getOrderBy(fieldPath, additionalFilters),
       }),
     ),
   );
@@ -115,6 +149,24 @@ export async function queryFirestoreCollectionWhereFieldIn<T = Record<string, un
     docsByName.set(doc.name, doc);
   }
   return [...docsByName.values()];
+}
+
+function buildWhereFilter(filters: Record<string, unknown>[]) {
+  if (filters.length === 1) return filters[0];
+  return {
+    compositeFilter: {
+      op: 'AND',
+      filters,
+    },
+  };
+}
+
+function getOrderBy(fieldPath: string, additionalFilters: FirestoreFieldFilter[]) {
+  const rangeFields = additionalFilters.map((filter) => filter.fieldPath);
+  return [
+    ...rangeFields.map((rangeField) => ({ field: { fieldPath: rangeField }, direction: 'ASCENDING' })),
+    { field: { fieldPath }, direction: 'ASCENDING' },
+  ];
 }
 
 async function runFirestoreStructuredQuery<T>(

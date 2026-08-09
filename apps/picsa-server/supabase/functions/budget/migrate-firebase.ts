@@ -5,6 +5,7 @@ import {
   FirebaseConfigError,
   queryFirestoreCollectionWhereFieldIn,
   queryFirestoreCollectionWhereFieldNotNull,
+  type FirestoreFieldFilter,
   type FirestoreDocument,
 } from '../_shared/firebase.ts';
 import { ErrorResponse, JSONResponse } from '../_shared/response.ts';
@@ -29,6 +30,7 @@ type BudgetTable = ReturnType<typeof getBudgetTable>;
 
 const migrationRequestSchema = z.strictObject({
   share_codes: z.array(z.string().min(1)).optional(),
+  created_before: z.string().min(1).optional(),
 });
 
 export async function migrateFirebaseBudgets(req: Request) {
@@ -63,7 +65,8 @@ function getAuthorizedDeploymentId(req: Request) {
 async function prepareFirebaseBudgetMigration(req: Request, deploymentId: string) {
   const options = await parseMigrationOptions(req);
   const requestedShareCodes = getRequestedShareCodes(options);
-  const sourceDocs = await getFirebaseBudgetDocs(requestedShareCodes);
+  const createdBefore = normalizeCreatedBefore(options.created_before);
+  const sourceDocs = await getFirebaseBudgetDocs(requestedShareCodes, createdBefore);
   const docs = filterByRequestedShareCodes(sourceDocs, requestedShareCodes);
   const mapped = docs.map((doc) => mapFirebaseBudget(doc, deploymentId));
 
@@ -168,15 +171,28 @@ function handleMigrationError(error: unknown) {
   return ErrorResponse('Internal Server Error', 500);
 }
 
-async function getFirebaseBudgetDocs(requestedShareCodes: string[]) {
+async function getFirebaseBudgetDocs(requestedShareCodes: string[], createdBefore?: string) {
+  const additionalFilters: FirestoreFieldFilter[] = createdBefore
+    ? [
+        {
+          fieldPath: '_created',
+          op: 'LESS_THAN_OR_EQUAL',
+          value: { stringValue: createdBefore },
+        },
+      ]
+    : [];
+
   if (requestedShareCodes.length > 0) {
     return queryFirestoreCollectionWhereFieldIn<LegacyFirebaseBudget>(
       DEFAULT_COLLECTION_PATH,
       'shareCode',
       requestedShareCodes,
+      { additionalFilters },
     );
   }
-  return queryFirestoreCollectionWhereFieldNotNull<LegacyFirebaseBudget>(DEFAULT_COLLECTION_PATH, 'shareCode');
+  return queryFirestoreCollectionWhereFieldNotNull<LegacyFirebaseBudget>(DEFAULT_COLLECTION_PATH, 'shareCode', {
+    additionalFilters,
+  });
 }
 
 function mapFirebaseBudget(
@@ -257,10 +273,31 @@ function getMissingRequestedShareCodeResults(
       {
         share_code: code,
         status: 'missing',
-        error: 'Requested share code not found in Firebase',
+        error: 'Requested share code not found in Firebase within the requested migration filters',
       },
     ];
   });
+}
+
+function normalizeCreatedBefore(value?: string) {
+  if (!value) return undefined;
+
+  const normalized = value.trim();
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(normalized);
+  const date = dateOnlyMatch ? new Date(`${normalized}T23:59:59.999Z`) : new Date(normalized);
+  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(normalized);
+
+  const isInvalidDateOnly =
+    dateOnlyMatch &&
+    (date.getUTCFullYear() !== Number(dateOnlyMatch[1]) ||
+      date.getUTCMonth() + 1 !== Number(dateOnlyMatch[2]) ||
+      date.getUTCDate() !== Number(dateOnlyMatch[3]));
+
+  if (Number.isNaN(date.getTime()) || isInvalidDateOnly || (!dateOnlyMatch && !hasTimezone)) {
+    throw ErrorResponse('created_before must be a valid ISO date or timestamp', 400);
+  }
+
+  return date.toISOString();
 }
 
 async function parseMigrationOptions(req: Request): Promise<MigrationOptions> {
