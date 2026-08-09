@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "5.7.4",
+  "version": "5.8.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -22,7 +22,8 @@
     "scripts": "nx run picsa-scripts:exec --scriptName",
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
     "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
-    "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup"
+    "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup",
+    "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts"
   },
   "private": true,
   "dependencies": {

@@ -345,36 +345,39 @@ export type Database = {
         Row: {
           additional_data: Json;
           additional_info: string | null;
+          country_code: CountryCodeLegacy;
           created_at: string;
           crop: string;
           days_lower: number;
           days_upper: number;
           id: string;
-          maturity_period: string;
+          maturity_period: string | null;
           updated_at: string;
           variety: string;
         };
         Insert: {
           additional_data?: Json;
           additional_info?: string | null;
+          country_code: CountryCodeLegacy;
           created_at?: string;
           crop: string;
           days_lower: number;
           days_upper: number;
           id?: string;
-          maturity_period: string;
+          maturity_period?: string | null;
           updated_at?: string;
           variety: string;
         };
         Update: {
           additional_data?: Json;
           additional_info?: string | null;
+          country_code?: CountryCodeLegacy;
           created_at?: string;
           crop?: string;
           days_lower?: number;
           days_upper?: number;
           id?: string;
-          maturity_period?: string;
+          maturity_period?: string | null;
           updated_at?: string;
           variety?: string;
         };

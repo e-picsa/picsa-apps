@@ -3,7 +3,7 @@ import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
 import { zipFolderContents } from '../utils/file.utils';
-import { getSupabaseClient } from '../utils/supabase.utils';
+import { getRemoteSupabaseClient } from '../utils/supabase.utils';
 
 interface IFileMeta extends FileObject {
   bucketName: string;
@@ -18,7 +18,7 @@ const backupDir = path.resolve(__dirname, './backups');
 const omitDirs = ['forecasts'];
 
 /** List of buckets to exclude from local backup */
-const omitBuckets: string[] = [];
+const omitBuckets: string[] = ['apk-releases'];
 
 /** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
@@ -69,7 +69,7 @@ async function syncFiles(remoteFiles: IFileMeta[]) {
   }
 }
 async function syncFile(remoteFile: IFileMeta) {
-  const supabase = getSupabaseClient();
+  const supabase = getRemoteSupabaseClient();
   const status = { downloaded: false, skipped: false, error: null as any };
   const { filePath, created_at, updated_at, bucketName, metadata } = remoteFile;
   const localFilePath = path.join(localDir, bucketName, filePath);
@@ -118,19 +118,20 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
 
   const baseDir = resolve(localDir, bucketName);
 
+  if (!fs.existsSync(baseDir)) {
+    return;
+  }
+
   const remoteHashmap = remoteFiles.reduce((map, f) => {
     map.set(f.filePath, f);
     return map;
   }, new Map<string, IFileMeta>());
 
   function walkDir(dir: string) {
+    if (!fs.existsSync(dir)) return;
     const files = fs.readdirSync(dir, { withFileTypes: true });
-    // Remove empty directories
-    if (files.length === 0) {
-      fs.rmdirSync(dir);
-    }
     for (const file of files) {
-      const childPath = resolve(file.parentPath, file.name);
+      const childPath = resolve(dir, file.name);
       if (file.isDirectory()) {
         walkDir(childPath);
       } else {
@@ -141,6 +142,11 @@ function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
           removedCount++;
         }
       }
+    }
+    // Clean up empty subdirectories (except base directory)
+    const remainingFiles = fs.readdirSync(dir);
+    if (remainingFiles.length === 0 && dir !== baseDir) {
+      fs.rmdirSync(dir);
     }
   }
 
@@ -161,45 +167,96 @@ function calculateMD5(filePath: string) {
 }
 
 async function listBuckets() {
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase.storage.listBuckets();
+  const supabase = getRemoteSupabaseClient();
+  try {
+    const { data, error } = await supabase.storage.listBuckets();
+    if (!error && data && data.length > 0) {
+      return data.filter(({ name }) => !omitBuckets.includes(name));
+    }
+  } catch {
+    // Ignore listBuckets API error for non-service-role keys
+  }
 
-  if (error) {
-    throw error;
+  // Fallback for anon key: query distinct bucket_ids dynamically from storage.objects table
+  const { data: objectRows, error: dbError } = await supabase
+    .schema('storage' as any)
+    .from('objects')
+    .select('bucket_id');
+
+  if (dbError || !objectRows) {
+    throw new Error(`Failed to list storage buckets from storage.objects: ${dbError?.message || 'No data returned'}`);
   }
-  if (!data || data.length === 0) {
-    throw new Error(`No buckets listed - make sure you use an access token with permissions`);
-  }
-  const buckets = data || [];
-  return buckets.filter(({ name }) => !omitBuckets.includes(name));
+
+  const uniqueBucketNames = Array.from(new Set(objectRows.map((r: any) => r.bucket_id))).filter(
+    (name): name is string => Boolean(name) && !omitBuckets.includes(name),
+  );
+
+  return uniqueBucketNames.map((name) => ({ name, id: name, public: true }));
 }
 
 // List all files in the bucket (recursively)
 async function listFiles(bucketName: string, prefix = '') {
-  const supabase = getSupabaseClient();
+  const supabase = getRemoteSupabaseClient();
   // skip list of omitted files
   if (omitDirs.includes(prefix)) return [];
 
+  // Try standard storage list API first
   const { data, error } = await supabase.storage.from(bucketName).list(prefix);
 
-  if (error) {
-    console.error(`Error listing files with prefix ${prefix}:`, error);
+  if (!error && data) {
+    let allFiles: IFileMeta[] = [];
+    for (const item of data) {
+      if (item.id) {
+        // It's a file
+        const filePath = prefix ? `${prefix}/${item.name}` : item.name;
+        allFiles.push({ ...item, filePath, bucketName });
+      } else {
+        // It's a folder
+        const subPrefix = prefix ? `${prefix}/${item.name}` : item.name;
+        const subFiles = await listFiles(bucketName, subPrefix);
+        allFiles = [...allFiles, ...subFiles];
+      }
+    }
+    return allFiles;
+  }
+
+  // Fallback for anon key: Query storage.objects table directly (works under public RLS policies)
+  let query = supabase
+    .schema('storage' as any)
+    .from('objects')
+    .select('id, name, created_at, updated_at, metadata')
+    .eq('bucket_id', bucketName);
+
+  if (prefix) {
+    query = query.like('name', `${prefix}/%`);
+  }
+
+  const { data: dbObjects, error: dbErr } = await query;
+
+  if (dbErr || !dbObjects) {
+    console.error(`Error querying storage.objects for bucket ${bucketName}:`, dbErr);
     return [];
   }
-  let allFiles: IFileMeta[] = [];
 
-  for (const item of data) {
-    if (item.id) {
-      // It's a file
-      const filePath = prefix ? `${prefix}/${item.name}` : item.name;
-      allFiles.push({ ...item, filePath, bucketName });
-    } else {
-      // It's a folder
-      const subPrefix = prefix ? `${prefix}/${item.name}` : item.name;
-      const subFiles = await listFiles(bucketName, subPrefix);
-      allFiles = [...allFiles, ...subFiles];
-    }
-  }
+  return dbObjects
+    .filter((obj: any) => {
+      // Exclude omitted directories
+      if (omitDirs.some((d) => obj.name.startsWith(`${d}/`) || obj.name === d)) {
+        return false;
+      }
+      return true;
+    })
+    .map((obj: any) => ({
+      id: obj.id,
+      name: path.basename(obj.name),
+      created_at: obj.created_at,
+      updated_at: obj.updated_at,
+      metadata: obj.metadata || {},
+      filePath: obj.name,
+      bucketName,
+    }));
+}
 
-  return allFiles;
+if (require.main === module) {
+  backupStorage();
 }
