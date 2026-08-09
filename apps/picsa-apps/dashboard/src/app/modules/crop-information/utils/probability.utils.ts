@@ -147,6 +147,24 @@ export function generateProbabilityHashmap(entries: ICropSuccessEntry[]): IProba
 }
 
 /**
+ * Helper to interpolate between lower and upper boundary values.
+ * Falls back to available boundary value if one is missing (sparse data).
+ */
+export function interpolateValue(
+  target: number,
+  lowerKey: number,
+  upperKey: number,
+  valLower: number | undefined,
+  valUpper: number | undefined,
+  strategy: IProbabilityInterpolationStrategy = linearInterpolationStrategy,
+): number | undefined {
+  if (typeof valLower === 'number' && typeof valUpper === 'number') {
+    return strategy(target, lowerKey, upperKey, valLower, valUpper);
+  }
+  return valLower ?? valUpper;
+}
+
+/**
  * Fetches and interpolates the crop success probability for a given water requirement and plant length.
  * Decouples lookup and math strategies, supporting nearest-neighbor/clipping bounds and sparse database fallbacks.
  */
@@ -157,46 +175,48 @@ export function getCropSuccessProbability(
   probabilityHashmap: IProbabilityHashmap,
   strategy: IProbabilityInterpolationStrategy = linearInterpolationStrategy,
 ): (number | undefined)[] {
-  const waterRounded = roundToNearest(water, WATER_REQUIREMENT_ROUNDING);
-  const targetDays = days;
-  const probabilities: (number | undefined)[] = [];
+  const waterKeys = Object.keys(probabilityHashmap).map(Number);
+  if (waterKeys.length === 0) {
+    return new Array(plantDates.length).fill(undefined);
+  }
 
-  const waterEntry = probabilityHashmap[waterRounded];
-  if (waterEntry) {
+  const { lower: lowerWater, upper: upperWater } = findSurroundingKeys(water, waterKeys);
+
+  const getProbabilitiesForWaterKey = (wKey: number): (number | undefined)[] => {
+    const waterEntry = probabilityHashmap[wKey];
+    if (!waterEntry) {
+      return new Array(plantDates.length).fill(undefined);
+    }
+
     const plantLengths = Object.keys(waterEntry).map(Number);
     if (plantLengths.length === 0) {
       return new Array(plantDates.length).fill(undefined);
     }
 
-    // Find the surrounding keys directly above and below targetDays
-    const { lower, upper } = findSurroundingKeys(targetDays, plantLengths);
+    const { lower: lowerDays, upper: upperDays } = findSurroundingKeys(days, plantLengths);
 
-    const lowerEntry = waterEntry[lower];
-    const upperEntry = waterEntry[upper];
+    return plantDates.map((date) =>
+      interpolateValue(
+        days,
+        lowerDays,
+        upperDays,
+        waterEntry[lowerDays]?.[date],
+        waterEntry[upperDays]?.[date],
+        strategy,
+      ),
+    );
+  };
 
-    for (const date of plantDates) {
-      const probLower = lowerEntry?.[date];
-      const probUpper = upperEntry?.[date];
-
-      // Interpolate if both values are valid numbers, otherwise fall back to nearest boundary (sparse data)
-      if (typeof probLower === 'number' && typeof probUpper === 'number') {
-        const interpolated = strategy(targetDays, lower, upper, probLower, probUpper);
-        probabilities.push(interpolated);
-      } else if (typeof probLower === 'number') {
-        probabilities.push(probLower);
-      } else if (typeof probUpper === 'number') {
-        probabilities.push(probUpper);
-      } else {
-        probabilities.push(undefined);
-      }
-    }
-  } else {
-    for (let i = 0; i < plantDates.length; i++) {
-      probabilities.push(undefined);
-    }
+  if (lowerWater === upperWater) {
+    return getProbabilitiesForWaterKey(lowerWater);
   }
 
-  return probabilities;
+  const probsLowerWater = getProbabilitiesForWaterKey(lowerWater);
+  const probsUpperWater = getProbabilitiesForWaterKey(upperWater);
+
+  return plantDates.map((_, i) =>
+    interpolateValue(water, lowerWater, upperWater, probsLowerWater[i], probsUpperWater[i], strategy),
+  );
 }
 
 export function generateProbabilityEntryValues(
