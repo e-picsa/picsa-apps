@@ -158,6 +158,9 @@ export function interpolateValue(
   valUpper: number | undefined,
   strategy: IProbabilityInterpolationStrategy = linearInterpolationStrategy,
 ): number | undefined {
+  if (lowerKey === upperKey) {
+    return valLower ?? valUpper;
+  }
   if (typeof valLower === 'number' && typeof valUpper === 'number') {
     return strategy(target, lowerKey, upperKey, valLower, valUpper);
   }
