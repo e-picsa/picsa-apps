@@ -4,7 +4,12 @@ import {
   groupAndSortCropDataItems,
 } from '@picsa/crop-probability/src/app/utils/probability-table.utils';
 
-import { findSurroundingKeys, getCropSuccessProbability, linearInterpolationStrategy } from './probability.utils';
+import {
+  findSurroundingKeys,
+  getCropSuccessProbability,
+  interpolateValue,
+  linearInterpolationStrategy,
+} from './probability.utils';
 
 describe('probability.utils', () => {
   describe('findSurroundingKeys', () => {
@@ -39,6 +44,24 @@ describe('probability.utils', () => {
     });
   });
 
+  describe('interpolateValue', () => {
+    it('should interpolate using strategy when both values are numbers', () => {
+      expect(interpolateValue(325, 300, 350, 0.4, 0.8)).toBeCloseTo(0.6);
+    });
+
+    it('should fall back to valLower when valUpper is undefined', () => {
+      expect(interpolateValue(325, 300, 350, 0.4, undefined)).toBe(0.4);
+    });
+
+    it('should fall back to valUpper when valLower is undefined', () => {
+      expect(interpolateValue(325, 300, 350, undefined, 0.8)).toBe(0.8);
+    });
+
+    it('should return undefined when both values are undefined', () => {
+      expect(interpolateValue(325, 300, 350, undefined, undefined)).toBeUndefined();
+    });
+  });
+
   describe('getCropSuccessProbability', () => {
     const mockHashmap = {
       250: {
@@ -56,8 +79,8 @@ describe('probability.utils', () => {
       expect(result[1]).toBeCloseTo(0.6);
     });
 
-    it('should return undefined if water requirement does not exist', () => {
-      const result = getCropSuccessProbability(500, 60, [100, 200], mockHashmap);
+    it('should return undefined if probability hashmap is empty', () => {
+      const result = getCropSuccessProbability(500, 60, [100, 200], {});
       expect(result).toEqual([undefined, undefined]);
     });
 
@@ -71,6 +94,45 @@ describe('probability.utils', () => {
       const result = getCropSuccessProbability(250, 60, [100, 200], sparseHashmap);
       expect(result[0]).toBe(0.2);
       expect(result[1]).toBe(0.8);
+    });
+
+    it('should interpolate successfully for 50mm increment lookup tables (weighted average over water)', () => {
+      // Lookup table available only in 50mm increments: 300 and 350
+      const hashmap50mm = {
+        300: {
+          60: { 100: 0.4, 200: 0.6 },
+        },
+        350: {
+          60: { 100: 0.8, 200: 1.0 },
+        },
+      };
+      // Target water requirement is 325 (midpoint between 300 and 350)
+      const resultMidpoint = getCropSuccessProbability(325, 60, [100, 200], hashmap50mm);
+      expect(resultMidpoint[0]).toBeCloseTo(0.6);
+      expect(resultMidpoint[1]).toBeCloseTo(0.8);
+
+      // Target water requirement is 320 (40% between 300 and 350)
+      const resultFraction = getCropSuccessProbability(320, 60, [100, 200], hashmap50mm);
+      expect(resultFraction[0]).toBeCloseTo(0.56);
+      expect(resultFraction[1]).toBeCloseTo(0.76);
+    });
+
+    it('should cap at nearest water boundary when water requirement is out of bounds', () => {
+      const hashmap50mm = {
+        300: {
+          60: { 100: 0.4, 200: 0.6 },
+        },
+        350: {
+          60: { 100: 0.8, 200: 1.0 },
+        },
+      };
+      // Below min key (250 < 300) -> returns probabilities for 300
+      const resultBelow = getCropSuccessProbability(250, 60, [100, 200], hashmap50mm);
+      expect(resultBelow).toEqual([0.4, 0.6]);
+
+      // Above max key (400 > 350) -> returns probabilities for 350
+      const resultAbove = getCropSuccessProbability(400, 60, [100, 200], hashmap50mm);
+      expect(resultAbove).toEqual([0.8, 1.0]);
     });
   });
 
