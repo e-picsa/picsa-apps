@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
 import {
   EL_NINO_COLOR,
   EL_NINO_YEARS,
+  ENSO_NEUTRAL_COLOR,
   LA_NINA_COLOR,
   LA_NINA_YEARS,
-  NEUTRAL_COLOR,
 } from '@picsa/data/climate/tool_definitions';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
@@ -58,7 +58,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
       }
       if (this.elNinoSet.has(d.x)) return EL_NINO_COLOR;
       if (this.laNinaSet.has(d.x)) return LA_NINA_COLOR;
-      return NEUTRAL_COLOR; // Grey out neutral years with valid data
+      return ENSO_NEUTRAL_COLOR; // Grey out neutral years with valid data
     }
     return undefined;
   }
@@ -178,6 +178,9 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         );
         poly.setAttribute('data-cx', cx.toString());
         poly.setAttribute('data-cy', cy.toString());
+        poly.setAttribute('fill', EL_NINO_COLOR);
+        poly.setAttribute('stroke', '#b86b1f');
+        poly.setAttribute('stroke-width', '1.5');
         poly.setAttribute('class', 'c3-circle el-nino-point');
         (poly as any).__data__ = d;
         el.parentNode?.replaceChild(poly, el);
@@ -190,6 +193,9 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         rect.setAttribute('y', (cy - half).toString());
         rect.setAttribute('width', size.toString());
         rect.setAttribute('height', size.toString());
+        rect.setAttribute('fill', LA_NINA_COLOR);
+        rect.setAttribute('stroke', '#0d4277');
+        rect.setAttribute('stroke-width', '1.5');
         rect.setAttribute('class', 'c3-circle la-nina-point');
         (rect as any).__data__ = d;
         el.parentNode?.replaceChild(rect, el);
@@ -199,6 +205,10 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
         circle.setAttribute('r', '4');
+        circle.setAttribute('fill', ENSO_NEUTRAL_COLOR);
+        circle.setAttribute('stroke', 'none');
+        circle.setAttribute('stroke-width', '0');
+        circle.setAttribute('opacity', '0.6');
         circle.setAttribute('class', 'c3-circle neutral-point');
         (circle as any).__data__ = d;
         el.parentNode?.replaceChild(circle, el);
