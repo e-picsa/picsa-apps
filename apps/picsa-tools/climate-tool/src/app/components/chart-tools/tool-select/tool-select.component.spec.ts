@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ToolSelectComponent } from './tool-select.component';
 
@@ -8,7 +9,7 @@ describe('ToolSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ToolSelectComponent],
+      imports: [ToolSelectComponent, PicsaTranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ToolSelectComponent);
