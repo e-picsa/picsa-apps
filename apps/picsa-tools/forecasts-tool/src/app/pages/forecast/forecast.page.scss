@@ -1,7 +1,6 @@
 .page-content {
   max-width: 1280px;
-  margin: auto;
-  width: 100%;
+  margin: auto 12px;
 }
 .forecast-container {
   @apply border-solid capitalize p-2;
@@ -56,4 +55,29 @@ h2 {
 }
 .forecast-image {
   @apply h-full w-full object-contain;
+}
+
+.forecast {
+  & > picsa-form-location-select {
+    ::ng-deep {
+      .form-location-select {
+        .mat-mdc-form-field {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .forecast {
+    & > picsa-form-location-select {
+      ::ng-deep {
+        .form-location-select {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+  }
 }
