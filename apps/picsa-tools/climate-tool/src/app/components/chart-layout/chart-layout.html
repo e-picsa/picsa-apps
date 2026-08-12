@@ -1,5 +1,5 @@
 <!-- line tool -->
-@if (toolService.enabled().line) {
+@if (toolService.activeTool() === 'line') {
 <climate-line-tool #lineTool></climate-line-tool>
 }
 <!-- chart -->
@@ -7,7 +7,7 @@
 <!-- definition -->
 <div class="chart-definition">{{definition().definition | translate}}</div>
 <!-- probability tool -->
-@if (toolService.enabled().line) {
+@if (toolService.activeTool() === 'line') {
 <climate-probability-tool
   style="height: 140px"
   [lineValue]="$any(toolService.tools().line.value)"
@@ -16,6 +16,10 @@
 ></climate-probability-tool>
 }
 <!-- terciles tool -->
-@if (toolService.enabled().terciles) {
+@if (toolService.activeTool() === 'terciles') {
 <climate-terciles-tool [values]="chartService.chartSeriesData()"></climate-terciles-tool>
+}
+<!-- el nino / la nina tool -->
+@if (toolService.activeTool() === 'el_nino') {
+<climate-el-nino-tool></climate-el-nino-tool>
 }

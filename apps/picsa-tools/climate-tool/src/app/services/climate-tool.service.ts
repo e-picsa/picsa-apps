@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-type IToolName = 'line' | 'terciles';
+type IToolName = 'line' | 'terciles' | 'el_nino';
 
 interface IClimateTool {
   name: IToolName;
@@ -23,24 +23,26 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
     label: translateMarker('Terciles'),
     icon: 'assets/climate-tools/tercile-tool.svg',
   },
+  el_nino: {
+    name: 'el_nino',
+    label: translateMarker('El Niño') + ' / ' + translateMarker('La Niña'),
+    icon: 'assets/climate-tools/el-nino-tool.svg',
+  },
 };
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
   public tools = signal(TOOL_DEFAULTS);
 
-  /** Track enabled tools separately to other settings for easier change detection */
-  public enabled = signal<{ [key in IToolName]: boolean }>({
-    line: false,
-    terciles: false,
-  });
+  /** Currently active tool name, or undefined if all tools are disabled */
+  public activeTool = signal<IToolName | undefined>(undefined);
 
   public disableAll() {
-    this.enabled.set({ line: false, terciles: false });
+    this.activeTool.set(undefined);
   }
 
   public toggleEnabled(tool: IToolName) {
-    this.enabled.update((e) => ({ ...e, [tool]: !e[tool] }));
+    this.activeTool.update((current) => (current === tool ? undefined : tool));
   }
 
   public setValue(tool: IToolName, value: any) {
@@ -71,21 +73,4 @@ export function calcPercentile(arr: number[], p: number) {
 
   if (upper >= arr.length) return arr[lower];
   return arr[lower] * (1 - weight) + arr[upper] * weight;
-}
-
-// Returns the percentile of the given value in a sorted numeric array.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function calcPercentRank(arr: number[], v: number) {
-  if (typeof v !== 'number') throw new TypeError('v must be a number');
-  for (let i = 0, l = arr.length; i < l; i++) {
-    if (v <= arr[i]) {
-      while (i < l && v === arr[i]) i++;
-      if (i === 0) return 0;
-      if (v !== arr[i - 1]) {
-        i += (v - arr[i - 1]) / (arr[i] - arr[i - 1]);
-      }
-      return i / l;
-    }
-  }
-  return 1;
 }

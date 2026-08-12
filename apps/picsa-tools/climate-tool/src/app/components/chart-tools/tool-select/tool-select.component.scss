@@ -1,26 +1,54 @@
 .tool-select-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
 }
 
 mat-card.tool-card {
-  padding: 4px;
+  padding: 6px 4px;
   border-width: 2px;
   border-style: solid;
+  border-color: #e0e0e0;
   width: 100%;
-  max-width: 80px;
+  max-width: 88px;
   cursor: pointer;
   text-align: center;
   box-shadow: none;
-  opacity: 0.5;
+  opacity: 0.7;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+
+  &:hover {
+    opacity: 0.95;
+    border-color: #bdbdbd;
+  }
 }
+
 mat-card.tool-card[data-enabled='true'] {
   opacity: 1;
+  border-color: #548235 !important;
+  background-color: #f1f8e9 !important;
+  box-shadow:
+    0 0 0 2px rgba(84, 130, 53, 0.4),
+    0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-2px);
+
+  .tool-label {
+    font-weight: 700;
+    color: #2e7d32;
+  }
+}
+
+.tool-label {
+  font-size: 12px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  color: #424242;
+  transition: color 0.2s ease-in-out;
 }
 
 .tool-image {
-  height: 60px;
-  width: 60px;
+  height: 56px;
+  width: 56px;
   margin: auto;
 }

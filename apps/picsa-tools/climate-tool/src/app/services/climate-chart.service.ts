@@ -12,6 +12,7 @@ import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { firstValueFrom, Subject } from 'rxjs';
 
+import type { BaseChartToolComponent } from '../components/chart-tools/base-tool.component';
 import { generateChartConfig } from '../utils';
 import { ClimateDataService } from './climate-data.service';
 import { ClimateToolService } from './climate-tool.service';
@@ -23,6 +24,9 @@ export class ClimateChartService {
   private printProvider = inject(PrintProvider);
   private toolService = inject(ClimateToolService);
   private router = inject(Router);
+
+  /** Signal holding reference to the currently active tool component */
+  public readonly activeToolHandler = signal<BaseChartToolComponent | undefined>(undefined);
 
   // SIGNALS - single source of truth for application state
   readonly station = signal<IStationMeta | undefined>(undefined);
@@ -190,10 +194,25 @@ export class ClimateChartService {
         this._chartRendered.next();
       };
 
-      // override point color if function set
+      // override point color, radius and tooltip if function set
       config.data!.color = (color, d) => this.getPointColour(d as DataPoint) || color;
       config.point!.r = (d) => {
-        return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
+        if (['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id)) return 0;
+        return this.getPointRadius(d as DataPoint) ?? this.pointRadius;
+      };
+      config.tooltip = config.tooltip || {};
+      config.tooltip.contents = (d: any, defaultTitleFormat: any, defaultValueFormat: any, color: any) => {
+        const chartApi = this.chartComponent?.chart as any;
+        let html = chartApi?.internal?.getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) || '';
+        const year = d[0]?.x;
+        if (typeof year === 'number' && this.formatTooltipRow) {
+          const extraRow = this.formatTooltipRow(year);
+          if (extraRow && html) {
+            const row = `<tr class="extra-tooltip-row"><td colspan="2" style="color: ${extraRow.color}; font-weight: 600; text-align: center; padding-top: 6px; border-top: 1px solid #e0e0e0;">${extraRow.text}</td></tr>`;
+            html = html.replace('</table>', `${row}</table>`);
+          }
+        }
+        return html;
       };
 
       this.chartConfig.set(config);
@@ -223,6 +242,11 @@ export class ClimateChartService {
       chart.load({ columns: [lineArray as any], classes: { id } });
       chart.show(id);
     } else {
+      try {
+        chart.hide([id]);
+      } catch {
+        /* empty */
+      }
       chart.unload({ ids: [id] });
     }
   }
@@ -230,6 +254,11 @@ export class ClimateChartService {
   public removeSeriesFromChart(ids: string[]) {
     const chart = this.chartComponent?.chart;
     if (!chart) return;
+    try {
+      chart.hide(ids);
+    } catch {
+      /* empty */
+    }
     chart.unload({ ids });
   }
 
@@ -299,11 +328,26 @@ export class ClimateChartService {
   }
 
   /**
-   * Overridable function for point colour setting (e.g. line tool supplies custom).
+   * Delegates point colour setting to active tool handler.
    * @return hex colour code string or undefined for default colour
    */
   public getPointColour(d: DataPoint): string | undefined {
-    return;
+    return this.activeToolHandler()?.getPointColour(d);
+  }
+
+  /**
+   * Delegates point radius setting to active tool handler.
+   * @return radius number or undefined for default radius
+   */
+  public getPointRadius(d: DataPoint): number | undefined {
+    return this.activeToolHandler()?.getPointRadius(d);
+  }
+
+  /**
+   * Delegates extra tooltip pop-up row to active tool handler.
+   */
+  public formatTooltipRow(year: number): { text: string; color: string } | undefined {
+    return this.activeToolHandler()?.formatTooltipRow(year);
   }
 
   /**
