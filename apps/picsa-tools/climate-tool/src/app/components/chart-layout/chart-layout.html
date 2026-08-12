@@ -19,3 +19,8 @@
 @if (toolService.enabled().terciles) {
 <climate-terciles-tool [values]="chartService.chartSeriesData()"></climate-terciles-tool>
 }
+<!-- el nino / la nina tool -->
+@if (toolService.enabled().el_nino) {
+<climate-el-nino-tool></climate-el-nino-tool>
+}
+

@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+.el-nino-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.marker {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+.triangle-marker {
+  background-color: var(--el-nino-color);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.square-marker {
+  background-color: var(--la-nina-color);
+  border-radius: 0px;
+}
