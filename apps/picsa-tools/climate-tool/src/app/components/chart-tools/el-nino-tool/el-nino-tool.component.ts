@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, HostListener } from '@angular/core';
 import {
   EL_NINO_COLOR,
   EL_NINO_YEARS,
@@ -49,7 +49,12 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
     });
   }
 
-  protected override getPointColour(d: any): string | undefined {
+  @HostListener('window:resize', [])
+  onWindowResize() {
+    setTimeout(() => this.applyPointShapes(), 50);
+  }
+
+  public override getPointColour(d: any): string | undefined {
     if (d && typeof d.x === 'number') {
       if (d.id && TOOL_SERIES_IDS.includes(d.id)) return undefined;
       const validYears = this.getValidYearsWithData();
@@ -64,7 +69,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
   }
 
   // Point radius formatter: El Niño slightly larger = 12, La Niña = 8, Neutral strictly = 4
-  protected override getPointRadius(d: any): number | undefined {
+  public override getPointRadius(d: any): number | undefined {
     if (d && typeof d.x === 'number') {
       if (d.id && TOOL_SERIES_IDS.includes(d.id)) return undefined;
       const validYears = this.getValidYearsWithData();
@@ -79,7 +84,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
   }
 
   // Tooltip pop-up row formatter (only for years with valid data)
-  protected override formatTooltipRow(year: number): ITooltipExtraRow | undefined {
+  public override formatTooltipRow(year: number): ITooltipExtraRow | undefined {
     const validYears = this.getValidYearsWithData();
     if (!validYears.has(year)) {
       return undefined; // Omit years without data
@@ -128,6 +133,48 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
     return validYears;
   }
 
+  /** Calculate current SVG pixel coordinates for point data using C3 internal scale API or DOM attributes */
+  private getPointCoordinates(el: SVGElement, d: any): { cx: number; cy: number } | undefined {
+    const chartApi = (this.chartService.chartComponent?.chart as any)?.internal;
+    if (chartApi && typeof chartApi.x === 'function') {
+      try {
+        const cx = chartApi.x(d.x);
+        const cy = typeof chartApi.getYValue === 'function' ? chartApi.getYValue(d) : chartApi.y(d.value);
+        if (typeof cx === 'number' && !isNaN(cx) && typeof cy === 'number' && !isNaN(cy)) {
+          return { cx, cy };
+        }
+      } catch (e) {
+        // Fallback to DOM attributes
+      }
+    }
+
+    let cx = 0;
+    let cy = 0;
+
+    if (el.tagName === 'circle') {
+      cx = parseFloat(el.getAttribute('cx') || '0');
+      cy = parseFloat(el.getAttribute('cy') || '0');
+    } else if (el.tagName === 'rect') {
+      const x = parseFloat(el.getAttribute('x') || '0');
+      const y = parseFloat(el.getAttribute('y') || '0');
+      const w = parseFloat(el.getAttribute('width') || '0');
+      cx = x + w / 2;
+      cy = y + w / 2;
+    } else if (el.tagName === 'polygon') {
+      const origCx = el.getAttribute('data-cx');
+      const origCy = el.getAttribute('data-cy');
+      if (origCx && origCy) {
+        cx = parseFloat(origCx);
+        cy = parseFloat(origCy);
+      }
+    }
+
+    if (cx || cy) {
+      return { cx, cy };
+    }
+    return undefined;
+  }
+
   private applyPointShapes() {
     const svg = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
     if (!svg) return;
@@ -149,24 +196,9 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         return;
       }
 
-      let cx = 0;
-      let cy = 0;
-
-      if (el.tagName === 'circle') {
-        cx = parseFloat(el.getAttribute('cx') || '0');
-        cy = parseFloat(el.getAttribute('cy') || '0');
-      } else if (el.tagName === 'rect') {
-        const x = parseFloat(el.getAttribute('x') || '0');
-        const y = parseFloat(el.getAttribute('y') || '0');
-        const w = parseFloat(el.getAttribute('width') || '0');
-        cx = x + w / 2;
-        cy = y + w / 2;
-      } else if (el.tagName === 'polygon') {
-        cx = parseFloat(el.getAttribute('data-cx') || '0');
-        cy = parseFloat(el.getAttribute('data-cy') || '0');
-      }
-
-      if (!cx && !cy) return;
+      const coords = this.getPointCoordinates(el, d);
+      if (!coords) return;
+      const { cx, cy } = coords;
 
       if (this.elNinoSet.has(year)) {
         // Red/Orange Triangle (larger marker)
@@ -178,10 +210,11 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         );
         poly.setAttribute('data-cx', cx.toString());
         poly.setAttribute('data-cy', cy.toString());
-        poly.setAttribute('fill', EL_NINO_COLOR);
-        poly.setAttribute('stroke', '#b86b1f');
-        poly.setAttribute('stroke-width', '1.5');
         poly.setAttribute('class', 'c3-circle el-nino-point');
+        poly.setAttribute(
+          'style',
+          `fill: ${EL_NINO_COLOR} !important; stroke: #b86b1f !important; stroke-width: 1.5px !important;`,
+        );
         (poly as any).__data__ = d;
         el.parentNode?.replaceChild(poly, el);
       } else if (this.laNinaSet.has(year)) {
@@ -193,10 +226,11 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         rect.setAttribute('y', (cy - half).toString());
         rect.setAttribute('width', size.toString());
         rect.setAttribute('height', size.toString());
-        rect.setAttribute('fill', LA_NINA_COLOR);
-        rect.setAttribute('stroke', '#0d4277');
-        rect.setAttribute('stroke-width', '1.5');
         rect.setAttribute('class', 'c3-circle la-nina-point');
+        rect.setAttribute(
+          'style',
+          `fill: ${LA_NINA_COLOR} !important; stroke: #0d4277 !important; stroke-width: 1.5px !important;`,
+        );
         (rect as any).__data__ = d;
         el.parentNode?.replaceChild(rect, el);
       } else {
@@ -205,11 +239,11 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
         circle.setAttribute('r', '4');
-        circle.setAttribute('fill', ENSO_NEUTRAL_COLOR);
-        circle.setAttribute('stroke', 'none');
-        circle.setAttribute('stroke-width', '0');
-        circle.setAttribute('opacity', '0.6');
         circle.setAttribute('class', 'c3-circle neutral-point');
+        circle.setAttribute(
+          'style',
+          `fill: ${ENSO_NEUTRAL_COLOR} !important; stroke: none !important; opacity: 0.6 !important;`,
+        );
         (circle as any).__data__ = d;
         el.parentNode?.replaceChild(circle, el);
       }
@@ -222,22 +256,10 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
 
     const points = svg.querySelectorAll<SVGElement>('.c3-circles .c3-circle');
     points.forEach((el: any) => {
-      let cx = 0;
-      let cy = 0;
-
-      if (el.tagName === 'circle') {
-        cx = parseFloat(el.getAttribute('cx') || '0');
-        cy = parseFloat(el.getAttribute('cy') || '0');
-      } else if (el.tagName === 'rect') {
-        const x = parseFloat(el.getAttribute('x') || '0');
-        const y = parseFloat(el.getAttribute('y') || '0');
-        const w = parseFloat(el.getAttribute('width') || '0');
-        cx = x + w / 2;
-        cy = y + w / 2;
-      } else if (el.tagName === 'polygon') {
-        cx = parseFloat(el.getAttribute('data-cx') || '0');
-        cy = parseFloat(el.getAttribute('data-cy') || '0');
-      }
+      const d = el.__data__;
+      const coords = d ? this.getPointCoordinates(el, d) : undefined;
+      const cx = coords ? coords.cx : parseFloat(el.getAttribute('cx') || '0');
+      const cy = coords ? coords.cy : parseFloat(el.getAttribute('cy') || '0');
 
       if (cx || cy) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
