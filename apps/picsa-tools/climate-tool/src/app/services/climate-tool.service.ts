@@ -26,7 +26,7 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
   el_nino: {
     name: 'el_nino',
     label: translateMarker('El Niño') + ' / ' + translateMarker('La Niña'),
-    icon: 'assets/climate-tools/enso-tool.svg',
+    icon: 'assets/climate-tools/el-nino-tool.svg',
   },
 };
 
