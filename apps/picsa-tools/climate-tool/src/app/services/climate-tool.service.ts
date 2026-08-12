@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-type IToolName = 'line' | 'terciles';
+type IToolName = 'line' | 'terciles' | 'el_nino';
 
 interface IClimateTool {
   name: IToolName;
@@ -23,6 +23,11 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
     label: translateMarker('Terciles'),
     icon: 'assets/climate-tools/tercile-tool.svg',
   },
+  el_nino: {
+    name: 'el_nino',
+    label: translateMarker('El Niño') + ' / ' + translateMarker('La Niña'),
+    icon: 'assets/climate-tools/enso-tool.svg',
+  },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -33,14 +38,32 @@ export class ClimateToolService {
   public enabled = signal<{ [key in IToolName]: boolean }>({
     line: false,
     terciles: false,
+    el_nino: false,
   });
 
   public disableAll() {
-    this.enabled.set({ line: false, terciles: false });
+    this.enabled.set({ line: false, terciles: false, el_nino: false });
   }
 
   public toggleEnabled(tool: IToolName) {
-    this.enabled.update((e) => ({ ...e, [tool]: !e[tool] }));
+    this.enabled.update((e) => {
+      const isCurrentlyEnabled = e[tool];
+      if (!isCurrentlyEnabled) {
+        // Enable selected tool and disable all other tools
+        return {
+          line: tool === 'line',
+          terciles: tool === 'terciles',
+          el_nino: tool === 'el_nino',
+        };
+      } else {
+        // Disable selected tool
+        return {
+          line: false,
+          terciles: false,
+          el_nino: false,
+        };
+      }
+    });
   }
 
   public setValue(tool: IToolName, value: any) {

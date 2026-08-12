@@ -1,6 +1,6 @@
 export const EL_NINO_COLOR = '#d4802b';
 export const LA_NINA_COLOR = '#13599e';
-export const NEUTRAL_COLOR = '#9e9e9e';
+export const ENSO_NEUTRAL_COLOR = '#9e9e9e';
 
 // NOTE - assume no need to translate
 export const EL_NINO_LABEL = 'El Niño';
