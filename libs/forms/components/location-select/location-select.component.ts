@@ -30,6 +30,8 @@ export class FormLocationSelectComponent {
 
   public value = input<(string | undefined)[]>([]);
 
+  public fieldTitle = input<boolean | undefined>(false);
+
   /** Optional method to apply to data before rendering locations in list */
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
