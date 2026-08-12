@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener } from '@angular/core';
 import {
   EL_NINO_COLOR,
   EL_NINO_YEARS,
@@ -8,6 +8,7 @@ import {
   LA_NINA_YEARS,
 } from '@picsa/data/climate/tool_definitions';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { DataPoint } from 'c3';
 
 import { BaseChartToolComponent, ITooltipExtraRow, TOOL_SERIES_IDS } from '../base-tool.component';
 
@@ -27,6 +28,33 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
 
   // Assign color variables from data
   public readonly styles = { '--el-nino-color': EL_NINO_COLOR, '--la-nina-color': LA_NINA_COLOR };
+
+  /** Cache set of valid years with data using a computed signal */
+  protected readonly validYearsWithData = computed(() => {
+    const data = this.stationData();
+    const chartDef = this.chartDefinition();
+    if (!data || data.length === 0 || !chartDef) return new Set<number>();
+
+    const xVar = chartDef.xVar || 'Year';
+    const dataKeys = chartDef.keys || [];
+    const validYears = new Set<number>();
+
+    for (const d of data) {
+      const year = d[xVar] as number;
+      if (typeof year === 'number' && !isNaN(year)) {
+        const hasValue = dataKeys.some((key) => {
+          const val = d[key];
+          return val !== null && val !== undefined && (val as any) !== '' && typeof val === 'number' && !isNaN(val);
+        });
+
+        if (hasValue) {
+          validYears.add(year);
+        }
+      }
+    }
+
+    return validYears;
+  });
 
   constructor() {
     super();
@@ -57,7 +85,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
   public override getPointColour(d: any): string | undefined {
     if (d && typeof d.x === 'number') {
       if (d.id && TOOL_SERIES_IDS.includes(d.id)) return undefined;
-      const validYears = this.getValidYearsWithData();
+      const validYears = this.validYearsWithData();
       if (!validYears.has(d.x)) {
         return undefined; // Omit years without data
       }
@@ -69,10 +97,10 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
   }
 
   // Point radius formatter: El Niño slightly larger = 12, La Niña = 8, Neutral strictly = 4
-  public override getPointRadius(d: any): number | undefined {
+  public override getPointRadius(d: DataPoint): number | undefined {
     if (d && typeof d.x === 'number') {
       if (d.id && TOOL_SERIES_IDS.includes(d.id)) return undefined;
-      const validYears = this.getValidYearsWithData();
+      const validYears = this.validYearsWithData();
       if (!validYears.has(d.x)) {
         return undefined; // Omit years without data
       }
@@ -85,7 +113,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
 
   // Tooltip pop-up row formatter (only for years with valid data)
   public override formatTooltipRow(year: number): ITooltipExtraRow | undefined {
-    const validYears = this.getValidYearsWithData();
+    const validYears = this.validYearsWithData();
     if (!validYears.has(year)) {
       return undefined; // Omit years without data
     }
@@ -100,37 +128,6 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
 
   protected override onToolDestroy() {
     this.clearPointShapes();
-  }
-
-  /**
-   * Return a Set of years that have valid, non-null numeric data values for the current chart.
-   */
-  private getValidYearsWithData(): Set<number> {
-    const data = this.stationData();
-    const chartDef = this.chartDefinition();
-    if (!data || data.length === 0 || !chartDef) return new Set();
-
-    const xVar = chartDef.xVar || 'Year';
-    const dataKeys = chartDef.keys || [];
-
-    const validYears = new Set<number>();
-
-    for (const d of data) {
-      const year = d[xVar] as number;
-      if (typeof year === 'number' && !isNaN(year)) {
-        // Check if at least one key has a valid numeric value (not null, undefined, NaN, or "")
-        const hasValue = dataKeys.some((key) => {
-          const val = d[key];
-          return val !== null && val !== undefined && (val as any) !== '' && typeof val === 'number' && !isNaN(val);
-        });
-
-        if (hasValue) {
-          validYears.add(year);
-        }
-      }
-    }
-
-    return validYears;
   }
 
   /** Calculate current SVG pixel coordinates for point data using C3 internal scale API or DOM attributes */
@@ -179,7 +176,7 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
     const svg = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
     if (!svg) return;
 
-    const validYears = this.getValidYearsWithData();
+    const validYears = this.validYearsWithData();
 
     const points = svg.querySelectorAll<SVGElement>('.c3-circles .c3-circle');
     points.forEach((el: any) => {

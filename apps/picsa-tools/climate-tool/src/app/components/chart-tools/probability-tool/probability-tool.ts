@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +6,7 @@ import { LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '@picsa/data/climate
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { IProbabilities } from '../../../models';
-import { BaseChartToolComponent } from '../base-tool.component';
+import { ClimateChartService } from '../../../services/climate-chart.service';
 
 @Component({
   selector: 'climate-probability-tool',
@@ -15,7 +15,9 @@ import { BaseChartToolComponent } from '../base-tool.component';
   imports: [MatButtonToggleModule, MatCardModule, MatIconModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProbabilityToolComponent extends BaseChartToolComponent {
+export class ProbabilityToolComponent {
+  private chartService = inject(ClimateChartService);
+
   readonly chartName = input<string>();
   readonly lineValue = input<number>();
   readonly values = input<number[]>([]);
@@ -29,11 +31,15 @@ export class ProbabilityToolComponent extends BaseChartToolComponent {
     return undefined;
   });
 
-  public options = computed(() => this.chartDefinition()?.tools.probability || PROBABILITY_TOOL_OPTIONS);
+  public options = computed(() => this.chartService.chartDefinition()?.tools.probability || PROBABILITY_TOOL_OPTIONS);
 
   /** Match probability block colors to line tool */
-  public colorAbove = computed(() => this.chartDefinition()?.tools.line.above.color || LINE_TOOL_OPTIONS.above.color);
-  public colorBelow = computed(() => this.chartDefinition()?.tools.line.below.color || LINE_TOOL_OPTIONS.below.color);
+  public colorAbove = computed(
+    () => this.chartService.chartDefinition()?.tools.line.above.color || LINE_TOOL_OPTIONS.above.color,
+  );
+  public colorBelow = computed(
+    () => this.chartService.chartDefinition()?.tools.line.below.color || LINE_TOOL_OPTIONS.below.color,
+  );
 
   calculateProbabilities(x: number, values: number[]): IProbabilities | undefined {
     if (x === undefined || x === null || !values) {

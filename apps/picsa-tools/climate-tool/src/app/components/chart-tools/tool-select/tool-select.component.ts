@@ -17,8 +17,8 @@ export class ToolSelectComponent {
   public tools = computed(
     () => {
       const allTools = this.toolService.tools();
-      const enabled = this.toolService.enabled();
-      return Object.values(allTools).map(({ name, icon, label }) => ({ name, icon, label, enabled: enabled[name] }));
+      const active = this.toolService.activeTool();
+      return Object.values(allTools).map(({ name, icon, label }) => ({ name, icon, label, enabled: active === name }));
     },
     { equal: isEqual },
   );

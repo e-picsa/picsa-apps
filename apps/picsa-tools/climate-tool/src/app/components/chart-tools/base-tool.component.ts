@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import { DataPoint } from 'c3';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
@@ -14,7 +15,7 @@ export interface ITooltipExtraRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
 })
-export abstract class BaseChartToolComponent implements OnDestroy {
+export abstract class BaseChartToolComponent {
   protected chartService = inject(ClimateChartService);
   protected toolService = inject(ClimateToolService);
   protected destroyRef = inject(DestroyRef);
@@ -35,19 +36,15 @@ export abstract class BaseChartToolComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.cleanupToolState();
-  }
-
   /**
    * Method hooks that extending tools can override.
    * Return undefined to defer to standard chart defaults.
    */
-  public getPointColour(d: any): string | undefined {
+  public getPointColour(d: DataPoint): string | undefined {
     return undefined;
   }
 
-  public getPointRadius(d: any): number | undefined {
+  public getPointRadius(d: DataPoint): number | undefined {
     return undefined;
   }
 

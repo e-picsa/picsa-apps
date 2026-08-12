@@ -34,36 +34,15 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
 export class ClimateToolService {
   public tools = signal(TOOL_DEFAULTS);
 
-  /** Track enabled tools separately to other settings for easier change detection */
-  public enabled = signal<{ [key in IToolName]: boolean }>({
-    line: false,
-    terciles: false,
-    el_nino: false,
-  });
+  /** Currently active tool name, or undefined if all tools are disabled */
+  public activeTool = signal<IToolName | undefined>(undefined);
 
   public disableAll() {
-    this.enabled.set({ line: false, terciles: false, el_nino: false });
+    this.activeTool.set(undefined);
   }
 
   public toggleEnabled(tool: IToolName) {
-    this.enabled.update((e) => {
-      const isCurrentlyEnabled = e[tool];
-      if (!isCurrentlyEnabled) {
-        // Enable selected tool and disable all other tools
-        return {
-          line: tool === 'line',
-          terciles: tool === 'terciles',
-          el_nino: tool === 'el_nino',
-        };
-      } else {
-        // Disable selected tool
-        return {
-          line: false,
-          terciles: false,
-          el_nino: false,
-        };
-      }
-    });
+    this.activeTool.update((current) => (current === tool ? undefined : tool));
   }
 
   public setValue(tool: IToolName, value: any) {
@@ -94,21 +73,4 @@ export function calcPercentile(arr: number[], p: number) {
 
   if (upper >= arr.length) return arr[lower];
   return arr[lower] * (1 - weight) + arr[upper] * weight;
-}
-
-// Returns the percentile of the given value in a sorted numeric array.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function calcPercentRank(arr: number[], v: number) {
-  if (typeof v !== 'number') throw new TypeError('v must be a number');
-  for (let i = 0, l = arr.length; i < l; i++) {
-    if (v <= arr[i]) {
-      while (i < l && v === arr[i]) i++;
-      if (i === 0) return 0;
-      if (v !== arr[i - 1]) {
-        i += (v - arr[i - 1]) / (arr[i] - arr[i - 1]);
-      }
-      return i / l;
-    }
-  }
-  return 1;
 }
