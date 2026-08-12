@@ -155,8 +155,9 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
       const x = parseFloat(el.getAttribute('x') || '0');
       const y = parseFloat(el.getAttribute('y') || '0');
       const w = parseFloat(el.getAttribute('width') || '0');
+      const h = parseFloat(el.getAttribute('height') || '0');
       cx = x + w / 2;
-      cy = y + w / 2;
+      cy = y + h / 2;
     } else if (el.tagName === 'polygon') {
       const origCx = el.getAttribute('data-cx');
       const origCy = el.getAttribute('data-cy');
@@ -200,49 +201,71 @@ export class ElNinoToolComponent extends BaseChartToolComponent {
       if (this.elNinoSet.has(year)) {
         // Red/Orange Triangle (larger marker)
         const r = 12;
-        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        poly.setAttribute(
-          'points',
-          `${cx},${cy - r} ${cx - r * 0.866},${cy + r * 0.5} ${cx + r * 0.866},${cy + r * 0.5}`,
-        );
-        poly.setAttribute('data-cx', cx.toString());
-        poly.setAttribute('data-cy', cy.toString());
-        poly.setAttribute('class', 'c3-circle el-nino-point');
-        poly.setAttribute(
-          'style',
-          `fill: ${EL_NINO_COLOR} !important; stroke: #b86b1f !important; stroke-width: 1.5px !important;`,
-        );
-        (poly as any).__data__ = d;
-        el.parentNode?.replaceChild(poly, el);
+        const pts = `${cx},${cy - r} ${cx - r * 0.866},${cy + r * 0.5} ${cx + r * 0.866},${cy + r * 0.5}`;
+
+        if (el.tagName === 'polygon') {
+          // Update in-place to avoid node recreation
+          el.setAttribute('points', pts);
+          el.setAttribute('data-cx', cx.toString());
+          el.setAttribute('data-cy', cy.toString());
+        } else {
+          const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          poly.setAttribute('points', pts);
+          poly.setAttribute('data-cx', cx.toString());
+          poly.setAttribute('data-cy', cy.toString());
+          poly.setAttribute('class', 'c3-circle el-nino-point');
+          poly.setAttribute(
+            'style',
+            `fill: ${EL_NINO_COLOR} !important; stroke: #b86b1f !important; stroke-width: 1.5px !important;`,
+          );
+          (poly as any).__data__ = d;
+          el.parentNode?.replaceChild(poly, el);
+        }
       } else if (this.laNinaSet.has(year)) {
         // Blue Square marker
         const size = 16;
         const half = size / 2;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', (cx - half).toString());
-        rect.setAttribute('y', (cy - half).toString());
-        rect.setAttribute('width', size.toString());
-        rect.setAttribute('height', size.toString());
-        rect.setAttribute('class', 'c3-circle la-nina-point');
-        rect.setAttribute(
-          'style',
-          `fill: ${LA_NINA_COLOR} !important; stroke: #0d4277 !important; stroke-width: 1.5px !important;`,
-        );
-        (rect as any).__data__ = d;
-        el.parentNode?.replaceChild(rect, el);
+        const rx = cx - half;
+        const ry = cy - half;
+
+        if (el.tagName === 'rect') {
+          // Update in-place to avoid node recreation
+          el.setAttribute('x', rx.toString());
+          el.setAttribute('y', ry.toString());
+        } else {
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', rx.toString());
+          rect.setAttribute('y', ry.toString());
+          rect.setAttribute('width', size.toString());
+          rect.setAttribute('height', size.toString());
+          rect.setAttribute('class', 'c3-circle la-nina-point');
+          rect.setAttribute(
+            'style',
+            `fill: ${LA_NINA_COLOR} !important; stroke: #0d4277 !important; stroke-width: 1.5px !important;`,
+          );
+          (rect as any).__data__ = d;
+          el.parentNode?.replaceChild(rect, el);
+        }
       } else {
         // Grey Circle with radius 4 and NO border
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', cx.toString());
-        circle.setAttribute('cy', cy.toString());
-        circle.setAttribute('r', '4');
-        circle.setAttribute('class', 'c3-circle neutral-point');
-        circle.setAttribute(
-          'style',
-          `fill: ${ENSO_NEUTRAL_COLOR} !important; stroke: none !important; opacity: 0.6 !important;`,
-        );
-        (circle as any).__data__ = d;
-        el.parentNode?.replaceChild(circle, el);
+        if (el.tagName === 'circle') {
+          // Update in-place
+          el.setAttribute('cx', cx.toString());
+          el.setAttribute('cy', cy.toString());
+          el.setAttribute('r', '4');
+        } else {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', cx.toString());
+          circle.setAttribute('cy', cy.toString());
+          circle.setAttribute('r', '4');
+          circle.setAttribute('class', 'c3-circle neutral-point');
+          circle.setAttribute(
+            'style',
+            `fill: ${ENSO_NEUTRAL_COLOR} !important; stroke: none !important; opacity: 0.6 !important;`,
+          );
+          (circle as any).__data__ = d;
+          el.parentNode?.replaceChild(circle, el);
+        }
       }
     });
   }

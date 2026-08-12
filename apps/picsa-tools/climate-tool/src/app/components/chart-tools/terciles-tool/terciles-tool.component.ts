@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { calcPercentile } from '../../../services/climate-tool.service';
@@ -34,14 +34,20 @@ export class TercilesToolComponent extends BaseChartToolComponent {
 
   protected override onToolDestroy() {
     // When tool is toggled off, remove lines from graph
-    this.generateTerciles([]);
     this.removeSeries(['lowerTercile', 'upperTercile']);
     this.upperTercile.set(0);
     this.lowerTercile.set(0);
   }
 
   private generateTerciles(values: number[]) {
-    const arr = values.sort((a, b) => a - b).filter((v) => v !== undefined);
+    if (!values || values.length === 0) {
+      this.removeSeries(['lowerTercile', 'upperTercile']);
+      this.lowerTercile.set(0);
+      this.upperTercile.set(0);
+      return;
+    }
+
+    const arr = [...values].filter((v) => typeof v === 'number' && !isNaN(v)).sort((a, b) => a - b);
     const [lower, upper] = [Math.round(calcPercentile(arr, 1 / 3)), Math.round(calcPercentile(arr, 2 / 3))];
 
     this.addFixedLine(lower, 'lowerTercile');
@@ -50,7 +56,7 @@ export class TercilesToolComponent extends BaseChartToolComponent {
     this.lowerTercile.set(lower);
     this.upperTercile.set(upper);
 
-    // ensure terciles rendered before positioning lable
+    // ensure terciles rendered before positioning label
     setTimeout(() => {
       this.labelStyles.lower.set(this.generateLabelStyles('lower'));
       this.labelStyles.upper.set(this.generateLabelStyles('upper'));

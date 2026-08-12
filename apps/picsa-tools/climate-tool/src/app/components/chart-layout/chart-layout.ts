@@ -29,7 +29,7 @@ import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-too
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.has-line-tool]': 'toolService.enabled().line',
+    '[class.has-line-tool]': 'toolService.activeTool()==="line"',
   },
 })
 export class ClimateChartLayoutComponent implements AfterViewInit {
