@@ -1,4 +1,4 @@
-<div class="page-content">
+<div class="forecast page-content">
   <div class="viewer-container slide-in" [class.active]="viewerOpen() ? true : false">
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
@@ -8,6 +8,7 @@
     [countryCode]="countryCode()"
     [value]="locationSelected()"
     (valueChanged)="handleLocationUpdate($event)"
+    [fieldTitle]="true"
   ></picsa-form-location-select>
 
   <!-- Short Term (Weekly + Daily) -->
