@@ -28,6 +28,14 @@ export interface IPointStyle {
   opacity?: number;
 }
 
+export interface ILegendItem {
+  label: string;
+  shape: PointShape;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
@@ -74,6 +82,11 @@ export abstract class BaseChartToolComponent {
     return undefined;
   }
 
+  /** Override to draw a custom legend directly on the chart SVG canvas */
+  public getLegendItems(): ILegendItem[] | undefined {
+    return undefined;
+  }
+
   public formatTooltipRow(year: number): ITooltipExtraRow | undefined {
     return undefined;
   }
@@ -86,9 +99,11 @@ export abstract class BaseChartToolComponent {
     if (!data?.length || !def) return values;
 
     const xVar = def.xVar || 'Year';
+    const isValidVal = (val: any): boolean => typeof val === 'number' && Number.isFinite(val);
+
     for (const row of data) {
       const x = row[xVar] as number;
-      if (Number.isFinite(x) && (def.keys || []).some((key) => Number.isFinite(row[key]))) {
+      if (isValidVal(x) && (def.keys || []).some((key) => isValidVal(row[key]))) {
         values.add(x);
       }
     }
@@ -97,7 +112,8 @@ export abstract class BaseChartToolComponent {
 
   /** Shared guard excluding tool series and x values without data */
   protected isDecoratable(d: DataPoint): d is DataPoint & { x: number } {
-    if (typeof d?.x !== 'number') return false;
+    if (typeof d?.x !== 'number' || !Number.isFinite(d.x)) return false;
+    if (typeof d?.value !== 'number' || !Number.isFinite(d.value)) return false;
     if (d.id && TOOL_SERIES_IDS.includes(d.id)) return false;
     return this.validXValues().has(d.x);
   }

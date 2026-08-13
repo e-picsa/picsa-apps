@@ -15,7 +15,13 @@ import { firstValueFrom, Subject } from 'rxjs';
 
 import { BaseChartToolComponent, TOOL_SERIES_IDS } from '../components/chart-tools/base-tool.component';
 import { generateChartConfig } from '../utils';
-import { clearPointOverlay, IOverlayPoint, renderPointOverlay } from '../utils/chart-point-overlay';
+import {
+  clearPointOverlay,
+  clearSvgLegend,
+  IOverlayPoint,
+  renderPointOverlay,
+  renderSvgLegend,
+} from '../utils/chart-point-overlay';
 import { ClimateDataService } from './climate-data.service';
 import { ClimateToolService } from './climate-tool.service';
 
@@ -87,6 +93,7 @@ export class ClimateChartService {
         this.syncPointOverlay();
       } else {
         clearPointOverlay(this.chartComponent?.chart);
+        clearSvgLegend(this.chartComponent?.chart);
       }
     });
   }
@@ -218,6 +225,9 @@ export class ClimateChartService {
       };
       config.point!.r = (d) => {
         if (TOOL_SERIES_IDS.includes(d.id)) return 0;
+        if (d.value === null || d.value === undefined || typeof d.value !== 'number' || !Number.isFinite(d.value)) {
+          return 0;
+        }
         return this.getPointRadius(d as DataPoint) ?? this.pointRadius();
       };
       config.tooltip = config.tooltip || {};
@@ -256,24 +266,35 @@ export class ClimateChartService {
     const definition = this.chartDefinition();
     if (!tool?.usesPointOverlay || !definition) {
       clearPointOverlay(chart);
+      clearSvgLegend(chart);
       return;
     }
 
     const xVar = definition.xVar || 'Year';
     const points: IOverlayPoint[] = [];
+    const isValidVal = (val: any): boolean => typeof val === 'number' && Number.isFinite(val);
 
     for (const row of this.stationData()) {
       const x = row[xVar] as number;
-      if (!Number.isFinite(x)) continue;
+      if (!isValidVal(x)) continue;
       for (const key of definition.keys) {
         const value = row[key] as number;
-        if (!Number.isFinite(value)) continue;
+        if (!isValidVal(value)) continue;
         const style = tool.getPointStyle({ id: key, x, value, index: -1 } as DataPoint);
         if (style) points.push({ id: key, x, value, style });
       }
     }
 
-    renderPointOverlay(chart, points, this.pointRadius() / ClimateChartService.DEFAULT_POINT_RADIUS);
+    const scale = Math.max(0.6, this.pointRadius() / ClimateChartService.DEFAULT_POINT_RADIUS);
+    renderPointOverlay(chart, points, scale);
+
+    const legendItems = tool.getLegendItems();
+    // Render SVG legend on canvas ONLY in print version (so it is captured in PNG export without appearing on normal screen)
+    if (this.isPrintVersion && legendItems?.length) {
+      renderSvgLegend(chart, legendItems, scale);
+    } else {
+      clearSvgLegend(chart);
+    }
   }
 
   /*****************************************************************************
@@ -365,15 +386,19 @@ export class ClimateChartService {
 
     // if cache config exists revert back
     if (this.isPrintVersion) {
-      this.chartConfig.set({ ...config, size: { width: 900, height: 500 }, title: { text: '' } });
+      this.chartConfig.set({
+        ...config,
+        size: { width: 900, height: 530 },
+        padding: { bottom: 40, right: 10, left: 60 },
+        title: { text: '' },
+      });
       this.pointRadius.set(3);
     } else {
-      const newConfig = { ...config, size: undefined };
+      const newConfig = { ...config, size: undefined, padding: undefined };
       this.chartConfig.set(newConfig);
       this.pointRadius.set(ClimateChartService.DEFAULT_POINT_RADIUS);
     }
 
-    window.dispatchEvent(new CustomEvent('picsaChartRerender'));
     // Ensure graphics updated by waiting for chart render notification and timeout
     await firstValueFrom(this.chartRendered$);
     await _wait(500);
