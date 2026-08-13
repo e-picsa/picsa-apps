@@ -50,9 +50,10 @@ export class ClimateChartService {
   // PNG blob for print version
   readonly chartPngBlob = signal<Blob | undefined>(undefined);
 
-  // Subject for chart rendered events (one-time events, not state)
+  // Subject and signal for chart rendered events
   private _chartRendered = new Subject<void>();
   chartRendered$ = this._chartRendered.asObservable();
+  readonly chartRenderCount = signal(0);
 
   /** Binding for active rendered chart component and active C3 chart API */
   readonly chartComponent = signal<PicsaChartComponent | undefined>(undefined);
@@ -82,10 +83,12 @@ export class ClimateChartService {
       }
     });
 
-    // Synchronize overlay whenever chart instance or active tool changes
+    // Synchronize overlay reactively whenever chart instance, active tool, or render/resize changes
     effect(() => {
+      this.chartRenderCount();
       const chart = this.chart();
       const tool = this.activeToolHandler();
+      console.log('render count', this.chartRenderCount());
       if (chart && tool?.usesPointOverlay) {
         this.syncPointOverlay();
       } else if (chart) {
@@ -212,6 +215,11 @@ export class ClimateChartService {
       const currentStationData = this.stationData();
       const config = await generateChartConfig(currentStationData, definition, this.monthNames);
       config.onrendered = () => {
+        this.chartRenderCount.update((c) => c + 1);
+        this._chartRendered.next();
+      };
+      config.onresized = () => {
+        this.chartRenderCount.update((c) => c + 1);
         this._chartRendered.next();
       };
 
