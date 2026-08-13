@@ -88,7 +88,6 @@ export class ClimateChartService {
       this.chartRenderCount();
       const chart = this.chart();
       const tool = this.activeToolHandler();
-      console.log('render count', this.chartRenderCount());
       if (chart && tool?.usesPointOverlay) {
         this.syncPointOverlay();
       } else if (chart) {
@@ -215,10 +214,6 @@ export class ClimateChartService {
       const currentStationData = this.stationData();
       const config = await generateChartConfig(currentStationData, definition, this.monthNames);
       config.onrendered = () => {
-        this.chartRenderCount.update((c) => c + 1);
-        this._chartRendered.next();
-      };
-      config.onresized = () => {
         this.chartRenderCount.update((c) => c + 1);
         this._chartRendered.next();
       };

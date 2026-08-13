@@ -92,7 +92,7 @@ describe('ClimateChartService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should configure onrendered and onresized callbacks on chart config', async () => {
+  it('should configure onrendered callback on chart config', async () => {
     service.station.set(mockStation);
     service.stationData.set(mockData);
 
@@ -101,7 +101,6 @@ describe('ClimateChartService', () => {
     const config = service.chartConfig();
     expect(config).toBeDefined();
     expect(typeof config?.onrendered).toBe('function');
-    expect(typeof (config as any)?.onresized).toBe('function');
 
     // Verify calling onrendered updates chartRenderCount and emits chartRendered$
     let renderedFired = false;
@@ -113,15 +112,5 @@ describe('ClimateChartService', () => {
     config?.onrendered?.();
     expect(renderedFired).toBe(true);
     expect(service.chartRenderCount()).toBe(initialCount + 1);
-
-    // Verify calling onresized updates chartRenderCount and emits chartRendered$
-    let resizedFired = false;
-    service.chartRendered$.subscribe(() => {
-      resizedFired = true;
-    });
-
-    (config as any)?.onresized?.();
-    expect(resizedFired).toBe(true);
-    expect(service.chartRenderCount()).toBe(initialCount + 2);
   });
 });
