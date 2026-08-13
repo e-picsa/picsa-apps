@@ -1,5 +1,5 @@
-<div class="el-nino-legend">
-  @for (item of legendItems; track item.label) {
+<div class="enso-legend">
+  @for (item of legendItems(); track item.label) {
     <div class="legend-item">
       <svg class="marker" viewBox="-14 -14 28 28" aria-hidden="true">
         <path [attr.d]="item.path" [attr.fill]="item.color" [attr.stroke]="item.stroke || 'none'" stroke-width="1.5" />
