@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-type IToolName = 'line' | 'terciles' | 'el_nino';
+type IToolName = 'line' | 'terciles' | 'el_nino' | 'la_nina';
 
 interface IClimateTool {
   name: IToolName;
@@ -25,8 +25,13 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
   },
   el_nino: {
     name: 'el_nino',
-    label: translateMarker('El Niño') + ' / ' + translateMarker('La Niña'),
+    label: translateMarker('El Niño'),
     icon: 'assets/climate-tools/el-nino-tool.svg',
+  },
+  la_nina: {
+    name: 'la_nina',
+    label: translateMarker('La Niña'),
+    icon: 'assets/climate-tools/la-nina-tool.svg',
   },
 };
 

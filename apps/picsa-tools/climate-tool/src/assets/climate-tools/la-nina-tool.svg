@@ -16,6 +16,6 @@
   <circle cx="26" cy="64" r="6" fill="#9e9e9e"/>
   <circle cx="102" cy="64" r="6" fill="#9e9e9e"/>
 
-  <!-- El Niño highlighted point: Orange Triangle centered on the line -->
-  <polygon points="64,34 36,86 92,86" fill="#d4802b" stroke="#b86b1f" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- La Niña highlighted point: Blue Square centered on the line -->
+  <rect x="40" y="40" width="48" height="48" rx="4" fill="#13599e" stroke="#0d4277" stroke-width="3.5"/>
 </svg>
