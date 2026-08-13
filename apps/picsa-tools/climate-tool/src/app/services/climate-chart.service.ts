@@ -389,7 +389,7 @@ export class ClimateChartService {
       this.chartConfig.set({
         ...config,
         size: { width: 900, height: 530 },
-        padding: { bottom: 40, right: 10, left: 60 },
+        padding: { bottom: 45, right: 10, left: 60 },
         title: { text: '' },
       });
       this.pointRadius.set(3);

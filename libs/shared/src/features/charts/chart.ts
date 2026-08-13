@@ -72,6 +72,10 @@ export class PicsaChartComponent {
         this.svg.attr('id', 'picsa_chart_svg');
       },
     });
+    // Ensure onrendered runs with this.chart fully assigned
+    if (this.chart && config.onrendered) {
+      config.onrendered.call((this.chart as any)?.internal);
+    }
   }
 }
 

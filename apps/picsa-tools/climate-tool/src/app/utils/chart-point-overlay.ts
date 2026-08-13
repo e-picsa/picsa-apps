@@ -1,9 +1,10 @@
 import type { ChartAPI } from 'c3';
 import { select } from 'd3-selection';
 
-import type { IPointStyle, PointShape } from '../components/chart-tools/base-tool.component';
+import type { ILegendItem, IPointStyle, PointShape } from '../components/chart-tools/base-tool.component';
 
 const LAYER_CLASS = 'picsa-point-overlay';
+const LEGEND_LAYER_CLASS = 'picsa-legend-overlay';
 const OVERLAY_ACTIVE_CLASS = 'picsa-overlay-active';
 
 const SHAPE_PATH: Record<PointShape, (s: number) => string> = {
@@ -43,6 +44,9 @@ export function renderPointOverlay(chart: ChartAPI, points: IOverlayPoint[], sca
   const mainNode = internal.main.node() as SVGGElement;
   mainNode.classList.add(OVERLAY_ACTIVE_CLASS);
 
+  // Directly set inline opacity: 0 on standard C3 circles so computedStyle in serializeSvgWithStyles sees 0
+  select(mainNode).selectAll('.c3-circles .c3-circle').style('opacity', '0');
+
   const root = select<SVGGElement, unknown>(mainNode);
   let layer = root.select<SVGGElement>(`g.${LAYER_CLASS}`);
   if (layer.empty()) {
@@ -65,6 +69,90 @@ export function renderPointOverlay(chart: ChartAPI, points: IOverlayPoint[], sca
     .attr('opacity', (d) => d.style.opacity ?? 1);
 }
 
+interface ISvgLegendItem extends ILegendItem {
+  x: number;
+  y: number;
+}
+
+/**
+ * Render a declarative tool legend directly onto the SVG canvas.
+ * Renders below the plot area so it is captured directly by SVG->PNG export without requiring HTML elements.
+ */
+export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], scale = 1) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.svg || !legendItems?.length) return;
+
+  const svgNode = internal.svg.node() as SVGSVGElement;
+  const root = select<SVGSVGElement, unknown>(svgNode);
+
+  let legendLayer = root.select<SVGGElement>(`g.${LEGEND_LAYER_CLASS}`);
+  if (legendLayer.empty()) {
+    legendLayer = root.append('g').attr('class', LEGEND_LAYER_CLASS);
+  }
+
+  const chartWidth = internal.currentWidth || 900;
+  const chartHeight = internal.currentHeight || 530;
+
+  const itemGap = 48;
+  const iconTextGap = 12;
+  const approxItemWidth = 90;
+  const totalWidth = legendItems.length * approxItemWidth + (legendItems.length - 1) * itemGap;
+  let currentX = Math.max(40, (chartWidth - totalWidth) / 2);
+  const legendY = chartHeight - 24;
+
+  const data: ISvgLegendItem[] = legendItems.map((item) => {
+    const x = currentX;
+    currentX += approxItemWidth + itemGap;
+    return { ...item, x, y: legendY };
+  });
+
+  const items = legendLayer
+    .selectAll<SVGGElement, ISvgLegendItem>('g.legend-item')
+    .data(data, (d) => d.label)
+    .join((enter) => {
+      const g = enter.append('g').attr('class', 'legend-item');
+      g.append('path');
+      g.append('text');
+      return g;
+    });
+
+  items.attr('transform', (d) => `translate(${d.x},${d.y})`);
+
+  items
+    .select('path')
+    .attr('d', (d) => getShapePath(d.shape, 6))
+    .style('fill', (d) => d.fill)
+    .style('stroke', (d) => d.stroke ?? 'none')
+    .style('stroke-width', (d) => `${d.strokeWidth ?? 1}px`)
+    .style('opacity', '1')
+    .attr('fill', (d) => d.fill)
+    .attr('stroke', (d) => d.stroke ?? 'none')
+    .attr('stroke-width', (d) => d.strokeWidth ?? 1)
+    .attr('opacity', '1');
+
+  items
+    .select('text')
+    .attr('x', iconTextGap)
+    .attr('y', 0)
+    .style('dominant-baseline', 'central')
+    .style('fill', '#222222')
+    .style('font-size', '13px')
+    .style('font-family', 'sans-serif')
+    .style('font-weight', '600')
+    .attr('dominant-baseline', 'central')
+    .attr('fill', '#222222')
+    .attr('font-size', '13px')
+    .attr('font-family', 'sans-serif')
+    .attr('font-weight', '600')
+    .text((d) => d.label);
+}
+
+export function clearSvgLegend(chart?: ChartAPI) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.svg) return;
+  select(internal.svg.node()).select(`g.${LEGEND_LAYER_CLASS}`).remove();
+}
+
 export function clearPointOverlay(chart?: ChartAPI) {
   const internal = (chart as any)?.internal;
   if (!internal?.main) return;
@@ -72,5 +160,8 @@ export function clearPointOverlay(chart?: ChartAPI) {
   const mainNode = internal.main.node() as SVGGElement;
   mainNode.classList.remove(OVERLAY_ACTIVE_CLASS);
 
-  select(mainNode).select(`g.${LAYER_CLASS}`).remove();
+  const root = select(mainNode);
+  root.select(`g.${LAYER_CLASS}`).remove();
+  clearSvgLegend(chart);
+  root.selectAll('.c3-circles .c3-circle').style('opacity', null);
 }
