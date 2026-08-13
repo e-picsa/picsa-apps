@@ -11,6 +11,23 @@ export interface ITooltipExtraRow {
   color: string;
 }
 
+export type PointShape = 'circle' | 'square' | 'triangle' | 'diamond';
+
+/**
+ * Declarative marker definition for a single data point.
+ * NOTE - paint properties are applied as inline SVG attributes (not CSS) so that
+ * markers survive PNG export via `svgToPngBlob`.
+ */
+export interface IPointStyle {
+  shape: PointShape;
+  /** radius / half-extent in px, at the default point scale */
+  size: number;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+  opacity?: number;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
@@ -20,15 +37,19 @@ export abstract class BaseChartToolComponent {
   protected toolService = inject(ClimateToolService);
   protected destroyRef = inject(DestroyRef);
 
-  /** Protected reactive signals & streams exposing chart data/config to derived tools */
   protected readonly chartDefinition = computed(() => this.chartService.chartDefinition());
   protected readonly chartSeriesData = computed(() => this.chartService.chartSeriesData());
   protected readonly stationData = computed(() => this.chartService.stationData());
   protected readonly chartConfig = computed(() => this.chartService.chartConfig());
   protected readonly chartRendered$ = this.chartService.chartRendered$;
 
+  /**
+   * Set true in subclasses that implement `getPointStyle`, so the chart service
+   * knows to render the custom marker overlay and hide C3's default circles.
+   */
+  public readonly usesPointOverlay: boolean = false;
+
   constructor() {
-    // Register this tool instance as the active tool handler on ClimateChartService
     this.chartService.activeToolHandler.set(this);
 
     this.destroyRef.onDestroy(() => {
@@ -48,8 +69,37 @@ export abstract class BaseChartToolComponent {
     return undefined;
   }
 
+  /** Override to draw a custom marker in place of C3's default circle */
+  public getPointStyle(d: DataPoint): IPointStyle | undefined {
+    return undefined;
+  }
+
   public formatTooltipRow(year: number): ITooltipExtraRow | undefined {
     return undefined;
+  }
+
+  /** Set of x values (usually years) having at least one finite value on the active chart */
+  protected readonly validXValues = computed(() => {
+    const data = this.stationData();
+    const def = this.chartDefinition();
+    const values = new Set<number>();
+    if (!data?.length || !def) return values;
+
+    const xVar = def.xVar || 'Year';
+    for (const row of data) {
+      const x = row[xVar] as number;
+      if (Number.isFinite(x) && (def.keys || []).some((key) => Number.isFinite(row[key]))) {
+        values.add(x);
+      }
+    }
+    return values;
+  });
+
+  /** Shared guard excluding tool series and x values without data */
+  protected isDecoratable(d: DataPoint): d is DataPoint & { x: number } {
+    if (typeof d?.x !== 'number') return false;
+    if (d.id && TOOL_SERIES_IDS.includes(d.id)) return false;
+    return this.validXValues().has(d.x);
   }
 
   /** Helper method for tools to add horizontal lines to the chart */
@@ -67,9 +117,6 @@ export abstract class BaseChartToolComponent {
     return this.chartService.convertDateToDayNumber(date);
   }
 
-  /**
-   * Unregisters this tool instance from ClimateChartService and executes per-tool cleanup.
-   */
   protected cleanupToolState() {
     if (this.chartService.activeToolHandler() === this) {
       this.chartService.activeToolHandler.set(undefined);

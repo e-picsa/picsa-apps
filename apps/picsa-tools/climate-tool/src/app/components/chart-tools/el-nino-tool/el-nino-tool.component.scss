@@ -1,11 +1,20 @@
 :host {
   display: block;
 }
+// reference to hardcoded colors used in .ts file for quick view only
+.ts {
+  --el-nino-fill: #d4802b;
+  --el-nino-stroke: #b86b1f;
+  --la-nina-fill: #13599e;
+  --la-nina-stroke: #0d4277;
+  --neutral-fill: #9e9e9e;
+}
+
 .el-nino-legend {
   display: flex;
+  gap: 1rem;
   align-items: center;
   justify-content: center;
-  gap: 24px;
   padding: 8px 16px;
   background-color: #f5f5f5;
   border-radius: 6px;
@@ -16,22 +25,12 @@
 
 .legend-item {
   display: flex;
+  gap: 0.35rem;
   align-items: center;
-  gap: 8px;
 }
 
 .marker {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-}
-
-.triangle-marker {
-  background-color: var(--el-nino-color);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.square-marker {
-  background-color: var(--la-nina-color);
-  border-radius: 0px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
 }

@@ -60,3 +60,26 @@ picsa-chart {
   font-size: 20px;
   font-weight: bold;
 }
+
+// When using custom marker overlay hide default styled points
+.picsa-overlay-active .c3-circles .c3-circle {
+  opacity: 0 !important;
+}
+
+.picsa-point-overlay {
+  animation: picsa-overlay-fade 200ms ease-out;
+
+  path {
+    fill: inherit;
+    stroke: inherit;
+  }
+}
+
+@keyframes picsa-overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

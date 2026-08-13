@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
@@ -12,8 +13,9 @@ import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { firstValueFrom, Subject } from 'rxjs';
 
-import type { BaseChartToolComponent } from '../components/chart-tools/base-tool.component';
+import { BaseChartToolComponent, TOOL_SERIES_IDS } from '../components/chart-tools/base-tool.component';
 import { generateChartConfig } from '../utils';
+import { clearPointOverlay, IOverlayPoint, renderPointOverlay } from '../utils/chart-point-overlay';
 import { ClimateDataService } from './climate-data.service';
 import { ClimateToolService } from './climate-tool.service';
 
@@ -52,7 +54,8 @@ export class ClimateChartService {
 
   /** Track whether print mode has been toggled */
   private isPrintVersion = false;
-  private pointRadius = 8;
+  private static readonly DEFAULT_POINT_RADIUS = 8;
+  private readonly pointRadius = signal(ClimateChartService.DEFAULT_POINT_RADIUS);
 
   private monthNames: string[] = [];
 
@@ -72,6 +75,20 @@ export class ClimateChartService {
         this.dataService.setPreferredStation(station.id);
       }
     });
+
+    // Re-render custom marker overlay after every chart render (covers resize,
+    // data load/unload, config change and print toggling)
+    this.chartRendered$.pipe(takeUntilDestroyed()).subscribe(() => this.syncPointOverlay());
+
+    // Synchronize overlay whenever active tool changes (instant rendering on tool toggle without chart re-render)
+    effect(() => {
+      const tool = this.activeToolHandler();
+      if (tool?.usesPointOverlay) {
+        this.syncPointOverlay();
+      } else {
+        clearPointOverlay(this.chartComponent?.chart);
+      }
+    });
   }
 
   /**
@@ -83,7 +100,7 @@ export class ClimateChartService {
     this.chartConfig.set(undefined);
     this.chartDefinition.set(undefined);
     this.setStation(undefined);
-    this.getPointColour = () => undefined;
+    this.activeToolHandler.set(undefined);
   }
 
   /**
@@ -195,10 +212,13 @@ export class ClimateChartService {
       };
 
       // override point color, radius and tooltip if function set
-      config.data!.color = (color, d) => this.getPointColour(d as DataPoint) || color;
+      config.data!.color = (color, d) => {
+        if (TOOL_SERIES_IDS.includes((d as DataPoint).id)) return color;
+        return this.getPointColour(d as DataPoint) || color;
+      };
       config.point!.r = (d) => {
-        if (['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id)) return 0;
-        return this.getPointRadius(d as DataPoint) ?? this.pointRadius;
+        if (TOOL_SERIES_IDS.includes(d.id)) return 0;
+        return this.getPointRadius(d as DataPoint) ?? this.pointRadius();
       };
       config.tooltip = config.tooltip || {};
       config.tooltip.contents = (d: any, defaultTitleFormat: any, defaultValueFormat: any, color: any) => {
@@ -222,6 +242,38 @@ export class ClimateChartService {
     } else {
       console.warn('No chart found', id, station);
     }
+  }
+
+  /**
+   * Build the marker list from station data and hand it to the overlay renderer.
+   * Markers are applied to every series key on the active chart.
+   */
+  private syncPointOverlay() {
+    const chart = this.chartComponent?.chart;
+    if (!chart) return;
+
+    const tool = this.activeToolHandler();
+    const definition = this.chartDefinition();
+    if (!tool?.usesPointOverlay || !definition) {
+      clearPointOverlay(chart);
+      return;
+    }
+
+    const xVar = definition.xVar || 'Year';
+    const points: IOverlayPoint[] = [];
+
+    for (const row of this.stationData()) {
+      const x = row[xVar] as number;
+      if (!Number.isFinite(x)) continue;
+      for (const key of definition.keys) {
+        const value = row[key] as number;
+        if (!Number.isFinite(value)) continue;
+        const style = tool.getPointStyle({ id: key, x, value, index: -1 } as DataPoint);
+        if (style) points.push({ id: key, x, value, style });
+      }
+    }
+
+    renderPointOverlay(chart, points, this.pointRadius() / ClimateChartService.DEFAULT_POINT_RADIUS);
   }
 
   /*****************************************************************************
@@ -286,7 +338,7 @@ export class ClimateChartService {
 
     // Generate a png representation of currently rendered chart so that it
     // can be embedded in custom print-layout component
-    const svgElement = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
+    const svgElement = (this.chartComponent?.chart as any)?.internal?.svg?.node() as SVGSVGElement | undefined;
     if (svgElement) {
       const pngBlob = await this.printProvider.svgToPngBlob(svgElement);
       if (pngBlob) {
@@ -314,11 +366,11 @@ export class ClimateChartService {
     // if cache config exists revert back
     if (this.isPrintVersion) {
       this.chartConfig.set({ ...config, size: { width: 900, height: 500 }, title: { text: '' } });
-      this.pointRadius = 3;
+      this.pointRadius.set(3);
     } else {
       const newConfig = { ...config, size: undefined };
       this.chartConfig.set(newConfig);
-      this.pointRadius = 8;
+      this.pointRadius.set(ClimateChartService.DEFAULT_POINT_RADIUS);
     }
 
     window.dispatchEvent(new CustomEvent('picsaChartRerender'));
