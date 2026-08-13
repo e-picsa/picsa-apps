@@ -61,6 +61,10 @@ export class PicsaChartComponent {
 
   // use create method to populate div which will also be available before viewInit
   private create(config: Partial<c3.ChartConfiguration>) {
+    const userOnrendered = config.onrendered;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const component = this;
+
     this.chart = c3.generate({
       ...config,
       bindto: this.chartContainer.nativeElement,
@@ -68,14 +72,22 @@ export class PicsaChartComponent {
       size: config.size || {
         height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
       },
-      oninit: function () {
+      oninit() {
         this.svg.attr('id', 'picsa_chart_svg');
       },
+      /**
+       * Ensure `component.chart` is assigned to the new chart API before `userOnrendered` executes.
+       * `c3.generate()` fires `onrendered` synchronously before returning its instance, which would
+       * otherwise cause subscribers (e.g. print export & tool overlays) to reference a stale or undefined chart.
+       */
+      onrendered() {
+        const api = this?.api;
+        if (api) {
+          component.chart = api;
+        }
+        userOnrendered?.call(this);
+      },
     });
-    // Ensure onrendered runs with this.chart fully assigned
-    if (this.chart && config.onrendered) {
-      config.onrendered.call((this.chart as any)?.internal);
-    }
   }
 }
 
