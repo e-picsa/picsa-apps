@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
@@ -55,8 +54,9 @@ export class ClimateChartService {
   private _chartRendered = new Subject<void>();
   chartRendered$ = this._chartRendered.asObservable();
 
-  /** Binding for active rendered chart component */
-  public chartComponent?: PicsaChartComponent;
+  /** Binding for active rendered chart component and active C3 chart API */
+  readonly chartComponent = signal<PicsaChartComponent | undefined>(undefined);
+  readonly chart = computed(() => this.chartComponent()?.chart());
 
   /** Track whether print mode has been toggled */
   private isPrintVersion = false;
@@ -82,18 +82,15 @@ export class ClimateChartService {
       }
     });
 
-    // Re-render custom marker overlay after every chart render (covers resize,
-    // data load/unload, config change and print toggling)
-    this.chartRendered$.pipe(takeUntilDestroyed()).subscribe(() => this.syncPointOverlay());
-
-    // Synchronize overlay whenever active tool changes (instant rendering on tool toggle without chart re-render)
+    // Synchronize overlay whenever chart instance or active tool changes
     effect(() => {
+      const chart = this.chart();
       const tool = this.activeToolHandler();
-      if (tool?.usesPointOverlay) {
+      if (chart && tool?.usesPointOverlay) {
         this.syncPointOverlay();
-      } else {
-        clearPointOverlay(this.chartComponent?.chart);
-        clearSvgLegend(this.chartComponent?.chart);
+      } else if (chart) {
+        clearPointOverlay(chart);
+        clearSvgLegend(chart);
       }
     });
   }
@@ -114,7 +111,7 @@ export class ClimateChartService {
    * Provide access to the current chart for use in tools.
    */
   public registerChartComponent(chart: PicsaChartComponent) {
-    this.chartComponent = chart;
+    this.chartComponent.set(chart);
   }
 
   /**
@@ -232,7 +229,7 @@ export class ClimateChartService {
       };
       config.tooltip = config.tooltip || {};
       config.tooltip.contents = (d: any, defaultTitleFormat: any, defaultValueFormat: any, color: any) => {
-        const chartApi = this.chartComponent?.chart as any;
+        const chartApi = this.chart();
         let html = chartApi?.internal?.getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) || '';
         const year = d[0]?.x;
         if (typeof year === 'number' && this.formatTooltipRow) {
@@ -259,7 +256,7 @@ export class ClimateChartService {
    * Markers are applied to every series key on the active chart.
    */
   private syncPointOverlay() {
-    const chart = this.chartComponent?.chart;
+    const chart = this.chart();
     if (!chart) return;
 
     const tool = this.activeToolHandler();
@@ -306,7 +303,7 @@ export class ClimateChartService {
    * NOTE - to remove the points the chart config also needs to be included in hardcoded config
    */
   public addFixedLineToChart(value: number, id: string) {
-    const chart = this.chartComponent?.chart;
+    const chart = this.chart();
     if (!chart) return;
     if (value) {
       const dataLength = this.stationData().length;
@@ -325,7 +322,7 @@ export class ClimateChartService {
   }
 
   public removeSeriesFromChart(ids: string[]) {
-    const chart = this.chartComponent?.chart;
+    const chart = this.chart();
     if (!chart) return;
     try {
       chart.hide(ids);
@@ -359,7 +356,7 @@ export class ClimateChartService {
 
     // Generate a png representation of currently rendered chart so that it
     // can be embedded in custom print-layout component
-    const svgElement = (this.chartComponent?.chart as any)?.internal?.svg?.node() as SVGSVGElement | undefined;
+    const svgElement = this.chart()?.internal?.svg?.node() as SVGSVGElement | undefined;
     if (svgElement) {
       const pngBlob = await this.printProvider.svgToPngBlob(svgElement);
       if (pngBlob) {

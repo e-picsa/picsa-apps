@@ -1,10 +1,13 @@
 import {
   Component,
+  DestroyRef,
   effect,
   ElementRef,
   HostListener,
   inject,
   input,
+  signal,
+  untracked,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -27,45 +30,43 @@ import * as c3 from 'c3';
 export class PicsaChartComponent {
   private elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
 
-  public chart: c3.ChartAPI;
-
   @ViewChild('chart', { static: true })
   chartContainer: ElementRef<HTMLDivElement>;
 
-  config = input.required<IChartConfig>();
+  readonly config = input.required<IChartConfig>();
+  readonly chart = signal<c3.ChartAPI | undefined>(undefined);
 
-  // dispatch resize event to trigger chart resize on orientation change
-  @HostListener('window:orientationchange', [])
-  onOrientationChange() {
-    if (this.chart) {
-      setTimeout(() => {
-        this.create(this.config());
-      }, 200);
-    }
-  }
-  /** Custom event to force rerender (e.g. deep config changes not picked uo) */
-  @HostListener('window:picsaChartRerender', [])
-  chartRerender() {
-    if (this.chart) {
-      setTimeout(() => {
-        this.create(this.config());
-      }, 200);
-    }
-  }
   constructor() {
     effect(() => {
       const config = this.config();
-      this.create(config);
+      untracked(() => this.create(config));
     });
+
+    inject(DestroyRef).onDestroy(() => this.destroy());
+  }
+
+  @HostListener('window:orientationchange', [])
+  @HostListener('window:picsaChartRerender', [])
+  rerender() {
+    if (this.chart()) {
+      setTimeout(() => this.create(this.config()), 200);
+    }
+  }
+
+  private destroy() {
+    try {
+      this.chart()?.destroy();
+    } catch {
+      /* empty */
+    }
+    this.chart.set(undefined);
   }
 
   // use create method to populate div which will also be available before viewInit
   private create(config: Partial<c3.ChartConfiguration>) {
-    const userOnrendered = config.onrendered;
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const component = this;
+    this.destroy();
 
-    this.chart = c3.generate({
+    const chart = c3.generate({
       ...config,
       bindto: this.chartContainer.nativeElement,
       data: config.data || {},
@@ -75,19 +76,9 @@ export class PicsaChartComponent {
       oninit() {
         this.svg.attr('id', 'picsa_chart_svg');
       },
-      /**
-       * Ensure `component.chart` is assigned to the new chart API before `userOnrendered` executes.
-       * `c3.generate()` fires `onrendered` synchronously before returning its instance, which would
-       * otherwise cause subscribers (e.g. print export & tool overlays) to reference a stale or undefined chart.
-       */
-      onrendered() {
-        const api = this?.api;
-        if (api) {
-          component.chart = api;
-        }
-        userOnrendered?.call(this);
-      },
     });
+
+    this.chart.set(chart);
   }
 }
 
