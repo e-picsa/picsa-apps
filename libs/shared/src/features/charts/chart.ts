@@ -1,10 +1,13 @@
 import {
   Component,
+  DestroyRef,
   effect,
   ElementRef,
   HostListener,
   inject,
   input,
+  signal,
+  untracked,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -27,51 +30,55 @@ import * as c3 from 'c3';
 export class PicsaChartComponent {
   private elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
 
-  public chart: c3.ChartAPI;
-
   @ViewChild('chart', { static: true })
   chartContainer: ElementRef<HTMLDivElement>;
 
-  config = input.required<IChartConfig>();
+  readonly config = input.required<IChartConfig>();
+  readonly chart = signal<c3.ChartAPI | undefined>(undefined);
 
-  // dispatch resize event to trigger chart resize on orientation change
-  @HostListener('window:orientationchange', [])
-  onOrientationChange() {
-    if (this.chart) {
-      setTimeout(() => {
-        this.create(this.config());
-      }, 200);
-    }
-  }
-  /** Custom event to force rerender (e.g. deep config changes not picked uo) */
-  @HostListener('window:picsaChartRerender', [])
-  chartRerender() {
-    if (this.chart) {
-      setTimeout(() => {
-        this.create(this.config());
-      }, 200);
-    }
-  }
   constructor() {
     effect(() => {
       const config = this.config();
-      this.create(config);
+      untracked(() => this.create(config));
     });
+
+    inject(DestroyRef).onDestroy(() => this.destroy());
+  }
+
+  @HostListener('window:orientationchange', [])
+  @HostListener('window:picsaChartRerender', [])
+  rerender() {
+    if (this.chart()) {
+      setTimeout(() => this.create(this.config()), 200);
+    }
+  }
+
+  private destroy() {
+    try {
+      this.chart()?.destroy();
+    } catch {
+      /* empty */
+    }
+    this.chart.set(undefined);
   }
 
   // use create method to populate div which will also be available before viewInit
   private create(config: Partial<c3.ChartConfiguration>) {
-    this.chart = c3.generate({
+    this.destroy();
+
+    const chart = c3.generate({
       ...config,
       bindto: this.chartContainer.nativeElement,
       data: config.data || {},
       size: config.size || {
         height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
       },
-      oninit: function () {
+      oninit() {
         this.svg.attr('id', 'picsa_chart_svg');
       },
     });
+
+    this.chart.set(chart);
   }
 }
 

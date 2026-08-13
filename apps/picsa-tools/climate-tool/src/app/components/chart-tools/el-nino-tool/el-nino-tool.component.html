@@ -1,10 +1,10 @@
-<div class="el-nino-legend" [ngStyle]="styles">
-  <div class="legend-item">
-    <span class="marker triangle-marker"></span>
-    <span class="label">{{ 'El Niño' | translate }}</span>
-  </div>
-  <div class="legend-item">
-    <span class="marker square-marker"></span>
-    <span class="label">{{ 'La Niña' | translate }}</span>
-  </div>
+<div class="el-nino-legend">
+  @for (item of legendItems; track item.label) {
+    <div class="legend-item">
+      <svg class="marker" viewBox="-14 -14 28 28" aria-hidden="true">
+        <path [attr.d]="item.path" [attr.fill]="item.color" [attr.stroke]="item.stroke || 'none'" stroke-width="1.5" />
+      </svg>
+      <span class="label">{{ item.label | translate }}</span>
+    </div>
+  }
 </div>
