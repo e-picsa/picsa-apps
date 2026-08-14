@@ -31,14 +31,14 @@ export class ProbabilityToolComponent {
     return undefined;
   });
 
-  public options = computed(() => this.chartService.chartDefinition()?.tools.probability || PROBABILITY_TOOL_OPTIONS);
+  public options = computed(() => this.chartService.chartDefinition()?.tools?.probability || PROBABILITY_TOOL_OPTIONS);
 
   /** Match probability block colors to line tool */
   public colorAbove = computed(
-    () => this.chartService.chartDefinition()?.tools.line.above.color || LINE_TOOL_OPTIONS.above.color,
+    () => this.chartService.chartDefinition()?.tools?.line?.above?.color || LINE_TOOL_OPTIONS.above.color,
   );
   public colorBelow = computed(
-    () => this.chartService.chartDefinition()?.tools.line.below.color || LINE_TOOL_OPTIONS.below.color,
+    () => this.chartService.chartDefinition()?.tools?.line?.below?.color || LINE_TOOL_OPTIONS.below.color,
   );
 
   calculateProbabilities(x: number, values: number[]): IProbabilities | undefined {

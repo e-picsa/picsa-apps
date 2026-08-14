@@ -1,20 +1,22 @@
-import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
-import { isEqual } from '@picsa/utils/object.utils';
 
 import { calcPercentile } from '../../../services/climate-tool.service';
-import { BaseChartToolComponent } from '../base-tool.component';
+import { BaseChartToolComponent, IOverlayLine } from '../base-tool.component';
 
 @Component({
   selector: 'climate-terciles-tool',
   templateUrl: './terciles-tool.component.html',
   styleUrls: ['./terciles-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgStyle],
 })
 export class TercilesToolComponent extends BaseChartToolComponent {
+  public override readonly usesPointOverlay = true;
+
   /** Value of current series data displayed */
   readonly values = input<number[]>([]);
+
+  public lowerTercile = signal<number>(0);
+  public upperTercile = signal<number>(0);
 
   constructor() {
     super();
@@ -24,24 +26,52 @@ export class TercilesToolComponent extends BaseChartToolComponent {
     });
   }
 
-  public lowerTercile = signal<number>(0);
-  public upperTercile = signal<number>(0);
-
-  public labelStyles = {
-    lower: signal(this.generateLabelStyles('lower'), { equal: isEqual }),
-    upper: signal(this.generateLabelStyles('upper'), { equal: isEqual }),
-  };
+  public override getOverlayLines(): IOverlayLine[] | undefined {
+    const lower = this.lowerTercile();
+    const upper = this.upperTercile();
+    const lines: IOverlayLine[] = [];
+    if (lower) {
+      lines.push({
+        id: 'tercile-lower',
+        value: lower,
+        color: '#aa1818',
+        strokeWidth: 2.5,
+        strokeDasharray: '6 4',
+        label: {
+          text: `Lower = ${this.formatYValue(lower)}`,
+          position: 'left',
+          color: '#000000',
+          background: '#ffffff',
+          borderColor: '#aa1818',
+        },
+      });
+    }
+    if (upper) {
+      lines.push({
+        id: 'tercile-upper',
+        value: upper,
+        color: '#aa1818',
+        strokeWidth: 2.5,
+        strokeDasharray: '6 4',
+        label: {
+          text: `Upper = ${this.formatYValue(upper)}`,
+          position: 'left',
+          color: '#000000',
+          background: '#ffffff',
+          borderColor: '#aa1818',
+        },
+      });
+    }
+    return lines;
+  }
 
   protected override onToolDestroy() {
-    // When tool is toggled off, remove lines from graph
-    this.removeSeries(['lowerTercile', 'upperTercile']);
     this.upperTercile.set(0);
     this.lowerTercile.set(0);
   }
 
   private generateTerciles(values: number[]) {
     if (!values || values.length === 0) {
-      this.removeSeries(['lowerTercile', 'upperTercile']);
       this.lowerTercile.set(0);
       this.upperTercile.set(0);
       return;
@@ -50,31 +80,7 @@ export class TercilesToolComponent extends BaseChartToolComponent {
     const arr = [...values].filter((v) => typeof v === 'number' && !isNaN(v)).sort((a, b) => a - b);
     const [lower, upper] = [Math.round(calcPercentile(arr, 1 / 3)), Math.round(calcPercentile(arr, 2 / 3))];
 
-    this.addFixedLine(lower, 'lowerTercile');
-    this.addFixedLine(upper, 'upperTercile');
-
     this.lowerTercile.set(lower);
     this.upperTercile.set(upper);
-
-    // ensure terciles rendered before positioning label
-    setTimeout(() => {
-      this.labelStyles.lower.set(this.generateLabelStyles('lower'));
-      this.labelStyles.upper.set(this.generateLabelStyles('upper'));
-    }, 50);
-  }
-
-  /**
-   * Lookup the rendered tercile line and use to position fixed label dom element
-   */
-  private generateLabelStyles(tercile: 'lower' | 'upper') {
-    const chartPathEl = document.querySelector(`.c3-line-${tercile}Tercile`);
-    if (chartPathEl) {
-      const { x, y } = chartPathEl.getBoundingClientRect();
-
-      const yOffset = tercile === 'lower' ? 16 : -48;
-      return { left: Math.round(x) + 'px', top: Math.round(y) + yOffset + 'px' };
-    } else {
-      return { left: '-100vw', top: '-100vh' };
-    }
   }
 }

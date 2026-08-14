@@ -102,15 +102,9 @@ describe('ClimateChartService', () => {
     expect(config).toBeDefined();
     expect(typeof config?.onrendered).toBe('function');
 
-    // Verify calling onrendered updates chartRenderCount and emits chartRendered$
-    let renderedFired = false;
-    service.chartRendered$.subscribe(() => {
-      renderedFired = true;
-    });
-
+    // Verify calling onrendered updates chartRenderCount signal
     const initialCount = service.chartRenderCount();
     config?.onrendered?.();
-    expect(renderedFired).toBe(true);
     expect(service.chartRenderCount()).toBe(initialCount + 1);
   });
 });
