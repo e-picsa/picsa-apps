@@ -64,7 +64,7 @@ export interface IChartMeta {
   yLabel: string;
   xVar: keyof IStationData;
   xLabel: string;
-  tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
+  tools: IChartTools;
   units: string;
   definition: string;
   legend?: {
@@ -92,9 +92,21 @@ export interface IChartMeta {
 /*************************************************************************
  *                            Tools
  ************************************************************************/
+export interface IGenericToolOptions {
+  enabled?: boolean;
+}
+
+export interface IChartTools {
+  line?: ILineToolOptions;
+  probability?: IProbabilityToolOptions;
+  terciles?: IGenericToolOptions;
+  el_nino?: IGenericToolOptions;
+  la_nina?: IGenericToolOptions;
+}
+
 export interface ILineToolOptions {
   /** Specify if tool should be available */
-  enabled: boolean;
+  enabled?: boolean;
   /** Display config for points above line */
   above: {
     color: string;
@@ -105,6 +117,8 @@ export interface ILineToolOptions {
   };
 }
 export interface IProbabilityToolOptions {
+  /** Specify if tool should be available */
+  enabled?: boolean;
   above: {
     /** label to populate for 'above' summary */
     label: string;

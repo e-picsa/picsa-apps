@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
+import { IChartMeta } from '@picsa/models';
 import { DataPoint } from 'c3';
 
 import { calcPercentile } from '../../../services/climate-tool.service';
@@ -110,12 +111,8 @@ export class LineToolComponent extends BaseChartToolComponent {
   }
 
   /** Set line tool dates formats and min/max values for line tool */
-  private loadLineToolConfig(definition: {
-    tools: { line: typeof LINE_TOOL_OPTIONS };
-    axes: { yMinor: number };
-    yFormat: string;
-  }) {
-    this.options = definition.tools.line;
+  private loadLineToolConfig(definition: IChartMeta) {
+    this.options = definition.tools?.line || LINE_TOOL_OPTIONS;
     this.step.set(definition.axes.yMinor);
     if (definition.yFormat === 'value') {
       this.inputType.set('number');
