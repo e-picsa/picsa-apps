@@ -46,7 +46,6 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
       },
       names: definition.data_labels,
       x: 'Year',
-      classes: { LineTool: 'LineTool' },
       colors,
     },
     title: { text: definition.name },

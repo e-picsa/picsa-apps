@@ -6,9 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
+import { DataPoint } from 'c3';
 
 import { calcPercentile } from '../../../services/climate-tool.service';
-import { BaseChartToolComponent, TOOL_SERIES_IDS } from '../base-tool.component';
+import { BaseChartToolComponent, ILegendItem, IOverlayLine, IPointStyle } from '../base-tool.component';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
@@ -26,6 +27,8 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineToolComponent extends BaseChartToolComponent {
+  public override readonly usesPointOverlay = true;
+
   readonly ranges = signal<{ min: number; max: number }>({ min: 0, max: 0 });
   readonly step = signal(1);
   readonly inputType = signal<'number' | 'date' | undefined>(undefined);
@@ -39,11 +42,6 @@ export class LineToolComponent extends BaseChartToolComponent {
   constructor() {
     super();
 
-    // Subscribe to chart rendered events to apply point colors
-    const sub = this.chartRendered$.subscribe(() => {
-      this.applyPointColours();
-    });
-
     // Subscribe to chart definition changes via effect
     effect(() => {
       const chartDef = this.chartDefinition();
@@ -52,27 +50,44 @@ export class LineToolComponent extends BaseChartToolComponent {
       }
     });
 
-    // React to value changes and update chart
+    // React to value changes and update tool service
     effect(() => {
       const val = this.value();
       this.updateOnValueChange(val);
     });
-
-    this.destroyRef.onDestroy(() => {
-      sub.unsubscribe();
-    });
   }
 
-  public override getPointColour(d: any): string | undefined {
+  public override getPointStyle(d: DataPoint): IPointStyle | undefined {
+    if (!this.isDecoratable(d)) return undefined;
     const val = this.value();
-    if (val === undefined || !d || typeof d.value !== 'number') return undefined;
+    if (val === undefined || d.value === undefined) return undefined;
     const { above, below } = this.options;
-    return d.value >= val ? above.color : below.color;
+    const color = d.value >= val ? above.color : below.color;
+    return { shape: 'circle', size: 8, fill: color, stroke: color, strokeWidth: 1 };
+  }
+
+  public override getOverlayLines(): IOverlayLine[] | undefined {
+    const val = this.value();
+    if (val === undefined) return undefined;
+    return [
+      {
+        id: 'line-threshold',
+        value: val,
+        color: '#000000',
+        strokeWidth: 3,
+      },
+    ];
+  }
+
+  public override getLegendItems(): ILegendItem[] {
+    const { above, below } = this.options;
+    return [
+      { label: 'Above', shape: 'circle', fill: above.color },
+      { label: 'Below', shape: 'circle', fill: below.color },
+    ];
   }
 
   protected override onToolDestroy() {
-    this.clearPointColours();
-    this.removeSeries(['LineTool']);
     this.toolService.setValue('line', undefined);
   }
 
@@ -119,13 +134,7 @@ export class LineToolComponent extends BaseChartToolComponent {
   }
 
   private updateOnValueChange(value: number | undefined) {
-    // Update chart line
-    this.updateChart(value);
-
-    // Apply point colours to SVG DOM
-    this.applyPointColours();
-
-    // Also inform tool service of value changes so that probability tool can update
+    // Inform tool service of value changes so that probability tool can update
     this.toolService.setValue('line', value);
   }
 
@@ -135,46 +144,5 @@ export class LineToolComponent extends BaseChartToolComponent {
     const currentStep = this.step();
     const rounded = Math.round(median / currentStep) * currentStep;
     this.value.set(rounded);
-  }
-
-  /** Load or unload the linetool value as a line on the chart */
-  private updateChart(value?: number) {
-    const id = 'LineTool';
-    if (value) {
-      this.addFixedLine(value, id);
-    } else {
-      this.removeSeries([id]);
-    }
-  }
-
-  /** Apply above/below point colors directly to SVG circle element inline styles */
-  private applyPointColours() {
-    const svg = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
-    if (!svg) return;
-
-    const points = svg.querySelectorAll<SVGElement>('.c3-circles .c3-circle');
-    points.forEach((el: any) => {
-      const d = el.__data__;
-      if (!d || typeof d.value !== 'number') return;
-      if (d.id && TOOL_SERIES_IDS.includes(d.id)) return;
-
-      const color = this.getPointColour(d);
-      if (color) {
-        el.setAttribute('style', `fill: ${color} !important; stroke: ${color} !important;`);
-      } else {
-        el.removeAttribute('style');
-      }
-    });
-  }
-
-  /** Remove point color inline style overrides when tool is destroyed */
-  private clearPointColours() {
-    const svg = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
-    if (!svg) return;
-
-    const points = svg.querySelectorAll<SVGElement>('.c3-circles .c3-circle');
-    points.forEach((el: any) => {
-      el.removeAttribute('style');
-    });
   }
 }

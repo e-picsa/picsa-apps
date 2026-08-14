@@ -10,14 +10,15 @@ import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
-import { firstValueFrom, Subject } from 'rxjs';
 
-import { BaseChartToolComponent, TOOL_SERIES_IDS } from '../components/chart-tools/base-tool.component';
+import { BaseChartToolComponent } from '../components/chart-tools/base-tool.component';
 import { generateChartConfig } from '../utils';
 import {
+  clearLineOverlay,
   clearPointOverlay,
   clearSvgLegend,
   IOverlayPoint,
+  renderLineOverlay,
   renderPointOverlay,
   renderSvgLegend,
 } from '../utils/chart-point-overlay';
@@ -50,9 +51,8 @@ export class ClimateChartService {
   // PNG blob for print version
   readonly chartPngBlob = signal<Blob | undefined>(undefined);
 
-  // Subject and signal for chart rendered events
-  private _chartRendered = new Subject<void>();
-  chartRendered$ = this._chartRendered.asObservable();
+  // Signal and resolvers for chart render events
+  private renderResolvers: Array<() => void> = [];
   readonly chartRenderCount = signal(0);
 
   /** Binding for active rendered chart component and active C3 chart API */
@@ -213,22 +213,20 @@ export class ClimateChartService {
       // generate config and apply custom onrendered callback
       const currentStationData = this.stationData();
       const config = await generateChartConfig(currentStationData, definition, this.monthNames);
-      config.onrendered = () => {
+      const notifyRender = () => {
         this.chartRenderCount.update((c) => c + 1);
-        this._chartRendered.next();
+        const resolvers = this.renderResolvers;
+        this.renderResolvers = [];
+        resolvers.forEach((r) => r());
       };
+      config.onrendered = notifyRender;
 
-      // override point color, radius and tooltip if function set
-      config.data!.color = (color, d) => {
-        if (TOOL_SERIES_IDS.includes((d as DataPoint).id)) return color;
-        return this.getPointColour(d as DataPoint) || color;
-      };
+      // override point radius and tooltip if function set
       config.point!.r = (d) => {
-        if (TOOL_SERIES_IDS.includes(d.id)) return 0;
         if (d.value === null || d.value === undefined || typeof d.value !== 'number' || !Number.isFinite(d.value)) {
           return 0;
         }
-        return this.getPointRadius(d as DataPoint) ?? this.pointRadius();
+        return this.pointRadius();
       };
       config.tooltip = config.tooltip || {};
       config.tooltip.contents = (d: any, defaultTitleFormat: any, defaultValueFormat: any, color: any) => {
@@ -255,8 +253,7 @@ export class ClimateChartService {
   }
 
   /**
-   * Build the marker list from station data and hand it to the overlay renderer.
-   * Markers are applied to every series key on the active chart.
+   * Build the marker list and lines from station data and hand it to the overlay renderer.
    */
   private syncPointOverlay() {
     const chart = this.chart();
@@ -267,9 +264,21 @@ export class ClimateChartService {
     if (!tool?.usesPointOverlay || !definition) {
       clearPointOverlay(chart);
       clearSvgLegend(chart);
+      clearLineOverlay(chart);
       return;
     }
 
+    const scale = Math.max(0.6, this.pointRadius() / ClimateChartService.DEFAULT_POINT_RADIUS);
+
+    // 1. Sync overlay lines (horizontal thresholds / terciles)
+    const lines = tool.getOverlayLines?.();
+    if (lines && lines.length > 0) {
+      renderLineOverlay(chart, lines, scale);
+    } else {
+      clearLineOverlay(chart);
+    }
+
+    // 2. Sync overlay points
     const xVar = definition.xVar || 'Year';
     const points: IOverlayPoint[] = [];
     const isValidVal = (val: any): boolean => typeof val === 'number' && Number.isFinite(val);
@@ -285,7 +294,6 @@ export class ClimateChartService {
       }
     }
 
-    const scale = Math.max(0.6, this.pointRadius() / ClimateChartService.DEFAULT_POINT_RADIUS);
     renderPointOverlay(chart, points, scale);
 
     const legendItems = tool.getLegendItems();
@@ -295,44 +303,6 @@ export class ClimateChartService {
     } else {
       clearSvgLegend(chart);
     }
-  }
-
-  /*****************************************************************************
-   *   Chart additions
-   ***************************************************************************/
-
-  /**
-   * Add a horizontal line to the chart at a specific value.
-   * NOTE - to remove the points the chart config also needs to be included in hardcoded config
-   */
-  public addFixedLineToChart(value: number, id: string) {
-    const chart = this.chart();
-    if (!chart) return;
-    if (value) {
-      const dataLength = this.stationData().length;
-      const lineArray = new Array(dataLength).fill(value);
-      lineArray.unshift(id);
-      chart.load({ columns: [lineArray as any], classes: { id } });
-      chart.show(id);
-    } else {
-      try {
-        chart.hide([id]);
-      } catch {
-        /* empty */
-      }
-      chart.unload({ ids: [id] });
-    }
-  }
-
-  public removeSeriesFromChart(ids: string[]) {
-    const chart = this.chart();
-    if (!chart) return;
-    try {
-      chart.hide(ids);
-    } catch {
-      /* empty */
-    }
-    chart.unload({ ids });
   }
 
   /*****************************************************************************
@@ -400,24 +370,14 @@ export class ClimateChartService {
     }
 
     // Ensure graphics updated by waiting for chart render notification and timeout
-    await firstValueFrom(this.chartRendered$);
+    await this.waitForNextRender();
     await _wait(500);
   }
 
-  /**
-   * Delegates point colour setting to active tool handler.
-   * @return hex colour code string or undefined for default colour
-   */
-  public getPointColour(d: DataPoint): string | undefined {
-    return this.activeToolHandler()?.getPointColour(d);
-  }
-
-  /**
-   * Delegates point radius setting to active tool handler.
-   * @return radius number or undefined for default radius
-   */
-  public getPointRadius(d: DataPoint): number | undefined {
-    return this.activeToolHandler()?.getPointRadius(d);
+  private waitForNextRender(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.renderResolvers.push(resolve);
+    });
   }
 
   /**

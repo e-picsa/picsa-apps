@@ -1,7 +1,7 @@
 import type { ChartAPI } from 'c3';
 import { select } from 'd3-selection';
 
-import type { ILegendItem, IPointStyle, PointShape } from '../components/chart-tools/base-tool.component';
+import type { ILegendItem, IOverlayLine, IPointStyle, PointShape } from '../components/chart-tools/base-tool.component';
 
 const LAYER_CLASS = 'picsa-point-overlay';
 const LEGEND_LAYER_CLASS = 'picsa-legend-overlay';
@@ -42,12 +42,20 @@ export function renderPointOverlay(chart: ChartAPI, points: IOverlayPoint[], sca
   if (!internal?.main) return;
 
   const mainNode = internal.main.node() as SVGGElement;
+  const root = select<SVGGElement, unknown>(mainNode);
+
+  if (!points || points.length === 0) {
+    root.select(`g.${LAYER_CLASS}`).remove();
+    root.selectAll('.c3-circles .c3-circle').style('opacity', null);
+    mainNode.classList.remove(OVERLAY_ACTIVE_CLASS);
+    return;
+  }
+
   mainNode.classList.add(OVERLAY_ACTIVE_CLASS);
 
   // Directly set inline opacity: 0 on standard C3 circles so computedStyle in serializeSvgWithStyles sees 0
   select(mainNode).selectAll('.c3-circles .c3-circle').style('opacity', '0');
 
-  const root = select<SVGGElement, unknown>(mainNode);
   let layer = root.select<SVGGElement>(`g.${LAYER_CLASS}`);
   if (layer.empty()) {
     layer = root.append('g').attr('class', LAYER_CLASS).attr('pointer-events', 'none');
@@ -153,6 +161,121 @@ export function clearSvgLegend(chart?: ChartAPI) {
   select(internal.svg.node()).select(`g.${LEGEND_LAYER_CLASS}`).remove();
 }
 
+const LINE_LAYER_CLASS = 'picsa-line-overlay';
+
+/**
+ * Render declarative overlay lines (horizontal thresholds, tercile boundaries) directly onto chart SVG canvas.
+ */
+export function renderLineOverlay(chart: ChartAPI, lines: IOverlayLine[], scale = 1) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.main) return;
+
+  const mainNode = internal.main.node() as SVGGElement;
+  const root = select<SVGGElement, unknown>(mainNode);
+  let layer = root.select<SVGGElement>(`g.${LINE_LAYER_CLASS}`);
+  if (layer.empty()) {
+    layer = root.append('g').attr('class', LINE_LAYER_CLASS).attr('pointer-events', 'none');
+  }
+
+  const chartWidth = internal.width || 800;
+
+  const lineGroups = layer
+    .selectAll<SVGGElement, IOverlayLine>('g.overlay-line')
+    .data(lines, (d) => d.id)
+    .join((enter) => {
+      const g = enter.append('g').attr('class', 'overlay-line');
+      g.append('line');
+      const labelGroup = g.append('g').attr('class', 'overlay-line-label');
+      labelGroup.append('rect');
+      labelGroup.append('text');
+      return g;
+    });
+
+  lineGroups.each(function (d) {
+    const g = select(this);
+    const yPos = internal.y(d.value);
+    const strokeColor = d.color || '#000000';
+    const strokeWidth = (d.strokeWidth ?? 2) * scale;
+    const dash = d.strokeDasharray || 'none';
+
+    // Update line
+    g.select('line')
+      .attr('x1', 0)
+      .attr('x2', chartWidth)
+      .attr('y1', yPos)
+      .attr('y2', yPos)
+      .style('stroke', strokeColor)
+      .style('stroke-width', `${strokeWidth}px`)
+      .style('stroke-dasharray', dash)
+      .style('opacity', (d.opacity ?? 1).toString())
+      .attr('stroke', strokeColor)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke-dasharray', dash)
+      .attr('opacity', d.opacity ?? 1);
+
+    // Update label if present
+    const labelGroup = g.select<SVGGElement>('g.overlay-line-label');
+    if (!d.label?.text) {
+      labelGroup.style('display', 'none');
+    } else {
+      labelGroup.style('display', null);
+      const labelText = d.label.text;
+      const fontSize = (d.label.fontSize ?? 13) * scale;
+      const padX = 8 * scale;
+      const padY = 4 * scale;
+      const textHeight = fontSize;
+      const approxCharWidth = fontSize * 0.62;
+      const boxWidth = labelText.length * approxCharWidth + padX * 2;
+      const boxHeight = textHeight + padY * 2;
+
+      const isRight = d.label.position === 'right';
+      const boxX = isRight ? chartWidth - boxWidth - 10 : 10;
+      const boxY = yPos - boxHeight - 4; // place slightly above line
+
+      const rect = labelGroup.select('rect');
+      rect
+        .attr('x', boxX)
+        .attr('y', boxY)
+        .attr('width', boxWidth)
+        .attr('height', boxHeight)
+        .attr('rx', 3)
+        .attr('ry', 3)
+        .style('fill', d.label.background || '#ffffff')
+        .style('stroke', d.label.borderColor || strokeColor)
+        .style('stroke-width', '1.5px')
+        .style('opacity', '0.95')
+        .attr('fill', d.label.background || '#ffffff')
+        .attr('stroke', d.label.borderColor || strokeColor)
+        .attr('stroke-width', 1.5)
+        .attr('opacity', 0.95);
+
+      const text = labelGroup.select('text');
+      text
+        .attr('x', boxX + boxWidth / 2)
+        .attr('y', boxY + boxHeight / 2)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
+        .style('fill', d.label.color || '#000000')
+        .style('font-size', `${fontSize}px`)
+        .style('font-family', 'sans-serif')
+        .style('font-weight', '600')
+        .attr('dominant-baseline', 'central')
+        .attr('text-anchor', 'middle')
+        .attr('fill', d.label.color || '#000000')
+        .attr('font-size', `${fontSize}px`)
+        .attr('font-family', 'sans-serif')
+        .attr('font-weight', '600')
+        .text(labelText);
+    }
+  });
+}
+
+export function clearLineOverlay(chart?: ChartAPI) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.main) return;
+  select(internal.main.node()).select(`g.${LINE_LAYER_CLASS}`).remove();
+}
+
 export function clearPointOverlay(chart?: ChartAPI) {
   const internal = (chart as any)?.internal;
   if (!internal?.main) return;
@@ -162,6 +285,7 @@ export function clearPointOverlay(chart?: ChartAPI) {
 
   const root = select(mainNode);
   root.select(`g.${LAYER_CLASS}`).remove();
+  clearLineOverlay(chart);
   clearSvgLegend(chart);
   root.selectAll('.c3-circles .c3-circle').style('opacity', null);
 }

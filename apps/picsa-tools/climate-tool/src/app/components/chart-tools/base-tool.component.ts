@@ -4,8 +4,6 @@ import { DataPoint } from 'c3';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
 
-export const TOOL_SERIES_IDS = ['LineTool', 'lowerTercile', 'upperTercile'];
-
 export interface ITooltipExtraRow {
   text: string;
   color: string;
@@ -36,6 +34,25 @@ export interface ILegendItem {
   strokeWidth?: number;
 }
 
+export interface IOverlayLineLabel {
+  text: string;
+  position?: 'left' | 'right';
+  color?: string;
+  background?: string;
+  borderColor?: string;
+  fontSize?: number;
+}
+
+export interface IOverlayLine {
+  id: string;
+  value: number;
+  color?: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
+  opacity?: number;
+  label?: IOverlayLineLabel;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
@@ -49,11 +66,10 @@ export abstract class BaseChartToolComponent {
   protected readonly chartSeriesData = computed(() => this.chartService.chartSeriesData());
   protected readonly stationData = computed(() => this.chartService.stationData());
   protected readonly chartConfig = computed(() => this.chartService.chartConfig());
-  protected readonly chartRendered$ = this.chartService.chartRendered$;
 
   /**
-   * Set true in subclasses that implement `getPointStyle`, so the chart service
-   * knows to render the custom marker overlay and hide C3's default circles.
+   * Set true in subclasses that implement `getPointStyle` or `getOverlayLines`, so the
+   * chart service knows to render the custom overlay and hide C3's default circles.
    */
   public readonly usesPointOverlay: boolean = false;
 
@@ -65,18 +81,6 @@ export abstract class BaseChartToolComponent {
     });
   }
 
-  /**
-   * Method hooks that extending tools can override.
-   * Return undefined to defer to standard chart defaults.
-   */
-  public getPointColour(d: DataPoint): string | undefined {
-    return undefined;
-  }
-
-  public getPointRadius(d: DataPoint): number | undefined {
-    return undefined;
-  }
-
   /** Override to draw a custom marker in place of C3's default circle */
   public getPointStyle(d: DataPoint): IPointStyle | undefined {
     return undefined;
@@ -84,6 +88,11 @@ export abstract class BaseChartToolComponent {
 
   /** Override to draw a custom legend directly on the chart SVG canvas */
   public getLegendItems(): ILegendItem[] | undefined {
+    return undefined;
+  }
+
+  /** Override to draw declarative horizontal lines directly on the chart SVG canvas */
+  public getOverlayLines(): IOverlayLine[] | undefined {
     return undefined;
   }
 
@@ -110,22 +119,11 @@ export abstract class BaseChartToolComponent {
     return values;
   });
 
-  /** Shared guard excluding tool series and x values without data */
+  /** Shared guard excluding x values without data */
   protected isDecoratable(d: DataPoint): d is DataPoint & { x: number } {
     if (typeof d?.x !== 'number' || !Number.isFinite(d.x)) return false;
     if (typeof d?.value !== 'number' || !Number.isFinite(d.value)) return false;
-    if (d.id && TOOL_SERIES_IDS.includes(d.id)) return false;
     return this.validXValues().has(d.x);
-  }
-
-  /** Helper method for tools to add horizontal lines to the chart */
-  protected addFixedLine(value: number, id: string) {
-    this.chartService.addFixedLineToChart(value, id);
-  }
-
-  /** Helper method for tools to remove series lines from the chart */
-  protected removeSeries(ids: string[]) {
-    this.chartService.removeSeriesFromChart(ids);
   }
 
   /** Helper method to convert a Date to a day-of-year number */
