@@ -38,7 +38,7 @@ export class TercilesToolComponent extends BaseChartToolComponent {
         strokeWidth: 2.5,
         strokeDasharray: '6 4',
         label: {
-          text: `Lower = ${lower}`,
+          text: `Lower = ${this.formatYValue(lower)}`,
           position: 'left',
           color: '#000000',
           background: '#ffffff',
@@ -54,7 +54,7 @@ export class TercilesToolComponent extends BaseChartToolComponent {
         strokeWidth: 2.5,
         strokeDasharray: '6 4',
         label: {
-          text: `Upper = ${upper}`,
+          text: `Upper = ${this.formatYValue(upper)}`,
           position: 'left',
           color: '#000000',
           background: '#ffffff',

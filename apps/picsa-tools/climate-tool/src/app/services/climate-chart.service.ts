@@ -11,8 +11,8 @@ import { isEqual } from '@picsa/utils/object.utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 
-import { BaseChartToolComponent } from '../components/chart-tools/base-tool.component';
-import { generateChartConfig } from '../utils';
+import type { BaseChartToolComponent } from '../components/chart-tools/base-tool.component';
+import { formatYValue, generateChartConfig } from '../utils';
 import {
   clearLineOverlay,
   clearPointOverlay,
@@ -416,5 +416,13 @@ export class ClimateChartService {
       return dayNumber > 183 ? dayNumber - 183 : dayNumber + 183;
     }
     return dayNumber;
+  }
+
+  /**
+   * Format a y-value according to the active chart definition.
+   */
+  public formatYValue(value: number, isAxisLabel = false): string {
+    const def = this.chartDefinition();
+    return formatYValue(value, def, isAxisLabel);
   }
 }

@@ -131,6 +131,11 @@ export abstract class BaseChartToolComponent {
     return this.chartService.convertDateToDayNumber(date);
   }
 
+  /** Helper method to format a y-value using the active chart definition */
+  public formatYValue(value: number, isAxisLabel = false): string {
+    return this.chartService.formatYValue(value, isAxisLabel);
+  }
+
   protected cleanupToolState() {
     if (this.chartService.activeToolHandler() === this) {
       this.chartService.activeToolHandler.set(undefined);
