@@ -3,9 +3,9 @@
   <div class="flex-col w-full">
     @if (locationData().admin_4; as data) {
       @if (fieldTitle() && locationData().admin_5) {
-        <div class="mb-2">Choose a Province</div>
+        <div class="form-location-select__label">{{'Choose a Province' | translate}}</div>
       } @else if (fieldTitle() && !locationData().admin_5) {
-        <div>Choose a District</div>
+        <div class="form-location-select__label">{{'Choose a District' | translate}}</div>
       } @else {}
       <mat-form-field>
         <mat-label>{{ data.label }}</mat-label>
@@ -22,7 +22,7 @@
   <div class="flex-col w-full">
     @if (locationData().admin_5; as data) {
       @if (fieldTitle()) {
-        <div class="mb-2">Choose a District</div>
+        <div class="form-location-select__label">{{'Choose a District' | translate}}</div>
       }
       <mat-form-field>
         <mat-label>{{ data.label }}</mat-label>
