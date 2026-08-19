@@ -7,10 +7,14 @@ import {
   inject,
   OnDestroy,
   signal,
+  untracked,
   viewChildren,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
@@ -29,7 +33,16 @@ import { ForecastViewerComponent } from '../../components/forecast-viewer/foreca
 import { IForecast } from '../../schemas';
 import { ForecastService } from '../../services/forecast.service';
 
-const STRINGS = { National: translateMarker('National') };
+const STRINGS = {
+  National: translateMarker('National'),
+  NoData: translateMarker('No data available'),
+  UpToDate: translateMarker('Up to date'),
+  Stale: translateMarker('Stale data'),
+  Checking: translateMarker('Checking for updates…'),
+  Offline: translateMarker('Offline - showing saved forecasts'),
+  Error: translateMarker('Could not check for updates'),
+  NeverSynced: translateMarker('No data Available'),
+};
 
 interface IForecastSummary {
   _doc: RxDocument<IForecast>;
@@ -43,6 +56,23 @@ interface IForecastSummary {
   languageLabel?: string;
 }
 
+interface IForecastCategory {
+  id: string;
+  title: string;
+  forecasts: IForecastSummary[];
+  loading: boolean;
+}
+
+interface ISyncStatus {
+  state: 'idle' | 'updating' | 'success' | 'stale' | 'offline' | 'error';
+  icon: string;
+  /** e.g. `Up to Date`, `Offline` */
+  label: string;
+  /** e.g. `Last checked: 2 hours ago` */
+  detail?: string;
+}
+
+const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './forecast.page.html',
@@ -50,8 +80,10 @@ interface IForecastSummary {
   imports: [
     CommonModule,
     ForecastViewerComponent,
+    MatButtonModule,
     MatIcon,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     PicsaFormsModule,
     PicsaTranslateModule,
     ResourceItemLinkComponent,
@@ -61,6 +93,8 @@ interface IForecastSummary {
 export class ForecastComponent implements OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
+  private snackbar = inject(MatSnackBar);
+  readonly dismissedError = signal<string | undefined>(undefined);
 
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
@@ -74,8 +108,17 @@ export class ForecastComponent implements OnDestroy {
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
+  public locationReady = computed(() => {
+    const location = this.locationSelected() || [];
+    return !!location[2] && !!location[4];
+  });
+
   public loading = computed(() => this.service.loadingForecasts());
   public loadingDownscaled = computed(() => this.service.loadingDownscaled());
+
+  // Activity that should render the animated spinner
+  public refreshing = computed(() => this.service.isForceRefreshing());
+  public syncing = computed(() => this.loading() || this.loadingDownscaled() || this.refreshing());
 
   public resourceLinks = computed<IResourceLink[]>(() => {
     const { country_code } = this.configurationService.userSettings();
@@ -84,14 +127,84 @@ export class ForecastComponent implements OnDestroy {
 
   // Utility to add type-safety to implicit ng-template data
   public toForecastType = (data: any) => data as IForecastSummary;
+  public toCategory = (data: any) => data as IForecastCategory;
 
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
+
+  /** Categories are always rendered - each falls back to "No data available" */
+  public shortTermCategories = computed<IForecastCategory[]>(() => [
+    { id: 'weekly', title: translateMarker('Weekly'), forecasts: this.weeklyForecasts(), loading: this.loading() },
+    { id: 'daily', title: translateMarker('Daily'), forecasts: this.dailyForecasts(), loading: this.loading() },
+  ]);
+
+  public seasonalCategories = computed<IForecastCategory[]>(() => [
+    {
+      id: 'downscaled',
+      title: translateMarker('Downscaled'),
+      forecasts: this.downscaledForecasts(),
+      loading: this.loadingDownscaled(),
+    },
+    {
+      id: 'seasonal',
+      title: translateMarker('National'),
+      forecasts: this.seasonalForecasts(),
+      loading: this.loading(),
+    },
+  ]);
+
+  /** Ticking clock used to keep relative "x hours ago" labels fresh */
+  private now = signal(Date.now());
+  private nowInterval = setInterval(() => this.now.set(Date.now()), 30_000);
+
+  public syncStatus = computed<ISyncStatus>(() => {
+    const state = this.service.syncState();
+    const lastSyncedAt = this.service.lastSyncedAt();
+    const now = this.now();
+
+    const detail = lastSyncedAt
+      ? `${translateMarker('Last checked')}: ${formatRelativeTime(new Date(lastSyncedAt).getTime(), now)}`
+      : STRINGS.NeverSynced;
+
+    if (this.syncing()) {
+      return { state: 'updating', icon: 'sync', label: STRINGS.Checking };
+    }
+    if (state === 'offline') {
+      return { state: 'offline', icon: 'cloud_off', label: STRINGS.Offline };
+    }
+    if (state === 'error') {
+      return { state: 'error', icon: 'error_outline', label: STRINGS.Error };
+    }
+    const isStale = !lastSyncedAt || now - new Date(lastSyncedAt).getTime() > STALE_THRESHOLD_MS;
+    return isStale
+      ? { state: 'stale', icon: 'schedule', label: STRINGS.Stale, detail }
+      : { state: 'success', icon: 'cloud_done', label: STRINGS.UpToDate, detail };
+  });
+
+  /** Inline banner message shown when a refresh fails (cached data is retained) */
+  public syncErrorMessage = computed(() => (this.syncing() ? undefined : this.service.syncError()));
+
+  /** Track last notified error to avoid duplicate toasts */
+  private lastNotifiedError?: string;
 
   constructor() {
     effect(() => {
       const { location } = this.configurationService.userSettings();
       this.service.setForecastLocation(location);
+    });
+    // Toast feedback for offline/error sync states (data remains cached)
+    effect(() => {
+      const state = this.service.syncState();
+      const message = this.service.syncError();
+      untracked(() => {
+        if ((state === 'offline' || state === 'error') && message && message !== this.lastNotifiedError) {
+          this.lastNotifiedError = message;
+          this.snackbar.open(message, undefined, { duration: 4000, panelClass: 'forecast-sync-snackbar' });
+        }
+        if (state === 'success') {
+          this.lastNotifiedError = undefined;
+        }
+      });
     });
   }
 
@@ -101,6 +214,10 @@ export class ForecastComponent implements OnDestroy {
 
   public handleLocationUpdate(location: (string | undefined)[]) {
     this.configurationService.updateUserSettings({ location });
+  }
+
+  public async handleForceRefresh() {
+    await this.service.forceRefresh();
   }
 
   public async handleForecastClick(forecast: IForecastSummary) {
@@ -172,7 +289,18 @@ export class ForecastComponent implements OnDestroy {
     if (label) return label;
     return storageFileToLabel(storage_file);
   }
+
+  // Banner is visible when there's an error that hasn't been dismissed
+  readonly showBanner = computed(() => {
+    const error = this.syncErrorMessage();
+    return !!error && error !== this.dismissedError();
+  });
+
+  closeBanner(): void {
+    this.dismissedError.set(this.syncErrorMessage());
+  }
 }
+
 function storageFileToLabel(storage_file: string) {
   const filename = storage_file.split('/').pop();
   if (filename) {
@@ -180,4 +308,15 @@ function storageFileToLabel(storage_file: string) {
     return basename.replace(/[-_]/g, ' ');
   }
   return storage_file;
+}
+
+function formatRelativeTime(from: number, now: number) {
+  const diff = Math.max(0, now - from);
+  const minutes = Math.round(diff / 60_000);
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days === 1 ? '' : 's'} ago`;
 }

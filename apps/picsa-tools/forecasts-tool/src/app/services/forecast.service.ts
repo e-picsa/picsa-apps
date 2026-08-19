@@ -1,4 +1,4 @@
-import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
@@ -19,6 +19,7 @@ interface IDownscaledLocation {
 }
 
 type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
+export type DataSyncType = 'idle' | 'updating' | 'success' | 'offline' | 'error';
 
 interface LoaderConfig {
   type: ForecastType;
@@ -26,6 +27,19 @@ interface LoaderConfig {
   limit?: number;
   includeStorage?: boolean;
 }
+
+class ForecastOfflineError extends Error {
+  constructor() {
+    super('Forecast server is offline/unavailable');
+  }
+}
+
+interface ILoadOptions {
+  /** Bypass incremental `gt(id)` query bounds and re-validate all recent server records */
+  force?: boolean;
+}
+
+export const FORECAST_STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
@@ -48,6 +62,18 @@ export class ForecastService extends PicsaAsyncService {
 
   public loadingForecasts = signal(false);
   public loadingDownscaled = signal(false);
+
+  public syncState = signal<DataSyncType>('idle');
+  public syncError = signal<string | undefined>(undefined);
+
+  private readonly LAST_SYNC_STORAGE_KEY = 'picsa_forecast_last_sync';
+  public lastSyncedAt = signal<string | undefined>(this.readPersistedSyncTime());
+  public isForceRefreshing = signal(false);
+  public isStale = computed(() => {
+    const last = this.lastSyncedAt();
+    if (!last) return true;
+    return Date.now() - new Date(last).getTime() > FORECAST_STALE_THRESHOLD_MS;
+  });
 
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
@@ -81,6 +107,8 @@ export class ForecastService extends PicsaAsyncService {
         this.seasonalForecastDocs.set([]);
         this.weeklyForecastDocs.set([]);
         this.dailyForecastDocs.set([]);
+        this.loadingForecasts.set(false);
+        this.syncState.set('idle');
         this.loadingForecasts.set(false);
       }
     });
@@ -124,6 +152,25 @@ export class ForecastService extends PicsaAsyncService {
     }
   }
 
+  // Force Refresh for latest forecasts for active country location
+  public async forceRefresh(): Promise<void> {
+    await this.ready();
+    const country_code = this.countryLocation();
+    if (!country_code) {
+      this.syncState.set('idle');
+      return;
+    }
+    // Prevent overlapping manual refreshes
+    if (this.isForceRefreshing()) return;
+
+    this.isForceRefreshing.set(true);
+    try {
+      await this.loadForecastsForCountry(country_code, { force: true });
+    } finally {
+      this.isForceRefreshing.set(false);
+    }
+  }
+
   public async downloadForecastFile(doc: RxDocument<IForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
     await downloaderUI.start();
     const { error, data } = await downloaderUI.completed();
@@ -142,7 +189,10 @@ export class ForecastService extends PicsaAsyncService {
     return doc;
   }
 
-  private async loadForecastsForCountry(country_code: ICountryCode) {
+  private async loadForecastsForCountry(country_code: ICountryCode, options: ILoadOptions = {}) {
+    const { force = false } = options;
+
+    // Cancel any in-flight load (e.g. user switched location mid force-refresh)
     if (this.activeCountryLoad) {
       this.activeCountryLoad.cancelled = true;
     }
@@ -179,11 +229,27 @@ export class ForecastService extends PicsaAsyncService {
       const serverConfigs = countryConfigs.filter((c) => c.includeStorage);
       if (serverConfigs.length > 0) {
         this.loadingForecasts.set(true);
+        this.syncState.set('updating');
+        this.syncError.set(undefined);
+
+        await this.supabaseService.ready();
+        if (!this.supabaseService.isAvailable() || !this.isOnline()) {
+          // Offline - keep cached data intact and surface feedback to the UI
+          if (!currentLoad.cancelled) {
+            this.syncState.set('offline');
+            this.syncError.set('No internet connection. Showing previously downloaded forecasts.');
+          }
+          return;
+        }
 
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            const serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
+            // On force refresh bypass the incremental bound so recent records are re-validated
+            const latest = force ? undefined : cached[0];
+            const serverForecasts = await this.loadServerForecasts(country_code, config.type, latest, config.limit, {
+              force,
+            });
             if (currentLoad.cancelled) return;
 
             if (serverForecasts.length > 0) {
@@ -206,9 +272,23 @@ export class ForecastService extends PicsaAsyncService {
             }
           }),
         );
+
+        // Location switch occurred while refresh was in flight - discard result
+        if (currentLoad.cancelled) return;
+
+        this.markSyncSuccess();
       }
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
+      if (!currentLoad.cancelled) {
+        const offline = !this.isOnline() || !this.supabaseService.isAvailable();
+        this.syncState.set(offline ? 'offline' : 'error');
+        this.syncError.set(
+          offline
+            ? 'No internet connection. Showing previously downloaded forecasts.'
+            : 'Could not check for new forecasts. Showing previously downloaded forecasts.',
+        );
+      }
     } finally {
       if (!currentLoad.cancelled) {
         this.loadingForecasts.set(false);
@@ -221,6 +301,7 @@ export class ForecastService extends PicsaAsyncService {
     forecast_type: ForecastType,
     latest?: IForecast,
     limit = 3,
+    options: ILoadOptions = {},
   ): Promise<IForecast[]> {
     await this.supabaseService.ready();
     if (!this.supabaseService.isAvailable()) {
@@ -228,13 +309,15 @@ export class ForecastService extends PicsaAsyncService {
       return [];
     }
     const table = this.supabaseService.db.table('forecasts');
-    const query = table.select<'*', IForecastRow>('*').neq('storage_file', null).eq('forecast_type', forecast_type);
+    const query = table.select<'', IForecastRow>('').neq('storage_file', null).eq('forecast_type', forecast_type);
 
     if (country_code !== 'global') {
       query.eq('country_code', country_code);
     }
 
-    if (latest) {
+    // Incremental sync - only fetch records newer than the latest cached record.
+    // Skipped during force refresh so all recent records are re-validated.
+    if (latest && !options.force) {
       query.gt('id', latest.id);
     }
 
@@ -287,15 +370,13 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   private async storeHardcodedData(forecasts: IForecastRow[] = []) {
-    const { error, success } = await this.dbCollection.bulkUpsert(
+    const { error, success } = await this.upsertPreservingAttachments(
       forecasts.map((forecast) => SERVER_DB_MAPPING(forecast)),
     );
-
     if (error.length > 0) {
-      console.error('forecast store error', error);
+      console.error('[ForecastService] error storing hardcoded forecasts', error);
       return [];
     }
-
     return success;
   }
 
@@ -310,6 +391,57 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   private async saveForecasts(forecasts: IForecast[]) {
-    return await this.dbCollection.bulkUpsert(forecasts);
+    return await this.upsertPreservingAttachments(forecasts);
+  }
+
+  /**
+   * Upsert forecast records whilst retaining any RxDB attachments already stored against the document, so that previously downloaded forecast files remain available offline.
+   */
+  private async upsertPreservingAttachments(forecasts: IForecast[]) {
+    if (forecasts.length === 0) {
+      return { success: [] as RxDocument<IForecast>[], error: [] as any[] };
+    }
+    const existingDocs = await this.dbCollection.findByIds(forecasts.map((f) => f.id)).exec();
+
+    const merged = forecasts.map((forecast) => {
+      const existing = existingDocs.get(forecast.id);
+      if (!existing) return forecast;
+      // `toJSON(true)` retains internal `_attachments` metadata required by rxdb
+      const { _attachments } = existing.toJSON(true) as any;
+      if (_attachments && Object.keys(_attachments).length > 0) {
+        return { ...forecast, _attachments } as IForecast;
+      }
+      return forecast;
+    });
+
+    return await this.dbCollection.bulkUpsert(merged as any);
+  }
+
+  private markSyncSuccess() {
+    const timestamp = new Date().toISOString();
+    this.lastSyncedAt.set(timestamp);
+    this.syncError.set(undefined);
+    this.syncState.set('success');
+    this.persistSyncTime(timestamp);
+  }
+
+  private readPersistedSyncTime(): string | undefined {
+    try {
+      return localStorage.getItem(this.LAST_SYNC_STORAGE_KEY) || undefined;
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  private persistSyncTime(timestamp: string) {
+    try {
+      localStorage.setItem(this.LAST_SYNC_STORAGE_KEY, timestamp);
+    } catch (error) {
+      console.warn('[ForecastService] unable to persist last sync time', error);
+    }
+  }
+
+  private isOnline() {
+    return typeof navigator === 'undefined' ? true : navigator.onLine !== false;
   }
 }

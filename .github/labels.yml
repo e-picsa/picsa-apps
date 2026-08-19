@@ -30,6 +30,7 @@
   { 'color': '000000', 'description': 'Updates related to Option tool', 'name': 'Tool: Option' },
   { 'color': '000000', 'description': 'Updates related to Resources tool', 'name': 'Tool: Resources' },
   { 'color': '000000', 'description': 'Updates related to Seasonal Calendar tool', 'name': 'Tool: Seasonal Calendar' },
+  { 'color': '000000', 'description': 'Updates related to Forecast tool', 'name': 'Tools: Forecasts' },
   # PICSA Apps
   { 'color': '000000', 'description': 'Updates related to Dashboard app', 'name': 'App: Dashboard' },
   { 'color': '000000', 'description': 'Updates related to Server app', 'name': 'App: Server' },
