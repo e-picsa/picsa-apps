@@ -66,6 +66,7 @@ interface IForecastCategory {
 interface ISyncStatus {
   state: 'idle' | 'updating' | 'success' | 'stale' | 'offline' | 'error';
   icon: string;
+  /** e.g. `Up to Date`, `Offline` */
   label: string;
   /** e.g. `Last checked: 2 hours ago` */
   detail?: string;
@@ -93,6 +94,7 @@ export class ForecastComponent implements OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
   private snackbar = inject(MatSnackBar);
+  readonly dismissedError = signal<string | undefined>(undefined);
 
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
@@ -165,7 +167,7 @@ export class ForecastComponent implements OnDestroy {
       : STRINGS.NeverSynced;
 
     if (this.syncing()) {
-      return { state: 'updating', icon: 'sync', label: STRINGS.Checking, detail };
+      return { state: 'updating', icon: 'sync', label: STRINGS.Checking };
     }
     if (state === 'offline') {
       return { state: 'offline', icon: 'cloud_off', label: STRINGS.Offline };
@@ -287,7 +289,18 @@ export class ForecastComponent implements OnDestroy {
     if (label) return label;
     return storageFileToLabel(storage_file);
   }
+
+  // Banner is visible when there's an error that hasn't been dismissed
+  readonly showBanner = computed(() => {
+    const error = this.syncErrorMessage();
+    return !!error && error !== this.dismissedError();
+  });
+
+  closeBanner(): void {
+    this.dismissedError.set(this.syncErrorMessage());
+  }
 }
+
 function storageFileToLabel(storage_file: string) {
   const filename = storage_file.split('/').pop();
   if (filename) {
