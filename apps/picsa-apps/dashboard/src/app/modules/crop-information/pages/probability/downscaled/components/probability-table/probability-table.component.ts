@@ -21,6 +21,7 @@ import { arrayToHashmap } from '@picsa/utils';
 
 import { ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../../services';
+import { CropProbabilityDocxService } from '../../../../../services/crop-probability-docx.service';
 import {
   generateProbabilityHashmap,
   generateTable,
@@ -45,6 +46,7 @@ import { CropProbabilityLanguageSelectComponent } from '../language-select/langu
 })
 export class CropProbabilityTableComponent {
   private service = inject(CropInformationService);
+  private docxService = inject(CropProbabilityDocxService);
   dialog = inject(MatDialog);
 
   /** Location water requiremetns */
@@ -87,6 +89,14 @@ export class CropProbabilityTableComponent {
   });
 
   public copyStatus = signal<'ready' | 'pending' | 'success'>('ready');
+
+  public async exportDocx() {
+    await this.docxService.exportDocx({
+      stationData: this.tableData(),
+      tableMeta: this.tableMeta(),
+      locationName: this.locationName(),
+    });
+  }
 
   public exportAppJson() {
     const output = { meta: this.tableMeta(), data: this.tableData() };
