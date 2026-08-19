@@ -3,6 +3,19 @@
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
+  <!-- Inline offline/error notification -->
+  @if (showBanner() && locationReady()) {
+  <div class="sync-banner" [attr.data-state]="syncStatus().state">
+    <div>
+      <mat-icon>{{ syncStatus().state === 'offline' ? 'cloud_off' : 'error_outline' }}</mat-icon>
+    </div>
+    @if(syncErrorMessage()){<span>{{ syncErrorMessage()! | translate }}</span>}
+    <button type="button" class="sync-banner__close" (click)="closeBanner()" [attr.aria-label]="'Close' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  }
+
   <!-- Location Select  -->
   <picsa-form-location-select
     [countryCode]="countryCode()"
@@ -13,44 +26,50 @@
 
   <!-- Toolbar: title + sync status + force refresh -->
   <div class="forecast-toolbar">
-    <div class="forecast-toolbar__title">Available Forecasts</div>
+    <div class="forecast-toolbar__title capitalize">{{ 'Available Forecasts' | translate }}</div>
     <div class="forecast-toolbar__actions">
-      <!-- Sync status indicator -->
-      <div class="sync-status" [attr.data-state]="syncStatus().state">
-        @if (syncing()) {
-        <mat-spinner class="sync-status__spinner" [diameter]="18"></mat-spinner>
-        } @else {
-        <mat-icon class="sync-status__icon">{{ syncStatus().icon }}</mat-icon>
-        }
-        <div class="sync-status__text">
-          <span class="sync-status__label">{{ syncStatus().label | translate }}</span>
-          <!-- <span class="sync-status__detail">({{ syncStatus().detail | translate }})</span> -->
+      @if(locationReady()){
+      <div class="flex flex-row justify-between items-center gap-2">
+        <!-- Sync status indicator -->
+        <div class="sync-status flex flex-col" [attr.data-state]="syncStatus().state">
+          <div class="flex flex-row items-center gap-1">
+            @if (syncing()) {
+            <div>
+              <mat-spinner class="sync-status__spinner" [diameter]="18"></mat-spinner>
+            </div>
+            } @else {
+            <div>
+              <mat-icon class="sync-status__icon">{{ syncStatus().icon }}</mat-icon>
+            </div>
+            }
+            <span class="sync-status__text sync-status__label text-center">{{ syncStatus().label | translate }}</span>
+          </div>
+          <div class="sync-status__text w-full">
+            @if (syncStatus().detail) {
+            <span class="sync-status__detail">({{ syncStatus().detail! | translate }})</span>
+            }
+          </div>
         </div>
+        <!-- Force refresh -->
+        <button
+          matButton="filled"
+          color="primary"
+          class="force-refresh-button"
+          [disabled]="syncing() || !locationReady() || syncStatus().state === 'offline' || syncStatus().state === 'success'"
+          (click)="handleForceRefresh()"
+        >
+          @if (syncing()) {
+          <mat-spinner [diameter]="18" class="force-refresh-button__spinner"></mat-spinner>
+          } @else {
+          <mat-icon>refresh</mat-icon>
+          }
+          <span>{{ 'Refresh' | translate }}</span>
+        </button>
       </div>
-      <!-- Force refresh -->
-      <button
-        matButton="filled"
-        color="primary"
-        class="force-refresh-button"
-        [disabled]="syncing() || !locationReady() || syncStatus().state === 'offline'"
-        (click)="handleForceRefresh()"
-      >
-        <span>{{ 'Force Refresh' | translate }}</span>
-        @if (syncing()) {
-        <mat-spinner [diameter]="18" class="force-refresh-button__spinner"></mat-spinner>
-        } @else {
-        <mat-icon>refresh</mat-icon>
-        }
-      </button>
-      <!-- Inline offline/error notification (cached data kept intact) -->
-      @if (syncErrorMessage(); as errorMessage) {
-      <div class="sync-banner" [attr.data-state]="syncStatus().state">
-        <div><mat-icon>{{ syncStatus().state === 'offline' ? 'cloud_off' : 'error_outline' }}</mat-icon></div>
-        <span>{{ errorMessage | translate }}</span>
-        <div><mat-icon>close</mat-icon></div>
-        <!-- <button matButton color="primary" (click)="handleForceRefresh()" [disabled]="syncing()">
-      {{ 'Retry' | translate }}
-    </button> -->
+      } @else{
+      <div class="sync-status flex flex-row items-center justify-center">
+        <mat-icon class="sync-status__icon">place</mat-icon>
+        <span>{{ 'No location selected' | translate }}</span>
       </div>
       }
     </div>
@@ -76,7 +95,7 @@
 
   <!-- Resources -->
   <div class="resources">
-    <h3 class="forecast-group-title">{{'Resources' | translate}}</h3>
+    <h3 class="forecast-group-title capitalize">{{'Resources' | translate}}</h3>
     <div class="flex flex-wrap gap-4 mb-4">
       @if (resourceLinks().length === 0) {
       <div class="forecast-empty">{{ 'No resources available' | translate }}</div>
@@ -99,7 +118,7 @@
       @if (category.loading && category.forecasts.length === 0) {
       <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
       } @if (category.forecasts.length === 0) {
-      <div class="forecast-empty">{{ 'No forecasts available' | translate }}</div>
+      <div class="forecast-empty capitalize">{{ 'No forecasts available' | translate }}</div>
       } @else {
       <div class="flex flex-wrap items-stretch gap-4 w-full">
         @for (forecast of category.forecasts; track forecast.id) {
@@ -149,65 +168,3 @@
   </div>
   }
 </ng-template>
-
-<!-- Short Term (Weekly + Daily) -->
-<!-- <h2>{{'Short Term' | translate}}</h2>
-<div class="w-full">
-  @if (loading() && dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
-  <div class="mx-auto w-24 mt-4 mb-2">
-    <mat-progress-bar mode="query"></mat-progress-bar>
-  </div>
-  } @else if (loading()) {
-  <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
-  } @else {
-  <div class="h-1 mb-2"></div>
-  }
-
-  <div class="flex flex-wrap items-center gap-4 w-full">
-    @if (!countryCode()) {
-    <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-      {{ 'Please select a location to view forecasts' | translate }}
-    </div>
-    } @else if (dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
-    <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-      {{ 'No short term forecasts found' | translate }}
-    </div>
-    } @else { @for(forecast of weeklyForecasts(); track forecast.id){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-    } @for(forecast of dailyForecasts(); track forecast.id){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-    } }
-  </div>
-</div> -->
-
-<!-- Seasonal Forecasts -->
-<!-- <h2>{{'Seasonal' | translate}}</h2>
-<div class="w-full">
-  @if ((loading() || loadingDownscaled()) && downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
-  <div class="mx-auto w-24 mt-4 mb-2">
-    <mat-progress-bar mode="query"></mat-progress-bar>
-  </div>
-  } @else if (loading() || loadingDownscaled()) {
-  <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
-  } @else {
-  <div class="h-1 mb-2"></div>
-  }
-
-  <div class="mt-2 flex flex-wrap items-center gap-4 w-full">
-    @if (!countryCode()) {
-    <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-      {{ 'Please select a location to view forecasts' | translate }}
-    </div>
-    } @else if (downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
-    <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-      {{ 'No seasonal forecasts found' | translate }}
-    </div>
-    } @else {
-    @for(forecast of downscaledForecasts(); track forecast.id){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-    }
-    @for(forecast of seasonalForecasts(); track forecast.id){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-    } }
-  </div>
-</div> -->
