@@ -4,6 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
@@ -20,7 +21,7 @@ import { isEqual } from '@picsa/utils/object.utils';
  */
 @Component({
   selector: 'picsa-form-location-select',
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, PicsaTranslateModule],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
