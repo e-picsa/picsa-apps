@@ -97,7 +97,7 @@ describe('CropProbabilityDocxService', () => {
     expect(buffer.length).toBeGreaterThan(0);
   });
 
-  it('should export docx and call downloadjs', async () => {
+  it('should export docx and include default language label in filename', async () => {
     await service.exportDocx({
       stationData: mockStationData,
       tableMeta: mockMeta,
@@ -106,7 +106,22 @@ describe('CropProbabilityDocxService', () => {
 
     expect(download).toHaveBeenCalledWith(
       expect.any(Blob),
-      'Dedza North - Crop Probabilities.docx',
+      'Dedza North - Crop Probabilities - English.docx',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+  });
+
+  it('should export docx and include localized language label in filename', async () => {
+    await service.exportDocx({
+      stationData: mockStationData,
+      tableMeta: mockMeta,
+      locationName: 'Chikwawa',
+      languageCode: 'zm_ny',
+    });
+
+    expect(download).toHaveBeenCalledWith(
+      expect.any(Blob),
+      'Chikwawa - Crop Probabilities - Nyanja.docx',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
   });

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CROPS_DATA_HASHMAP } from '@picsa/data';
+import { CROPS_DATA_HASHMAP, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import {
   AlignmentType,
   BorderStyle,
@@ -28,6 +28,7 @@ export interface IExportDocxOptions {
   tableMeta: IProbabilityTableMeta;
   locationName: string;
   languageCode?: string;
+  languageLabel?: string;
 }
 
 @Injectable({
@@ -37,16 +38,26 @@ export class CropProbabilityDocxService {
   private translateService = inject(TranslateService);
 
   public async exportDocx(options: IExportDocxOptions): Promise<void> {
-    const { stationData, tableMeta, locationName, languageCode } = options;
+    const { stationData, tableMeta, locationName, languageCode, languageLabel } = options;
 
     if (languageCode) {
       this.translateService.use(languageCode);
     }
 
+    const currentLang =
+      languageCode || this.translateService.currentLang || this.translateService.defaultLang || 'global_en';
+
+    const resolvedLangLabel =
+      languageLabel ||
+      LOCALES_DATA_HASHMAP[currentLang as keyof typeof LOCALES_DATA_HASHMAP]?.language_label ||
+      LOCALES_DATA.find((l) => l.id === currentLang || l.language_code === currentLang)?.language_label ||
+      'English';
+
     const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
     const blob = await Packer.toBlob(doc);
     const sanitizedLocation = (locationName || 'Location').replace(/[/\\?%*:|"<>]/g, '_');
-    const filename = `${sanitizedLocation} - Crop Probabilities.docx`;
+    const sanitizedLang = resolvedLangLabel.replace(/[/\\?%*:|"<>]/g, '_');
+    const filename = `${sanitizedLocation} - Crop Probabilities - ${sanitizedLang}.docx`;
     download(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
   }
 
@@ -438,6 +449,15 @@ export class CropProbabilityDocxService {
     });
 
     return new Document({
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: 'Calibri',
+            },
+          },
+        },
+      },
       sections: [
         {
           properties: {
