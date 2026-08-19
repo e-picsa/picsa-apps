@@ -81,6 +81,7 @@
     "date-fns": "^2.29.3",
     "deepmerge": "^4.3.0",
     "dexie": "^3.2.3",
+    "docx": "^9.2.0",
     "downloadjs": "^1.4.7",
     "fast-xml-parser": "^5",
     "firebase": "^9.16.0",
