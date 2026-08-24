@@ -109,6 +109,8 @@ export class ForecastService extends PicsaAsyncService {
         this.dailyForecastDocs.set([]);
         this.loadingForecasts.set(false);
         this.syncState.set('idle');
+        this.lastSyncedAt.set(undefined);
+        this.syncError.set(undefined);
         this.loadingForecasts.set(false);
       }
     });
