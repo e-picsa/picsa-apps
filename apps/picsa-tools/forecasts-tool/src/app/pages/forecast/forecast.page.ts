@@ -94,7 +94,7 @@ export class ForecastComponent implements OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
   private snackbar = inject(MatSnackBar);
-  readonly dismissedError = signal<string | undefined>(undefined);
+  readonly dismissedBannerKey = signal<string | undefined>(undefined);
 
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
@@ -291,13 +291,19 @@ export class ForecastComponent implements OnDestroy {
   }
 
   // Banner is visible when there's an error that hasn't been dismissed
-  readonly showBanner = computed(() => {
+  readonly bannerKey = computed(() => {
     const error = this.syncErrorMessage();
-    return !!error && error !== this.dismissedError();
+
+    return error ? `${this.locationSelected()}|${error}` : undefined;
+  });
+  readonly showBanner = computed(() => {
+    const key = this.bannerKey();
+
+    return key !== undefined && key !== this.dismissedBannerKey();
   });
 
   closeBanner(): void {
-    this.dismissedError.set(this.syncErrorMessage());
+    this.dismissedBannerKey.set(this.bannerKey());
   }
 }
 
