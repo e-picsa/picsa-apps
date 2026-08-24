@@ -1,13 +1,16 @@
-import { IChartDefinitions, IChartMeta } from '@picsa/models';
+import { IChartDefinitions, IChartMeta, IChartTools } from '@picsa/models';
 import { deepClone } from '@picsa/utils';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import merge from 'deepmerge';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
 
-const tools: IChartMeta['tools'] = {
+const DEFAULT_TOOLS: IChartTools = {
   line: LINE_TOOL_OPTIONS,
   probability: PROBABILITY_TOOL_OPTIONS,
+  terciles: { enabled: true },
+  el_nino: { enabled: true },
+  la_nina: { enabled: true },
 };
 
 // Default bounds (will be replaced by bounds generated from data)
@@ -40,7 +43,7 @@ const definitions: IChartDefinitions = {
       yMinor: 100,
       yMajor: 200,
     },
-    tools,
+    tools: DEFAULT_TOOLS,
     units: 'mm',
     definition: '',
   },
@@ -61,7 +64,7 @@ const definitions: IChartDefinitions = {
       yMinor: 365 / 48,
       yMajor: 365 / 12,
     },
-    tools: merge(tools, {
+    tools: merge(DEFAULT_TOOLS, {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
       probability: {
@@ -90,7 +93,7 @@ const definitions: IChartDefinitions = {
       yMajor: 365 / 12,
     },
 
-    tools: merge(tools, {
+    tools: merge(DEFAULT_TOOLS, {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
       probability: {
@@ -118,7 +121,7 @@ const definitions: IChartDefinitions = {
       yMinor: 10,
       yMajor: 50,
     },
-    tools,
+    tools: DEFAULT_TOOLS,
     units: 'days',
     definition: '',
   },
@@ -139,7 +142,7 @@ const definitions: IChartDefinitions = {
       yMinor: 0.5,
       yMajor: 1,
     },
-    tools,
+    tools: DEFAULT_TOOLS,
     units: 'days',
     definition: '',
   },
@@ -165,7 +168,10 @@ const definitions: IChartDefinitions = {
     },
     tooltip: { grouped: true },
     legend: { show: true },
-    tools: {} as any,
+    tools: merge(DEFAULT_TOOLS, {
+      line: { enabled: false },
+      terciles: { enabled: false },
+    }),
     units: '°C',
     definition: '',
   },
@@ -191,7 +197,10 @@ const definitions: IChartDefinitions = {
     },
     tooltip: { grouped: true },
     legend: { show: true },
-    tools: {} as any,
+    tools: merge(DEFAULT_TOOLS, {
+      line: { enabled: false },
+      terciles: { enabled: false },
+    }),
     units: '°C',
     definition: '',
   },

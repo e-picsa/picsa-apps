@@ -1,12 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
 
-import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile } from '../../../services/climate-tool.service';
-
-interface ITercile {
-  value: number;
-  labelPosition: { x: string; y: string };
-}
+import { BaseChartToolComponent, IOverlayLine } from '../base-tool.component';
 
 @Component({
   selector: 'climate-terciles-tool',
@@ -14,60 +9,78 @@ interface ITercile {
   styleUrls: ['./terciles-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TercilesToolComponent implements OnDestroy {
-  private chartService = inject(ClimateChartService);
+export class TercilesToolComponent extends BaseChartToolComponent {
+  public override readonly usesPointOverlay = true;
 
   /** Value of current series data displayed */
   readonly values = input<number[]>([]);
 
+  public lowerTercile = signal<number>(0);
+  public upperTercile = signal<number>(0);
+
   constructor() {
+    super();
     effect(() => {
       const vals = this.values();
       this.generateTerciles(vals);
     });
   }
 
-  terciles: { upper?: ITercile; lower?: ITercile } = {};
-
-  ngOnDestroy() {
-    // when tool is toggle off also remove from the graph
-    this.generateTerciles([]);
+  public override getOverlayLines(): IOverlayLine[] | undefined {
+    const lower = this.lowerTercile();
+    const upper = this.upperTercile();
+    const lines: IOverlayLine[] = [];
+    if (lower) {
+      lines.push({
+        id: 'tercile-lower',
+        value: lower,
+        color: '#aa1818',
+        strokeWidth: 2.5,
+        strokeDasharray: '6 4',
+        label: {
+          text: `Lower = ${this.formatYValue(lower)}`,
+          position: 'left',
+          color: '#000000',
+          background: '#ffffff',
+          borderColor: '#aa1818',
+        },
+      });
+    }
+    if (upper) {
+      lines.push({
+        id: 'tercile-upper',
+        value: upper,
+        color: '#aa1818',
+        strokeWidth: 2.5,
+        strokeDasharray: '6 4',
+        label: {
+          text: `Upper = ${this.formatYValue(upper)}`,
+          position: 'left',
+          color: '#000000',
+          background: '#ffffff',
+          borderColor: '#aa1818',
+        },
+      });
+    }
+    return lines;
   }
 
-  private generateTerciles(values?: number[]) {
-    if (values && values.length > 0) {
-      const arr = values.sort((a, b) => a - b).filter((v) => v !== undefined);
-      const terciles = [calcPercentile(arr, 1 / 3), calcPercentile(arr, 2 / 3)];
-      this.updateChart('lower', Math.round(terciles[0]));
-      this.updateChart('upper', Math.round(terciles[1]));
-    } else {
-      this.terciles = {};
-      this.updateChart('lower', 0);
-      this.updateChart('upper', 0);
-    }
+  protected override onToolDestroy() {
+    this.upperTercile.set(0);
+    this.lowerTercile.set(0);
   }
-  private updateChart(tercile: 'lower' | 'upper', value: number) {
-    if (value) {
-      this.chartService.addFixedLineToChart(value, `${tercile}Tercile`);
-      setTimeout(() => {
-        const labelPosition = this.getTextLabelPosition(tercile);
-        this.terciles[tercile] = { value, labelPosition };
-      }, 500);
-    } else {
-      this.chartService.removeSeriesFromChart([`${tercile}Tercile`]);
+
+  private generateTerciles(values: number[]) {
+    if (!values || values.length === 0) {
+      this.lowerTercile.set(0);
+      this.upperTercile.set(0);
+      return;
     }
-  }
-  /**
-   * Lookup the rendered tercile line and use to position fixed label dom element
-   */
-  private getTextLabelPosition(tercile: 'lower' | 'upper') {
-    const chartPathEl = document.querySelector(`.c3-line-${tercile}Tercile`);
-    if (chartPathEl) {
-      const { x, y, width } = chartPathEl.getBoundingClientRect();
-      const yOffset = tercile === 'lower' ? 16 : -48;
-      return { x: Math.round(x) + 'px', y: Math.round(y) + yOffset + 'px' };
-    } else {
-      return { x: '-100vw', y: '-100vh' };
-    }
+
+    const arr = [...values].filter((v) => typeof v === 'number' && !isNaN(v)).sort((a, b) => a - b);
+    const [lower, upper] = [Math.round(calcPercentile(arr, 1 / 3)), Math.round(calcPercentile(arr, 2 / 3))];
+
+    this.lowerTercile.set(lower);
+    this.upperTercile.set(upper);
   }
 }

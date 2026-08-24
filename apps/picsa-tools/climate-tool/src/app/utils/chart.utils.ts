@@ -3,7 +3,7 @@ import { IChartConfig, IChartMeta, IStationData } from '@picsa/models/src';
 
 // expose global variable to allow override by translated month names
 // (used in both axis labels and tooltip)
-let MONTH_NAMES: string[];
+let MONTH_NAMES: string[] = MONTH_DATA.map((m) => m.labelShort);
 
 interface IGridMeta {
   xTicks: number[];
@@ -46,7 +46,6 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
       },
       names: definition.data_labels,
       x: 'Year',
-      classes: { LineTool: 'LineTool' },
       colors,
     },
     title: { text: definition.name },
@@ -77,7 +76,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
         label: { position: 'outer-middle', text: definition.yLabel },
         tick: {
           values: gridMeta.yTicks,
-          format: (d: any) => (gridMeta.yLines.includes(d as any) ? _formatYAxis(d as any, definition, true) : ''),
+          format: (d: any) => (gridMeta.yLines.includes(d as any) ? formatYValue(d as any, definition, true) : ''),
         },
         min: definition.axes.yMin,
         max: definition.axes.yMax,
@@ -201,36 +200,42 @@ function _formatXAxis(value: number): string {
 }
 
 function _getTooltipFormat(value: number, meta: IChartMeta) {
-  if (meta.yFormat == 'value') {
-    return `${Math.round(value).toString()} ${meta.units}`;
+  if (meta.yFormat === 'value') {
+    return `${Math.round(value).toString()} ${meta.units}`.trim();
   } else {
-    return `${_formatYAxis(value, meta, false)} ${meta.units}`;
+    return `${formatYValue(value, meta, false)} ${meta.units}`.trim();
   }
 }
 
-function _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {
-  const { yMajor } = meta.axes;
+/**
+ * Format a y-axis value according to the chart definition (e.g. date format for season start/end).
+ */
+export function formatYValue(value: number, meta?: IChartMeta, isAxisLabel = false): string {
+  if (!meta) {
+    return `${value}`;
+  }
 
-  let label: string;
+  const { yMajor } = meta.axes || {};
+  const monthNames = MONTH_NAMES || MONTH_DATA.map((m) => m.labelShort);
+
   switch (meta.yFormat) {
     case 'date-from-July': {
       // previously 181 based on local met +182 and -1 for index starting at 0
       // now simply half of standard year 365 + 1 for index
       const dayNumber = (value + 183) % 366;
       if (isAxisLabel) {
-        const monthNumber = Math.round(dayNumber / yMajor) % 12;
+        const monthNumber = Math.round(dayNumber / (yMajor || 365 / 12)) % 12;
         // just want nearest month name
-        label = MONTH_NAMES[monthNumber];
+        return monthNames[monthNumber] ?? '';
       } else {
-        //simply converts number to day rough date value (same method as local met office)
-        //initialise year from a year with 365 days
+        // simply converts number to day rough date value (same method as local met office)
+        // initialise year from a year with 365 days
         const d = new Date(2015, 0);
         d.setDate(dayNumber);
 
         // just take first 3 letters
-        label = `${d.getDate()}-${MONTH_NAMES[d.getMonth() % 12]}`;
+        return `${d.getDate()}-${monthNames[d.getMonth() % 12] ?? ''}`;
       }
-      return label;
     }
     case 'date':
       // TODO

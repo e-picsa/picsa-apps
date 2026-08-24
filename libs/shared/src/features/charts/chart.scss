@@ -12,16 +12,6 @@ picsa-chart {
 .c3-line {
   stroke-width: 2px;
 }
-.c3-line-LineTool {
-  stroke-width: 3px !important;
-  stroke: black !important;
-}
-.c3-line-upperTercile,
-.c3-line-lowerTercile {
-  stroke-width: 3px !important;
-  stroke-dasharray: 6px;
-  stroke: #aa1818 !important;
-}
 
 /*expanded circle fill, outline (stroke) and outline width*/
 .c3-circle._expanded_ {
@@ -59,4 +49,27 @@ picsa-chart {
 .c3-title {
   font-size: 20px;
   font-weight: bold;
+}
+
+// When using custom marker overlay hide default styled points
+.picsa-overlay-active .c3-circles .c3-circle {
+  opacity: 0 !important;
+}
+
+.picsa-point-overlay {
+  animation: picsa-overlay-fade 200ms ease-out;
+
+  path {
+    fill: inherit;
+    stroke: inherit;
+  }
+}
+
+@keyframes picsa-overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

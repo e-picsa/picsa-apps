@@ -5,6 +5,7 @@ import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
+import { ElNinoToolComponent, LaNinaToolComponent } from '../chart-tools/el-nino-tool/el-nino-tool.component';
 import { LineToolComponent } from '../chart-tools/line-tool/line-tool.component';
 import { ProbabilityToolComponent } from '../chart-tools/probability-tool/probability-tool';
 import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-tool.component';
@@ -24,10 +25,12 @@ import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-too
     LineToolComponent,
     ProbabilityToolComponent,
     TercilesToolComponent,
+    ElNinoToolComponent,
+    LaNinaToolComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.has-line-tool]': 'toolService.enabled().line',
+    '[class.has-line-tool]': 'toolService.activeTool()==="line"',
   },
 })
 export class ClimateChartLayoutComponent implements AfterViewInit {

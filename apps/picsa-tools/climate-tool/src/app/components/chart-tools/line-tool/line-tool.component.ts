@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY, MatDatepickerModule } from '@angular/material/datepicker';
@@ -6,9 +6,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
+import { IChartMeta } from '@picsa/models';
+import { DataPoint } from 'c3';
 
-import { ClimateChartService } from '../../../services/climate-chart.service';
-import { calcPercentile, ClimateToolService } from '../../../services/climate-tool.service';
+import { calcPercentile } from '../../../services/climate-tool.service';
+import { BaseChartToolComponent, ILegendItem, IOverlayLine, IPointStyle } from '../base-tool.component';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
@@ -25,10 +27,8 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LineToolComponent {
-  private chartService = inject(ClimateChartService);
-  private toolService = inject(ClimateToolService);
-  private destroyRef = inject(DestroyRef);
+export class LineToolComponent extends BaseChartToolComponent {
+  public override readonly usesPointOverlay = true;
 
   readonly ranges = signal<{ min: number; max: number }>({ min: 0, max: 0 });
   readonly step = signal(1);
@@ -41,35 +41,65 @@ export class LineToolComponent {
   private options = LINE_TOOL_OPTIONS;
 
   constructor() {
+    super();
+
     // Subscribe to chart definition changes via effect
     effect(() => {
-      const chartDef = this.chartService.chartDefinition();
+      const chartDef = this.chartDefinition();
       if (chartDef) {
         this.loadLineToolConfig(chartDef);
       }
     });
 
-    // React to value changes and update chart
+    // React to value changes and update tool service
     effect(() => {
       const val = this.value();
       this.updateOnValueChange(val);
     });
+  }
 
-    // Remove line when component is destroyed
-    this.destroyRef.onDestroy(() => {
-      this.updateOnValueChange(undefined);
-    });
+  public override getPointStyle(d: DataPoint): IPointStyle | undefined {
+    if (!this.isDecoratable(d)) return undefined;
+    const val = this.value();
+    if (val === undefined || d.value === undefined) return undefined;
+    const { above, below } = this.options;
+    const color = d.value >= val ? above.color : below.color;
+    return { shape: 'circle', size: 8, fill: color, stroke: color, strokeWidth: 1 };
+  }
+
+  public override getOverlayLines(): IOverlayLine[] | undefined {
+    const val = this.value();
+    if (val === undefined) return undefined;
+    return [
+      {
+        id: 'line-threshold',
+        value: val,
+        color: '#000000',
+        strokeWidth: 3,
+      },
+    ];
+  }
+
+  public override getLegendItems(): ILegendItem[] {
+    const { above, below } = this.options;
+    return [
+      { label: 'Above', shape: 'circle', fill: above.color },
+      { label: 'Below', shape: 'circle', fill: below.color },
+    ];
+  }
+
+  protected override onToolDestroy() {
+    this.toolService.setValue('line', undefined);
   }
 
   public setLineToolFromDate(datestring: string) {
     const d = new Date(datestring);
-    const dateDayNumber = this.chartService.convertDateToDayNumber(d);
+    const dateDayNumber = this.convertDateToDayNumber(d);
     return this.setLineToolValue(dateDayNumber);
   }
 
   /**
-   * When line tool value change update chart to display custom point colours above/below
-   * and trigger event emitter to handle line load/unload and chart refresh
+   * When line tool value changes, set value and update chart line
    */
   public setLineToolValue(value: number) {
     const min = this.ranges().min;
@@ -78,16 +108,11 @@ export class LineToolComponent {
     } else {
       this.value.set(value);
     }
-    // Note: updateOnValueChange effect handles the rest
   }
 
   /** Set line tool dates formats and min/max values for line tool */
-  private loadLineToolConfig(definition: {
-    tools: { line: typeof LINE_TOOL_OPTIONS };
-    axes: { yMinor: number };
-    yFormat: string;
-  }) {
-    this.options = definition.tools.line;
+  private loadLineToolConfig(definition: IChartMeta) {
+    this.options = definition.tools?.line || LINE_TOOL_OPTIONS;
     this.step.set(definition.axes.yMinor);
     if (definition.yFormat === 'value') {
       this.inputType.set('number');
@@ -95,7 +120,7 @@ export class LineToolComponent {
       this.inputType.set('date');
     }
 
-    const config = this.chartService.chartConfig();
+    const config = this.chartConfig();
     if (config) {
       this.ranges.set({
         min: config.axis?.y?.min || 0,
@@ -106,36 +131,15 @@ export class LineToolComponent {
   }
 
   private updateOnValueChange(value: number | undefined) {
-    // Update point colours
-    const { above, below } = this.options;
-    const pointFormatter = (d: { value: number }) => {
-      if (!value) return;
-      return d.value >= value ? above.color : below.color;
-    };
-    this.chartService.getPointColour = pointFormatter;
-
-    // Update chart line
-    this.updateChart(value);
-
-    // Also inform tool service of value changes so that probability tool can update
+    // Inform tool service of value changes so that probability tool can update
     this.toolService.setValue('line', value);
   }
 
   private setDefaultLineValue() {
     // if no initial value provided calculate median and plot
-    const median = calcPercentile(this.chartService.chartSeriesData(), 0.5);
+    const median = calcPercentile(this.chartSeriesData(), 0.5);
     const currentStep = this.step();
     const rounded = Math.round(median / currentStep) * currentStep;
     this.value.set(rounded);
-  }
-
-  /** Load or unload the linetool value as a line on the chart */
-  private updateChart(value?: number) {
-    const id = 'LineTool';
-    if (value) {
-      this.chartService.addFixedLineToChart(value, id);
-    } else {
-      this.chartService.removeSeriesFromChart([id]);
-    }
   }
 }

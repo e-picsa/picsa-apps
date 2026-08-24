@@ -1,4 +1,4 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Capacitor } from '@capacitor/core';
 import { _wait } from '@picsa/utils';
@@ -50,21 +50,24 @@ export class PrintProvider {
    */
   public async svgToPngBlob(
     svgElement: SVGSVGElement,
-    options = { width: 900, height: 500, scale: 1, backgroundColor: 'white' },
+    options?: { width?: number; height?: number; scale?: number; backgroundColor?: string },
   ): Promise<Blob> {
-    const { width, height, scale = 1, backgroundColor = 'transparent' } = options;
+    const svgRect = svgElement.getBoundingClientRect();
+    const width = options?.width || (svgRect.width > 0 ? svgRect.width : 900);
+    const height = options?.height || (svgRect.height > 0 ? svgRect.height : 530);
+    const scale = options?.scale || 1;
+    const backgroundColor = options?.backgroundColor || 'white';
 
     // Get computed styles and serialize the SVG
-    const serializedSvg = serializeSvgWithStyles(svgElement);
+    const serializedSvg = serializeSvgWithStyles(svgElement, width, height);
 
     // Create canvas
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
     // Set canvas dimensions
-    const svgRect = svgElement.getBoundingClientRect();
-    canvas.width = (width || svgRect.width) * scale;
-    canvas.height = (height || svgRect.height) * scale;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
 
     // Scale context if needed
     if (scale !== 1) {
@@ -111,23 +114,68 @@ export class PrintProvider {
   }
 }
 
+const SVG_STYLE_PROPERTIES = [
+  'fill',
+  'fill-opacity',
+  'stroke',
+  'stroke-width',
+  'stroke-linecap',
+  'stroke-linejoin',
+  'stroke-dasharray',
+  'stroke-opacity',
+  'opacity',
+  'font-family',
+  'font-size',
+  'font-weight',
+  'font-style',
+  'text-anchor',
+  'dominant-baseline',
+  'display',
+  'visibility',
+  'shape-rendering',
+  'clip-path',
+];
+
 /** Take an svgElement and inline any inherited styles */
-function serializeSvgWithStyles(svgElement: SVGElement) {
+function serializeSvgWithStyles(svgElement: SVGElement, width = 900, height = 530) {
   // Clone the SVG to avoid modifying the original
   const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+
+  clonedSvg.setAttribute('width', width.toString());
+  clonedSvg.setAttribute('height', height.toString());
+  if (!clonedSvg.getAttribute('viewBox')) {
+    clonedSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  }
 
   // Get all elements in the SVG
   const allElements = [clonedSvg, ...clonedSvg.querySelectorAll('*')];
 
-  // Apply computed styles to each element
+  // Apply computed styles to each element for relevant SVG presentation properties only
   allElements.forEach((element, index) => {
     const originalElement = index === 0 ? svgElement : svgElement.querySelectorAll('*')[index - 1];
 
     if (originalElement) {
+      // If the element is part of custom point overlay or legend overlay, preserve its explicit attributes and styles
+      const isCustomOverlay = originalElement.closest('.picsa-point-overlay, .picsa-legend-overlay');
+      if (isCustomOverlay) {
+        return;
+      }
+
+      // If chart overlay is active and element is a standard c3 circle, force opacity 0 and display none
+      if (originalElement.classList.contains('c3-circle')) {
+        const isOverlayActive = svgElement.querySelector('.picsa-point-overlay') !== null;
+        if (isOverlayActive) {
+          element.setAttribute('style', 'opacity: 0 !important; display: none !important;');
+          return;
+        }
+      }
+
       const computedStyle = window.getComputedStyle(originalElement);
-      const styleString = Array.from(computedStyle)
-        .filter((prop) => computedStyle.getPropertyValue(prop))
-        .map((prop) => `${prop}: ${computedStyle.getPropertyValue(prop)}`)
+      const styleString = SVG_STYLE_PROPERTIES.map((prop) => {
+        const val = computedStyle.getPropertyValue(prop);
+        return val ? `${prop}: ${val}` : '';
+      })
+        .filter(Boolean)
         .join('; ');
 
       if (styleString) {
