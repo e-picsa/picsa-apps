@@ -55,7 +55,7 @@
           matButton="filled"
           color="primary"
           class="force-refresh-button"
-          [disabled]="syncing() || !locationReady() || syncStatus().state === 'offline' || syncStatus().state === 'success'"
+          [disabled]="syncing() || !locationReady() || syncStatus().state === 'offline'"
           (click)="handleForceRefresh()"
         >
           @if (syncing()) {
