@@ -62,7 +62,7 @@ h2 {
   & > picsa-form-location-select {
     ::ng-deep {
       .form-location-select {
-        margin: auto 12px;
+        margin: 0 12px 12px 12px;
         .mat-mdc-form-field {
           width: 100%;
         }
@@ -131,7 +131,7 @@ button span.mdc-button__label {
   align-items: center;
   gap: 0.075rem;
   font-size: 0.8125rem;
-  padding: 0.425rem 2rem;
+  padding: 0.425rem 1rem;
   border-radius: 999px;
   background: var(--ion-color-secondary-100, #c1c1c1);
   color: var(--color-secondary-800, #444);
