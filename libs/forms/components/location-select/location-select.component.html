@@ -3,18 +3,36 @@
   <div class="flex-col w-full">
     @if (locationData().admin_4; as data) {
       @if (fieldTitle() && locationData().admin_5) {
-        <div class="form-location-select__label">{{'Choose a Province' | translate}}</div>
+        <div class="form-location-select__label">{{ 'Choose a Province' | translate }}</div>
       } @else if (fieldTitle() && !locationData().admin_5) {
-        <div class="form-location-select__label">{{'Choose a District' | translate}}</div>
-      } @else {}
-      <mat-form-field>
-        <mat-label>{{ data.label }}</mat-label>
-        <mat-select #admin4 (selectionChange)="admin4Selected.set(admin4.value)" [value]="admin4Selected()">
-          @for (option of data.locations; track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+        <div class="form-location-select__label">{{ 'Choose a District' | translate }}</div>
+      }
+      @if (selectedAdmin4Option() && !editingAdmin4()) {
+        <button
+          type="button"
+          class="form-location-select__selected"
+          (click)="editAdmin4()"
+          [attr.aria-label]="('Change' | translate) + ': ' + selectedAdmin4Option()!.label"
+        >
+          <span class="text-[20px]">{{ selectedAdmin4Option()!.label }}</span>
+          <mat-icon>edit</mat-icon>
+        </button>
+      } @else {
+        <mat-form-field>
+          <mat-label>{{ data.label }}</mat-label>
+          <mat-select #admin4
+            [value]="admin4Selected()"
+            (selectionChange)="onAdmin4SelectionChange($event.value)"
+            (closed)="closeAdmin4Editor()"
+          >
+            @for (option of data.locations; track option.id) {
+              <mat-option [value]="option.id">
+                {{ option.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
     }
   </div>
 
@@ -22,21 +40,35 @@
   <div class="flex-col w-full">
     @if (locationData().admin_5; as data) {
       @if (fieldTitle()) {
-        <div class="form-location-select__label">{{'Choose a District' | translate}}</div>
+        <div class="form-location-select__label">{{ 'Choose a District' | translate }}</div>
       }
-      <mat-form-field>
-        <mat-label>{{ data.label }}</mat-label>
-        <mat-select
-          [disabled]="!admin4Selected()"
-          #admin5
-          (selectionChange)="admin5Selected.set(admin5.value)"
-          [value]="admin5Selected()"
+      @if (selectedAdmin5Option() && !editingAdmin5()) {
+        <button
+          type="button"
+          class="form-location-select__selected"
+          (click)="editAdmin5()"
+          [attr.aria-label]="('Change' | translate) + ': ' + selectedAdmin5Option()!.label"
         >
-          @for (option of admin5Options(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+          <span class="text-[20px]">{{ selectedAdmin5Option()!.label }}</span>
+          <mat-icon>edit</mat-icon>
+        </button>
+      } @else {
+        <mat-form-field>
+          <mat-label>{{ data.label }}</mat-label>
+          <mat-select #admin5
+            [disabled]="!admin4Selected()"
+            [value]="admin5Selected()"
+            (selectionChange)="onAdmin5SelectionChange($event.value)"
+            (closed)="closeAdmin5Editor()"
+          >
+            @for (option of admin5Options(); track option.id) {
+              <mat-option [value]="option.id">
+                {{ option.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
     }
   </div>
 </div>
