@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Gauge Arc -->
+  <path d="M14 44 A20 20 0 0 1 50 44" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+  <!-- Threat zone accent -->
+  <path d="M38 25 A20 20 0 0 1 50 44" fill="none" stroke="#dc2626" stroke-width="4" stroke-linecap="round" />
+  <!-- Needle Dial pointing to risk -->
+  <line x1="32" y1="44" x2="42" y2="28" stroke="#dc2626" stroke-width="3" stroke-linecap="round" />
+  <circle cx="32" cy="44" r="4.5" fill="#334155" />
+</svg>
