@@ -25,6 +25,10 @@ export interface IStationMeta {
    * Draft stations appear in global deployment but not country-specific
    **/
   draft?: boolean;
+  /**
+   * Station capability and data availability descriptor (generated at build/sync time)
+   */
+  capabilities?: IStationCapabilities;
 }
 
 export interface IStationData {
@@ -41,6 +45,72 @@ export interface IStationData {
   mean_tmax?: number;
   mean_tmin?: number;
 }
+
+/**
+ * Wide-format monthly station record representing 1 month of historical observations.
+ */
+export interface IMonthlyStationData {
+  /** Month in YYYY-MM format, e.g. '1944-07' */
+  month: string;
+  /** Total rainfall for the month (mm) */
+  Rainfall?: number | null;
+  /** Lowest minimum daily temperature for the month (°C) */
+  min_tmin?: number | null;
+  /** Mean minimum daily temperature for the month (°C) */
+  mean_tmin?: number | null;
+  /** Mean maximum daily temperature for the month (°C) */
+  mean_tmax?: number | null;
+  /** Highest maximum daily temperature for the month (°C) */
+  max_tmax?: number | null;
+  /** Lowest maximum daily temperature for the month (°C) */
+  min_tmax?: number | null;
+  /** Highest minimum daily temperature for the month (°C) */
+  max_tmin?: number | null;
+}
+
+/**
+ * Station capability and data availability descriptor.
+ * Enables synchronous chart filtering and UI badge generation without parsing data files.
+ */
+export interface IStationCapabilities {
+  /** ISO timestamp of when this station's data was generated or synced */
+  lastUpdated?: string;
+  /** Deterministic content hash (e.g. SHA-256) of station data for cache invalidation */
+  contentHash?: string;
+  /** Schema version of the data format */
+  schemaVersion: number;
+  /** Earliest and latest historical years with data, e.g. [1946, 2024] */
+  years?: [number, number];
+  /** Available annual chart types */
+  annual?: IChartId[];
+  /** Available monthly metrics */
+  monthly?: {
+    hasRainfall: boolean;
+    hasTemperature: boolean;
+  };
+}
+
+/**
+ * Representation of country-defined 3-month climatological periods
+ * (e.g. OND, NDJ, DJF, JFM, FMA).
+ * Note: Labels are formatted dynamically from month indices to support i18n without hardcoding text.
+ */
+export interface IThreeMonthPeriod {
+  /** Unique period identifier, e.g. 'djf' */
+  id: string;
+  /** Short uppercase meteorological code, e.g. 'DJF' */
+  code: string;
+  /** 1-indexed months comprising the 3-month period, e.g. [12, 1, 2] */
+  months: [number, number, number];
+  /** Whether this is considered the primary agricultural / rainy period */
+  primary?: boolean;
+}
+
+/** Backward compatibility alias */
+export type IThreeMonthSeason = IThreeMonthPeriod;
+
+/** Supported timespan display resolutions */
+export type ClimateTimespanMode = 'annual' | 'monthly' | 'three_month';
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
@@ -67,6 +137,10 @@ export interface IChartMeta {
   tools: IChartTools;
   units: string;
   definition: string;
+  /** Methodology definition for monthly timespan view (e.g. for info tooltip / chart description) */
+  definitionMonthly?: string;
+  /** Methodology definition for 3-month seasonal timespan view (e.g. for info tooltip / chart description) */
+  definitionThreeMonth?: string;
   legend?: {
     /** Specify whether to show chart legend */
     show?: boolean;

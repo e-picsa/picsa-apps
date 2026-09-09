@@ -46,6 +46,10 @@ const definitions: IChartDefinitions = {
     tools: DEFAULT_TOOLS,
     units: 'mm',
     definition: '',
+    definitionMonthly: translateMarker('Total rainfall recorded for the selected month in each year'),
+    definitionThreeMonth: translateMarker(
+      'Total rainfall recorded across the selected 3-month period in each year (requires complete data across all 3 months)',
+    ),
   },
   start: {
     _id: 'start',
@@ -174,6 +178,12 @@ const definitions: IChartDefinitions = {
     }),
     units: '°C',
     definition: '',
+    definitionMonthly: translateMarker(
+      'The lowest daily minimum and mean daily minimum temperatures for the selected month in each year',
+    ),
+    definitionThreeMonth: translateMarker(
+      'The lowest daily minimum and mean daily minimum temperatures recorded across the selected 3-month period in each year',
+    ),
   },
   temp_max: {
     _id: 'temp_max',
@@ -203,8 +213,32 @@ const definitions: IChartDefinitions = {
     }),
     units: '°C',
     definition: '',
+    definitionMonthly: translateMarker(
+      'The mean daily maximum and highest daily maximum temperatures for the selected month in each year',
+    ),
+    definitionThreeMonth: translateMarker(
+      'The mean daily maximum and highest daily maximum temperatures recorded across the selected 3-month period in each year',
+    ),
   },
 };
+
+/**
+ * Retrieve the appropriate methodology description text for a chart definition
+ * based on the active timespan resolution.
+ */
+export function getChartDefinitionText(
+  chartDef?: IChartMeta,
+  timespan: 'annual' | 'monthly' | 'three_month' = 'annual',
+): string {
+  if (!chartDef) return '';
+  if (timespan === 'monthly' && chartDef.definitionMonthly) {
+    return chartDef.definitionMonthly;
+  }
+  if (timespan === 'three_month' && chartDef.definitionThreeMonth) {
+    return chartDef.definitionThreeMonth;
+  }
+  return chartDef.definition || '';
+}
 
 // Provide additional export as cloned object to avoid duplicate references
 const DEFINITIONS = () => {
