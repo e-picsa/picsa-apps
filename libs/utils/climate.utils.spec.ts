@@ -109,6 +109,58 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       const wide = pivotLongToWideMonthly(records);
       expect(wide.length).toBe(0);
     });
+
+    it('should detect duplicate observations and invoke onDuplicate callback', () => {
+      const duplicates: any[] = [];
+      const records: IIncomingClimateRecord[] = [
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 50 },
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 75 },
+      ];
+
+      const wide = pivotLongToWideMonthly(records, {
+        onDuplicate: (dup) => duplicates.push(dup),
+      });
+
+      expect(duplicates.length).toBe(1);
+      expect(duplicates[0]).toEqual({
+        stationId: 'test',
+        month: '1980-01',
+        element: 'Rainfall',
+        existingValue: 50,
+        incomingValue: 75,
+        isConflict: true,
+      });
+      // Default resolution is last-wins
+      expect(wide[0].Rainfall).toBe(75);
+    });
+
+    it('should respect resolution: keep-first when configured', () => {
+      const records: IIncomingClimateRecord[] = [
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 50 },
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 75 },
+      ];
+
+      const wide = pivotLongToWideMonthly(records, {
+        resolution: 'keep-first',
+      });
+
+      expect(wide[0].Rainfall).toBe(50);
+    });
+
+    it('should flag identical duplicates with isConflict: false', () => {
+      const duplicates: any[] = [];
+      const records: IIncomingClimateRecord[] = [
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 50 },
+        { station_id: 'test', time_value: '1980-01', summary_element: 'rainfall', summary_value: 50 },
+      ];
+
+      pivotLongToWideMonthly(records, {
+        onDuplicate: (dup) => duplicates.push(dup),
+      });
+
+      expect(duplicates.length).toBe(1);
+      expect(duplicates[0].isConflict).toBe(false);
+    });
   });
 
   describe('stationHasTemperatureData', () => {

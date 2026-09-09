@@ -16,7 +16,7 @@ import type {
  * Eliminates float precision noise and ensures deterministic diffs.
  */
 export function roundClimateValue(val: number | null | undefined): number | null {
-  if (val === null || val === undefined || isNaN(val)) {
+  if (val === null || val === undefined || Number.isNaN(val)) {
     return null;
   }
   const rounded = Math.round(val * 10) / 10;
@@ -68,11 +68,32 @@ function normalizeElementName(element: string): keyof Omit<IMonthlyStationData, 
   }
 }
 
+/** Event emitted when duplicate records for the same month and element are encountered during pivoting */
+export interface IPivotDuplicateRecord {
+  stationId?: string;
+  month: string;
+  element: string;
+  existingValue: number | null;
+  incomingValue: number | null;
+  isConflict: boolean;
+}
+
+export interface IPivotOptions {
+  /** Optional callback invoked whenever a duplicate record for a (month, element) pair is encountered */
+  onDuplicate?: (duplicate: IPivotDuplicateRecord) => void;
+  /** Deduplication resolution: 'last-wins' (default) or 'keep-first' */
+  resolution?: 'last-wins' | 'keep-first';
+}
+
 /**
  * Transform incoming long-format climate records into wide monthly station records.
+ * Detects within-batch duplicates and surfaces conflicting observations via optional callback/warnings.
  * Sorts chronologically by month ascending (YYYY-MM).
  */
-export function pivotLongToWideMonthly(records: IIncomingClimateRecord[]): IMonthlyStationData[] {
+export function pivotLongToWideMonthly(
+  records: IIncomingClimateRecord[],
+  options?: IPivotOptions,
+): IMonthlyStationData[] {
   const monthMap = new Map<string, IMonthlyStationData>();
 
   for (const record of records) {
@@ -89,6 +110,34 @@ export function pivotLongToWideMonthly(records: IIncomingClimateRecord[]): IMont
     }
 
     const roundedVal = roundClimateValue(record.summary_value);
+
+    // Check for within-batch duplicate record
+    if (entry[elementKey] !== undefined) {
+      const existingVal = entry[elementKey] ?? null;
+      const isConflict = existingVal !== roundedVal;
+
+      if (options?.onDuplicate) {
+        options.onDuplicate({
+          stationId: record.station_id,
+          month,
+          element: elementKey,
+          existingValue: existingVal,
+          incomingValue: roundedVal,
+          isConflict,
+        });
+      }
+
+      if (isConflict) {
+        console.warn(
+          `[pivotLongToWideMonthly] Conflicting duplicate observation for station '${record.station_id || 'unknown'}', month ${month}, element '${elementKey}': earlier value was ${existingVal}, incoming value is ${roundedVal}.`,
+        );
+      }
+
+      if (options?.resolution === 'keep-first') {
+        continue;
+      }
+    }
+
     entry[elementKey] = roundedVal;
   }
 
@@ -161,7 +210,7 @@ export function parseMonthlyCsv(csvText: string): IMonthlyStationData[] {
       const rawVal = parts[h]?.trim();
       if (rawVal !== undefined && rawVal !== '' && rawVal !== 'null') {
         const num = Number(rawVal);
-        entry[header] = isNaN(num) ? null : roundClimateValue(num);
+        entry[header] = Number.isNaN(num) ? null : roundClimateValue(num);
       } else {
         entry[header] = null;
       }
@@ -197,14 +246,14 @@ export function parseAnnualCsv(csvText: string): IStationData[] {
       const rawVal = parts[h]?.trim();
       if (rawVal !== undefined && rawVal !== '' && rawVal !== 'null') {
         const num = Number(rawVal);
-        rowObj[header] = isNaN(num) ? rawVal : num;
+        rowObj[header] = Number.isNaN(num) ? rawVal : num;
       } else {
         rowObj[header] = null;
       }
     }
 
     const yearVal = rowObj['Year'] ?? rowObj['year'];
-    if (typeof yearVal !== 'number' || isNaN(yearVal)) continue;
+    if (typeof yearVal !== 'number' || Number.isNaN(yearVal)) continue;
 
     // In legacy climate data (e.g. Zimbabwe), 0 in Start, End, Length, Rainfall represents missing data
     const isAllZeros =
@@ -248,7 +297,7 @@ export function calculateStationCapabilities(params: {
 
   // Compute year bounds from annual data
   for (const row of annualData) {
-    if (typeof row.Year === 'number' && !isNaN(row.Year)) {
+    if (typeof row.Year === 'number' && !Number.isNaN(row.Year)) {
       if (firstYear === undefined || row.Year < firstYear) firstYear = row.Year;
       if (lastYear === undefined || row.Year > lastYear) lastYear = row.Year;
     }
@@ -256,8 +305,8 @@ export function calculateStationCapabilities(params: {
 
   // Also check monthly data for year bounds
   for (const row of monthlyData) {
-    const yr = parseInt(row.month.slice(0, 4), 10);
-    if (!isNaN(yr)) {
+    const yr = Number.parseInt(row.month.slice(0, 4), 10);
+    if (!Number.isNaN(yr)) {
       if (firstYear === undefined || yr < firstYear) firstYear = yr;
       if (lastYear === undefined || yr > lastYear) lastYear = yr;
     }
@@ -308,19 +357,19 @@ export function calculateStationCapabilities(params: {
 
     // Check annual data valid rows
     for (const row of annualData) {
-      if (typeof row.Year !== 'number' || isNaN(row.Year)) continue;
+      if (typeof row.Year !== 'number' || Number.isNaN(row.Year)) continue;
       const hasMetric =
-        (typeof row.Rainfall === 'number' && !isNaN(row.Rainfall)) ||
-        (typeof row.Start === 'number' && !isNaN(row.Start)) ||
-        (typeof row.End === 'number' && !isNaN(row.End)) ||
-        (typeof row.Length === 'number' && !isNaN(row.Length)) ||
-        (typeof row.Extreme_events === 'number' && !isNaN(row.Extreme_events)) ||
-        (typeof row.min_tmin === 'number' && !isNaN(row.min_tmin)) ||
-        (typeof row.mean_tmin === 'number' && !isNaN(row.mean_tmin)) ||
-        (typeof row.max_tmin === 'number' && !isNaN(row.max_tmin)) ||
-        (typeof row.min_tmax === 'number' && !isNaN(row.min_tmax)) ||
-        (typeof row.mean_tmax === 'number' && !isNaN(row.mean_tmax)) ||
-        (typeof row.max_tmax === 'number' && !isNaN(row.max_tmax));
+        (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
+        (typeof row.Start === 'number' && !Number.isNaN(row.Start)) ||
+        (typeof row.End === 'number' && !Number.isNaN(row.End)) ||
+        (typeof row.Length === 'number' && !Number.isNaN(row.Length)) ||
+        (typeof row.Extreme_events === 'number' && !Number.isNaN(row.Extreme_events)) ||
+        (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
+        (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
+        (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
+        (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
+        (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
+        (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
 
       if (hasMetric) {
         validYears.add(row.Year);
@@ -329,16 +378,16 @@ export function calculateStationCapabilities(params: {
 
     // Check monthly data valid rows
     for (const row of monthlyData) {
-      const yr = parseInt(row.month.slice(0, 4), 10);
-      if (!isNaN(yr)) {
+      const yr = Number.parseInt(row.month.slice(0, 4), 10);
+      if (!Number.isNaN(yr)) {
         const hasMetric =
-          (typeof row.Rainfall === 'number' && !isNaN(row.Rainfall)) ||
-          (typeof row.min_tmin === 'number' && !isNaN(row.min_tmin)) ||
-          (typeof row.mean_tmin === 'number' && !isNaN(row.mean_tmin)) ||
-          (typeof row.max_tmin === 'number' && !isNaN(row.max_tmin)) ||
-          (typeof row.min_tmax === 'number' && !isNaN(row.min_tmax)) ||
-          (typeof row.mean_tmax === 'number' && !isNaN(row.mean_tmax)) ||
-          (typeof row.max_tmax === 'number' && !isNaN(row.max_tmax));
+          (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
+          (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
+          (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
+          (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
+          (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
+          (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
+          (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
         if (hasMetric) {
           validYears.add(yr);
         }
@@ -400,8 +449,8 @@ export function auditMonthlyChanges(params: {
     // 1. Check for physical sanity violations on incoming data
     // Date format validation
     const monthParts = month.split('-');
-    const mm = parseInt(monthParts[1], 10);
-    if (isNaN(mm) || mm < 1 || mm > 12) {
+    const mm = Number.parseInt(monthParts[1], 10);
+    if (Number.isNaN(mm) || mm < 1 || mm > 12) {
       sanityViolations.push({
         stationId,
         month,

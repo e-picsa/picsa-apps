@@ -90,7 +90,7 @@ export function writeCountryCapabilities(country: string, caps: Record<string, I
 
   // Sort station keys alphabetically for deterministic output
   const sortedCaps: Record<string, IStationCapabilities> = {};
-  for (const key of Object.keys(caps).sort()) {
+  for (const key of Object.keys(caps).sort((a, b) => a.localeCompare(b))) {
     sortedCaps[key] = caps[key];
   }
 
@@ -300,9 +300,23 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   const updatedCaps: Record<string, IStationCapabilities> = { ...existingCaps };
 
   for (const [stationId, records] of stationGroups.entries()) {
-    console.log(`\nProcessing Station: ${stationId}...`);
-
-    const newMonthlyData = pivotLongToWideMonthly(records);
+    const newMonthlyData = pivotLongToWideMonthly(records, {
+      onDuplicate: (dup) => {
+        if (dup.isConflict) {
+          auditReport.sanityViolations.push({
+            stationId,
+            month: dup.month,
+            rule: 'DUPLICATE_OBSERVATION_CONFLICT',
+            message: `Conflicting duplicate observation for '${dup.element}' in month ${dup.month}: earlier value was ${dup.existingValue}, incoming value is ${dup.incomingValue} (overwritten with incoming)`,
+            values: {
+              element: dup.element,
+              earlierValue: dup.existingValue,
+              incomingValue: dup.incomingValue,
+            },
+          });
+        }
+      },
+    });
 
     const monthlyCsvPath = path.join(countryDir, `${stationId}.monthly.csv`);
     const annualCsvPath = path.join(countryDir, `${stationId}.csv`);
