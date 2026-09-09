@@ -1,0 +1,56 @@
+# Weekly automated check to keep PR-Agent and AI models up-to-date
+
+name: Check PR-Agent & Model Updates
+
+on:
+  schedule:
+    # Run every Monday at 08:00 UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      prefer_family:
+        description: 'Preferred low-cost model family (luna, minimax, or leave blank)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check_updates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+
+      - name: Check for PR-Agent & Model Updates
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          PREFER_FLAG=""
+          if [ -n "${{ github.event.inputs.prefer_family }}" ]; then
+            PREFER_FLAG="--prefer-family=${{ github.event.inputs.prefer_family }}"
+          fi
+          node tools/workflows/check-pr-agent-updates.mjs --output-github $PREFER_FLAG
+
+      - name: Create Pull Request
+        if: steps.check.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/update-pr-agent-models
+          title: ${{ steps.check.outputs.pr_title }}
+          body: ${{ steps.check.outputs.pr_body }}
+          commit-message: ${{ steps.check.outputs.pr_title }}
+          labels: |
+            dependencies
+            maintenance
+          delete-branch: true

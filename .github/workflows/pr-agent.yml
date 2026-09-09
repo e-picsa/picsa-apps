@@ -28,12 +28,12 @@ jobs:
     steps:
       # Optional: Only needed if you rely on root repository context files (e.g. AGENTS.md, .pr_agent.toml)
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Adds 👀 reaction to acknowledge slash command comment immediately
       - name: Acknowledge Slash Command
         if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/')
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             try {
