@@ -246,8 +246,8 @@ export interface IStationAuditSummary {
   totalMissingYears?: number;
   annual?: IChartId[];
   monthly?: IChartId[];
-  hasRainfall: boolean;
-  hasTemperature: boolean;
+  hasRainfall?: boolean;
+  hasTemperature?: boolean;
   hash?: string;
 }
 
