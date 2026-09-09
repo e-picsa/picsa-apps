@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IStationData } from '@picsa/models/src';
+import { IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 import { allSettledInBatches } from '@picsa/utils';

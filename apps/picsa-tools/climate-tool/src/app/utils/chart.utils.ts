@@ -1,5 +1,5 @@
 import { MONTH_DATA } from '@picsa/data';
-import { IChartConfig, IChartMeta, IStationData } from '@picsa/models/src';
+import { IChartConfig, IChartMeta, IStationData } from '@picsa/models';
 
 // expose global variable to allow override by translated month names
 // (used in both axis labels and tooltip)

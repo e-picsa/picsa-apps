@@ -11,7 +11,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import type { IChartConfig } from '@picsa/models/src/climate.models';
+import type { IChartConfig } from '@picsa/models';
 import * as c3 from 'c3';
 
 // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
