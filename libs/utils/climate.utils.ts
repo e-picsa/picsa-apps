@@ -19,7 +19,8 @@ export function roundClimateValue(val: number | null | undefined): number | null
   if (val === null || val === undefined || isNaN(val)) {
     return null;
   }
-  return Math.round(val * 10) / 10;
+  const rounded = Math.round(val * 10) / 10;
+  return rounded === 0 ? 0 : rounded;
 }
 
 /**

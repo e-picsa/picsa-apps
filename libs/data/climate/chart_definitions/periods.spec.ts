@@ -1,11 +1,11 @@
+import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
 import {
   CLIMATE_CHART_DEFINITIONS,
   COUNTRY_THREE_MONTH_PERIODS,
   DEFAULT_THREE_MONTH_PERIODS,
   formatThreeMonthPeriodLabel,
   getChartDefinitionText,
-} from '@picsa/data/climate/chart_definitions';
-import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
+} from './index';
 
 describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
   describe('Country 3-Month Periods', () => {
