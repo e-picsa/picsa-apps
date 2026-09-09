@@ -177,14 +177,16 @@ export function formatMonthlyCsv(data: IMonthlyStationData[], includeTemperature
     return csv;
   }
 
-  let csv = 'month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax\n';
+  let csv = 'month,Rainfall,min_tmin,mean_tmin,max_tmin,min_tmax,mean_tmax,max_tmax\n';
   for (const row of data) {
     const rain = row.Rainfall !== undefined && row.Rainfall !== null ? row.Rainfall : '';
     const minTmin = row.min_tmin !== undefined && row.min_tmin !== null ? row.min_tmin : '';
     const meanTmin = row.mean_tmin !== undefined && row.mean_tmin !== null ? row.mean_tmin : '';
+    const maxTmin = row.max_tmin !== undefined && row.max_tmin !== null ? row.max_tmin : '';
+    const minTmax = row.min_tmax !== undefined && row.min_tmax !== null ? row.min_tmax : '';
     const meanTmax = row.mean_tmax !== undefined && row.mean_tmax !== null ? row.mean_tmax : '';
     const maxTmax = row.max_tmax !== undefined && row.max_tmax !== null ? row.max_tmax : '';
-    csv += `${row.month},${rain},${minTmin},${meanTmin},${meanTmax},${maxTmax}\n`;
+    csv += `${row.month},${rain},${minTmin},${meanTmin},${maxTmin},${minTmax},${meanTmax},${maxTmax}\n`;
   }
   return csv;
 }

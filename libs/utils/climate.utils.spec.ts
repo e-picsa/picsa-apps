@@ -199,13 +199,15 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(parsed[1].Rainfall).toBeNull();
     });
 
-    it('should format stations with temperature with full 6 columns and empty cells for nulls', () => {
+    it('should format stations with temperature with full 8 columns and empty cells for nulls', () => {
       const data: IMonthlyStationData[] = [
         {
           month: '1970-01',
           Rainfall: 150.2,
           min_tmin: 15.1,
           mean_tmin: 18.0,
+          max_tmin: 20.5,
+          min_tmax: 22.0,
           mean_tmax: 27.5,
           max_tmax: 31.0,
         },
@@ -214,29 +216,37 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
           Rainfall: null,
           min_tmin: null,
           mean_tmin: 17.5,
+          max_tmin: null,
+          min_tmax: null,
           mean_tmax: null,
           max_tmax: null,
         },
       ];
 
       const csv = formatMonthlyCsv(data);
-      expect(csv).toContain('month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax\n');
-      expect(csv).toContain('1970-01,150.2,15.1,18,27.5,31\n');
-      expect(csv).toContain('1970-02,,,17.5,,\n');
+      expect(csv).toContain('month,Rainfall,min_tmin,mean_tmin,max_tmin,min_tmax,mean_tmax,max_tmax\n');
+      expect(csv).toContain('1970-01,150.2,15.1,18,20.5,22,27.5,31\n');
+      expect(csv).toContain('1970-02,,,17.5,,,,\n');
 
       const parsed = parseMonthlyCsv(csv);
       expect(parsed.length).toBe(2);
       expect(parsed[0].Rainfall).toBe(150.2);
+      expect(parsed[0].max_tmin).toBe(20.5);
+      expect(parsed[0].min_tmax).toBe(22);
       expect(parsed[0].max_tmax).toBe(31);
       expect(parsed[1].mean_tmin).toBe(17.5);
       expect(parsed[1].Rainfall).toBeNull();
       expect(parsed[1].min_tmin).toBeNull();
+      expect(parsed[1].max_tmin).toBeNull();
+      expect(parsed[1].min_tmax).toBeNull();
     });
 
     it('should handle explicit includeTemperature parameter', () => {
       const data: IMonthlyStationData[] = [{ month: '1970-01', Rainfall: 100 }];
       const csvWithTemp = formatMonthlyCsv(data, true);
-      expect(csvWithTemp.startsWith('month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax')).toBe(true);
+      expect(csvWithTemp.startsWith('month,Rainfall,min_tmin,mean_tmin,max_tmin,min_tmax,mean_tmax,max_tmax')).toBe(
+        true,
+      );
 
       const csvWithoutTemp = formatMonthlyCsv(data, false);
       expect(csvWithoutTemp.startsWith('month,Rainfall\n')).toBe(true);
