@@ -1,0 +1,16 @@
+{
+  "name": "utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/utils",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/utils"],
+      "options": {
+        "jestConfig": "libs/utils/jest.config.ts"
+      }
+    }
+  }
+}

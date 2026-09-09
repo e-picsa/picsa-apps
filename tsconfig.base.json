@@ -46,7 +46,9 @@
       "@picsa/server-types": ["apps/picsa-server/supabase/types/index.ts"],
       "@picsa/server-utils": ["apps/picsa-server/supabase/utils/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"],
-      "@picsa/theme": ["libs/theme/src/index.ts"]
+      "@picsa/theme": ["libs/theme/src/index.ts"],
+      "@picsa/utils": ["libs/utils/index.ts"],
+      "@picsa/utils/*": ["libs/utils/*"]
     }
   },
   // Default (strict) angular compiler options

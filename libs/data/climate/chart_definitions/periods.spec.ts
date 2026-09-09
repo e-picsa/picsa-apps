@@ -1,11 +1,11 @@
+import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
 import {
   CLIMATE_CHART_DEFINITIONS,
   COUNTRY_THREE_MONTH_PERIODS,
   DEFAULT_THREE_MONTH_PERIODS,
   formatThreeMonthPeriodLabel,
   getChartDefinitionText,
-} from '@picsa/data/climate/chart_definitions';
-import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
+} from './index';
 
 describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
   describe('Country 3-Month Periods', () => {
@@ -111,10 +111,7 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
         contentHash: 'abc123hash',
         years: [1944, 2024],
         annual: ['rainfall', 'temp_min', 'temp_max'],
-        monthly: {
-          hasRainfall: true,
-          hasTemperature: true,
-        },
+        monthly: ['rainfall', 'temp_min', 'temp_max'],
       };
 
       const station: Partial<IStationMeta> = {
@@ -125,7 +122,7 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
       expect(station.capabilities?.contentHash).toBe('abc123hash');
       expect(station.capabilities?.years).toEqual([1944, 2024]);
       expect(station.capabilities?.annual).toContain('rainfall');
-      expect(station.capabilities?.monthly?.hasRainfall).toBe(true);
+      expect(station.capabilities?.monthly).toContain('rainfall');
     });
   });
 });
