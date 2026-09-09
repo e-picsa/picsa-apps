@@ -73,7 +73,7 @@ export interface IMonthlyStationData {
  * Enables synchronous chart filtering and UI badge generation without parsing data files.
  */
 export interface IStationCapabilities {
-  /** ISO timestamp of when this station's data was generated or synced */
+  /** Date string (YYYY-MM-DD) when this station's data was last tracked as updated in git */
   lastUpdated?: string;
   /** Deterministic content hash (e.g. SHA-256) of station data for cache invalidation */
   contentHash?: string;

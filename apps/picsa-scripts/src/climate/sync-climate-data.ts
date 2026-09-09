@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -115,6 +116,32 @@ export function computeSha256(content: string): string {
 }
 
 /**
+ * Query Git for the date (YYYY-MM-DD) when a station's data files were last committed.
+ * Checks both annual and monthly CSV paths (if present) and returns the latest commit date.
+ * Falls back to current date (YYYY-MM-DD) if uncommitted, untracked, or if git command fails.
+ */
+export function getStationGitLastUpdatedDate(filePaths: string[]): string {
+  const existingPaths = filePaths.filter((p) => fs.existsSync(p));
+  if (existingPaths.length === 0) {
+    return new Date().toISOString().slice(0, 10);
+  }
+  try {
+    const quotedPaths = existingPaths.map((p) => `"${p}"`).join(' ');
+    const stdout = execSync(`git log -1 --format="%as" -- ${quotedPaths}`, {
+      cwd: ROOT_DIR,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
+    if (stdout && /^\d{4}-\d{2}-\d{2}$/.test(stdout)) {
+      return stdout;
+    }
+  } catch {
+    // Ignore git error and fall back
+  }
+  return new Date().toISOString().slice(0, 10);
+}
+
+/**
  * Retroactively compute capabilities for all existing station CSV files in a country.
  */
 export function computeExistingCapabilitiesForCountry(
@@ -158,7 +185,9 @@ export function computeExistingCapabilitiesForCountry(
     const prevCap = existingCaps[stationId];
     const isUnchanged = prevCap?.contentHash === contentHash;
     const stationLastUpdated =
-      isUnchanged && prevCap?.lastUpdated ? prevCap.lastUpdated : options.auditReport.timestamp;
+      isUnchanged && prevCap?.lastUpdated && /^\d{4}-\d{2}-\d{2}$/.test(prevCap.lastUpdated)
+        ? prevCap.lastUpdated
+        : getStationGitLastUpdatedDate([annualCsvPath, monthlyCsvPath]);
 
     const capabilities = calculateStationCapabilities({
       annualData,
@@ -196,8 +225,9 @@ export function computeExistingCapabilitiesForCountry(
 }
 
 export async function runSync(options: CliArgs = {}): Promise<IClimateAuditReport> {
+  const today = new Date().toISOString().slice(0, 10);
   const auditReport: IClimateAuditReport = {
-    timestamp: new Date().toISOString(),
+    timestamp: today,
     totalStationsProcessed: 0,
     stationsSummary: [],
     historicalRevisions: [],
@@ -315,7 +345,10 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     const prevCap = existingCaps[stationId];
     const isUnchanged =
       prevCap?.contentHash === contentHash && previousMonthlyCsvContent.trim() === newMonthlyCsvContent.trim();
-    const stationLastUpdated = isUnchanged && prevCap?.lastUpdated ? prevCap.lastUpdated : auditReport.timestamp;
+    const stationLastUpdated =
+      isUnchanged && prevCap?.lastUpdated && /^\d{4}-\d{2}-\d{2}$/.test(prevCap.lastUpdated)
+        ? prevCap.lastUpdated
+        : today;
 
     // Calculate station capabilities
     const capabilities = calculateStationCapabilities({

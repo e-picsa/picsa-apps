@@ -351,7 +351,7 @@ export function calculateStationCapabilities(params: {
 
   return {
     schemaVersion,
-    lastUpdated: lastUpdated || new Date().toISOString(),
+    lastUpdated: lastUpdated || new Date().toISOString().slice(0, 10),
     contentHash,
     years: firstYear !== undefined && lastYear !== undefined ? [firstYear, lastYear] : undefined,
     totalMissingYears,

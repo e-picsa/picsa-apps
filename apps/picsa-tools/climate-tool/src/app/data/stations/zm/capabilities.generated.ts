@@ -8,7 +8,7 @@ import type { IStationCapabilities } from '@picsa/models';
 export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   chinsali_ftc: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '2585f05e119e4e6b2081624f09da7dc4fa9bc7d52499a61a706aadb5e216d49c',
     years: [2014, 2025],
     totalMissingYears: 0,
@@ -16,7 +16,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   chipata_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:52:09.430Z',
+    lastUpdated: '2025-08-03',
     contentHash: '719e9488a56917aa1072a6c957f8894c2161608803290782eaa11eae8c04256d',
     years: [1944, 2025],
     totalMissingYears: 1,
@@ -24,7 +24,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   chipepo_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '3aefac8e66c4aaed1918750813d374da2ad570c3c3b2077fe5c0d5f14f3b5946',
     years: [1993, 2025],
     totalMissingYears: 0,
@@ -32,7 +32,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   choma_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:52:09.430Z',
+    lastUpdated: '2025-08-05',
     contentHash: '62705af338e2e111ee60c8f325bd0051202221ff77cac1106531caf0e19a81d9',
     years: [1949, 2025],
     totalMissingYears: 0,
@@ -40,7 +40,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   isoka_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '2a28bed8ad7d949b1b7ec3065a955933624c309ccdafdd2d04548320594814a3',
     years: [1977, 2025],
     totalMissingYears: 0,
@@ -48,7 +48,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kabompo_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'a981b4efaa7c91da36f6a2fae19359995af65c05cb781bf3beecdccfd40ce29a',
     years: [1949, 2025],
     totalMissingYears: 18,
@@ -56,7 +56,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kabwe_agro: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '30878616a27826614ccddd2f83adf91fc51b3b8727c9f283149266fb817220cb',
     years: [1976, 2025],
     totalMissingYears: 11,
@@ -64,7 +64,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kabwe_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-03',
     contentHash: 'a97686c5e2d3ecda9ab1a0dbf54676bfe59888be434034f5c478f484dfcca2dd',
     years: [1949, 2025],
     totalMissingYears: 0,
@@ -72,7 +72,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kafironda_agromet: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '53ac498e3c9d7148353cf1138e9b2a5c671aac551a80c6a68ff9e01a5a7976cf',
     years: [1966, 2025],
     totalMissingYears: 0,
@@ -80,7 +80,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kafue_polder: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-08',
     contentHash: '66668a8d943476393b3607636545d5f64a8f595a91bd6a41f86e536090259172',
     years: [1956, 2025],
     totalMissingYears: 5,
@@ -88,7 +88,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kalabo_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'd803df63133ab52f5aee623c12786ec7cd5eeeca420d157165c6669fc0e2ebe6',
     years: [1987, 2024],
     totalMissingYears: 2,
@@ -96,7 +96,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kaoma_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'dc98004a82ecd695a4960ce8d82067d589ac33209775c4a3dd4b1fbc13d68eee',
     years: [1960, 2025],
     totalMissingYears: 1,
@@ -104,7 +104,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kasama_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-08',
     contentHash: 'd4a813d50a199134270256a57a3e88c338b11de1e9b7a4cfe7f47cee32a807a5',
     years: [1933, 2025],
     totalMissingYears: 1,
@@ -112,7 +112,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kasempa_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-03',
     contentHash: 'da19a26da677661555cffad7950b93a1af5f801fbe9102722ada3b72d7f22cd7',
     years: [1937, 2025],
     totalMissingYears: 19,
@@ -120,7 +120,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kawambwa_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-08',
     contentHash: 'f517f6c7346de7a8d38aaf1667786091fd964ed8c1337f19fc9d22296b3d0177',
     years: [1956, 2025],
     totalMissingYears: 0,
@@ -128,7 +128,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   livingstone_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-08',
     contentHash: '04834a8a7cae30fe4f6c76303d304e4586da94aff06474012de6283db2d33980',
     years: [1931, 2025],
     totalMissingYears: 8,
@@ -136,7 +136,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   lundazi_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-04',
     contentHash: '0b44d92c98c0c9b0f9c4b1ab4dfcb386b06431b19add02fe6d1a9265c0bc50b0',
     years: [1955, 2025],
     totalMissingYears: 2,
@@ -144,7 +144,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   lusaka_city_airpor: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-03',
     contentHash: '568e400d358bf5c3e331ed71cd98bc96f79f72e3dc550ef9f2a78a2be973ae44',
     years: [1949, 2025],
     totalMissingYears: 7,
@@ -152,7 +152,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   lusaka_int__airpor: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '429ccc1edb793582542976515e2aa37a91b48ae0118d6a66b10555a65577687f',
     years: [1966, 2025],
     totalMissingYears: 0,
@@ -160,7 +160,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   magoye_agromet: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '4dba04523e9fd76c8b6321e7633f764a3cdbc8195d88da986772d9eb9cb5687f',
     years: [1977, 2025],
     totalMissingYears: 1,
@@ -168,7 +168,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mansa_agro: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '74e43add02f64dafda564a49bc8ded5bcdfe0edf3f67f05d632391fa8c31da88',
     years: [1991, 2025],
     totalMissingYears: 8,
@@ -176,7 +176,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mansa_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '75c59618848af42e4f2caa2cfdaa8dd0a026c4443d9412d970cf79a42686e909',
     years: [1959, 2025],
     totalMissingYears: 1,
@@ -184,7 +184,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mbala_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '139ede696eba29c09fadb72e2e0d2b7ee46b8595fc23ac6e48a05750fc7ef010',
     years: [1952, 2024],
     totalMissingYears: 4,
@@ -192,7 +192,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mfuwe_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-04',
     contentHash: 'e897c3c59cd997d93226221b3a80735b98aff0789e391b05329a713d8ec48f51',
     years: [1979, 2025],
     totalMissingYears: 1,
@@ -200,7 +200,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   misamfu_agromet: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'b2d7dd01dc8b7b6d9dc1a7342df2ee092643c212250b079d87d9da15ca6efbc3',
     years: [1973, 2025],
     totalMissingYears: 0,
@@ -208,7 +208,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mkushi_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '8b98fbd6c801a981e371b3df19d930cf56a22f13794eec5f27725a4d02adb64c',
     years: [1992, 2025],
     totalMissingYears: 11,
@@ -216,7 +216,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mongu_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '44a7ed0068cb7d94a31cf302cf477d9f63403329ec9b15c56f41a0537aec5ee0',
     years: [1934, 2023],
     totalMissingYears: 9,
@@ -224,7 +224,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mpika_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-03',
     contentHash: '74da638058e8ea6fb6a736fffa9e83d7a8a2c9736f75aea777f912a7d0521b83',
     years: [1929, 2025],
     totalMissingYears: 2,
@@ -232,7 +232,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mpulungu_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'de86369e07898f0955489efe7c3c5f2f1c75e76868097270330deeed67b35b73',
     years: [2017, 2024],
     totalMissingYears: 1,
@@ -240,7 +240,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   msekera_agromet: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-04',
     contentHash: '5bd16bb30120a1a400914c1d4c7c3cea57ac4d1fc6ca10c4be07dfe882bb202c',
     years: [1981, 2025],
     totalMissingYears: 3,
@@ -248,7 +248,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mt__makulu_agrome: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '1a26a01eb6bb6647cba070f27d2cf6c56ae443486b90afac7bc77e888825f7c8',
     years: [1960, 2025],
     totalMissingYears: 2,
@@ -256,7 +256,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mumbwa_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-06-26',
     contentHash: '3ccff08436a9d6eef590e010de9a1e59aac1f8321767f948b42392a30b86302c',
     years: [1977, 2023],
     totalMissingYears: 7,
@@ -264,7 +264,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   mwinilunga_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'e4d15831ff10e2c41965007f48720ec5c9174bab98060f38b3f11b2dcad108f0',
     years: [1949, 2022],
     totalMissingYears: 5,
@@ -272,7 +272,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   ndola_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-08',
     contentHash: '536e71f811866e16fb815efdfa3e80e05548a412921897199239cb8096a4dbd3',
     years: [1941, 2025],
     totalMissingYears: 4,
@@ -280,7 +280,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   petauke_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '28e59cbdf242d31e9fa830ab118c5a891651ee606ebea8f5c807976290e397ec',
     years: [1949, 2025],
     totalMissingYears: 1,
@@ -288,7 +288,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   samfya_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'dac1d656bb36bf044e7503a1e33168be6e18decbe9c7e61ecb7cbccd5052125e',
     years: [1957, 2022],
     totalMissingYears: 29,
@@ -296,7 +296,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   senanga_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'f2af9eeacf01477a3d8a85907a21fc165b327f1345beeabae1eea44307378ec2',
     years: [1979, 2025],
     totalMissingYears: 9,
@@ -304,7 +304,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   serenje_agro_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '65705d3dcbb2f7e158b0fe3bee80f9038d1f027eb2f483e0f2b2076bdfd862ff',
     years: [1956, 2025],
     totalMissingYears: 0,
@@ -312,7 +312,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   sesheke_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'c18b3d70ad0c56cbae29ca93b63ebd9f9c1f67596e8ce7f08d8af18ea4ffd059',
     years: [1949, 2025],
     totalMissingYears: 11,
@@ -320,7 +320,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   simon_mwansa_kapwepwe: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: 'b90feefc2af355b3d619a28d4b3130a6c2ba197ba6d591b2ed9d8a241a6ce426',
     years: [2022, 2025],
     totalMissingYears: 0,
@@ -328,7 +328,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   solwezi_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '537f6b8300c068fcd679cc2435885c304a2332f0b19eff914c357c6b4137d490',
     years: [1960, 2025],
     totalMissingYears: 0,
@@ -336,7 +336,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   zambezi_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-09-09T19:35:12.201Z',
+    lastUpdated: '2025-08-05',
     contentHash: '35f024145ecd1e3148e07421bfcb90707acc8d2315f8a2a82d932bd9bd9204fa',
     years: [1953, 2024],
     totalMissingYears: 0,
