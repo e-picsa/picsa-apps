@@ -1,4 +1,4 @@
-import * as c3 from 'c3';
+import type * as c3 from 'c3';
 
 export interface ICropRequirement {
   crop: string;
@@ -203,4 +203,60 @@ export interface IProbabilityToolOptions {
   };
   /** reverse probabilities to show 'below' values first */
   reverse?: boolean;
+}
+
+/*************************************************************************
+ *                     Sync, Ingestion & Audit Models
+ ************************************************************************/
+
+/** Incoming long-format climate observation record from upstream data system */
+export interface IIncomingClimateRecord {
+  station_id: string;
+  /** Time value formatted as 'YYYY-MM' or date string */
+  time_value: string;
+  /** Numeric observation value or null */
+  summary_value: number | null | undefined;
+  /** Element key: 'rainfall', 'mean_tmin', 'mean_tmax', 'min_tmin', 'max_tmax', etc. */
+  summary_element: string;
+}
+
+/** Record of a change detected in previously published historical data */
+export interface IHistoricalRevision {
+  stationId: string;
+  month: string;
+  metric: string;
+  oldValue: number | null;
+  newValue: number | null;
+  diff: number;
+}
+
+/** Record of physical consistency check failure */
+export interface ISanityViolation {
+  stationId: string;
+  month: string;
+  rule: string;
+  message: string;
+  values: Record<string, unknown>;
+}
+
+/** Summary of automated change detection and data health inspection */
+export interface IClimateAuditReport {
+  timestamp: string;
+  totalStationsProcessed: number;
+  stationsSummary: Array<{
+    id: string;
+    status: 'NEW' | 'UPDATED' | 'UNCHANGED';
+    years?: [number, number];
+    hasRainfall: boolean;
+    hasTemperature: boolean;
+    hash?: string;
+  }>;
+  historicalRevisions: IHistoricalRevision[];
+  missingnessRegressions: Array<{
+    stationId: string;
+    month: string;
+    metric: string;
+    previousValue: number;
+  }>;
+  sanityViolations: ISanityViolation[];
 }

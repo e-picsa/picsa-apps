@@ -39,7 +39,7 @@
       "@picsa/i18n/*": ["libs/i18n/src/*"],
       "@picsa/manual/*": ["apps/picsa-tools/manual-tool/*"],
       "@picsa/migrations": ["libs/migrations/index.ts"],
-      "@picsa/models": ["libs/models/src/index.ts"],
+      "@picsa/models": ["libs/models/index.ts"],
       "@picsa/option/*": ["apps/picsa-tools/option-tool/*"],
       "@picsa/resources/*": ["apps/picsa-tools/resources-tool/src/app/*"],
       "@picsa/seasonal-calendar/*": ["apps/picsa-tools/seasonal-calendar-tool/*"],
