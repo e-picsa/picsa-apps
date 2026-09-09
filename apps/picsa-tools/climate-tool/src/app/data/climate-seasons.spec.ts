@@ -111,10 +111,7 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
         contentHash: 'abc123hash',
         years: [1944, 2024],
         annual: ['rainfall', 'temp_min', 'temp_max'],
-        monthly: {
-          hasRainfall: true,
-          hasTemperature: true,
-        },
+        monthly: ['rainfall', 'temp_min', 'temp_max'],
       };
 
       const station: Partial<IStationMeta> = {
@@ -125,7 +122,7 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
       expect(station.capabilities?.contentHash).toBe('abc123hash');
       expect(station.capabilities?.years).toEqual([1944, 2024]);
       expect(station.capabilities?.annual).toContain('rainfall');
-      expect(station.capabilities?.monthly?.hasRainfall).toBe(true);
+      expect(station.capabilities?.monthly).toContain('rainfall');
     });
   });
 });

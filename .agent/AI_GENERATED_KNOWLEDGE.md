@@ -286,3 +286,24 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 2. **Dependency Isolation in `libs/utils`**:
    - Deno edge functions and standalone Node scripts fail if `@picsa/utils` re-exports heavy root dependencies (e.g. Angular router/core, rxdb, xlsx, xml).
    - Keep platform-agnostic, dependency-free utilities (`climate.utils.ts`, `object.utils.ts`, `async.utils.ts`) isolated so they rely only on native JavaScript/Web APIs (`Math`, `Array`, `Map`, `crypto.subtle`) and can be safely imported anywhere.
+
+### Climate Data Sync CLI, Deterministic CSV Transformations & Audit Pipeline
+
+**Date**: 2026-09-09
+**Context**: Implementing Issue #14 Phase 1 (Issue #688): building the pure transformation utilities, station capabilities indexing with SHA-256 hashing, and automated change auditing pipeline.
+**Learning**:
+
+1. **Deterministic CSV Formatting & Column Omission**:
+   - For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,Tmin,Tmean,Tmax,TmeanMin,TmeanMax`) cuts file size by >60% (~150 bytes vs ~420 bytes per year-set).
+   - Floats should always be rounded to 1 decimal place (`Math.round(val * 10) / 10`) during ingest/transformation to eliminate sensor noise and float representation drift across different database drivers.
+2. **Idempotent CLI Runner with SHA-256 Hashing**:
+   - The CLI runner (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) computes SHA-256 hashes of canonical station data. If the incoming hash matches `STATION_CAPABILITIES[stationId].contentHash` and the CSV content is identical, the existing `lastUpdated` timestamp is strictly preserved.
+   - This ensures re-running the sync pipeline generates **zero git diffs**, preventing spurious PRs and unnecessary mobile cache invalidations.
+3. **TSX tsconfig-paths Resolution in Monorepos**:
+   - When executing standalone TypeScript scripts using `node ./node_modules/tsx/dist/cli.mjs` from the repository root, pass `--tsconfig tsconfig.base.json` so that path aliases defined in the base configuration (`@picsa/models`, `@picsa/utils`) resolve correctly at runtime.
+4. **Per-Country Station Capabilities & Retroactive Baselines**:
+   - Grouping stations by country (`data/stations/<country>/`) with separate `metadata.ts` (human-curated names/coordinates) and `capabilities.generated.ts` (machine-generated hashes, chart availability, missing year counts) isolates country-level PRs and prevents large monolithic merge conflicts.
+   - Modeling `monthly?: IChartId[]` as a string array symmetrically matches `annual?: IChartId[]`, simplifying UI availability checks (`station.capabilities?.[timespan]?.includes(chartId)`).
+   - In legacy meteorological data files (e.g. Zimbabwe Climsoft exports), `0` placeholders in season columns (`Start=0, End=0, Length=0, Rainfall=0`) must be normalized to `null` to accurately count missing years in $[Y_{\min}, Y_{\max}]$.
+
+
