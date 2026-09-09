@@ -34,6 +34,10 @@ num_code_suggestions = 3
 extra_instructions = """
 Focus strictly on material issues: logic errors, race conditions, edge cases, missing error boundaries, and security vulnerabilities.
 Ignore minor style formatting, variable naming preferences, and cosmetic refactoring.
+
+When a linked issue is present:
+- Cross-check the diff against the issue's requirements and reproduction steps, explicitly noting if any requirement or edge case was missed or only partially addressed.
+- Assess whether the fix properly addresses the underlying root cause described in the issue without introducing regressions to related workflows.
 """
 
 # 3. Controls /improve tool
