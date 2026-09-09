@@ -1,4 +1,90 @@
-` database triggers to invoke background tasks asynchronously.
+# AI Generated Knowledge
+
+This file is a shared knowledge base for AI agents operating on this codebase.
+
+## Instructions for Agents
+
+1.  **Read this file** at the start of your session to learn from previous agent experiences.
+2.  **Append to this file** if you discover:
+    - Specific "gotchas" or tricky implementation details.
+    - Workarounds for recurring issues.
+    - Patterns that work well for this specific architecture.
+3.  **Format**: Use the following format for entries:
+
+```markdown
+### [Topic/Issue Name]
+
+**Date**: YYYY-MM-DD
+**Context**: [Brief context of the task]
+**Learning**: [What you learned or the solution you found]
+```
+
+---
+
+## Knowledge Base
+
+### Local Development Credentials
+
+**Date**: 2026-02-20
+**Context**: Logging into the local server during automated tests.
+**Learning**: Use `admin@picsa.app` with password `admin@picsa.app` for admin testing and `user@picsa.app` with password `user@picsa.app` for non-admin testing.
+
+### Verification Entry
+
+**Date**: 2026-02-06
+**Context**: Verifying the new AI self-documentation workflow.
+**Learning**: Agents can successfully append to this file to share knowledge.
+
+### Supabase User Role Management Implementation
+
+**Date**: 2026-02-08
+**Context**: Implementing user role management UI and Backend functions in `user-permissions.component.ts`.
+**Learning**:
+
+1. **Database**: Roles are stored in `user_roles` table (deployment_id, user_id, roles[]).
+2. **Auth Hook**: `custom_access_token_hook` injects these roles into JWT `picsa_roles` claim.
+3. **Backend Logic**:
+   - `add-user.ts` and `update-user-roles.ts` (new) handle role changes.
+   - Validation ensures users cannot assign roles they do not possess.
+   - `_shared/auth.ts` was updated to treat `deployments.admin` as a super-admin for the deployment, bypassing specific role checks.
+4. **Frontend**:
+   - `DashboardAuthService` computes available roles and handles implicit role inheritance using `@picsa/shared/utils/role.utils`.
+   - `user-permissions.component.ts` uses `availableRoles` from `DashboardAuthService`.
+   - `APP_ROLES` is now derived from the shared utility's exhaustive `APP_ROLES_MAP`.
+   - `assignImplicitRoles` in both frontend and backend now uses the robust shared implementation that expands Global Admin/Author roles to all feature roles.
+
+### Role-Based Route Protection
+
+**Date**: 2026-02-10
+**Context**: Implement route guards for the dashboard `climate -> admin` page.
+**Learning**:
+
+1.  **Auth Logic Encapsulation**: `DashboardAuthService` now has a `hasRole(role: AppRole)` method for checking permissions. This replaces ad-hoc logic in directives.
+2.  **Route Guard**: `authRoleGuard` is a functional guard in `dashboard/src/app/modules/auth/guards` that uses `DashboardAuthService.hasRole`.
+3.  **Directives**: `AuthRoleRequiredDirective` also uses `DashboardAuthService.hasRole` for consistency.
+4.  **Navigation**: `navLinks.ts` defines role requirements for menu items, which are enforced by `authenticated-layout.component`.
+
+### Supabase Environment Detection & Local Email Fallback
+
+**Date**: 2026-02-19
+**Context**: Configuring email systems to send to Resend in production, but route to the Supabase local Inbucket (Mailpit) instance during development.
+**Learning**:
+
+1. **Detecting Local Env**: In Supabase Edge Functions, you can determine if you are running locally inside the Supabase Docker container by checking the `SUPABASE_URL` environment variable. Locally, it often resolves to the API gateway (e.g., `http://kong:8000`). Checking `Deno.env.get('SUPABASE_URL')?.includes('kong')` or the absence of production keys (`RESEND_API_KEY`) is a reliable heuristic.
+2. **Local Inbucket SMTP**: The local Supabase environment runs an email sink called Inbucket (formerly Mailpit). This service exposes an SMTP server on port `1025` internally inside the docker network (even though the web interface is mapped to 54324).
+3. **Usage via Edge Functions**: You can use `npm:nodemailer` in a Deno Edge function to route emails to `host: 'inbucket', port: 1025, ignoreTLS: true`. These emails will then appear in the local Supabase studio at `http://localhost:54324/`.
+
+### Edge Functions and Triggers Architecture
+
+**Date**: 2026-02-19
+**Context**: Implementing Access Requests and Email Notifications.
+**Learning**:
+
+1.  **Dashboard API**: UI interactions should not hit the database directly with complex constraints (like `insertion`) when they represent larger domain actions. Instead, use Edge Functions under `dashboard/{module}/{endpoint}` (e.g., `dashboard/deployments/request-access`).
+2.  **Modularity**: Third-party service integrations (like Resend for emails) must be modularized into `_shared/` directory (e.g., `_shared/email.ts`) rather than duplicated across multiple Edge Functions.
+3.  **Database Webhooks via Edge Functions**:
+4.  **Database Webhooks & Triggers**:
+    - Avoid sending emails or doing external API calls synchronously from the Dashboard API Edge Functions. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks asynchronously.
     - **Trigger Method Comparison**:
       - **`public.call_edge_function(name, body)` (Preferred for Supabase Edge Functions)**:
         - _Strengths_: Dynamically resolves `project_url` and `anon_key` from `private.get_secret(...)`. This means your SQL migrations won't break across local, staging, and production environments with hardcoded IP addresses. It allows for a totally custom JSON body.
@@ -112,6 +198,7 @@
 
 **Date**: 2026-08-13
 **Context**: Refactoring `ElNinoToolComponent` and `ClimateChartService` to use a declarative D3 SVG point overlay instead of C3 DOM node manipulation.
+
 ### SVG Serialization for PNG Export & C3 Style Collision
 
 **Date**: 2026-08-13
@@ -130,6 +217,7 @@
 
 1. **Signal Tracking in Delegate Functions**: When a central service (`ClimateChartService`) maintains an `effect()` that invokes a method on an active child component (`activeToolHandler().getPointStyle(d)`), Angular's signal reactive graph automatically tracks any signals accessed inside `getPointStyle` (such as `LineToolComponent.value()`). Updating the child signal (`this.value.set(...)`) automatically triggers the parent effect to re-run and re-sync the point overlay layer (`syncPointOverlay()`), eliminating the need for RxJS Subjects or manual event emitters.
 2. **Replacing `Subject<void>` for Render Events**: Replacing `_chartRendered = new Subject<void>()` with a `chartRenderCount = signal(0)` counter provides a pure Signal API. Synchronous or async tasks (such as PNG export generation) can await render completions via a simple promise-resolver helper queue without introducing RxJS subscription leaks.
+
 ### Declarative Chart Tool Configuration & Deepmerge Overrides
 
 **Date**: 2026-08-13

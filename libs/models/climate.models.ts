@@ -239,24 +239,30 @@ export interface ISanityViolation {
   values: Record<string, unknown>;
 }
 
+/** Summary of an individual station's data status and temporal range */
+export interface IStationAuditSummary {
+  id: string;
+  status: 'NEW' | 'UPDATED' | 'UNCHANGED';
+  years?: readonly [start: number, end: number] | [number, number];
+  hasRainfall: boolean;
+  hasTemperature: boolean;
+  hash?: string;
+}
+
+/** Record of a missingness regression where a previously valid observation became null */
+export interface IMissingnessRegression {
+  stationId: string;
+  month: string;
+  metric: string;
+  previousValue: number;
+}
+
 /** Summary of automated change detection and data health inspection */
 export interface IClimateAuditReport {
   timestamp: string;
   totalStationsProcessed: number;
-  stationsSummary: Array<{
-    id: string;
-    status: 'NEW' | 'UPDATED' | 'UNCHANGED';
-    years?: [number, number];
-    hasRainfall: boolean;
-    hasTemperature: boolean;
-    hash?: string;
-  }>;
+  stationsSummary: IStationAuditSummary[];
   historicalRevisions: IHistoricalRevision[];
-  missingnessRegressions: Array<{
-    stationId: string;
-    month: string;
-    metric: string;
-    previousValue: number;
-  }>;
+  missingnessRegressions: IMissingnessRegression[];
   sanityViolations: ISanityViolation[];
 }
