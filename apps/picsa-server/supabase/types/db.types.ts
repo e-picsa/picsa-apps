@@ -389,7 +389,6 @@ export type Database = {
           created_at: string;
           id: string;
           location_id: string;
-          override_data: Json;
           station_id: string | null;
           updated_at: string;
           water_requirements: Json;
@@ -399,7 +398,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           location_id: string;
-          override_data?: Json;
           station_id?: string | null;
           updated_at?: string;
           water_requirements?: Json;
@@ -409,7 +407,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           location_id?: string;
-          override_data?: Json;
           station_id?: string | null;
           updated_at?: string;
           water_requirements?: Json;
