@@ -100,13 +100,17 @@ gh pr view --json number,url,title,headRefName
 gh pr view --json comments --jq '.comments[] | {author: .author.login, body: .body}'
 
 # View inline line-level review comments
-gh api repos/:owner/:repo/pulls/$(gh pr view --json number -q .number)/comments \
+repo="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+pr_number="$(gh pr view --json number -q .number)"
+gh api "repos/${repo}/pulls/${pr_number}/comments" \
   --jq '.[] | {id: .id, path: .path, line: .line, author: .user.login, body: .body}'
 
 # Check status of SonarCloud / GitHub Actions checks
 gh pr checks
 
 # Reply directly to an inline review comment
-gh api repos/:owner/:repo/pulls/comments/<comment_id>/replies \
+repo="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+pr_number="$(gh pr view --json number -q .number)"
+gh api "repos/${repo}/pulls/${pr_number}/comments/<comment_id>/replies" \
   -f body="Declined: Per our Angular 21 conventions, we use signal inputs rather than @Input decorators."
 ```

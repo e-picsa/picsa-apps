@@ -30,7 +30,9 @@ gh pr view --json number,url,title,headRefName,baseRefName
 gh pr view --json comments --jq '.comments[] | {id: .id, author: .author.login, body: .body, createdAt: .createdAt}'
 
 # 3. Inspect inline review comments (PR-Agent suggestions, Sonar findings, human reviews)
-gh api repos/:owner/:repo/pulls/$(gh pr view --json number -q .number)/comments \
+repo="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+pr_number="$(gh pr view --json number -q .number)"
+gh api "repos/${repo}/pulls/${pr_number}/comments" \
   --jq '.[] | {id: .id, path: .path, line: .line, author: .user.login, body: .body}'
 
 # 4. Check CI and SonarQube status checks
@@ -41,7 +43,7 @@ gh pr checks
 
 ## Phase 2: Triage Matrix & Push-Back Criteria
 
-Evaluate each finding against project standards ([AGENTS.md](file:///Users/chrismclarke/.t3/worktrees/picsa-apps/t3code-1d0be915/AGENTS.md), [.pr_agent.toml](file:///Users/chrismclarke/.t3/worktrees/picsa-apps/t3code-1d0be915/.pr_agent.toml), and [sonar-project.properties](file:///Users/chrismclarke/.t3/worktrees/picsa-apps/t3code-1d0be915/sonar-project.properties)).
+Evaluate each finding against project standards (`AGENTS.md`, `.pr_agent.toml`, and `sonar-project.properties`).
 
 Categorize each finding into one of three buckets:
 
@@ -123,7 +125,10 @@ Before altering code, output a structured triage table to the user:
      ```
      Or respond to specific inline review comments:
      ```bash
-     gh api repos/:owner/:repo/pulls/comments/<comment_id>/replies -f body="Declined: In accordance with our Angular 21 guidelines, we use Signal inputs rather than @Input decorators."
+     repo="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+     pr_number="$(gh pr view --json number -q .number)"
+     gh api "repos/${repo}/pulls/${pr_number}/comments/<comment_id>/replies" \
+       -f body="Declined: In accordance with our Angular 21 guidelines, we use Signal inputs rather than @Input decorators."
      ```
 
 3. **Anti-Loop Safety Rule (CRITICAL)**:
