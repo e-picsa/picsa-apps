@@ -26,16 +26,45 @@ const prAgentConfigPath = path.join(rootDir, '.pr_agent.toml');
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
 const isGitHubOutput = args.includes('--output-github');
-const preferFamilyArg = args.find((a) => a.startsWith('--prefer-family='))?.split('=')[1];
+const preferFamilyArg =
+  args.find((a) => a.startsWith('--prefer-family='))?.split('=')[1] ||
+  process.env.PREFER_FAMILY ||
+  '';
+
+const ALLOWED_HOSTS = new Set(['api.github.com', 'openrouter.ai', 'raw.githubusercontent.com']);
+const ALLOWED_BASE_ACTIONS = new Set(['actions/checkout', 'actions/github-script']);
+
+/**
+ * Validates and sanitizes a URL against allowed hosts and HTTPS protocol
+ */
+function validateUrl(urlInput) {
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(urlInput);
+  } catch {
+    throw new Error(`Invalid URL: ${urlInput}`);
+  }
+
+  if (parsedUrl.protocol !== 'https:') {
+    throw new Error(`Forbidden protocol (HTTPS required): ${parsedUrl.protocol}`);
+  }
+
+  if (!ALLOWED_HOSTS.has(parsedUrl.hostname)) {
+    throw new Error(`Forbidden host: ${parsedUrl.hostname}`);
+  }
+
+  return parsedUrl;
+}
 
 async function fetchJson(url, options = {}) {
+  const safeUrl = validateUrl(url);
   const headers = {
     'User-Agent': 'picsa-pr-agent-checker',
     ...(options.headers || {}),
   };
-  const res = await fetch(url, { ...options, headers });
+  const res = await fetch(safeUrl, { ...options, headers });
   if (!res.ok) {
-    throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+    throw new Error(`Failed to fetch ${safeUrl.pathname}: ${res.status} ${res.statusText}`);
   }
   return res.json();
 }
@@ -49,25 +78,29 @@ async function getLatestPrAgentRelease() {
   const releaseUrl = 'https://api.github.com/repos/the-pr-agent/pr-agent/releases/latest';
 
   const release = await fetchJson(releaseUrl, { headers });
-  const tag = release.tag_name;
+  const tag = String(release.tag_name || '');
+  if (!/^[a-zA-Z0-9._-]+$/.test(tag)) {
+    throw new Error(`Unexpected tag format in release: ${tag}`);
+  }
 
-  // Resolve commit sha for tag
-  const refUrl = `https://api.github.com/repos/the-pr-agent/pr-agent/git/ref/tags/${tag}`;
-  const refData = await fetchJson(refUrl, { headers });
-
-  let sha = refData.object.sha;
-  if (refData.object.type === 'tag') {
-    const tagObj = await fetchJson(refData.object.url, { headers });
-    sha = tagObj.object.sha;
+  // Resolve commit SHA directly via commits endpoint with encoded tag
+  const commitUrl = `https://api.github.com/repos/the-pr-agent/pr-agent/commits/${encodeURIComponent(tag)}`;
+  const commitData = await fetchJson(commitUrl, { headers });
+  const sha = String(commitData.sha || '');
+  if (!/^[a-f0-9]{40}$/.test(sha)) {
+    throw new Error(`Unexpected commit SHA format for tag ${tag}: ${sha}`);
   }
 
   return { tag, sha, htmlUrl: release.html_url };
 }
 
 /**
- * Fetch latest major version for a GitHub Action (e.g. 'actions/checkout' -> 'v7')
+ * Fetch latest major version for an allowed GitHub Action (e.g. 'actions/checkout' -> 'v7')
  */
 async function getLatestActionMajorVersion(actionRepo) {
+  if (!ALLOWED_BASE_ACTIONS.has(actionRepo)) {
+    return null;
+  }
   const token = process.env.GITHUB_TOKEN;
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   try {
@@ -111,11 +144,13 @@ async function getOpenRouterCatalog() {
 }
 
 /**
- * Optionally check LiteLLM model database for PR-Agent compatibility
+ * Check LiteLLM model database for PR-Agent compatibility
  */
 async function getLiteLlmModelCatalog() {
   try {
-    return await fetchJson('https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json');
+    return await fetchJson(
+      'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json'
+    );
   } catch (err) {
     console.warn('Warning: Could not fetch LiteLLM catalog:', err.message);
     return null;
@@ -239,7 +274,7 @@ async function main() {
 
   const tokensRegex = /custom_model_max_tokens\s*=\s*(\d+)/;
   const tokensMatch = currentConfigContent.match(tokensRegex);
-  const currentTokens = tokensMatch ? parseInt(tokensMatch[1], 10) : null;
+  const currentTokens = tokensMatch ? Number.parseInt(tokensMatch[1], 10) : null;
 
   console.log(`Current PR-Agent Action: ${currentTag} (${currentSha})`);
   console.log(`Current Primary Model:   ${currentModel}`);
@@ -326,7 +361,9 @@ async function main() {
 
   const changesList = [];
   if (actionChanged) {
-    changesList.push(`- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`);
+    changesList.push(
+      `- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`
+    );
   }
   for (const b of baseActionUpdates) {
     changesList.push(`- **Base Action (${b.actionRepo})**: \`${b.currentVersion}\` → \`${b.latestVersion}\``);

@@ -34,16 +34,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PREFER_FAMILY: ${{ inputs.prefer_family }}
         run: |
-          PREFER_FLAG=""
-          if [ -n "${{ github.event.inputs.prefer_family }}" ]; then
-            PREFER_FLAG="--prefer-family=${{ github.event.inputs.prefer_family }}"
+          PREFER_FLAG=()
+          if [ -n "$PREFER_FAMILY" ]; then
+            PREFER_FLAG+=( "--prefer-family=$PREFER_FAMILY" )
           fi
-          node tools/workflows/check-pr-agent-updates.mjs --output-github $PREFER_FLAG
+          node tools/workflows/check-pr-agent-updates.mjs --output-github "${PREFER_FLAG[@]}"
 
       - name: Create Pull Request
         if: steps.check.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/update-pr-agent-models
