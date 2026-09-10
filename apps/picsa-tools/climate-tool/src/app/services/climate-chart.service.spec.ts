@@ -41,6 +41,35 @@ describe('ClimateChartService', () => {
     },
   };
 
+  const mockTempMinMeta: IChartMeta = {
+    _id: 'temp_min',
+    name: 'Minimum Temperature',
+    shortname: 'Min Temp',
+    image: '',
+    keys: ['min_tmin', 'mean_tmin'],
+    colors: ['#00f', '#0ff'],
+    yFormat: 'value',
+    yLabel: '°C',
+    xVar: 'Year',
+    xLabel: 'Year',
+    units: '°C',
+    definition: '',
+    axes: {
+      yMin: null,
+      yMax: null,
+      xMin: 1980,
+      xMax: 2020,
+      xMinor: 1,
+      xMajor: 5,
+      yMinor: 1,
+      yMajor: 2,
+    },
+    tools: {
+      line: { enabled: true, above: { color: 'green' }, below: { color: 'red' } },
+      probability: { above: { label: 'above' }, below: { label: 'below' } },
+    },
+  };
+
   const mockStation: IStationMeta = {
     id: 'test_station',
     name: 'Test Station',
@@ -50,6 +79,7 @@ describe('ClimateChartService', () => {
     location: ['District'],
     definitions: {
       rainfall: mockChartMeta,
+      temp_min: mockTempMinMeta,
     } as any,
   };
 
@@ -139,8 +169,8 @@ describe('ClimateChartService', () => {
 
   it('should populate availableCharts on setStation and compute chartSeriesData on setChart', async () => {
     await service.setStation('test_station');
-    expect(service.availableCharts().length).toBe(1);
-    expect(service.availableCharts()[0]._id).toBe('rainfall');
+    expect(service.availableCharts().length).toBe(2);
+    expect(service.availableCharts().map((c) => c._id)).toContain('rainfall');
 
     await service.setChart('rainfall');
     expect(service.chartData().length).toBe(2);
@@ -260,6 +290,36 @@ describe('ClimateChartService', () => {
 
       // The axis max should match the annual yMax, not rescale to 110
       expect(service.chartConfig()?.axis?.y?.max).toBe(annualYMax);
+    });
+
+    it('should keep temperature axis scale fixed between annual and monthly modes using annual min/max with 2-degree buffer', async () => {
+      const stationWithMonthly: IStationMeta = {
+        ...mockStation,
+        countryCode: 'ZM',
+        capabilities: {
+          schemaVersion: 1,
+          monthly: ['temp_min'],
+        },
+      };
+      service.station.set(stationWithMonthly);
+      await service.setTimespanMode('annual');
+      await service.setChart('temp_min');
+
+      // In annual mockData: min_tmin min is 15, mean_tmin max is 19.
+      // With 2-degree buffer and yMajor=2:
+      // yMin: floor((15 - 2) / 2) * 2 = 12
+      // yMax: ceil((19 + 2) / 2) * 2 = 22
+      expect(service.chartConfig()?.axis?.y?.min).toBe(12);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(22);
+
+      // In monthly mode
+      await service.setTimespanMode('monthly');
+      await service.setSelectedMonth(1);
+      await service.setChart('temp_min');
+
+      // The axis bounds in monthly mode must match the annual bounds exactly
+      expect(service.chartConfig()?.axis?.y?.min).toBe(12);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(22);
     });
   });
 });
