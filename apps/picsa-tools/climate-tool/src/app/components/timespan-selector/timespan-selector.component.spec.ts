@@ -62,4 +62,31 @@ describe('TimespanSelectorComponent', () => {
     component.onPeriodSelect(period);
     expect(spy).toHaveBeenCalledWith(period);
   });
+
+  it('should expose only active months (October to June) and render 9 chips in monthly mode', async () => {
+    expect(component.months().length).toBe(9);
+    const monthIndices = component.months().map((m) => m.index + 1);
+    expect(monthIndices).toEqual([10, 11, 12, 1, 2, 3, 4, 5, 6]);
+    expect(monthIndices).not.toContain(7); // Jul
+    expect(monthIndices).not.toContain(8); // Aug
+    expect(monthIndices).not.toContain(9); // Sep
+
+    chartService.station.set({
+      id: 'test',
+      name: 'Test',
+      latitude: 0,
+      longitude: 0,
+      location: [],
+      countryCode: 'zm',
+      capabilities: { schemaVersion: 1, monthly: ['rainfall'] },
+    } as any);
+    chartService.chartDefinition.set({ _id: 'rainfall' } as any);
+
+    await chartService.setTimespanMode('monthly');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const chips = compiled.querySelectorAll('.month-grid .selector-chip');
+    expect(chips.length).toBe(9);
+  });
 });

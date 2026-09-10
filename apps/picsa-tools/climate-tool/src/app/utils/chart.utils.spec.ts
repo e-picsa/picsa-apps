@@ -115,10 +115,7 @@ describe('chart.utils', () => {
         },
         colors: ['blue'],
       };
-      const rainData: IStationData[] = [
-        { Year: 2000, Rainfall: 540 } as any,
-        { Year: 2001, Rainfall: 720 } as any,
-      ];
+      const rainData: IStationData[] = [{ Year: 2000, Rainfall: 540 } as any, { Year: 2001, Rainfall: 720 } as any];
 
       const ranges = calculateDataRanges(rainData, rainfallMeta);
       expect(ranges.yMin).toBe(0);
@@ -132,9 +129,7 @@ describe('chart.utils', () => {
       expect(Number.isFinite(emptyRanges.xMin)).toBe(true);
       expect(Number.isFinite(emptyRanges.xMax)).toBe(true);
 
-      const nullData: IStationData[] = [
-        { Year: 2000, min_tmin: null, mean_tmin: undefined } as any,
-      ];
+      const nullData: IStationData[] = [{ Year: 2000, min_tmin: null, mean_tmin: undefined } as any];
       const nullRanges = calculateDataRanges(nullData, mockTempMinMeta);
       expect(Number.isFinite(nullRanges.yMin)).toBe(true);
       expect(Number.isFinite(nullRanges.yMax)).toBe(true);

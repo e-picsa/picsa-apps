@@ -8,7 +8,14 @@ import {
   IStationMeta,
   IThreeMonthPeriod,
 } from '@picsa/models';
-import { aggregateThreeMonthSeries, arrayToHashmap, convertMonthlyToStationData, deepClone, filterMonthlyDataByMonth, loadCSV } from '@picsa/utils';
+import {
+  aggregateThreeMonthSeries,
+  arrayToHashmap,
+  convertMonthlyToStationData,
+  deepClone,
+  filterMonthlyDataByMonth,
+  loadCSV,
+} from '@picsa/utils';
 
 import { CLIMATE_STATIONS_META } from '../data/stations';
 
