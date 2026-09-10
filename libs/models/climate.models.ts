@@ -73,7 +73,7 @@ export interface IMonthlyStationData {
  * Enables synchronous chart filtering and UI badge generation without parsing data files.
  */
 export interface IStationCapabilities {
-  /** ISO timestamp of when this station's data was generated or synced */
+  /** Date string (YYYY-MM-DD) when this station's data was last tracked as updated in git */
   lastUpdated?: string;
   /** Deterministic content hash (e.g. SHA-256) of station data for cache invalidation */
   contentHash?: string;
@@ -81,13 +81,12 @@ export interface IStationCapabilities {
   schemaVersion: number;
   /** Earliest and latest historical years with data, e.g. [1946, 2024] */
   years?: [number, number];
+  /** Total count of missing years within the historical range */
+  totalMissingYears?: number;
   /** Available annual chart types */
   annual?: IChartId[];
-  /** Available monthly metrics */
-  monthly?: {
-    hasRainfall: boolean;
-    hasTemperature: boolean;
-  };
+  /** Available monthly chart types (e.g. ['rainfall', 'temp_min', 'temp_max']) */
+  monthly?: IChartId[];
 }
 
 /**
@@ -244,8 +243,11 @@ export interface IStationAuditSummary {
   id: string;
   status: 'NEW' | 'UPDATED' | 'UNCHANGED';
   years?: readonly [start: number, end: number] | [number, number];
-  hasRainfall: boolean;
-  hasTemperature: boolean;
+  totalMissingYears?: number;
+  annual?: IChartId[];
+  monthly?: IChartId[];
+  hasRainfall?: boolean;
+  hasTemperature?: boolean;
   hash?: string;
 }
 
