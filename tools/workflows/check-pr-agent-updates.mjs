@@ -138,18 +138,37 @@ async function getLiteLlmModelCatalog() {
 }
 
 /**
- * Find latest Gemini Flash model
+ * Check if a model is recognized in the LiteLLM catalog
  */
-function findLatestGeminiFlash(openRouterModels) {
+function isModelRecognizedInLiteLlm(modelKey, litellmCatalog) {
+  if (!litellmCatalog) return true;
+  const lower = modelKey.toLowerCase();
+  const withoutProvider = lower.replace(/^(openrouter|gemini)\//, '');
+  return Boolean(
+    litellmCatalog[lower] ||
+    litellmCatalog[withoutProvider] ||
+    litellmCatalog[modelKey]
+  );
+}
+
+/**
+ * Find latest Gemini Flash model, filtering for LiteLLM compatibility
+ */
+function findLatestGeminiFlash(openRouterModels, litellmCatalog) {
   const candidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    return (
+    const isFlash = (
       id.startsWith('google/gemini-') &&
       id.includes('flash') &&
       !id.includes('image') &&
       !id.includes('batch') &&
       !id.includes('preview')
     );
+    if (!isFlash) return false;
+
+    // Filter out models unrecognized by LiteLLM
+    const directId = `gemini/${m.id.replace(/^google\//, '')}`;
+    return isModelRecognizedInLiteLlm(directId, litellmCatalog);
   });
 
   candidates.sort((a, b) => {
@@ -166,19 +185,21 @@ function findLatestGeminiFlash(openRouterModels) {
 }
 
 /**
- * Find latest low-cost intelligent fallback model (Luna or MiniMax)
+ * Find latest low-cost intelligent fallback model (Luna or MiniMax), filtering for LiteLLM compatibility
  */
-function findLowCostFallback(openRouterModels, preferredFamily) {
+function findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog) {
   // 1. Luna candidates
   const lunaCandidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    return (
+    const isLuna = (
       id.includes('luna') &&
       !id.includes('batch') &&
       !id.includes('pro') &&
       !id.includes('8b') &&
       (m.context_length || 0) >= 128000
     );
+    if (!isLuna) return false;
+    return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
   });
   lunaCandidates.sort((a, b) => {
     const vDiff = compareVersions(a.id, b.id);
@@ -189,12 +210,14 @@ function findLowCostFallback(openRouterModels, preferredFamily) {
   // 2. MiniMax candidates
   const minimaxCandidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    return (
+    const isMinimax = (
       id.startsWith('minimax/minimax-') &&
       !id.includes('batch') &&
       !id.includes('her') &&
       (m.context_length || 0) >= 128000
     );
+    if (!isMinimax) return false;
+    return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
   });
   minimaxCandidates.sort((a, b) => {
     const vDiff = compareVersions(a.id, b.id);
@@ -265,13 +288,13 @@ async function main() {
   const latestRelease = await getLatestPrAgentRelease();
   console.log(`\nLatest PR-Agent Action:  ${latestRelease.tag} (${latestRelease.sha})`);
 
-  // 2. Query models
+  // 2. Query models and verify compatibility against LiteLLM catalog
   const openRouterModels = await getOpenRouterCatalog();
   const litellmCatalog = await getLiteLlmModelCatalog();
 
-  const latestGeminiFlash = findLatestGeminiFlash(openRouterModels);
+  const latestGeminiFlash = findLatestGeminiFlash(openRouterModels, litellmCatalog);
   if (!latestGeminiFlash) {
-    throw new Error('Could not find any suitable Gemini Flash model in catalog');
+    throw new Error('Could not find any suitable LiteLLM-compatible Gemini Flash model in catalog');
   }
 
   // Gemini model names: OpenRouter has "google/gemini-3.8-flash", direct is "gemini/gemini-3.8-flash"
@@ -291,12 +314,30 @@ async function main() {
     }
   }
 
-  const lowCostModel = findLowCostFallback(openRouterModels, preferredFamily);
+  const lowCostModel = findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog);
   if (!lowCostModel) {
-    throw new Error('Could not find any low cost fallback model');
+    throw new Error('Could not find any suitable LiteLLM-compatible low cost fallback model');
   }
   const proposedLowCostFallback = `openrouter/${lowCostModel.id}`;
   const proposedFallbacks = [proposedLowCostFallback, proposedGeminiMirror];
+
+  // Final validation guard: Ensure all proposed models are recognized in LiteLLM
+  if (litellmCatalog) {
+    const primaryOk = isModelRecognizedInLiteLlm(proposedPrimaryModel, litellmCatalog);
+    const lowCostOk = isModelRecognizedInLiteLlm(proposedLowCostFallback, litellmCatalog);
+    const mirrorOk = isModelRecognizedInLiteLlm(proposedGeminiMirror, litellmCatalog);
+
+    if (!primaryOk || !lowCostOk || !mirrorOk) {
+      console.warn('⚠️ One or more proposed models are not recognized in the LiteLLM catalog.');
+      console.warn(`Primary: ${primaryOk}, LowCost: ${lowCostOk}, Mirror: ${mirrorOk}`);
+      console.warn('Aborting update to prevent proposing configurations that fail at runtime.');
+      if (isGitHubOutput && process.env.GITHUB_OUTPUT) {
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_changes=false\n');
+      }
+      return;
+    }
+    console.log('✅ LiteLLM compatibility verified for all proposed models.');
+  }
 
   // Calculate lowest common context tokens
   const contextWindows = [
@@ -304,14 +345,6 @@ async function main() {
     lowCostModel.context_length || 1048576,
   ];
   const proposedTokens = Math.min(...contextWindows);
-
-  // Check LiteLLM recognition
-  if (litellmCatalog) {
-    const geminiRecognized = Boolean(litellmCatalog[proposedPrimaryModel] || litellmCatalog[directGeminiModelId]);
-    const lowCostRecognized = Boolean(litellmCatalog[proposedLowCostFallback] || litellmCatalog[lowCostModel.id]);
-    console.log(`LiteLLM primary recognized: ${geminiRecognized ? 'yes' : 'via custom token override'}`);
-    console.log(`LiteLLM fallback recognized: ${lowCostRecognized ? 'yes' : 'via custom token override'}`);
-  }
 
   console.log(`\nProposed Primary Model:  ${proposedPrimaryModel}`);
   console.log(`Proposed Fallback Models: ${JSON.stringify(proposedFallbacks)}`);
