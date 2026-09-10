@@ -55,6 +55,13 @@ function validateUrl(urlInput) {
   return parsedUrl;
 }
 
+/**
+ * Sanitizes input to prevent CWE-117 log injection by stripping line breaks
+ */
+function sanitizeLog(val) {
+  return String(val).replace(/[\r\n]+/g, ' ');
+}
+
 async function fetchJson(url, options = {}) {
   const safeUrl = validateUrl(url);
   const headers = {
@@ -279,14 +286,14 @@ async function main() {
   const tokensMatch = currentConfigContent.match(tokensRegex);
   const currentTokens = tokensMatch ? Number.parseInt(tokensMatch[1], 10) : null;
 
-  console.log(`Current PR-Agent Action: ${currentTag} (${currentSha})`);
-  console.log(`Current Primary Model:   ${currentModel}`);
-  console.log(`Current Fallback Models: ${JSON.stringify(currentFallbacks)}`);
-  console.log(`Current Max Tokens:      ${currentTokens}`);
+  console.log(`Current PR-Agent Action: ${sanitizeLog(currentTag)} (${sanitizeLog(currentSha)})`);
+  console.log(`Current Primary Model:   ${sanitizeLog(currentModel)}`);
+  console.log(`Current Fallback Models: ${sanitizeLog(JSON.stringify(currentFallbacks))}`);
+  console.log(`Current Max Tokens:      ${sanitizeLog(currentTokens)}`);
 
   // 1. Check latest PR-Agent action release
   const latestRelease = await getLatestPrAgentRelease();
-  console.log(`\nLatest PR-Agent Action:  ${latestRelease.tag} (${latestRelease.sha})`);
+  console.log(`\nLatest PR-Agent Action:  ${sanitizeLog(latestRelease.tag)} (${sanitizeLog(latestRelease.sha)})`);
 
   // 2. Query models and verify compatibility against LiteLLM catalog
   const openRouterModels = await getOpenRouterCatalog();
@@ -346,9 +353,9 @@ async function main() {
   ];
   const proposedTokens = Math.min(...contextWindows);
 
-  console.log(`\nProposed Primary Model:  ${proposedPrimaryModel}`);
-  console.log(`Proposed Fallback Models: ${JSON.stringify(proposedFallbacks)}`);
-  console.log(`Proposed Max Tokens:      ${proposedTokens}`);
+  console.log(`\nProposed Primary Model:  ${sanitizeLog(proposedPrimaryModel)}`);
+  console.log(`Proposed Fallback Models: ${sanitizeLog(JSON.stringify(proposedFallbacks))}`);
+  console.log(`Proposed Max Tokens:      ${sanitizeLog(proposedTokens)}`);
 
   // Check for changes
   const actionChanged = currentTag !== latestRelease.tag || currentSha !== latestRelease.sha;
@@ -383,7 +390,7 @@ async function main() {
   }
 
   console.log('\n⚠️ Updates detected:');
-  changesList.forEach((c) => console.log(c));
+  changesList.forEach((c) => console.log(sanitizeLog(c)));
 
   // Update workflow file
   let newWorkflowContent = currentWorkflowContent;
