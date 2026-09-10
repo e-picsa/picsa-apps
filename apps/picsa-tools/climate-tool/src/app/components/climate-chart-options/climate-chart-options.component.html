@@ -2,7 +2,13 @@
   <mat-icon>share</mat-icon>{{ 'Share' | translate }}
 </button>
 <h3>{{ 'Chart' | translate }}</h3>
-<climate-view-select></climate-view-select>
+<div class="chart-options-flow">
+  <climate-view-select></climate-view-select>
+  @if (chartService.canShowTimespan()) {
+    <climate-timespan-selector></climate-timespan-selector>
+  }
+</div>
 <mat-divider></mat-divider>
 <h3>{{ 'Tools' | translate }}</h3>
 <climate-tool-select></climate-tool-select>
+

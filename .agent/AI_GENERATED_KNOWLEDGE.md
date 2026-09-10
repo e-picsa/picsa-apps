@@ -121,6 +121,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Avoid writing async effects like `effect(async () => { await this.ready(); ... })`.
 - Angular tracks signal dependencies synchronously. Any signal accessed after the first `await` is not tracked. Concurrent async executions can also introduce race conditions.
 - Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
+- **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
 
 ### Internationalization (i18n) Module Import in Standalone Components
 

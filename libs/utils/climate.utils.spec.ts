@@ -2,6 +2,8 @@ import type { IIncomingClimateRecord, IMonthlyStationData, IStationData } from '
 import {
   auditMonthlyChanges,
   calculateStationCapabilities,
+  aggregateThreeMonthSeries,
+  filterMonthlyDataByMonth,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
   normalizeMonthKey,
@@ -556,6 +558,84 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(md).toContain('No previously published historical data was modified.');
       expect(md).toContain('No regressions detected (no valid data became missing).');
       expect(md).toContain('All records passed temperature ordering, positive rainfall, and calendar sanity rules.');
+    });
+  });
+
+  describe('filterMonthlyDataByMonth', () => {
+    const monthlyData: IMonthlyStationData[] = [
+      { month: '1980-01', Rainfall: 100, mean_tmin: 15.5 },
+      { month: '1980-10', Rainfall: 20, mean_tmin: 18.2 },
+      { month: '1981-10', Rainfall: 25, mean_tmin: 19.0 },
+      { month: '1982-10', Rainfall: null, mean_tmin: null },
+      { month: '1982-11', Rainfall: 40, mean_tmin: 17.5 },
+    ];
+
+    it('should filter records strictly matching the target month number', () => {
+      const filtered = filterMonthlyDataByMonth(monthlyData, 10);
+      expect(filtered.length).toBe(3);
+      expect(filtered.map((r) => r.Year)).toEqual([1980, 1981, 1982]);
+      expect(filtered[0].Rainfall).toBe(20);
+      expect(filtered[0].mean_tmin).toBe(18.2);
+      expect(filtered[1].Rainfall).toBe(25);
+      expect(filtered[2].Rainfall).toBeNull();
+    });
+
+    it('should return empty array when month has no records', () => {
+      expect(filterMonthlyDataByMonth(monthlyData, 6)).toEqual([]);
+    });
+  });
+
+  describe('aggregateThreeMonthSeries', () => {
+    const djfPeriod = { id: 'djf', code: 'DJF', months: [12, 1, 2] as [number, number, number] };
+
+    it('should aggregate DJF cross-year period across consecutive season months', () => {
+      // Season 1980: Dec 1980, Jan 1981, Feb 1981
+      const monthlyData: IMonthlyStationData[] = [
+        { month: '1980-12', Rainfall: 200, min_tmin: 14.0, mean_tmin: 18.0, max_tmax: 30.0, mean_tmax: 26.0 },
+        { month: '1981-01', Rainfall: 250, min_tmin: 12.5, mean_tmin: 17.0, max_tmax: 32.0, mean_tmax: 27.0 },
+        { month: '1981-02', Rainfall: 150, min_tmin: 13.0, mean_tmin: 17.5, max_tmax: 29.0, mean_tmax: 25.0 },
+      ];
+
+      const aggregated = aggregateThreeMonthSeries(monthlyData, djfPeriod);
+      expect(aggregated.length).toBe(1);
+      expect(aggregated[0].Year).toBe(1980);
+      // Rainfall sum = 200 + 250 + 150 = 600
+      expect(aggregated[0].Rainfall).toBe(600);
+      // min_tmin = min(14.0, 12.5, 13.0) = 12.5
+      expect(aggregated[0].min_tmin).toBe(12.5);
+      // max_tmax = max(30.0, 32.0, 29.0) = 32.0
+      expect(aggregated[0].max_tmax).toBe(32);
+      // mean_tmin = (18 + 17 + 17.5) / 3 = 17.5
+      expect(aggregated[0].mean_tmin).toBe(17.5);
+      // mean_tmax = (26 + 27 + 25) / 3 = 26
+      expect(aggregated[0].mean_tmax).toBe(26);
+    });
+
+    it('should strictly return null for rainfall if any month in the 3-month period is missing', () => {
+      // Missing Feb 1981
+      const monthlyData: IMonthlyStationData[] = [
+        { month: '1980-12', Rainfall: 200, min_tmin: 14.0, max_tmax: 30.0 },
+        { month: '1981-01', Rainfall: 250, min_tmin: 12.5, max_tmax: 32.0 },
+      ];
+
+      const aggregated = aggregateThreeMonthSeries(monthlyData, djfPeriod);
+      expect(aggregated.length).toBe(1);
+      expect(aggregated[0].Rainfall).toBeNull();
+      // Temperature extremes can still be computed from available months
+      expect(aggregated[0].min_tmin).toBe(12.5);
+      expect(aggregated[0].max_tmax).toBe(32);
+    });
+
+    it('should strictly return null for rainfall if any month has null rainfall value', () => {
+      const monthlyData: IMonthlyStationData[] = [
+        { month: '1980-12', Rainfall: 200 },
+        { month: '1981-01', Rainfall: null },
+        { month: '1981-02', Rainfall: 150 },
+      ];
+
+      const aggregated = aggregateThreeMonthSeries(monthlyData, djfPeriod);
+      expect(aggregated.length).toBe(1);
+      expect(aggregated[0].Rainfall).toBeNull();
     });
   });
 });
