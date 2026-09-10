@@ -23,6 +23,8 @@ env:
   SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
   SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       branch:
