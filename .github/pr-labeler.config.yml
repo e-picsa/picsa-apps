@@ -2,9 +2,6 @@
 'App: Dashboard':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-apps/dashboard/**/*'
-'App: Server':
-  - changed-files:
-      - any-glob-to-any-file: 'apps/picsa-apps/server/**/*'
 # HACK - for now farmer pages are contained within extension app, to refactor in future
 'App: Farmer':
   - changed-files:
@@ -12,6 +9,14 @@
 'App: Extension':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/extension-content/**/*'
+
+# Server
+'Server: DB Migration':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-server/supabase/migrations/**/*'
+'Server: Functions':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-server/supabase/functions/**/*'
 
 # Tools
 'Tool: Budget':
