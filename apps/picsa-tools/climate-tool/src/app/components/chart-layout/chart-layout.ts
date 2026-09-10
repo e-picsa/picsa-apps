@@ -9,6 +9,7 @@ import { ElNinoToolComponent, LaNinaToolComponent } from '../chart-tools/el-nino
 import { LineToolComponent } from '../chart-tools/line-tool/line-tool.component';
 import { ProbabilityToolComponent } from '../chart-tools/probability-tool/probability-tool';
 import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-tool.component';
+import { PeriodNavigatorComponent } from '../period-navigator/period-navigator.component';
 
 /******************************************************************
  * Component to display highly customised charts for climate data
@@ -27,6 +28,7 @@ import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-too
     TercilesToolComponent,
     ElNinoToolComponent,
     LaNinaToolComponent,
+    PeriodNavigatorComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

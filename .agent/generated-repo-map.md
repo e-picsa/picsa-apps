@@ -24,7 +24,7 @@
 | `@picsa/i18n/*` | `libs/i18n/src/*` |
 | `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
 | `@picsa/migrations` | `libs/migrations/index.ts` |
-| `@picsa/models` | `libs/models/src/index.ts` |
+| `@picsa/models` | `libs/models/index.ts` |
 | `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
 | `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
 | `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
@@ -32,8 +32,10 @@
 | `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
 | `@picsa/shared/*` | `libs/shared/src/*` |
 | `@picsa/theme` | `libs/theme/src/index.ts` |
+| `@picsa/utils` | `libs/utils/index.ts` |
+| `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (418 files scanned)
+## Codebase Symbol Index (417 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -534,10 +536,14 @@
   - `Component` **ClimateChartOptionsComponent** (methods: [showShareDialog])
 - **[material.module.ts](../apps/picsa-tools/climate-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/climate-tool/src/app/components/material.module.ts`)
   - `Class` **PicsaClimateMaterialModule**
+- **[period-navigator.component.ts](../apps/picsa-tools/climate-tool/src/app/components/period-navigator/period-navigator.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/period-navigator/period-navigator.component.ts`)
+  - `Component` **PeriodNavigatorComponent**
 - **[print-layout.component.ts](../apps/picsa-tools/climate-tool/src/app/components/print-layout/print-layout.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/print-layout/print-layout.component.ts`)
   - `Component` **ClimatePrintLayoutComponent**
 - **[share-dialog.component.ts](../apps/picsa-tools/climate-tool/src/app/components/share-dialog/share-dialog.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/share-dialog/share-dialog.component.ts`)
   - `Component` **ClimateShareDialogComponent** (methods: [sharePicture, shareLink])
+- **[timespan-selector.component.ts](../apps/picsa-tools/climate-tool/src/app/components/timespan-selector/timespan-selector.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/timespan-selector/timespan-selector.component.ts`)
+  - `Component` **TimespanSelectorComponent** (methods: [onModeChange, onMonthSelect, onPeriodSelect])
 - **[view-select.ts](../apps/picsa-tools/climate-tool/src/app/components/view-select/view-select.ts)** (`apps/picsa-tools/climate-tool/src/app/components/view-select/view-select.ts`)
   - `Component` **ViewSelectComponent**
 - **[index.ts](../apps/picsa-tools/climate-tool/src/app/models/index.ts)** (`apps/picsa-tools/climate-tool/src/app/models/index.ts`)
@@ -552,7 +558,7 @@
 - **[climate-chart.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts`)
   - `Service` **ClimateChartService** (methods: [clearChartData, registerChartComponent, goToSiteSelect, loadStationAndChart, setStation])
 - **[climate-data.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-data.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-data.service.ts`)
-  - `Service` **ClimateDataService** (methods: [getPreferredStation, setPreferredStation, getStationMeta, getStationData])
+  - `Service` **ClimateDataService** (methods: [getPreferredStation, setPreferredStation, getStationMeta, getStationData, getMonthlyStationData])
 - **[climate-tool.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts`)
   - `Service` **ClimateToolService** (methods: [disableAll, toggleEnabled, setValue])
   - `Function` **calcPercentile**
@@ -802,33 +808,6 @@
 
 - **[types.ts](../libs/i18n-gen/src/types.ts)** (`libs/i18n-gen/src/types.ts`)
   - `Interface` **ITranslationEntry**
-
-### `libs/models`
-
-- **[climate.models.ts](../libs/models/src/climate.models.ts)** (`libs/models/src/climate.models.ts`)
-  - `Interface` **ICropRequirement**
-  - `Interface` **IStationMeta**
-  - `Interface` **IStationData**
-  - `Interface` **IChartMeta**
-  - `Interface` **IGenericToolOptions**
-  - `Interface` **IChartTools**
-  - `Interface` **ILineToolOptions**
-  - `Interface` **IProbabilityToolOptions**
-  - `Type` **IChartConfig**
-  - `Type` **IChartId**
-- **[db.models.ts](../libs/models/src/db.models.ts)** (`libs/models/src/db.models.ts`)
-  - `Interface` **IDBDoc**
-  - `Interface` **IAppMeta**
-  - `Type` **IDBEndpoint**
-  - `Function` **keyReplace**
-- **[models.ts](../libs/models/src/models.ts)** (`libs/models/src/models.ts`)
-  - `Interface` **IGroupSettings**
-  - `Interface` **IRegionLang**
-  - `Interface` **ICurrencyCounters**
-  - `Interface` **IFirebaseConfig**
-  - `Interface` **IEnvironment**
-  - `Type` **IAppVariants**
-  - `Type` **LanguageCode**
 
 ### `libs/shared`
 
