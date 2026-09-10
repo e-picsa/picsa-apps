@@ -1,10 +1,78 @@
-<div class="enso-legend">
-  @for (item of legendItems(); track item.label) {
-    <div class="legend-item">
-      <svg class="marker" viewBox="-14 -14 28 28" aria-hidden="true">
-        <path [attr.d]="item.path" [attr.fill]="item.color" [attr.stroke]="item.stroke || 'none'" stroke-width="1.5" />
-      </svg>
-      <span class="label">{{ item.label | translate }}</span>
+<div class="enso-container">
+  <!-- Controls row: Title, gradings toggle chips, actions -->
+  <div class="enso-header">
+    <div class="header-left">
+      <span class="tool-title">{{ label }} {{ 'Gradings' | translate }}:</span>
+      <span class="tool-subtitle">{{ 'Click gradings to toggle on/off' | translate }}</span>
     </div>
-  }
+    <div class="quick-actions">
+      <button matButton class="action-btn" type="button" (click)="selectAllGrades()">
+        {{ 'Select All' | translate }}
+      </button>
+      <span class="divider">|</span>
+      <button matButton class="action-btn" type="button" (click)="clearAllGrades()">
+        {{ 'Clear' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Grading Chips -->
+  <div class="enso-grades-list" role="group" [attr.aria-label]="label + ' gradings'">
+    @for (item of displayItems(); track item.grade) {
+      <button
+        type="button"
+        class="grade-chip"
+        [class.selected]="item.isSelected"
+        [attr.aria-pressed]="item.isSelected"
+        (click)="toggleGrade(item.grade)"
+        [title]="item.label + ' (' + item.threshold + '°C SST anomaly)'"
+      >
+        <svg class="marker-icon" viewBox="-16 -16 32 32" aria-hidden="true">
+          <path
+            [attr.d]="item.path"
+            [attr.fill]="item.color"
+            [attr.stroke]="item.stroke || 'none'"
+            stroke-width="1.5"
+          />
+        </svg>
+        <span class="grade-name">{{ item.label | translate }}</span>
+        <span class="grade-code">({{ item.code }})</span>
+        <span class="grade-threshold">{{ item.threshold }}°C</span>
+        @if (item.count > 0) {
+          <span class="grade-count" [title]="item.count + ' ' + ('years in current dataset' | translate)">{{ item.count }}y</span>
+        }
+      </button>
+    }
+
+    <!-- Neutral / Other indicator -->
+    <div class="neutral-chip" [title]="'Years without active classification' | translate">
+      <svg class="marker-icon" viewBox="-16 -16 32 32" aria-hidden="true">
+        <path
+          [attr.d]="neutralLegendItem().path"
+          [attr.fill]="neutralLegendItem().color"
+          [attr.stroke]="neutralLegendItem().stroke || 'none'"
+          stroke-width="1"
+        />
+      </svg>
+      <span class="grade-name">{{ 'Neutral / Other' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Metadata footer: source link & NOAA RONI definition -->
+  <div class="enso-footer">
+    <span class="source-label">{{ 'Data Source' | translate }}:</span>
+    <a
+      class="source-link"
+      [href]="dataSource.url"
+      target="_blank"
+      rel="noopener noreferrer"
+      [title]="dataSource.description"
+    >
+      <span>{{ dataSource.title }} (ggweather.com)</span>
+      <mat-icon class="external-icon">open_in_new</mat-icon>
+    </a>
+    <span class="source-hint">
+      — {{ 'NOAA standard 3-month running mean SST anomaly in Niño 3.4 relative to tropical average' | translate }}
+    </span>
+  </div>
 </div>

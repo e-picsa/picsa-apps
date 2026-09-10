@@ -1,35 +1,224 @@
 :host {
   display: block;
-}
-// reference to hardcoded colors used in .ts file for quick view only
-.ts {
-  --el-nino-fill: #d4802b;
-  --el-nino-stroke: #b86b1f;
-  --la-nina-fill: #13599e;
-  --la-nina-stroke: #0d4277;
-  --neutral-fill: #9e9e9e;
-}
-.enso-legend {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  background-color: #f5f5f5;
-  border-radius: 6px;
   margin-top: 8px;
-  font-size: 14px;
-  font-weight: 500;
 }
 
-.legend-item {
+.enso-container {
   display: flex;
-  gap: 0.35rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.marker {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 auto;
+.enso-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    .tool-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .tool-subtitle {
+      font-size: 12px;
+      color: #64748b;
+    }
+  }
+
+  .quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .action-btn {
+      font-size: 12px;
+      line-height: 24px;
+      height: 24px;
+      padding: 0 8px;
+      color: #475569;
+      font-weight: 500;
+      min-width: unset;
+
+      &:hover {
+        color: #0f172a;
+        background: #e2e8f0;
+      }
+    }
+
+    .divider {
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+  }
+}
+
+.enso-grades-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.grade-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  outline: none;
+  user-select: none;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #1e293b;
+  }
+
+  &.selected {
+    background: #ffffff;
+    border-color: #0f172a;
+    color: #0f172a;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+    .marker-icon {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  &:not(.selected) {
+    opacity: 0.5;
+    background: #f8fafc;
+    border-style: dashed;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .marker-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease-in-out;
+  }
+
+  .grade-name {
+    font-size: 13px;
+  }
+
+  .grade-code {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .grade-threshold {
+    font-size: 11px;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 10px;
+    color: #475569;
+    font-family: monospace;
+  }
+
+  .grade-count {
+    font-size: 10px;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #334155;
+    padding: 1px 5px;
+    border-radius: 8px;
+  }
+}
+
+.neutral-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: 12px;
+  color: #64748b;
+
+  .marker-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.enso-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  padding-top: 4px;
+  border-top: 1px solid #edf2f7;
+
+  .source-label {
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+      color: #1d4ed8;
+    }
+
+    .external-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+    }
+  }
+
+  .source-hint {
+    color: #94a3b8;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 600px) {
+  .enso-container {
+    padding: 8px 10px;
+  }
+
+  .grade-threshold,
+  .source-hint {
+    display: none;
+  }
 }

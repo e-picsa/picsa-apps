@@ -32,6 +32,7 @@ export interface ILegendItem {
   fill: string;
   stroke?: string;
   strokeWidth?: number;
+  size?: number;
 }
 
 export interface IOverlayLineLabel {
