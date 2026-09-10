@@ -29,7 +29,7 @@ export class ToolSelectComponent {
           const toolConfig = chartTools[tool.name as keyof typeof chartTools];
           return toolConfig?.enabled !== false;
         })
-        .map((config) => ({ ...config, enabled: active === name }));
+        .map((config) => ({ ...config, enabled: active === config.name }));
     },
     { equal: isEqual },
   );

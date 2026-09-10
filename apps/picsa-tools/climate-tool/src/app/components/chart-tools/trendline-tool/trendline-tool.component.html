@@ -1,0 +1,58 @@
+<div class="trendline-tool-container">
+  @for (item of seriesAnalyses(); track item.key) {
+    <mat-card class="trendline-card" appearance="outlined">
+      <div class="card-header">
+        <div class="series-title">
+          <span class="color-dot" [style.background-color]="item.color"></span>
+          <span class="title-text">{{ item.label | translate }}</span>
+        </div>
+
+        @switch (item.status) {
+          @case ('up') {
+            <div class="trend-badge trend-up">
+              <mat-icon>trending_up</mat-icon>
+              <span>{{ 'Upward trend' | translate }}</span>
+            </div>
+          }
+          @case ('down') {
+            <div class="trend-badge trend-down">
+              <mat-icon>trending_down</mat-icon>
+              <span>{{ 'Downward trend' | translate }}</span>
+            </div>
+          }
+          @case ('insufficient') {
+            <div class="trend-badge trend-none">
+              <mat-icon>help_outline</mat-icon>
+              <span>{{ 'Insufficient data' | translate }}</span>
+            </div>
+          }
+          @default {
+            <div class="trend-badge trend-none">
+              <mat-icon>trending_flat</mat-icon>
+              <span>{{ 'No strong trend' | translate }}</span>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">{{ 'Change' | translate }}</span>
+          <span class="stat-value" [class.highlight]="item.stats.hasTrend">{{ item.decadeText }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">{{ 'Correlation (r)' | translate }}</span>
+          <span class="stat-value">{{ item.stats.n >= 3 ? (item.stats.r | number : '1.2-2') : '—' }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">{{ 'p-value' | translate }}</span>
+          <span class="stat-value">{{ item.stats.n >= 3 ? formatPValue(item.stats.pValue) : '—' }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">{{ 'R²' | translate }}</span>
+          <span class="stat-value">{{ item.stats.n >= 3 ? (item.stats.r2 * 100 | number : '1.1-1') + '%' : '—' }}</span>
+        </div>
+      </div>
+    </mat-card>
+  }
+</div>

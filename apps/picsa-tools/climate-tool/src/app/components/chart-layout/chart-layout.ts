@@ -8,6 +8,7 @@ import { ClimateToolService } from '../../services/climate-tool.service';
 import { LineToolComponent } from '../chart-tools/line-tool/line-tool.component';
 import { ProbabilityToolComponent } from '../chart-tools/probability-tool/probability-tool';
 import { TercilesToolComponent } from '../chart-tools/terciles-tool/terciles-tool.component';
+import { TrendlineToolComponent } from '../chart-tools/trendline-tool/trendline-tool.component';
 import { PeriodNavigatorComponent } from '../period-navigator/period-navigator.component';
 
 /******************************************************************
@@ -25,6 +26,7 @@ import { PeriodNavigatorComponent } from '../period-navigator/period-navigator.c
     LineToolComponent,
     ProbabilityToolComponent,
     TercilesToolComponent,
+    TrendlineToolComponent,
     PeriodNavigatorComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
