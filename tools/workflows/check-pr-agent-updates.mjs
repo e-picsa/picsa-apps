@@ -2,7 +2,7 @@
 
 /**
  * Script to check for updates to:
- * 1. the-pr-agent GitHub Action releases & base GitHub actions (actions/checkout, actions/github-script)
+ * 1. the-pr-agent GitHub Action releases
  * 2. Latest Gemini Flash models (direct API & OpenRouter mirror)
  * 3. Latest low-cost intelligent fallback models (Luna / MiniMax)
  * 4. Context token limits and LiteLLM model support
@@ -32,7 +32,6 @@ const preferFamilyArg =
   '';
 
 const ALLOWED_HOSTS = new Set(['api.github.com', 'openrouter.ai', 'raw.githubusercontent.com']);
-const ALLOWED_BASE_ACTIONS = new Set(['actions/checkout', 'actions/github-script']);
 
 /**
  * Validates and sanitizes a URL against allowed hosts and HTTPS protocol
@@ -92,33 +91,6 @@ async function getLatestPrAgentRelease() {
   }
 
   return { tag, sha, htmlUrl: release.html_url };
-}
-
-/**
- * Fetch latest release and commit SHA for an allowed GitHub Action (e.g. 'actions/checkout' -> tag: 'v7.0.1', sha: '...')
- */
-async function getLatestActionRelease(actionRepo) {
-  if (!ALLOWED_BASE_ACTIONS.has(actionRepo)) {
-    return null;
-  }
-  const token = process.env.GITHUB_TOKEN;
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  try {
-    const releaseUrl = `https://api.github.com/repos/${actionRepo}/releases/latest`;
-    const release = await fetchJson(releaseUrl, { headers });
-    const tag = String(release.tag_name || '');
-    if (!/^[a-zA-Z0-9._-]+$/.test(tag)) return null;
-
-    const commitUrl = `https://api.github.com/repos/${actionRepo}/commits/${encodeURIComponent(tag)}`;
-    const commitData = await fetchJson(commitUrl, { headers });
-    const sha = String(commitData.sha || '');
-    if (!/^[a-f0-9]{40}$/.test(sha)) return null;
-
-    return { tag, sha };
-  } catch (err) {
-    console.warn(`Warning: Could not fetch latest release for ${actionRepo}:`, err.message);
-    return null;
-  }
 }
 
 /**
@@ -293,32 +265,7 @@ async function main() {
   const latestRelease = await getLatestPrAgentRelease();
   console.log(`\nLatest PR-Agent Action:  ${latestRelease.tag} (${latestRelease.sha})`);
 
-  // 2. Check base actions in pr-agent.yml (e.g. actions/checkout, actions/github-script)
-  const baseActionsRegex =
-    /uses:\s+(actions\/[a-zA-Z0-9_-]+)@(?:([a-f0-9]{40})\s*#\s*([^\s\n]+)|([a-zA-Z0-9._-]+))/g;
-  const baseActionUpdates = [];
-  let baseActionMatch;
-  while ((baseActionMatch = baseActionsRegex.exec(currentWorkflowContent)) !== null) {
-    const actionRepo = baseActionMatch[1];
-    const currentSha = baseActionMatch[2];
-    const currentTag = baseActionMatch[3] || baseActionMatch[4];
-    const fullMatched = baseActionMatch[0];
-
-    const latest = await getLatestActionRelease(actionRepo);
-    if (latest && (latest.tag !== currentTag || (currentSha && latest.sha !== currentSha))) {
-      baseActionUpdates.push({
-        actionRepo,
-        currentTag,
-        currentSha,
-        latestTag: latest.tag,
-        latestSha: latest.sha,
-        fullMatched,
-        replacement: `uses: ${actionRepo}@${latest.sha} # ${latest.tag}`,
-      });
-    }
-  }
-
-  // 3. Query models
+  // 2. Query models
   const openRouterModels = await getOpenRouterCatalog();
   const litellmCatalog = await getLiteLlmModelCatalog();
 
@@ -372,22 +319,16 @@ async function main() {
 
   // Check for changes
   const actionChanged = currentTag !== latestRelease.tag || currentSha !== latestRelease.sha;
-  const baseActionsChanged = baseActionUpdates.length > 0;
   const modelChanged = currentModel !== proposedPrimaryModel;
   const fallbacksChanged = JSON.stringify(currentFallbacks) !== JSON.stringify(proposedFallbacks);
   const tokensChanged = currentTokens !== proposedTokens;
 
-  const hasChanges = actionChanged || baseActionsChanged || modelChanged || fallbacksChanged || tokensChanged;
+  const hasChanges = actionChanged || modelChanged || fallbacksChanged || tokensChanged;
 
   const changesList = [];
   if (actionChanged) {
     changesList.push(
       `- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`
-    );
-  }
-  for (const b of baseActionUpdates) {
-    changesList.push(
-      `- **Base Action (${b.actionRepo})**: \`${b.currentTag}\` (\`${b.currentSha?.slice(0, 7) || 'unpinned'}\`) → \`${b.latestTag}\` (\`${b.latestSha.slice(0, 7)}\`)`
     );
   }
   if (modelChanged) {
@@ -418,9 +359,6 @@ async function main() {
       actionRegex,
       `uses: the-pr-agent/pr-agent@${latestRelease.sha} #${latestRelease.tag}`
     );
-  }
-  for (const b of baseActionUpdates) {
-    newWorkflowContent = newWorkflowContent.replace(b.fullMatched, b.replacement);
   }
 
   // Update .pr_agent.toml file
@@ -458,8 +396,6 @@ async function main() {
     prTitle = `chore: update PR-Agent action to ${latestRelease.tag}`;
   } else if (modelChanged || fallbacksChanged) {
     prTitle = `chore: update PR-Agent models (${proposedPrimaryModel.replace('gemini/', '')})`;
-  } else if (baseActionsChanged) {
-    prTitle = 'chore: update base actions in PR-Agent workflow';
   }
 
   const prBody = `## 🤖 Automated PR-Agent & Model Upgrade
