@@ -8,7 +8,7 @@ import {
   IStationMeta,
   IThreeMonthPeriod,
 } from '@picsa/models';
-import { aggregateThreeMonthSeries, arrayToHashmap, deepClone, filterMonthlyDataByMonth, loadCSV } from '@picsa/utils';
+import { aggregateThreeMonthSeries, arrayToHashmap, convertMonthlyToStationData, deepClone, filterMonthlyDataByMonth, loadCSV } from '@picsa/utils';
 
 import { CLIMATE_STATIONS_META } from '../data/stations';
 
@@ -35,6 +35,7 @@ export class ClimateDataService {
 
   private loadedStationData: Record<string, IStationData[]> = {};
   private loadedMonthlyData: Record<string, IMonthlyStationData[]> = {};
+  private loadedTimespanBounds: Record<string, IStationData[]> = {};
 
   constructor() {
     effect(() => {
@@ -124,8 +125,40 @@ export class ClimateDataService {
   }
 
   /**
-   * Resolve station observations for a specific timespan resolution (annual, 1-month, 3-month).
+   * Resolve dataset representing all observations for the specified timespan mode.
+   * - annual: annual station records (Boundary C)
+   * - monthly: all monthly records across all 12 months (Boundary A)
+   * - three_month: all aggregated 3-month records across all available periods (Boundary B)
    */
+  public async getTimespanBoundsData(
+    stationId: string,
+    mode: ClimateTimespanMode,
+    periods?: IThreeMonthPeriod[],
+  ): Promise<IStationData[]> {
+    if (mode === 'annual') {
+      const data = await this.getStationData(stationId);
+      return data || [];
+    }
+
+    const cacheKey = `${stationId}_${mode}`;
+    if (this.loadedTimespanBounds[cacheKey]) {
+      return this.loadedTimespanBounds[cacheKey];
+    }
+
+    const monthlyData = await this.getMonthlyStationData(stationId);
+    let boundsData: IStationData[] = [];
+
+    if (mode === 'monthly') {
+      boundsData = convertMonthlyToStationData(monthlyData);
+    } else if (mode === 'three_month') {
+      const activePeriods = periods && periods.length > 0 ? periods : [];
+      boundsData = activePeriods.flatMap((p) => aggregateThreeMonthSeries(monthlyData, p));
+    }
+
+    this.loadedTimespanBounds[cacheKey] = boundsData;
+    return boundsData;
+  }
+
   public async getTimespanData(
     stationId: string,
     mode: ClimateTimespanMode,

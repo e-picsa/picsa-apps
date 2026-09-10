@@ -114,6 +114,8 @@ describe('ClimateChartService', () => {
     { month: '2000-01', Rainfall: 100, min_tmin: 15, mean_tmin: 18, mean_tmax: 28, max_tmax: 32 },
     { month: '2000-02', Rainfall: 120, min_tmin: 16, mean_tmin: 19, mean_tmax: 29, max_tmax: 33 },
     { month: '2000-03', Rainfall: 80, min_tmin: 14, mean_tmin: 17, mean_tmax: 27, max_tmax: 31 },
+    { month: '2000-07', Rainfall: 0, min_tmin: 6, mean_tmin: 11, mean_tmax: 22, max_tmax: 26 },
+    { month: '2000-10', Rainfall: 10, min_tmin: 19, mean_tmin: 24, mean_tmax: 35, max_tmax: 40 },
     { month: '2001-01', Rainfall: 110, min_tmin: 15.5, mean_tmin: 18.5, mean_tmax: 28.5, max_tmax: 32.5 },
   ];
 
@@ -123,6 +125,7 @@ describe('ClimateChartService', () => {
     getStationData: jest.Mock;
     getMonthlyStationData: jest.Mock;
     getTimespanData: jest.Mock;
+    getTimespanBoundsData: jest.Mock;
     stations: jest.Mock;
   };
 
@@ -136,6 +139,22 @@ describe('ClimateChartService', () => {
         if (mode === 'monthly') {
           const monthStr = month.toString().padStart(2, '0');
           return Promise.resolve(mockMonthlyData.filter((d) => d.month.endsWith(`-${monthStr}`)));
+        }
+        return Promise.resolve(mockData);
+      }),
+      getTimespanBoundsData: jest.fn().mockImplementation((_id, mode) => {
+        if (mode === 'monthly') {
+          return Promise.resolve(
+            mockMonthlyData.map((m) => ({
+              Year: parseInt(m.month.slice(0, 4), 10),
+              Rainfall: m.Rainfall,
+              min_tmin: m.min_tmin,
+              mean_tmin: m.mean_tmin,
+              min_tmax: m.min_tmax,
+              mean_tmax: m.mean_tmax,
+              max_tmax: m.max_tmax,
+            }))
+          );
         }
         return Promise.resolve(mockData);
       }),
@@ -292,7 +311,7 @@ describe('ClimateChartService', () => {
       expect(service.chartConfig()?.axis?.y?.max).toBe(annualYMax);
     });
 
-    it('should keep temperature axis scale fixed between annual and monthly modes using annual min/max with 2-degree buffer', async () => {
+    it('should use adaptive boundaries where annual is scale C and monthly is scale A across all months', async () => {
       const stationWithMonthly: IStationMeta = {
         ...mockStation,
         countryCode: 'ZM',
@@ -302,24 +321,35 @@ describe('ClimateChartService', () => {
         },
       };
       service.station.set(stationWithMonthly);
+
+      // 1. Annual mode (Boundary C):
+      // Annual mockData: min_tmin min is 15, mean_tmin max is 19.
+      // floor((15 - 2) / 2) * 2 = 12, ceil((19 + 2) / 2) * 2 = 22 -> [12, 22]
       await service.setTimespanMode('annual');
       await service.setChart('temp_min');
-
-      // In annual mockData: min_tmin min is 15, mean_tmin max is 19.
-      // With 2-degree buffer and yMajor=2:
-      // yMin: floor((15 - 2) / 2) * 2 = 12
-      // yMax: ceil((19 + 2) / 2) * 2 = 22
       expect(service.chartConfig()?.axis?.y?.min).toBe(12);
       expect(service.chartConfig()?.axis?.y?.max).toBe(22);
 
-      // In monthly mode
+      // 2. Monthly mode (Boundary A across all 12 months):
+      // Across all months: min_tmin min is 6 (July), mean_tmin max is 24 (Oct).
+      // floor((6 - 2) / 2) * 2 = 4, ceil((24 + 2) / 2) * 2 = 26 -> [4, 26]
+      // Viewing January (Month 1)
       await service.setTimespanMode('monthly');
       await service.setSelectedMonth(1);
       await service.setChart('temp_min');
+      expect(service.chartConfig()?.axis?.y?.min).toBe(4);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(26);
 
-      // The axis bounds in monthly mode must match the annual bounds exactly
-      expect(service.chartConfig()?.axis?.y?.min).toBe(12);
-      expect(service.chartConfig()?.axis?.y?.max).toBe(22);
+      // Viewing March (Month 3) - axis scale remains fixed at Boundary A [4, 26]
+      await service.setSelectedMonth(3);
+      await service.setChart('temp_min');
+      expect(service.chartConfig()?.axis?.y?.min).toBe(4);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(26);
+
+      // Annual boundary C [12, 22] is narrower than monthly boundary A [4, 26]
+      const annualRange = 22 - 12;
+      const monthlyRange = 26 - 4;
+      expect(annualRange).toBeLessThan(monthlyRange);
     });
   });
 });

@@ -643,6 +643,30 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
 }
 
 /**
+ * Map a raw monthly station record into an IStationData observation row.
+ */
+function mapMonthlyRowToStationData(row: IMonthlyStationData): IStationData | null {
+  if (!row.month) return null;
+  const year = Number.parseInt(row.month.slice(0, 4), 10);
+  if (Number.isNaN(year)) return null;
+
+  return {
+    Year: year,
+    Start: null as any,
+    End: null as any,
+    Length: null as any,
+    Rainfall: (row.Rainfall ?? null) as any,
+    Extreme_events: null as any,
+    min_tmin: (row.min_tmin ?? null) as any,
+    mean_tmin: (row.mean_tmin ?? null) as any,
+    max_tmin: (row.max_tmin ?? null) as any,
+    min_tmax: (row.min_tmax ?? null) as any,
+    mean_tmax: (row.mean_tmax ?? null) as any,
+    max_tmax: (row.max_tmax ?? null) as any,
+  };
+}
+
+/**
  * Filter monthly station data for a single calendar month (1-12) across all years.
  * Returns an array of IStationData rows with Year matching the calendar year.
  */
@@ -652,24 +676,24 @@ export function filterMonthlyDataByMonth(monthlyData: IMonthlyStationData[], tar
 
   for (const row of monthlyData) {
     if (row.month && row.month.endsWith(monthSuffix)) {
-      const year = Number.parseInt(row.month.slice(0, 4), 10);
-      if (Number.isNaN(year)) continue;
-
-      rows.push({
-        Year: year,
-        Start: null as any,
-        End: null as any,
-        Length: null as any,
-        Rainfall: (row.Rainfall ?? null) as any,
-        Extreme_events: null as any,
-        min_tmin: (row.min_tmin ?? null) as any,
-        mean_tmin: (row.mean_tmin ?? null) as any,
-        max_tmin: (row.max_tmin ?? null) as any,
-        min_tmax: (row.min_tmax ?? null) as any,
-        mean_tmax: (row.mean_tmax ?? null) as any,
-        max_tmax: (row.max_tmax ?? null) as any,
-      });
+      const mapped = mapMonthlyRowToStationData(row);
+      if (mapped) rows.push(mapped);
     }
+  }
+
+  return rows.sort((a, b) => a.Year - b.Year);
+}
+
+/**
+ * Convert all monthly station records across all calendar months into IStationData rows.
+ * Used for computing station-wide 1-month axis bounds (Scale A).
+ */
+export function convertMonthlyToStationData(monthlyData: IMonthlyStationData[]): IStationData[] {
+  const rows: IStationData[] = [];
+
+  for (const row of monthlyData) {
+    const mapped = mapMonthlyRowToStationData(row);
+    if (mapped) rows.push(mapped);
   }
 
   return rows.sort((a, b) => a.Year - b.Year);
