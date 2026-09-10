@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { shareBudget } from './share.ts';
 import { importBudget } from './import.ts';
+import { migrateFirebaseBudgets } from './migrate-firebase.ts';
+import { shareBudget } from './share.ts';
 
 const app = new Hono().basePath('/budget');
 
@@ -10,7 +11,7 @@ app.use(
   '*',
   cors({
     origin: '*', // api restriction handled at supabase function invocation layer
-    allowHeaders: ['authorization', 'x-client-info', 'apikey', 'content-type'],
+    allowHeaders: ['authorization', 'x-client-info', 'apikey', 'content-type', 'x-picsa-deployment-id'],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
   }),
 );
@@ -24,6 +25,11 @@ app.get('/import/:code', async (c) => {
 // POST /budget/share
 app.post('/share', async (c) => {
   return shareBudget(c.req.raw);
+});
+
+// POST /budget/migrate-firebase
+app.post('/migrate-firebase', async (c) => {
+  return migrateFirebaseBudgets(c.req.raw);
 });
 
 export default app;
