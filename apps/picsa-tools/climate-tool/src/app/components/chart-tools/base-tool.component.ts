@@ -53,6 +53,29 @@ export interface IOverlayLine {
   label?: IOverlayLineLabel;
 }
 
+export interface ITrendlineOverlay {
+  id: string;
+  /** Key of data series used to resolve correct Y scale */
+  seriesKey?: string;
+  startX: number;
+  endX: number;
+  startY: number;
+  endY: number;
+  color: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
+  opacity?: number;
+  label?: string;
+}
+
+export interface IChartOverlayMessage {
+  text: string;
+  subtext?: string;
+  color?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
@@ -68,8 +91,8 @@ export abstract class BaseChartToolComponent {
   protected readonly chartConfig = computed(() => this.chartService.chartConfig());
 
   /**
-   * Set true in subclasses that implement `getPointStyle` or `getOverlayLines`, so the
-   * chart service knows to render the custom overlay and hide C3's default circles.
+   * Set true in subclasses that implement custom markers, lines, or trendlines so the
+   * chart service knows to run overlay synchronization.
    */
   public readonly usesPointOverlay: boolean = false;
 
@@ -93,6 +116,16 @@ export abstract class BaseChartToolComponent {
 
   /** Override to draw declarative horizontal lines directly on the chart SVG canvas */
   public getOverlayLines(): IOverlayLine[] | undefined {
+    return undefined;
+  }
+
+  /** Override to draw declarative trendlines directly on the chart SVG canvas */
+  public getTrendlines(): ITrendlineOverlay[] | undefined {
+    return undefined;
+  }
+
+  /** Override to display a message banner directly on the chart SVG canvas */
+  public getChartMessage(): IChartOverlayMessage | undefined {
     return undefined;
   }
 

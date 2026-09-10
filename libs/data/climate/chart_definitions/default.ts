@@ -3,12 +3,18 @@ import { deepClone } from '@picsa/utils';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import merge from 'deepmerge';
 
-import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
+import {
+  LINE_TOOL_COLORS,
+  LINE_TOOL_OPTIONS,
+  PROBABILITY_TOOL_OPTIONS,
+  TRENDLINE_TOOL_OPTIONS,
+} from '../tool_definitions';
 
 const DEFAULT_TOOLS: IChartTools = {
   line: LINE_TOOL_OPTIONS,
   probability: PROBABILITY_TOOL_OPTIONS,
   terciles: { enabled: true },
+  trendline: TRENDLINE_TOOL_OPTIONS,
   el_nino: { enabled: true },
   la_nina: { enabled: true },
 };
