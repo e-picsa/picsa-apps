@@ -12,7 +12,6 @@
       - any-glob-to-any-file: 'apps/picsa-apps/app/**/*'
       - any-glob-to-any-file: 'apps/picsa-apps/app-native/**/*'
 
-# CI / Automation
 'CI / Automation':
   - changed-files:
       - any-glob-to-any-file: '.github/**/*'

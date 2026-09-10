@@ -2,7 +2,6 @@
 # Original list generated from gh cli via
 # `gh label list --json color,description,name`
 [
-  # GitHub / Conventional commit PR labels
   { 'color': 'd73a4a', 'description': "Something isn't working", 'name': 'bug' },
   { 'color': '0075ca', 'description': 'Improvements or additions to documentation', 'name': 'documentation' },
   { 'color': 'a2eeef', 'description': 'New feature or request', 'name': 'enhancement' },
@@ -12,7 +11,6 @@
   { 'color': 'ededed', 'description': '', 'name': 'feature' },
   { 'color': 'ededed', 'description': '', 'name': 'fix' },
   { 'color': 'ededed', 'description': '', 'name': 'maintenance' },
-  # CI / Automation
   { 'color': 'fbca04', 'description': 'Changes to CI workflows and automation', 'name': 'CI / Automation' },
   # PICSA Server
   { 'color': 'e99695', 'description': 'Changes containing database schema migrations', 'name': 'Server: DB Migration' },
