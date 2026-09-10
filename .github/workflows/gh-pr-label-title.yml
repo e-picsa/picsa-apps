@@ -17,7 +17,7 @@ jobs:
     steps:
       # Checkout repo to access local templates (if updated)
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       # Check if PR title matches conventional commit standard
       # Not strictly enforced so allow continue on error
       # https://github.com/marketplace/actions/semantic-pull-request
