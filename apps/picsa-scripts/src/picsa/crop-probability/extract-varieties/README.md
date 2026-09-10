@@ -21,7 +21,7 @@ All files for this script are co-located in this directory:
 - **`.gitignore`**: Excludes temporary `output/` files from source control.
 - **`output/`** *(Generated at runtime, git-ignored)*:
   - `crop_data_rows.[country].csv`: Primary database catalog CSV (`country_code,crop,variety,maturity_period,days_lower,days_upper,additional_info,additional_data`).
-  - `crop_data_downscaled_rows.[country].csv`: Secondary station downscaled water requirements CSV (1 row per district: `country_code,location_id,water_requirements,override_data,station_id`).
+  - `crop_data_downscaled_rows.[country].csv`: Secondary station downscaled water requirements CSV (1 row per district: `country_code,location_id,water_requirements,station_id`).
   - `sublocation_discrepancies.json`: Audit log of sublocation variations within each district prior to merging.
 
 ---

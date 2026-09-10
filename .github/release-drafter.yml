@@ -16,7 +16,8 @@ categories:
     { title: '🟪Extension App', labels: ['App: Extension'] },
     { title: '🟪Farmer App', labels: ['App: Farmer'] },
     { title: '🟪Dashboard App', labels: ['App: Dashboard'] },
-    { title: '🟪Server App', labels: ['App: Server'] },
+    { title: '⚡Server Functions', labels: ['Server: Functions'] },
+    { title: '🗄️DB Migrations', labels: ['Server: DB Migration'] },
     { title: '🟫Core Maintenance', labels: ['maintenance'] },
   ]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
