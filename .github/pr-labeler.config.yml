@@ -9,6 +9,13 @@
 'App: Extension':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/extension-content/**/*'
+      - any-glob-to-any-file: 'apps/picsa-apps/app/**/*'
+      - any-glob-to-any-file: 'apps/picsa-apps/app-native/**/*'
+
+'CI / Automation':
+  - changed-files:
+      - any-glob-to-any-file: '.github/**/*'
+      - any-glob-to-any-file: 'tools/workflows/**/*'
 
 # Server
 'Server: DB Migration':
@@ -28,12 +35,12 @@
 'Tool: Crop Probability':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/crop-probability-tool/**/*'
+'Tool: Forecasts':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/forecasts-tool/**/*'
 'Tool: Manual':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/manual-tool/**/*'
-'Tool: Monitoring':
-  - changed-files:
-      - any-glob-to-any-file: 'apps/picsa-tools/monitoring-tool/**/*'
 'Tool: Option':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/option-tool/**/*'
