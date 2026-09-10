@@ -66,7 +66,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   enterpriseType = signal<string | undefined>(undefined);
   enterpriseType$ = new Subject<string>();
   filteredEnterprises = signal<IBudgetCard[]>([]);
-  periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
+  periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months', 'years'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTH_DATA.map((m) => m.labelShort)];
   enterpriseTypeCards: IBudgetCard[] = [];
