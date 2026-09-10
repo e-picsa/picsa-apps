@@ -31,10 +31,12 @@ import {
   clearLineOverlay,
   clearPointOverlay,
   clearSvgLegend,
+  clearTrendlineOverlay,
   IOverlayPoint,
   renderLineOverlay,
   renderPointOverlay,
   renderSvgLegend,
+  renderTrendlineOverlay,
 } from '../utils/chart-point-overlay';
 import { ClimateDataService } from './climate-data.service';
 import { ClimateToolService } from './climate-tool.service';
@@ -405,7 +407,7 @@ export class ClimateChartService {
   }
 
   /**
-   * Build the marker list and lines from station data and hand it to the overlay renderer.
+   * Build the marker list, lines, and trendlines from station data and hand them to the overlay renderer.
    */
   private syncPointOverlay() {
     const chart = this.chart();
@@ -417,6 +419,7 @@ export class ClimateChartService {
       clearPointOverlay(chart);
       clearSvgLegend(chart);
       clearLineOverlay(chart);
+      clearTrendlineOverlay(chart);
       return;
     }
 
@@ -447,6 +450,15 @@ export class ClimateChartService {
     }
 
     renderPointOverlay(chart, points, scale);
+
+    // 3. Sync trendlines & chart message
+    const trendlines = tool.getTrendlines?.();
+    const message = tool.getChartMessage?.();
+    if ((trendlines && trendlines.length > 0) || message) {
+      renderTrendlineOverlay(chart, trendlines || [], message, scale);
+    } else {
+      clearTrendlineOverlay(chart);
+    }
 
     const legendItems = tool.getLegendItems();
     // Render SVG legend on canvas ONLY in print version (so it is captured in PNG export without appearing on normal screen)

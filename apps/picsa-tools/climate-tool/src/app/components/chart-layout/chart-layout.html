@@ -23,6 +23,10 @@
 @if (toolService.activeTool() === 'terciles') {
 <climate-terciles-tool [values]="chartService.chartSeriesData()"></climate-terciles-tool>
 }
+<!-- trendline tool -->
+@if (toolService.activeTool() === 'trendline') {
+<climate-trendline-tool></climate-trendline-tool>
+}
 <!-- el nino tool -->
 @if (toolService.activeTool() === 'el_nino') {
 <climate-el-nino-tool></climate-el-nino-tool>

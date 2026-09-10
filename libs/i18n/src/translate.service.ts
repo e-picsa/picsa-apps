@@ -37,4 +37,9 @@ export class PicsaTranslateService {
     const translatedArr = await Promise.all(translatePromises);
     return translatedArr;
   }
+
+  public instant(text: string): string {
+    if (!text) return text;
+    return this.ngxTranslate.instant(text);
+  }
 }

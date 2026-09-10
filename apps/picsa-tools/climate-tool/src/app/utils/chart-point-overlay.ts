@@ -1,10 +1,20 @@
 import type { ChartAPI } from 'c3';
 import { select } from 'd3-selection';
 
-import type { ILegendItem, IOverlayLine, IPointStyle, PointShape } from '../components/chart-tools/base-tool.component';
+import type {
+  IChartOverlayMessage,
+  ILegendItem,
+  IOverlayLine,
+  IPointStyle,
+  ITrendlineOverlay,
+  PointShape,
+} from '../components/chart-tools/base-tool.component';
 
 const LAYER_CLASS = 'picsa-point-overlay';
 const LEGEND_LAYER_CLASS = 'picsa-legend-overlay';
+const LINE_LAYER_CLASS = 'picsa-line-overlay';
+const TRENDLINE_LAYER_CLASS = 'picsa-trendline-overlay';
+const MESSAGE_LAYER_CLASS = 'picsa-message-overlay';
 const OVERLAY_ACTIVE_CLASS = 'picsa-overlay-active';
 
 const SHAPE_PATH: Record<PointShape, (s: number) => string> = {
@@ -101,12 +111,13 @@ export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], sca
   const chartWidth = internal.currentWidth || 900;
   const chartHeight = internal.currentHeight || 530;
 
-  const itemGap = 48;
-  const iconTextGap = 12;
-  const approxItemWidth = 90;
+  const itemGap = 48 * scale;
+  const iconTextGap = 12 * scale;
+  const approxItemWidth = 90 * scale;
+  const fontSize = 13 * scale;
   const totalWidth = legendItems.length * approxItemWidth + (legendItems.length - 1) * itemGap;
   let currentX = Math.max(40, (chartWidth - totalWidth) / 2);
-  const legendY = chartHeight - 24;
+  const legendY = chartHeight - 24 * scale;
 
   const data: ISvgLegendItem[] = legendItems.map((item) => {
     const x = currentX;
@@ -128,7 +139,7 @@ export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], sca
 
   items
     .select('path')
-    .attr('d', (d) => getShapePath(d.shape, 6))
+    .attr('d', (d) => getShapePath(d.shape, 6 * scale))
     .style('fill', (d) => d.fill)
     .style('stroke', (d) => d.stroke ?? 'none')
     .style('stroke-width', (d) => `${d.strokeWidth ?? 1}px`)
@@ -144,12 +155,12 @@ export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], sca
     .attr('y', 0)
     .style('dominant-baseline', 'central')
     .style('fill', '#222222')
-    .style('font-size', '13px')
+    .style('font-size', `${fontSize}px`)
     .style('font-family', 'sans-serif')
     .style('font-weight', '600')
     .attr('dominant-baseline', 'central')
     .attr('fill', '#222222')
-    .attr('font-size', '13px')
+    .attr('font-size', `${fontSize}px`)
     .attr('font-family', 'sans-serif')
     .attr('font-weight', '600')
     .text((d) => d.label);
@@ -160,8 +171,6 @@ export function clearSvgLegend(chart?: ChartAPI) {
   if (!internal?.svg) return;
   select(internal.svg.node()).select(`g.${LEGEND_LAYER_CLASS}`).remove();
 }
-
-const LINE_LAYER_CLASS = 'picsa-line-overlay';
 
 /**
  * Render declarative overlay lines (horizontal thresholds, tercile boundaries) directly onto chart SVG canvas.
@@ -276,6 +285,217 @@ export function clearLineOverlay(chart?: ChartAPI) {
   select(internal.main.node()).select(`g.${LINE_LAYER_CLASS}`).remove();
 }
 
+/**
+ * Render declarative trendlines and/or status message banners directly onto chart SVG canvas.
+ */
+export function renderTrendlineOverlay(
+  chart: ChartAPI,
+  trendlines: ITrendlineOverlay[],
+  message?: IChartOverlayMessage,
+  scale = 1,
+) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.main) return;
+
+  const mainNode = internal.main.node() as SVGGElement;
+  const root = select<SVGGElement, unknown>(mainNode);
+
+  // 1. Render trendlines
+  if (!trendlines || trendlines.length === 0) {
+    root.select(`g.${TRENDLINE_LAYER_CLASS}`).remove();
+  } else {
+    let layer = root.select<SVGGElement>(`g.${TRENDLINE_LAYER_CLASS}`);
+    if (layer.empty()) {
+      layer = root.append('g').attr('class', TRENDLINE_LAYER_CLASS).attr('pointer-events', 'none');
+    }
+
+    const groups = layer
+      .selectAll<SVGGElement, ITrendlineOverlay>('g.overlay-trendline')
+      .data(trendlines, (d) => d.id)
+      .join((enter) => {
+        const g = enter.append('g').attr('class', 'overlay-trendline');
+        g.append('line');
+        const badge = g.append('g').attr('class', 'trendline-label');
+        badge.append('rect');
+        badge.append('text');
+        return g;
+      });
+
+    groups.each(function (d) {
+      const g = select(this);
+      const yScale =
+        d.seriesKey && typeof internal.getYScale === 'function'
+          ? internal.getYScale(d.seriesKey)
+          : internal.y || ((v: number) => v);
+      const xScale = typeof internal.x === 'function' ? internal.x.bind(internal) : (v: number) => v;
+
+      const x1 = xScale(d.startX);
+      const x2 = xScale(d.endX);
+      const y1 = yScale(d.startY);
+      const y2 = yScale(d.endY);
+
+      const strokeColor = d.color || '#333333';
+      const strokeWidth = (d.strokeWidth ?? 2.5) * scale;
+      const dash = d.strokeDasharray ?? '8 4';
+
+      g.select('line')
+        .attr('x1', x1)
+        .attr('y1', y1)
+        .attr('x2', x2)
+        .attr('y2', y2)
+        .style('stroke', strokeColor)
+        .style('stroke-width', `${strokeWidth}px`)
+        .style('stroke-dasharray', dash)
+        .style('opacity', (d.opacity ?? 0.9).toString())
+        .attr('stroke', strokeColor)
+        .attr('stroke-width', strokeWidth)
+        .attr('stroke-dasharray', dash)
+        .attr('opacity', d.opacity ?? 0.9);
+
+      // Label badge near the end of the trendline
+      const badge = g.select<SVGGElement>('g.trendline-label');
+      if (!d.label) {
+        badge.style('display', 'none');
+      } else {
+        badge.style('display', null);
+        const fontSize = 11 * scale;
+        const padX = 6 * scale;
+        const padY = 3 * scale;
+        const approxCharWidth = fontSize * 0.62;
+        const boxWidth = d.label.length * approxCharWidth + padX * 2;
+        const boxHeight = fontSize + padY * 2;
+
+        const chartWidth = internal.width || 800;
+        const chartHeight = internal.height || (internal.currentHeight ? internal.currentHeight - 50 : 400);
+        const isNearRight = x2 + boxWidth > chartWidth;
+        const badgeX = isNearRight ? x2 - boxWidth - 4 : x2 + 4;
+        const rawBadgeY = y2 - boxHeight / 2;
+        const badgeY = Math.max(2, Math.min(chartHeight - boxHeight - 2, rawBadgeY));
+
+        badge
+          .select('rect')
+          .attr('x', badgeX)
+          .attr('y', badgeY)
+          .attr('width', boxWidth)
+          .attr('height', boxHeight)
+          .attr('rx', 4)
+          .attr('ry', 4)
+          .style('fill', '#ffffff')
+          .style('stroke', strokeColor)
+          .style('stroke-width', '1.5px')
+          .style('opacity', '0.95')
+          .attr('fill', '#ffffff')
+          .attr('stroke', strokeColor)
+          .attr('stroke-width', 1.5)
+          .attr('opacity', 0.95);
+
+        badge
+          .select('text')
+          .attr('x', badgeX + boxWidth / 2)
+          .attr('y', badgeY + boxHeight / 2)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'central')
+          .style('fill', strokeColor)
+          .style('font-size', `${fontSize}px`)
+          .style('font-family', 'sans-serif')
+          .style('font-weight', '600')
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'central')
+          .attr('fill', strokeColor)
+          .attr('font-size', `${fontSize}px`)
+          .attr('font-family', 'sans-serif')
+          .attr('font-weight', '600')
+          .text(d.label);
+      }
+    });
+  }
+
+  // 2. Render message banner (when no strong trend exists)
+  if (!message || !message.text) {
+    root.select(`g.${MESSAGE_LAYER_CLASS}`).remove();
+  } else {
+    let msgLayer = root.select<SVGGElement>(`g.${MESSAGE_LAYER_CLASS}`);
+    if (msgLayer.empty()) {
+      msgLayer = root.append('g').attr('class', MESSAGE_LAYER_CLASS).attr('pointer-events', 'none');
+    }
+
+    const chartWidth = internal.width || 800;
+    const bannerHeight = (message.subtext ? 42 : 28) * scale;
+    const fontSize = 12 * scale;
+    const subFontSize = 10 * scale;
+
+    const maxLen = Math.max(message.text.length, message.subtext?.length || 0);
+    const approxWidth = Math.min(chartWidth - 20, Math.max(220, maxLen * 7.5 * scale + 32 * scale));
+    const bannerX = (chartWidth - approxWidth) / 2;
+    const bannerY = 8 * scale;
+
+    const bg = msgLayer.selectAll<SVGRectElement, unknown>('rect').data([1]);
+    bg.join('rect')
+      .attr('x', bannerX)
+      .attr('y', bannerY)
+      .attr('width', approxWidth)
+      .attr('height', bannerHeight)
+      .attr('rx', 6)
+      .attr('ry', 6)
+      .style('fill', message.backgroundColor || '#f8f9fa')
+      .style('stroke', message.borderColor || '#d0d5dd')
+      .style('stroke-width', '1.5px')
+      .style('opacity', '0.96')
+      .attr('fill', message.backgroundColor || '#f8f9fa')
+      .attr('stroke', message.borderColor || '#d0d5dd')
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.96);
+
+    const mainText = msgLayer.selectAll<SVGTextElement, unknown>('text.msg-main').data([message.text]);
+    mainText
+      .join('text')
+      .attr('class', 'msg-main')
+      .attr('x', bannerX + approxWidth / 2)
+      .attr('y', message.subtext ? bannerY + 15 * scale : bannerY + bannerHeight / 2)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .style('fill', message.color || '#344054')
+      .style('font-size', `${fontSize}px`)
+      .style('font-family', 'sans-serif')
+      .style('font-weight', '600')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('fill', message.color || '#344054')
+      .attr('font-size', `${fontSize}px`)
+      .attr('font-family', 'sans-serif')
+      .attr('font-weight', '600')
+      .text(message.text);
+
+    const subData = message.subtext ? [message.subtext] : [];
+    const subText = msgLayer.selectAll<SVGTextElement, unknown>('text.msg-sub').data(subData);
+    subText
+      .join('text')
+      .attr('class', 'msg-sub')
+      .attr('x', bannerX + approxWidth / 2)
+      .attr('y', bannerY + 31 * scale)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .style('fill', '#667085')
+      .style('font-size', `${subFontSize}px`)
+      .style('font-family', 'sans-serif')
+      .style('font-weight', '400')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('fill', '#667085')
+      .attr('font-size', `${subFontSize}px`)
+      .attr('font-family', 'sans-serif')
+      .attr('font-weight', '400')
+      .text((d) => d);
+  }
+}
+
+export function clearTrendlineOverlay(chart?: ChartAPI) {
+  const internal = (chart as any)?.internal;
+  if (!internal?.main) return;
+  select(internal.main.node()).select(`g.${TRENDLINE_LAYER_CLASS}`).remove();
+  select(internal.main.node()).select(`g.${MESSAGE_LAYER_CLASS}`).remove();
+}
+
 export function clearPointOverlay(chart?: ChartAPI) {
   const internal = (chart as any)?.internal;
   if (!internal?.main) return;
@@ -286,6 +506,7 @@ export function clearPointOverlay(chart?: ChartAPI) {
   const root = select(mainNode);
   root.select(`g.${LAYER_CLASS}`).remove();
   clearLineOverlay(chart);
+  clearTrendlineOverlay(chart);
   clearSvgLegend(chart);
   root.selectAll('.c3-circles .c3-circle').style('opacity', null);
 }
