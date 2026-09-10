@@ -19,6 +19,7 @@ import {
   IBudget,
   IBudgetCodeDoc,
   IBudgetMeta,
+  IBudgetPeriodLabel,
   IBudgetPeriodType,
   IBudgetValueCounters,
   IBudgetValueScale,
@@ -51,11 +52,11 @@ export class BudgetStore {
   @observable activeBudget: IBudget = undefined as any;
   @observable valueCounters: IBudgetValueCounters = [[], []];
 
-  @observable periodLabels: string[] = [];
+  @observable periodLabels: IBudgetPeriodLabel[] = [];
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
-    this.periodLabels = this.generatePeriodLabels(budget.meta);
+    this.periodLabels = generatePeriodLabels(budget.meta);
     this.service.budgetData.set(budget.data);
   }
 
@@ -323,24 +324,6 @@ export class BudgetStore {
    *
    ***************************************************************************/
 
-  // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
-  private generatePeriodLabels(meta: IBudgetMeta): string[] {
-    const { lengthScale, lengthTotal, monthStart = 1 } = meta;
-    const months = MONTH_DATA.map((m) => m.labelShort);
-    if (lengthScale === 'weeks') {
-      return new Array(lengthTotal).fill(0).map((_, i) => 'Week ' + (i + 1));
-    }
-    if (lengthScale === 'days') {
-      return new Array(lengthTotal).fill(0).map((_, i) => 'Day ' + (i + 1));
-    }
-    if (lengthScale === 'months') {
-      // duplicate array so that can still slice up to 12 months from dec
-      const base = [...months, ...months];
-      return base.slice(monthStart - 1, lengthTotal + monthStart - 1);
-    }
-    return [];
-  }
-
   // each currency has a base unit (e.g. MK 1000) which is used to generate
   // counter representations in orders of 10 (i.e. 100, 1000, 10000) and half values.
   // These can additionaly be scaled up or down by magnitudes of 10.
@@ -356,4 +339,29 @@ export class BudgetStore {
     ];
     return counters;
   }
+}
+
+/**
+ * Generate a list of labels depending on scale, total and start,
+ * e.g. [{ prefix: 'Year', suffix: 1 }, { prefix: 'Year', suffix: 2 }]
+ * or [{ prefix: 'Sep' }, { prefix: 'Oct' }]
+ */
+export function generatePeriodLabels(meta: IBudgetMeta): IBudgetPeriodLabel[] {
+  const { lengthScale, lengthTotal, monthStart = 1 } = meta;
+  const months = MONTH_DATA.map((m) => m.labelShort);
+  if (lengthScale === 'years') {
+    return new Array(lengthTotal).fill(0).map((_, i) => ({ prefix: 'Year', suffix: i + 1 }));
+  }
+  if (lengthScale === 'weeks') {
+    return new Array(lengthTotal).fill(0).map((_, i) => ({ prefix: 'Week', suffix: i + 1 }));
+  }
+  if (lengthScale === 'days') {
+    return new Array(lengthTotal).fill(0).map((_, i) => ({ prefix: 'Day', suffix: i + 1 }));
+  }
+  if (lengthScale === 'months') {
+    // duplicate array so that can still slice up to 12 months from dec
+    const base = [...months, ...months];
+    return base.slice(monthStart - 1, lengthTotal + monthStart - 1).map((label) => ({ prefix: label }));
+  }
+  return [];
 }
