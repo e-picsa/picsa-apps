@@ -305,12 +305,14 @@ export function calculateStationCapabilities(params: {
     }
   }
 
-  // Also check monthly data for year bounds
-  for (const row of monthlyData) {
-    const yr = Number.parseInt(row.month.slice(0, 4), 10);
-    if (!Number.isNaN(yr)) {
-      if (firstYear === undefined || yr < firstYear) firstYear = yr;
-      if (lastYear === undefined || yr > lastYear) lastYear = yr;
+  // Only fall back to monthly data for year bounds if annual data is absent
+  if (firstYear === undefined && lastYear === undefined) {
+    for (const row of monthlyData) {
+      const yr = Number.parseInt(row.month.slice(0, 4), 10);
+      if (!Number.isNaN(yr)) {
+        if (firstYear === undefined || yr < firstYear) firstYear = yr;
+        if (lastYear === undefined || yr > lastYear) lastYear = yr;
+      }
     }
   }
 
@@ -357,41 +359,43 @@ export function calculateStationCapabilities(params: {
   if (firstYear !== undefined && lastYear !== undefined) {
     const validYears = new Set<number>();
 
-    // Check annual data valid rows
-    for (const row of annualData) {
-      if (typeof row.Year !== 'number' || Number.isNaN(row.Year)) continue;
-      const hasMetric =
-        (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
-        (typeof row.Start === 'number' && !Number.isNaN(row.Start)) ||
-        (typeof row.End === 'number' && !Number.isNaN(row.End)) ||
-        (typeof row.Length === 'number' && !Number.isNaN(row.Length)) ||
-        (typeof row.Extreme_events === 'number' && !Number.isNaN(row.Extreme_events)) ||
-        (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
-        (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
-        (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
-        (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
-        (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
-        (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
-
-      if (hasMetric) {
-        validYears.add(row.Year);
-      }
-    }
-
-    // Check monthly data valid rows
-    for (const row of monthlyData) {
-      const yr = Number.parseInt(row.month.slice(0, 4), 10);
-      if (!Number.isNaN(yr)) {
+    if (annualData.length > 0) {
+      // Depend strictly on annual data for summary metadata
+      for (const row of annualData) {
+        if (typeof row.Year !== 'number' || Number.isNaN(row.Year)) continue;
         const hasMetric =
           (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
+          (typeof row.Start === 'number' && !Number.isNaN(row.Start)) ||
+          (typeof row.End === 'number' && !Number.isNaN(row.End)) ||
+          (typeof row.Length === 'number' && !Number.isNaN(row.Length)) ||
+          (typeof row.Extreme_events === 'number' && !Number.isNaN(row.Extreme_events)) ||
           (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
           (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
           (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
           (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
           (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
           (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
+
         if (hasMetric) {
-          validYears.add(yr);
+          validYears.add(row.Year);
+        }
+      }
+    } else {
+      // Fallback: check monthly data valid rows if no annual data
+      for (const row of monthlyData) {
+        const yr = Number.parseInt(row.month.slice(0, 4), 10);
+        if (!Number.isNaN(yr)) {
+          const hasMetric =
+            (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
+            (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
+            (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
+            (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
+            (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
+            (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
+            (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
+          if (hasMetric) {
+            validYears.add(yr);
+          }
         }
       }
     }

@@ -66,16 +66,33 @@ export function getCountryCapsPath(country: string): string {
 
 export function loadCountryCapabilities(country: string): Record<string, IStationCapabilities> {
   const capsPath = getCountryCapsPath(country);
-  if (fs.existsSync(capsPath)) {
-    try {
-      const content = fs.readFileSync(capsPath, 'utf-8');
-      const match = content.match(/=\s*(\{[\s\S]*?\});?\s*$/);
-      if (match) {
-        return JSON.parse(match[1]);
-      }
-    } catch {
-      return {};
+  if (!fs.existsSync(capsPath)) {
+    return {};
+  }
+  // 1. Try loading via require (works natively when executed via tsx)
+  try {
+    delete require.cache[require.resolve(capsPath)];
+    const mod = require(capsPath);
+    const key = `${country.toUpperCase()}_STATION_CAPABILITIES`;
+    if (mod[key]) {
+      return mod[key];
     }
+  } catch {
+    // Fall back to safe static string parsing if require fails
+  }
+  // 2. Safe static JSON extraction (handles unquoted keys, single quotes, trailing commas without eval)
+  try {
+    const content = fs.readFileSync(capsPath, 'utf-8');
+    const match = content.match(/=\s*(\{[\s\S]*?\});?\s*$/);
+    if (match) {
+      const jsonText = match[1]
+        .replace(/'/g, '"')
+        .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+        .replace(/,\s*([}\]])/g, '$1');
+      return JSON.parse(jsonText);
+    }
+  } catch {
+    return {};
   }
   return {};
 }
@@ -177,17 +194,15 @@ export function computeExistingCapabilitiesForCountry(
       monthlyData = parseMonthlyCsv(monthlyCsvContent);
     }
 
-    const combinedData = monthlyCsvContent
-      ? `${annualCsvContent.trim()}\n---\n${monthlyCsvContent.trim()}`
-      : annualCsvContent.trim();
-    const contentHash = computeSha256(combinedData);
+    // Base summary metadata (contentHash, lastUpdated, years, totalMissingYears) on annual data
+    const contentHash = computeSha256(annualCsvContent.trim());
 
     const prevCap = existingCaps[stationId];
     const isUnchanged = prevCap?.contentHash === contentHash;
     const stationLastUpdated =
       isUnchanged && prevCap?.lastUpdated && /^\d{4}-\d{2}-\d{2}$/.test(prevCap.lastUpdated)
         ? prevCap.lastUpdated
-        : getStationGitLastUpdatedDate([annualCsvPath, monthlyCsvPath]);
+        : getStationGitLastUpdatedDate([annualCsvPath]);
 
     const capabilities = calculateStationCapabilities({
       annualData,
