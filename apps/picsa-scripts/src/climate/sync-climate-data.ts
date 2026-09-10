@@ -71,7 +71,7 @@ export function loadCountryCapabilities(country: string): Record<string, IStatio
       const content = fs.readFileSync(capsPath, 'utf-8');
       const match = content.match(/=\s*(\{[\s\S]*?\});?\s*$/);
       if (match) {
-        return JSON.parse(match[1]);
+        return new Function(`return ${match[1]}`)();
       }
     } catch {
       return {};
@@ -177,17 +177,15 @@ export function computeExistingCapabilitiesForCountry(
       monthlyData = parseMonthlyCsv(monthlyCsvContent);
     }
 
-    const combinedData = monthlyCsvContent
-      ? `${annualCsvContent.trim()}\n---\n${monthlyCsvContent.trim()}`
-      : annualCsvContent.trim();
-    const contentHash = computeSha256(combinedData);
+    // Base summary metadata (contentHash, lastUpdated, years, totalMissingYears) on annual data
+    const contentHash = computeSha256(annualCsvContent.trim());
 
     const prevCap = existingCaps[stationId];
     const isUnchanged = prevCap?.contentHash === contentHash;
     const stationLastUpdated =
       isUnchanged && prevCap?.lastUpdated && /^\d{4}-\d{2}-\d{2}$/.test(prevCap.lastUpdated)
         ? prevCap.lastUpdated
-        : getStationGitLastUpdatedDate([annualCsvPath, monthlyCsvPath]);
+        : getStationGitLastUpdatedDate([annualCsvPath]);
 
     const capabilities = calculateStationCapabilities({
       annualData,
