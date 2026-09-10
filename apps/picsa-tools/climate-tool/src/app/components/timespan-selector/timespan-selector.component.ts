@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { ClimateTimespanMode, IThreeMonthPeriod } from '@picsa/models';
@@ -15,7 +15,7 @@ import { PicsaClimateMaterialModule } from '../material.module';
 })
 export class TimespanSelectorComponent {
   chartService = inject(ClimateChartService);
-  months = MONTH_DATA;
+  months = computed(() => this.chartService.availableMonths().map((m) => MONTH_DATA[m - 1]));
 
   onModeChange(mode: ClimateTimespanMode) {
     this.chartService.setTimespanMode(mode);

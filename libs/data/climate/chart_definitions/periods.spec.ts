@@ -1,13 +1,37 @@
 import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
 import {
   CLIMATE_CHART_DEFINITIONS,
+  COUNTRY_ACTIVE_MONTHS,
   COUNTRY_THREE_MONTH_PERIODS,
+  DEFAULT_ACTIVE_MONTHS,
   DEFAULT_THREE_MONTH_PERIODS,
   formatThreeMonthPeriodLabel,
+  getActiveMonthsForCountry,
+  getActivePeriodsForCountry,
   getChartDefinitionText,
 } from './index';
 
 describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
+  describe('Active Months Configuration', () => {
+    it('should default to October through June (excluding July, August, September)', () => {
+      expect(DEFAULT_ACTIVE_MONTHS).toEqual([10, 11, 12, 1, 2, 3, 4, 5, 6]);
+      expect(DEFAULT_ACTIVE_MONTHS).not.toContain(7);
+      expect(DEFAULT_ACTIVE_MONTHS).not.toContain(8);
+      expect(DEFAULT_ACTIVE_MONTHS).not.toContain(9);
+    });
+
+    it('should provide active month configs for Zambia, Malawi, Zimbabwe', () => {
+      expect(getActiveMonthsForCountry('zm')).toEqual(DEFAULT_ACTIVE_MONTHS);
+      expect(getActiveMonthsForCountry('mw')).toEqual(DEFAULT_ACTIVE_MONTHS);
+      expect(getActiveMonthsForCountry('zw')).toEqual(DEFAULT_ACTIVE_MONTHS);
+      expect(getActiveMonthsForCountry('unknown_country')).toEqual(DEFAULT_ACTIVE_MONTHS);
+    });
+
+    it('should resolve active 3-month periods for a country', () => {
+      expect(getActivePeriodsForCountry('zm')).toEqual(COUNTRY_THREE_MONTH_PERIODS.zm);
+      expect(getActivePeriodsForCountry(undefined)).toEqual(DEFAULT_THREE_MONTH_PERIODS);
+    });
+  });
   describe('Country 3-Month Periods', () => {
     it('should export standard 3-month periods with month indices and codes', () => {
       expect(DEFAULT_THREE_MONTH_PERIODS.length).toBe(5);
