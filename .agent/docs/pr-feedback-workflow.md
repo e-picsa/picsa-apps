@@ -28,7 +28,7 @@ It enforces a 5-phase structured lifecycle:
 2. **Triage Matrix**: Classifies each finding into `ACCEPT & FIX`, `PUSH BACK`, or `ESCALATE`.
 3. **Present Plan**: Adheres to Planning Mode by providing a structured decision table before touching code.
 4. **Local Fixes & Verification**: Implements accepted fixes surgically and verifies locally (`yarn nx affected --target=lint` and `yarn nx affected --target=test`).
-5. **Batch Commit, Push & Post Responses**: Pushes a single batched commit and provides polite, technically sound reply comments for rejected items.
+5. **Batch Commit, Push & Post Responses**: Pushes a single batched commit, provides polite, technically sound reply comments for rejected items, and reminds the user of the manual re-review procedure.
 
 ### The Triage Decision Matrix
 
@@ -59,6 +59,8 @@ A common failure mode in AI-driven PR workflows is the **re-work loop**:
    The agent must run `yarn nx affected --target=lint` and `yarn nx affected --target=test` locally before pushing to avoid triggering CI test failure loops.
 4. **Single Batch Push:**  
    All accepted fixes are batched into a single commit (`fix: address PR review feedback [pr-agent/sonar]`) rather than pushed incrementally.
+5. **Mandatory User Notice on Manual Re-Review:**  
+   After completing fixes or pushes, the agent must notify the developer that PR-Agent will not re-run on its own. To get an updated review, the developer must manually comment `/review` on GitHub and re-invoke the skill once the bot finishes.
 
 ---
 
@@ -80,6 +82,7 @@ The model will:
 3. Run `yarn nx affected --target=lint` and `yarn nx affected --target=test`.
 4. Create a single commit and push to the remote branch.
 5. Provide the drafted reply comments for pushed-back items.
+6. Provide the reminder notice for manually triggering `/review`.
 
 ### 3. Targeted Push-Back
 > *"Look at comment #3 from PR-Agent suggesting we switch this to an `@Input()`. Post a response explaining our project's Angular 21 Signal convention."*

@@ -15,6 +15,7 @@ Automated review tools (PR-Agent, SonarQube/SonarCloud) provide high-value catch
 1. **Never blindly accept bot suggestions.** Evaluate every item against repository conventions.
 2. **Push back firmly with technical rationale** on suggestions that violate repo patterns, degrade readability, or represent stylistic bikeshedding.
 3. **Prevent re-work loops.** Review in batch, plan upfront, verify locally, commit and push once. Never trigger automated bot re-reviews (`/review`, `/improve`) automatically.
+4. **Notify user of manual re-review procedure.** Always inform the user that automated bots will not re-run on push; if a fresh review is desired, the user must comment `/review` on GitHub and re-invoke the skill afterwards.
 
 ---
 
@@ -131,6 +132,8 @@ Before altering code, output a structured triage table to the user:
        -f body="Declined: In accordance with our Angular 21 guidelines, we use Signal inputs rather than @Input decorators."
      ```
 
-3. **Anti-Loop Safety Rule (CRITICAL)**:
+3. **Anti-Loop Safety Rule & Re-Review Instructions (MANDATORY)**:
    - **DO NOT** post `/review` or `/improve` comments to trigger bot runs automatically.
-   - New commits push without re-triggering PR-Agent automatically (`handle_push_trigger: 'false'`). Re-reviews should only be requested manually by the developer when desired.
+   - New commits push without re-triggering PR-Agent automatically (`handle_push_trigger: 'false'`).
+   - **MANDATORY NOTICE TO USER**: In your final response after completing changes or pushing, you MUST explicitly remind the user:
+     > **Re-Review Notice:** Automated review bots (PR-Agent) will not re-run automatically on push. If you want a fresh review, manually comment `/review` (or `/improve`) on the PR thread in GitHub, wait for the workflow to complete, and then invoke `$address-pr-feedback` again.
