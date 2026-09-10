@@ -139,6 +139,40 @@ describe('chart.utils', () => {
       expect(Number.isFinite(nullRanges.yMin)).toBe(true);
       expect(Number.isFinite(nullRanges.yMax)).toBe(true);
     });
+
+    it('should preserve explicitly configured axis limits even if they are not multiples of yMajor', () => {
+      const explicitMeta: IChartMeta = {
+        ...mockTempMinMeta,
+        axes: {
+          ...mockTempMinMeta.axes,
+          yMin: 3, // Not a multiple of yMajor (2)
+          yMax: 25, // Not a multiple of yMajor (2)
+          xMin: 1983, // Not a multiple of xMajor (5)
+        },
+      };
+
+      const ranges = calculateDataRanges(mockAnnualData, explicitMeta);
+      expect(ranges.yMin).toBe(3);
+      expect(ranges.yMax).toBe(25);
+      expect(ranges.xMin).toBe(1983);
+    });
+
+    it('should safely handle zero or missing yMajor without dividing by zero or producing NaN', () => {
+      const zeroMajorMeta: IChartMeta = {
+        ...mockTempMinMeta,
+        axes: {
+          ...mockTempMinMeta.axes,
+          yMajor: 0,
+          xMajor: 0,
+        },
+      };
+
+      const ranges = calculateDataRanges(mockAnnualData, zeroMajorMeta);
+      expect(Number.isFinite(ranges.yMin)).toBe(true);
+      expect(Number.isFinite(ranges.yMax)).toBe(true);
+      expect(Number.isFinite(ranges.xMin)).toBe(true);
+      expect(Number.isFinite(ranges.xMax)).toBe(true);
+    });
   });
 
   describe('generateChartConfig', () => {

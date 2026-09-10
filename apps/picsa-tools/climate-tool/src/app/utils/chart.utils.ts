@@ -173,24 +173,44 @@ export function calculateDataRanges(data: IStationData[], definition: IChartMeta
 
   // For temperature charts, buffer y-axis by 2 degrees on either side of annual min/max
   const yBuffer = isTemperatureChart(definition) ? TEMPERATURE_AXIS_BUFFER : 0;
+  const yMajor = typeof definition.axes.yMajor === 'number' && definition.axes.yMajor > 0 ? definition.axes.yMajor : 1;
+  const xMajor = typeof definition.axes.xMajor === 'number' && definition.axes.xMajor > 0 ? definition.axes.xMajor : 1;
 
-  yMin = typeof yMin === 'number' ? yMin : Number.isFinite(dataBounds.yMin) ? dataBounds.yMin - yBuffer : 0;
-  yMax = typeof yMax === 'number' ? yMax : Number.isFinite(dataBounds.yMax) ? dataBounds.yMax + yBuffer : 0;
-  xMin = typeof xMin === 'number' ? xMin : Number.isFinite(dataBounds.xMin) ? dataBounds.xMin : 0;
-  xMax = typeof xMax === 'number' ? xMax : Number.isFinite(dataBounds.xMax) ? dataBounds.xMax : 0;
+  yMin =
+    typeof yMin === 'number'
+      ? yMin
+      : Number.isFinite(dataBounds.yMin)
+        ? Math.floor((dataBounds.yMin - yBuffer) / yMajor) * yMajor
+        : 0;
+  yMax =
+    typeof yMax === 'number'
+      ? yMax
+      : Number.isFinite(dataBounds.yMax)
+        ? Math.ceil((dataBounds.yMax + yBuffer) / yMajor) * yMajor
+        : 0;
+  xMin =
+    typeof xMin === 'number'
+      ? xMin
+      : Number.isFinite(dataBounds.xMin)
+        ? Math.floor(dataBounds.xMin / xMajor) * xMajor
+        : 0;
+  xMax =
+    typeof xMax === 'number'
+      ? xMax
+      : Number.isFinite(dataBounds.xMax)
+        ? Math.ceil(dataBounds.xMax / xMajor) * xMajor
+        : 0;
 
   // Note - xAxis hardcoded to end at this year for all year charts
   if (definition.xVar === 'Year') {
-    xMax = new Date().getFullYear();
+    xMax = Math.ceil(new Date().getFullYear() / xMajor) * xMajor;
   }
 
-  const { xMajor, yMajor } = definition.axes;
   return {
-    // round max up and min down to the nearest interval
-    yMin: Math.floor(yMin / yMajor) * yMajor,
-    yMax: Math.ceil(yMax / yMajor) * yMajor,
-    xMin: Math.floor(xMin / xMajor) * xMajor,
-    xMax: Math.ceil(xMax / xMajor) * xMajor,
+    yMin,
+    yMax,
+    xMin,
+    xMax,
   };
 }
 
