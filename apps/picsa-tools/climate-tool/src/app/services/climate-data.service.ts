@@ -1,7 +1,14 @@
 import { computed, effect, inject, Injectable, untracked } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
-import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
-import { arrayToHashmap, deepClone, loadCSV } from '@picsa/utils';
+import {
+  ClimateTimespanMode,
+  IChartMeta,
+  IMonthlyStationData,
+  IStationData,
+  IStationMeta,
+  IThreeMonthPeriod,
+} from '@picsa/models';
+import { aggregateThreeMonthSeries, arrayToHashmap, deepClone, filterMonthlyDataByMonth, loadCSV } from '@picsa/utils';
 
 import { CLIMATE_STATIONS_META } from '../data/stations';
 
@@ -27,6 +34,7 @@ export class ClimateDataService {
   private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));
 
   private loadedStationData: Record<string, IStationData[]> = {};
+  private loadedMonthlyData: Record<string, IMonthlyStationData[]> = {};
 
   constructor() {
     effect(() => {
@@ -89,6 +97,50 @@ export class ClimateDataService {
       this.loadedStationData[stationId] = cleaned;
       return cleaned;
     }
+  }
+
+  public async getMonthlyStationData(stationId: string): Promise<IMonthlyStationData[]> {
+    const data = this.loadedMonthlyData[stationId];
+    if (data) {
+      return data;
+    }
+    console.log('[Climate] Load Monthly Data', stationId);
+    const station = this.stationHashmap()[stationId];
+    if (!station) {
+      return [];
+    }
+    const { countryCode, id } = station;
+    const summaries = await loadCSV<IMonthlyStationData>(`assets/summaries/${countryCode}/${id}.monthly.csv`, {
+      download: true,
+      dynamicTyping: true,
+      header: true,
+      transform: (v) => {
+        if (v === 'null' || v === '') return null;
+        return v;
+      },
+    });
+    this.loadedMonthlyData[stationId] = summaries || [];
+    return this.loadedMonthlyData[stationId];
+  }
+
+  /**
+   * Resolve station observations for a specific timespan resolution (annual, 1-month, 3-month).
+   */
+  public async getTimespanData(
+    stationId: string,
+    mode: ClimateTimespanMode,
+    month: number,
+    period?: IThreeMonthPeriod,
+  ): Promise<IStationData[]> {
+    if (mode === 'annual') {
+      const data = await this.getStationData(stationId);
+      return data || [];
+    }
+    const monthlyData = await this.getMonthlyStationData(stationId);
+    if (mode === 'monthly') {
+      return filterMonthlyDataByMonth(monthlyData, month);
+    }
+    return period ? aggregateThreeMonthSeries(monthlyData, period) : [];
   }
 
   /**

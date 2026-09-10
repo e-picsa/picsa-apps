@@ -9,6 +9,7 @@ import type {
   IStationAuditSummary,
   IStationCapabilities,
   IStationData,
+  IThreeMonthPeriod,
 } from '@picsa/models';
 
 /**
@@ -639,4 +640,149 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
   }
 
   return md;
+}
+
+/**
+ * Filter monthly station data for a single calendar month (1-12) across all years.
+ * Returns an array of IStationData rows with Year matching the calendar year.
+ */
+export function filterMonthlyDataByMonth(monthlyData: IMonthlyStationData[], targetMonth: number): IStationData[] {
+  const monthSuffix = `-${String(targetMonth).padStart(2, '0')}`;
+  const rows: IStationData[] = [];
+
+  for (const row of monthlyData) {
+    if (row.month && row.month.endsWith(monthSuffix)) {
+      const year = Number.parseInt(row.month.slice(0, 4), 10);
+      if (Number.isNaN(year)) continue;
+
+      rows.push({
+        Year: year,
+        Start: null as any,
+        End: null as any,
+        Length: null as any,
+        Rainfall: (row.Rainfall ?? null) as any,
+        Extreme_events: null as any,
+        min_tmin: (row.min_tmin ?? null) as any,
+        mean_tmin: (row.mean_tmin ?? null) as any,
+        max_tmin: (row.max_tmin ?? null) as any,
+        min_tmax: (row.min_tmax ?? null) as any,
+        mean_tmax: (row.mean_tmax ?? null) as any,
+        max_tmax: (row.max_tmax ?? null) as any,
+      });
+    }
+  }
+
+  return rows.sort((a, b) => a.Year - b.Year);
+}
+
+/**
+ * Aggregates monthly station records into 3-month climatological seasonal series.
+ * Aligns seasons to the Southern Africa agricultural year starting July 1st:
+ * Months >= 7 (Jul-Dec) belong to season year Y.
+ * Months < 7 (Jan-Jun) belong to season year Y (calendar year Y + 1).
+ *
+ * Rainfall requires complete data across all 3 months (strictly null if any month missing).
+ * Temperatures aggregate extremes (min of min_tmin, max of max_tmax) and means.
+ */
+export function aggregateThreeMonthSeries(
+  monthlyData: IMonthlyStationData[],
+  period: IThreeMonthPeriod,
+): IStationData[] {
+  // Map season year -> Map<monthNumber, IMonthlyStationData>
+  const seasonMap = new Map<number, Map<number, IMonthlyStationData>>();
+
+  for (const row of monthlyData) {
+    if (!row.month) continue;
+    const parts = row.month.split('-');
+    if (parts.length < 2) continue;
+    const calYear = Number.parseInt(parts[0], 10);
+    const monthNum = Number.parseInt(parts[1], 10);
+    if (Number.isNaN(calYear) || Number.isNaN(monthNum)) continue;
+
+    // Determine season year
+    const seasonYear = monthNum >= 7 ? calYear : calYear - 1;
+
+    if (!seasonMap.has(seasonYear)) {
+      seasonMap.set(seasonYear, new Map<number, IMonthlyStationData>());
+    }
+    seasonMap.get(seasonYear)!.set(monthNum, row);
+  }
+
+  const result: IStationData[] = [];
+  const requiredMonths = period.months; // e.g. [12, 1, 2]
+
+  for (const [seasonYear, monthsMap] of seasonMap.entries()) {
+    // Check rainfall completeness
+    let rainfallSum: number | null = 0;
+    for (const m of requiredMonths) {
+      const row = monthsMap.get(m);
+      if (!row || row.Rainfall === undefined || row.Rainfall === null || Number.isNaN(row.Rainfall)) {
+        rainfallSum = null;
+        break;
+      }
+      rainfallSum += row.Rainfall;
+    }
+    if (rainfallSum !== null) {
+      rainfallSum = roundClimateValue(rainfallSum);
+    }
+
+    // Aggregate temperatures
+    let minTmin: number | null = null;
+    let maxTmax: number | null = null;
+    let minTmax: number | null = null;
+    let maxTmin: number | null = null;
+    let sumMeanTmin = 0;
+    let countMeanTmin = 0;
+    let sumMeanTmax = 0;
+    let countMeanTmax = 0;
+
+    for (const m of requiredMonths) {
+      const row = monthsMap.get(m);
+      if (!row) continue;
+
+      if (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) {
+        minTmin = minTmin === null ? row.min_tmin : Math.min(minTmin, row.min_tmin);
+      }
+      if (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax)) {
+        maxTmax = maxTmax === null ? row.max_tmax : Math.max(maxTmax, row.max_tmax);
+      }
+      if (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) {
+        minTmax = minTmax === null ? row.min_tmax : Math.min(minTmax, row.min_tmax);
+      }
+      if (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) {
+        maxTmin = maxTmin === null ? row.max_tmin : Math.max(maxTmin, row.max_tmin);
+      }
+      if (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) {
+        sumMeanTmin += row.mean_tmin;
+        countMeanTmin++;
+      }
+      if (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) {
+        sumMeanTmax += row.mean_tmax;
+        countMeanTmax++;
+      }
+    }
+
+    const meanTmin = countMeanTmin > 0 ? roundClimateValue(sumMeanTmin / countMeanTmin) : null;
+    const meanTmax = countMeanTmax > 0 ? roundClimateValue(sumMeanTmax / countMeanTmax) : null;
+
+    // If there were any observations for this season year, emit the season row
+    if (monthsMap.size > 0) {
+      result.push({
+        Year: seasonYear,
+        Start: null as any,
+        End: null as any,
+        Length: null as any,
+        Rainfall: rainfallSum as any,
+        Extreme_events: null as any,
+        min_tmin: (minTmin !== null ? roundClimateValue(minTmin) : null) as any,
+        mean_tmin: meanTmin as any,
+        max_tmin: (maxTmin !== null ? roundClimateValue(maxTmin) : null) as any,
+        min_tmax: (minTmax !== null ? roundClimateValue(minTmax) : null) as any,
+        mean_tmax: meanTmax as any,
+        max_tmax: (maxTmax !== null ? roundClimateValue(maxTmax) : null) as any,
+      });
+    }
+  }
+
+  return result.sort((a, b) => a.Year - b.Year);
 }

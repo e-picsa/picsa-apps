@@ -16,14 +16,19 @@ interface IGridMeta {
  * Generate a c3 chart config with series loaded for all station data, and
  * active definition series displayed
  */
-export async function generateChartConfig(data: IStationData[], definition: IChartMeta, monthNames?: string[]) {
+export async function generateChartConfig(
+  data: IStationData[],
+  definition: IChartMeta,
+  monthNames?: string[],
+  boundsData?: IStationData[],
+) {
   // HACK - override monthnames if passed from translation system
   MONTH_NAMES = monthNames || MONTH_DATA.map((m) => m.labelShort);
 
-  // recalculate axes min/max bounds from data
+  // recalculate axes min/max bounds from data (or boundsData from annual series if provided)
   definition.axes = {
     ...definition.axes,
-    ...calculateDataRanges(data, definition),
+    ...calculateDataRanges(boundsData || data, definition),
   };
   // configure major and minor ticks, labels and gridlines
   const gridMeta = calculateGridMeta(definition);
@@ -122,6 +127,15 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
 
 // iterate over data and calculate min/max values for xVar and multiple yVars
 function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
+  // For temperature charts, ensure axis bounds span the full temperature spectrum (including max_tmin / min_tmax)
+  // so month-to-month and 3-month views stay visually aligned with the broad annual scale without rescaling
+  let keys = definition.keys;
+  if (definition._id === 'temp_min') {
+    keys = [...definition.keys, 'max_tmin'];
+  } else if (definition._id === 'temp_max') {
+    keys = [...definition.keys, 'min_tmax'];
+  }
+
   const dataBounds = data.reduce(
     (bounds, d) => {
       const xVal = d[definition.xVar];
@@ -130,9 +144,11 @@ function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
         bounds.xMin = Math.min(bounds.xMin, xVal);
       }
       // take all possible yValues and filter out undefined
-      const yVals = definition.keys.map((k) => d[k]).filter((v) => typeof v === 'number') as number[];
-      bounds.yMin = Math.min(bounds.yMin, ...yVals);
-      bounds.yMax = Math.max(bounds.yMax, ...yVals);
+      const yVals = keys.map((k) => d[k]).filter((v) => typeof v === 'number') as number[];
+      if (yVals.length > 0) {
+        bounds.yMin = Math.min(bounds.yMin, ...yVals);
+        bounds.yMax = Math.max(bounds.yMax, ...yVals);
+      }
 
       return bounds;
     },
