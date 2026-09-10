@@ -1,0 +1,45 @@
+<div class="timespan-selector-container">
+  <!-- Resolution Mode Toggle -->
+  <mat-button-toggle-group
+    [value]="chartService.timespanMode()"
+    (change)="onModeChange($event.value)"
+    hideSingleSelectionIndicator="true"
+    class="timespan-mode-toggle"
+  >
+    <mat-button-toggle value="annual">{{ 'Annual' | translate }}</mat-button-toggle>
+    <mat-button-toggle value="monthly">{{ '1-Month' | translate }}</mat-button-toggle>
+    <mat-button-toggle value="three_month">{{ '3-Month' | translate }}</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!-- 1-Month Selector Sub-view -->
+  @if (chartService.timespanMode() === 'monthly') {
+    <div class="sub-selector month-grid">
+      @for (m of months; track m.id) {
+        <button
+          type="button"
+          class="selector-chip"
+          [class.active]="chartService.selectedMonth() === m.index + 1"
+          (click)="onMonthSelect(m.index + 1)"
+        >
+          {{ m.labelShort | translate }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- 3-Month Period Selector Sub-view -->
+  @if (chartService.timespanMode() === 'three_month') {
+    <div class="sub-selector period-grid">
+      @for (p of chartService.availablePeriods(); track p.id) {
+        <button
+          type="button"
+          class="selector-chip"
+          [class.active]="chartService.selectedPeriod()?.id === p.id"
+          (click)="onPeriodSelect(p)"
+        >
+          {{ p.code }}
+        </button>
+      }
+    </div>
+  }
+</div>

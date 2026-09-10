@@ -1,3 +1,7 @@
+<!-- period navigator -->
+@if (chartService.timespanMode() !== 'annual') {
+  <climate-period-navigator></climate-period-navigator>
+}
 <!-- line tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-line-tool #lineTool></climate-line-tool>
@@ -5,7 +9,7 @@
 <!-- chart -->
 <picsa-chart #picsaChart [config]="chartService.chartConfig() || {}"></picsa-chart>
 <!-- definition -->
-<div class="chart-definition">{{definition().definition | translate}}</div>
+<div class="chart-definition">{{ chartService.currentDefinitionText() | translate }}</div>
 <!-- probability tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-probability-tool
