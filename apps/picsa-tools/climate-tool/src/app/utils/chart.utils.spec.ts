@@ -72,31 +72,31 @@ describe('chart.utils', () => {
   });
 
   describe('calculateDataRanges', () => {
-    it('should scale temp_min from annual data min to max with a 2-degree buffer without using max_tmin', () => {
+    it('should snap temp_min to the nearest major gridline interval without using max_tmin', () => {
       // Annual min_tmin min is 4.2, mean_tmin max is 18.0.
-      // Expected with 2°C buffer:
-      // yMin: floor((4.2 - 2) / 2) * 2 = floor(2.2 / 2) * 2 = 2
-      // yMax: ceil((18.0 + 2) / 2) * 2 = ceil(20.0 / 2) * 2 = 20
-      // If max_tmin (28.5) was used, yMax would be ceil((28.5) / 2) * 2 = 30.
+      // Snapped to yMajor (2):
+      // yMin: floor(4.2 / 2) * 2 = 4
+      // yMax: ceil(18.0 / 2) * 2 = 18
+      // If max_tmin (28.5) was used, yMax would be ceil(28.5 / 2) * 2 = 30.
       const ranges = calculateDataRanges(mockAnnualData, mockTempMinMeta);
 
-      expect(ranges.yMin).toBe(2);
-      expect(ranges.yMax).toBe(20);
+      expect(ranges.yMin).toBe(4);
+      expect(ranges.yMax).toBe(18);
     });
 
-    it('should scale temp_max from annual data min to max with a 2-degree buffer without using min_tmax', () => {
+    it('should snap temp_max to the nearest major gridline interval without using min_tmax', () => {
       // Annual mean_tmax min is 27.0, max_tmax max is 40.1.
-      // Expected with 2°C buffer:
-      // yMin: floor((27.0 - 2) / 2) * 2 = floor(25.0 / 2) * 2 = 24
-      // yMax: ceil((40.1 + 2) / 2) * 2 = ceil(42.1 / 2) * 2 = 44
+      // Snapped to yMajor (2):
+      // yMin: floor(27.0 / 2) * 2 = 26
+      // yMax: ceil(40.1 / 2) * 2 = 42
       // If min_tmax (15.2) was used, yMin would be floor(15.2 / 2) * 2 = 14.
       const ranges = calculateDataRanges(mockAnnualData, mockTempMaxMeta);
 
-      expect(ranges.yMin).toBe(24);
-      expect(ranges.yMax).toBe(44);
+      expect(ranges.yMin).toBe(26);
+      expect(ranges.yMax).toBe(42);
     });
 
-    it('should not apply a 2-degree buffer to non-temperature charts', () => {
+    it('should correctly scale non-temperature charts to their major gridlines', () => {
       const rainfallMeta: IChartMeta = {
         _id: 'rainfall',
         name: 'Rainfall',
@@ -186,9 +186,9 @@ describe('chart.utils', () => {
       const metaCopy = { ...mockTempMinMeta, axes: { ...mockTempMinMeta.axes } };
       const config = await generateChartConfig(monthlyData, metaCopy, undefined, mockAnnualData);
 
-      // Should have same yMin and yMax as annual calculation (2 to 20) rather than monthly bounds (6 to 18)
-      expect(config.axis?.y?.min).toBe(2);
-      expect(config.axis?.y?.max).toBe(20);
+      // Should have same yMin and yMax as annual calculation (4 to 18) rather than monthly bounds (8 to 16)
+      expect(config.axis?.y?.min).toBe(4);
+      expect(config.axis?.y?.max).toBe(18);
     });
 
     it('should not mutate the input definition axes object', async () => {

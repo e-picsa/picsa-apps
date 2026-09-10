@@ -5,8 +5,6 @@ import { IChartConfig, IChartMeta, IStationData } from '@picsa/models';
 // (used in both axis labels and tooltip)
 let MONTH_NAMES: string[] = MONTH_DATA.map((m) => m.labelShort);
 
-export const TEMPERATURE_AXIS_BUFFER = 2;
-
 /**
  * Determine if a chart definition represents a temperature metric.
  */
@@ -171,22 +169,21 @@ export function calculateDataRanges(data: IStationData[], definition: IChartMeta
   // overwrite data bounds with hardcoded if set
   let { yMin, yMax, xMin, xMax } = definition.axes;
 
-  // For temperature charts, buffer y-axis by 2 degrees on either side of annual min/max
-  const yBuffer = isTemperatureChart(definition) ? TEMPERATURE_AXIS_BUFFER : 0;
   const yMajor = typeof definition.axes.yMajor === 'number' && definition.axes.yMajor > 0 ? definition.axes.yMajor : 1;
   const xMajor = typeof definition.axes.xMajor === 'number' && definition.axes.xMajor > 0 ? definition.axes.xMajor : 1;
 
+  // Round computed bounds outward to the nearest major gridline interval
   yMin =
     typeof yMin === 'number'
       ? yMin
       : Number.isFinite(dataBounds.yMin)
-        ? Math.floor((dataBounds.yMin - yBuffer) / yMajor) * yMajor
+        ? Math.floor(dataBounds.yMin / yMajor) * yMajor
         : 0;
   yMax =
     typeof yMax === 'number'
       ? yMax
       : Number.isFinite(dataBounds.yMax)
-        ? Math.ceil((dataBounds.yMax + yBuffer) / yMajor) * yMajor
+        ? Math.ceil(dataBounds.yMax / yMajor) * yMajor
         : 0;
   xMin =
     typeof xMin === 'number'

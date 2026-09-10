@@ -324,31 +324,31 @@ describe('ClimateChartService', () => {
 
       // 1. Annual mode (Boundary C):
       // Annual mockData: min_tmin min is 15, mean_tmin max is 19.
-      // floor((15 - 2) / 2) * 2 = 12, ceil((19 + 2) / 2) * 2 = 22 -> [12, 22]
+      // floor(15 / 2) * 2 = 14, ceil(19 / 2) * 2 = 20 -> [14, 20]
       await service.setTimespanMode('annual');
       await service.setChart('temp_min');
-      expect(service.chartConfig()?.axis?.y?.min).toBe(12);
-      expect(service.chartConfig()?.axis?.y?.max).toBe(22);
+      expect(service.chartConfig()?.axis?.y?.min).toBe(14);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(20);
 
       // 2. Monthly mode (Boundary A across all 12 months):
       // Across all months: min_tmin min is 6 (July), mean_tmin max is 24 (Oct).
-      // floor((6 - 2) / 2) * 2 = 4, ceil((24 + 2) / 2) * 2 = 26 -> [4, 26]
+      // floor(6 / 2) * 2 = 6, ceil(24 / 2) * 2 = 24 -> [6, 24]
       // Viewing January (Month 1)
       await service.setTimespanMode('monthly');
       await service.setSelectedMonth(1);
       await service.setChart('temp_min');
-      expect(service.chartConfig()?.axis?.y?.min).toBe(4);
-      expect(service.chartConfig()?.axis?.y?.max).toBe(26);
+      expect(service.chartConfig()?.axis?.y?.min).toBe(6);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(24);
 
-      // Viewing March (Month 3) - axis scale remains fixed at Boundary A [4, 26]
+      // Viewing March (Month 3) - axis scale remains fixed at Boundary A [6, 24]
       await service.setSelectedMonth(3);
       await service.setChart('temp_min');
-      expect(service.chartConfig()?.axis?.y?.min).toBe(4);
-      expect(service.chartConfig()?.axis?.y?.max).toBe(26);
+      expect(service.chartConfig()?.axis?.y?.min).toBe(6);
+      expect(service.chartConfig()?.axis?.y?.max).toBe(24);
 
-      // Annual boundary C [12, 22] is narrower than monthly boundary A [4, 26]
-      const annualRange = 22 - 12;
-      const monthlyRange = 26 - 4;
+      // Annual boundary C [14, 20] is narrower than monthly boundary A [6, 24]
+      const annualRange = 20 - 14;
+      const monthlyRange = 24 - 6;
       expect(annualRange).toBeLessThan(monthlyRange);
     });
   });
