@@ -19,6 +19,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
 - **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
+- **[PR Feedback Resolution](.agent/skills/address-pr-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
 
 ## Core Principles
 
