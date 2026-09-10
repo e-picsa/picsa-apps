@@ -14,17 +14,19 @@ Automated review tools (PR-Agent, SonarQube/SonarCloud) provide high-value catch
 **Core Directives:**
 1. **Never blindly accept bot suggestions.** Evaluate every item against repository conventions.
 2. **Push back firmly with technical rationale** on suggestions that violate repo patterns, degrade readability, or represent stylistic bikeshedding.
-3. **Prevent re-work loops.** Review in batch, plan upfront, verify locally, commit and push once. Never trigger automated bot re-reviews (`/review`, `/improve`) automatically.
-4. **Notify user of manual re-review procedure.** Always inform the user that automated bots will not re-run on push; if a fresh review is desired, the user must comment `/review` on GitHub and re-invoke the skill afterwards.
+3. **Verify feedback freshness.** Detect if the automated review matches the latest commit on the branch (e.g. from `Persistent review updated to latest commit <sha>` or the review header). Warn if feedback is outdated or if a review is currently in progress.
+4. **Prevent re-work loops.** Review in batch, plan upfront, verify locally. Never trigger automated bot re-reviews (`/review`, `/improve`) automatically.
+5. **Conditional push (User Approval Required).** Do NOT automatically commit and push to remote without explicit user confirmation.
+6. **Notify user of manual re-review procedure.** Inform the user that automated bots will not re-run on push; if a fresh review is desired, the user must comment `/review` on GitHub and re-invoke the skill once the workflow completes.
 
 ---
 
-## Phase 1: Fetch PR Context & Feedback
+## Phase 1: Fetch PR Context, Feedback & Check Freshness
 
 Run the following commands using native execution to inspect the current PR and its feedback:
 
 ```bash
-# 1. Identify PR number and status
+# 1. Identify PR number, branch, and status
 gh pr view --json number,url,title,headRefName,baseRefName
 
 # 2. Inspect high-level PR comments (PR-Agent summaries, general feedback)
@@ -36,9 +38,23 @@ pr_number="$(gh pr view --json number -q .number)"
 gh api "repos/${repo}/pulls/${pr_number}/comments" \
   --jq '.[] | {id: .id, path: .path, line: .line, author: .user.login, body: .body}'
 
-# 4. Check CI and SonarQube status checks
+# 4. Check CI and SonarQube status checks (verify if review or build jobs are running)
 gh pr checks
 ```
+
+### Review Freshness Check
+Automated review bots update a persistent comment when review completes:
+- Check for PR comment markers such as:
+  - `Persistent review updated to latest commit <sha>`
+  - `#### (Review updated until commit .../<sha>)`
+  - JSON metadata: `"head_sha":"<sha>"` or `"resolved_head_sha":"<sha>"`
+- Compare this SHA with the current branch commit (`git rev-parse HEAD`).
+- **If the review commit matches current HEAD**: Feedback is up to date.
+- **If the review commit is older than current HEAD**:
+  Warn the user in your report:
+  > ⚠️ **Feedback Freshness Warning**: The current automated review reflects commit `<reviewed_sha>`, but the branch is currently at `<current_sha>`. Feedback may be outdated. You can trigger a new review by commenting `/review` on the PR thread in GitHub and re-invoking this skill once complete, or proceed to address the existing feedback.
+- **If `gh pr checks` shows `pr_agent_job` is currently pending or running**:
+  Inform the user that an automated review is currently running and advise waiting for it to finish.
 
 ---
 
@@ -82,7 +98,7 @@ Before altering code, output a structured triage table to the user:
 | 2 | PR-Agent | `user-card.component.ts:15` | Use `@Input()` decorator | **PUSH BACK** | Project requires Angular 21 Signal inputs (`input.required()`) |
 | 3 | SonarQube | `sync.service.ts:88` | Make injected service `readonly` | **PUSH BACK** | Rule `typescript:S2933` is suppressed in `sonar-project.properties` |
 
-*Note: If the user prompt explicitly requested "fix and push immediately", proceed to implementation while still documenting the rationale in your summary.*
+*Include the review freshness status in your summary table.*
 
 ---
 
@@ -108,17 +124,23 @@ Before altering code, output a structured triage table to the user:
 
 ---
 
-## Phase 5: Commit, Push & Feedback Response
+## Phase 5: Verification Summary & Conditional Push
 
-1. **Commit & Push Once**:
-   Batch all verified changes into a single clean commit:
+1. **Present Local Changes & Ask for Push Approval (MANDATORY)**:
+   - Present a concise diff/summary of changes made and local test/lint results.
+   - **Do NOT commit or push automatically** unless the user explicitly gave permission in their initial prompt (e.g., *"implement, commit, and push"*).
+   - Ask the user for confirmation:
+     > *"Changes verified locally. Would you like me to commit and push to remote (`origin/<branch>`)?"*
+
+2. **Execute Commit & Push (Only Upon Explicit Confirmation)**:
+   Once the user approves:
    ```bash
    git add <modified-files>
    git commit -m "fix: address PR review feedback [pr-agent/sonar]"
    git push origin HEAD
    ```
 
-2. **Respond to Review / Push-Backs**:
+3. **Respond to Review / Push-Backs**:
    - For items pushed back, draft polite, technically sound responses explaining why the recommendation was not adopted.
    - If user requests posting the response directly, use:
      ```bash
@@ -132,7 +154,7 @@ Before altering code, output a structured triage table to the user:
        -f body="Declined: In accordance with our Angular 21 guidelines, we use Signal inputs rather than @Input decorators."
      ```
 
-3. **Anti-Loop Safety Rule & Re-Review Instructions (MANDATORY)**:
+4. **Anti-Loop Safety Rule & Re-Review Instructions (MANDATORY)**:
    - **DO NOT** post `/review` or `/improve` comments to trigger bot runs automatically.
    - New commits push without re-triggering PR-Agent automatically (`handle_push_trigger: 'false'`).
    - **MANDATORY NOTICE TO USER**: In your final response after completing changes or pushing, you MUST explicitly remind the user:
