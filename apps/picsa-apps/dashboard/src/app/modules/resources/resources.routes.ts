@@ -71,5 +71,11 @@ export const ResourcesFeature = defineFeature({
         ),
       roleRequired: 'resources.admin',
     },
+    {
+      path: 'admin',
+      nav: { label: 'Admin' },
+      loadComponent: () => import('./pages/admin/resources-admin.component').then((m) => m.ResourcesAdminComponent),
+      roleRequired: 'resources.admin',
+    },
   ],
 });
