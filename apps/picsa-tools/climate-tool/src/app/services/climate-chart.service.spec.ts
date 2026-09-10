@@ -27,7 +27,7 @@ describe('ClimateChartService', () => {
     definition: '',
     axes: {
       yMin: 0,
-      yMax: 1000,
+      yMax: null,
       xMin: 1980,
       xMax: 2020,
       xMinor: 1,
@@ -253,19 +253,20 @@ describe('ClimateChartService', () => {
       expect(reloadSpy).toHaveBeenCalled();
     });
 
-    it('should cycle months with nextPeriod and previousPeriod in monthly mode', async () => {
+    it('should cycle active months with nextPeriod and previousPeriod in monthly mode', async () => {
+      service.station.set(mockStation);
       await service.setTimespanMode('monthly');
-      service.selectedMonth.set(1);
+      service.selectedMonth.set(10); // October
 
       await service.nextPeriod();
-      expect(service.selectedMonth()).toBe(2);
+      expect(service.selectedMonth()).toBe(11); // November
 
-      service.selectedMonth.set(12);
+      service.selectedMonth.set(6); // June (end of active season)
       await service.nextPeriod();
-      expect(service.selectedMonth()).toBe(1);
+      expect(service.selectedMonth()).toBe(10); // Wraps around to October
 
       await service.previousPeriod();
-      expect(service.selectedMonth()).toBe(12);
+      expect(service.selectedMonth()).toBe(6); // Wraps back to June
     });
 
     it('should load monthly data and append period label in monthly mode', async () => {
@@ -288,7 +289,7 @@ describe('ClimateChartService', () => {
       expect(service.chartDefinition()?.name).toContain('(');
     });
 
-    it('should use annual station data for axes bounds in monthly mode to keep scales stable', async () => {
+    it('should scale monthly rainfall to station-wide monthly maximum without stretching to annual total', async () => {
       const stationWithMonthly: IStationMeta = {
         ...mockStation,
         countryCode: 'ZM',
@@ -301,14 +302,22 @@ describe('ClimateChartService', () => {
       await service.setTimespanMode('annual');
       await service.setChart('rainfall');
       const annualYMax = service.chartConfig()?.axis?.y?.max;
+      expect(annualYMax).toBe(600); // from mock annual values: 500, 600
 
-      // In monthly mode with lower monthly rainfall values (100, 110)
+      // In monthly mode with monthly rainfall values (max is 120 across all months)
       await service.setTimespanMode('monthly');
       await service.setSelectedMonth(1);
       await service.setChart('rainfall');
 
-      // The axis max should match the annual yMax, not rescale to 110
-      expect(service.chartConfig()?.axis?.y?.max).toBe(annualYMax);
+      const monthlyYMax = service.chartConfig()?.axis?.y?.max;
+      // Monthly yMax should scale to 200 (sensible range for max 120 with yMajor 100), not 600
+      expect(monthlyYMax).toBe(200);
+      expect(monthlyYMax).toBeLessThan(annualYMax!);
+
+      // Navigating to Month 3 (max value is 80) maintains the same fixed monthly scale (200)
+      await service.setSelectedMonth(3);
+      await service.setChart('rainfall');
+      expect(service.chartConfig()?.axis?.y?.max).toBe(200);
     });
 
     it('should use adaptive boundaries where annual is scale C and monthly is scale A across all months', async () => {

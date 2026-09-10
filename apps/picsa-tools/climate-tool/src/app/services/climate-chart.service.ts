@@ -2,9 +2,9 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  COUNTRY_THREE_MONTH_PERIODS,
-  DEFAULT_THREE_MONTH_PERIODS,
   formatThreeMonthPeriodLabel,
+  getActiveMonthsForCountry,
+  getActivePeriodsForCountry,
   getChartDefinitionText,
   MONTH_DATA,
 } from '@picsa/data';
@@ -71,9 +71,11 @@ export class ClimateChartService {
   readonly selectedPeriod = signal<IThreeMonthPeriod | undefined>(undefined);
 
   readonly availablePeriods = computed<IThreeMonthPeriod[]>(() => {
-    const station = this.station();
-    const countryCode = station?.countryCode?.toLowerCase() || 'default';
-    return COUNTRY_THREE_MONTH_PERIODS[countryCode] || DEFAULT_THREE_MONTH_PERIODS;
+    return getActivePeriodsForCountry(this.station()?.countryCode);
+  });
+
+  readonly availableMonths = computed<number[]>(() => {
+    return getActiveMonthsForCountry(this.station()?.countryCode);
   });
 
   /** 1-to-1 capability guard: returns true only if the station explicitly advertises monthly support for this chart ID */
@@ -141,6 +143,14 @@ export class ClimateChartService {
       const station = this.station();
       if (station && station.id) {
         this.dataService.setPreferredStation(station.id);
+        const months = this.availableMonths();
+        if (!months.includes(this.selectedMonth()) && months.length > 0) {
+          this.selectedMonth.set(months[0]);
+        }
+        const periods = this.availablePeriods();
+        if (this.selectedPeriod() && !periods.some((p) => p.id === this.selectedPeriod()?.id) && periods.length > 0) {
+          this.selectedPeriod.set(periods[0]);
+        }
       }
     });
 
@@ -293,6 +303,13 @@ export class ClimateChartService {
         this.selectedPeriod.set(period);
       }
 
+      if (isTimespan && mode === 'monthly') {
+        const months = this.availableMonths();
+        if (!months.includes(this.selectedMonth()) && months.length > 0) {
+          this.selectedMonth.set(months[0]);
+        }
+      }
+
       const currentStationData = isTimespan
         ? await this.dataService.getTimespanData(station!.id, mode, this.selectedMonth(), period)
         : (await this.dataService.getStationData(station!.id)) || [];
@@ -300,6 +317,14 @@ export class ClimateChartService {
       const periodLabel = this.currentPeriodLabel();
       if (isTimespan && periodLabel) {
         definition.name = `${definition.name} (${periodLabel})`;
+      }
+
+      if (definition._id === 'rainfall' && isTimespan && mode === 'monthly') {
+        definition.axes = {
+          ...definition.axes,
+          yMinor: 50,
+          yMajor: 100,
+        };
       }
 
       this.chartData.set(currentStationData);
@@ -362,7 +387,12 @@ export class ClimateChartService {
   public async setTimespanMode(mode: ClimateTimespanMode) {
     if (this.timespanMode() === mode) return;
     this.timespanMode.set(mode);
-    if (mode === 'three_month' && !this.selectedPeriod()) {
+    if (mode === 'monthly') {
+      const months = this.availableMonths();
+      if (!months.includes(this.selectedMonth()) && months.length > 0) {
+        this.selectedMonth.set(months[0]);
+      }
+    } else if (mode === 'three_month' && !this.selectedPeriod()) {
       const periods = this.availablePeriods();
       if (periods.length > 0) {
         this.selectedPeriod.set(periods[0]);
@@ -394,9 +424,12 @@ export class ClimateChartService {
   private async stepPeriod(step: 1 | -1) {
     const mode = this.timespanMode();
     if (mode === 'monthly') {
+      const months = this.availableMonths();
+      if (months.length <= 1) return;
       const cur = this.selectedMonth();
-      const next = ((cur - 1 + step + 12) % 12) + 1;
-      await this.setSelectedMonth(next);
+      const curIndex = months.indexOf(cur);
+      const nextIndex = curIndex === -1 ? 0 : (curIndex + step + months.length) % months.length;
+      await this.setSelectedMonth(months[nextIndex]);
     } else if (mode === 'three_month') {
       const periods = this.availablePeriods();
       if (periods.length <= 1) return;
