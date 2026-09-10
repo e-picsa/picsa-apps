@@ -5,6 +5,13 @@ import { IChartConfig, IChartMeta, IStationData } from '@picsa/models';
 // (used in both axis labels and tooltip)
 let MONTH_NAMES: string[] = MONTH_DATA.map((m) => m.labelShort);
 
+/**
+ * Determine if a chart definition represents a temperature metric.
+ */
+export function isTemperatureChart(definition: IChartMeta): boolean {
+  return definition._id === 'temp_min' || definition._id === 'temp_max' || definition.units === '°C';
+}
+
 interface IGridMeta {
   xTicks: number[];
   yTicks: number[];
@@ -26,12 +33,18 @@ export async function generateChartConfig(
   MONTH_NAMES = monthNames || MONTH_DATA.map((m) => m.labelShort);
 
   // recalculate axes min/max bounds from data (or boundsData from annual series if provided)
-  definition.axes = {
+  // Avoid mutating the passed definition directly to prevent persistent side-effects across re-renders
+  const effectiveAxes = {
     ...definition.axes,
     ...calculateDataRanges(boundsData || data, definition),
   };
+  const activeDefinition: IChartMeta = {
+    ...definition,
+    axes: effectiveAxes,
+  };
+
   // configure major and minor ticks, labels and gridlines
-  const gridMeta = calculateGridMeta(definition);
+  const gridMeta = calculateGridMeta(activeDefinition);
 
   // combine data keys with data colors array, e.g.
   // ['data_1','data_2'], ['red','green'] -> `{data_1: 'red', data_2: 'green'}`
@@ -67,8 +80,8 @@ export async function generateChartConfig(
     axis: {
       x: {
         label: definition.xLabel,
-        min: definition.axes.xMin,
-        max: definition.axes.xMax,
+        min: effectiveAxes.xMin,
+        max: effectiveAxes.xMax,
         tick: {
           rotate: 75,
           multiline: false,
@@ -83,8 +96,8 @@ export async function generateChartConfig(
           values: gridMeta.yTicks,
           format: (d: any) => (gridMeta.yLines.includes(d as any) ? formatYValue(d as any, definition, true) : ''),
         },
-        min: definition.axes.yMin,
-        max: definition.axes.yMax,
+        min: effectiveAxes.yMin,
+        max: effectiveAxes.yMax,
         padding: {
           bottom: 0,
           top: 10,
@@ -126,15 +139,8 @@ export async function generateChartConfig(
 }
 
 // iterate over data and calculate min/max values for xVar and multiple yVars
-function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
-  // For temperature charts, ensure axis bounds span the full temperature spectrum (including max_tmin / min_tmax)
-  // so month-to-month and 3-month views stay visually aligned with the broad annual scale without rescaling
-  let keys = definition.keys;
-  if (definition._id === 'temp_min') {
-    keys = [...definition.keys, 'max_tmin'];
-  } else if (definition._id === 'temp_max') {
-    keys = [...definition.keys, 'min_tmax'];
-  }
+export function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
+  const keys = definition.keys;
 
   const dataBounds = data.reduce(
     (bounds, d) => {
@@ -163,29 +169,45 @@ function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
   // overwrite data bounds with hardcoded if set
   let { yMin, yMax, xMin, xMax } = definition.axes;
 
-  yMin = typeof yMin === 'number' ? yMin : dataBounds.yMin;
-  yMax = typeof yMax === 'number' ? yMax : dataBounds.yMax;
-  xMin = typeof xMin === 'number' ? xMin : dataBounds.xMin;
-  xMax = typeof xMax === 'number' ? xMax : dataBounds.xMax;
+  const yMajor = typeof definition.axes.yMajor === 'number' && definition.axes.yMajor > 0 ? definition.axes.yMajor : 1;
+  const xMajor = typeof definition.axes.xMajor === 'number' && definition.axes.xMajor > 0 ? definition.axes.xMajor : 1;
 
-  // TODO - replace infinity with 0 at end
+  // Round computed bounds outward to the nearest major gridline interval
+  yMin =
+    typeof yMin === 'number'
+      ? yMin
+      : Number.isFinite(dataBounds.yMin)
+        ? Math.floor(dataBounds.yMin / yMajor) * yMajor
+        : 0;
+  yMax =
+    typeof yMax === 'number'
+      ? yMax
+      : Number.isFinite(dataBounds.yMax)
+        ? Math.ceil(dataBounds.yMax / yMajor) * yMajor
+        : 0;
+  xMin =
+    typeof xMin === 'number'
+      ? xMin
+      : Number.isFinite(dataBounds.xMin)
+        ? Math.floor(dataBounds.xMin / xMajor) * xMajor
+        : 0;
+  xMax =
+    typeof xMax === 'number'
+      ? xMax
+      : Number.isFinite(dataBounds.xMax)
+        ? Math.ceil(dataBounds.xMax / xMajor) * xMajor
+        : 0;
 
-  // NOTE - yAxis hardcoded to 0 start currently for rainfall chart
-  // if (definition.yFormat === 'value') {
-  //   yMin = 0;
-  // }
   // Note - xAxis hardcoded to end at this year for all year charts
   if (definition.xVar === 'Year') {
-    xMax = new Date().getFullYear();
+    xMax = Math.ceil(new Date().getFullYear() / xMajor) * xMajor;
   }
 
-  const { xMajor, yMajor } = definition.axes;
   return {
-    // round max up and min down to the nearest interval
-    yMin: Math.floor(yMin / yMajor) * yMajor,
-    yMax: Math.ceil(yMax / yMajor) * yMajor,
-    xMin: Math.floor(xMin / xMajor) * xMajor,
-    xMax: Math.ceil(xMax / xMajor) * xMajor,
+    yMin,
+    yMax,
+    xMin,
+    xMax,
   };
 }
 

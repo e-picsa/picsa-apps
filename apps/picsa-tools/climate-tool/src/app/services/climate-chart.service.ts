@@ -304,9 +304,12 @@ export class ClimateChartService {
 
       this.chartData.set(currentStationData);
 
-      // In monthly or 3-month mode, use annual station data for axis bounds
-      // so the axes scale remains fixed across month-to-month and 3-month navigation
-      const boundsData = isTimespan ? (await this.dataService.getStationData(station!.id)) || undefined : undefined;
+      // In monthly mode, use all monthly data so all 1-month charts share fixed boundary A.
+      // In 3-month mode, use all 3-month aggregated periods so all 3-month charts share fixed boundary B.
+      // In annual mode, boundsData is undefined so axis bounds default to annual data (boundary C).
+      const boundsData = isTimespan
+        ? await this.dataService.getTimespanBoundsData(station!.id, mode, this.availablePeriods())
+        : undefined;
 
       // generate config and apply custom onrendered callback
       const config = await generateChartConfig(currentStationData, definition, this.monthNames, boundsData);
