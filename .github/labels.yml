@@ -20,6 +20,9 @@
   { 'color': 'ededed', 'description': '', 'name': 'feature' },
   { 'color': 'ededed', 'description': '', 'name': 'fix' },
   { 'color': 'ededed', 'description': '', 'name': 'maintenance' },
+  # PICSA Server
+  { 'color': 'e99695', 'description': 'Changes containing database schema migrations', 'name': 'Server: DB Migration' },
+  { 'color': 'e99695', 'description': 'Changes to server edge functions', 'name': 'Server: Functions' },
   # PICSA Tools
   { 'color': '000000', 'description': 'Updates related to Budget tool', 'name': 'Tool: Budget' },
   { 'color': '000000', 'description': 'Updates related to Climate tool', 'name': 'Tool: Climate' },
@@ -32,7 +35,6 @@
   { 'color': '000000', 'description': 'Updates related to Seasonal Calendar tool', 'name': 'Tool: Seasonal Calendar' },
   # PICSA Apps
   { 'color': '000000', 'description': 'Updates related to Dashboard app', 'name': 'App: Dashboard' },
-  { 'color': '000000', 'description': 'Updates related to Server app', 'name': 'App: Server' },
   { 'color': '000000', 'description': 'Updates related to Farmer app', 'name': 'App: Farmer' },
   { 'color': '000000', 'description': 'Updates related to Extension app', 'name': 'App: Extension' },
 ]
