@@ -95,18 +95,26 @@ async function getLatestPrAgentRelease() {
 }
 
 /**
- * Fetch latest major version for an allowed GitHub Action (e.g. 'actions/checkout' -> 'v7')
+ * Fetch latest release and commit SHA for an allowed GitHub Action (e.g. 'actions/checkout' -> tag: 'v7.0.1', sha: '...')
  */
-async function getLatestActionMajorVersion(actionRepo) {
+async function getLatestActionRelease(actionRepo) {
   if (!ALLOWED_BASE_ACTIONS.has(actionRepo)) {
     return null;
   }
   const token = process.env.GITHUB_TOKEN;
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   try {
-    const data = await fetchJson(`https://api.github.com/repos/${actionRepo}/releases/latest`, { headers });
-    const match = data.tag_name?.match(/^v?(\d+)/);
-    return match ? `v${match[1]}` : null;
+    const releaseUrl = `https://api.github.com/repos/${actionRepo}/releases/latest`;
+    const release = await fetchJson(releaseUrl, { headers });
+    const tag = String(release.tag_name || '');
+    if (!/^[a-zA-Z0-9._-]+$/.test(tag)) return null;
+
+    const commitUrl = `https://api.github.com/repos/${actionRepo}/commits/${encodeURIComponent(tag)}`;
+    const commitData = await fetchJson(commitUrl, { headers });
+    const sha = String(commitData.sha || '');
+    if (!/^[a-f0-9]{40}$/.test(sha)) return null;
+
+    return { tag, sha };
   } catch (err) {
     console.warn(`Warning: Could not fetch latest release for ${actionRepo}:`, err.message);
     return null;
@@ -286,15 +294,27 @@ async function main() {
   console.log(`\nLatest PR-Agent Action:  ${latestRelease.tag} (${latestRelease.sha})`);
 
   // 2. Check base actions in pr-agent.yml (e.g. actions/checkout, actions/github-script)
-  const baseActionsRegex = /uses:\s+(actions\/[a-zA-Z0-9_-]+)@(v\d+)/g;
+  const baseActionsRegex =
+    /uses:\s+(actions\/[a-zA-Z0-9_-]+)@(?:([a-f0-9]{40})\s*#\s*([^\s\n]+)|([a-zA-Z0-9._-]+))/g;
   const baseActionUpdates = [];
   let baseActionMatch;
   while ((baseActionMatch = baseActionsRegex.exec(currentWorkflowContent)) !== null) {
     const actionRepo = baseActionMatch[1];
-    const currentVersion = baseActionMatch[2];
-    const latestVersion = await getLatestActionMajorVersion(actionRepo);
-    if (latestVersion && latestVersion !== currentVersion) {
-      baseActionUpdates.push({ actionRepo, currentVersion, latestVersion });
+    const currentSha = baseActionMatch[2];
+    const currentTag = baseActionMatch[3] || baseActionMatch[4];
+    const fullMatched = baseActionMatch[0];
+
+    const latest = await getLatestActionRelease(actionRepo);
+    if (latest && (latest.tag !== currentTag || (currentSha && latest.sha !== currentSha))) {
+      baseActionUpdates.push({
+        actionRepo,
+        currentTag,
+        currentSha,
+        latestTag: latest.tag,
+        latestSha: latest.sha,
+        fullMatched,
+        replacement: `uses: ${actionRepo}@${latest.sha} # ${latest.tag}`,
+      });
     }
   }
 
@@ -366,7 +386,9 @@ async function main() {
     );
   }
   for (const b of baseActionUpdates) {
-    changesList.push(`- **Base Action (${b.actionRepo})**: \`${b.currentVersion}\` → \`${b.latestVersion}\``);
+    changesList.push(
+      `- **Base Action (${b.actionRepo})**: \`${b.currentTag}\` (\`${b.currentSha?.slice(0, 7) || 'unpinned'}\`) → \`${b.latestTag}\` (\`${b.latestSha.slice(0, 7)}\`)`
+    );
   }
   if (modelChanged) {
     changesList.push(`- **Primary Model**: \`${currentModel}\` → \`${proposedPrimaryModel}\``);
@@ -398,10 +420,7 @@ async function main() {
     );
   }
   for (const b of baseActionUpdates) {
-    newWorkflowContent = newWorkflowContent.replace(
-      new RegExp(`uses:\\s+${b.actionRepo}@${b.currentVersion}`, 'g'),
-      `uses: ${b.actionRepo}@${b.latestVersion}`
-    );
+    newWorkflowContent = newWorkflowContent.replace(b.fullMatched, b.replacement);
   }
 
   // Update .pr_agent.toml file
