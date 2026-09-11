@@ -148,5 +148,9 @@ vector_port = 54328
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
 
+# Allow anonymous feedback submissions (user_id captured from JWT when present)
+[functions.feedback]
+verify_jwt = false
+
 [functions.dashboard]
 static_files = [ "./functions/dashboard/**/*.html" ]

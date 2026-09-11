@@ -19,6 +19,7 @@ const config: CapacitorConfig = {
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',
+    '@capawesome/capacitor-screenshot',
     '@capacitor/core',
     '@capacitor/device',
     '@capacitor/filesystem',
