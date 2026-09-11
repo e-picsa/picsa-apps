@@ -15,8 +15,8 @@ import { FeedbackDialogComponent } from './feedback-dialog.component';
   styleUrl: './feedback-fab.component.scss',
 })
 export class FeedbackFabComponent {
-  private dialog = inject(MatDialog);
-  private safeAreaService = inject(SafeAreaService);
+  private readonly dialog = inject(MatDialog);
+  private readonly safeAreaService = inject(SafeAreaService);
 
   public bottomInset = signal(16);
 

@@ -14,19 +14,12 @@ export interface FormDataResult {
  * the raw bytes and the boundary extracted from the Content-Type header.
  */
 function extractBoundary(contentType: string): string | null {
-  const match = contentType.match(/boundary=([^\s;]+)/i);
+  const match = /boundary=([^\s;]+)/i.exec(contentType);
   return match ? match[1] : null;
 }
 
-async function parseMultipartBody(raw: Uint8Array, boundary: string): Promise<FormDataResult> {
-  const decoder = new TextDecoder();
-  const boundaryStr = `--${boundary}`;
-  const boundaryBytes = new TextEncoder().encode(boundaryStr);
-
-  const fields: Record<string, string> = {};
-  const files: FormDataResult['files'] = {};
-
-  // Split on boundary
+/** Scan the raw body for boundary delimiters and extract each part's bytes. */
+function splitMultipartParts(raw: Uint8Array, boundaryBytes: Uint8Array): Uint8Array[] {
   const parts: Uint8Array[] = [];
   let pos = 0;
   while (pos < raw.length) {
@@ -50,45 +43,65 @@ async function parseMultipartBody(raw: Uint8Array, boundary: string): Promise<Fo
     }
     pos = nextIdx + boundaryBytes.length;
   }
+  return parts;
+}
 
-  for (const part of parts) {
-    // Split headers from body at double CRLF
-    const doubleCRLF = new Uint8Array([0x0d, 0x0a, 0x0d, 0x0a]);
-    const sepIdx = indexOf(part, doubleCRLF, 0);
-    if (sepIdx === -1) continue;
+/** Parse a single part's headers and body. Returns null when the part has no name. */
+function parsePart(
+  part: Uint8Array,
+  decoder: TextDecoder,
+): { name: string; filename: string; contentType: string; body: Uint8Array } | null {
+  // Split headers from body at double CRLF
+  const doubleCRLF = new Uint8Array([0x0d, 0x0a, 0x0d, 0x0a]);
+  const sepIdx = indexOf(part, doubleCRLF, 0);
+  if (sepIdx === -1) return null;
 
-    const headerBytes = part.slice(0, sepIdx);
-    const bodyBytes = part.slice(sepIdx + 4);
-    const headerText = decoder.decode(headerBytes);
+  const headerBytes = part.slice(0, sepIdx);
+  const bodyBytes = part.slice(sepIdx + 4);
+  const headerText = decoder.decode(headerBytes);
 
-    // Parse Content-Disposition and Content-Type from headers
-    let name = '';
-    let filename = '';
-    let contentType = 'text/plain';
-    for (const line of headerText.split('\r\n')) {
-      if (line.toLowerCase().startsWith('content-disposition:')) {
-        const nameMatch = line.match(/name="([^"]+)"/);
-        if (nameMatch) name = nameMatch[1];
-        const fnMatch = line.match(/filename="([^"]+)"/);
-        if (fnMatch) filename = fnMatch[1];
-      }
-      if (line.toLowerCase().startsWith('content-type:')) {
-        contentType = line.substring(line.indexOf(':') + 1).trim();
-      }
+  // Parse Content-Disposition and Content-Type from headers
+  let name = '';
+  let filename = '';
+  let contentType = 'text/plain';
+  for (const line of headerText.split('\r\n')) {
+    if (line.toLowerCase().startsWith('content-disposition:')) {
+      const nameMatch = /name="([^"]+)"/.exec(line);
+      if (nameMatch) name = nameMatch[1];
+      const fnMatch = /filename="([^"]+)"/.exec(line);
+      if (fnMatch) filename = fnMatch[1];
     }
+    if (line.toLowerCase().startsWith('content-type:')) {
+      contentType = line.substring(line.indexOf(':') + 1).trim();
+    }
+  }
 
-    if (!name) continue;
+  if (!name) return null;
 
+  return { name, filename, contentType, body: bodyBytes };
+}
+
+async function parseMultipartBody(raw: Uint8Array, boundary: string): Promise<FormDataResult> {
+  const decoder = new TextDecoder();
+  const boundaryBytes = new TextEncoder().encode(`--${boundary}`);
+
+  const fields: Record<string, string> = {};
+  const files: FormDataResult['files'] = {};
+
+  for (const part of splitMultipartParts(raw, boundaryBytes)) {
+    const parsed = parsePart(part, decoder);
+    if (!parsed) continue;
+    const { name, filename, contentType, body } = parsed;
     if (filename) {
       files[name] = {
         name,
         filename,
         contentType,
-        size: bodyBytes.byteLength,
-        content: bodyBytes,
+        size: body.byteLength,
+        content: body,
       };
     } else {
-      fields[name] = decoder.decode(bodyBytes);
+      fields[name] = decoder.decode(body);
     }
   }
 
@@ -112,7 +125,7 @@ function indexOf(haystack: Uint8Array, needle: Uint8Array, from: number): number
 
 export const getFormData = async (req: Request): Promise<FormDataResult> => {
   const ct = req.headers.get('content-type');
-  if (ct && ct.startsWith('multipart/form-data')) {
+  if (ct?.startsWith('multipart/form-data')) {
     try {
       // Strategy 1: Clone the request and try Deno's native formData parser
       const cloned = req.clone();

@@ -129,7 +129,7 @@ async function signedUrl(req: Request): Promise<Response> {
       console.error(error);
       return ErrorResponse(error.message);
     }
-    if (!data || !data.screenshot_path) {
+    if (!data?.screenshot_path) {
       return ErrorResponse('No screenshot found for this report', 404);
     }
 

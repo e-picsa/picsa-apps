@@ -23,7 +23,7 @@ function isValidImageBytes(bytes: Uint8Array, contentType: string): boolean {
     return (
       matchesSignature(bytes, WEBP_SIGNATURE) &&
       bytes.byteLength >= 12 &&
-      String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) === 'WEBP'
+      String.fromCodePoint(bytes[8], bytes[9], bytes[10], bytes[11]) === 'WEBP'
     );
   }
   return false;

@@ -28,6 +28,7 @@
     ></textarea>
     <mat-hint align="end">{{ comment().length }} / 2000</mat-hint>
   </mat-form-field>
+  <label class="hidden" for="picsa-feedback-comment">{{ 'Your message' | translate }}</label>
 
   <!-- Screenshot controls + preview -->
   <div class="flex flex-col gap-2">
@@ -63,6 +64,7 @@
       <div class="relative">
         <img
           [src]="'data:' + preview.type + ';base64,' + preview.base64"
+          [alt]="'Screenshot preview' | translate"
           class="max-h-[160px] w-full rounded border border-gray-200 object-contain"
         />
         <button

@@ -27,10 +27,10 @@ const BACKOFF_CAP = 3_600_000;
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackService extends PicsaAsyncService {
-  private dbService = inject(PicsaDatabase_V2_Service);
-  private networkService = inject(NetworkService);
-  private supabaseService = inject(SupabaseService);
-  private deviceInfoService = inject(DeviceInfoService);
+  private readonly dbService = inject(PicsaDatabase_V2_Service);
+  private readonly networkService = inject(NetworkService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly deviceInfoService = inject(DeviceInfoService);
 
   private collection: RxCollection<IFeedbackQueueEntry>;
 
@@ -205,12 +205,10 @@ function base64ToBlob(base64: string, mime: string): Blob {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
+    bytes[i] = binary.codePointAt(i) ?? 0;
   }
   return new Blob([bytes], { type: mime });
 }
 
 /** Swallows a rejected promise's error in branches where it's already handled. */
-const noop = (err?: unknown) => {
-  void err;
-};
+const noop = () => undefined;

@@ -41,10 +41,10 @@ interface IScreenshotPreview {
   styleUrl: './feedback-dialog.component.scss',
 })
 export class FeedbackDialogComponent {
-  private dialogRef = inject<MatDialogRef<FeedbackDialogComponent>>(MatDialogRef);
-  private screenshotService = inject(ScreenshotService);
-  private feedbackService = inject(FeedbackService);
-  private data = inject<IFeedbackDialogData>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject<MatDialogRef<FeedbackDialogComponent>>(MatDialogRef);
+  private readonly screenshotService = inject(ScreenshotService);
+  private readonly feedbackService = inject(FeedbackService);
+  private readonly data = inject<IFeedbackDialogData>(MAT_DIALOG_DATA);
 
   public fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 

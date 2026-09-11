@@ -7,7 +7,7 @@ export async function checkBackendAvailability(url: string): Promise<boolean> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s for cold mobile starts
 
-    const response = await fetch(`${url}/auth/v1/health`, { signal: controller.signal });
+    await fetch(`${url}/auth/v1/health`, { signal: controller.signal });
     clearTimeout(timeoutId);
     // ANY response (even 404/4xx) means the server is reachable
     return true;

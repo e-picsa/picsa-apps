@@ -140,19 +140,19 @@ function detectImageMimeType(base64: string): string {
     const raw = atob(base64.substring(0, 12));
     // PNG magic: 89 50 4E 47
     if (
-      raw.charCodeAt(0) === 0x89 &&
-      raw.charCodeAt(1) === 0x50 &&
-      raw.charCodeAt(2) === 0x4e &&
-      raw.charCodeAt(3) === 0x47
+      raw.codePointAt(0) === 0x89 &&
+      raw.codePointAt(1) === 0x50 &&
+      raw.codePointAt(2) === 0x4e &&
+      raw.codePointAt(3) === 0x47
     ) {
       return 'image/png';
     }
     // JPEG magic: FF D8 FF
-    if (raw.charCodeAt(0) === 0xff && raw.charCodeAt(1) === 0xd8 && raw.charCodeAt(2) === 0xff) {
+    if (raw.codePointAt(0) === 0xff && raw.codePointAt(1) === 0xd8 && raw.codePointAt(2) === 0xff) {
       return 'image/jpeg';
     }
     // WEBP magic: RIFF....WEBP
-    if (raw.substring(0, 4) === 'RIFF' && raw.substring(8, 12) === 'WEBP') {
+    if (raw.startsWith('RIFF') && raw.substring(8, 12) === 'WEBP') {
       return 'image/webp';
     }
   } catch {
@@ -235,8 +235,7 @@ export async function renderPageToPng(): Promise<string> {
 function copyComputedStyles(source: Element, target: Element) {
   const computed = getComputedStyle(source);
   let css = '';
-  for (let i = 0; i < computed.length; i++) {
-    const prop = computed[i];
+  for (const prop of Array.from(computed)) {
     css += `${prop}:${computed.getPropertyValue(prop)};`;
   }
   target.setAttribute('style', css);

@@ -8,8 +8,8 @@ import { NetworkService } from '../network.service';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceInfoService {
-  private networkService = inject(NetworkService);
-  private translateService = inject(TranslateService);
+  private readonly networkService = inject(NetworkService);
+  private readonly translateService = inject(TranslateService);
 
   async collect(): Promise<Record<string, string | undefined>> {
     const t = (v: string | undefined, max = 64): string | undefined => {
