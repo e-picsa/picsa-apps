@@ -18,9 +18,9 @@ header[data-style='inverted'] {
 }
 
 .start-content {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  display: block;
+  position: absolute;
+  left: 0;
   @apply sm:min-w-24;
 }
 
@@ -32,9 +32,9 @@ header[data-style='inverted'] {
 }
 .end-content {
   margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  display: block;
+  position: absolute;
+  right: 0;
   @apply sm:min-w-24;
 }
 h1 {
