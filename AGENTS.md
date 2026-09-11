@@ -7,7 +7,7 @@ The architecture consists of a "Super App" (`apps/picsa-apps/app`) that acts as 
 
 > [!IMPORTANT]
 > **Use Yarn for all commands.**
-> Always prefix `nx` commands with `yarn`, e.g., `yarn nx build`.
+> Always prefix `nx` commands with `yarn`, e.g., `yarn nx lint components`.
 
 ## Detailed Context
 
@@ -43,6 +43,23 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 ### Planning Mode Requirements
 
 - **Respect Planning Mode in all cases**: Avoid making code changes without presenting a plan and receiving explicit approval, unless explicitly given permission to do so by the user. This ensures strict adherence to the planning workflow across all tasks.
+
+### Verification Protocol (STRICT: Targeted Lint & Test First, No Redundant Builds)
+
+To conserve context tokens and runtime, agents **MUST NOT** execute full application builds (`yarn build`, `yarn nx build`, `nx build`, `picsa-apps-app-native:build`) after making code changes. App builds run full AOT passes, bundle native Capacitor layers, and flood the context window with thousands of tokens of build logs.
+
+1. **Targeted Linting (Default for Syntax, Type, and Template Checks)**:
+   - Run linting **only** on the specific tool or library that was modified.
+   - Avoid linting massive shells like `picsa-apps-app-native`.
+   - **Library example**: `yarn nx lint components` or `yarn nx lint utils`
+   - **Tool example**: `yarn nx lint picsa-tools-crop-probability-tool` or `yarn nx lint picsa-tools-climate-tool`
+2. **Targeted Testing (Strictly Scoped to Modified Code)**:
+   - When verifying logic changes, run tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs).
+   - **NEVER** run broad project test suites or test across the general codebase.
+   - **Library example**: `yarn nx test utils --testFile=climate.utils.spec.ts`
+   - **Tool example**: `yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts`
+3. **When Builds Are Permitted**:
+   - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
 
 ### Tool Usage Requirements (Crucial for Context Preservation)
 

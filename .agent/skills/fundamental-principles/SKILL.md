@@ -34,3 +34,13 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 - **NEVER** run destructive terminal commands such as `git restore`, `git reset --hard`, `git checkout .`, `git clean -fd`, or `rm -rf` under any circumstances unless explicitly requested by the user.
 - Even if attempting to undo a previous programmatic mistake, you must either manually revert the specific edits you made using file replacement tools, or explicitly ask the user for permission to execute a destructive `git` command to discard changes. This is to ensure you do not destroy uncommitted, in-progress work the user may have in their working directory.
+
+## 4. Verification Workflow (No Redundant Builds or Broad Test Suites)
+
+- **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
+- **Targeted Linting (Default)**: Verify syntax, template checks, and types by linting only the specific tool or library modified (avoiding heavy app shells):
+  - Specific Library: `yarn nx lint components` or `yarn nx lint utils`
+  - Specific Tool: `yarn nx lint picsa-tools-crop-probability-tool`
+- **Targeted Testing Only**: When verifying logic, execute tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs)—never run broad test suites across projects or the general codebase:
+  - Specific Tool: `yarn nx test picsa-tools-crop-probability-tool --testFile=<modified.spec.ts>`
+  - Specific Library: `yarn nx test utils --testFile=<modified.spec.ts>`
