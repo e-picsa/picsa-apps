@@ -15,8 +15,9 @@
 
   <!-- Comment -->
   <mat-form-field appearance="fill" class="w-full">
-    <mat-label>{{ 'Your message' | translate }}</mat-label>
+    <mat-label for="picsa-feedback-comment">{{ 'Your message' | translate }}</mat-label>
     <textarea
+      id="picsa-feedback-comment"
       matInput
       [ngModel]="comment()"
       (ngModelChange)="comment.set($event)"
@@ -78,7 +79,8 @@
   </div>
 
   <!-- Hidden file input for web attach -->
-  <input #fileInput type="file" accept="image/*" class="hidden" />
+  <input id="picsa-feedback-file-input" #fileInput type="file" accept="image/*" class="hidden" />
+  <label class="hidden" for="picsa-feedback-file-input">{{ 'Attach image' | translate }}</label>
 
   <!-- Status messages -->
   @if (submitted()) {
