@@ -4,7 +4,7 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
-import { ClimateToolService } from '../../../services/climate-tool.service';
+import { ClimateToolService, IClimateTool, TOOL_ORDER } from '../../../services/climate-tool.service';
 
 @Component({
   selector: 'climate-tool-select',
@@ -23,7 +23,8 @@ export class ToolSelectComponent {
       const active = this.toolService.activeTool();
       const chartTools = this.chartService.chartDefinition()?.tools;
 
-      return Object.values(allTools)
+      return TOOL_ORDER.map((name) => allTools[name])
+        .filter((tool): tool is IClimateTool => Boolean(tool))
         .filter((tool) => {
           if (!chartTools) return true;
           const toolConfig = chartTools[tool.name as keyof typeof chartTools];

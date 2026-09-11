@@ -37,7 +37,7 @@ describe('ToolSelectComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return all 5 tools when chartDefinition has all tools enabled', () => {
+  it('should return all 5 tools in order: line, terciles, trendline, el_nino, la_nina', () => {
     mockChartDefinition.set({
       _id: 'rainfall',
       tools: {
@@ -48,7 +48,7 @@ describe('ToolSelectComponent', () => {
         el_nino: { enabled: true },
         la_nina: { enabled: true },
       },
-    } as any);
+    } as unknown as IChartMeta);
 
     const tools = component.tools();
     const toolNames = tools.map((t) => t.name);
@@ -65,7 +65,7 @@ describe('ToolSelectComponent', () => {
         el_nino: { enabled: true },
         la_nina: { enabled: true },
       },
-    } as any);
+    } as unknown as IChartMeta);
 
     const tools = component.tools();
     const toolNames = tools.map((t) => t.name);
@@ -82,7 +82,7 @@ describe('ToolSelectComponent', () => {
         el_nino: { enabled: true },
         la_nina: { enabled: true },
       },
-    } as any);
+    } as unknown as IChartMeta);
 
     const tools = component.tools();
     const toolNames = tools.map((t) => t.name);

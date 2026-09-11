@@ -1,15 +1,17 @@
 import { Injectable, signal } from '@angular/core';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-type IToolName = 'line' | 'terciles' | 'trendline' | 'el_nino' | 'la_nina';
+export type IToolName = 'line' | 'terciles' | 'trendline' | 'el_nino' | 'la_nina';
 
-interface IClimateTool {
+export interface IClimateTool {
   name: IToolName;
   label: string;
   icon: string;
   /** Optionally shared value if required by other tools */
   value?: any;
 }
+
+export const TOOL_ORDER: IToolName[] = ['line', 'terciles', 'trendline', 'el_nino', 'la_nina'];
 
 const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
   line: {
