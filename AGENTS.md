@@ -53,8 +53,8 @@ To conserve context tokens and runtime, agents **MUST NOT** execute full applica
    - Avoid linting massive shells like `picsa-apps-app-native`.
    - **Library example**: `yarn nx lint components` or `yarn nx lint utils`
    - **Tool example**: `yarn nx lint picsa-tools-crop-probability-tool` or `yarn nx lint picsa-tools-climate-tool`
-2. **Targeted Testing (Strictly Scoped to Modified Files)**:
-   - When verifying logic changes, run tests **ONLY against files you created or modified**.
+2. **Targeted Testing (Strictly Scoped to Modified Code)**:
+   - When verifying logic changes, run tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs).
    - **NEVER** run broad project test suites or test across the general codebase.
    - **Library example**: `yarn nx test utils --testFile=climate.utils.spec.ts`
    - **Tool example**: `yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts`

@@ -13,10 +13,10 @@
 ### Unit Tests (Targeted File Execution ONLY)
 
 > [!IMPORTANT]
-> **Agents MUST ONLY execute tests against files they have created or modified.**
+> **Agents MUST ONLY execute tests directly covering files they have created or modified (or newly created/modified spec files).**
 > Do **NOT** run tests against entire projects or the general codebase, as this wastes tokens, executes hundreds of unrelated specs, and consumes minutes.
 
-Use the `--testFile` parameter to target only the specific spec file you created or changed:
+Use the `--testFile` parameter to target only the specific spec file covering your changes:
 
 ```bash
 # General pattern:

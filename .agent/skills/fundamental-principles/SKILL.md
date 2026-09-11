@@ -41,6 +41,6 @@ As an intelligent agent, you must improve your own workflow and help future agen
 - **Targeted Linting (Default)**: Verify syntax, template checks, and types by linting only the specific tool or library modified (avoiding heavy app shells):
   - Specific Library: `yarn nx lint components` or `yarn nx lint utils`
   - Specific Tool: `yarn nx lint picsa-tools-crop-probability-tool`
-- **Targeted Testing Only**: When verifying logic, execute tests **ONLY against files you created or modified**—never run broad test suites across projects or the general codebase:
+- **Targeted Testing Only**: When verifying logic, execute tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs)—never run broad test suites across projects or the general codebase:
   - Specific Tool: `yarn nx test picsa-tools-crop-probability-tool --testFile=<modified.spec.ts>`
   - Specific Library: `yarn nx test utils --testFile=<modified.spec.ts>`
