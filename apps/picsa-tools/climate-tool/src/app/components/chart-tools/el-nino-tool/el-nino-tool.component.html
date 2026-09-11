@@ -1,10 +1,41 @@
-<div class="enso-legend">
-  @for (item of legendItems(); track item.label) {
-    <div class="legend-item">
-      <svg class="marker" viewBox="-14 -14 28 28" aria-hidden="true">
-        <path [attr.d]="item.path" [attr.fill]="item.color" [attr.stroke]="item.stroke || 'none'" stroke-width="1.5" />
-      </svg>
-      <span class="label">{{ item.label | translate }}</span>
-    </div>
-  }
+<div class="enso-container">
+  <!-- Interactive Grading Chips -->
+  <div class="enso-grades-list" role="group" [attr.aria-label]="label + ' gradings'">
+    @for (item of displayItems(); track item.grade) {
+      <button
+        type="button"
+        class="grade-chip"
+        [class.selected]="item.isSelected"
+        [attr.aria-pressed]="item.isSelected"
+        (click)="toggleGrade(item.grade)"
+        [title]="item.label + ' (' + item.threshold + '°C SST anomaly)'"
+      >
+        <svg class="marker-icon" viewBox="-16 -16 32 32" aria-hidden="true">
+          <path
+            [attr.d]="item.path"
+            [attr.fill]="item.color"
+            [attr.stroke]="item.stroke || 'none'"
+            stroke-width="1.5"
+          />
+        </svg>
+        <span class="grade-name">{{ item.label | translate }}</span>
+        <span class="grade-threshold">{{ item.threshold }}°C</span>
+      </button>
+    }
+  </div>
+
+  <!-- Metadata footer: source link -->
+  <div class="enso-footer">
+    <span class="source-label">{{ 'Data Source' | translate }}:</span>
+    <a
+      class="source-link"
+      [href]="dataSource.url"
+      target="_blank"
+      rel="noopener noreferrer"
+      [title]="dataSource.description"
+    >
+      <span>{{ dataSource.title }} (ggweather.com)</span>
+      <mat-icon class="external-icon">open_in_new</mat-icon>
+    </a>
+  </div>
 </div>
