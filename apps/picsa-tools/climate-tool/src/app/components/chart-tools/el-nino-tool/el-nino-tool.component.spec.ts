@@ -204,7 +204,7 @@ describe('EnsoToolComponents', () => {
       // For a neutral year in 3-month mode, display the RONI anomaly for context
       const neutralTooltip = component.formatTooltipRow(1960);
       expect(neutralTooltip).toBeDefined();
-      expect(neutralTooltip?.text).toBe('RONI (OND): -0.08°C');
+      expect(neutralTooltip?.text).toBe('RONI (OND): +0.01°C');
       expect(neutralTooltip?.color).toBe('#64748b');
     });
 

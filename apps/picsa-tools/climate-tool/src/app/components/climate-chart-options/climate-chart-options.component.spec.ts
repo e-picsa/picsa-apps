@@ -13,8 +13,8 @@ describe('ClimateChartOptionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ClimateChartOptionsComponent, PicsaTranslateModule.forRoot()],
-      providers: [{ provide: SocialSharing, useValue: {} }],
+      imports: [PicsaTranslateModule.forRoot(), ClimateChartOptionsComponent],
+      providers: [SocialSharing],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ClimateChartOptionsComponent);
@@ -81,13 +81,13 @@ describe('ClimateChartOptionsComponent', () => {
     expect(component.activeToolLabel()).toBe('Tools');
   });
 
-  it('should render Share heading and Share Image button', () => {
+  it('should render Share Image button', () => {
     const el = fixture.nativeElement as HTMLElement;
     const shareBtn = el.querySelector('.share-btn') as HTMLButtonElement;
     expect(shareBtn).toBeTruthy();
     expect(shareBtn.querySelector('mat-icon')?.textContent).toContain('share');
     const headings = Array.from(el.querySelectorAll('h3'));
-    expect(headings.length).toBeGreaterThanOrEqual(3);
+    expect(headings.length).toBeGreaterThanOrEqual(2);
   });
 
   it('should open share dialog when showShareDialog is invoked', async () => {

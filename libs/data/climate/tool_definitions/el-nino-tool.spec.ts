@@ -1,30 +1,38 @@
 import {
+  EL_NINO_DEFINITIONS,
   EL_NINO_GRADES,
+  EL_NINO_STYLES,
   EL_NINO_YEARS,
   EnsoGrade,
   formatRoniAnomaly,
   getEnso3MonthValue,
   getEnsoSeasonRecord,
+  LA_NINA_DEFINITIONS,
   LA_NINA_GRADES,
+  LA_NINA_STYLES,
   LA_NINA_YEARS,
   RONI_DATA_SOURCE,
+  RONI_PERIOD_HEADINGS,
   RONI_SEASON_RECORDS,
   THREE_MONTH_PERIOD_KEYS,
 } from './el-nino-tool';
 
 describe('RONI ENSO Dataset and Tools Data Layer', () => {
-  it('should contain all 78 seasons from 1949-1950 to 2026-2027', () => {
+  it('should contain all 78 seasons from 1949-1950 to 2026-2027 with start and end years', () => {
     expect(RONI_SEASON_RECORDS.length).toBe(78);
-    expect(RONI_SEASON_RECORDS[0].season).toBe('1949-1950');
-    expect(RONI_SEASON_RECORDS[RONI_SEASON_RECORDS.length - 1].season).toBe('2026-2027');
+    expect(RONI_SEASON_RECORDS[0].startYear).toBe(1949);
+    expect(RONI_SEASON_RECORDS[0].endYear).toBe(1950);
+    expect(RONI_SEASON_RECORDS[RONI_SEASON_RECORDS.length - 1].startYear).toBe(2026);
+    expect(RONI_SEASON_RECORDS[RONI_SEASON_RECORDS.length - 1].endYear).toBe(2027);
   });
 
-  it('should ensure all 12 three-month period keys exist in each season record', () => {
+  it('should define 12 period headings (JJA -> MJJ) and exactly 12 values per season record', () => {
+    expect(RONI_PERIOD_HEADINGS.length).toBe(12);
+    expect(RONI_PERIOD_HEADINGS[0]).toBe('JJA');
+    expect(RONI_PERIOD_HEADINGS[RONI_PERIOD_HEADINGS.length - 1]).toBe('MJJ');
     for (const rec of RONI_SEASON_RECORDS) {
       expect(rec.values).toBeDefined();
-      for (const key of THREE_MONTH_PERIOD_KEYS) {
-        expect(key in rec.values).toBe(true);
-      }
+      expect(rec.values.length).toBe(12);
     }
   });
 
@@ -58,6 +66,7 @@ describe('RONI ENSO Dataset and Tools Data Layer', () => {
   });
 
   it('should maintain backward compatibility with EL_NINO_YEARS and LA_NINA_YEARS arrays', () => {
+    expect(EL_NINO_YEARS).toContain(1953);
     expect(EL_NINO_YEARS).toContain(1982);
     expect(EL_NINO_YEARS).toContain(1997);
     expect(EL_NINO_YEARS).toContain(2015);
@@ -70,6 +79,13 @@ describe('RONI ENSO Dataset and Tools Data Layer', () => {
   });
 
   it('should correctly lookup season records via getEnsoSeasonRecord', () => {
+    // 1953-1954 was a Weak El Nino (WE, grade 1)
+    const rec1953 = getEnsoSeasonRecord(1953);
+    expect(rec1953).toBeDefined();
+    expect(rec1953?.category).toBe('el_nino');
+    expect(rec1953?.ensoType).toBe('WE');
+    expect(rec1953?.grade).toBe(1);
+
     // 1982-1983 was a Very Strong El Nino (VSE, grade 4)
     const rec1982 = getEnsoSeasonRecord(1982);
     expect(rec1982).toBeDefined();
@@ -114,5 +130,17 @@ describe('RONI ENSO Dataset and Tools Data Layer', () => {
     expect(formatRoniAnomaly(null)).toBeNull();
     expect(formatRoniAnomaly(undefined)).toBeNull();
     expect(formatRoniAnomaly(Number.NaN)).toBeNull();
+  });
+
+  it('should expose separate readable styling and definition objects', () => {
+    expect(EL_NINO_STYLES[1].color).toBe('#fed8a6');
+    expect(EL_NINO_DEFINITIONS[1].code).toBe('WE');
+    expect(EL_NINO_GRADES[1].color).toBe(EL_NINO_STYLES[1].color);
+    expect(EL_NINO_GRADES[1].code).toBe(EL_NINO_DEFINITIONS[1].code);
+
+    expect(LA_NINA_STYLES[1].color).toBe('#bae0fd');
+    expect(LA_NINA_DEFINITIONS[1].code).toBe('WL');
+    expect(LA_NINA_GRADES[1].color).toBe(LA_NINA_STYLES[1].color);
+    expect(LA_NINA_GRADES[1].code).toBe(LA_NINA_DEFINITIONS[1].code);
   });
 });
