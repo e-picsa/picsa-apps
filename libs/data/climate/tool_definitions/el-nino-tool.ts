@@ -66,6 +66,7 @@ export interface IEnsoGradeConfig {
   color: string;
   stroke: string;
   size: number;
+  defaultActive?: boolean;
 }
 
 /** El Niño gradings 1 to 4: lighter to darker shades of orange/red and growing sizes */
@@ -75,18 +76,20 @@ export const EL_NINO_GRADES: Record<EnsoGrade, IEnsoGradeConfig> = {
     label: 'Weak',
     code: 'WE',
     threshold: '+0.5 to +0.9',
-    color: '#f5a65b',
-    stroke: '#d9771c',
-    size: 6.5,
+    color: '#fed8a6',
+    stroke: '#d97f26',
+    size: 4.5,
+    defaultActive: false,
   },
   2: {
     grade: 2,
     label: 'Moderate',
     code: 'ME',
     threshold: '+1.0 to +1.4',
-    color: '#e0731e',
-    stroke: '#b8540b',
-    size: 8.5,
+    color: '#f59338',
+    stroke: '#bf5c0a',
+    size: 7.5,
+    defaultActive: true,
   },
   3: {
     grade: 3,
@@ -95,7 +98,8 @@ export const EL_NINO_GRADES: Record<EnsoGrade, IEnsoGradeConfig> = {
     threshold: '+1.5 to +1.9',
     color: '#c44601',
     stroke: '#943200',
-    size: 10.5,
+    size: 10.0,
+    defaultActive: true,
   },
   4: {
     grade: 4,
@@ -105,6 +109,7 @@ export const EL_NINO_GRADES: Record<EnsoGrade, IEnsoGradeConfig> = {
     color: '#8c1b07',
     stroke: '#5e1003',
     size: 12.5,
+    defaultActive: true,
   },
 };
 
@@ -115,18 +120,20 @@ export const LA_NINA_GRADES: Record<1 | 2 | 3, IEnsoGradeConfig> = {
     label: 'Weak',
     code: 'WL',
     threshold: '-0.5 to -0.9',
-    color: '#72b1e8',
-    stroke: '#3b8ccf',
-    size: 6.5,
+    color: '#bae0fd',
+    stroke: '#4a94d8',
+    size: 4.5,
+    defaultActive: false,
   },
   2: {
     grade: 2,
     label: 'Moderate',
     code: 'ML',
     threshold: '-1.0 to -1.4',
-    color: '#2d78bf',
-    stroke: '#1b568c',
-    size: 8.5,
+    color: '#348be8',
+    stroke: '#1c62a8',
+    size: 7.5,
+    defaultActive: true,
   },
   3: {
     grade: 3,
@@ -136,6 +143,7 @@ export const LA_NINA_GRADES: Record<1 | 2 | 3, IEnsoGradeConfig> = {
     color: '#0e457b',
     stroke: '#082a4d',
     size: 11.0,
+    defaultActive: true,
   },
 };
 

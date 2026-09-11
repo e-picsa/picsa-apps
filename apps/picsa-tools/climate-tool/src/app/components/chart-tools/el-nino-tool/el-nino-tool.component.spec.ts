@@ -69,14 +69,16 @@ describe('EnsoToolComponents', () => {
       fixture.detectChanges();
     });
 
-    it('should create and initialize with all 4 grades selected', () => {
+    it('should create and initialize with Weak grade disabled and Moderate/Strong/Very Strong selected', () => {
       expect(component).toBeTruthy();
       expect(component.label).toBe('El Niño');
       expect(component.symbol).toBe('▲');
       expect(component.category).toBe('el_nino');
       expect(component.availableGrades.length).toBe(4);
-      expect(component.selectedGrades().size).toBe(4);
-      expect(component.isGradeSelected(1)).toBe(true);
+      expect(component.selectedGrades().size).toBe(3);
+      expect(component.isGradeSelected(1)).toBe(false);
+      expect(component.isGradeSelected(2)).toBe(true);
+      expect(component.isGradeSelected(3)).toBe(true);
       expect(component.isGradeSelected(4)).toBe(true);
     });
 
@@ -89,13 +91,16 @@ describe('EnsoToolComponents', () => {
       expect(link.getAttribute('href')).toBe('https://ggweather.com/enso/roni.htm');
     });
 
-    it('should calculate active dataset counts for displayItems', () => {
+    it('should calculate active dataset counts for displayItems with Weak unselected initially', () => {
       const items = component.displayItems();
       expect(items.length).toBe(4);
-      // In sampleData: 1951 (Weak=1), 1963 (Moderate=1), 1972 (Strong=1), 1982 (Very Strong=1)
       for (const item of items) {
         expect(item.count).toBe(1);
-        expect(item.isSelected).toBe(true);
+        if (item.grade === 1) {
+          expect(item.isSelected).toBe(false);
+        } else {
+          expect(item.isSelected).toBe(true);
+        }
       }
     });
 
@@ -103,7 +108,7 @@ describe('EnsoToolComponents', () => {
       const p1982 = component.getPointStyle({ x: 1982, value: 500 } as DataPoint); // Very Strong (4)
       const p1972 = component.getPointStyle({ x: 1972, value: 520 } as DataPoint); // Strong (3)
       const p1963 = component.getPointStyle({ x: 1963, value: 540 } as DataPoint); // Moderate (2)
-      const p1951 = component.getPointStyle({ x: 1951, value: 560 } as DataPoint); // Weak (1)
+      const p1951Disabled = component.getPointStyle({ x: 1951, value: 560 } as DataPoint); // Weak (1) initially disabled
       const p1960 = component.getPointStyle({ x: 1960, value: 600 } as DataPoint); // Neutral
 
       expect(p1982?.shape).toBe('triangle');
@@ -111,16 +116,22 @@ describe('EnsoToolComponents', () => {
       expect(p1982?.fill).toBe('#8c1b07');
 
       expect(p1972?.shape).toBe('triangle');
-      expect(p1972?.size).toBe(10.5);
+      expect(p1972?.size).toBe(10.0);
       expect(p1972?.fill).toBe('#c44601');
 
       expect(p1963?.shape).toBe('triangle');
-      expect(p1963?.size).toBe(8.5);
-      expect(p1963?.fill).toBe('#e0731e');
+      expect(p1963?.size).toBe(7.5);
+      expect(p1963?.fill).toBe('#f59338');
 
-      expect(p1951?.shape).toBe('triangle');
-      expect(p1951?.size).toBe(6.5);
-      expect(p1951?.fill).toBe('#f5a65b');
+      // Weak is disabled initially, so it renders neutral
+      expect(p1951Disabled?.shape).toBe('circle');
+
+      // Enable Weak
+      component.toggleGrade(1);
+      const p1951Active = component.getPointStyle({ x: 1951, value: 560 } as DataPoint);
+      expect(p1951Active?.shape).toBe('triangle');
+      expect(p1951Active?.size).toBe(4.5);
+      expect(p1951Active?.fill).toBe('#fed8a6');
 
       // Neutral point should use neutralStyle
       expect(p1960?.shape).toBe('circle');
@@ -145,7 +156,7 @@ describe('EnsoToolComponents', () => {
       // 1972 (grade 3) should still return Strong style
       const p1972 = component.getPointStyle({ x: 1972, value: 520 } as DataPoint);
       expect(p1972?.shape).toBe('triangle');
-      expect(p1972?.size).toBe(10.5);
+      expect(p1972?.size).toBe(10.0);
 
       // Re-enable grade 4
       component.toggleGrade(4);
@@ -199,19 +210,29 @@ describe('EnsoToolComponents', () => {
 
     it('should return legend items matching selected grades plus neutral', () => {
       const items = component.getLegendItems();
-      expect(items.length).toBe(5); // 4 grades + neutral
+      expect(items.length).toBe(4); // 3 active grades (Moderate, Strong, Very Strong) + neutral
       expect(items.map((i) => i.label)).toEqual([
-        'El Niño (Weak)',
         'El Niño (Moderate)',
         'El Niño (Strong)',
         'El Niño (Very Strong)',
         'Neutral / Other',
       ]);
 
+      // Toggling grade 1 (Weak) on should add it to legend
       component.toggleGrade(1);
-      const filteredItems = component.getLegendItems();
-      expect(filteredItems.length).toBe(4);
-      expect(filteredItems.find((i) => i.label === 'El Niño (Weak)')).toBeUndefined();
+      const withWeak = component.getLegendItems();
+      expect(withWeak.length).toBe(5);
+      expect(withWeak.find((i) => i.label === 'El Niño (Weak)')).toBeDefined();
+    });
+
+    it('should render a compact layout without headers, counts, neutral indicators or long explanations', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.enso-header')).toBeFalsy();
+      expect(el.querySelector('.neutral-chip')).toBeFalsy();
+      expect(el.querySelector('.source-hint')).toBeFalsy();
+      expect(el.querySelector('.grade-count')).toBeFalsy();
+      expect(el.querySelectorAll('.grade-chip').length).toBe(4);
+      expect(el.querySelector('.source-link')).toBeTruthy();
     });
   });
 
@@ -225,32 +246,41 @@ describe('EnsoToolComponents', () => {
       fixture.detectChanges();
     });
 
-    it('should create and initialize with all 3 grades selected', () => {
+    it('should create and initialize with Weak grade disabled and Moderate/Strong selected', () => {
       expect(component).toBeTruthy();
       expect(component.label).toBe('La Niña');
       expect(component.symbol).toBe('■');
       expect(component.category).toBe('la_nina');
       expect(component.availableGrades.length).toBe(3);
-      expect(component.selectedGrades().size).toBe(3);
+      expect(component.selectedGrades().size).toBe(2);
+      expect(component.isGradeSelected(1)).toBe(false);
+      expect(component.isGradeSelected(2)).toBe(true);
+      expect(component.isGradeSelected(3)).toBe(true);
     });
 
     it('should assign distinct sizes and colors to each La Niña grade in getPointStyle', () => {
       const p1973 = component.getPointStyle({ x: 1973, value: 700 } as DataPoint); // Strong (3)
       const p1955 = component.getPointStyle({ x: 1955, value: 720 } as DataPoint); // Moderate (2)
-      const p1954 = component.getPointStyle({ x: 1954, value: 680 } as DataPoint); // Weak (1)
+      const p1954Disabled = component.getPointStyle({ x: 1954, value: 680 } as DataPoint); // Weak (1) initially disabled
       const p1960 = component.getPointStyle({ x: 1960, value: 600 } as DataPoint); // Neutral
 
       expect(p1973?.shape).toBe('square');
-      expect(p1973?.size).toBe(11);
+      expect(p1973?.size).toBe(11.0);
       expect(p1973?.fill).toBe('#0e457b');
 
       expect(p1955?.shape).toBe('square');
-      expect(p1955?.size).toBe(8.5);
-      expect(p1955?.fill).toBe('#2d78bf');
+      expect(p1955?.size).toBe(7.5);
+      expect(p1955?.fill).toBe('#348be8');
 
-      expect(p1954?.shape).toBe('square');
-      expect(p1954?.size).toBe(6.5);
-      expect(p1954?.fill).toBe('#72b1e8');
+      // Weak disabled renders neutral
+      expect(p1954Disabled?.shape).toBe('circle');
+
+      // Enable Weak
+      component.toggleGrade(1);
+      const p1954Active = component.getPointStyle({ x: 1954, value: 680 } as DataPoint);
+      expect(p1954Active?.shape).toBe('square');
+      expect(p1954Active?.size).toBe(4.5);
+      expect(p1954Active?.fill).toBe('#bae0fd');
 
       expect(p1960?.shape).toBe('circle');
     });

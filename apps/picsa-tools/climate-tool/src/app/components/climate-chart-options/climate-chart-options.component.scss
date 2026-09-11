@@ -1,34 +1,98 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
+  width: 100%;
 }
 
 h3 {
   text-align: center;
-  margin: 8px 0 4px 0;
+  margin: 6px 0 4px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .chart-options-flow {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 8px;
 }
 
 climate-view-select {
-  flex: 0 0 auto;
   width: 100%;
 }
 
 climate-timespan-selector {
-  flex: 1 1 100%;
   width: 100%;
 }
 
 mat-divider {
-  margin: 8px 0;
+  margin: 6px 0;
+}
+
+.tools-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  margin: 2px 0;
+
+  h3 {
+    margin: 0;
+  }
+
+  &.has-active-tool {
+    justify-content: space-between;
+    animation: fadeIn 0.18s ease-out;
+
+    .back-btn {
+      padding: 0 4px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary, #1976d2);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      min-width: unset;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .tool-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tool-custom-slot,
+.tool-select-slot {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.share-btn {
+  width: 100%;
+  margin-top: 4px;
 }

@@ -240,7 +240,7 @@ export class ElNinoToolComponent extends BaseEnsoTool {
     EL_NINO_GRADES[3],
     EL_NINO_GRADES[4],
   ] as const;
-  public override readonly selectedGrades = signal<Set<EnsoGrade>>(new Set([1, 2, 3, 4]));
+  public override readonly selectedGrades = signal<Set<EnsoGrade>>(new Set([2, 3, 4]));
 }
 
 @Component({
@@ -260,5 +260,5 @@ export class LaNinaToolComponent extends BaseEnsoTool {
     LA_NINA_GRADES[2],
     LA_NINA_GRADES[3],
   ] as const;
-  public override readonly selectedGrades = signal<Set<EnsoGrade>>(new Set([1, 2, 3]));
+  public override readonly selectedGrades = signal<Set<EnsoGrade>>(new Set([2, 3]));
 }

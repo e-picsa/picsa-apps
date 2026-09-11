@@ -1,6 +1,3 @@
-<button matButton color="primary" (click)="showShareDialog()">
-  <mat-icon>share</mat-icon>{{ 'Share' | translate }}
-</button>
 <h3>{{ 'Chart' | translate }}</h3>
 <div class="chart-options-flow">
   <climate-view-select></climate-view-select>
@@ -8,7 +5,38 @@
     <climate-timespan-selector></climate-timespan-selector>
   }
 </div>
-<mat-divider></mat-divider>
-<h3>{{ 'Tools' | translate }}</h3>
-<climate-tool-select></climate-tool-select>
 
+<mat-divider></mat-divider>
+
+<div class="tools-header" [class.has-active-tool]="isEnsoToolActive()">
+  @if (isEnsoToolActive()) {
+    <button matButton class="back-btn" (click)="closeToolCustomisation()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>{{ 'All Tools' | translate }}</span>
+    </button>
+    <h3 class="tool-title">{{ activeToolLabel() }}</h3>
+  } @else {
+    <h3>{{ 'Tools' | translate }}</h3>
+  }
+</div>
+
+@if (toolService.activeTool() === 'el_nino') {
+  <div class="tool-custom-slot">
+    <climate-el-nino-tool></climate-el-nino-tool>
+  </div>
+} @else if (toolService.activeTool() === 'la_nina') {
+  <div class="tool-custom-slot">
+    <climate-la-nina-tool></climate-la-nina-tool>
+  </div>
+} @else {
+  <div class="tool-select-slot">
+    <climate-tool-select></climate-tool-select>
+  </div>
+}
+
+<mat-divider></mat-divider>
+
+<button matButton color="primary" class="share-btn" (click)="showShareDialog()">
+  <mat-icon>share</mat-icon>
+  <span>{{ 'Share Image' | translate }}</span>
+</button>

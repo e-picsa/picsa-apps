@@ -443,7 +443,7 @@ export class ClimateChartService {
   /**
    * Build the marker list and lines from station data and hand it to the overlay renderer.
    */
-  private syncPointOverlay() {
+  public syncPointOverlay() {
     const chart = this.chart();
     if (!chart) return;
 

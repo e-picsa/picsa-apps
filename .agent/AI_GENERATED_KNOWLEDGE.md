@@ -158,6 +158,15 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
 - Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
 
+### Responsive Tool Customization Slots & Sidenav Container Layout
+
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
+- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
+- **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
+- **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
+- **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
+
 ### Unified Y-Value Formatting Across Chart Tools
 
 - Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
