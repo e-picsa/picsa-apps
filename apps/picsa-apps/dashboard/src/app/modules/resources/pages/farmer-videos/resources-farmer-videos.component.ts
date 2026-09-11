@@ -3,10 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal, TemplateR
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ICountryCode, ILocaleDataEntry, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
+import { ILocaleDataEntry, LOCALES_DATA } from '@picsa/data/deployments';
 import { IPicsaVideo } from '@picsa/data/resources';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
-import download from 'downloadjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
@@ -15,7 +14,6 @@ import {
   calculateStats,
   formatVariantCountry,
   formatVariantLanguages,
-  generateMatrixCSV,
   getColumnCoverage,
   getCountryLabel,
   getDirectToFarmerVideos,
@@ -121,45 +119,48 @@ export class ResourcesFarmerVideosComponent {
       data,
       width: '760px',
       maxWidth: '95vw',
+      panelClass: 'video-preview-dialog-panel',
     });
   }
 
-  /** Opens video preview dialog directly from catalog variant */
-  public openVariantPreview(row: IFarmerVideoMatrixRow, child: IPicsaVideo): void {
-    const firstCode = child.locale_codes[0];
-    const locale = LOCALES_DATA_HASHMAP[firstCode] || {
-      id: firstCode,
-      language_label: firstCode,
-      country_code: 'global' as ICountryCode,
-      language_code: 'en',
-      flag_path: '',
+  /** Opens video preview dialog directly for an item from the catalog */
+  public openVariantPreview(row: IFarmerVideoMatrixRow, variant: IPicsaVideo): void {
+    const firstLocale = variant.locale_codes[0];
+    const meta = this.allLocales.find((l) => l.id === firstLocale);
+    const countryName = getCountryLabel(meta ? meta.country_code : firstLocale.split('_')[0]);
+
+    // Check if secondary locale has English (subtitled)
+    const isSubtitled =
+      variant.locale_codes.length > 1 && variant.locale_codes.some((c) => c.endsWith('_en') && c !== firstLocale);
+
+    const data: IVideoPreviewData = {
+      videoTitle: row.title,
+      videoId: row.id,
+      localeLabel: formatVariantLanguages(variant),
+      countryName,
+      localeCode: variant.locale_codes.join(', '),
+      resolution: variant.resolution,
+      sizeKb: variant.size_kb,
+      url: variant.supabase_url,
+      isSubtitled,
     };
-    this.openPreview(row, child, locale);
+
+    this.dialog.open(this.videoPreviewDialog, {
+      data,
+      width: '760px',
+      maxWidth: '95vw',
+      panelClass: 'video-preview-dialog-panel',
+    });
   }
 
-  /** Copies video storage URL to clipboard */
-  public copyUrl(url: string, event: Event): void {
+  /** Copies video URL to clipboard */
+  public async copyUrl(url: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    navigator.clipboard.writeText(url).then(
-      () => {
-        this.snackBar.open('Video URL copied to clipboard', 'Dismiss', {
-          duration: 2500,
-        });
-      },
-      () => {
-        this.snackBar.open('Failed to copy URL', 'Dismiss', { duration: 2500 });
-      },
-    );
-  }
-
-  /** Exports translation matrix as downloadable CSV */
-  public exportMatrixCSV(): void {
-    const csvString = generateMatrixCSV(this.matrixRows(), this.countryLocales());
-    const country = this.activeCountry();
-    download(
-      new Blob([csvString], { type: 'text/csv' }),
-      `picsa_farmer_videos_${country}_${Date.now()}.csv`,
-      'text/csv',
-    );
+    try {
+      await navigator.clipboard.writeText(url);
+      this.snackBar.open('Video URL copied to clipboard', 'Dismiss', { duration: 2500 });
+    } catch {
+      this.snackBar.open('Failed to copy URL', 'Dismiss', { duration: 2500 });
+    }
   }
 }

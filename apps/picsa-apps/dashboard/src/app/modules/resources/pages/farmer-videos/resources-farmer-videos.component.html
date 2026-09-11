@@ -1,28 +1,16 @@
 <div class="page-content resources-farmer-videos-page">
   <!-- Page Header -->
   <div class="header-container">
-    <div>
-      <div class="title-row">
-        <h2>Farmer Videos & Translations</h2>
-        <span class="country-badge" [attr.data-country]="activeCountry()">
-          {{ countryLabel() }}
-        </span>
-      </div>
-      <p class="subtitle">
-        Overview of direct-to-farmer videos (Introduction, PICSA Steps 1–8, and Testimonials) and language translation availability for <strong>{{ countryLabel() }}</strong>.
-      </p>
-    </div>
-
-    <div class="header-actions">
-      <button matButton="outlined" color="primary" (click)="exportMatrixCSV()" [disabled]="matrixRows().length === 0">
-        <mat-icon>file_download</mat-icon>
-        Export Matrix CSV
-      </button>
+    <div class="title-row">
+      <h2>Farmer Videos & Translations</h2>
+      <span class="country-badge" [attr.data-country]="activeCountry()">
+        {{ countryLabel() }}
+      </span>
     </div>
   </div>
 
-  <!-- Stats Overview Cards -->
-  <div class="stats-grid">
+  <!-- Controls & Stats Row -->
+  <div class="controls-row">
     <mat-card class="stat-card">
       <mat-card-content>
         <div class="stat-icon-wrapper text-primary">
@@ -30,19 +18,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ stats().totalVideos }}</span>
-          <span class="stat-label">Farmer Videos</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon-wrapper text-info">
-          <mat-icon>video_library</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats().totalFiles }}</span>
-          <span class="stat-label">Video Files Total</span>
+          <span class="stat-label">Videos</span>
         </div>
       </mat-card-content>
     </mat-card>
@@ -54,19 +30,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ stats().languageCount }}</span>
-          <span class="stat-label">Languages ({{ stats().localeCount }} Locales)</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon-wrapper text-accent">
-          <mat-icon>folder_zip</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats().totalSizeMb }} MB</span>
-          <span class="stat-label">Total Media Size</span>
+          <span class="stat-label">Languages</span>
         </div>
       </mat-card-content>
     </mat-card>
@@ -78,29 +42,29 @@
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ stats().coveragePercent }}%</span>
-          <span class="stat-label">Translation Coverage</span>
+          <span class="stat-label">Translated</span>
         </div>
       </mat-card-content>
     </mat-card>
-  </div>
 
-  <!-- Search Toolbar -->
-  <div class="filters-toolbar">
-    <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
-      <mat-label>Search videos...</mat-label>
-      <input
-        matInput
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        placeholder="Filter by title, ID, or step"
-      />
-      <mat-icon matPrefix>search</mat-icon>
-      @if (searchTerm()) {
-        <button matIconButton matSuffix (click)="searchTerm.set('')">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-    </mat-form-field>
+    <!-- Search Filter Alongside Cards -->
+    <div class="search-wrapper">
+      <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+        <mat-label>Search videos...</mat-label>
+        <input
+          matInput
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Filter by title, ID, or step"
+        />
+        <mat-icon matPrefix>search</mat-icon>
+        @if (searchTerm()) {
+          <button matIconButton matSuffix (click)="searchTerm.set('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
   </div>
 
   <!-- Views Tab Group -->
@@ -253,7 +217,12 @@
                     </td>
                   }
                   <td class="coverage-col footer-stat">
-                    <strong>{{ stats().totalFiles }} files</strong>
+                    <div class="footer-stat-cell">
+                      <strong [class.full-coverage]="stats().availableVideos === stats().targetVideos">
+                        {{ stats().availableVideos }} / {{ stats().targetVideos }}
+                      </strong>
+                      <span class="percent-label">{{ stats().coveragePercent }}%</span>
+                    </div>
                   </td>
                 </tr>
               </tfoot>
@@ -267,7 +236,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="mr-2">list_alt</mat-icon>
-        Video Files Catalog ({{ stats().totalVideos }} Videos, {{ stats().totalFiles }} Files)
+        Video Files Catalog ({{ stats().totalVideos }} Videos)
       </ng-template>
 
       <div class="tab-body-container">

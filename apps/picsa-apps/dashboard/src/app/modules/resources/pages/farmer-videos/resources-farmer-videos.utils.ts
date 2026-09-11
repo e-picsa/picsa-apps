@@ -11,7 +11,6 @@ import {
   PICSA_INTRO_VIDEOS_DATA,
   PICSA_VIDEO_TESTIMONIAL_DATA,
 } from '@picsa/data/resources';
-import { unparse } from 'papaparse';
 
 export type VideoCategory = 'intro' | 'step' | 'testimonial';
 
@@ -60,7 +59,8 @@ export interface IVideoPreviewData {
 
 export interface IFarmerVideoStats {
   totalVideos: number;
-  totalFiles: number;
+  targetVideos: number;
+  availableVideos: number;
   totalSizeMb: number;
   localeCount: number;
   languageCount: number;
@@ -319,17 +319,17 @@ export function buildMatrixRows(
  */
 export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDataEntry[]): IFarmerVideoStats {
   const totalVideos = rows.length;
-  let totalFiles = 0;
-  let totalSizeKb = 0;
   let availableCells = 0;
   let applicableCells = 0;
 
-  const coveredLanguages = new Set<string>();
+  // Target locales excluding global_en
+  const targetLocales = locales.filter((l) => l.id !== 'global_en');
+  const languageCount = targetLocales.length > 0 ? targetLocales.length : locales.length;
+
+  const availableVariantUrls = new Set<string>();
+  let totalSizeKb = 0;
 
   for (const row of rows) {
-    totalFiles += row.children.length;
-    totalSizeKb += row.totalSizeKb;
-
     for (const locale of locales) {
       const cell = row.cells[locale.id];
       if (!cell || cell.status === 'not_applicable') continue;
@@ -337,7 +337,10 @@ export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDa
       applicableCells++;
       if (cell.status === 'audio' || cell.status === 'subtitled') {
         availableCells++;
-        coveredLanguages.add(locale.language_label);
+        if (cell.variant?.supabase_url && !availableVariantUrls.has(cell.variant.supabase_url)) {
+          availableVariantUrls.add(cell.variant.supabase_url);
+          totalSizeKb += cell.variant.size_kb || 0;
+        }
       }
     }
   }
@@ -346,10 +349,11 @@ export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDa
 
   return {
     totalVideos,
-    totalFiles,
+    targetVideos: applicableCells,
+    availableVideos: availableCells,
     totalSizeMb: Math.round(totalSizeKb / 1000),
     localeCount: locales.length,
-    languageCount: coveredLanguages.size,
+    languageCount,
     coveragePercent,
   };
 }
@@ -376,39 +380,4 @@ export function getColumnCoverage(
 
   const percent = applicable > 0 ? Math.round((available / applicable) * 100) : 0;
   return { available, applicable, percent };
-}
-
-/**
- * Generates downloadable CSV matrix string.
- */
-export function generateMatrixCSV(rows: IFarmerVideoMatrixRow[], locales: ILocaleDataEntry[]): string {
-  const data = rows.map((row) => {
-    const entry: Record<string, string | number> = {
-      Category: row.categoryLabel,
-      'Video Title': row.title,
-      'Video ID': row.id,
-      'Available / Applicable': `${row.availableCount} / ${row.applicableCount}`,
-    };
-
-    for (const locale of locales) {
-      const cell = row.cells[locale.id];
-      const colHeader = `${locale.language_label} (${getCountryLabel(locale.country_code)})`;
-
-      if (!cell || cell.status === 'not_applicable') {
-        entry[colHeader] = 'N/A';
-      } else if (cell.status === 'missing') {
-        entry[colHeader] = 'Missing';
-      } else if (cell.status === 'subtitled') {
-        const mb = Math.round((cell.variant?.size_kb || 0) / 100) / 10;
-        entry[colHeader] = `Available (English Subtitles, ${mb}MB)`;
-      } else {
-        const mb = Math.round((cell.variant?.size_kb || 0) / 100) / 10;
-        entry[colHeader] = `Available (${mb}MB)`;
-      }
-    }
-
-    return entry;
-  });
-
-  return unparse(data);
 }

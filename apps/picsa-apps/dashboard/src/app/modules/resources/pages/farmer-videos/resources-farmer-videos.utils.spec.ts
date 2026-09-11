@@ -7,7 +7,6 @@ import {
   evaluateTranslationCell,
   formatVariantCountry,
   formatVariantLanguages,
-  generateMatrixCSV,
   getColumnCoverage,
   getCountryLabel,
   getDirectToFarmerVideos,
@@ -210,29 +209,31 @@ describe('resources-farmer-videos.utils', () => {
   });
 
   describe('calculateStats', () => {
-    it('should compute overall statistics with 100% coverage for Malawi', () => {
+    it('should compute statistics with targetVideos and target language count for Malawi', () => {
       const mwLocales = getLocalesForCountry(LOCALES_DATA, 'mw');
       const mwVideos = getVideosForCountry(allVideos, 'mw');
       const rows = buildMatrixRows(mwVideos, mwLocales);
       const stats = calculateStats(rows, mwLocales);
 
       expect(stats.totalVideos).toBe(11);
-      expect(stats.totalFiles).toBeGreaterThan(20);
+      expect(stats.targetVideos).toBe(33); // 21 (intro+steps 1-6) + 6 (steps 7-8) + 6 (testimonials)
+      expect(stats.availableVideos).toBe(33);
+      expect(stats.languageCount).toBe(3); // mw_en, mw_ny, mw_tum (excluding global_en)
       expect(stats.localeCount).toBe(4);
       expect(stats.coveragePercent).toBe(100);
+      expect(stats.totalSizeMb).toBeGreaterThan(0);
     });
-  });
 
-  describe('generateMatrixCSV', () => {
-    it('should generate CSV with N/A markers and categories', () => {
-      const mwLocales = getLocalesForCountry(LOCALES_DATA, 'mw');
-      const mwVideos = getVideosForCountry(allVideos, 'mw');
-      const rows = buildMatrixRows(mwVideos, mwLocales);
-      const csv = generateMatrixCSV(rows, mwLocales);
+    it('should correctly compute 27 target videos and 3 target languages for Zimbabwe', () => {
+      const zwLocales = getLocalesForCountry(LOCALES_DATA, 'zw');
+      const zwVideos = getVideosForCountry(allVideos, 'zw');
+      const rows = buildMatrixRows(zwVideos, zwLocales);
+      const stats = calculateStats(rows, zwLocales);
 
-      expect(csv).toContain('Category,Video Title,Video ID,Available / Applicable');
-      expect(csv).toContain('N/A');
-      expect(csv).toContain('Available (English Subtitles');
+      expect(stats.totalVideos).toBe(9); // intro + 8 steps
+      expect(stats.targetVideos).toBe(27); // 9 videos * 3 applicable locales
+      expect(stats.languageCount).toBe(3); // zw_en, zw_sn, zw_nd (excluding global_en)
+      expect(stats.localeCount).toBe(4);
     });
   });
 
