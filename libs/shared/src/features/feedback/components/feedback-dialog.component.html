@@ -90,8 +90,11 @@
   }
   @if (queued()) {
     <div class="text-amber-600">
-      {{ "Your feedback has been saved and will be sent automatically once you're back online." | translate }}
+      {{ "You're offline. Your feedback is saved and will be sent automatically when you're back online." | translate }}
     </div>
+  }
+  @if (retrying()) {
+    <div class="text-amber-600">{{ 'Your feedback is saved. It will be retried automatically.' | translate }}</div>
   }
   @if (error()) {
     <div class="text-red-600">{{ error() }}</div>

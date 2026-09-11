@@ -175,6 +175,7 @@ export class FeedbackService extends PicsaAsyncService {
 
   /** True for connectivity failures that should stay on the generic retry path. */
   private isNetworkFailure(err: unknown): boolean {
+    if ((err as { __picsaNetworkError?: boolean })?.__picsaNetworkError === true) return true;
     if (this.networkService.isNetworkError(err)) return true;
     const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
     return (

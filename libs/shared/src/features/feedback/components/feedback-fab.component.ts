@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { SafeAreaService } from '@picsa/shared/services/native/safe-area';
 
+import { FeedbackService } from '../../../services/core/feedback/feedback.service';
 import { FeedbackDialogComponent } from './feedback-dialog.component';
 
 @Component({
@@ -16,11 +17,14 @@ import { FeedbackDialogComponent } from './feedback-dialog.component';
 })
 export class FeedbackFabComponent {
   private readonly dialog = inject(MatDialog);
+  private readonly feedbackService = inject(FeedbackService);
   private readonly safeAreaService = inject(SafeAreaService);
 
   public bottomInset = signal(16);
 
   constructor() {
+    // Start the feedback queue at app start so queued reports retry in the background
+    this.feedbackService.ready().catch((err) => console.error('[Feedback] initialisation failed', err));
     this.safeAreaService.getInsets().then((insets) => {
       this.bottomInset.set(Math.max(16, insets.bottom + 16));
     });

@@ -54,6 +54,7 @@ export class FeedbackDialogComponent {
   public submitting = signal(false);
   public submitted = signal(false);
   public queued = signal(false);
+  public retrying = signal(false);
   public error = signal('');
   public capturing = signal(false);
   public attaching = signal(false);
@@ -72,6 +73,7 @@ export class FeedbackDialogComponent {
     this.capturing.set(true);
     this.error.set('');
     try {
+      await this.showCaptureFeedback();
       const shot = await this.screenshotService.capture();
       if (shot) {
         const downscaled = await this.screenshotService.downscaleBase64(shot.base64, shot.type);
@@ -79,10 +81,16 @@ export class FeedbackDialogComponent {
       }
     } catch (err) {
       console.error('[Feedback] screenshot capture failed', err);
-      this.error.set("We couldn't take a screenshot. You can attach an image instead.");
+      this.error.set('Screen capture failed. Please try again, or attach an image instead.');
     } finally {
       this.capturing.set(false);
     }
+  }
+
+  /** Let the capturing state paint and remain visible briefly before the dialog is hidden for capture. */
+  private async showCaptureFeedback(): Promise<void> {
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    await new Promise<void>((resolve) => setTimeout(resolve, 250));
   }
 
   async attachFromGallery() {
@@ -101,11 +109,11 @@ export class FeedbackDialogComponent {
         this.error.set(result.message);
       } else {
         // cancelled (dismiss / timeout / no file)
-        this.error.set('No image was selected. You can continue without one.');
+        this.error.set('No image was selected.');
       }
     } catch (err) {
       console.error('[Feedback] attach from gallery failed', err);
-      this.error.set("We couldn't attach that image. Please try again.");
+      this.error.set("That image couldn't be attached. Please try another one.");
     } finally {
       this.attaching.set(false);
     }
@@ -119,6 +127,8 @@ export class FeedbackDialogComponent {
     if (!this.canSubmit()) return;
     this.submitting.set(true);
     this.error.set('');
+    this.retrying.set(false);
+    this.queued.set(false);
     try {
       const result = await this.feedbackService.submit({
         type: this.type(),
@@ -135,7 +145,7 @@ export class FeedbackDialogComponent {
         this.queued.set(true);
         this.submitting.set(false);
       } else {
-        this.error.set("We couldn't send your feedback right now. It will be retried automatically.");
+        this.retrying.set(true);
         this.submitting.set(false);
       }
     } catch (err: any) {
@@ -144,7 +154,7 @@ export class FeedbackDialogComponent {
       if (err?.__picsaServerError && err.message) {
         this.error.set(err.message);
       } else {
-        this.error.set("We couldn't send your feedback right now. It will be retried automatically.");
+        this.error.set('Something went wrong. Please try again.');
       }
       this.submitting.set(false);
     }

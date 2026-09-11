@@ -65,7 +65,7 @@ export class ScreenshotService {
           const parsed = parseDataUri(photo.dataUrl);
           return parsed
             ? { status: 'ok', screenshot: parsed }
-            : { status: 'error', message: "We couldn't read that image. Please try a different one." };
+            : { status: 'error', message: "That image couldn't be read. Please try another one." };
         } catch {
           // Camera.getPhoto rejects when the user dismisses the picker
           return { status: 'cancelled' };
@@ -92,7 +92,7 @@ export class ScreenshotService {
             return;
           }
           if (!file.type.startsWith('image/')) {
-            settle({ status: 'error', message: 'Please select an image file (PNG, JPG or WebP).' });
+            settle({ status: 'error', message: 'Please choose an image file (PNG, JPG or WebP).' });
             return;
           }
           const reader = new FileReader();
@@ -103,11 +103,11 @@ export class ScreenshotService {
             settle(
               parsed
                 ? { status: 'ok', screenshot: parsed }
-                : { status: 'error', message: "We couldn't read that image. Please try a different one." },
+                : { status: 'error', message: "That image couldn't be read. Please try another one." },
             );
           };
           reader.onerror = () =>
-            settle({ status: 'error', message: "We couldn't read that image. Please try a different one." });
+            settle({ status: 'error', message: "That image couldn't be read. Please try another one." });
           reader.readAsDataURL(file);
         };
         const onCancel = () => {
@@ -196,7 +196,7 @@ export async function downscaleDataUri(dataUri: string, maxBytes: number): Promi
     throw new Error('Failed to encode downscaled image');
   }
   if (parsed.base64.length * 0.75 > maxBytes) {
-    throw new Error('That image is too large to attach. Please choose a smaller one.');
+    throw new Error('That image is too large. Please choose a smaller one.');
   }
   return parsed;
 }

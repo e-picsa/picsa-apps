@@ -204,4 +204,16 @@ describe('FeedbackService', () => {
     await service.drain();
     expect(stubSupabaseService.invokeFunction).not.toHaveBeenCalled();
   });
+
+  it('does not rethrow __picsaNetworkError as server error and returns failed for retry', async () => {
+    const networkErr = Object.assign(new Error('Failed to send a request to the Edge Function'), {
+      __picsaNetworkError: true,
+    });
+    stubSupabaseService.invokeFunction.mockRejectedValueOnce(networkErr);
+    const result = await service.submit({ type: 'feedback', comment: 'net-fail' });
+    const target = mockDocs.find((d) => d._data.comment === 'net-fail');
+    expect(target._data.status).toBe('failed');
+    expect(target._data.retry_count).toBe(1);
+    expect(result).toBe('failed');
+  });
 });

@@ -77,12 +77,13 @@ describe('FeedbackDialogComponent', () => {
     expect(component.error()).toBe('');
   });
 
-  it('sets error on failed result', async () => {
+  it('sets retrying on failed result instead of error', async () => {
     const feedbackService = TestBed.inject(FeedbackService) as any;
     feedbackService.submit.mockResolvedValue('failed');
     component.comment.set('Bad feedback');
     await component.submit();
-    expect(component.error()).toBe("We couldn't send your feedback right now. It will be retried automatically.");
+    expect(component.retrying()).toBe(true);
+    expect(component.error()).toBe('');
     expect(component.submitted()).toBe(false);
     expect(component.queued()).toBe(false);
   });

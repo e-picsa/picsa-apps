@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { FeedbackService } from '../../../services/core/feedback/feedback.service';
 import { FeedbackFabComponent } from './feedback-fab.component';
 
 describe('FeedbackFabComponent', () => {
@@ -9,6 +10,7 @@ describe('FeedbackFabComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FeedbackFabComponent],
+      providers: [{ provide: FeedbackService, useValue: { ready: jest.fn().mockResolvedValue(undefined) } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FeedbackFabComponent);
