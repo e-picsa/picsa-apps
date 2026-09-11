@@ -67,18 +67,31 @@ describe('FeedbackDialogComponent', () => {
     expect(component.error()).toBe('');
   });
 
-  it('sets queued on pending result without auto-close', async () => {
+  it('sets queued on pending result, disables submit, and auto-closes after delay', async () => {
+    jest.useFakeTimers();
     const feedbackService = TestBed.inject(FeedbackService) as any;
+    const dialogRef = TestBed.inject(MatDialogRef) as any;
     feedbackService.submit.mockResolvedValue('pending');
     component.comment.set('Offline feedback');
     await component.submit();
     expect(component.queued()).toBe(true);
     expect(component.submitted()).toBe(false);
+    expect(component.canSubmit()).toBe(false);
     expect(component.error()).toBe('');
+    // Second submit call must be blocked by canSubmit
+    feedbackService.submit.mockClear();
+    await component.submit();
+    expect(feedbackService.submit).not.toHaveBeenCalled();
+    // Advancing the timer triggers auto-close
+    jest.advanceTimersByTime(1800);
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    jest.useRealTimers();
   });
 
-  it('sets retrying on failed result instead of error', async () => {
+  it('sets retrying on failed result, disables submit, and auto-closes after delay', async () => {
+    jest.useFakeTimers();
     const feedbackService = TestBed.inject(FeedbackService) as any;
+    const dialogRef = TestBed.inject(MatDialogRef) as any;
     feedbackService.submit.mockResolvedValue('failed');
     component.comment.set('Bad feedback');
     await component.submit();
@@ -86,5 +99,14 @@ describe('FeedbackDialogComponent', () => {
     expect(component.error()).toBe('');
     expect(component.submitted()).toBe(false);
     expect(component.queued()).toBe(false);
+    expect(component.canSubmit()).toBe(false);
+    // Second submit call must be blocked by canSubmit
+    feedbackService.submit.mockClear();
+    await component.submit();
+    expect(feedbackService.submit).not.toHaveBeenCalled();
+    // Advancing the timer triggers auto-close
+    jest.advanceTimersByTime(1800);
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    jest.useRealTimers();
   });
 });

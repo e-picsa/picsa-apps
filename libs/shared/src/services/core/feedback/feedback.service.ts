@@ -62,6 +62,9 @@ export class FeedbackService extends PicsaAsyncService {
   /** Queue a new feedback entry and attempt to drain immediately if online */
   async submit(input: IFeedbackSubmission): Promise<'submitted' | 'pending' | 'failed'> {
     await this.ready();
+    // Avoid duplicate queue entries when submit is triggered repeatedly (e.g. offline double-tap)
+    const duplicate = await this.findUnsentDuplicate(input);
+    if (duplicate) return 'pending';
     const device_info = await this.deviceInfoService.collect();
     const entry: IFeedbackQueueEntry = {
       id: crypto.randomUUID(),
@@ -199,6 +202,19 @@ export class FeedbackService extends PicsaAsyncService {
       }
     }
     return raw;
+  }
+
+  /** True when an identical submission is already queued and not yet sent. */
+  private async findUnsentDuplicate(input: IFeedbackSubmission): Promise<boolean> {
+    const docs = await this.collection.find({ selector: { status: { $in: ['pending', 'submitting'] } } }).exec();
+    return docs.some(({ _data: d }) => {
+      return (
+        d.type === input.type &&
+        d.comment === input.comment &&
+        d.screen_path === input.screen_path &&
+        d.screenshot_base64 === input.screenshot_base64
+      );
+    });
   }
 }
 

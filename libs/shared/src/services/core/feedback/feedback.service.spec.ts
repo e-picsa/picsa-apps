@@ -216,4 +216,16 @@ describe('FeedbackService', () => {
     expect(target._data.retry_count).toBe(1);
     expect(result).toBe('failed');
   });
+
+  it('rejects duplicate unsent submissions (same content while still queued)', async () => {
+    stubNetworkService.isOnline.mockReturnValue(false);
+    const input = { type: 'feedback' as const, comment: 'duplicate-test' };
+    const first = await service.submit(input);
+    expect(first).toBe('pending');
+    expect(mockCollection.insert).toHaveBeenCalledTimes(1);
+    // Second identical submit while still pending should return 'pending' without inserting
+    const second = await service.submit(input);
+    expect(second).toBe('pending');
+    expect(mockCollection.insert).toHaveBeenCalledTimes(1);
+  });
 });

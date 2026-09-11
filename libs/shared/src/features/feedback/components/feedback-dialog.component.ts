@@ -62,7 +62,14 @@ export class FeedbackDialogComponent {
   public screenPath = this.data.screenPath;
   public commentValid = computed(() => this.comment().trim().length > 0 && this.comment().length <= 2000);
   public canSubmit = computed(
-    () => this.commentValid() && !this.submitting() && !this.submitted() && !this.capturing() && !this.attaching(),
+    () =>
+      this.commentValid() &&
+      !this.submitting() &&
+      !this.submitted() &&
+      !this.queued() &&
+      !this.retrying() &&
+      !this.capturing() &&
+      !this.attaching(),
   );
 
   setType(value: FeedbackType) {
@@ -139,14 +146,13 @@ export class FeedbackDialogComponent {
       });
       if (result === 'submitted') {
         this.submitted.set(true);
-        this.submitting.set(false);
-        setTimeout(() => this.dialogRef.close(true), 1200);
+        this.closeAfter(1500);
       } else if (result === 'pending') {
         this.queued.set(true);
-        this.submitting.set(false);
+        this.closeAfter(1800);
       } else {
         this.retrying.set(true);
-        this.submitting.set(false);
+        this.closeAfter(1800);
       }
     } catch (err: any) {
       console.error('[Feedback] submit error', err);
@@ -158,6 +164,11 @@ export class FeedbackDialogComponent {
       }
       this.submitting.set(false);
     }
+  }
+
+  /** Close the dialog after a short delay so the outcome message stays readable (submit stays disabled meanwhile). */
+  private closeAfter(delayMs: number) {
+    setTimeout(() => this.dialogRef.close(true), delayMs);
   }
 
   close() {
