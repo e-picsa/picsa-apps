@@ -22,6 +22,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
+import { FeedbackFabComponent } from '@picsa/shared/features/feedback';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { filter, map } from 'rxjs';
 
@@ -42,6 +43,7 @@ import { filter, map } from 'rxjs';
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
     PicsaScrollRestoreDirective,
+    FeedbackFabComponent,
   ],
 })
 export class AppLayoutComponent {

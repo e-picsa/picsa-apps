@@ -1,0 +1,69 @@
+:host {
+  display: block;
+}
+
+/* === Mobile bottom-sheet (panel class on .cdk-overlay-pane) === */
+::ng-deep .feedback-dialog-panel .cdk-overlay-pane {
+  @media (max-width: 640px) {
+    position: fixed !important;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 !important;
+    max-width: 100vw !important;
+  }
+}
+
+::ng-deep .feedback-dialog-panel .mat-mdc-dialog-surface {
+  border-radius: 16px;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+/* Surface scroll behaviour for keyboard / narrow states */
+feedback-dialog {
+  display: block;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Form needs to be the scrollable child */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* gap-4 */
+}
+
+/* Toggle group: full width equal segments */
+mat-button-toggle-group {
+  width: 100%;
+}
+
+::ng-deep .feedback-dialog-panel .mat-button-toggle-group {
+  width: 100%;
+}
+
+::ng-deep .feedback-dialog-panel .mat-button-toggle {
+  flex: 1 1 0;
+}
+
+/* 44px touch targets on tonal/filled buttons used for capture, attach, cancel, submit */
+:host button.min-h-\[44px\],
+:host .min-h-\[44px\] {
+  min-height: 44px;
+}
+
+/* Remove-button must overlay the preview image's top-right corner */
+.preview-remove-btn {
+  position: absolute !important;
+  top: 4px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,125 @@
+<form (ngSubmit)="submit()" class="feedback-form">
+  <!-- Header -->
+  <div class="flex items-center justify-between gap-2">
+    <h2 class="flex-1 text-lg font-semibold">{{ 'Send Feedback' | translate }}</h2>
+    <button type="button" matIconButton aria-label="Close" (click)="close()" class="shrink-0">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Type toggle -->
+  <mat-button-toggle-group [value]="type()" (change)="setType($event.value)" class="w-full">
+    <mat-button-toggle value="feedback" class="flex-1">{{ 'Feedback' | translate }}</mat-button-toggle>
+    <mat-button-toggle value="bug_report" class="flex-1">{{ 'Bug report' | translate }}</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!-- Comment -->
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label for="picsa-feedback-comment">{{ 'Your message' | translate }}</mat-label>
+    <textarea
+      id="picsa-feedback-comment"
+      matInput
+      [ngModel]="comment()"
+      (ngModelChange)="comment.set($event)"
+      name="comment"
+      rows="4"
+      maxlength="2000"
+      required
+    ></textarea>
+    <mat-hint align="end">{{ comment().length }} / 2000</mat-hint>
+  </mat-form-field>
+  <label class="hidden" for="picsa-feedback-comment">{{ 'Your message' | translate }}</label>
+
+  <!-- Screenshot controls + preview -->
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 w-full sm:flex-row">
+      <button
+        type="button"
+        matButton="tonal"
+        class="w-full min-h-[44px] sm:flex-1"
+        (click)="captureScreenshot()"
+        [disabled]="submitting() || capturing() || attaching()"
+      >
+        @if (capturing()) {
+          {{ 'Taking screenshot…' | translate }}
+        } @else {
+          <span class="inline-flex items-center justify-center gap-2"
+            ><mat-icon>screenshot</mat-icon> <span>{{ 'Capture screen' | translate }}</span></span
+          >
+        }
+      </button>
+      <button
+        type="button"
+        matButton="tonal"
+        class="w-full min-h-[44px] sm:flex-1"
+        (click)="attachFromGallery()"
+        [disabled]="submitting() || capturing() || attaching()"
+      >
+        <span class="inline-flex items-center justify-center gap-2"
+          ><mat-icon>attach_file</mat-icon> <span>{{ 'Attach image' | translate }}</span></span
+        >
+      </button>
+    </div>
+    @if (screenshot(); as preview) {
+      <div class="relative">
+        <img
+          [src]="'data:' + preview.type + ';base64,' + preview.base64"
+          [alt]="'Screenshot preview' | translate"
+          class="max-h-[160px] w-full rounded border border-gray-200 object-contain"
+        />
+        <button
+          type="button"
+          matIconButton
+          class="preview-remove-btn"
+          (click)="removeScreenshot()"
+          aria-label="Remove screenshot"
+        >
+          <mat-icon class="text-sm">close</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Hidden file input for web attach -->
+  <input id="picsa-feedback-file-input" #fileInput type="file" accept="image/*" class="hidden" />
+  <label class="hidden" for="picsa-feedback-file-input">{{ 'Attach image' | translate }}</label>
+
+  <!-- Status messages -->
+  @if (submitted()) {
+    <div class="text-emerald-600">{{ 'Thank you! Your feedback has been submitted.' | translate }}</div>
+  }
+  @if (queued()) {
+    <div class="text-amber-600">
+      {{ "You're offline. Your feedback is saved and will be sent automatically when you're back online." | translate }}
+    </div>
+  }
+  @if (retrying()) {
+    <div class="text-amber-600">{{ 'Your feedback is saved. It will be retried automatically.' | translate }}</div>
+  }
+  @if (error()) {
+    <div class="text-red-600">{{ error() }}</div>
+  }
+
+  <!-- Actions -->
+  <div class="flex flex-wrap gap-2">
+    <button type="button" matButton="tonal" class="flex-1 basis-[45%] min-h-[44px]" (click)="close()">
+      {{ (queued() || retrying() ? 'Close' : 'Cancel') | translate }}
+    </button>
+    <button
+      type="submit"
+      matButton="filled"
+      color="primary"
+      class="flex-1 basis-[45%] min-h-[44px]"
+      [disabled]="!canSubmit()"
+    >
+      @if (submitting()) {
+        <span class="inline-flex items-center justify-center gap-2">
+          <mat-icon>hourglass_empty</mat-icon>
+          <span>{{ 'Submit' | translate }}</span>
+        </span>
+      } @else {
+        {{ 'Submit' | translate }}
+      }
+    </button>
+  </div>
+</form>

@@ -79,7 +79,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Database Triggers & Internal Edge Functions
 
 - **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
-- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n  - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
 - **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
 ### PostgreSQL Generated Column Nullability
@@ -128,6 +128,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
 
 ---
+
+1. **Generated Column Nullability in PostgreSQL**: When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`). Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.
+
+### Feedback Backend Planning Notes
+
+**Date**: 2026-09-11
+**Context**: Planning the backend for the offline-first in-app feedback feature (edge function + migration + storage bucket).
+**Learning**:
+
+1. **deno.lock version lock**: keep `apps/picsa-server/supabase/functions/deno.lock` at v4 (edge runtime Deno 2.1.4 compatible) — newer local Deno upgrades it to v5 and breaks `supabase functions serve`; restore it after local deno test runs.
+2. **service-role-only tables**: for user-submitted content, REVOKE anon/authenticated + GRANT service_role with RLS and route ALL client access through edge functions; store screenshots in a PRIVATE bucket.
+3. **zod caps must fit real payloads**: when setting validation caps (e.g. 64 chars per field), account for real-world values like `navigator.userAgent` (~100+ chars).
+4. **Anonymous edge functions**: use `verify_jwt = false` in config.toml for endpoints that accept submissions without a logged-in user (keep verify_jwt for admin endpoints).
+5. **Robust upload handling on edge runtime**: `multiparser` npm package is broken there — plan native `req.formData()` with a manual byte-level fallback (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if the row insert fails (orphan cleanup).
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
 
