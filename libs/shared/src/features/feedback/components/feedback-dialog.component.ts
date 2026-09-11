@@ -149,10 +149,10 @@ export class FeedbackDialogComponent {
         this.closeAfter(1500);
       } else if (result === 'pending') {
         this.queued.set(true);
-        this.closeAfter(1800);
+        this.submitting.set(false);
       } else {
         this.retrying.set(true);
-        this.closeAfter(1800);
+        this.submitting.set(false);
       }
     } catch (err: any) {
       console.error('[Feedback] submit error', err);

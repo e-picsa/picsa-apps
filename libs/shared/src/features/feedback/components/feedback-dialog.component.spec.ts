@@ -67,7 +67,7 @@ describe('FeedbackDialogComponent', () => {
     expect(component.error()).toBe('');
   });
 
-  it('sets queued on pending result, disables submit, and auto-closes after delay', async () => {
+  it('sets queued on pending result, disables submit, and does NOT auto-close', async () => {
     jest.useFakeTimers();
     const feedbackService = TestBed.inject(FeedbackService) as any;
     const dialogRef = TestBed.inject(MatDialogRef) as any;
@@ -82,13 +82,13 @@ describe('FeedbackDialogComponent', () => {
     feedbackService.submit.mockClear();
     await component.submit();
     expect(feedbackService.submit).not.toHaveBeenCalled();
-    // Advancing the timer triggers auto-close
-    jest.advanceTimersByTime(1800);
-    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    // Advancing well beyond the old 1800 ms — dialog must NOT auto-close
+    jest.advanceTimersByTime(5000);
+    expect(dialogRef.close).not.toHaveBeenCalled();
     jest.useRealTimers();
   });
 
-  it('sets retrying on failed result, disables submit, and auto-closes after delay', async () => {
+  it('sets retrying on failed result, disables submit, and does NOT auto-close', async () => {
     jest.useFakeTimers();
     const feedbackService = TestBed.inject(FeedbackService) as any;
     const dialogRef = TestBed.inject(MatDialogRef) as any;
@@ -104,9 +104,9 @@ describe('FeedbackDialogComponent', () => {
     feedbackService.submit.mockClear();
     await component.submit();
     expect(feedbackService.submit).not.toHaveBeenCalled();
-    // Advancing the timer triggers auto-close
-    jest.advanceTimersByTime(1800);
-    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    // Advancing well beyond the old 1800 ms — dialog must NOT auto-close
+    jest.advanceTimersByTime(5000);
+    expect(dialogRef.close).not.toHaveBeenCalled();
     jest.useRealTimers();
   });
 });

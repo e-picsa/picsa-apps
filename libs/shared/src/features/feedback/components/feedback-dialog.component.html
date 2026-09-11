@@ -103,7 +103,7 @@
   <!-- Actions -->
   <div class="flex flex-wrap gap-2">
     <button type="button" matButton="tonal" class="flex-1 basis-[45%] min-h-[44px]" (click)="close()">
-      {{ 'Cancel' | translate }}
+      {{ (queued() || retrying() ? 'Close' : 'Cancel') | translate }}
     </button>
     <button
       type="submit"
