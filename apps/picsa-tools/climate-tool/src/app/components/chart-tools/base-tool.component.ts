@@ -32,6 +32,7 @@ export interface ILegendItem {
   fill: string;
   stroke?: string;
   strokeWidth?: number;
+  size?: number;
 }
 
 export interface IOverlayLineLabel {
@@ -64,7 +65,7 @@ export abstract class BaseChartToolComponent {
 
   protected readonly chartDefinition = computed(() => this.chartService.chartDefinition());
   protected readonly chartSeriesData = computed(() => this.chartService.chartSeriesData());
-  protected readonly stationData = computed(() => this.chartService.stationData());
+  protected readonly chartData = computed(() => this.chartService.chartData());
   protected readonly chartConfig = computed(() => this.chartService.chartConfig());
 
   /**
@@ -102,7 +103,7 @@ export abstract class BaseChartToolComponent {
 
   /** Set of x values (usually years) having at least one finite value on the active chart */
   protected readonly validXValues = computed(() => {
-    const data = this.stationData();
+    const data = this.chartData();
     const def = this.chartDefinition();
     const values = new Set<number>();
     if (!data?.length || !def) return values;

@@ -7,8 +7,10 @@ export * from './farmer_content';
 export * from './months';
 export * from './tools';
 export * from './weather';
+export * from './climate/chart_definitions';
 
 // NOTE - do not include top-level export as angular esm modules
+
 // break ts-node used in yarn:i18n
 
 // export { DataIconRegistry } from './iconRegistry';

@@ -1,1 +1,1 @@
-C:/apps/picsa/picsa-apps/AGENTS.md
+AGENTS.md

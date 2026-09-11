@@ -7,17 +7,18 @@ categories:
     { title: '🟦Budget Tool', labels: ['Tool: Budget'] },
     { title: '🟦Climate Tool', labels: ['Tool: Climate'] },
     { title: '🟦Crop Probability Tool', labels: ['Tool: Crop Probability'] },
-    { title: '🟦Farmer Activity Tool', labels: ['Tool: Farmer Activity'] },
+    { title: '🟦Forecasts Tool', labels: ['Tool: Forecasts'] },
     { title: '🟦Manual Tool', labels: ['Tool: Manual'] },
-    { title: '🟦Monitoring Tool', labels: ['Tool: Monitoring'] },
     { title: '🟦Option Tool', labels: ['Tool: Option'] },
     { title: '🟦Resources Tool', labels: ['Tool: Resources'] },
     { title: '🟦Seasonal Calendar Tool', labels: ['Tool: Seasonal Calendar'] },
     { title: '🟪Extension App', labels: ['App: Extension'] },
     { title: '🟪Farmer App', labels: ['App: Farmer'] },
     { title: '🟪Dashboard App', labels: ['App: Dashboard'] },
-    { title: '🟪Server App', labels: ['App: Server'] },
-    { title: '🟫Core Maintenance', labels: ['maintenance'] },
+    { title: '⚡Server Functions', labels: ['Server: Functions'] },
+    { title: '🗄️DB Migrations', labels: ['Server: DB Migration'] },
+    { title: '🤖CI / Automation', labels: ['CI / Automation'] },
+    { title: '🏫Core Maintenance', labels: ['maintenance'] },
   ]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 category-template: '### $TITLE'

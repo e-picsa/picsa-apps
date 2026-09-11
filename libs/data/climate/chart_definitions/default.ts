@@ -30,7 +30,7 @@ const definitions: IChartDefinitions = {
     _id: 'rainfall',
     name: translateMarker('Seasonal Rainfall'),
     shortname: translateMarker('Rain'),
-    image: 'assets/climate-icons/season-rainfall.png',
+    image: 'assets/climate-icons/season-rainfall.svg',
     keys: ['Rainfall'],
     colors: ['#377eb8'],
     yFormat: 'value',
@@ -46,12 +46,16 @@ const definitions: IChartDefinitions = {
     tools: DEFAULT_TOOLS,
     units: 'mm',
     definition: '',
+    definitionMonthly: translateMarker('Total rainfall recorded for the selected month in each year'),
+    definitionThreeMonth: translateMarker(
+      'Total rainfall recorded across the selected 3-month period in each year (requires complete data across all 3 months)',
+    ),
   },
   start: {
     _id: 'start',
     name: translateMarker('Start of Season'),
     shortname: translateMarker('Start'),
-    image: 'assets/climate-icons/season-start.png',
+    image: 'assets/climate-icons/season-start.svg',
     keys: ['Start'],
     colors: ['#e41a1c'],
     yFormat: 'date-from-July',
@@ -80,7 +84,7 @@ const definitions: IChartDefinitions = {
     _id: 'end',
     name: translateMarker('End of Season'),
     shortname: translateMarker('End'),
-    image: 'assets/climate-icons/season-end.png',
+    image: 'assets/climate-icons/season-end.svg',
     keys: ['End'],
     colors: ['#984ea3'],
     yFormat: 'date-from-July',
@@ -109,7 +113,7 @@ const definitions: IChartDefinitions = {
     _id: 'length',
     name: translateMarker('Length of Season'),
     shortname: translateMarker('Length'),
-    image: 'assets/climate-icons/season-length.png',
+    image: 'assets/climate-icons/season-length.svg',
     keys: ['Length'],
     colors: ['#4daf4a'],
     yFormat: 'value',
@@ -174,6 +178,12 @@ const definitions: IChartDefinitions = {
     }),
     units: '°C',
     definition: '',
+    definitionMonthly: translateMarker(
+      'The lowest daily minimum and mean daily minimum temperatures for the selected month in each year',
+    ),
+    definitionThreeMonth: translateMarker(
+      'The lowest daily minimum and mean daily minimum temperatures recorded across the selected 3-month period in each year',
+    ),
   },
   temp_max: {
     _id: 'temp_max',
@@ -203,8 +213,32 @@ const definitions: IChartDefinitions = {
     }),
     units: '°C',
     definition: '',
+    definitionMonthly: translateMarker(
+      'The mean daily maximum and highest daily maximum temperatures for the selected month in each year',
+    ),
+    definitionThreeMonth: translateMarker(
+      'The mean daily maximum and highest daily maximum temperatures recorded across the selected 3-month period in each year',
+    ),
   },
 };
+
+/**
+ * Retrieve the appropriate methodology description text for a chart definition
+ * based on the active timespan resolution.
+ */
+export function getChartDefinitionText(
+  chartDef?: IChartMeta,
+  timespan: 'annual' | 'monthly' | 'three_month' = 'annual',
+): string {
+  if (!chartDef) return '';
+  if (timespan === 'monthly' && chartDef.definitionMonthly) {
+    return chartDef.definitionMonthly;
+  }
+  if (timespan === 'three_month' && chartDef.definitionThreeMonth) {
+    return chartDef.definitionThreeMonth;
+  }
+  return chartDef.definition || '';
+}
 
 // Provide additional export as cloned object to avoid duplicate references
 const DEFINITIONS = () => {

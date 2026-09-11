@@ -1,185 +1,133 @@
-# AI Generated Knowledge
+# AI Generated Knowledge & Repository Gotchas
 
-This file is a shared knowledge base for AI agents operating on this codebase.
+This file is a shared, curated knowledge base of non-obvious engineering gotchas, runtime traps, and architectural constraints discovered across AI agent sessions on this codebase.
 
-## Instructions for Agents
-
-1.  **Read this file** at the start of your session to learn from previous agent experiences.
-2.  **Append to this file** if you discover:
-    - Specific "gotchas" or tricky implementation details.
-    - Workarounds for recurring issues.
-    - Patterns that work well for this specific architecture.
-3.  **Format**: Use the following format for entries:
-
-```markdown
-### [Topic/Issue Name]
-
-**Date**: YYYY-MM-DD
-**Context**: [Brief context of the task]
-**Learning**: [What you learned or the solution you found]
-```
+> [!IMPORTANT]
+> **Instructions for Agents**:
+>
+> 1. **Read this file** before starting work on backend triggers, bundling, charts, reactive state, or domain forecasting.
+> 2. **Maintain by Topic, Not Timeline**: Do NOT append chronological logs (`Date / Context / Learning`). Instead, add or refine entries within the relevant category section below.
+> 3. **High Signal Only**: Only add counter-intuitive gotchas, bundler/runtime traps, or domain quirks that an agent cannot easily deduce without failing first. Do not add general advice or commit changelogs.
+> 4. **Prune When Obsolete**: If a refactor renders a workaround obsolete, delete or update the corresponding section.
 
 ---
 
-## Knowledge Base
+## 1. Local Environment & Test Credentials
 
-### Local Development Credentials
+- **Admin Testing**: `admin@picsa.app` / `admin@picsa.app`
+- **Non-Admin Testing**: `user@picsa.app` / `user@picsa.app`
+- **Local Supabase Inbucket (Mailpit)**: Web interface runs at `http://localhost:54324/`. Internal Docker SMTP runs on port `1025` (`host: 'inbucket'`).
 
-**Date**: 2026-02-20
-**Context**: Logging into the local server during automated tests.
-**Learning**: Use `admin@picsa.app` with password `admin@picsa.app` for admin testing and `user@picsa.app` with password `user@picsa.app` for non-admin testing.
+---
 
-### Verification Entry
+## 2. Multi-Runtime & Bundler Boundaries (Node, Deno, Angular)
 
-**Date**: 2026-02-06
-**Context**: Verifying the new AI self-documentation workflow.
-**Learning**: Agents can successfully append to this file to share knowledge.
+### Pure TypeScript Domain Models (`libs/models`)
 
-### Supabase User Role Management Implementation
+- `libs/models` must contain **only pure TypeScript interfaces and types** with zero runtime code.
+- Any external library types (such as `c3.ChartConfiguration`) must strictly use `import type * as c3 from 'c3'` so the import is completely erased during compilation and never evaluated by Node or Deno.
+- Files reside directly in `libs/models/` (flat structure without a redundant `src/` directory), matching `libs/utils/`.
 
-**Date**: 2026-02-08
-**Context**: Implementing user role management UI and Backend functions in `user-permissions.component.ts`.
-**Learning**:
+### Dependency Isolation in `libs/utils`
 
-1. **Database**: Roles are stored in `user_roles` table (deployment_id, user_id, roles[]).
-2. **Auth Hook**: `custom_access_token_hook` injects these roles into JWT `picsa_roles` claim.
-3. **Backend Logic**:
-   - `add-user.ts` and `update-user-roles.ts` (new) handle role changes.
-   - Validation ensures users cannot assign roles they do not possess.
-   - `_shared/auth.ts` was updated to treat `deployments.admin` as a super-admin for the deployment, bypassing specific role checks.
-4. **Frontend**:
-   - `DashboardAuthService` computes available roles and handles implicit role inheritance using `@picsa/shared/utils/role.utils`.
-   - `user-permissions.component.ts` uses `availableRoles` from `DashboardAuthService`.
-   - `APP_ROLES` is now derived from the shared utility's exhaustive `APP_ROLES_MAP`.
-   - `assignImplicitRoles` in both frontend and backend now uses the robust shared implementation that expands Global Admin/Author roles to all feature roles.
+- Deno edge functions and standalone Node scripts fail if `@picsa/utils` re-exports heavy root dependencies (e.g. Angular router/core, rxdb, xlsx, xml).
+- Keep platform-agnostic, dependency-free utilities (`climate.utils.ts`, `object.utils.ts`, `async.utils.ts`) isolated so they rely only on native JavaScript/Web APIs (`Math`, `Array`, `Map`, `crypto.subtle`) and can be safely imported anywhere.
 
-### Role-Based Route Protection
+### Leaflet Plugins and ES Module Namespace Wrapper in Production
 
-**Date**: 2026-02-10
-**Context**: Implement route guards for the dashboard `climate -> admin` page.
-**Learning**:
+- **Problem**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object in production esbuild chunks. Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) dynamically attach methods to Leaflet's runtime export object via CommonJS/UMD, causing runtime crashes (`typeError: Ai.maplibreGL is not a function`).
+- **Solution**: Import Leaflet as a default export: `import L from 'leaflet'` with `esModuleInterop: true`. This resolves directly to the mutable Leaflet exports object shared by plugins.
 
-1.  **Auth Logic Encapsulation**: `DashboardAuthService` now has a `hasRole(role: AppRole)` method for checking permissions. This replaces ad-hoc logic in directives.
-2.  **Route Guard**: `authRoleGuard` is a functional guard in `dashboard/src/app/modules/auth/guards` that uses `DashboardAuthService.hasRole`.
-3.  **Directives**: `AuthRoleRequiredDirective` also uses `DashboardAuthService.hasRole` for consistency.
-4.  **Navigation**: `navLinks.ts` defines role requirements for menu items, which are enforced by `authenticated-layout.component`.
+### Edge Function Resource Bundling (`static_files`)
 
-### Supabase Environment Detection & Local Email Fallback
+- The Deno bundler (esbuild) statically analyzes `.ts` imports and completely strips out non-TS files (such as `.html`, `.json`) unless declared as static files.
+- To include arbitrary files for use with `Deno.readTextFile()`, declare them in `supabase/config.toml` under the function block:
+  ```toml
+  [functions.dashboard]
+  static_files = [ "./functions/dashboard/**/*.html" ]
+  ```
 
-**Date**: 2026-02-19
-**Context**: Configuring email systems to send to Resend in production, but route to the Supabase local Inbucket (Mailpit) instance during development.
-**Learning**:
+### Heavy Document Export Isolation (DOCX/PDF)
 
-1. **Detecting Local Env**: In Supabase Edge Functions, you can determine if you are running locally inside the Supabase Docker container by checking the `SUPABASE_URL` environment variable. Locally, it often resolves to the API gateway (e.g., `http://kong:8000`). Checking `Deno.env.get('SUPABASE_URL')?.includes('kong')` or the absence of production keys (`RESEND_API_KEY`) is a reliable heuristic.
-2. **Local Inbucket SMTP**: The local Supabase environment runs an email sink called Inbucket (formerly Mailpit). This service exposes an SMTP server on port `1025` internally inside the docker network (even though the web interface is mapped to 54324).
-3. **Usage via Edge Functions**: You can use `npm:nodemailer` in a Deno Edge function to route emails to `host: 'inbucket', port: 1025, ignoreTLS: true`. These emails will then appear in the local Supabase studio at `http://localhost:54324/`.
+- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
+- In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
 
-### Edge Functions and Triggers Architecture
+### TSX tsconfig-paths Resolution in Monorepos
 
-**Date**: 2026-02-19
-**Context**: Implementing Access Requests and Email Notifications.
-**Learning**:
+- When executing standalone TypeScript scripts using `node ./node_modules/tsx/dist/cli.mjs` from the repository root, pass `--tsconfig tsconfig.base.json` so that path aliases defined in the base configuration (`@picsa/models`, `@picsa/utils`) resolve correctly at runtime.
 
-1.  **Dashboard API**: UI interactions should not hit the database directly with complex constraints (like `insertion`) when they represent larger domain actions. Instead, use Edge Functions under `dashboard/{module}/{endpoint}` (e.g., `dashboard/deployments/request-access`).
-2.  **Modularity**: Third-party service integrations (like Resend for emails) must be modularized into `_shared/` directory (e.g., `_shared/email.ts`) rather than duplicated across multiple Edge Functions.
-3.  **Database Webhooks via Edge Functions**:
-4.  **Database Webhooks & Triggers**:
-    - Avoid sending emails or doing external API calls synchronously from the Dashboard API Edge Functions. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks asynchronously.
-    - **Trigger Method Comparison**:
-      - **`public.call_edge_function(name, body)` (Preferred for Supabase Edge Functions)**:
-        - _Strengths_: Dynamically resolves `project_url` and `anon_key` from `private.get_secret(...)`. This means your SQL migrations won't break across local, staging, and production environments with hardcoded IP addresses. It allows for a totally custom JSON body.
-        - _Weaknesses_: Requires you to write an intermediate PL/pgSQL function to act as the trigger handler (since `call_edge_function` takes arguments).
-      - **`supabase_functions.http_request(url, method, headers, params, timeout)` (Preferred for 3rd Party Webhooks)**:
-        - _Strengths_: It natively constructs the standard Supabase webhook payload (`{"old_record": ..., "record": ..., "type": ...}`). It can be attached directly to a trigger `EXECUTE FUNCTION supabase_functions.http_request(...)` without an intermediate wrapper. Logs to `supabase_functions.hooks`.
-        - _Weaknesses_: You must hardcode the `url` (e.g. `http://172.17.0.1:54321/...`) which will cause errors across different deployment environments unless heavily manipulated. It does not auto-inject Supabase auth headers.
-    - **Recommendation**: Always use `public.call_edge_function` wrapped in a custom PL/pgSQL trigger function when invoking an internal Supabase Edge Function to ensure environment portability.
-    - **Local Development Note**: The `anon_key` generated by Supabase CLI for local development is **deterministic** across all developer machines. Always seed this deterministic key into `vault.decrypted_secrets` via `supabase/seed.sql` (e.g., `select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so that `call_edge_function` triggers work out-of-the-box locally without Missing Authorization Header errors from the Kong API Gateway. Production environments will securely override this secret via the Supabase Dashboard Vault.
+### Unit Test Colocation Convention
 
-### Edge Function Resource Bundling
+- **Strict Colocation Next to Source**: Unit test specifications (`*.spec.ts`) must always be colocated directly next to the source file they test (e.g. `libs/utils/climate.utils.spec.ts` next to `libs/utils/climate.utils.ts`, and `libs/data/climate/chart_definitions/periods.spec.ts` next to `periods.ts`).
+- Avoid scattering library or utility tests into consumer application folders (such as `apps/picsa-tools/climate-tool/src/app/data/`). Libraries (`libs/utils`, `libs/data`) maintain their own Nx project/Jest targets (`yarn nx test utils`, `yarn nx test data`), keeping tests discovered cleanly without jumping across the monorepo.
 
-**Date**: 2026-02-19
-**Context**: Serving an HTML email template from within a Deno Edge Function without the compiler excluding the non-TS file.
-**Learning**:
+### TypeScript Strictness & SonarCloud Rules (S2871, Number Parsing, Duplication)
 
-1. When deploying Edge Functions, the Deno bundler (esbuild) automatically statically analyzes `.ts` imports. However, it completely strips out and ignores arbitrary file types (like `.html`, `.json`) unless they are explicitly wrapped as ES Module exports.
-2. The preferred native way to include these arbitrary files for use with `Deno.readTextFile()` is to declare them in the `supabase/config.toml` file under the corresponding function block.
-   Example:
-   ```toml
-   [functions.dashboard]
-   static_files = [ "./functions/dashboard/**/*.html" ]
-   ```
+- **Deterministic Array Sorting (S2871)**: Never use bare `Array.prototype.sort()` or `toSorted()` on string arrays or object keys. Always supply an explicit comparator `(a, b) => a.localeCompare(b)` to avoid locale-dependent sorting anomalies.
+- **Strict Number Checks & Parsing**: Always use `Number.isNaN()` and `Number.parseInt(..., 10)` rather than global `isNaN()` and `parseInt()`. The global variants perform loose implicit type coercions (e.g. `isNaN(undefined) === true`, `isNaN(null) === false`), whereas `Number.*` methods operate strictly on numbers.
+- **SonarCloud Duplication Prevention (Dictionaries & Grade Records)**: Defining repetitive structural configurations (e.g. grade settings, thresholds, hex colors, and size properties) across multiple constants can trigger Sonar's block duplication detector. Separate styling and definitions into modular JSON/object literals (`EL_NINO_STYLES`, `EL_NINO_DEFINITIONS`) and compose them using object spread syntax. This preserves crystal-clear JSON readability for reviewers while preventing large multi-line object block duplication (≥ 10 lines) in SonarCloud.
 
-### Agent Bootstrapping and Component Skills
+---
 
-**Date**: 2026-02-20
-**Context**: Enforcing skill reading for Angular UI and component generation.
-**Learning**: Always review `.agent/skills/angular/SKILL.md` and `.agent/skills/ui-theming/SKILL.md` before making UI or component changes. Pay special attention to:
+## 3. Supabase, Edge Functions & Database Triggers
 
-1. Using `<button matButton>` instead of `<button mat-button>`.
-2. Utilizing signal-based inputs (`input()`) and outputs (`output()`).
-3. Appropriate use of semantic colors and standard tailwind classes.
+### Supabase Environment Detection & Local Email Routing
 
-### Code Organization and Refactoring
+- In Supabase Edge Functions, detect local Docker development by checking if `Deno.env.get('SUPABASE_URL')?.includes('kong')` or if production keys (`RESEND_API_KEY`) are missing.
+- In local development, route emails to Inbucket using `npm:nodemailer` pointed to `host: 'inbucket', port: 1025, ignoreTLS: true` dilemmas.
 
-**Date**: 2026-02-20
-**Context**: Refactoring backend Edge Functions (e.g., `notifyRequests`) to improve readability and maintainability.
-**Learning**:
+### Database Triggers & Internal Edge Functions
 
-1. Always prefer smaller functions where possible. Functions should ideally be under 50 lines of code. Extract blocks like `INSERT`/`UPDATE` branch logic into their own dedicated helper functions.
-2. Abstract common operations into shared utility files within the `_shared` directory (e.g., extracting template string substitution out of email edge functions into `_shared/template.ts`).
+- **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
+- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+- **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
-### State Management Preferences
+### PostgreSQL Generated Column Nullability
 
-**Date**: 2026-03-09
-**Context**: Re-architecting state for complex dashboard services.
-**Learning**: MobX should never be used in this codebase as it is heavily deprecated. Ensure that only Angular Signals (`signal`, `computed`, `effect`) are used for reactive state management.
+- When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`).
+- Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.
 
-### Internationalization (i18n) Imports in Standalone Components
+### Supabase Async Initialization & Offline Null Checks
 
-**Date**: 2026-04-24
-**Context**: Refactoring components to standalone and importing the translate pipe.
-**Learning**: Never import `TranslatePipe` directly from `@ngx-translate/core`. The correct pattern for this project is to import `PicsaTranslateModule` from `@picsa/i18n` and add it to the `imports` array of your standalone component.
+- **Initialization Timing**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` finishes. Initializing the Supabase client or database property (`db`) inside an Angular `effect()` is asynchronous and runs on the next microtask cycle, meaning `ready()` can resolve while `db` is still undefined. Initialize clients synchronously inside `init()`.
+- **Offline Mode**: When Supabase is offline (detected via health check), `isAvailable` is set to `false` and `db` is not created. Services interacting with Supabase (`AppUserService`, `PicsaDatabaseSyncService`, `ForecastService`) must check `isAvailable()` before executing operations on `supabaseService.db` to prevent unhandled `TypeError` crashes.
 
-### Supabase and RxDB Async Initialization Race Conditions
+### User Role Authorization Architecture
 
-**Date**: 2026-06-09
-**Context**: Fixing race conditions and TypeError exceptions when querying `SupabaseService.db` before it was defined, or when the database was offline.
-**Learning**:
+- **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
+- **JWT Claim**: `custom_access_token_hook` injects these roles into the JWT `picsa_roles` claim.
+- **Client Authorization**:
+  - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
+  - Route protection uses the functional `authRoleGuard` in `dashboard/src/app/modules/auth/guards`.
+  - Template protection uses `AuthRoleRequiredDirective` (`*authRoleRequired="..."`).
+  - Navigation definitions in `navLinks.ts` define role requirements enforced by `authenticated-layout.component`.
 
-1. **Ready Race Condition**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` resolves. In `SupabaseService`, the client and database property (`db`) were initialized in an Angular `effect()` inside the constructor reacting to `isAvailable` signal changes. Since effects run asynchronously in the next change detection/microtask cycle, `ready()` could resolve _before_ the effect ran, leaving `db` undefined. The fix was to initialize clients synchronously inside `init()`.
-2. **Offline Mode & Null Checks**: When the Supabase server is offline (detected via health check ping), `isAvailable` is set to `false` and the client/database properties are not created. Consequently, all queries hitting `supabaseService.db` directly would throw a `TypeError`. Every database service interacting with Supabase (such as `AppUserService`, `PicsaDatabaseSyncService`, and `ForecastService`) must check `isAvailable()` before performing any operations on `supabaseService.db`.
-3. **Async Effects in Angular**: Avoid writing asynchronous effects like `effect(async () => { await this.ready(); ... })`. Because Angular tracks dependencies synchronously, any signal accessed after the first `await` is not tracked. It also allows multiple instances of the asynchronous payload to execute concurrently, leading to race conditions. Instead, trigger the initialization of the service in the constructor and react to `this.readySignal()` synchronously in the effect, delegating asynchronous work to methods using cancellation tokens/trackers.
+---
 
-### Angular 21 Signal Forms and OnPush Change Detection
+## 4. Angular 21, Signals & Reactive Architecture
 
-**Date**: 2026-06-09
-**Context**: Fixing select options not updating UI when selecting options inside material overlay panels in components configured with `ChangeDetectionStrategy.OnPush`.
-**Learning**:
+### Material CDK Overlays & OnPush Change Detection
 
-1. **Overlay Change Detection Issue**: Angular Material components like `mat-select` render their option lists in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's template DOM tree. Under `OnPush`, event-based change detection is not triggered in the host component because select events do not bubble up through the component's DOM tree.
-2. **Signal Forms Solution**: Instead of using standard `FormGroup`/`ReactiveFormsModule` with manual `ChangeDetectorRef` triggers, use Angular 21's modern Signal Forms (`@angular/forms/signals`).
-3. **Usage**:
-   - Define a writable signal to hold the model state: `public readonly model = signal<T>(initialState);`
-   - Define a signal form tree with validation: `public readonly budgetForm = form(this.model, (path) => { required(path.field); });`
-   - Bind inputs in the template using `[formField]="budgetForm.field"` (importing `FormField` directive from `@angular/forms/signals`).
-   - Read values reactively in the template via the model signal: `model().field`. Since the template reads a signal, any value changes automatically trigger change detection on the component view, regardless of DOM tree hierarchy or overlays.
+- **Issue**: Angular Material components like `mat-select` render dropdown options in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's DOM tree. Under `ChangeDetectionStrategy.OnPush`, selection events do not bubble through the component's DOM tree, leaving the UI stale.
+- **Solution**: Use Angular 21 modern Signal Forms (`@angular/forms/signals`) rather than manual `ChangeDetectorRef` triggers:
+  - Define a writable signal: `public readonly model = signal<T>(initialState);`
+  - Define the form tree: `public readonly form = form(this.model, (path) => { ... });`
+  - Bind inputs with `[formField]="form.field"` (importing `FormField` from `@angular/forms/signals`).
+  - Reading `model().field` in the template automatically registers the signal dependency and triggers change detection on view updates regardless of DOM hierarchy.
 
-### Leaflet Plugins and ES Module Namespace Wrapper Issue in Production Build
+### Synchronous Effects vs Async Operations
 
-**Date**: 2026-07-08
-**Context**: Fixing `typeError: Ai.maplibreGL is not a function` in production build when loading the climate map.
-**Learning**:
+- Avoid writing async effects like `effect(async () => { await this.ready(); ... })`.
+- Angular tracks signal dependencies synchronously. Any signal accessed after the first `await` is not tracked. Concurrent async executions can also introduce race conditions.
+- Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
+- **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
 
-1. **Namespace Import vs Plugins**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object (`Ai` in output chunk) under production bundling with esbuild.
-2. **Dynamic Extension Mismatch**: Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) are usually packaged as CommonJS/UMD. At runtime they obtain the underlying Leaflet exports object via `require('leaflet')` and dynamically add functions to it (e.g. `L.maplibreGL`).
-3. **Broken Bindings**: Because the ESM wrapper namespace object is sealed and created _before_ the plugin adds properties to the Leaflet export object, the newly added plugin methods are not visible on the ESM wrapper namespace `L`.
-4. **Resolution**: By importing Leaflet as a default export (`import L from 'leaflet'`) and using `esModuleInterop: true`, the import resolves directly to the actual mutable Leaflet module exports object. The plugin and component code then reference the exact same object, ensuring that dynamically added properties/methods (like `maplibreGL`) are visible and functional.
+### Internationalization (i18n) Module Import in Standalone Components
 
-### Supabase PostgreSQL Generated Columns and Per-Country Crop Variety Queries
+- Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
+- The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
 
-**Date**: 2026-08-05
-**Context**: Adding `country_code` column to `crop_data` table, updating primary key, and filtering dashboard queries by country.
-**Learning**:
+---
 
 1. **Generated Column Nullability in PostgreSQL**: When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`). Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.
 
@@ -194,3 +142,72 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 3. **zod caps must fit real payloads**: when setting validation caps (e.g. 64 chars per field), account for real-world values like `navigator.userAgent` (~100+ chars).
 4. **Anonymous edge functions**: use `verify_jwt = false` in config.toml for endpoints that accept submissions without a logged-in user (keep verify_jwt for admin endpoints).
 5. **Robust upload handling on edge runtime**: `multiparser` npm package is broken there — plan native `req.formData()` with a manual byte-level fallback (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if the row insert fails (orphan cleanup).
+
+## 5. Charts & SVG Visualizations (C3 / D3)
+
+### C3 Inline Style Precedence & Point Customization
+
+- C3 default stylesheets apply `.c3-circle { fill: currentColor !important }`.
+- When rendering custom SVG point shapes (`<polygon>`, `<rect>`, `<circle>`), apply inline styles with `!important` (e.g. `style="fill: ${color} !important; stroke: ${strokeColor} !important;"`) to prevent styles from reverting to black.
+- When replacing SVG circle nodes with non-circle tags, C3's built-in D3 resize handler cannot update `cx`/`cy`. Use C3's internal scale functions (`chartApi.x(d.x)` and `chartApi.getYValue(d)`) inside a `@HostListener('window:resize')` handler to maintain accurate pixel positioning on resize.
+
+### SVG Serialization for Canvas/PNG Export
+
+- When serializing an SVG to render onto an HTML5 Canvas via `new Image()`, copying all `window.getComputedStyle(element)` properties onto element attributes copies C3 stylesheet rules (`.c3 path { fill: none; stroke: #000; }`) onto custom overlay elements, overriding fills and breaking custom graphics.
+- Filter computed styles to essential presentation properties (`fill`, `stroke`, `opacity`, `font-*`) and explicitly exclude custom overlay groups (`.picsa-point-overlay`, `.picsa-legend-overlay`) so explicit XML attributes and inline styles are preserved.
+
+### C3 Callback Lifecycle Timing
+
+- `c3.generate()` invokes `config.onrendered` synchronously before returning the new chart instance.
+- Any wrapper component managing C3 lifecycle must ensure `onrendered` fires with the chart instance reference fully assigned to prevent downstream consumers from seeing `undefined`.
+
+### Signal Reactivity for SVG Point Overlays & Render Events
+
+- **Signal Delegation**: When a central service (`ClimateChartService`) maintains an `effect()` that calls an active tool handler (`activeToolHandler().getPointStyle(d)`), Angular automatically tracks signals read inside that delegate (e.g. `LineToolComponent.value()`). Modifying the child signal re-triggers the parent effect without RxJS Subjects.
+- **Render Notifications**: Replace `Subject<void>` for chart render events with a `chartRenderCount = signal(0)` counter. Export pipelines can await render completion using a promise helper queue without subscription leak risks.
+
+### Declarative Chart Tool Configuration
+
+- Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
+- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
+
+### Responsive Tool Customization Slots & Sidenav Container Layout
+
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
+- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
+- **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
+- **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
+- **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
+
+### Unified Y-Value Formatting Across Chart Tools
+
+- Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
+
+---
+
+## 6. Domain Logic & Agronomy Data Rules
+
+### Climatological Season Alignment (July 1st Start)
+
+- In Southern Africa (Zambia, Malawi, Zimbabwe), meteorological data systems align the agricultural season from July 1st to June 30th (e.g. season year 2024 spans July 2024 to June 2025).
+- Month membership in seasons crossing the calendar year boundary (e.g., `DJF` = Dec, Jan, Feb) belongs directly to that attributed season start year without requiring ad-hoc day-shifting in the frontend.
+
+### Station Availability & Capability Indexing
+
+- Rather than downloading and parsing CSV files on the mobile client to discover available charts, stations are indexed with `IStationCapabilities` (schemaVersion, lastUpdated, contentHash, metric availability). This enables instant, synchronous chart availability filtering and cache invalidation.
+
+### Climate Data Sync, Formatting & Audit Pipeline
+
+- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
+- **Idempotent CLI Runner**: The CLI runner (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) computes SHA-256 hashes of canonical station data. Preserving `lastUpdated` when data hashes match ensures zero git diffs on subsequent runs.
+- **Per-Country Station Organization**: Grouping stations by country (`data/stations/<country>/`) with separate `metadata.ts` and `capabilities.generated.ts` cleanly isolates PRs and prevents cross-country merge conflicts.
+- **Symmetric Capability Models**: Modeling `monthly?: IChartId[]` as a string array symmetrically matches `annual?: IChartId[]`, simplifying runtime availability checks (`station.capabilities?.[timespan]?.includes(chartId)`).
+- **Missing Years Normalization**: In legacy data files (e.g. Zimbabwe Climsoft exports), `0` placeholders in season columns (`Start=0, End=0, Length=0, Rainfall=0`) must be normalized to `null` to accurately count missing years in $[Y_{\min}, Y_{\max}]$.
+- **Within-Batch Duplicate Observation Handling**: Upstream sync feeds can emit multiple records for the same station, month, and metric (e.g. overlapping time slices or correction batches). `pivotLongToWideMonthly` tracks duplicates via `IPivotOptions.onDuplicate`. Identical duplicates are de-duplicated cleanly, while conflicting values (`existing !== incoming`) log warnings and are captured as `DUPLICATE_OBSERVATION_CONFLICT` violations in the audit report.
+- **Git Commit Date Retrieval & Timestamp Idempotency**: Station `lastUpdated` uses a clean `YYYY-MM-DD` date derived from `git log -1 --format="%as"` over the station's CSV files. When `contentHash` is unchanged across subsequent runs, the existing `lastUpdated` is strictly preserved, guaranteeing 100% idempotency (zero git diffs).
+
+### RONI ENSO Season Classification & Grade Definitions
+
+- **RONI Event Criteria**: A season is classified as El Niño (or La Niña) when the running 3-month mean SST anomaly equals or exceeds $+0.5^\circ\text{C}$ (or $\le -0.5^\circ\text{C}$) for at least 5 consecutive overlapping 3-month periods. For example, 1953-1954 has 5 consecutive periods $\ge +0.5^\circ\text{C}$ (JJA to OND) and is classified as Weak El Niño (`WE`, grade 1), preserving historical continuity in `EL_NINO_YEARS`.
+- **Season Continuity**: The RONI dataset maintains continuous season records through the station data projection range (e.g. 2026-2027) so charts with recent or projected years have well-defined records rather than missing keys.

@@ -1,0 +1,402 @@
+<div class="page-content resources-farmer-videos-page">
+  <!-- Page Header -->
+  <div class="header-container">
+    <div class="title-row">
+      <h2>Farmer Videos & Translations</h2>
+      <span class="country-badge" [attr.data-country]="activeCountry()">
+        {{ countryLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Controls & Stats Row -->
+  <div class="controls-row">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper text-primary">
+          <mat-icon>ondemand_video</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats().totalVideos }}</span>
+          <span class="stat-label">Videos</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper text-success">
+          <mat-icon>translate</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats().languageCount }}</span>
+          <span class="stat-label">Languages</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper text-warning">
+          <mat-icon>pie_chart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats().coveragePercent }}%</span>
+          <span class="stat-label">Translated</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Search Filter Alongside Cards -->
+    <div class="search-wrapper">
+      <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+        <mat-label>Search videos...</mat-label>
+        <input
+          matInput
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Filter by title, ID, or step"
+        />
+        <mat-icon matPrefix>search</mat-icon>
+        @if (searchTerm()) {
+          <button matIconButton matSuffix (click)="searchTerm.set('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Views Tab Group -->
+  <mat-tab-group
+    animationDuration="150ms"
+    class="views-tab-group"
+    [selectedIndex]="activeTab()"
+    (selectedIndexChange)="activeTab.set($event)"
+  >
+    <!-- TAB 1: Translation Matrix -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-2">grid_on</mat-icon>
+        Translation Matrix
+      </ng-template>
+
+      <div class="tab-body-container">
+        @if (matrixRows().length === 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <p>No videos match "{{ searchTerm() }}".</p>
+          </div>
+        } @else {
+          <div class="matrix-table-wrapper mat-elevation-z1">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th class="sticky-step-col">Category</th>
+                  <th class="sticky-video-col">Farmer Video</th>
+                  @for (locale of countryLocales(); track locale.id) {
+                    <th class="locale-header-col">
+                      <div class="locale-header-cell">
+                        <span class="country-pill" [attr.data-country]="locale.country_code">
+                          {{ locale.country_code | uppercase }}
+                        </span>
+                        <span class="locale-lang">{{ locale.language_label }}</span>
+                        <span class="locale-code">{{ locale.id }}</span>
+                      </div>
+                    </th>
+                  }
+                  <th class="coverage-col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of matrixRows(); track row.id) {
+                  <tr>
+                    <!-- Step / Category column -->
+                    <td class="sticky-step-col">
+                      <span
+                        class="category-badge"
+                        [class.badge-intro]="row.category === 'intro'"
+                        [class.badge-step]="row.category === 'step'"
+                        [class.badge-testimonial]="row.category === 'testimonial'"
+                      >
+                        {{ row.categoryLabel }}
+                      </span>
+                    </td>
+
+                    <!-- Video Title and ID -->
+                    <td class="sticky-video-col">
+                      <div class="video-cell-title">
+                        <strong>{{ row.title }}</strong>
+                        <span class="video-id-tag">{{ row.id }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Translation Cells -->
+                    @for (locale of countryLocales(); track locale.id) {
+                      @let cell = row.cells[locale.id];
+                      <td class="locale-cell">
+                        @if (cell.status === 'audio') {
+                          <button
+                            type="button"
+                            class="cell-btn status-audio"
+                            [matTooltip]="
+                              locale.language_label +
+                              ' • Audio Available • ' +
+                              ((cell.variant?.size_kb ?? 0) | sizeMB) +
+                              'MB\nClick to preview'
+                            "
+                            (click)="openPreview(row, cell.variant!, locale, false)"
+                          >
+                            <mat-icon class="status-icon success-icon">check_circle</mat-icon>
+                          </button>
+                        } @else if (cell.status === 'subtitled') {
+                          <button
+                            type="button"
+                            class="cell-btn status-subtitled"
+                            [matTooltip]="
+                              locale.language_label +
+                              ' • English Subtitles Available • ' +
+                              ((cell.variant?.size_kb ?? 0) | sizeMB) +
+                              'MB\nClick to preview'
+                            "
+                            (click)="openPreview(row, cell.variant!, locale, true)"
+                          >
+                            <mat-icon class="status-icon subtitle-icon">closed_caption</mat-icon>
+                            <span class="cc-pill">CC</span>
+                          </button>
+                        } @else if (cell.status === 'not_applicable') {
+                          <span
+                            class="na-indicator"
+                            [matTooltip]="
+                              locale.id === 'global_en'
+                                ? 'Global English not used for this video (localized version expected)'
+                                : 'Localized English not used for this video (global English used)'
+                            "
+                          >
+                            N/A
+                          </span>
+                        } @else {
+                          <span
+                            class="missing-indicator"
+                            [matTooltip]="'No ' + locale.language_label + ' translation available'"
+                          >
+                            —
+                          </span>
+                        }
+                      </td>
+                    }
+
+                    <!-- Row Coverage Badge -->
+                    <td class="coverage-col">
+                      <span
+                        class="coverage-badge"
+                        [class.full-coverage]="row.availableCount === row.applicableCount"
+                      >
+                        {{ row.availableCount }} / {{ row.applicableCount }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+
+              <!-- Footer Row -->
+              <tfoot>
+                <tr class="footer-row">
+                  <td class="sticky-step-col footer-label" colspan="2">
+                    <strong>Total Available per Language:</strong>
+                  </td>
+                  @for (locale of countryLocales(); track locale.id) {
+                    @let coverage = getColumnCoverage(locale.id);
+                    <td class="locale-cell footer-stat">
+                      <div class="footer-stat-cell">
+                        <strong [class.full-coverage]="coverage.available === coverage.applicable">
+                          {{ coverage.available }} / {{ coverage.applicable }}
+                        </strong>
+                        <span class="percent-label">{{ coverage.percent }}%</span>
+                      </div>
+                    </td>
+                  }
+                  <td class="coverage-col footer-stat">
+                    <div class="footer-stat-cell">
+                      <strong [class.full-coverage]="stats().availableVideos === stats().targetVideos">
+                        {{ stats().availableVideos }} / {{ stats().targetVideos }}
+                      </strong>
+                      <span class="percent-label">{{ stats().coveragePercent }}%</span>
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- TAB 2: Video Files Catalog -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-2">list_alt</mat-icon>
+        Video Files Catalog ({{ stats().totalVideos }} Videos)
+      </ng-template>
+
+      <div class="tab-body-container">
+        @if (matrixRows().length === 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <p>No videos match "{{ searchTerm() }}".</p>
+          </div>
+        } @else {
+          <mat-accordion multi class="catalog-accordion">
+            @for (row of matrixRows(); track row.id) {
+              <mat-expansion-panel class="video-panel" [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title class="panel-title">
+                    <span
+                      class="category-badge mr-2"
+                      [class.badge-intro]="row.category === 'intro'"
+                      [class.badge-step]="row.category === 'step'"
+                      [class.badge-testimonial]="row.category === 'testimonial'"
+                    >
+                      {{ row.categoryLabel }}
+                    </span>
+                    <strong class="title-text">{{ row.title }}</strong>
+                    <span class="id-tag ml-2">{{ row.id }}</span>
+                  </mat-panel-title>
+                  <mat-panel-description class="panel-desc">
+                    <span>{{ row.children.length }} files</span>
+                    <span class="dot-separator">•</span>
+                    <span>{{ row.totalSizeKb | sizeMB }} MB total</span>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="catalog-variants-table-wrapper">
+                  <table class="catalog-variants-table">
+                    <thead>
+                      <tr>
+                        <th>Locale</th>
+                        <th>Language(s)</th>
+                        <th>Country</th>
+                        <th>Resolution</th>
+                        <th>Size</th>
+                        <th class="actions-header">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (child of row.children; track child.id || $index) {
+                        @let variantCountry = formatVariantCountry(child);
+                        <tr>
+                          <td>
+                            <div class="locales-list">
+                              @for (code of child.locale_codes; track code) {
+                                <span class="locale-code-badge">{{ code }}</span>
+                              }
+                            </div>
+                          </td>
+                          <td>
+                            <strong>{{ formatVariantLanguages(child) }}</strong>
+                          </td>
+                          <td>
+                            <span class="country-pill" [attr.data-country]="variantCountry.code">
+                              {{ variantCountry.label }}
+                            </span>
+                          </td>
+                          <td>
+                            <span class="resolution-badge">{{ child.resolution }}</span>
+                          </td>
+                          <td>
+                            <span>{{ child.size_kb | sizeMB }} MB</span>
+                          </td>
+                          <td class="actions-cell">
+                            <!-- Play / Preview Button -->
+                            <button
+                              matButton="outlined"
+                              color="primary"
+                              class="action-btn"
+                              (click)="openVariantPreview(row, child)"
+                            >
+                              <mat-icon>play_circle</mat-icon>
+                              Preview
+                            </button>
+
+                            <!-- Copy URL Button -->
+                            <button
+                              matIconButton
+                              matTooltip="Copy Video Storage URL"
+                              class="action-icon-btn"
+                              (click)="copyUrl(child.supabase_url, $event)"
+                            >
+                              <mat-icon>content_copy</mat-icon>
+                            </button>
+
+                            <!-- Open Link Button -->
+                            <a
+                              [href]="child.supabase_url"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              matIconButton
+                              matTooltip="Open video in new tab"
+                              class="action-icon-btn"
+                              (click)="$event.stopPropagation()"
+                            >
+                              <mat-icon>open_in_new</mat-icon>
+                            </a>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<!-- Video Preview Dialog Template -->
+<ng-template #videoPreviewDialog let-data>
+  <div class="video-dialog">
+    <div class="dialog-header">
+      <div>
+        <h3 class="dialog-title">{{ data.videoTitle }}</h3>
+        <div class="dialog-meta">
+          <span class="dialog-pill">{{ data.localeLabel }} ({{ data.countryName }})</span>
+          <span class="dialog-pill">{{ data.localeCode }}</span>
+          @if (data.isSubtitled) {
+            <span class="dialog-pill subtitle-pill">English Subtitles</span>
+          }
+          <span class="dialog-pill">{{ data.resolution }}</span>
+          <span class="dialog-pill">{{ data.sizeKb | sizeMB }} MB</span>
+        </div>
+      </div>
+      <button matIconButton mat-dialog-close aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <video controls autoplay playsinline class="video-element" [src]="data.url">
+        Your browser does not support video playback.
+      </video>
+    </div>
+
+    <div class="dialog-footer">
+      <a
+        matButton="outlined"
+        [href]="data.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        download
+      >
+        <mat-icon>open_in_new</mat-icon>
+        Open Original Video
+      </a>
+
+      <button matButton="filled" color="primary" mat-dialog-close>
+        Close
+      </button>
+    </div>
+  </div>
+</ng-template>

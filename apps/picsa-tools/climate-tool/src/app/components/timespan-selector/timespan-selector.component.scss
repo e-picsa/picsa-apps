@@ -1,0 +1,80 @@
+.timespan-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.timespan-mode-toggle {
+  width: 100%;
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+
+  ::ng-deep {
+    .mat-pseudo-checkbox {
+      display: none !important;
+    }
+
+    .mat-button-toggle {
+      flex: 1;
+      text-align: center;
+      font-size: 0.85rem;
+
+      &.mat-button-toggle-checked {
+        background-color: var(--color-primary, #005b85) !important;
+        color: #ffffff !important;
+
+        .mat-button-toggle-label-content {
+          color: #ffffff !important;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+.sub-selector {
+  display: grid;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.month-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.period-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.selector-chip {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #374151;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+  }
+
+  &.active {
+    background-color: var(--color-primary, #005b85);
+    border-color: var(--color-primary, #005b85);
+    color: #ffffff;
+    font-weight: 600;
+  }
+}

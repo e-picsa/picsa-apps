@@ -1,3 +1,7 @@
+<!-- period navigator -->
+@if (chartService.timespanMode() !== 'annual') {
+  <climate-period-navigator></climate-period-navigator>
+}
 <!-- line tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-line-tool #lineTool></climate-line-tool>
@@ -5,7 +9,7 @@
 <!-- chart -->
 <picsa-chart #picsaChart [config]="chartService.chartConfig() || {}"></picsa-chart>
 <!-- definition -->
-<div class="chart-definition">{{definition().definition | translate}}</div>
+<div class="chart-definition">{{ chartService.currentDefinitionText() | translate }}</div>
 <!-- probability tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-probability-tool
@@ -18,12 +22,4 @@
 <!-- terciles tool -->
 @if (toolService.activeTool() === 'terciles') {
 <climate-terciles-tool [values]="chartService.chartSeriesData()"></climate-terciles-tool>
-}
-<!-- el nino tool -->
-@if (toolService.activeTool() === 'el_nino') {
-<climate-el-nino-tool></climate-el-nino-tool>
-}
-<!-- la nina tool -->
-@if (toolService.activeTool() === 'la_nina') {
-<climate-la-nina-tool></climate-la-nina-tool>
 }

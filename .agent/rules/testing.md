@@ -10,15 +10,29 @@
 > [!NOTE]
 > Always use `yarn` to run test commands.
 
-### Unit Tests
+### Unit Tests (Targeted File Execution ONLY)
+
+> [!IMPORTANT]
+> **Agents MUST ONLY execute tests directly covering files they have created or modified (or newly created/modified spec files).**
+> Do **NOT** run tests against entire projects or the general codebase, as this wastes tokens, executes hundreds of unrelated specs, and consumes minutes.
+
+Use the `--testFile` parameter to target only the specific spec file covering your changes:
 
 ```bash
-yarn nx test <project-name>
-# Example
-yarn nx test picsa-apps-dashboard
+# General pattern:
+yarn nx test <project-or-lib> --testFile=<filename.spec.ts>
+
+# Example for a specific tool:
+yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts
+
+# Example for a specific library:
+yarn nx test utils --testFile=climate.utils.spec.ts
 ```
 
 ### E2E Tests
+
+> [!WARNING]
+> Only run E2E tests when explicitly instructed by the user.
 
 ```bash
 yarn nx e2e <project-name-e2e>

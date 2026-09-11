@@ -2,7 +2,7 @@
 # Documentation: https://docs.pr-agent.ai/installation/github/
 # Model Provider: https://docs.litellm.ai/
 
-name: Gemini PR Agent
+name: PR Agent
 
 on:
   pull_request:
@@ -28,12 +28,12 @@ jobs:
     steps:
       # Optional: Only needed if you rely on root repository context files (e.g. AGENTS.md, .pr_agent.toml)
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # Adds 👀 reaction to acknowledge slash command comment immediately
       - name: Acknowledge Slash Command
         if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/')
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             try {
@@ -48,7 +48,7 @@ jobs:
             }
 
       - name: PR Agent Action
-        uses: the-pr-agent/pr-agent@8e4d32e5497defd43c023a404f73560c62728961 #v0.39.0
+        uses: the-pr-agent/pr-agent@f3b385ea2927247ddcff2fe252472380b9c8f5fc #v0.45.0
         id: pragent
         continue-on-error: true
         env:

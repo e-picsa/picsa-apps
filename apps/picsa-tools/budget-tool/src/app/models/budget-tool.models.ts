@@ -31,7 +31,13 @@ export interface IBudgetMeta {
   enterprise: IBudgetCard;
 }
 
-export type IEnterpriseScaleLentgh = 'months' | 'weeks' | 'days';
+export type IEnterpriseScaleLentgh = 'years' | 'months' | 'weeks' | 'days';
+
+export interface IBudgetPeriodLabel {
+  prefix: string;
+  suffix?: number;
+}
+
 // budget counters scaled in multiples of 10
 export type IBudgetValueScale = number;
 // counters form 2 arrays, one with a list of labels (/images) and the next with values

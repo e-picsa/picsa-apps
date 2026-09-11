@@ -7,7 +7,7 @@ The architecture consists of a "Super App" (`apps/picsa-apps/app`) that acts as 
 
 > [!IMPORTANT]
 > **Use Yarn for all commands.**
-> Always prefix `nx` commands with `yarn`, e.g., `yarn nx build`.
+> Always prefix `nx` commands with `yarn`, e.g., `yarn nx lint components`.
 
 ## Detailed Context
 
@@ -19,6 +19,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
 - **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
+- **[PR Feedback Resolution](.agent/skills/address-pr-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
 
 ## Core Principles
 
@@ -43,6 +44,23 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 
 - **Respect Planning Mode in all cases**: Avoid making code changes without presenting a plan and receiving explicit approval, unless explicitly given permission to do so by the user. This ensures strict adherence to the planning workflow across all tasks.
 
+### Verification Protocol (STRICT: Targeted Lint & Test First, No Redundant Builds)
+
+To conserve context tokens and runtime, agents **MUST NOT** execute full application builds (`yarn build`, `yarn nx build`, `nx build`, `picsa-apps-app-native:build`) after making code changes. App builds run full AOT passes, bundle native Capacitor layers, and flood the context window with thousands of tokens of build logs.
+
+1. **Targeted Linting (Default for Syntax, Type, and Template Checks)**:
+   - Run linting **only** on the specific tool or library that was modified.
+   - Avoid linting massive shells like `picsa-apps-app-native`.
+   - **Library example**: `yarn nx lint components` or `yarn nx lint utils`
+   - **Tool example**: `yarn nx lint picsa-tools-crop-probability-tool` or `yarn nx lint picsa-tools-climate-tool`
+2. **Targeted Testing (Strictly Scoped to Modified Code)**:
+   - When verifying logic changes, run tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs).
+   - **NEVER** run broad project test suites or test across the general codebase.
+   - **Library example**: `yarn nx test utils --testFile=climate.utils.spec.ts`
+   - **Tool example**: `yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts`
+3. **When Builds Are Permitted**:
+   - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
+
 ### Tool Usage Requirements (Crucial for Context Preservation)
 
 To avoid overloading the context window and consuming excessive tokens, all AI/Agent assistants (regardless of the IDE) MUST adhere to the following file-reading constraints:
@@ -53,16 +71,30 @@ To avoid overloading the context window and consuming excessive tokens, all AI/A
   - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.
 - **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
 
-## Self-Documentation & Codebase Map Maintenance
+## Self-Documentation & Codebase Knowledge Maintenance
 
-As an intelligent agent, you are encouraged to improve your own workflow and help future agents.
+As an intelligent agent, you are responsible for maintaining the project's institutional memory in `.agent/AI_GENERATED_KNOWLEDGE.md`.
 
-1.  **Check Knowledge Base**: Before starting a task, check `.agent/AI_GENERATED_KNOWLEDGE.md` for learnings from previous sessions.
-2.  **Record Learnings**: If you solve a particularly tricky problem or discover a useful pattern, append a new entry to `.agent/AI_GENERATED_KNOWLEDGE.md` following the format in that file.
-3.  **Regenerate Codebase Map on Structural Additions**:
-    - **When to regenerate**: Do NOT run `yarn ai:gen-codemap` for minor bug fixes or method updates. ONLY regenerate when creating new structural elements that require extraction:
-      - New `@picsa/*` libraries or TypeScript path aliases in `tsconfig.base.json`.
-      - New Angular services (`@Injectable`), components (`@Component`), directives (`@Directive`), or pipes (`@Pipe`).
-      - New Supabase edge functions (`apps/picsa-server/supabase/functions/`), server utils, or database SQL migrations (`apps/picsa-server/supabase/migrations/*.sql`).
-      - New tools in `apps/picsa-tools/` or deployable apps in `apps/picsa-apps/`.
-    - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agent/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.
+1. **Consult Before Acting**: Check `.agent/AI_GENERATED_KNOWLEDGE.md` for known gotchas (runtime incompatibilities, Supabase triggers, bundler traps, offline quirks) relevant to your task.
+2. **When to Add Knowledge (High Quality Threshold)**:
+   Add or update an entry ONLY if you encounter a non-obvious trap, unexpected runtime behavior, or codebase-specific constraint that:
+   - Caused unexpected failures or required non-trivial debugging.
+   - General AI training or static typing would likely get wrong.
+   - Is specific to this codebase's architecture, tooling, or business domain.
+3. **What NOT to Add (Strictly Prohibited)**:
+   - ❌ **No Work Logs / Changelogs**: Do NOT record PR summaries or "what I did today".
+   - ❌ **No General Programming Advice**: Do NOT add generic advice ("write small functions", "add unit tests").
+   - ❌ **No Duplicate Rules**: If a rule belongs in `tech-stack.md`, `testing.md`, or a `SKILL.md`, put it there.
+   - ❌ **No External Repo Specs**: Do NOT record specs or notes for external/other repositories.
+   - ❌ **No Incomplete/Test Stubs**: Never commit verification or empty placeholder entries.
+4. **Structure & Curation**:
+   - Do NOT append chronological journal entries (`Date: YYYY-MM-DD`, `Context: ...`).
+   - Group knowledge under the appropriate **topical section** (e.g., *Multi-Runtime & Bundling*, *Supabase & Triggers*, *Angular & Reactive State*, *Charts & SVG*, *Domain Logic*).
+   - If a fix makes an existing gotcha obsolete, **prune or update** the existing section instead of letting dead knowledge accumulate.
+5. **Regenerate Codebase Map on Structural Additions**:
+   - **When to regenerate**: Do NOT run `yarn ai:gen-codemap` for minor bug fixes or method updates. ONLY regenerate when creating new structural elements that require extraction:
+     - New `@picsa/*` libraries or TypeScript path aliases in `tsconfig.base.json`.
+     - New Angular services (`@Injectable`), components (`@Component`), directives (`@Directive`), or pipes (`@Pipe`).
+     - New Supabase edge functions (`apps/picsa-server/supabase/functions/`), server utils, or database SQL migrations (`apps/picsa-server/supabase/migrations/*.sql`).
+     - New tools in `apps/picsa-tools/` or deployable apps in `apps/picsa-apps/`.
+   - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agent/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.

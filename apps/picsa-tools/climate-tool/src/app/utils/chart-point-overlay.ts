@@ -6,6 +6,7 @@ import type { ILegendItem, IOverlayLine, IPointStyle, PointShape } from '../comp
 const LAYER_CLASS = 'picsa-point-overlay';
 const LEGEND_LAYER_CLASS = 'picsa-legend-overlay';
 const OVERLAY_ACTIVE_CLASS = 'picsa-overlay-active';
+const LINE_LAYER_CLASS = 'picsa-line-overlay';
 
 const SHAPE_PATH: Record<PointShape, (s: number) => string> = {
   circle: (s) => `M ${-s},0 a ${s},${s} 0 1,0 ${2 * s},0 a ${s},${s} 0 1,0 ${-2 * s},0`,
@@ -24,7 +25,7 @@ export interface IOverlayPoint {
 
 /** Path string for a shape, exposed so legends can share marker geometry */
 export function getShapePath(shape: PointShape, size: number): string {
-  return SHAPE_PATH[shape](size);
+  return SHAPE_PATH[shape]?.(size) ?? SHAPE_PATH.circle(size);
 }
 
 /**
@@ -88,7 +89,12 @@ interface ISvgLegendItem extends ILegendItem {
  */
 export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], scale = 1) {
   const internal = (chart as any)?.internal;
-  if (!internal?.svg || !legendItems?.length) return;
+  if (!internal?.svg) return;
+
+  if (!legendItems?.length) {
+    clearSvgLegend(chart);
+    return;
+  }
 
   const svgNode = internal.svg.node() as SVGSVGElement;
   const root = select<SVGSVGElement, unknown>(svgNode);
@@ -101,16 +107,16 @@ export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], sca
   const chartWidth = internal.currentWidth || 900;
   const chartHeight = internal.currentHeight || 530;
 
-  const itemGap = 48;
-  const iconTextGap = 12;
-  const approxItemWidth = 90;
-  const totalWidth = legendItems.length * approxItemWidth + (legendItems.length - 1) * itemGap;
-  let currentX = Math.max(40, (chartWidth - totalWidth) / 2);
+  const gap = 16;
+  const iconTextGap = 10;
+  const itemWidths = legendItems.map((item) => Math.max(70, item.label.length * 7.5 + iconTextGap + 16));
+  const totalWidth = itemWidths.reduce((sum, w) => sum + w, 0) + (legendItems.length - 1) * gap;
+  let currentX = Math.max(20, (chartWidth - totalWidth) / 2);
   const legendY = chartHeight - 24;
 
-  const data: ISvgLegendItem[] = legendItems.map((item) => {
+  const data: ISvgLegendItem[] = legendItems.map((item, idx) => {
     const x = currentX;
-    currentX += approxItemWidth + itemGap;
+    currentX += itemWidths[idx] + gap;
     return { ...item, x, y: legendY };
   });
 
@@ -128,7 +134,7 @@ export function renderSvgLegend(chart: ChartAPI, legendItems: ILegendItem[], sca
 
   items
     .select('path')
-    .attr('d', (d) => getShapePath(d.shape, 6))
+    .attr('d', (d) => getShapePath(d.shape, (d.size ? Math.min(d.size * 0.8, 10) : 6) * scale))
     .style('fill', (d) => d.fill)
     .style('stroke', (d) => d.stroke ?? 'none')
     .style('stroke-width', (d) => `${d.strokeWidth ?? 1}px`)
@@ -160,8 +166,6 @@ export function clearSvgLegend(chart?: ChartAPI) {
   if (!internal?.svg) return;
   select(internal.svg.node()).select(`g.${LEGEND_LAYER_CLASS}`).remove();
 }
-
-const LINE_LAYER_CLASS = 'picsa-line-overlay';
 
 /**
  * Render declarative overlay lines (horizontal thresholds, tercile boundaries) directly onto chart SVG canvas.
