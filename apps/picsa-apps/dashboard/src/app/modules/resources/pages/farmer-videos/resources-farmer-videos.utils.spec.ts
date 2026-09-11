@@ -219,9 +219,7 @@ describe('resources-farmer-videos.utils', () => {
       expect(stats.targetVideos).toBe(33); // 21 (intro+steps 1-6) + 6 (steps 7-8) + 6 (testimonials)
       expect(stats.availableVideos).toBe(33);
       expect(stats.languageCount).toBe(3); // mw_en, mw_ny, mw_tum (excluding global_en)
-      expect(stats.localeCount).toBe(4);
       expect(stats.coveragePercent).toBe(100);
-      expect(stats.totalSizeMb).toBeGreaterThan(0);
     });
 
     it('should correctly compute 27 target videos and 3 target languages for Zimbabwe', () => {
@@ -233,7 +231,6 @@ describe('resources-farmer-videos.utils', () => {
       expect(stats.totalVideos).toBe(9); // intro + 8 steps
       expect(stats.targetVideos).toBe(27); // 9 videos * 3 applicable locales
       expect(stats.languageCount).toBe(3); // zw_en, zw_sn, zw_nd (excluding global_en)
-      expect(stats.localeCount).toBe(4);
     });
   });
 

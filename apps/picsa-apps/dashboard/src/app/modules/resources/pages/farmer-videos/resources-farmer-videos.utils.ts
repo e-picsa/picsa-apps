@@ -61,8 +61,6 @@ export interface IFarmerVideoStats {
   totalVideos: number;
   targetVideos: number;
   availableVideos: number;
-  totalSizeMb: number;
-  localeCount: number;
   languageCount: number;
   coveragePercent: number;
 }
@@ -326,9 +324,6 @@ export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDa
   const targetLocales = locales.filter((l) => l.id !== 'global_en');
   const languageCount = targetLocales.length > 0 ? targetLocales.length : locales.length;
 
-  const availableVariantUrls = new Set<string>();
-  let totalSizeKb = 0;
-
   for (const row of rows) {
     for (const locale of locales) {
       const cell = row.cells[locale.id];
@@ -337,10 +332,6 @@ export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDa
       applicableCells++;
       if (cell.status === 'audio' || cell.status === 'subtitled') {
         availableCells++;
-        if (cell.variant?.supabase_url && !availableVariantUrls.has(cell.variant.supabase_url)) {
-          availableVariantUrls.add(cell.variant.supabase_url);
-          totalSizeKb += cell.variant.size_kb || 0;
-        }
       }
     }
   }
@@ -351,8 +342,6 @@ export function calculateStats(rows: IFarmerVideoMatrixRow[], locales: ILocaleDa
     totalVideos,
     targetVideos: applicableCells,
     availableVideos: availableCells,
-    totalSizeMb: Math.round(totalSizeKb / 1000),
-    localeCount: locales.length,
     languageCount,
     coveragePercent,
   };
