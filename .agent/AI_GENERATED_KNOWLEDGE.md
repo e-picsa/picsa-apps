@@ -182,3 +182,15 @@ This file is a shared knowledge base for AI agents operating on this codebase.
 **Learning**:
 
 1. **Generated Column Nullability in PostgreSQL**: When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`). Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.
+
+### Feedback Backend Planning Notes
+
+**Date**: 2026-09-11
+**Context**: Planning the backend for the offline-first in-app feedback feature (edge function + migration + storage bucket).
+**Learning**:
+
+1. **deno.lock version lock**: keep `apps/picsa-server/supabase/functions/deno.lock` at v4 (edge runtime Deno 2.1.4 compatible) — newer local Deno upgrades it to v5 and breaks `supabase functions serve`; restore it after local deno test runs.
+2. **service-role-only tables**: for user-submitted content, REVOKE anon/authenticated + GRANT service_role with RLS and route ALL client access through edge functions; store screenshots in a PRIVATE bucket.
+3. **zod caps must fit real payloads**: when setting validation caps (e.g. 64 chars per field), account for real-world values like `navigator.userAgent` (~100+ chars).
+4. **Anonymous edge functions**: use `verify_jwt = false` in config.toml for endpoints that accept submissions without a logged-in user (keep verify_jwt for admin endpoints).
+5. **Robust upload handling on edge runtime**: `multiparser` npm package is broken there — plan native `req.formData()` with a manual byte-level fallback (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if the row insert fails (orphan cleanup).
