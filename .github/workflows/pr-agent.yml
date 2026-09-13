@@ -10,14 +10,28 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+# NOTE: No top-level `concurrency` block by design.
+# A top-level `cancel-in-progress: true` is evaluated before the job-level
+# `if: sender.type != 'Bot'` guard, so a SonarCloud report comment (Bot sender)
+# would cancel an in-progress manual `/review` run and then itself skip,
+# leaving the workflow showing as Cancelled with no review posted.
+# Concurrency is instead scoped at the job level below, where skipped (Bot)
+# runs never acquire the lock and so can never cancel real work.
 
 jobs:
   pr_agent_job:
     # Prevent bot loops when PR-Agent or dependabot posts comments
     if: ${{ github.event.sender.type != 'Bot' }}
+    # Job-level (not workflow-level) concurrency so skipped Bot runs never cancel real runs.
+    # - Auto `pull_request` runs share one group per PR, so rapid pushes still cancel superseded runs.
+    # - Manual `issue_comment` (/review, /improve, /ask) runs get a unique group per comment,
+    #   so a SonarCloud report comment (or a second slash command) can never cancel an in-progress review.
+    # - Also fixes the old group key bug: `pull_request.number` is empty for `issue_comment`
+    #   events (PR number lives at `issue.number`), which previously collapsed all comment runs
+    #   onto the same `${{ github.ref }}` group.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.issue.number }}${{ github.event_name == 'issue_comment' && format('-manual-{0}', github.event.comment.id) || '-auto' }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
