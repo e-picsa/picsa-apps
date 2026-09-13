@@ -38,5 +38,4 @@ Related issues: #689, #690
 
 - [x] **Dynamic Terciles**: Recompute 33rd / 66th percentiles dynamically against the active timespan series using reactive computed signals.
 - [x] **El Niño / La Niña Reactivity**: Update point overlays and legend counts (`activeCount`) based on active timespan values across resolutions.
-- [x] **Sample Size Guardrail**: Display warning banner when active series has < 20 years of valid observations.
-- [x] **Export Alignment**: Ensure print layout and PNG export titles display the active period (e.g. "Dec–Feb (DJF) Rainfall") and period-specific definitions.
+- [x] **Export Alignment**: Ensure print layout and PNG export titles display the active period (e.g. "Dec–Feb (DJF) Rainfall") and period-specific definitions via `chartDefinitionText`.

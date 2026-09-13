@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, inject, input, viewChild } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, viewChild } from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
@@ -21,7 +20,6 @@ import { PeriodNavigatorComponent } from '../period-navigator/period-navigator.c
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
   imports: [
-    MatIconModule,
     PicsaTranslateModule,
     PicsaChartComponent,
     LineToolComponent,
@@ -41,16 +39,6 @@ export class ClimateChartLayoutComponent implements AfterViewInit {
   readonly definition = input.required<IChartMeta>();
 
   readonly picsaChart = viewChild<PicsaChartComponent>('picsaChart');
-
-  readonly validObservationCount = computed(() => {
-    const series = this.chartService.chartSeriesData();
-    return series.filter((v) => typeof v === 'number' && Number.isFinite(v)).length;
-  });
-
-  readonly hasInsufficientData = computed(() => {
-    const count = this.validObservationCount();
-    return count > 0 && count < 20;
-  });
 
   ngAfterViewInit() {
     const chart = this.picsaChart();

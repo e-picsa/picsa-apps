@@ -46,12 +46,12 @@ describe('PrintLayoutComponent', () => {
     chartService.chartDefinition.set(mockDef as any);
 
     chartService.timespanMode.set('annual');
-    expect(component.chartDefinition()).toBe('Annual rainfall description');
+    expect(component.chartDefinitionText()).toBe('Annual rainfall description');
 
     chartService.timespanMode.set('monthly');
-    expect(component.chartDefinition()).toBe('Monthly rainfall description');
+    expect(component.chartDefinitionText()).toBe('Monthly rainfall description');
 
     chartService.timespanMode.set('three_month');
-    expect(component.chartDefinition()).toBe('3-Month rainfall description');
+    expect(component.chartDefinitionText()).toBe('3-Month rainfall description');
   });
 });
