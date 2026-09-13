@@ -2,6 +2,7 @@ import { computed, effect, inject, Injectable, untracked } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import {
   ClimateTimespanMode,
+  hasStationClimateData,
   IChartMeta,
   IMonthlyStationData,
   IStationData,
@@ -26,15 +27,21 @@ export class ClimateDataService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  /** List of all stations for current  */
+  /** List of all stations for current country in metadata */
+  public allStations = computed(() => {
+    const { country_code } = this.configurationService.deploymentSettings();
+    return CLIMATE_STATIONS_META[country_code] || [];
+  });
+
+  /** Active stations for selection in the app (filters out draft stations and stations without data) */
   public stations = computed(() => {
-    const { climateTool, country_code } = this.configurationService.deploymentSettings();
-    const stations = CLIMATE_STATIONS_META[country_code] || [];
+    const { climateTool } = this.configurationService.deploymentSettings();
+    const stations = this.allStations();
     const filterFn = climateTool?.station_filter;
     if (filterFn) {
       return stations.filter((station) => filterFn(station));
     } else {
-      return stations.filter((station) => !station.draft);
+      return stations.filter((station) => !station.draft && hasStationClimateData(station));
     }
   });
 

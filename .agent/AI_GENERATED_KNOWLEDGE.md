@@ -92,6 +92,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Initialization Timing**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` finishes. Initializing the Supabase client or database property (`db`) inside an Angular `effect()` is asynchronous and runs on the next microtask cycle, meaning `ready()` can resolve while `db` is still undefined. Initialize clients synchronously inside `init()`.
 - **Offline Mode**: When Supabase is offline (detected via health check), `isAvailable` is set to `false` and `db` is not created. Services interacting with Supabase (`AppUserService`, `PicsaDatabaseSyncService`, `ForecastService`) must check `isAvailable()` before executing operations on `supabaseService.db` to prevent unhandled `TypeError` crashes.
 
+### Climate Station Identifiers & Seed Data (Canonical Slugs vs Met IDs)
+
+- **Station Slug as Canonical Primary Key**: In `climate_stations`, the primary key is `(country_code, station_id)` where `station_id` is always a clean, human-readable slug (e.g. `masvingo`, `buhera`, `chipata_met`), not an opaque numeric ID. Downstream foreign keys (`crop_data_downscaled.station_id`, `climate_station_data.station_id`), routing, and generated CSV filenames (`<station_id>.csv`) depend on this slug.
+- **National Met IDs**: Official national meteorological service or WMO station IDs (e.g. Zimbabwe MSD `67875010`) are stored in `met_station_id` (database column on `climate_stations` and `metStationId` on `IStationMeta`) for reference and linking. Avoid hardcoding station ID maps in code.
+- **Seed CSV Line Endings (CRLF Trap)**: Database seed CSVs in `apps/picsa-server/supabase/data/` may have Windows-style CRLF (`\r\n`) line endings. When programmatically modifying or appending columns to these CSVs, always strip `\r` (split on `/\r?\n/`) and write with clean Unix LF (`\n`) endings; otherwise appending values to lines with unstripped `\r` results in the added token or comma rendering on a separate line.
+- **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
+
 ### User Role Authorization Architecture
 
 - **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
