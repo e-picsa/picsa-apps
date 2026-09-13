@@ -316,6 +316,7 @@ export type Database = {
           id: string | null;
           latitude: number | null;
           longitude: number | null;
+          met_station_id: string | null;
           station_id: string;
           station_name: string | null;
         };
@@ -326,6 +327,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          met_station_id?: string | null;
           station_id: string;
           station_name?: string | null;
         };
@@ -336,6 +338,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          met_station_id?: string | null;
           station_id?: string;
           station_name?: string | null;
         };

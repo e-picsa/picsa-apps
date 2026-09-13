@@ -232,6 +232,29 @@ export function computeExistingCapabilitiesForCountry(
     options.auditReport.totalStationsProcessed++;
   }
 
+  // Populate default capabilities (years: []) for stations registered in metadata without data files
+  const metaPath = path.join(
+    ROOT_DIR,
+    `apps/picsa-tools/climate-tool/src/app/data/stations/${country}/metadata.ts`,
+  );
+  if (fs.existsSync(metaPath)) {
+    try {
+      const metaContent = fs.readFileSync(metaPath, "utf-8");
+      const idMatches = metaContent.matchAll(/id:\s*['"]([^'"]+)['"]/g);
+      for (const m of idMatches) {
+        const stationId = m[1];
+        if (!annualFiles.includes(`${stationId}.csv`)) {
+          updatedCaps[stationId] = {
+            schemaVersion: 1,
+            years: [],
+          };
+        }
+      }
+    } catch {
+      // Ignore if metadata extraction fails
+    }
+  }
+
   if (!options.auditOnly) {
     writeCountryCapabilities(country, updatedCaps);
   }
