@@ -129,6 +129,8 @@ export interface IChartMeta {
   data_labels?: Record<string, string>;
   /** Colors for data series */
   colors: string[];
+  /** Color to use in chart view select (default to series color[0]) */
+  viewSelectColor?: string;
   yFormat: 'value' | 'date' | 'date-from-July';
   yLabel: string;
   xVar: keyof IStationData;

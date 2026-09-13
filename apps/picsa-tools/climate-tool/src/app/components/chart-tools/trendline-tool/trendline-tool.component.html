@@ -27,7 +27,7 @@
 
         <!-- Primary rate of change and trend badge inline row -->
         <div class="trend-summary-row">
-          <div class="rate-change" [class.highlight]="item.stats?.shouldPlotLine">
+          <div class="rate-change" [class.highlight]="item.stats.shouldPlotLine">
             {{ item.decadeText }}
           </div>
 
@@ -72,14 +72,14 @@
         </div>
 
         <!-- Explanatory subtext explaining statistical status in plain language -->
-        @if (item.subtext) {
-          <div class="trend-subtext">
-            {{ item.subtext | translate }}
-          </div>
-        }
+        <!-- @if (item.subtext) {
+              <div class="trend-subtext mt-2 ml-4">
+                {{ item.subtext | translate }}
+              </div>
+            } -->
 
         <!-- Collapsible Technical Stats Section -->
-        @if (item.stats?.shouldPlotLine) {
+        @if (item.stats.shouldPlotLine) {
           <div class="stats-toggle-row">
             <button
               matButton
@@ -125,20 +125,26 @@
                       </p>
                       <ul class="info-keys">
                         <li>
-                          <strong>0.00 (0%)</strong>: {{ 'Trendline explains none of the variation; changes are purely random.' | translate }}
+                          <strong>0.00 (0%)</strong>:
+                          {{ 'Trendline explains none of the variation; changes are purely random.' | translate }}
                         </li>
                         <li>
-                          <strong>0.10 – 0.30</strong>: {{ 'Typical for climate records; shows an observable trend alongside natural yearly variability.' | translate }}
+                          <strong>0.10 – 0.30</strong>:
+                          {{
+                            'Typical for climate records; shows an observable trend alongside natural yearly variability.'
+                              | translate
+                          }}
                         </li>
                         <li>
-                          <strong>1.00 (100%)</strong>: {{ 'Perfect fit; all historical data points lie directly on the trendline.' | translate }}
+                          <strong>1.00 (100%)</strong>:
+                          {{ 'Perfect fit; all historical data points lie directly on the trendline.' | translate }}
                         </li>
                       </ul>
                     </div>
                   </mat-menu>
                 </div>
                 <span class="stat-value">{{
-                  item.stats?.rSquared !== null && item.stats?.rSquared !== undefined
+                  item.stats.rSquared !== null && item.stats.rSquared !== undefined
                     ? (item.stats.rSquared | number: '1.2-2')
                     : '—'
                 }}</span>
@@ -167,16 +173,23 @@
                         }}
                       </p>
                       <ul class="info-keys">
-                        <li><strong>&lt; 0.05</strong>: {{ 'Statistically clear trend (unlikely by chance alone)' | translate }}</li>
-                        <li><strong>&ge; 0.05</strong>: {{ 'Uncertain trend (cannot rule out random fluctuations)' | translate }}</li>
+                        <li>
+                          <strong>&lt; 0.05</strong>:
+                          {{ 'Statistically clear trend (unlikely by chance alone)' | translate }}
+                        </li>
+                        <li>
+                          <strong>&ge; 0.05</strong>:
+                          {{ 'Uncertain trend (cannot rule out random fluctuations)' | translate }}
+                        </li>
                       </ul>
                     </div>
                   </mat-menu>
                 </div>
                 <span
                   class="stat-value"
-                  [class.stat-value-failed]="item.stats && !item.stats.isSignificant && item.stats.pValue !== null"
-                >{{ formatPValue(item.stats?.pValue ?? null) }}</span>
+                  [class.stat-value-failed]="!item.stats.isSignificant && item.stats.pValue !== null"
+                  >{{ formatPValue(item.stats.pValue) }}</span
+                >
               </div>
             </div>
           }

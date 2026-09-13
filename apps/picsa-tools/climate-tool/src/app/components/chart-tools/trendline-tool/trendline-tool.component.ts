@@ -25,6 +25,7 @@ export interface ISeriesTrendAnalysis {
   status: TrendStatus;
   rateLabel: string;
   decadeText: string;
+  subtext?: string;
 }
 
 @Component({
@@ -107,6 +108,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         status: stats.status,
         rateLabel,
         decadeText,
+        subtext: stats.subtext,
       };
     });
   });
@@ -156,10 +158,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     return lines;
   }
 
-  /**
-   * Upper chart message summary removed as it does not add value over the
-   * on-line overlay labels and sidebar panel details.
-   */
   public override getChartMessage(): IChartOverlayMessage | undefined {
     return undefined;
   }

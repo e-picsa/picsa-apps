@@ -3,17 +3,12 @@
   width: 100%;
 }
 
-.trendline-tool-container {
+.trendline-tool-container,
+.analyses-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-}
-
-.option-section {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .section-label {
@@ -24,7 +19,6 @@
   color: #64748b;
 }
 
-/* Analysis period button group (32px non-cropped buttons) */
 .compact-toggle-group {
   width: 100%;
   display: flex;
@@ -34,71 +28,44 @@
   --mat-button-toggle-height: 32px;
   --mat-standard-button-toggle-height: 32px;
 
-  ::ng-deep {
-    .mat-button-toggle {
-      flex: 1;
-      height: 32px !important;
-      line-height: 32px !important;
-
-      .mat-button-toggle-button {
-        height: 32px !important;
-        line-height: 32px !important;
-      }
-
-      .mat-button-toggle-label-content {
-        line-height: 32px !important;
-        padding: 0 8px !important;
-        font-size: 12px !important;
-        height: 32px !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-  }
-
   mat-button-toggle {
     flex: 1;
     font-size: 12px;
     font-weight: 500;
     border: none;
-    background: #ffffff;
+    background: #fff;
     color: #475569;
 
     &.mat-button-toggle-checked {
       background: var(--color-primary, #1976d2);
-      color: #ffffff;
+      color: #fff;
       font-weight: 600;
 
       ::ng-deep .mat-button-toggle-label-content {
-        color: #ffffff !important;
+        color: #fff !important;
       }
     }
   }
 }
 
-.analyses-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
 .trendline-card {
-  width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
 }
 
-.card-header {
+.card-header,
+.trend-summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
   gap: 8px;
+}
+
+.card-header {
+  margin-bottom: 6px;
 }
 
 .series-title {
@@ -117,17 +84,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  display: inline-block;
   flex-shrink: 0;
-}
-
-/* Primary trend summary row: change rate + status badge */
-.trend-summary-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-bottom: 4px;
 }
 
 .rate-change {
@@ -135,10 +92,6 @@
   font-weight: 700;
   color: #101828;
   white-space: nowrap;
-
-  &.highlight {
-    color: #0f172a;
-  }
 }
 
 .trend-badge {
@@ -158,50 +111,36 @@
   }
 
   &.trend-up {
-    background-color: #ecfdf3;
+    background: #ecfdf3;
     color: #027a48;
     border: 1px solid #a6f4c5;
   }
-
   &.trend-down {
-    background-color: #fef3f2;
+    background: #fef3f2;
     color: #b42318;
     border: 1px solid #fecdca;
   }
-
   &.trend-uncertain {
-    background-color: #fef0c7;
+    background: #fef0c7;
     color: #b54708;
     border: 1px solid #fedf89;
   }
-
-  &.trend-weak {
-    background-color: #f2f4f7;
-    color: #475467;
-    border: 1px solid #d0d5dd;
-  }
-
-  &.trend-descriptive {
-    background-color: #eff8ff;
-    color: #175cd3;
-    border: 1px solid #b2ddff;
-  }
-
-  &.trend-none {
-    background-color: #f2f4f7;
+  &.trend-weak,
+  &.trend-insufficient,
+  &.trend-neutral {
+    background: #f2f4f7;
     color: #475467;
     border: 1px solid #d0d5dd;
   }
 }
 
-.insufficient-reason {
-  font-size: 11px;
+.trend-subtext {
+  font-size: 11.5px;
   color: #64748b;
-  line-height: 1.35;
-  padding-top: 4px;
+  line-height: 1.4;
+  padding: 2px 0 4px;
 }
 
-/* Expand / Collapse row for statistical details */
 .stats-toggle-row {
   display: flex;
   align-items: center;
@@ -209,73 +148,49 @@
   padding-top: 4px;
   border-top: 1px dashed #f1f5f9;
 
-  .stats-expand-toggle {
+  .stats-toggle-btn {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     padding: 0 4px !important;
-    height: 22px !important;
-    line-height: 22px !important;
+    height: 24px !important;
     font-size: 11px;
     font-weight: 500;
     color: #64748b;
-    border-radius: 4px;
-
-    &:hover {
-      color: #1e293b;
-      background-color: #f8fafc;
-    }
 
     .toggle-icon {
       font-size: 16px;
       width: 16px;
       height: 16px;
-      margin-left: -2px;
       color: #94a3b8;
     }
   }
 }
 
-/* Two statistical indicators below the rate of change */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding-top: 8px;
   margin-top: 4px;
   border-top: 1px solid #f1f5f9;
-  animation: fadeIn 0.15s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
 }
 
 .stat-header {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 3px;
   margin-bottom: 2px;
 }
 
 .stat-symbol {
   font-size: 11.5px;
-  font-family: 'Times New Roman', Times, serif, 'Georgia';
   font-style: italic;
   font-weight: 700;
   color: #475569;
@@ -284,11 +199,9 @@
 .stat-info-btn {
   width: 14px !important;
   height: 14px !important;
-  line-height: 14px !important;
   padding: 0 !important;
   border: none;
   background: transparent;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -298,11 +211,6 @@
     width: 12px;
     height: 12px;
     color: #94a3b8;
-    transition: color 0.15s ease;
-
-    &:hover {
-      color: #3b82f6;
-    }
   }
 }
 
@@ -313,14 +221,13 @@
 
   &.stat-value-failed {
     color: #b42318;
-    background-color: #fef3f2;
+    background: #fef3f2;
     padding: 1px 5px;
     border-radius: 4px;
     font-weight: 700;
   }
 }
 
-/* Info popup card inside mat-menu */
 .stat-info-content {
   padding: 10px 14px;
   max-width: 250px;
@@ -336,7 +243,7 @@
   }
 
   .info-desc {
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
     color: #475569;
   }
 
@@ -355,29 +262,23 @@
   }
 }
 
-/* Methodology Button (no horizontal separator above it) */
-.trendline-methodology {
-  margin-top: 2px;
-  width: 100%;
+.methodology-link-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
 
-  .methodology-button {
-    width: 100%;
-    display: flex;
+  .methodology-btn {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
     font-size: 12px;
     font-weight: 500;
     color: #475467;
-    border-color: #d0d5dd;
-    border-radius: 6px;
-    height: 32px;
-    line-height: 32px;
 
-    .methodology-icon {
-      font-size: 15px;
-      width: 15px;
-      height: 15px;
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
       color: #64748b;
     }
   }

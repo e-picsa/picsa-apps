@@ -202,6 +202,7 @@ const definitions: IChartDefinitions = {
       max_tmax: translateMarker('Highest maximum daily temp'),
     },
     colors: ['#850000', '#f76e6e'],
+    viewSelectColor: '#f76e6e',
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
