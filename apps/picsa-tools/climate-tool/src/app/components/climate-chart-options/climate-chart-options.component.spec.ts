@@ -66,8 +66,20 @@ describe('ClimateChartOptionsComponent', () => {
     expect(el.querySelector('.tools-header .tool-title')?.textContent).toContain('La Niña');
   });
 
+  it('should display custom slot and Trendline tool heading when activeTool is trendline', () => {
+    toolService.activeTool.set('trendline');
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.tool-custom-slot')).toBeTruthy();
+    expect(el.querySelector('climate-trendline-options')).toBeTruthy();
+    expect(component.hasSecondaryToolActive()).toBe(true);
+    expect(component.activeToolLabel()).toBe('Trendline');
+    expect(el.querySelector('.tools-header .tool-title')?.textContent).toContain('Trendline');
+  });
+
   it('should disable tool and return to all tools when closeToolCustomisation is called', () => {
-    toolService.activeTool.set('el_nino');
+    toolService.activeTool.set('trendline');
     fixture.detectChanges();
 
     component.closeToolCustomisation();
@@ -77,7 +89,7 @@ describe('ClimateChartOptionsComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('climate-tool-select')).toBeTruthy();
     expect(el.querySelector('.tool-custom-slot')).toBeFalsy();
-    expect(component.isEnsoToolActive()).toBe(false);
+    expect(component.hasSecondaryToolActive()).toBe(false);
     expect(component.activeToolLabel()).toBe('Tools');
   });
 

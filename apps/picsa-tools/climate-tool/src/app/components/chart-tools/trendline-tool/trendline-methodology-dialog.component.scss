@@ -1,0 +1,137 @@
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+
+  .title-icon {
+    color: #13599e;
+  }
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 70vh;
+  padding-top: 8px;
+  color: #334155;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.methodology-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #13599e;
+    }
+
+    h3 {
+      font-size: 0.925rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0;
+    }
+  }
+
+  p {
+    margin: 0;
+    padding-left: 24px;
+    color: #475467;
+  }
+}
+
+.warning-box {
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  padding: 12px;
+
+  .section-heading {
+    mat-icon {
+      color: #b45309;
+    }
+
+    h3 {
+      color: #92400e;
+    }
+  }
+
+  p {
+    padding-left: 24px;
+    color: #78350f;
+  }
+}
+
+.technical-accordion {
+  margin-top: 4px;
+}
+
+.technical-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+
+    .panel-title-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #64748b;
+    }
+  }
+
+  .panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #475467;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding-top: 4px;
+
+    h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 8px 0 2px 0;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .rules-list {
+      margin: 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      li {
+        color: #334155;
+      }
+    }
+  }
+}

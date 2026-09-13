@@ -1,0 +1,108 @@
+<div class="trendline-methodology-dialog">
+  <div mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">help_outline</mat-icon>
+    <span>{{ 'About the Trendline' | translate }}</span>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- 1. Meaning before method -->
+    <section class="methodology-section">
+      <div class="section-heading">
+        <mat-icon>show_chart</mat-icon>
+        <h3>{{ 'What does the line mean?' | translate }}</h3>
+      </div>
+      <p>
+        {{
+          'The line summarizes whether recorded observations (such as annual rainfall, seasonal rainfall, or temperatures) generally increased or decreased over the selected period. Individual years may still be much wetter, drier, hotter, or colder.'
+            | translate
+        }}
+      </p>
+    </section>
+
+    <!-- 2. Line visibility & Grey line explanation -->
+    <section class="methodology-section">
+      <div class="section-heading">
+        <mat-icon>visibility</mat-icon>
+        <h3>{{ 'Why are some lines colored, grey, or missing?' | translate }}</h3>
+      </div>
+      <p>
+        {{
+          'A colored line indicates a statistically clear trend (p < 0.05). A grey dashed line shows an estimated trend that is weak or uncertain due to high year-to-year variation. If no line appears at all, the observation record has too many missing years to calculate a reliable trend. An absent or grey line does not necessarily mean conditions have been unchanged.'
+            | translate
+        }}
+      </p>
+    </section>
+
+    <!-- 3. Practical Limits: Historical context, not a forecast -->
+    <section class="methodology-section warning-box">
+      <div class="section-heading">
+        <mat-icon>history_edu</mat-icon>
+        <h3>{{ 'Use it as historical context — not a forecast' | translate }}</h3>
+      </div>
+      <p>
+        {{
+          'The line describes past recorded history, not what will happen next season. Passing a statistical test does not tell us whether the historical change is large enough to matter for a particular farm. Always consider trends alongside seasonal forecasts, soil context, and local agricultural advice.'
+            | translate
+        }}
+      </p>
+    </section>
+
+    <!-- 4. Expandable Technical Method and Data Requirements -->
+    <mat-accordion class="technical-accordion">
+      <mat-expansion-panel class="technical-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon class="panel-title-icon">analytics</mat-icon>
+            <span>{{ 'Technical Method & Data Requirements' | translate }}</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <h4>{{ 'Ordinary Least Squares (OLS) Regression' | translate }}</h4>
+          <p>
+            {{
+              'Linear regression fits a straight line minimizing the sum of squared differences between historical observations and fitted values. Slopes, intercepts, Pearson correlation (r), and R² are computed using standard OLS methods.'
+                | translate
+            }}
+          </p>
+
+          <h4>{{ 'Data Completeness Rules' | translate }}</h4>
+          <p>
+            {{
+              'To prevent misleading fits, trendline estimation requires minimum inclusion thresholds based on usable years (verified complete annual or seasonal records, where missing values are never treated as zero):'
+                | translate
+            }}
+          </p>
+          <ul class="rules-list">
+            <li>
+              <strong>{{ '10-year view:' | translate }}</strong>
+              {{ 'At least 7 usable years within the last 10 years.' | translate }}
+            </li>
+            <li>
+              <strong>{{ '30-year view:' | translate }}</strong>
+              {{ 'At least 20 usable years within the last 30 years.' | translate }}
+            </li>
+            <li>
+              <strong>{{ 'Full-record view:' | translate }}</strong>
+              {{ 'At least 20 usable years, covering at least 70% of the entire record period.' | translate }}
+            </li>
+          </ul>
+
+          <h4>{{ 'Statistical Testing & Serial Correlation Limitation' | translate }}</h4>
+          <p>
+            {{
+              'Significance is evaluated using a two-sided Student’s t-distribution (p < 0.05). However, climate in nearby years can be related (serial correlation). Standard OLS tests assume independent errors and do not adjust for persistence, which can sometimes make the evidence for a trend appear stronger than it is.'
+                | translate
+            }}
+          </p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button matButton="filled" mat-dialog-close>
+      {{ 'Close' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

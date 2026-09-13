@@ -8,8 +8,8 @@
 
 <mat-divider></mat-divider>
 
-<div class="tools-header" [class.has-active-tool]="isEnsoToolActive()">
-  @if (isEnsoToolActive()) {
+<div class="tools-header" [class.has-active-tool]="hasSecondaryToolActive()">
+  @if (hasSecondaryToolActive()) {
     <button matButton class="back-btn" (click)="closeToolCustomisation()">
       <mat-icon>arrow_back</mat-icon>
       <span>{{ 'All Tools' | translate }}</span>
@@ -27,6 +27,10 @@
 } @else if (toolService.activeTool() === 'la_nina') {
   <div class="tool-custom-slot">
     <climate-la-nina-tool></climate-la-nina-tool>
+  </div>
+} @else if (toolService.activeTool() === 'trendline') {
+  <div class="tool-custom-slot">
+    <climate-trendline-tool></climate-trendline-tool>
   </div>
 } @else {
   <div class="tool-select-slot">

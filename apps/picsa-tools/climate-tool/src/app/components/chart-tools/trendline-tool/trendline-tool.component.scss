@@ -1,20 +1,93 @@
 :host {
   display: block;
   width: 100%;
-  margin-top: 12px;
 }
 
 .trendline-tool-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
-  justify-content: center;
+  width: 100%;
+}
+
+.option-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+/* Analysis period button group (32px non-cropped buttons) */
+.compact-toggle-group {
+  width: 100%;
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  --mat-button-toggle-height: 32px;
+  --mat-standard-button-toggle-height: 32px;
+
+  ::ng-deep {
+    .mat-button-toggle {
+      flex: 1;
+      height: 32px !important;
+      line-height: 32px !important;
+
+      .mat-button-toggle-button {
+        height: 32px !important;
+        line-height: 32px !important;
+      }
+
+      .mat-button-toggle-label-content {
+        line-height: 32px !important;
+        padding: 0 8px !important;
+        font-size: 12px !important;
+        height: 32px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  mat-button-toggle {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    background: #ffffff;
+    color: #475569;
+
+    &.mat-button-toggle-checked {
+      background: var(--color-primary, #1976d2);
+      color: #ffffff;
+      font-weight: 600;
+
+      ::ng-deep .mat-button-toggle-label-content {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+.analyses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 }
 
 .trendline-card {
-  flex: 1 1 300px;
-  max-width: 480px;
-  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
   background-color: #ffffff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
@@ -24,40 +97,64 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   gap: 8px;
 }
 
 .series-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .color-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
 
+/* Primary trend summary row: change rate + status badge */
+.trend-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.rate-change {
+  font-size: 13px;
+  font-weight: 700;
+  color: #101828;
+  white-space: nowrap;
+
+  &.highlight {
+    color: #0f172a;
+  }
+}
+
 .trend-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 
   &.trend-up {
@@ -72,6 +169,24 @@
     border: 1px solid #fecdca;
   }
 
+  &.trend-uncertain {
+    background-color: #fef0c7;
+    color: #b54708;
+    border: 1px solid #fedf89;
+  }
+
+  &.trend-weak {
+    background-color: #f2f4f7;
+    color: #475467;
+    border: 1px solid #d0d5dd;
+  }
+
+  &.trend-descriptive {
+    background-color: #eff8ff;
+    color: #175cd3;
+    border: 1px solid #b2ddff;
+  }
+
   &.trend-none {
     background-color: #f2f4f7;
     color: #475467;
@@ -79,12 +194,68 @@
   }
 }
 
+.insufficient-reason {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.35;
+  padding-top: 4px;
+}
+
+/* Expand / Collapse row for statistical details */
+.stats-toggle-row {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px dashed #f1f5f9;
+
+  .stats-expand-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 4px !important;
+    height: 22px !important;
+    line-height: 22px !important;
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+    border-radius: 4px;
+
+    &:hover {
+      color: #1e293b;
+      background-color: #f8fafc;
+    }
+
+    .toggle-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-left: -2px;
+      color: #94a3b8;
+    }
+  }
+}
+
+/* Three statistical indicators below the rate of change */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
   padding-top: 8px;
-  border-top: 1px solid #f2f4f7;
+  margin-top: 4px;
+  border-top: 1px solid #f1f5f9;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stat-item {
@@ -94,27 +265,112 @@
   text-align: center;
 }
 
-.stat-label {
-  font-size: 11px;
-  color: #6b7280;
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   margin-bottom: 2px;
-  white-space: nowrap;
 }
 
-.stat-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  white-space: nowrap;
+.stat-symbol {
+  font-size: 11.5px;
+  font-family: 'Times New Roman', Times, serif, 'Georgia';
+  font-style: italic;
+  font-weight: 700;
+  color: #475569;
+}
 
-  &.highlight {
-    color: #13599e;
+.stat-info-btn {
+  width: 14px !important;
+  height: 14px !important;
+  line-height: 14px !important;
+  padding: 0 !important;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .info-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: #94a3b8;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #3b82f6;
+    }
   }
 }
 
-@media (max-width: 600px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    row-gap: 12px;
+.stat-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #344054;
+}
+
+/* Info popup card inside mat-menu */
+.stat-info-content {
+  padding: 10px 14px;
+  max-width: 250px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #334155;
+
+  .info-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+
+  .info-desc {
+    margin: 0 0 6px 0;
+    color: #475569;
+  }
+
+  .info-keys {
+    margin: 0;
+    padding-left: 14px;
+    color: #64748b;
+    font-size: 10.5px;
+
+    li {
+      margin-bottom: 2px;
+      strong {
+        color: #1e293b;
+      }
+    }
+  }
+}
+
+/* Methodology Button (no horizontal separator above it) */
+.trendline-methodology {
+  margin-top: 2px;
+  width: 100%;
+
+  .methodology-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #475467;
+    border-color: #d0d5dd;
+    border-radius: 6px;
+    height: 32px;
+    line-height: 32px;
+
+    .methodology-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+      color: #64748b;
+    }
   }
 }

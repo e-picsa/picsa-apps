@@ -1,21 +1,28 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { DecimalPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
+import { TranslateService } from '@ngx-translate/core';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
-import { calculateLinearRegression, ITrendlineStats } from '../../../utils/statistics.utils';
-import { BaseChartToolComponent, IChartOverlayMessage, ITrendlineOverlay } from '../base-tool.component';
-
-export type TrendDirectionStatus = 'up' | 'down' | 'none' | 'insufficient';
+import { TrendlineConfigService } from '../../../services/trendline-config.service';
+import {
+  calculateLinearRegression,
+  formatPValue,
+  type ITrendlineStats,
+  type TrendlinePeriod,
+  type TrendStatus,
+} from '../../../utils/statistics.utils';
+import { PicsaClimateMaterialModule } from '../../material.module';
+import { BaseChartToolComponent, type IChartOverlayMessage, type ITrendlineOverlay } from '../base-tool.component';
+import { TrendlineMethodologyDialogComponent } from './trendline-methodology-dialog.component';
 
 export interface ISeriesTrendAnalysis {
   key: string;
   label: string;
   color: string;
   stats: ITrendlineStats;
-  status: TrendDirectionStatus;
+  status: TrendStatus;
   rateLabel: string;
   decadeText: string;
 }
@@ -24,53 +31,81 @@ export interface ISeriesTrendAnalysis {
   selector: 'climate-trendline-tool',
   templateUrl: './trendline-tool.component.html',
   styleUrls: ['./trendline-tool.component.scss'],
-  imports: [CommonModule, MatCardModule, MatIconModule, PicsaTranslateModule],
+  imports: [DecimalPipe, PicsaClimateMaterialModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrendlineToolComponent extends BaseChartToolComponent {
   public override readonly usesPointOverlay = true;
 
-  private translate = inject(PicsaTranslateService);
+  public readonly configService = inject(TrendlineConfigService);
+  private readonly translate = inject(TranslateService);
+  private readonly dialog = inject(MatDialog);
+
+  /** Tracks expanded state of statistical details per series key (starts contracted) */
+  public readonly expandedStats = signal<Record<string, boolean>>({});
+
+  public toggleStats(key: string): void {
+    this.expandedStats.update((current) => ({
+      ...current,
+      [key]: !current[key],
+    }));
+  }
+
+  public setPeriod(period: TrendlinePeriod): void {
+    this.configService.setPeriod(period);
+    this.chartService.syncPointOverlay();
+  }
+
+  public openMethodologyDialog(): void {
+    this.dialog.open(TrendlineMethodologyDialogComponent, {
+      width: '540px',
+      maxWidth: '92vw',
+    });
+  }
 
   /** Series trend analyses for all keys in the active chart */
   public readonly seriesAnalyses = computed<ISeriesTrendAnalysis[]>(() => {
+    // Trendline is strictly scoped to annual and seasonal indicators, not monthly
+    if (this.chartService.timespanMode() === 'monthly') {
+      return [];
+    }
+
     const data = this.chartData();
     const def = this.chartDefinition();
     if (!data?.length || !def?.keys?.length) return [];
 
     const xVar = def.xVar || 'Year';
     const pThreshold = def.tools?.trendline?.pThreshold ?? 0.05;
-    const rThreshold = def.tools?.trendline?.rThreshold ?? 0.3;
+    const period = this.configService.period();
 
     return def.keys.map((key, index) => {
       const points: { x: number; y: number }[] = [];
       for (const row of data) {
         const x = row[xVar] as number;
         const y = row[key] as number;
+        // Never convert missing values to zero or treat incomplete totals as complete
         if (typeof x === 'number' && Number.isFinite(x) && typeof y === 'number' && Number.isFinite(y)) {
           points.push({ x, y });
         }
       }
 
-      const stats = calculateLinearRegression(points, pThreshold, rThreshold);
+      const stats = calculateLinearRegression(points, period, pThreshold);
       const color = def.colors?.[index] || '#13599e';
       const label = def.data_labels?.[key] || (def.keys.length === 1 ? def.name : String(key));
       const units = def.units || '';
 
-      const status: TrendDirectionStatus =
-        stats.n < 3 ? 'insufficient' : stats.hasTrend ? (stats.slope > 0 ? 'up' : 'down') : 'none';
-
-      const sign = stats.changePerDecade >= 0 ? '+' : '';
+      const sign = stats.changePerDecade !== null && stats.changePerDecade >= 0 ? '+' : '';
       const unitStr = units ? ` ${units}` : '';
-      const rateLabel = stats.n >= 3 ? `${sign}${stats.changePerDecade.toFixed(1)}${unitStr}/10y` : '';
-      const decadeText = stats.n >= 3 ? `${sign}${stats.changePerDecade.toFixed(1)}${unitStr} / decade` : '—';
+      const rateLabel =
+        stats.changePerDecade !== null ? `${sign}${stats.changePerDecade.toFixed(1)}${unitStr} / decade` : '';
+      const decadeText = rateLabel || '—';
 
       return {
         key,
         label,
         color,
         stats,
-        status,
+        status: stats.status,
         rateLabel,
         decadeText,
       };
@@ -78,11 +113,39 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
   });
 
   public override getTrendlines(): ITrendlineOverlay[] | undefined {
+    if (this.chartService.timespanMode() === 'monthly') {
+      return [];
+    }
+
     const analyses = this.seriesAnalyses();
     const lines: ITrendlineOverlay[] = [];
 
     for (const item of analyses) {
-      if (item.stats.hasTrend) {
+      if (item.stats.shouldPlotLine) {
+        const isSignificant = item.stats.status === 'significant_up' || item.stats.status === 'significant_down';
+        const isUncertain = item.stats.status === 'uncertain_trend';
+
+        let color = item.color;
+        let strokeDasharray = '8 4';
+        let strokeWidth = 2.5;
+        let label = item.rateLabel;
+
+        if (!isSignificant) {
+          // Grey line for non-significant trends (uncertain or weak)
+          color = '#98a2b3';
+          if (isUncertain) {
+            strokeDasharray = '4 4';
+            strokeWidth = 2;
+            const tag = this.translate.instant(translateMarker('uncertain'));
+            label = `${item.rateLabel}\n${tag}`;
+          } else {
+            strokeDasharray = '2 3';
+            strokeWidth = 1.5;
+            const tag = this.translate.instant(translateMarker('weak'));
+            label = `${item.rateLabel}\n${tag}`;
+          }
+        }
+
         lines.push({
           id: `trendline-${item.key}`,
           seriesKey: item.key,
@@ -90,10 +153,10 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           endX: item.stats.endX,
           startY: item.stats.startY,
           endY: item.stats.endY,
-          color: item.color,
-          strokeWidth: 2.5,
-          strokeDasharray: '8 4',
-          label: item.rateLabel,
+          color,
+          strokeWidth,
+          strokeDasharray,
+          label,
         });
       }
     }
@@ -101,70 +164,15 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     return lines;
   }
 
+  /**
+   * Upper chart message summary removed as it does not add value over the
+   * on-line overlay labels and sidebar panel details.
+   */
   public override getChartMessage(): IChartOverlayMessage | undefined {
-    const analyses = this.seriesAnalyses();
-    if (!analyses.length) return undefined;
-
-    const withTrend = analyses.filter((a) => a.stats.hasTrend);
-    const withoutTrend = analyses.filter((a) => !a.stats.hasTrend);
-
-    // If all series have a significant trend, no banner is needed
-    if (withoutTrend.length === 0) {
-      return undefined;
-    }
-
-    // Check if any series has insufficient data (< 3 observations)
-    const insufficient = analyses.filter((a) => a.stats.n < 3);
-    if (insufficient.length === analyses.length) {
-      return {
-        text: this.translate.instant(translateMarker('Insufficient data to determine trend')),
-        subtext: this.translate.instant(translateMarker('At least 3 valid observations required')),
-        color: '#475467',
-        backgroundColor: '#f8f9fa',
-        borderColor: '#d0d5dd',
-      };
-    }
-
-    // Case 1: Single series chart without trend
-    if (analyses.length === 1) {
-      const single = analyses[0];
-      const pStr = this.formatPValue(single.stats.pValue);
-      const rStr = single.stats.r.toFixed(2);
-      return {
-        text: this.translate.instant(translateMarker('No strong trend detected')),
-        subtext: `|r| = ${Math.abs(single.stats.r).toFixed(2)} (r = ${rStr}), p = ${pStr}`,
-        color: '#475467',
-        backgroundColor: '#f8f9fa',
-        borderColor: '#d0d5dd',
-      };
-    }
-
-    // Case 2: Multi-series chart where none have a trend
-    if (withTrend.length === 0) {
-      return {
-        text: this.translate.instant(translateMarker('No strong trend detected')),
-        subtext: this.translate.instant(
-          translateMarker('None of the series meet the significance threshold (p < 0.05, |r| ≥ 0.3)'),
-        ),
-        color: '#475467',
-        backgroundColor: '#f8f9fa',
-        borderColor: '#d0d5dd',
-      };
-    }
-
-    // Case 3: Multi-series chart where some have a trend, but some do not
-    const noTrendNames = withoutTrend.map((a) => a.label).join(', ');
-    return {
-      text: `${this.translate.instant(translateMarker('No strong trend for'))}: ${noTrendNames}`,
-      subtext: this.translate.instant(translateMarker('Other series trendlines are plotted below')),
-      color: '#475467',
-      backgroundColor: '#f8f9fa',
-      borderColor: '#d0d5dd',
-    };
+    return undefined;
   }
 
-  public formatPValue(p: number): string {
-    if (p < 0.001) return '< 0.001';
-    return p.toFixed(3);
+  public formatPValue(p: number | null): string {
+    return formatPValue(p);
   }
 }

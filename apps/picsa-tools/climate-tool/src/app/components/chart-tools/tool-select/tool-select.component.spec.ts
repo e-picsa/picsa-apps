@@ -11,9 +11,11 @@ describe('ToolSelectComponent', () => {
   let component: ToolSelectComponent;
   let fixture: ComponentFixture<ToolSelectComponent>;
   let mockChartDefinition: ReturnType<typeof signal<IChartMeta | undefined>>;
+  let mockTimespanMode: ReturnType<typeof signal<string>>;
 
   beforeEach(async () => {
     mockChartDefinition = signal<IChartMeta | undefined>(undefined);
+    mockTimespanMode = signal<string>('annual');
 
     await TestBed.configureTestingModule({
       imports: [ToolSelectComponent, PicsaTranslateModule.forRoot()],
@@ -23,6 +25,7 @@ describe('ToolSelectComponent', () => {
           provide: ClimateChartService,
           useValue: {
             chartDefinition: mockChartDefinition,
+            timespanMode: mockTimespanMode,
           },
         },
       ],
@@ -87,5 +90,24 @@ describe('ToolSelectComponent', () => {
     const tools = component.tools();
     const toolNames = tools.map((t) => t.name);
     expect(toolNames).toEqual(['line', 'terciles', 'el_nino', 'la_nina']);
+  });
+
+  it('should exclude trendline when timespanMode is monthly', () => {
+    mockTimespanMode.set('monthly');
+    mockChartDefinition.set({
+      _id: 'rainfall',
+      tools: {
+        line: { enabled: true },
+        terciles: { enabled: true },
+        trendline: { enabled: true },
+        el_nino: { enabled: true },
+        la_nina: { enabled: true },
+      },
+    } as unknown as IChartMeta);
+
+    const tools = component.tools();
+    const toolNames = tools.map((t) => t.name);
+    expect(toolNames).toEqual(['line', 'terciles', 'el_nino', 'la_nina']);
+    expect(toolNames).not.toContain('trendline');
   });
 });

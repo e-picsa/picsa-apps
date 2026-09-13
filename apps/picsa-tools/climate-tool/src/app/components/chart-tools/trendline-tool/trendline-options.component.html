@@ -1,0 +1,34 @@
+<div class="trendline-options-container">
+  <!-- Period Selection -->
+  <div class="option-section">
+    <label class="section-label">{{ 'Analysis Period' | translate }}</label>
+    <mat-button-toggle-group
+      [value]="configService.period()"
+      (change)="setPeriod($event.value)"
+      class="compact-toggle-group"
+      hideSingleSelectionIndicator="true"
+    >
+      <mat-button-toggle value="full">{{ 'Full' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="30_year">{{ '30-Year' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="10_year">{{ '10-Year' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- Informative Notices / Guardrails -->
+  <div class="trendline-notices">
+    @if (configService.period() === '10_year') {
+      <div class="notice-box info">
+        <mat-icon class="notice-icon">info</mat-icon>
+        <span>{{ '10-year view evaluates the last 10 years (requires at least 7 valid years).' | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Methodology Popup Trigger at Bottom of Secondary Tool Panel -->
+  <div class="trendline-methodology">
+    <button matButton="outlined" class="methodology-button" (click)="openMethodologyDialog()">
+      <mat-icon class="methodology-icon">help_outline</mat-icon>
+      <span>{{ 'Methodology & Limitations' | translate }}</span>
+    </button>
+  </div>
+</div>

@@ -449,11 +449,17 @@ export function renderTrendlineOverlay(
       labelGroup.style('display', 'none');
     } else {
       labelGroup.style('display', null);
-      const fontSize = 11 * scale;
-      const padX = 6 * scale;
-      const padY = 3 * scale;
-      const boxWidth = d.label.length * (fontSize * 0.65) + padX * 2;
-      const boxHeight = fontSize + padY * 2;
+      const lines = d.label.split('\n');
+      const fontSize = 13.5 * scale;
+      const subFontSize = 11.5 * scale;
+      const lineHeight = fontSize * 1.25;
+      const padX = 8 * scale;
+      const padY = 5 * scale;
+
+      const maxChars = Math.max(...lines.map((l) => l.length));
+      const boxWidth = maxChars * (fontSize * 0.62) + padX * 2;
+      const boxHeight =
+        lines.length === 1 ? fontSize + padY * 2 : fontSize + (lines.length - 1) * lineHeight + padY * 2;
 
       // Position badge just to the right of line end, clamped within chart bounds
       const badgeX = Math.max(10, x2 - boxWidth);
@@ -471,29 +477,35 @@ export function renderTrendlineOverlay(
         .style('fill', '#ffffff')
         .style('stroke', strokeColor)
         .style('stroke-width', `${1.5 * scale}px`)
-        .style('opacity', '0.92')
+        .style('opacity', '0.94')
         .attr('fill', '#ffffff')
         .attr('stroke', strokeColor)
         .attr('stroke-width', 1.5 * scale)
-        .attr('opacity', 0.92);
+        .attr('opacity', 0.94);
 
-      labelGroup
+      const textElem = labelGroup
         .select('text')
         .attr('x', badgeX + boxWidth / 2)
-        .attr('y', badgeY + boxHeight / 2)
+        .attr('y', badgeY + padY + fontSize * 0.75)
         .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'central')
         .style('fill', strokeColor)
-        .style('font-size', `${fontSize}px`)
         .style('font-family', 'sans-serif')
-        .style('font-weight', '700')
-        .attr('dominant-baseline', 'central')
         .attr('text-anchor', 'middle')
         .attr('fill', strokeColor)
-        .attr('font-size', `${fontSize}px`)
         .attr('font-family', 'sans-serif')
-        .attr('font-weight', '700')
-        .text(d.label);
+        .text(null);
+
+      textElem
+        .selectAll('tspan')
+        .data(lines)
+        .join('tspan')
+        .attr('x', badgeX + boxWidth / 2)
+        .attr('dy', (_, i) => (i === 0 ? 0 : lineHeight))
+        .attr('font-size', (_, i) => `${i === 0 ? fontSize : subFontSize}px`)
+        .attr('font-weight', (_, i) => (i === 0 ? '700' : '600'))
+        .style('font-size', (_, i) => `${i === 0 ? fontSize : subFontSize}px`)
+        .style('font-weight', (_, i) => (i === 0 ? '700' : '600'))
+        .text((line) => line);
     }
   });
 }
