@@ -329,6 +329,7 @@ export class ClimateChartService {
         };
       }
 
+      this.chartDefinition.set({ ...definition });
       this.chartData.set(currentStationData);
 
       // In monthly mode, use all monthly data so all 1-month charts share fixed boundary A.
