@@ -2,6 +2,16 @@
 @if (chartService.timespanMode() !== 'annual') {
   <climate-period-navigator></climate-period-navigator>
 }
+
+@if (hasInsufficientData()) {
+  <div class="sample-size-warning">
+    <mat-icon class="warning-icon">warning_amber</mat-icon>
+    <span>
+      {{ 'Notice: Less than 20 years of data available for this period. Climatological statistics may be less representative.' | translate }}
+      ({{ validObservationCount() }} {{ 'years recorded' | translate }})
+    </span>
+  </div>
+}
 <!-- line tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-line-tool #lineTool></climate-line-tool>

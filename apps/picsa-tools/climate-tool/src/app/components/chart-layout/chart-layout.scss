@@ -40,3 +40,25 @@ picsa-chart {
 climate-probability-tool {
   grid-area: prob;
 }
+
+.sample-size-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin: 4px 2rem 8px 2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  .warning-icon {
+    font-size: 1.15rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: #d97706;
+  }
+}

@@ -28,7 +28,7 @@ export class ClimatePrintLayoutComponent {
 
   // Derive metadata from chart service signals
   readonly stationName = computed(() => this.chartService.station()?.name ?? '');
-  readonly chartDefinition = computed(() => this.chartService.chartDefinition()?.definition ?? '');
+  readonly chartDefinition = computed(() => this.chartService.currentDefinitionText());
   readonly chartName = computed(() => this.chartService.chartDefinition()?.name ?? '');
 
   readonly pngSrc = signal<string>('');
