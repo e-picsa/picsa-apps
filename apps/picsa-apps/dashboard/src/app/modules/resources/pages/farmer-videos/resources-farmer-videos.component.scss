@@ -1,31 +1,3 @@
-// Country-specific badge & pill color styling
-.country-badge,
-.country-pill {
-  &[data-country='mw'] {
-    background: #ecfdf5;
-    color: #065f46;
-    border-color: #a7f3d0;
-  }
-
-  &[data-country='zm'] {
-    background: #fef3c7;
-    color: #92400e;
-    border-color: #fde68a;
-  }
-
-  &[data-country='zw'] {
-    background: #fee2e2;
-    color: #991b1b;
-    border-color: #fecaca;
-  }
-
-  &[data-country='global'] {
-    background: #e0e7ff;
-    color: #3730a3;
-    border-color: #c7d2fe;
-  }
-}
-
 // Matrix Table sticky columns and fixed coordinates
 .matrix-table {
   border-collapse: separate;
