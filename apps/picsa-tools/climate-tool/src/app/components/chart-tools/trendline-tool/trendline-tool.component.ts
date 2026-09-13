@@ -75,7 +75,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     if (!data?.length || !def?.keys?.length) return [];
 
     const xVar = def.xVar || 'Year';
-    const pThreshold = def.tools?.trendline?.pThreshold ?? 0.05;
     const period = this.configService.period();
 
     return def.keys.map((key, index) => {
@@ -89,7 +88,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         }
       }
 
-      const stats = calculateLinearRegression(points, period, pThreshold);
+      const stats = calculateLinearRegression(points, period);
       const color = def.colors?.[index] || '#13599e';
       const label = def.data_labels?.[key] || (def.keys.length === 1 ? def.name : String(key));
       const units = def.units || '';
@@ -126,24 +125,17 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         const isUncertain = item.stats.status === 'uncertain_trend';
 
         let color = item.color;
-        let strokeDasharray = '8 4';
-        let strokeWidth = 2.5;
+        const strokeDasharray = '8 4';
+        const strokeWidth = 2.5;
         let label = item.rateLabel;
 
         if (!isSignificant) {
           // Grey line for non-significant trends (uncertain or weak)
           color = '#98a2b3';
-          if (isUncertain) {
-            strokeDasharray = '4 4';
-            strokeWidth = 2;
-            const tag = this.translate.instant(translateMarker('uncertain'));
-            label = `${item.rateLabel}\n${tag}`;
-          } else {
-            strokeDasharray = '2 3';
-            strokeWidth = 1.5;
-            const tag = this.translate.instant(translateMarker('weak'));
-            label = `${item.rateLabel}\n${tag}`;
-          }
+          const tag = isUncertain
+            ? this.translate.instant(translateMarker('uncertain'))
+            : this.translate.instant(translateMarker('weak'));
+          label = `${item.rateLabel}\n${tag}`;
         }
 
         lines.push({

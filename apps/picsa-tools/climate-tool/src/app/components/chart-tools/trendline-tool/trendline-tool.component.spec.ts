@@ -1,8 +1,9 @@
 import { DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import type { IChartMeta } from '@picsa/models';
+import type { IChartMeta, IStationData } from '@picsa/models';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { TrendlineConfigService } from '../../../services/trendline-config.service';
@@ -19,7 +20,7 @@ describe('TrendlineToolComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TrendlineToolComponent, DecimalPipe, PicsaTranslateModule.forRoot()],
-      providers: [ClimateChartService, TrendlineConfigService],
+      providers: [ClimateChartService, TrendlineConfigService, { provide: SocialSharing, useValue: {} }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TrendlineToolComponent);
@@ -43,7 +44,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should open methodology dialog when openMethodologyDialog is called', () => {
-    const openSpy = jest.spyOn(dialog, 'open').mockReturnValue({} as any);
+    const openSpy = jest.spyOn(component['dialog'], 'open').mockReturnValue({} as any);
     component.openMethodologyDialog();
     expect(openSpy).toHaveBeenCalledWith(TrendlineMethodologyDialogComponent, {
       width: '540px',
@@ -52,7 +53,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should analyze single-series chart and plot trendline when trend is statistically clear (p < 0.05)', () => {
-    const rainfallMeta: IChartMeta = {
+    const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
       shortname: 'Rain',
@@ -68,8 +69,8 @@ describe('TrendlineToolComponent', () => {
       Rainfall: 500 + i * 10,
     }));
 
-    chartService.chartDefinition.set(rainfallMeta);
-    chartService.chartData.set(strongUpwardData);
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(strongUpwardData as unknown as IStationData[]);
     fixture.detectChanges();
 
     const analyses = component.seriesAnalyses();
@@ -95,7 +96,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should handle multi-series charts (e.g. min, mean, max temperature) plotting colored lines for significant series and grey lines for non-significant', () => {
-    const tempMeta: IChartMeta = {
+    const tempMeta = {
       _id: 'temp',
       name: 'Temperature',
       shortname: 'Temp',
@@ -118,8 +119,8 @@ describe('TrendlineToolComponent', () => {
       mean_tmax: 30 + (i % 2 === 0 ? 0.8 : -0.8), // flat oscillating
     }));
 
-    chartService.chartDefinition.set(tempMeta);
-    chartService.chartData.set(multiSeriesData);
+    chartService.chartDefinition.set(tempMeta as unknown as IChartMeta);
+    chartService.chartData.set(multiSeriesData as unknown as IStationData[]);
     fixture.detectChanges();
 
     const analyses = component.seriesAnalyses();
@@ -149,7 +150,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should plot a grey trendline and show weak trend status when p >= 0.05 and correlation is low', () => {
-    const rainfallMeta: IChartMeta = {
+    const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
       shortname: 'Rain',
@@ -164,8 +165,8 @@ describe('TrendlineToolComponent', () => {
       Rainfall: 600 + (i % 2 === 0 ? 40 : -40),
     }));
 
-    chartService.chartDefinition.set(rainfallMeta);
-    chartService.chartData.set(flatData);
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(flatData as unknown as IStationData[]);
     fixture.detectChanges();
 
     const trendlines = component.getTrendlines();
@@ -180,7 +181,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should not plot a line when record has < 20 observations', () => {
-    const rainfallMeta: IChartMeta = {
+    const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
       shortname: 'Rain',
@@ -195,8 +196,8 @@ describe('TrendlineToolComponent', () => {
       Rainfall: 500 + i * 20,
     }));
 
-    chartService.chartDefinition.set(rainfallMeta);
-    chartService.chartData.set(shortData);
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(shortData as unknown as IStationData[]);
     fixture.detectChanges();
 
     const trendlines = component.getTrendlines();
@@ -210,7 +211,7 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should update analysis when period changes from full to 10-year view', () => {
-    const rainfallMeta: IChartMeta = {
+    const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
       shortname: 'Rain',
@@ -231,8 +232,8 @@ describe('TrendlineToolComponent', () => {
       })),
     ];
 
-    chartService.chartDefinition.set(rainfallMeta);
-    chartService.chartData.set(data);
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(data as unknown as IStationData[]);
     fixture.detectChanges();
 
     // In 10-year view, evaluates only the last 10 years (2015-2024)

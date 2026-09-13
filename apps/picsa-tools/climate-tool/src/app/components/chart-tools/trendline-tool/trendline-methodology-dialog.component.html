@@ -1,19 +1,24 @@
-<div class="trendline-methodology-dialog">
-  <div mat-dialog-title class="dialog-title">
-    <mat-icon class="title-icon">help_outline</mat-icon>
-    <span>{{ 'About the Trendline' | translate }}</span>
+<div class="trendline-methodology-container">
+  <div class="dialog-header">
+    <div class="title-with-icon">
+      <mat-icon class="header-icon">info_outline</mat-icon>
+      <h2 mat-dialog-title>{{ 'Understanding Climate Trendlines' | translate }}</h2>
+    </div>
+    <button matIconButton mat-dialog-close class="close-button" [attr.aria-label]="'Close dialog' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 
-  <mat-dialog-content class="dialog-content">
-    <!-- 1. Meaning before method -->
+  <mat-dialog-content class="dialog-body">
+    <!-- 1. What does the trendline show? -->
     <section class="methodology-section">
       <div class="section-heading">
         <mat-icon>show_chart</mat-icon>
-        <h3>{{ 'What does the line mean?' | translate }}</h3>
+        <h3>{{ 'What does the trendline show?' | translate }}</h3>
       </div>
       <p>
         {{
-          'The line summarizes whether recorded observations (such as annual rainfall, seasonal rainfall, or temperatures) generally increased or decreased over the selected period. Individual years may still be much wetter, drier, hotter, or colder.'
+          'A trendline shows the general long-term direction of change over time (e.g. warming temperatures, shift in seasonal rainfall). It fits an ordinary least squares regression line to historical data.'
             | translate
         }}
       </p>
@@ -27,7 +32,7 @@
       </div>
       <p>
         {{
-          'A colored line indicates a statistically clear trend (p < 0.05). A grey dashed line shows an estimated trend that is weak or uncertain due to high year-to-year variation. If no line appears at all, the observation record has too many missing years to calculate a reliable trend. An absent or grey line does not necessarily mean conditions have been unchanged.'
+          'A colored line indicates a statistically clear trend (p < 0.05). A grey dashed line shows an uncertain or weak trend where year-to-year variation is too high to confirm certainty. If no line appears at all, the observation record has too many missing years to calculate a reliable trend.'
             | translate
         }}
       </p>
@@ -66,6 +71,22 @@
             }}
           </p>
 
+          <h4>{{ 'Trend Classification Criteria' | translate }}</h4>
+          <ul class="rules-list">
+            <li>
+              <strong>{{ 'Statistically clear (colored line):' | translate }}</strong>
+              {{ 'p < 0.05. Strong evidence that the historical rate of change is distinguished from random yearly fluctuations.' | translate }}
+            </li>
+            <li>
+              <strong>{{ 'Uncertain trend (grey dashed line):' | translate }}</strong>
+              {{ 'p ≥ 0.05 with noticeable historical change (|r| ≥ 0.15, R² ≥ 0.02). Direction is estimated, but yearly variation is too high to rule out random chance.' | translate }}
+            </li>
+            <li>
+              <strong>{{ 'Weak / minimal trend (grey dashed line):' | translate }}</strong>
+              {{ 'p ≥ 0.05 with negligible historical change (|r| < 0.15, R² < 0.02). Historical values fluctuate without a meaningful overall directional shift.' | translate }}
+            </li>
+          </ul>
+
           <h4>{{ 'Data Completeness Rules' | translate }}</h4>
           <p>
             {{
@@ -75,23 +96,23 @@
           </p>
           <ul class="rules-list">
             <li>
-              <strong>{{ '10-year view:' | translate }}</strong>
-              {{ 'At least 7 usable years within the last 10 years.' | translate }}
+              <strong>{{ '10-Year View:' | translate }}</strong>
+              {{ 'At least 7 usable years within the most recent 10-year window.' | translate }}
             </li>
             <li>
-              <strong>{{ '30-year view:' | translate }}</strong>
-              {{ 'At least 20 usable years within the last 30 years.' | translate }}
+              <strong>{{ '30-Year View:' | translate }}</strong>
+              {{ 'At least 20 usable years within the most recent 30-year window.' | translate }}
             </li>
             <li>
-              <strong>{{ 'Full-record view:' | translate }}</strong>
-              {{ 'At least 20 usable years, covering at least 70% of the entire record period.' | translate }}
+              <strong>{{ 'Full Record:' | translate }}</strong>
+              {{ 'At least 20 usable years and at least 70% data completeness across the full record.' | translate }}
             </li>
           </ul>
 
-          <h4>{{ 'Statistical Testing & Serial Correlation Limitation' | translate }}</h4>
+          <h4>{{ 'Statistical Significance (p-value)' | translate }}</h4>
           <p>
             {{
-              'Significance is evaluated using a two-sided Student’s t-distribution (p < 0.05). However, climate in nearby years can be related (serial correlation). Standard OLS tests assume independent errors and do not adjust for persistence, which can sometimes make the evidence for a trend appear stronger than it is.'
+              'Significance is evaluated using a two-sided Student t-test on the correlation coefficient with df = n - 2 degrees of freedom. A threshold of p < 0.05 is required for a trend to be classified as statistically clear.'
                 | translate
             }}
           </p>
@@ -101,7 +122,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button matButton="filled" mat-dialog-close>
+    <button matButton="filled" color="primary" mat-dialog-close>
       {{ 'Close' | translate }}
     </button>
   </mat-dialog-actions>

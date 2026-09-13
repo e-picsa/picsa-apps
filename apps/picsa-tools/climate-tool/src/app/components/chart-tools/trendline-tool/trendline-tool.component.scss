@@ -236,11 +236,11 @@
   }
 }
 
-/* Three statistical indicators below the rate of change */
+/* Two statistical indicators below the rate of change */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   padding-top: 8px;
   margin-top: 4px;
   border-top: 1px solid #f1f5f9;
@@ -310,6 +310,14 @@
   font-size: 12px;
   font-weight: 600;
   color: #344054;
+
+  &.stat-value-failed {
+    color: #b42318;
+    background-color: #fef3f2;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
 }
 
 /* Info popup card inside mat-menu */

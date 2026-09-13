@@ -181,10 +181,6 @@ export interface IChartTools {
 export interface ITrendlineToolOptions {
   /** Specify if tool should be available */
   enabled?: boolean;
-  /** Maximum p-value for statistical significance (default: 0.05) */
-  pThreshold?: number;
-  /** Minimum correlation magnitude |r| (default: 0.30) */
-  rThreshold?: number;
 }
 
 export interface ILineToolOptions {

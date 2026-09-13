@@ -47,6 +47,7 @@ export interface ITrendlineStats {
   tStat: number | null;
   df: number | null;
   pValue: number | null;
+  isSignificant: boolean;
   status: TrendStatus;
   shouldPlotLine: boolean;
   message?: string;
@@ -61,6 +62,8 @@ export const MIN_OBSERVATIONS_30_YEAR = 20;
 export const MIN_OBSERVATIONS_10_YEAR = 7;
 /** Minimum completeness ratio (observations / year span) across full record */
 export const MIN_COMPLETENESS_RATIO = 0.7;
+/** Maximum p-value for statistical significance (p < 0.05) */
+export const SIGNIFICANCE_P_THRESHOLD = 0.05;
 /** Correlation threshold below which a non-significant trend is considered weak/minimal rather than uncertain */
 export const WEAK_CORRELATION_THRESHOLD = 0.15;
 
@@ -214,7 +217,7 @@ export function calculateSignificance(r: number | null, n: number): ISignificanc
 export function calculateLinearRegression(
   rawPoints: { x: number; y: number }[],
   period: TrendlinePeriod = 'full',
-  pThreshold = 0.05,
+  pThreshold = SIGNIFICANCE_P_THRESHOLD,
 ): ITrendlineStats {
   // 1. Data Cleaning & Sorting: Filter out NaN, null, and non-finite values; sort chronologically
   const cleanPoints = rawPoints
@@ -241,6 +244,7 @@ export function calculateLinearRegression(
       tStat: null,
       df: null,
       pValue: null,
+      isSignificant: false,
       status: 'unavailable',
       shouldPlotLine: false,
       message: 'Trend assessment unavailable',
@@ -309,6 +313,7 @@ export function calculateLinearRegression(
       tStat: null,
       df: null,
       pValue: null,
+      isSignificant: false,
       status: 'insufficient_data',
       shouldPlotLine: false,
       message: 'Not enough usable data to assess a trend.',
@@ -336,6 +341,7 @@ export function calculateLinearRegression(
       tStat: null,
       df: null,
       pValue: null,
+      isSignificant: false,
       status: 'unavailable',
       shouldPlotLine: false,
       message: 'Trend assessment unavailable',
@@ -360,6 +366,7 @@ export function calculateLinearRegression(
       tStat: null,
       df: null,
       pValue: null,
+      isSignificant: false,
       status: 'constant_y',
       shouldPlotLine: false,
       message: 'No clear trend detected for this period.',
@@ -388,6 +395,7 @@ export function calculateLinearRegression(
       tStat: sig.tStat,
       df: sig.df,
       pValue: sig.pValue,
+      isSignificant: false,
       status: 'insufficient_data',
       shouldPlotLine: false,
       message: 'Not enough usable data to assess a trend.',
@@ -415,6 +423,7 @@ export function calculateLinearRegression(
       tStat: sig.tStat,
       df: sig.df,
       pValue: sig.pValue,
+      isSignificant: true,
       status,
       shouldPlotLine: true,
       message: `${direction} trend detected`,
@@ -447,6 +456,7 @@ export function calculateLinearRegression(
     tStat: sig.tStat,
     df: sig.df,
     pValue: sig.pValue,
+    isSignificant: false,
     status,
     shouldPlotLine: true,
     message,

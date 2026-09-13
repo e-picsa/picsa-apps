@@ -161,7 +161,7 @@ const definitions: IChartDefinitions = {
     name: translateMarker('Minimum Temperatures'),
     shortname: translateMarker('Min Temps'),
     image: 'assets/climate-icons/temp_min.svg',
-    keys: ['min_tmin', 'mean_tmin'],
+    keys: ['mean_tmin', 'min_tmin'],
     data_labels: {
       min_tmin: translateMarker('Lowest minimum daily temp'),
       mean_tmin: translateMarker('Mean minimum daily temp'),
@@ -196,7 +196,7 @@ const definitions: IChartDefinitions = {
     name: translateMarker('Maximum Temperatures'),
     shortname: translateMarker('Max Temps'),
     image: 'assets/climate-icons/temp_max.svg',
-    keys: ['mean_tmax', 'max_tmax'],
+    keys: ['max_tmax', 'mean_tmax'],
     data_labels: {
       mean_tmax: translateMarker('Mean maximum daily temp'),
       max_tmax: translateMarker('Highest maximum daily temp'),

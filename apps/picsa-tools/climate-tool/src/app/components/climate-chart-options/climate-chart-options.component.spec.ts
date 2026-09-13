@@ -72,7 +72,7 @@ describe('ClimateChartOptionsComponent', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.tool-custom-slot')).toBeTruthy();
-    expect(el.querySelector('climate-trendline-options')).toBeTruthy();
+    expect(el.querySelector('climate-trendline-tool')).toBeTruthy();
     expect(component.hasSecondaryToolActive()).toBe(true);
     expect(component.activeToolLabel()).toBe('Trendline');
     expect(el.querySelector('.tools-header .tool-title')?.textContent).toContain('Trendline');
