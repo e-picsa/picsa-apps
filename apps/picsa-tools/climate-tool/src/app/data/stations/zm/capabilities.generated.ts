@@ -21,7 +21,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1944, 2025],
     totalMissingYears: 1,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
-    monthly: ['temp_min', 'temp_max'],
+    monthly: ['rainfall', 'temp_min', 'temp_max'],
   },
   chipepo_met: {
     schemaVersion: 1,
@@ -142,7 +142,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1955, 2025],
     totalMissingYears: 2,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
-    monthly: ['temp_min', 'temp_max'],
+    monthly: ['rainfall', 'temp_min', 'temp_max'],
   },
   lusaka_city_airpor: {
     schemaVersion: 1,
@@ -199,7 +199,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1979, 2025],
     totalMissingYears: 1,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
-    monthly: ['temp_min', 'temp_max'],
+    monthly: ['rainfall', 'temp_min', 'temp_max'],
   },
   misamfu_agromet: {
     schemaVersion: 1,
@@ -248,7 +248,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1981, 2025],
     totalMissingYears: 3,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
-    monthly: ['temp_min', 'temp_max'],
+    monthly: ['rainfall', 'temp_min', 'temp_max'],
   },
   mt__makulu_agrome: {
     schemaVersion: 1,
@@ -289,7 +289,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1949, 2025],
     totalMissingYears: 1,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
-    monthly: ['temp_min', 'temp_max'],
+    monthly: ['rainfall', 'temp_min', 'temp_max'],
   },
   samfya_met: {
     schemaVersion: 1,

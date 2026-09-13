@@ -71,5 +71,11 @@ export const ResourcesFeature = defineFeature({
         ),
       roleRequired: 'resources.admin',
     },
+    {
+      path: 'farmer-videos',
+      nav: { label: 'Farmer Videos' },
+      loadComponent: () =>
+        import('./pages/farmer-videos/resources-farmer-videos.component').then((m) => m.ResourcesFarmerVideosComponent),
+    },
   ],
 });

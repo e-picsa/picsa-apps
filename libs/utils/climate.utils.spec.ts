@@ -3,6 +3,7 @@ import {
   auditMonthlyChanges,
   calculateStationCapabilities,
   aggregateThreeMonthSeries,
+  convertMonthlyToStationData,
   filterMonthlyDataByMonth,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
@@ -582,6 +583,28 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
 
     it('should return empty array when month has no records', () => {
       expect(filterMonthlyDataByMonth(monthlyData, 6)).toEqual([]);
+    });
+  });
+
+  describe('convertMonthlyToStationData', () => {
+    const monthlyData: IMonthlyStationData[] = [
+      { month: '1980-01', Rainfall: 100, min_tmin: 14.0, mean_tmin: 15.5 },
+      { month: '1980-10', Rainfall: 20, min_tmin: 16.0, mean_tmin: 18.2 },
+      { month: '1981-06', Rainfall: 0, min_tmin: 8.0, mean_tmin: 12.0 },
+      { month: 'invalid-date', Rainfall: 10 },
+    ];
+
+    it('should convert all valid monthly records to station data rows with Year', () => {
+      const converted = convertMonthlyToStationData(monthlyData);
+      expect(converted.length).toBe(3);
+      expect(converted.map((r) => r.Year)).toEqual([1980, 1980, 1981]);
+      expect(converted[0].Rainfall).toBe(100);
+      expect(converted[0].min_tmin).toBe(14.0);
+      expect(converted[2].min_tmin).toBe(8.0);
+    });
+
+    it('should return empty array when monthly data is empty', () => {
+      expect(convertMonthlyToStationData([])).toEqual([]);
     });
   });
 

@@ -14,7 +14,7 @@
   <!-- 1-Month Selector Sub-view -->
   @if (chartService.timespanMode() === 'monthly') {
     <div class="sub-selector month-grid">
-      @for (m of months; track m.id) {
+      @for (m of months(); track m.id) {
         <button
           type="button"
           class="selector-chip"

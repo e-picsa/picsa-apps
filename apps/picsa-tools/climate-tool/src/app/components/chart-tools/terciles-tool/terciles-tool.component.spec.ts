@@ -114,4 +114,25 @@ describe('TercilesToolComponent', () => {
     expect(lowerLine?.label?.text).toMatch(/^Lower = \d{1,2}-[A-Za-z]+$/);
     expect(upperLine?.label?.text).toMatch(/^Upper = \d{1,2}-[A-Za-z]+$/);
   });
+
+  it('should dynamically recompute terciles when values input updates (e.g. timespan switch)', () => {
+    // 1. Annual values
+    fixture.componentRef.setInput('values', [600, 700, 800, 900, 1000, 1100]);
+    fixture.detectChanges();
+
+    const annualLower = component.lowerTercile();
+    const annualUpper = component.upperTercile();
+    expect(annualLower).toBeGreaterThan(600);
+    expect(annualUpper).toBeGreaterThan(annualLower);
+
+    // 2. Downscaled monthly values (lower range)
+    fixture.componentRef.setInput('values', [50, 100, 150, 200, 250, 300]);
+    fixture.detectChanges();
+
+    const monthlyLower = component.lowerTercile();
+    const monthlyUpper = component.upperTercile();
+    expect(monthlyLower).toBeLessThan(annualLower);
+    expect(monthlyUpper).toBeLessThan(annualUpper);
+    expect(monthlyUpper).toBeGreaterThan(monthlyLower);
+  });
 });

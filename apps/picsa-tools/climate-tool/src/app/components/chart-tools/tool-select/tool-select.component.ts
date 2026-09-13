@@ -4,7 +4,7 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
-import { ClimateToolService } from '../../../services/climate-tool.service';
+import { ClimateToolService, IClimateTool, TOOL_ORDER } from '../../../services/climate-tool.service';
 
 @Component({
   selector: 'climate-tool-select',
@@ -22,14 +22,20 @@ export class ToolSelectComponent {
       const allTools = this.toolService.tools();
       const active = this.toolService.activeTool();
       const chartTools = this.chartService.chartDefinition()?.tools;
+      const isMonthly = this.chartService.timespanMode() === 'monthly';
 
-      return Object.values(allTools)
+      return TOOL_ORDER.map((name) => allTools[name])
+        .filter((tool): tool is IClimateTool => Boolean(tool))
         .filter((tool) => {
+          // Trendlines are strictly scoped to annual and seasonal indicators, not monthly with untreated seasonality
+          if (tool.name === 'trendline' && isMonthly) {
+            return false;
+          }
           if (!chartTools) return true;
           const toolConfig = chartTools[tool.name as keyof typeof chartTools];
           return toolConfig?.enabled !== false;
         })
-        .map((config) => ({ ...config, enabled: active === name }));
+        .map((config) => ({ ...config, enabled: active === config.name }));
     },
     { equal: isEqual },
   );
