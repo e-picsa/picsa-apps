@@ -197,3 +197,18 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **RONI Event Criteria**: A season is classified as El Niño (or La Niña) when the running 3-month mean SST anomaly equals or exceeds $+0.5^\circ\text{C}$ (or $\le -0.5^\circ\text{C}$) for at least 5 consecutive overlapping 3-month periods. For example, 1953-1954 has 5 consecutive periods $\ge +0.5^\circ\text{C}$ (JJA to OND) and is classified as Weak El Niño (`WE`, grade 1), preserving historical continuity in `EL_NINO_YEARS`.
 - **Season Continuity**: The RONI dataset maintains continuous season records through the station data projection range (e.g. 2026-2027) so charts with recent or projected years have well-defined records rather than missing keys.
+### Climate Tool Trendline Analytics & Presentation Rules
+
+- **Simple Linear Regression Metric Redundancy**: In single-predictor OLS regression ($X = \text{Year}$), $r^2 \equiv R^2$. Displaying Pearson $r$ alongside $R^2$ clutters UI grids without providing additional value because trend direction is already explicitly conveyed by the signed rate of change (e.g. `+1.2 °C / decade`) and badge text. The stats grid focuses concisely on $R^2$ (goodness-of-fit) and $p$ (statistical significance).
+- **Threshold Failure Highlighting**: $p$-values have an established scientific threshold ($p < 0.05$ statistically clear, $p \ge 0.05$ not statistically distinguished from chance). When $p \ge 0.05$, it is highlighted with warning styling (`.stat-value-failed`). Continuous metrics like $R^2$ do not have binary failure cutoffs in climate analysis and should not be styled as failing.
+- **Unified Trend Classification Criteria**:
+  - **Consistent Line Weight (2.5px)**: All trendlines maintain a uniform `strokeWidth = 2.5` and dashed pattern (`8 4`) across Full, 30-Year, and 10-Year views, preventing lines from appearing optical thinned or faint on shorter/uncertain records.
+  - **Statistically Clear** ($p < 0.05$): Rendered in the series color with rate of change label.
+  - **Uncertain Trend** ($p \ge 0.05$ and $|r| \ge 0.15$ / $R^2 \ge 0.02$): Directional change is observable, but yearly noise prevents statistical certainty. Rendered in grey (`#98a2b3`) with an `uncertain` label.
+  - **Weak or Minimal Trend** ($p \ge 0.05$ and $|r| < 0.15$ / $R^2 < 0.02$): Rate of change is negligible. Rendered in grey (`#98a2b3`) with a `weak` label.
+  - **Insufficient Data**: When observation count (< 20 for full/30-yr, < 7 for 10-yr) or completeness (< 70%) requirements fail, lines are suppressed completely to prevent misleading inferences.
+- **Monthly Timespan Exclusion**: Trendline tools are strictly scoped to annual and seasonal indicators, hiding on monthly views where unadjusted seasonality would distort linear fits.
+
+### Angular Material Component Conventions
+
+- **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.

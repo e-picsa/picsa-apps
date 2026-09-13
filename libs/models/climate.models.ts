@@ -129,6 +129,8 @@ export interface IChartMeta {
   data_labels?: Record<string, string>;
   /** Colors for data series */
   colors: string[];
+  /** Color to use in chart view select (default to series color[0]) */
+  viewSelectColor?: string;
   yFormat: 'value' | 'date' | 'date-from-July';
   yLabel: string;
   xVar: keyof IStationData;
@@ -173,8 +175,14 @@ export interface IChartTools {
   line?: ILineToolOptions;
   probability?: IProbabilityToolOptions;
   terciles?: IGenericToolOptions;
+  trendline?: ITrendlineToolOptions;
   el_nino?: IGenericToolOptions;
   la_nina?: IGenericToolOptions;
+}
+
+export interface ITrendlineToolOptions {
+  /** Specify if tool should be available */
+  enabled?: boolean;
 }
 
 export interface ILineToolOptions {
