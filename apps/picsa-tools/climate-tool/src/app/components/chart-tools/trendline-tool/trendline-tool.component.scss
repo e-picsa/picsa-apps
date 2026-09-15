@@ -8,19 +8,18 @@
   @apply box-border w-full flex rounded-md overflow-hidden border border-slate-300;
   --mat-button-toggle-height: 32px;
   --mat-standard-button-toggle-height: 32px;
+}
+mat-button-toggle {
+  @apply flex-1 border-0 bg-white text-slate-600 font-medium;
+  font-size: 0.85rem;
 
-  mat-button-toggle {
-    @apply flex-1 border-0 bg-white text-slate-600 font-medium;
-    font-size: 0.85rem;
+  &.mat-button-toggle-checked {
+    background-color: var(--color-primary, #005b85) !important;
+    color: #ffffff !important;
 
-    &.mat-button-toggle-checked {
-      background-color: var(--color-primary, #005b85) !important;
+    ::ng-deep .mat-button-toggle-label-content {
       color: #ffffff !important;
-
-      ::ng-deep .mat-button-toggle-label-content {
-        color: #ffffff !important;
-        font-weight: 600;
-      }
+      font-weight: 600;
     }
   }
 }

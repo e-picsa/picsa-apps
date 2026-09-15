@@ -170,8 +170,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
       const label = def.data_labels?.[key] || (def.keys.length === 1 ? def.name : String(key));
       const units = def.units || '';
 
-      const isTemperature =
-        units.toLowerCase().includes('°c') || units.toLowerCase().includes('c') || key.toLowerCase().includes('temp');
+      const isTemperature = units.toLowerCase().includes('°c') || key.toLowerCase().includes('temp');
 
       const rateLabel = formatDecadeRate(stats.changePerDecade, units, isTemperature);
       const ciLabel = formatConfidenceInterval(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
