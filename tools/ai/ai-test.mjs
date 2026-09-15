@@ -15,15 +15,14 @@
  *   yarn ai:test --dry-run          # print what would run without executing
  *   yarn ai:test -- <extra nx args> # forward extra args to each `nx test` call
  *
- * Exit code is non-zero if any test run fails. Exits 0 with guidance when no
- * covering specs are found (that is not a failure — some files have no specs).
+ * Exit code is non-zero if any test run fails — including when a resolved spec
+ * cannot be executed (no owning Nx project or no test target). Exits 0 with
+ * guidance only when no covering specs exist at all (some files have no specs).
  */
-import { execSync, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { detectChangedFiles, hasHelpFlag, REPO_ROOT, runCommand } from './_shared.mjs';
 
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PROJECT_SCAN_ROOTS = ['apps', 'libs'];
 
 function printHelp() {
@@ -42,24 +41,6 @@ passed directly run as-is. Each spec runs via its owning Nx project:
   yarn nx test <project> --testFile=<spec basename>`);
 }
 
-function gitOutput(args) {
-  try {
-    return execSync(`git ${args}`, { cwd: REPO_ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch {
-    return '';
-  }
-}
-
-/** Files changed vs HEAD, covering staged + unstaged + untracked. */
-function detectChangedFiles() {
-  const raw = gitOutput('diff --name-only HEAD --diff-filter=ACMR');
-  const tracked = raw ? raw.split('\n').map((f) => f.trim()).filter(Boolean) : [];
-  // `ls-files --others` expands untracked directories into individual files (unlike `status --porcelain`)
-  const untrackedRaw = gitOutput('ls-files --others --exclude-standard');
-  const untracked = untrackedRaw ? untrackedRaw.split('\n').map((f) => f.trim()).filter(Boolean) : [];
-  return [...new Set([...tracked, ...untracked])];
-}
-
 /** Map a changed file to its covering spec (repo-relative), or null. */
 function toSpecFile(file) {
   const rel = path.isAbsolute(file) ? path.relative(REPO_ROOT, file) : file;
@@ -69,6 +50,22 @@ function toSpecFile(file) {
   }
   const spec = rel.replace(/\.ts$/, '.spec.ts');
   return existsSync(path.join(REPO_ROOT, spec)) ? spec : null;
+}
+
+function parseArgs(rawArgs) {
+  const dryRun = rawArgs.includes('--dry-run');
+  // Everything after `--` is forwarded to each `nx test` invocation
+  const separatorIndex = rawArgs.indexOf('--');
+  const passthrough = separatorIndex >= 0 ? rawArgs.slice(separatorIndex + 1) : [];
+  const ownArgs = (separatorIndex >= 0 ? rawArgs.slice(0, separatorIndex) : rawArgs).filter((a) => a !== '--dry-run');
+  return { dryRun, passthrough, ownArgs };
+}
+
+/** Split candidates into runnable specs and files without a covering spec. */
+function resolveSpecs(candidates) {
+  const specs = [...new Set(candidates.map(toSpecFile).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const withoutSpecs = candidates.filter((f) => !toSpecFile(f));
+  return { specs, withoutSpecs };
 }
 
 /** Recursively find all project.json files under the scan roots. */
@@ -125,39 +122,57 @@ function findOwningProject(specRel) {
   return projects.find((p) => normalised === p.root || normalised.startsWith(`${p.root}/`)) ?? null;
 }
 
-function run(cmd, args, dryRun) {
-  console.log(`\n$ ${cmd} ${args.join(' ')}`);
-  if (dryRun) return 0;
-  const result = spawnSync(cmd, args, { cwd: REPO_ROOT, stdio: 'inherit' });
-  return result.status ?? 1;
+/**
+ * Run one spec via its owning Nx project. A resolved spec that cannot be
+ * executed (no owning project or no test target) is a failure — silently
+ * skipping it would let verification report success without testing anything.
+ */
+function runSpec(spec, passthrough, dryRun) {
+  const project = findOwningProject(spec);
+  if (!project) {
+    console.error(`\n(ai-test: no owning Nx project found for ${spec})`);
+    return 1;
+  }
+  if (!project.hasTest) {
+    console.error(`\n(ai-test: project "${project.name}" has no test target for ${spec})`);
+    return 1;
+  }
+  return runCommand('yarn', ['nx', 'test', project.name, `--testFile=${path.basename(spec)}`, ...passthrough], {
+    dryRun,
+  });
+}
+
+function runSpecs(specs, passthrough, dryRun) {
+  let status = 0;
+  for (const spec of specs) {
+    status = runSpec(spec, passthrough, dryRun) || status;
+  }
+  return status;
+}
+
+function reportNoSpecs(candidates) {
+  console.log('ai-test: no covering *.spec.ts found for changed files:');
+  for (const f of candidates) console.log(`  - ${f}`);
+  console.log('\nGuidance: specs are colocated next to source (e.g. foo.spec.ts next to foo.ts).');
+  console.log('If the change has no coverable logic, no test run is required.');
 }
 
 function main() {
   const rawArgs = process.argv.slice(2);
-  if (rawArgs.includes('-h') || rawArgs.includes('--help')) {
+  if (hasHelpFlag(rawArgs)) {
     printHelp();
     return 0;
   }
-  const dryRun = rawArgs.includes('--dry-run');
-  // Everything after `--` is forwarded to each `nx test` invocation
-  const separatorIndex = rawArgs.indexOf('--');
-  const passthrough = separatorIndex >= 0 ? rawArgs.slice(separatorIndex + 1) : [];
-  const ownArgs = (separatorIndex >= 0 ? rawArgs.slice(0, separatorIndex) : rawArgs).filter((a) => a !== '--dry-run');
-
+  const { dryRun, passthrough, ownArgs } = parseArgs(rawArgs);
   const candidates = ownArgs.length > 0 ? ownArgs : detectChangedFiles();
   if (candidates.length === 0) {
     console.log('ai-test: no changed files detected (working tree clean vs HEAD). Pass explicit paths if needed.');
     return 0;
   }
 
-  const specs = [...new Set(candidates.map(toSpecFile).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-  const withoutSpecs = candidates.filter((f) => !toSpecFile(f));
-
+  const { specs, withoutSpecs } = resolveSpecs(candidates);
   if (specs.length === 0) {
-    console.log('ai-test: no covering *.spec.ts found for changed files:');
-    for (const f of candidates) console.log(`  - ${f}`);
-    console.log('\nGuidance: specs are colocated next to source (e.g. foo.spec.ts next to foo.ts).');
-    console.log('If the change has no coverable logic, no test run is required.');
+    reportNoSpecs(candidates);
     return 0;
   }
 
@@ -167,21 +182,7 @@ function main() {
     for (const f of withoutSpecs) console.log(`  - ${f}`);
   }
 
-  let status = 0;
-  for (const spec of specs) {
-    const project = findOwningProject(spec);
-    if (!project) {
-      console.warn(`\n(ai-test: skip ${spec} — no owning Nx project found)`);
-      continue;
-    }
-    if (!project.hasTest) {
-      console.warn(`\n(ai-test: skip ${spec} — project "${project.name}" has no test target)`);
-      continue;
-    }
-    status =
-      run('yarn', ['nx', 'test', project.name, `--testFile=${path.basename(spec)}`, ...passthrough], dryRun) || status;
-  }
-
+  const status = runSpecs(specs, passthrough, dryRun);
   console.log(status === 0 ? '\nai-test: OK' : '\nai-test: FAILED (see errors above)');
   return status;
 }

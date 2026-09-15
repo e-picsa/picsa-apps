@@ -18,12 +18,9 @@
  *
  * Exit code is non-zero if any step fails.
  */
-import { execSync, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+import { detectChangedFiles, hasHelpFlag, REPO_ROOT, runCommand } from './_shared.mjs';
 
 // Extensions prettier can format in this repo (kept in sync with lint-staged + common web files)
 const PRETTIER_EXTENSIONS = new Set(['.ts', '.html', '.scss', '.css', '.json', '.md', '.js', '.mjs', '.cjs']);
@@ -46,46 +43,18 @@ With no file args, lints all files changed vs HEAD (staged + unstaged + untracke
 Deleted files are skipped automatically.`);
 }
 
-function gitOutput(args) {
-  try {
-    return execSync(`git ${args}`, { cwd: REPO_ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch {
-    return '';
-  }
+function parseArgs(rawArgs) {
+  return {
+    check: rawArgs.includes('--check'),
+    dryRun: rawArgs.includes('--dry-run'),
+    stagedOnly: rawArgs.includes('--staged'),
+    explicitFiles: rawArgs.filter((a) => !a.startsWith('-')),
+  };
 }
 
-/** Files changed vs HEAD, covering staged + unstaged + untracked. */
-function detectChangedFiles(stagedOnly) {
-  const raw = stagedOnly ? gitOutput('diff --cached --name-only --diff-filter=ACMR') : gitOutput('diff --name-only HEAD --diff-filter=ACMR');
-  const tracked = raw ? raw.split('\n').map((f) => f.trim()).filter(Boolean) : [];
-  if (stagedOnly) return tracked;
-  // `ls-files --others` expands untracked directories into individual files (unlike `status --porcelain`)
-  const untrackedRaw = gitOutput('ls-files --others --exclude-standard');
-  const untracked = untrackedRaw ? untrackedRaw.split('\n').map((f) => f.trim()).filter(Boolean) : [];
-  return [...new Set([...tracked, ...untracked])];
-}
-
-function run(cmd, args, dryRun) {
-  console.log(`\n$ ${cmd} ${args.join(' ')}`);
-  if (dryRun) return 0;
-  const result = spawnSync(cmd, args, { cwd: REPO_ROOT, stdio: 'inherit' });
-  return result.status ?? 1;
-}
-
-function main() {
-  const rawArgs = process.argv.slice(2);
-  if (rawArgs.includes('-h') || rawArgs.includes('--help')) {
-    printHelp();
-    return 0;
-  }
-  const check = rawArgs.includes('--check');
-  const dryRun = rawArgs.includes('--dry-run');
-  const stagedOnly = rawArgs.includes('--staged');
-  const explicitFiles = rawArgs.filter((a) => !a.startsWith('-'));
-
-  const candidates = explicitFiles.length > 0 ? explicitFiles : detectChangedFiles(stagedOnly);
-  // Normalise to repo-relative paths and drop deleted/missing entries
-  const files = [...new Set(candidates.map((f) => f.trim()).filter(Boolean))].filter((f) => {
+/** Drop deleted/missing entries, warning about each skip. */
+function existingFiles(candidates) {
+  return [...new Set(candidates.map((f) => f.trim()).filter(Boolean))].filter((f) => {
     const abs = path.isAbsolute(f) ? f : path.join(REPO_ROOT, f);
     if (!existsSync(abs)) {
       console.warn(`  (skip missing/deleted: ${f})`);
@@ -93,36 +62,56 @@ function main() {
     }
     return true;
   });
+}
+
+function describeSource(explicitFiles, stagedOnly) {
+  if (explicitFiles.length > 0) return 'explicit';
+  return stagedOnly ? 'staged' : 'changed vs HEAD';
+}
+
+function runPrettier(files, check, dryRun) {
+  const targets = files.filter((f) => PRETTIER_EXTENSIONS.has(path.extname(f).toLowerCase()));
+  if (targets.length === 0) {
+    console.log('\n(ai-lint: no prettier-supported files, skipping prettier)');
+    return 0;
+  }
+  return runCommand('yarn', ['prettier', check ? '--check' : '--write', ...targets], { dryRun });
+}
+
+function runEslint(files, check, dryRun) {
+  const targets = files.filter((f) => ESLINT_EXTENSIONS.has(path.extname(f).toLowerCase()));
+  if (targets.length === 0) {
+    console.log('\n(ai-lint: no eslint-supported files, skipping eslint)');
+    return 0;
+  }
+  const args = check ? [...targets] : ['--fix', ...targets];
+  return runCommand('yarn', ['eslint', ...args], { dryRun });
+}
+
+function main() {
+  const rawArgs = process.argv.slice(2);
+  if (hasHelpFlag(rawArgs)) {
+    printHelp();
+    return 0;
+  }
+  const { check, dryRun, stagedOnly, explicitFiles } = parseArgs(rawArgs);
+  const candidates = explicitFiles.length > 0 ? explicitFiles : detectChangedFiles({ stagedOnly });
+  const files = existingFiles(candidates);
 
   if (files.length === 0) {
-    console.log(
-      stagedOnly
-        ? 'ai-lint: no staged files found. Stage changes first or run without --staged.'
-        : 'ai-lint: no changed files detected (working tree clean vs HEAD). Pass explicit paths if needed.',
-    );
+    if (stagedOnly) {
+      console.log('ai-lint: no staged files found. Stage changes first or run without --staged.');
+    } else {
+      console.log('ai-lint: no changed files detected (working tree clean vs HEAD). Pass explicit paths if needed.');
+    }
     return 0;
   }
 
-  console.log(`ai-lint: ${files.length} file(s)${explicitFiles.length > 0 ? ' (explicit)' : stagedOnly ? ' (staged)' : ' (changed vs HEAD)'}`);
+  console.log(`ai-lint: ${files.length} file(s) (${describeSource(explicitFiles, stagedOnly)})`);
   for (const f of files) console.log(`  - ${f}`);
 
-  const prettierFiles = files.filter((f) => PRETTIER_EXTENSIONS.has(path.extname(f).toLowerCase()));
-  const eslintFiles = files.filter((f) => ESLINT_EXTENSIONS.has(path.extname(f).toLowerCase()));
-
-  let status = 0;
-  if (prettierFiles.length > 0) {
-    status = run('yarn', ['prettier', check ? '--check' : '--write', ...prettierFiles], dryRun) || status;
-  } else {
-    console.log('\n(ai-lint: no prettier-supported files, skipping prettier)');
-  }
-
-  if (eslintFiles.length > 0) {
-    const args = check ? [...eslintFiles] : ['--fix', ...eslintFiles];
-    status = run('yarn', ['eslint', ...args], dryRun) || status;
-  } else {
-    console.log('\n(ai-lint: no eslint-supported files, skipping eslint)');
-  }
-
+  let status = runPrettier(files, check, dryRun);
+  status = runEslint(files, check, dryRun) || status;
   console.log(status === 0 ? '\nai-lint: OK' : '\nai-lint: FAILED (see errors above)');
   return status;
 }

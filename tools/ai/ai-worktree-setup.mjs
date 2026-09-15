@@ -18,14 +18,17 @@
  * scripts prior to install. Always use the direct `node ...` invocation for
  * first-time setup; `yarn ai:setup` is just a convenience alias afterwards.
  *
- * The script is idempotent: if the fingerprint exists it exits successfully
- * without doing anything (unless `--force` is passed), so automated clients
- * can safely invoke it unconditionally on worktree initialisation.
+ * The script is idempotent: a fingerprint matching this script version,
+ * worktree, and main checkout exits successfully without doing anything
+ * (unless `--force` is passed), so automated clients can safely invoke it
+ * unconditionally on worktree initialisation. A mismatched fingerprint
+ * fails loudly instead of reporting false success.
  */
-import { execSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gitOutput, hasHelpFlag } from './_shared.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const FINGERPRINT_FILENAME = '.ai-worktree-setup.json';
@@ -60,14 +63,6 @@ Copies git-ignored env/config files from the main checkout, runs
 \`yarn install --immutable\`, and writes a ${FINGERPRINT_FILENAME} fingerprint.`);
 }
 
-function gitOutput(args, cwd) {
-  try {
-    return execSync(`git ${args}`, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch {
-    return '';
-  }
-}
-
 /** Resolve the current worktree root and the main checkout root. */
 function resolveRoots(explicitMain) {
   const worktreeRoot = gitOutput('rev-parse --show-toplevel', SCRIPT_DIR) || path.resolve(SCRIPT_DIR, '..', '..');
@@ -97,6 +92,34 @@ function readFingerprint(worktreeRoot) {
   } catch {
     return null;
   }
+}
+
+/**
+ * Decide whether setup can be skipped. A fingerprint only suppresses setup
+ * when it matches this script version, worktree, and main checkout —
+ * otherwise a stale file would report success while dependencies and
+ * secret/config files stay unsynchronized.
+ * Returns 'skip' (already done), 'stale' (must re-run with --force), or 'proceed'.
+ */
+function fingerprintStatus(existing, { force, dryRun, worktreeRoot, mainRoot }) {
+  if (!existing || force) return 'proceed';
+  const valid =
+    existing.version === FINGERPRINT_VERSION &&
+    existing.worktree === worktreeRoot &&
+    existing.mainRepo === mainRoot;
+  if (dryRun) {
+    const note = valid ? 'a real run would exit here' : 'a real run would fail here';
+    console.log(`ai-setup: (dry-run) fingerprint ${valid ? 'exists' : 'is stale'} — ${note} (use --force to re-run).`);
+    return 'proceed';
+  }
+  if (valid) {
+    console.log(
+      `ai-setup: already initialised (${existing.installedAt ?? 'unknown date'}). Use --force to re-run.`,
+    );
+    return 'skip';
+  }
+  console.error('ai-setup: stale fingerprint found (version, worktree, or main repo mismatch); re-run with --force.');
+  return 'stale';
 }
 
 function copyFilesFromMain({ worktreeRoot, mainRoot, overwrite, dryRun }) {
@@ -139,7 +162,7 @@ function runInstall(worktreeRoot, dryRun) {
 
 function main() {
   const rawArgs = process.argv.slice(2);
-  if (rawArgs.includes('-h') || rawArgs.includes('--help')) {
+  if (hasHelpFlag(rawArgs)) {
     printHelp();
     return 0;
   }
@@ -158,15 +181,9 @@ function main() {
   console.log(`ai-setup: worktree ${worktreeRoot}\n          main     ${mainRoot}`);
 
   const existing = readFingerprint(worktreeRoot);
-  if (existing && !force && !dryRun) {
-    console.log(
-      `ai-setup: already initialised (${existing.installedAt ?? 'unknown date'}). Use --force to re-run.`,
-    );
-    return 0;
-  }
-  if (existing && !force && dryRun) {
-    console.log('ai-setup: fingerprint exists — a real run would exit here (use --force to re-run).');
-  }
+  const fpStatus = fingerprintStatus(existing, { force, dryRun, worktreeRoot, mainRoot });
+  if (fpStatus === 'skip') return 0;
+  if (fpStatus === 'stale') return 1;
 
   const { copied, skipped } = copyFilesFromMain({ worktreeRoot, mainRoot, overwrite, dryRun });
 
