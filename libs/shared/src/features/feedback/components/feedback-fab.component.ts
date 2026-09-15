@@ -37,6 +37,7 @@ export class FeedbackFabComponent {
       maxWidth: '420px',
       width: 'min(100vw - 24px, 420px)',
       maxHeight: 'calc(100dvh - 24px)',
+      autoFocus: false,
     });
   }
 }

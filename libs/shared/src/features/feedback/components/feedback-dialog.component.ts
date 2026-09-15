@@ -7,10 +7,12 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { FeedbackService } from '../../../services/core/feedback/feedback.service';
-import { ScreenshotService } from '../../../services/core/feedback/screenshot.service';
+import { ICapturedScreenshot, ScreenshotService } from '../../../services/core/feedback/screenshot.service';
+import { FeedbackPreferenceService } from '../services/feedback-preference.service';
 
 interface IFeedbackDialogData {
   screenPath: string;
@@ -18,9 +20,19 @@ interface IFeedbackDialogData {
 
 type FeedbackType = 'feedback' | 'bug_report';
 
-interface IScreenshotPreview {
-  base64: string;
-  type: string;
+export type FeedbackDialogStatus =
+  | 'idle'
+  | 'capturing'
+  | 'attaching'
+  | 'submitting'
+  | 'submitted'
+  | 'queued'
+  | 'retrying'
+  | 'error';
+
+export interface IFeedbackDialogState {
+  status: FeedbackDialogStatus;
+  errorMessage?: string;
 }
 
 @Component({
@@ -35,6 +47,7 @@ interface IScreenshotPreview {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSlideToggleModule,
     PicsaTranslateModule,
   ],
   templateUrl: './feedback-dialog.component.html',
@@ -44,41 +57,46 @@ export class FeedbackDialogComponent {
   private readonly dialogRef = inject<MatDialogRef<FeedbackDialogComponent>>(MatDialogRef);
   private readonly screenshotService = inject(ScreenshotService);
   private readonly feedbackService = inject(FeedbackService);
+  private readonly preferenceService = inject(FeedbackPreferenceService);
   private readonly data = inject<IFeedbackDialogData>(MAT_DIALOG_DATA);
 
   public fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   public type = signal<FeedbackType>('feedback');
   public comment = signal('');
-  public screenshot = signal<IScreenshotPreview | null>(null);
-  public submitting = signal(false);
-  public submitted = signal(false);
-  public queued = signal(false);
-  public retrying = signal(false);
-  public error = signal('');
-  public capturing = signal(false);
-  public attaching = signal(false);
+  public screenshot = signal<ICapturedScreenshot | null>(null);
+
+  // Single state machine replacing 8 boolean flags
+  public readonly state = signal<IFeedbackDialogState>({ status: 'idle' });
+
+  // Floating FAB preference toggle
+  public showFabSetting = signal(this.preferenceService.showFloatingFab());
 
   public screenPath = this.data.screenPath;
   public commentValid = computed(() => this.comment().trim().length > 0 && this.comment().length <= 2000);
-  public canSubmit = computed(
-    () =>
-      this.commentValid() &&
-      !this.submitting() &&
-      !this.submitted() &&
-      !this.queued() &&
-      !this.retrying() &&
-      !this.capturing() &&
-      !this.attaching(),
-  );
+
+  // Backward-compatible computed accessors for templates and specs
+  public submitting = computed(() => this.state().status === 'submitting');
+  public submitted = computed(() => this.state().status === 'submitted');
+  public queued = computed(() => this.state().status === 'queued');
+  public retrying = computed(() => this.state().status === 'retrying');
+  public capturing = computed(() => this.state().status === 'capturing');
+  public attaching = computed(() => this.state().status === 'attaching');
+  public error = computed(() => (this.state().status === 'error' ? (this.state().errorMessage ?? '') : ''));
+
+  public canSubmit = computed(() => this.commentValid() && ['idle', 'error'].includes(this.state().status));
 
   setType(value: FeedbackType) {
     this.type.set(value);
   }
 
+  toggleShowFab(show: boolean) {
+    this.showFabSetting.set(show);
+    this.preferenceService.setShowFloatingFab(show);
+  }
+
   async captureScreenshot() {
-    this.capturing.set(true);
-    this.error.set('');
+    this.state.set({ status: 'capturing' });
     try {
       await this.showCaptureFeedback();
       const shot = await this.screenshotService.capture();
@@ -86,11 +104,14 @@ export class FeedbackDialogComponent {
         const downscaled = await this.screenshotService.downscaleBase64(shot.base64, shot.type);
         this.screenshot.set(downscaled);
       }
-    } catch (err) {
+      this.state.set({ status: 'idle' });
+    } catch (err: any) {
       console.error('[Feedback] screenshot capture failed', err);
-      this.error.set('Screen capture failed. Please try again, or attach an image instead.');
-    } finally {
-      this.capturing.set(false);
+      const msg =
+        err?.message === 'WEB_SCREENSHOT_SECURITY_ERROR'
+          ? 'Web screen capture is not supported in this browser. Please attach an image instead.'
+          : 'Screen capture failed. Please try again, or attach an image instead.';
+      this.state.set({ status: 'error', errorMessage: msg });
     }
   }
 
@@ -101,8 +122,7 @@ export class FeedbackDialogComponent {
   }
 
   async attachFromGallery() {
-    this.attaching.set(true);
-    this.error.set('');
+    this.state.set({ status: 'attaching' });
     try {
       const inputEl = this.fileInput()?.nativeElement;
       const result = await this.screenshotService.attachFromGallery(inputEl);
@@ -112,17 +132,19 @@ export class FeedbackDialogComponent {
           result.screenshot.type,
         );
         this.screenshot.set(downscaled);
+        this.state.set({ status: 'idle' });
       } else if (result.status === 'error') {
-        this.error.set(result.message);
+        this.state.set({ status: 'error', errorMessage: result.message });
       } else {
         // cancelled (dismiss / timeout / no file)
-        this.error.set('No image was selected.');
+        this.state.set({ status: 'error', errorMessage: 'No image was selected.' });
       }
     } catch (err) {
       console.error('[Feedback] attach from gallery failed', err);
-      this.error.set("That image couldn't be attached. Please try another one.");
-    } finally {
-      this.attaching.set(false);
+      this.state.set({
+        status: 'error',
+        errorMessage: "That image couldn't be attached. Please try another one.",
+      });
     }
   }
 
@@ -132,10 +154,7 @@ export class FeedbackDialogComponent {
 
   async submit() {
     if (!this.canSubmit()) return;
-    this.submitting.set(true);
-    this.error.set('');
-    this.retrying.set(false);
-    this.queued.set(false);
+    this.state.set({ status: 'submitting' });
     try {
       const result = await this.feedbackService.submit({
         type: this.type(),
@@ -145,28 +164,22 @@ export class FeedbackDialogComponent {
         screenshot_type: this.screenshot()?.type,
       });
       if (result === 'submitted') {
-        this.submitted.set(true);
+        this.state.set({ status: 'submitted' });
         this.closeAfter(1500);
       } else if (result === 'pending') {
-        this.queued.set(true);
-        this.submitting.set(false);
+        this.state.set({ status: 'queued' });
       } else {
-        this.retrying.set(true);
-        this.submitting.set(false);
+        this.state.set({ status: 'retrying' });
       }
     } catch (err: any) {
       console.error('[Feedback] submit error', err);
       // Surface real server messages; keep generic text for network/offline failures
-      if (err?.__picsaServerError && err.message) {
-        this.error.set(err.message);
-      } else {
-        this.error.set('Something went wrong. Please try again.');
-      }
-      this.submitting.set(false);
+      const msg = err?.__picsaServerError && err.message ? err.message : 'Something went wrong. Please try again.';
+      this.state.set({ status: 'error', errorMessage: msg });
     }
   }
 
-  /** Close the dialog after a short delay so the outcome message stays readable (submit stays disabled meanwhile). */
+  /** Close the dialog after a short delay so the outcome message stays readable. */
   private closeAfter(delayMs: number) {
     setTimeout(() => this.dialogRef.close(true), delayMs);
   }

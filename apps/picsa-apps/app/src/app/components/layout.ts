@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListItem, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
@@ -22,7 +23,11 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
-import { FeedbackFabComponent } from '@picsa/shared/features/feedback';
+import {
+  FeedbackDialogComponent,
+  FeedbackFabComponent,
+  FeedbackPreferenceService,
+} from '@picsa/shared/features/feedback';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { filter, map } from 'rxjs';
 
@@ -34,6 +39,7 @@ import { filter, map } from 'rxjs';
   imports: [
     MatSidenavModule,
     MatButtonModule,
+    MatDialogModule,
     MatIconModule,
     MatNavList,
     MatListItem,
@@ -49,6 +55,10 @@ import { filter, map } from 'rxjs';
 export class AppLayoutComponent {
   private router = inject(Router);
   private configurationService = inject(ConfigurationService);
+  private dialog = inject(MatDialog);
+  private feedbackPreferenceService = inject(FeedbackPreferenceService);
+
+  public showFeedbackFab = this.feedbackPreferenceService.showFloatingFab;
 
   showLoader = input<boolean>();
   ready = input<boolean>();
@@ -92,5 +102,16 @@ export class AppLayoutComponent {
     this.configurationService.updateUserSettings({ user_type: targetType });
     this.router.navigate(['/', targetType]);
     this.drawer().close();
+  }
+
+  public openFeedback() {
+    this.dialog.open(FeedbackDialogComponent, {
+      data: { screenPath: location.pathname },
+      panelClass: 'feedback-dialog-panel',
+      maxWidth: '420px',
+      width: 'min(100vw - 24px, 420px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      autoFocus: false,
+    });
   }
 }

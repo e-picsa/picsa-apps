@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="flex items-center justify-between gap-2">
     <h2 class="flex-1 text-lg font-semibold">{{ 'Send Feedback' | translate }}</h2>
-    <button type="button" matIconButton aria-label="Close" (click)="close()" class="shrink-0">
+    <button type="button" matIconButton [attr.aria-label]="'Close' | translate" (click)="close()" class="shrink-0">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -24,6 +24,7 @@
       name="comment"
       rows="4"
       maxlength="2000"
+      class="resize-none"
       required
     ></textarea>
     <mat-hint align="end">{{ comment().length }} / 2000</mat-hint>
@@ -72,7 +73,7 @@
           matIconButton
           class="preview-remove-btn"
           (click)="removeScreenshot()"
-          aria-label="Remove screenshot"
+          [attr.aria-label]="'Remove screenshot' | translate"
         >
           <mat-icon class="text-sm">close</mat-icon>
         </button>
@@ -83,6 +84,16 @@
   <!-- Hidden file input for web attach -->
   <input id="picsa-feedback-file-input" #fileInput type="file" accept="image/*" class="hidden" />
   <label class="hidden" for="picsa-feedback-file-input">{{ 'Attach image' | translate }}</label>
+
+  <!-- Floating FAB Preference Setting -->
+  <div class="flex items-center justify-between border-t border-gray-100 pt-2 pb-1">
+    <span class="text-xs text-gray-600">{{ 'Show feedback button on all pages' | translate }}</span>
+    <mat-slide-toggle
+      [checked]="showFabSetting()"
+      (change)="toggleShowFab($event.checked)"
+      color="primary"
+    ></mat-slide-toggle>
+  </div>
 
   <!-- Status messages -->
   @if (submitted()) {
@@ -97,7 +108,7 @@
     <div class="text-amber-600">{{ 'Your feedback is saved. It will be retried automatically.' | translate }}</div>
   }
   @if (error()) {
-    <div class="text-red-600">{{ error() }}</div>
+    <div class="text-red-600">{{ error() | translate }}</div>
   }
 
   <!-- Actions -->

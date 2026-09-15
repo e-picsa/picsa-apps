@@ -1,19 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TranslateService, TranslateStore } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { FeedbackService } from '../../../services/core/feedback/feedback.service';
 import { ScreenshotService } from '../../../services/core/feedback/screenshot.service';
+import { FeedbackPreferenceService } from '../services/feedback-preference.service';
 import { FeedbackDialogComponent } from './feedback-dialog.component';
 
 describe('FeedbackDialogComponent', () => {
   let component: FeedbackDialogComponent;
   let fixture: ComponentFixture<FeedbackDialogComponent>;
+  let preferenceService: FeedbackPreferenceService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FeedbackDialogComponent],
+      imports: [FeedbackDialogComponent, PicsaTranslateModule.forRoot()],
       providers: [
         { provide: MatDialogRef, useValue: { close: jest.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { screenPath: '/farmer' } },
@@ -22,24 +23,12 @@ describe('FeedbackDialogComponent', () => {
           useValue: { capture: jest.fn(), attachFromGallery: jest.fn(), downscaleBase64: jest.fn() },
         },
         { provide: FeedbackService, useValue: { submit: jest.fn() } },
-        {
-          provide: TranslateService,
-          useValue: {
-            get: jest.fn((key: string) => of(key)),
-            instant: jest.fn((key: string) => key),
-            stream: jest.fn((key: string) => of(key)),
-            onLangChange: { subscribe: jest.fn() },
-            onTranslationChange: { subscribe: jest.fn() },
-            onDefaultLangChange: { subscribe: jest.fn() },
-            currentLang: 'en',
-          },
-        },
-        { provide: TranslateStore, useValue: { currentLang: 'en' } },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FeedbackDialogComponent);
     component = fixture.componentInstance;
+    preferenceService = TestBed.inject(FeedbackPreferenceService);
     fixture.detectChanges();
   });
 
@@ -55,6 +44,13 @@ describe('FeedbackDialogComponent', () => {
   it('enables submit when a valid comment is entered', () => {
     component.comment.set('Something useful');
     expect(component.canSubmit()).toBe(true);
+  });
+
+  it('toggles floating FAB preference', () => {
+    const setSpy = jest.spyOn(preferenceService, 'setShowFloatingFab');
+    component.toggleShowFab(true);
+    expect(component.showFabSetting()).toBe(true);
+    expect(setSpy).toHaveBeenCalledWith(true);
   });
 
   it('sets submitted on successful result', async () => {

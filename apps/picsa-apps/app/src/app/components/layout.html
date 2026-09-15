@@ -40,6 +40,12 @@
             <span>{{ 'Downloads' | translate}}</span>
           </div>
         </a>
+        <a mat-list-item (click)="openFeedback(); drawer.close()">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">feedback</mat-icon>
+            <span>{{ 'Share Feedback' | translate}}</span>
+          </div>
+        </a>
       </mat-nav-list>
       <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
       <footer>
@@ -54,8 +60,9 @@
       <picsa-header> </picsa-header>
       @if(ready()){
       <router-outlet></router-outlet>
-      }
+      } @if(showFeedbackFab()){
       <picsa-feedback-fab />
+      }
     </div>
 
     <!-- Loading spinner -->
