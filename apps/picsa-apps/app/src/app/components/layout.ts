@@ -105,6 +105,7 @@ export class AppLayoutComponent {
   }
 
   public openFeedback() {
+    this.feedbackPreferenceService.enableOnFirstMenuOpen();
     this.dialog.open(FeedbackDialogComponent, {
       data: { screenPath: location.pathname },
       panelClass: 'feedback-dialog-panel',
