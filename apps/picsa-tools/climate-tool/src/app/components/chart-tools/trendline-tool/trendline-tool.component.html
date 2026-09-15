@@ -20,30 +20,28 @@
   </div>
 
   <div class="flex flex-col gap-2 w-full">
-    @for (item of seriesAnalyses(); track item.key) {
+    @let analyses = seriesAnalyses();
+    @for (item of analyses; track item.key) {
+      @let showRate = item.stats.isSignificant && item.stats.changePerDecade !== null;
       <mat-card
         class="box-border p-2.5 bg-white rounded-lg border border-slate-200"
         [attr.data-trend-outcome]="item.status"
       >
         <!-- Series title & dot (for multi-series charts) -->
-        @if (seriesAnalyses().length > 1) {
+        @if (analyses.length > 1) {
           <div class="flex items-center justify-between gap-2 mb-1.5">
             <span class="flex items-center gap-1.5 font-semibold text-[13px] text-gray-800 truncate">
               <span class="w-2.5 h-2.5 rounded-full shrink-0" [style.background-color]="item.color"></span>
-              {{ item.label }}
+              {{ item.label | translate }}
             </span>
           </div>
         }
 
         <!-- Concise Trend Outcome Badge & Rate -->
-        <div class="flex items-center justify-between gap-2">
-          <!-- Estimated decadal rate of change (always shown if slope exists) -->
-          @if (item.stats.isSignificant && item.stats.changePerDecade !== null) {
-            <span
-              class="text-xs font-semibold whitespace-nowrap"
-              [class.text-slate-800]="item.stats.shouldPlotLine"
-              [class.text-slate-400]="!item.stats.shouldPlotLine"
-            >
+        <div class="flex items-center gap-2" [class.justify-between]="showRate" [class.justify-end]="!showRate">
+          <!-- Estimated decadal rate of change (only for statistically clear trends) -->
+          @if (showRate) {
+            <span class="text-xs font-semibold whitespace-nowrap text-slate-800">
               {{ item.rateLabel }}
             </span>
           }
@@ -82,13 +80,6 @@
           }
         </div>
 
-        <!-- Explanatory note for insufficient or constant series -->
-        <!-- @if (item.subtext) {
-          <div class="text-[11px] text-slate-500 leading-snug py-0.5">
-            {{ item.subtext | translate }}
-          </div>
-        } -->
-
         <!-- Technical Statistics Collapsible Section -->
         @if (item.stats.slope !== null && item.stats.slope !== undefined) {
           <div class="flex items-center mt-0.5 pt-1">
@@ -116,7 +107,7 @@
                 <thead>
                   <tr class="bg-slate-100">
                     @for (indicator of statIndicators; track indicator.key; let isLast = $last) {
-                      <th scope="col" [class.border-r]="!isLast" [class.border-slate-200]="!isLast">
+                      <th scope="col" [class]="!isLast ? 'border-r border-slate-200' : ''">
                         <div class="inline-flex items-center justify-center gap-0.5">
                           <button
                             matButton
@@ -157,7 +148,7 @@
                 <tbody>
                   <tr>
                     @for (indicator of statIndicators; track indicator.key; let isLast = $last) {
-                      <td [class.border-r]="!isLast" [class.border-slate-200]="!isLast">
+                      <td [class]="!isLast ? 'border-r border-slate-200' : ''">
                         @switch (indicator.key) {
                           @case ('ci') {
                             <div class="stat-ci-cell">
@@ -198,7 +189,7 @@
   </div>
 
   <!-- Methodology button -->
-  <button matButton type="button" class="methodology-btn" (click)="openMethodologyDialog()">
+  <button type="button" class="methodology-btn" (click)="openMethodologyDialog()">
     <mat-icon>help_outline</mat-icon>
     <span>{{ 'How is the trendline calculated?' | translate }}</span>
   </button>

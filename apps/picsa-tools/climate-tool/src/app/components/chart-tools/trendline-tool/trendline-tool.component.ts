@@ -7,7 +7,6 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { TrendlineConfigService } from '../../../services/trendline-config.service';
 import {
   calculateLinearRegression,
-  formatConfidenceInterval,
   formatConfidenceIntervalParts,
   formatDecadeRate,
   formatPValue,
@@ -16,7 +15,7 @@ import {
   type TrendStatus,
 } from '../../../utils/statistics.utils';
 import { PicsaClimateMaterialModule } from '../../material.module';
-import { BaseChartToolComponent, type IChartOverlayMessage, type ITrendlineOverlay } from '../base-tool.component';
+import { BaseChartToolComponent, type ITrendlineOverlay } from '../base-tool.component';
 import { TrendlineMethodologyDialogComponent } from './trendline-methodology-dialog.component';
 
 export interface ISeriesTrendAnalysis {
@@ -26,12 +25,8 @@ export interface ISeriesTrendAnalysis {
   stats: ITrendlineStats;
   status: TrendStatus;
   rateLabel: string;
-  ciLabel: string;
   ciRange: string;
   ciUnit: string;
-  decadeText: string;
-  subtext?: string;
-  isTemperature: boolean;
 }
 
 export type StatIndicatorKey = 'ci' | 'p' | 'n' | 'r2';
@@ -131,9 +126,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     });
   }
 
-  public formatPValue(p: number | null | undefined): string {
-    return formatPValue(p);
-  }
+  public readonly formatPValue = formatPValue;
 
   /**
    * Evaluates all data series defined on the active chart.
@@ -173,9 +166,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
       const isTemperature = units.toLowerCase().includes('°c') || key.toLowerCase().includes('temp');
 
       const rateLabel = formatDecadeRate(stats.changePerDecade, units, isTemperature);
-      const ciLabel = formatConfidenceInterval(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
       const ciParts = formatConfidenceIntervalParts(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
-      const decadeText = stats.changePerDecade !== null ? rateLabel : '—';
 
       return {
         key,
@@ -184,12 +175,8 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         stats,
         status: stats.status,
         rateLabel,
-        ciLabel,
         ciRange: ciParts.range,
         ciUnit: ciParts.unit,
-        decadeText,
-        subtext: stats.subtext,
-        isTemperature,
       };
     });
   });
@@ -199,7 +186,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
    * Public graph display rule:
    * - Plotted as a solid coloured line ONLY when statistically distinguishable from zero (p < 0.05).
    * - For inconclusive direction ('no_clear_trend') or 'insufficient_data' only the label badge
-   *   is rendered (no line), without any value - e.g. "trendline: No clear trend".
+   *   is rendered (no line), without any value - e.g. "No clear trend".
    */
   public override getTrendlines(): ITrendlineOverlay[] | undefined {
     if (this.chartService.timespanMode() === 'monthly') {
@@ -235,16 +222,12 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           endY: fallback.endY,
           color: item.color,
           labelOnly: true,
-          label: `${statusLabel}`,
+          label: statusLabel,
         });
       }
     }
 
     return lines;
-  }
-
-  public override getChartMessage(): IChartOverlayMessage | undefined {
-    return undefined;
   }
 
   /**

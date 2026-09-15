@@ -80,7 +80,8 @@ describe('TrendlineToolComponent', () => {
     expect(analyses[0].stats.shouldPlotLine).toBe(true);
     // Non-temperature rounds to nearest integer
     expect(analyses[0].rateLabel).toContain('+100 mm / decade');
-    expect(analyses[0].ciLabel).toContain('[+100, +100] mm / decade');
+    expect(analyses[0].ciRange).toBe('[+100, +100]');
+    expect(analyses[0].ciUnit).toBe('mm / decade');
 
     // Trendline overlay is generated with solid line
     const trendlines = component.getTrendlines();
