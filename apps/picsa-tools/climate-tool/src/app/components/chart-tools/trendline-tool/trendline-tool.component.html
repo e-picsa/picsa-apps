@@ -1,0 +1,208 @@
+<div class="trendline-tool-container">
+  <!-- Analysis Period Selection -->
+  <div class="option-section">
+    <label class="section-label">{{ 'Analysis Period' | translate }}</label>
+    <mat-button-toggle-group
+      [value]="configService.period()"
+      (change)="setPeriod($event.value)"
+      class="compact-toggle-group"
+      hideSingleSelectionIndicator="true"
+    >
+      <mat-button-toggle value="full">{{ 'Full' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="30_year">{{ '30-Year' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="10_year">{{ '10-Year' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- Summary Cards in Tool Panel -->
+  <div class="analyses-list">
+    @for (item of seriesAnalyses(); track item.key) {
+      <mat-card class="trendline-card" appearance="outlined">
+        <div class="card-header">
+          <div class="series-title">
+            <span class="color-dot" [style.background-color]="item.color"></span>
+            <span class="title-text">{{ item.label | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Primary rate of change and trend badge inline row -->
+        <div class="trend-summary-row">
+          <div class="rate-change" [class.highlight]="item.stats.shouldPlotLine">
+            {{ item.decadeText }}
+          </div>
+
+          @switch (item.status) {
+            @case ('significant_up') {
+              <div class="trend-badge trend-up">
+                <mat-icon>trending_up</mat-icon>
+                <span>{{ 'Upward trend' | translate }}</span>
+              </div>
+            }
+            @case ('significant_down') {
+              <div class="trend-badge trend-down">
+                <mat-icon>trending_down</mat-icon>
+                <span>{{ 'Downward trend' | translate }}</span>
+              </div>
+            }
+            @case ('uncertain_trend') {
+              <div class="trend-badge trend-uncertain">
+                <mat-icon>help_outline</mat-icon>
+                <span>{{ 'Uncertain trend' | translate }}</span>
+              </div>
+            }
+            @case ('weak_trend') {
+              <div class="trend-badge trend-weak">
+                <mat-icon>remove</mat-icon>
+                <span>{{ 'Weak / minimal' | translate }}</span>
+              </div>
+            }
+            @case ('insufficient_data') {
+              <div class="trend-badge trend-insufficient">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ 'Insufficient data' | translate }}</span>
+              </div>
+            }
+            @default {
+              <div class="trend-badge trend-neutral">
+                <mat-icon>help_outline</mat-icon>
+                <span>{{ 'Unavailable' | translate }}</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Explanatory subtext explaining statistical status in plain language -->
+        <!-- @if (item.subtext) {
+              <div class="trend-subtext mt-2 ml-4">
+                {{ item.subtext | translate }}
+              </div>
+            } -->
+
+        <!-- Collapsible Technical Stats Section -->
+        @if (item.stats.shouldPlotLine) {
+          <div class="stats-toggle-row">
+            <button
+              matButton
+              type="button"
+              class="stats-toggle-btn"
+              (click)="toggleStats(item.key)"
+              [attr.aria-expanded]="expandedStats()[item.key]"
+              [attr.aria-label]="
+                (expandedStats()[item.key] ? 'Hide technical statistics' : 'Show technical statistics') | translate
+              "
+            >
+              <span>{{ 'Statistical Indicators' | translate }}</span>
+              <mat-icon class="toggle-icon">
+                {{ expandedStats()[item.key] ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </button>
+          </div>
+
+          <!-- Statistical indicators grid placed inside expandable section -->
+          @if (expandedStats()[item.key]) {
+            <div class="stats-grid">
+              <!-- R² (Coefficient of determination) -->
+              <div class="stat-item">
+                <div class="stat-header">
+                  <span class="stat-symbol">R²</span>
+                  <button
+                    matIconButton
+                    type="button"
+                    class="stat-info-btn"
+                    [matMenuTriggerFor]="r2Menu"
+                    [attr.aria-label]="'Info on coefficient of determination R²' | translate"
+                  >
+                    <mat-icon class="info-icon">info_outline</mat-icon>
+                  </button>
+                  <mat-menu #r2Menu="matMenu" class="stat-info-menu" xPosition="before">
+                    <div class="stat-info-content" (click)="$event.stopPropagation()">
+                      <div class="info-title">{{ 'Goodness of Fit (R²)' | translate }}</div>
+                      <p class="info-desc">
+                        {{
+                          'Measures how well the trendline fits the data, showing the proportion of year-to-year variation explained by the trend (from 0.00 to 1.00).'
+                            | translate
+                        }}
+                      </p>
+                      <ul class="info-keys">
+                        <li>
+                          <strong>0.00 (0%)</strong>:
+                          {{ 'Trendline explains none of the variation; changes are purely random.' | translate }}
+                        </li>
+                        <li>
+                          <strong>0.10 – 0.30</strong>:
+                          {{
+                            'Typical for climate records; shows an observable trend alongside natural yearly variability.'
+                              | translate
+                          }}
+                        </li>
+                        <li>
+                          <strong>1.00 (100%)</strong>:
+                          {{ 'Perfect fit; all historical data points lie directly on the trendline.' | translate }}
+                        </li>
+                      </ul>
+                    </div>
+                  </mat-menu>
+                </div>
+                <span class="stat-value">{{
+                  item.stats.rSquared !== null && item.stats.rSquared !== undefined
+                    ? (item.stats.rSquared | number: '1.2-2')
+                    : '—'
+                }}</span>
+              </div>
+
+              <!-- p-value (Statistical significance) -->
+              <div class="stat-item">
+                <div class="stat-header">
+                  <span class="stat-symbol">p</span>
+                  <button
+                    matIconButton
+                    type="button"
+                    class="stat-info-btn"
+                    [matMenuTriggerFor]="pMenu"
+                    [attr.aria-label]="'Info on p-value' | translate"
+                  >
+                    <mat-icon class="info-icon">info_outline</mat-icon>
+                  </button>
+                  <mat-menu #pMenu="matMenu" class="stat-info-menu" xPosition="before">
+                    <div class="stat-info-content" (click)="$event.stopPropagation()">
+                      <div class="info-title">{{ 'Statistical Significance (p)' | translate }}</div>
+                      <p class="info-desc">
+                        {{
+                          'Indicates whether the historical change is strong enough to distinguish from random year-to-year weather fluctuations.'
+                            | translate
+                        }}
+                      </p>
+                      <ul class="info-keys">
+                        <li>
+                          <strong>&lt; 0.05</strong>:
+                          {{ 'Statistically clear trend (unlikely by chance alone)' | translate }}
+                        </li>
+                        <li>
+                          <strong>&ge; 0.05</strong>:
+                          {{ 'Uncertain trend (cannot rule out random fluctuations)' | translate }}
+                        </li>
+                      </ul>
+                    </div>
+                  </mat-menu>
+                </div>
+                <span
+                  class="stat-value"
+                  [class.stat-value-failed]="!item.stats.isSignificant && item.stats.pValue !== null"
+                  >{{ formatPValue(item.stats.pValue) }}</span
+                >
+              </div>
+            </div>
+          }
+        }
+      </mat-card>
+    }
+  </div>
+
+  <!-- Methodology and guidance footer link -->
+  <div class="methodology-link-row">
+    <button matButton type="button" class="methodology-btn" (click)="openMethodologyDialog()">
+      <mat-icon>help_outline</mat-icon>
+      <span>{{ 'How is trend calculated?' | translate }}</span>
+    </button>
+  </div>
+</div>

@@ -49,8 +49,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Heavy Document Export Isolation (DOCX/PDF)
 
-- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
-- In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
+- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.\n- In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
 
 ### TSX tsconfig-paths Resolution in Monorepos
 
@@ -92,6 +91,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Initialization Timing**: If a service inherits from `PicsaAsyncService`, `ready()` resolves immediately when `init()` finishes. Initializing the Supabase client or database property (`db`) inside an Angular `effect()` is asynchronous and runs on the next microtask cycle, meaning `ready()` can resolve while `db` is still undefined. Initialize clients synchronously inside `init()`.
 - **Offline Mode**: When Supabase is offline (detected via health check), `isAvailable` is set to `false` and `db` is not created. Services interacting with Supabase (`AppUserService`, `PicsaDatabaseSyncService`, `ForecastService`) must check `isAvailable()` before executing operations on `supabaseService.db` to prevent unhandled `TypeError` crashes.
 
+### Climate Station Identifiers & Seed Data (Canonical Slugs vs Met IDs)
+
+- **Station Slug as Canonical Primary Key**: In `climate_stations`, the primary key is `(country_code, station_id)` where `station_id` is always a clean, human-readable slug (e.g. `masvingo`, `buhera`, `chipata_met`), not an opaque numeric ID. Downstream foreign keys (`crop_data_downscaled.station_id`, `climate_station_data.station_id`), routing, and generated CSV filenames (`<station_id>.csv`) depend on this slug.
+- **National Met IDs**: Official national meteorological service or WMO station IDs (e.g. Zimbabwe MSD `67875010`) are stored in `met_station_id` (database column on `climate_stations` and `metStationId` on `IStationMeta`) for reference and linking. Avoid hardcoding station ID maps in code.
+- **Seed CSV Line Endings (CRLF Trap)**: Database seed CSVs in `apps/picsa-server/supabase/data/` may have Windows-style CRLF (`\r\n`) line endings. When programmatically modifying or appending columns to these CSVs, always strip `\r` (split on `/\r?\n/`) and write with clean Unix LF (`\n`) endings; otherwise appending values to lines with unstripped `\r` results in the added token or comma rendering on a separate line.
+- **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
+
 ### User Role Authorization Architecture
 
 - **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
@@ -126,6 +132,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
 - The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
+
+### Angular Component SCSS Budgets & Scoped Selector Expansion
+
+- **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
+- **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
 ---
 
@@ -173,8 +184,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Responsive Tool Customization Slots & Sidenav Container Layout
 
-- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
-- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.\n- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
 - **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
 - **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
 - **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
@@ -211,3 +221,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **RONI Event Criteria**: A season is classified as El Niño (or La Niña) when the running 3-month mean SST anomaly equals or exceeds $+0.5^\circ\text{C}$ (or $\le -0.5^\circ\text{C}$) for at least 5 consecutive overlapping 3-month periods. For example, 1953-1954 has 5 consecutive periods $\ge +0.5^\circ\text{C}$ (JJA to OND) and is classified as Weak El Niño (`WE`, grade 1), preserving historical continuity in `EL_NINO_YEARS`.
 - **Season Continuity**: The RONI dataset maintains continuous season records through the station data projection range (e.g. 2026-2027) so charts with recent or projected years have well-defined records rather than missing keys.
+
+### Climate Tool Trendline Analytics & Presentation Rules
+
+- **Simple Linear Regression Metric Redundancy**: In single-predictor OLS regression ($X = \text{Year}$), $r^2 \equiv R^2$. Displaying Pearson $r$ alongside $R^2$ clutters UI grids without providing additional value because trend direction is already explicitly conveyed by the signed rate of change (e.g. `+1.2 \circ C / decade`) and badge text. The stats grid focuses concisely on $R^2$ (goodness-of-fit) and $p$ (statistical significance).
+- **Threshold Failure Highlighting**: $p$-values have an established scientific threshold ($p < 0.05$ statistically clear, $p \ge 0.05$ not statistically distinguished from chance). When $p \ge 0.05$, it is highlighted with warning styling (`.stat-value-failed`). Continuous metrics like $R^2$ do not have binary failure cutoffs in climate analysis and should not be styled as failing.
+- **Unified Trend Classification Criteria**:
+  - **Consistent Line Weight (2.5px)**: All trendlines maintain a uniform `strokeWidth = 2.5` and dashed pattern (`8 4`) across Full, 30-Year, and 10-Year views, preventing lines from appearing optical thinned or faint on shorter/uncertain records.
+  - **Statistically Clear** ($p < 0.05$): Rendered in the series color with rate of change label.
+  - **Uncertain Trend** ($p \ge 0.05$ and $|r| \ge 0.15$ / $R^2 \ge 0.02$): Directional change is observable, but yearly noise prevents statistical certainty. Rendered in grey (`#98a2b3`) with an `uncertain` label.
+  - **Weak or Minimal Trend** ($p \ge 0.05$ and $|r| < 0.15$ / $R^2 < 0.02$): Rate of change is negligible. Rendered in grey (`#98a2b3`) with a `weak` label.
+  - **Insufficient Data**: When observation count (< 20 for full/30-yr, < 7 for 10-yr) or completeness (< 70%) requirements fail, lines are suppressed completely to prevent misleading inferences.
+- **Monthly Timespan Exclusion**: Trendline tools are strictly scoped to annual and seasonal indicators, hiding on monthly views where unadjusted seasonality would distort linear fits.
+
+### Angular Material Component Conventions
+
+- **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.

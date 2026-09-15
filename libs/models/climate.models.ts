@@ -29,6 +29,8 @@ export interface IStationMeta {
    * Station capability and data availability descriptor (generated at build/sync time)
    */
   capabilities?: IStationCapabilities;
+  /** National meteorological service / WMO station ID */
+  metStationId?: string;
 }
 
 export interface IStationData {
@@ -79,14 +81,29 @@ export interface IStationCapabilities {
   contentHash?: string;
   /** Schema version of the data format */
   schemaVersion: number;
-  /** Earliest and latest historical years with data, e.g. [1946, 2024] */
-  years?: [number, number];
+  /** Earliest and latest historical years with data, e.g. [1946, 2024], or [] if no data available */
+  years?: [number, number] | [];
   /** Total count of missing years within the historical range */
   totalMissingYears?: number;
   /** Available annual chart types */
   annual?: IChartId[];
   /** Available monthly chart types (e.g. ['rainfall', 'temp_min', 'temp_max']) */
   monthly?: IChartId[];
+}
+
+/**
+ * Check if a climate station has processed observation data available
+ */
+export function hasStationClimateData(station?: IStationMeta | null): boolean {
+  if (!station || !station.capabilities) {
+    return false;
+  }
+  const { years, annual, monthly } = station.capabilities;
+  return Boolean(
+    (years && years.length > 0) ||
+    (annual && annual.length > 0) ||
+    (monthly && monthly.length > 0)
+  );
 }
 
 /**
@@ -129,6 +146,8 @@ export interface IChartMeta {
   data_labels?: Record<string, string>;
   /** Colors for data series */
   colors: string[];
+  /** Color to use in chart view select (default to series color[0]) */
+  viewSelectColor?: string;
   yFormat: 'value' | 'date' | 'date-from-July';
   yLabel: string;
   xVar: keyof IStationData;
@@ -173,8 +192,14 @@ export interface IChartTools {
   line?: ILineToolOptions;
   probability?: IProbabilityToolOptions;
   terciles?: IGenericToolOptions;
+  trendline?: ITrendlineToolOptions;
   el_nino?: IGenericToolOptions;
   la_nina?: IGenericToolOptions;
+}
+
+export interface ITrendlineToolOptions {
+  /** Specify if tool should be available */
+  enabled?: boolean;
 }
 
 export interface ILineToolOptions {

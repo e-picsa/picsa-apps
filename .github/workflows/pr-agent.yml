@@ -5,19 +5,46 @@
 name: PR Agent
 
 on:
+  # `synchronize` is omitted: handle_push_trigger is false, so push events
+  # would start a full job that does nothing. `ready_for_review` must be
+  # listed here for the matching entry in pr_actions to ever fire.
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+# NOTE: No top-level `concurrency` block by design.
+# A top-level `cancel-in-progress: true` is evaluated before the job-level
+# `if:` guard, so a skipped Bot run would still cancel an in-progress
+# manual `/review`, leaving the workflow Cancelled with no review posted.
+# Concurrency is scoped at the job level below, where skipped runs never
+# acquire the lock and so can never cancel real work.
 
 jobs:
   pr_agent_job:
-    # Prevent bot loops when PR-Agent or dependabot posts comments
-    if: ${{ github.event.sender.type != 'Bot' }}
+    # Three guards: block bot loops (PR-Agent/dependabot/SonarCloud);
+    # `issue.pull_request != null` because issue_comment also fires on
+    # plain issues; `startsWith('/')` so ordinary comments don't spin up
+    # a job that no-ops.
+    if: >-
+      ${{ github.event.sender.type != 'Bot' &&
+          (github.event_name != 'issue_comment' ||
+           (github.event.issue.pull_request != null &&
+            startsWith(github.event.comment.body, '/'))) }}
+
+    # Auto `pull_request` runs share one `-auto` group per PR. Manual
+    # `issue_comment` runs get a unique group per comment id, so a second
+    # slash command can never cancel an in-progress review.
+    # The `||` fallback is required: `pull_request.number` is empty on
+    # issue_comment events, where the PR number lives at `issue.number`.
+    concurrency:
+      group: >-
+        ${{ github.workflow }}-${{ github.event.pull_request.number ||
+        github.event.issue.number }}${{ github.event_name ==
+        'issue_comment' && format('-manual-{0}', github.event.comment.id)
+        || '-auto' }}
+      cancel-in-progress: true
+
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -26,13 +53,15 @@ jobs:
       issues: write
 
     steps:
-      # Optional: Only needed if you rely on root repository context files (e.g. AGENTS.md, .pr_agent.toml)
+      # Only needed if you rely on root repository context files
+      # (e.g. AGENTS.md, .pr_agent.toml)
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Adds 👀 reaction to acknowledge slash command comment immediately
+      # Adds 👀 to acknowledge the command before the slower agent step.
+      # The slash-command check already happened in the job-level `if`.
       - name: Acknowledge Slash Command
-        if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/')
+        if: github.event_name == 'issue_comment'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
@@ -47,8 +76,10 @@ jobs:
               console.log('Failed to add reaction:', err.message);
             }
 
+      # continue-on-error lets the next step write a job summary before
+      # the run is marked failed.
       - name: PR Agent Action
-        uses: the-pr-agent/pr-agent@f3b385ea2927247ddcff2fe252472380b9c8f5fc #v0.45.0
+        uses: the-pr-agent/pr-agent@f3b385ea2927247ddcff2fe252472380b9c8f5fc # v0.45.0
         id: pragent
         continue-on-error: true
         env:
@@ -57,17 +88,18 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER__API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          
-          # 1. Automatic actions run when PR is FIRST opened/reopened
-          github_action_config.auto_describe: 'true'
-          github_action_config.auto_review: 'true'
-          github_action_config.auto_improve: 'true'
+
+          # Automatic actions on PR open/reopen/ready_for_review
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_review: "true"
+          github_action_config.auto_improve: "true"
           github_action_config.pr_actions: '["opened", "reopened", "ready_for_review"]'
 
-          # 2. Controls behavior when new commits are pushed (synchronize)
-          # Setting handle_push_trigger to false prevents auto_improve from running on pushes
-          github_action_config.handle_push_trigger: 'false'
+          # Prevents auto_improve from re-running on every pushed commit
+          github_action_config.handle_push_trigger: "false"
 
+      # `outcome` (not `conclusion`) is checked because continue-on-error
+      # rewrites conclusion to success.
       - name: Track Action Failures
         if: always() && steps.pragent.outcome != 'success'
         run: |
