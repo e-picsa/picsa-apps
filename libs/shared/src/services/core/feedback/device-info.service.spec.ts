@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateService } from '@ngx-translate/core';
+import { PicsaTranslateService } from '@picsa/i18n';
 
 import { NetworkService } from '../network.service';
 import { DeviceInfoService } from './device-info.service';
@@ -12,7 +12,7 @@ describe('DeviceInfoService', () => {
       providers: [
         DeviceInfoService,
         { provide: NetworkService, useValue: { isOnline: jest.fn().mockReturnValue(true) } },
-        { provide: TranslateService, useValue: { currentLang: 'global_en' } },
+        { provide: PicsaTranslateService, useValue: { currentLang: 'global_en' } },
       ],
     });
     service = TestBed.inject(DeviceInfoService);
@@ -26,11 +26,12 @@ describe('DeviceInfoService', () => {
     expect(info.screen_size).toMatch(/^\d+x\d+$/);
   });
 
-  it('truncates all fields to max 64 characters', async () => {
+  it('truncates fields within safe limits', async () => {
     const info = await service.collect();
-    for (const [, value] of Object.entries(info)) {
+    for (const [key, value] of Object.entries(info)) {
       if (value !== undefined) {
-        expect(value.length).toBeLessThanOrEqual(64);
+        const max = key === 'os_version' ? 200 : 64;
+        expect(value.length).toBeLessThanOrEqual(max);
       }
     }
   });

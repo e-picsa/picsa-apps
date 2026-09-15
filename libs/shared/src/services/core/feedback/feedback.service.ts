@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Network } from '@capacitor/network';
 import type { RxCollection, RxDocument } from 'rxdb';
 
@@ -8,6 +8,7 @@ import { FEEDBACK_QUEUE_COLLECTION, IFeedbackQueueEntry } from '../db_v2/schemas
 import { NetworkService } from '../network.service';
 import { SupabaseService } from '../supabase';
 import { DeviceInfoService } from './device-info.service';
+import { base64ToBlob } from './image.utils';
 
 interface IFeedbackSubmission {
   type: 'feedback' | 'bug_report';
@@ -24,9 +25,10 @@ interface IFeedbackResponse {
 
 const BACKOFF_BASE = 30_000;
 const BACKOFF_CAP = 3_600_000;
+const MAX_RETRIES = 5;
 
 @Injectable({ providedIn: 'root' })
-export class FeedbackService extends PicsaAsyncService {
+export class FeedbackService extends PicsaAsyncService implements OnDestroy {
   private readonly dbService = inject(PicsaDatabase_V2_Service);
   private readonly networkService = inject(NetworkService);
   private readonly supabaseService = inject(SupabaseService);
@@ -59,6 +61,15 @@ export class FeedbackService extends PicsaAsyncService {
     await this.drain().catch(noop);
   }
 
+  public ngOnDestroy() {
+    if (this.retryTimer) {
+      clearInterval(this.retryTimer);
+      this.retryTimer = undefined;
+    }
+    this.networkListener?.remove();
+    this.networkListener = undefined;
+  }
+
   /** Queue a new feedback entry and attempt to drain immediately if online */
   async submit(input: IFeedbackSubmission): Promise<'submitted' | 'pending' | 'failed'> {
     await this.ready();
@@ -82,16 +93,20 @@ export class FeedbackService extends PicsaAsyncService {
     if (!this.networkService.isOnline()) {
       return 'pending';
     }
-    await this.drain();
+    const serverErrors = await this.drain();
+    if (serverErrors.has(entry.id)) {
+      throw serverErrors.get(entry.id);
+    }
     const doc = await this.collection.findOne({ selector: { id: entry.id } }).exec();
     if (!doc) return 'failed';
     const status = doc._data.status as IFeedbackQueueEntry['status'];
     return status === 'submitted' ? 'submitted' : 'failed';
   }
 
-  /** Process all pending/failed feedback entries, respecting exponential backoff */
-  async drain(): Promise<void> {
-    if (this.draining) return;
+  /** Process all pending/failed feedback entries, respecting exponential backoff. Returns map of doc ID to server error. */
+  async drain(): Promise<Map<string, Error>> {
+    const serverErrors = new Map<string, Error>();
+    if (this.draining) return serverErrors;
     this.draining = true;
     try {
       const docs = await this.collection
@@ -111,6 +126,8 @@ export class FeedbackService extends PicsaAsyncService {
             status: 'submitted',
             server_id: response.id,
             screenshot_path: response.screenshot_path ?? undefined,
+            screenshot_base64: undefined,
+            screenshot_type: undefined,
             last_attempt_at: new Date().toISOString(),
           });
         } catch (error) {
@@ -120,16 +137,15 @@ export class FeedbackService extends PicsaAsyncService {
             retry_count: data.retry_count + 1,
             last_attempt_at: new Date().toISOString(),
           });
-          // Surface server (non-network) errors to the caller (e.g. the dialog)
-          // instead of silently queuing a retry that will keep failing.
           if ((error as any)?.__picsaServerError) {
-            throw error;
+            serverErrors.set(data.id, error as Error);
           }
         }
       }
     } finally {
       this.draining = false;
     }
+    return serverErrors;
   }
 
   private async updateDoc(doc: RxDocument<IFeedbackQueueEntry>, changes: Partial<IFeedbackQueueEntry>) {
@@ -138,6 +154,7 @@ export class FeedbackService extends PicsaAsyncService {
   }
 
   private shouldAttempt(data: IFeedbackQueueEntry): boolean {
+    if (data.retry_count >= MAX_RETRIES) return false;
     if (data.status === 'pending') return true;
     if (!data.last_attempt_at) return true;
     const elapsed = Date.now() - new Date(data.last_attempt_at).getTime();
@@ -216,15 +233,6 @@ export class FeedbackService extends PicsaAsyncService {
       );
     });
   }
-}
-
-function base64ToBlob(base64: string, mime: string): Blob {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.codePointAt(i) ?? 0;
-  }
-  return new Blob([bytes], { type: mime });
 }
 
 /** Swallows a rejected promise's error in branches where it's already handled. */

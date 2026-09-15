@@ -28,7 +28,7 @@ export class DeviceInfoService {
       try {
         const deviceInfo = await Device.getInfo();
         info.os = t(deviceInfo.platform);
-        info.os_version = t(deviceInfo.osVersion);
+        info.os_version = t(deviceInfo.osVersion, 200);
         info.device_model = t(deviceInfo.model);
       } catch {
         info.os = 'unknown';
@@ -41,7 +41,7 @@ export class DeviceInfoService {
       }
     } else {
       info.os = t(navigator.platform || 'web');
-      info.os_version = t(navigator.userAgent);
+      info.os_version = t(navigator.userAgent, 200);
     }
 
     return info;

@@ -128,7 +128,7 @@ describe('FeedbackService', () => {
   });
 
   afterEach(() => {
-    clearInterval(service['retryTimer']);
+    service.ngOnDestroy();
   });
 
   it('queues a pending doc when offline and does not call server', async () => {
