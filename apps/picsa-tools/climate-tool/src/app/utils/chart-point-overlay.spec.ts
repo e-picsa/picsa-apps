@@ -107,6 +107,34 @@ describe('chart-point-overlay', () => {
     expect(subText?.textContent).toBe('|r| = 0.12, p = 0.450');
   });
 
+  it('should render label-only badge without line when labelOnly is true', () => {
+    const trendlines: ITrendlineOverlay[] = [
+      {
+        id: 'trendline-insufficient',
+        startX: 2000,
+        endX: 2010,
+        startY: 50,
+        endY: 100,
+        color: '#13599e',
+        labelOnly: true,
+        label: 'Insufficient data',
+      },
+    ];
+
+    renderTrendlineOverlay(mockChart, trendlines);
+
+    const layer = mainG.querySelector('g.picsa-trendline-overlay');
+    expect(layer).toBeTruthy();
+
+    const line = layer?.querySelector('line');
+    expect(line?.style.display).toBe('none');
+
+    const badge = layer?.querySelector('g.trendline-label');
+    expect(badge).toBeTruthy();
+    const text = badge?.querySelector('text');
+    expect(text?.textContent).toBe('Insufficient data');
+  });
+
   it('should remove trendline and message overlay on clearTrendlineOverlay and clearPointOverlay', () => {
     renderTrendlineOverlay(
       mockChart,

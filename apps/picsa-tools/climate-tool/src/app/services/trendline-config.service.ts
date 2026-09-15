@@ -8,7 +8,6 @@ export class TrendlineConfigService {
    * Analysis window:
    * - 'full': Complete available record (requires >= 20 observations and >= 70% completeness).
    * - '30_year': Recent 30-year climate normal window (requires >= 20 observations).
-   * - '10_year': Recent 10-year period (requires >= 7 observations out of 10 years).
    */
   public readonly period = signal<TrendlinePeriod>('full');
 
