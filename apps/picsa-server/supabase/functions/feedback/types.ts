@@ -1,7 +1,7 @@
 import { z } from 'npm:zod@4/v4';
 
-/** Max screenshot size in bytes (10MB) */
-export const MAX_SCREENSHOT_BYTES = 10 * 1024 * 1024;
+/** Max screenshot size in bytes (3MB) */
+export const MAX_SCREENSHOT_BYTES = 3 * 1024 * 1024;
 
 /** Allowed screenshot content types */
 export const ALLOWED_SCREENSHOT_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const;
@@ -73,10 +73,10 @@ export interface ScreenshotFile {
 /** Max length of the raw device_info JSON string (defense against oversized payloads). */
 const MAX_DEVICE_INFO_STRING = 4096;
 
-const deviceInfoSchema = z.strictObject({
+const deviceInfoSchema = z.object({
   app_version: z.string().max(64).optional(),
   os: z.string().max(64).optional(),
-  os_version: z.string().max(64).optional(),
+  os_version: z.string().max(200).optional(),
   device_model: z.string().max(64).optional(),
   screen_size: z.string().max(64).optional(),
   network_status: z.string().max(64).optional(),
@@ -149,7 +149,7 @@ export function validateScreenshot(file: ScreenshotFile): string | null {
     return "This file type isn't supported. Please use PNG, JPG or WebP.";
   }
   if (file.content.byteLength > MAX_SCREENSHOT_BYTES) {
-    return 'That image is too large (maximum 10 MB). Please choose a smaller one.';
+    return 'That image is too large (maximum 3 MB). Please choose a smaller one.';
   }
   if (!isValidImageBytes(file.content, file.contentType)) {
     return "That file doesn't appear to be a valid image. Please try a different one.";

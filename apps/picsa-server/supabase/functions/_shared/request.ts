@@ -160,9 +160,9 @@ export const getFormData = async (req: Request): Promise<FormDataResult> => {
       }
       const cloned2 = req.clone();
       const rawBody = new Uint8Array(await cloned2.arrayBuffer());
-      console.error(`Manual multipart parse: body=${rawBody.length} bytes, boundary=${boundary}`);
+      console.log(`Manual multipart parse: body=${rawBody.length} bytes, boundary=${boundary}`);
       const result = await parseMultipartBody(rawBody, boundary);
-      console.error(`Parsed: ${Object.keys(result.fields).length} fields, ${Object.keys(result.files).length} files`);
+      console.log(`Parsed: ${Object.keys(result.fields).length} fields, ${Object.keys(result.files).length} files`);
       return result;
     } catch (manualErr) {
       console.error('Manual multipart parsing also failed', manualErr);

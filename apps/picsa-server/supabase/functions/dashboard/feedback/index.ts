@@ -134,7 +134,7 @@ async function signedUrl(req: Request): Promise<Response> {
     }
 
     const { data: urlData, error: urlError } = await supabase.storage
-      .from('feedback-screenshots')
+      .from('feedback')
       .createSignedUrl(data.screenshot_path, 60);
 
     if (urlError) {

@@ -41,7 +41,23 @@ for each row
 execute function extensions.moddatetime('updated_at');
 
 -- ============================================================
--- Storage — private bucket for screenshots (service role only)
+-- Storage — bucket for screenshots (public read, service_role write)
 -- ============================================================
-insert into storage.buckets (id, name, public) values ('feedback-screenshots', 'feedback-screenshots', false)
-on conflict (id) do nothing;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'feedback',
+  'feedback',
+  true,
+  3145728, -- 3 MB (consistent with edge function MAX_SCREENSHOT_BYTES)
+  array['image/png', 'image/jpeg', 'image/webp']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+create policy "Storage feedback public SELECT" on storage.objects for
+select
+  to public using (bucket_id = 'feedback');
+
+

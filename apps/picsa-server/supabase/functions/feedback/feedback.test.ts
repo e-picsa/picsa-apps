@@ -11,6 +11,7 @@ import {
   type ScreenshotFile,
 } from './types.ts';
 import { handleFeedback } from './index.ts';
+import { FEEDBACK_BUCKET } from './helpers.ts';
 
 /** Unique comment per test run so cleanup is reliable and parallel-safe. */
 const TEST_COMMENT = `test-feedback-${crypto.randomUUID()}`;
@@ -106,7 +107,7 @@ describe('feedback validation', () => {
     };
     const err = validateScreenshot(file);
     assertNotEquals(err, null);
-    assertStringIncludes(err as string, '10 MB');
+    assertStringIncludes(err as string, '3 MB');
   });
 
   it('rejects a non-image screenshot content type', () => {
@@ -274,7 +275,7 @@ async function assertRowExists(id: string, screenshotPath: string | null) {
 
 async function assertStorageObjectExists(screenshotPath: string, expectedBytes?: Uint8Array) {
   const supabase = getServiceRoleClient();
-  const { data, error } = await supabase.storage.from('feedback-screenshots').download(screenshotPath);
+  const { data, error } = await supabase.storage.from(FEEDBACK_BUCKET).download(screenshotPath);
   assertEquals(error, null);
   if (expectedBytes) {
     const bytes = new Uint8Array(await data!.arrayBuffer());
@@ -292,7 +293,7 @@ async function cleanupTestData() {
     if (data && data.length > 0) {
       for (const row of data) {
         if (row.screenshot_path) {
-          await supabase.storage.from('feedback-screenshots').remove([row.screenshot_path]);
+          await supabase.storage.from(FEEDBACK_BUCKET).remove([row.screenshot_path]);
         }
       }
       await (supabase as any).from('feedback_reports').delete().eq('comment', TEST_COMMENT);

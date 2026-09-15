@@ -235,7 +235,7 @@ describe('feedback admin (integration)', () => {
         .eq('id', id)
         .single();
       if (row?.screenshot_path) {
-        await supabase.storage.from('feedback-screenshots').remove([row.screenshot_path]);
+        await supabase.storage.from('feedback').remove([row.screenshot_path]);
       }
       await (supabase as any).from('feedback_reports').delete().eq('id', id);
     }
@@ -325,7 +325,7 @@ describe('feedback admin (integration)', () => {
     const screenshotPath = `reports/${crypto.randomUUID()}.png`;
     const pngBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0]);
     const { error: uploadErr } = await supabase.storage
-      .from('feedback-screenshots')
+      .from('feedback')
       .upload(screenshotPath, pngBytes, { contentType: 'image/png', upsert: false });
     if (uploadErr) throw new Error(`Upload failed: ${uploadErr.message}`);
 
@@ -347,7 +347,7 @@ describe('feedback admin (integration)', () => {
     assertEquals(res.status, 200);
     const body = await res.json();
     assertEquals(typeof body.signed_url, 'string');
-    assertStringIncludes(body.signed_url, 'feedback-screenshots');
+    assertStringIncludes(body.signed_url, 'feedback');
     assertEquals(body.expires_in, 60);
   });
 });

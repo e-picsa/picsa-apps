@@ -3,7 +3,7 @@ import { ErrorResponse, JSONResponse } from '../_shared/response.ts';
 import { getFormData } from '../_shared/request.ts';
 import { getUserFromRequest, getServiceRoleClient } from '../_shared/client.ts';
 import { mergeScreenPath, validateFeedbackFields, validateScreenshot, type ScreenshotFile } from './types.ts';
-import { insertFeedbackReport, uploadScreenshot } from './helpers.ts';
+import { FEEDBACK_BUCKET, insertFeedbackReport, uploadScreenshot } from './helpers.ts';
 
 /**
  * Handle a feedback submission (multipart form-data).
@@ -67,7 +67,7 @@ async function uploadScreenshotIfProvided(file: unknown): Promise<string | null>
 async function removeScreenshotIfOrphaned(screenshot_path: string | null): Promise<void> {
   if (!screenshot_path) return;
   try {
-    await getServiceRoleClient().storage.from('feedback-screenshots').remove([screenshot_path]);
+    await getServiceRoleClient().storage.from(FEEDBACK_BUCKET).remove([screenshot_path]);
   } catch (cleanupErr) {
     console.error('Failed to remove orphaned screenshot', cleanupErr);
   }

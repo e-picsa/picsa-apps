@@ -1,8 +1,10 @@
 import { getServiceRoleClient } from '../_shared/client.ts';
 import { extensionFor, type DeviceInfo, type ScreenshotFile } from './types.ts';
 
+export const FEEDBACK_BUCKET = 'feedback';
+
 /**
- * Upload a screenshot to the private `feedback-screenshots` bucket.
+ * Upload a screenshot to the `feedback` bucket.
  * Returns the storage path (e.g. `reports/<uuid>.png`).
  */
 export async function uploadScreenshot(file: ScreenshotFile): Promise<string> {
@@ -10,7 +12,7 @@ export async function uploadScreenshot(file: ScreenshotFile): Promise<string> {
   const path = `reports/${crypto.randomUUID()}.${ext}`;
   const supabase = getServiceRoleClient();
   const { error } = await supabase.storage
-    .from('feedback-screenshots')
+    .from(FEEDBACK_BUCKET)
     .upload(path, file.content, { contentType: file.contentType, upsert: false });
   if (error) {
     throw error;
