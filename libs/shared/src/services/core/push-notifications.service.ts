@@ -1,12 +1,20 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
+
+import { AppUpdateService } from '../native/app-update';
+import { AppUserService } from './appUser.service';
+import { PicsaNotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PicsaPushNotificationService {
-  //constructor() {}
+  private appUserService = inject(AppUserService);
+  private appUpdateService = inject(AppUpdateService);
+  private notificationService = inject(PicsaNotificationService);
+  private router = inject(Router);
 
   public async initializePushNotifications() {
     if (!Capacitor.isNativePlatform()) {
@@ -20,10 +28,24 @@ export class PicsaPushNotificationService {
         // Request permissions
         const reqResult = await PushNotifications.requestPermissions();
         if (reqResult.receive !== 'granted') {
-          console.error('Push notification permission was denied');
+          console.warn('[Push] Notification permission was denied');
           return;
         }
       }
+
+      // Create standard notification channel for Android 8.0+ (API 26+)
+      if (Capacitor.getPlatform() === 'android') {
+        await PushNotifications.createChannel({
+          id: 'default',
+          name: 'General',
+          description: 'General notifications and release updates',
+          importance: 4, // HIGH
+          visibility: 1, // PUBLIC
+          sound: 'default',
+          vibration: true,
+        });
+      }
+
       // Register with Apple / Google to receive push via FCM
       await PushNotifications.register();
 
@@ -32,45 +54,51 @@ export class PicsaPushNotificationService {
 
       // Add listeners
       PushNotifications.addListener('registration', (token: Token) => {
-        console.log('Push registration success');
-        // in case we have logic to save and update device tokens
-        //this.sendTokenToServer(token.value);
+        console.log('[Push] Registration success:', token.value);
+        this.sendTokenToServer(token.value);
       });
 
       PushNotifications.addListener('registrationError', (error: any) => {
-        // handle error logic
-        console.error('Error on registration:', error);
+        console.error('[Push] Error on registration:', error);
       });
 
       PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-        console.log('Push received');
-        // Handle foreground notification if required
+        console.log('[Push] Received in foreground:', notification);
         this.handleForegroundNotification(notification);
       });
 
-      PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
-        console.log('Push action performed');
-        // Handle notification click
-        this.handleNotificationClick(notification);
+      PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
+        console.log('[Push] Action performed:', notification);
+        await this.handleNotificationClick(notification);
       });
     } catch (err) {
-      console.error('Error initializing push notifications:', err);
+      console.error('[Push] Error initializing push notifications:', err);
     }
   }
 
-  private async sendTokenToServer(token: string) {
-    //TODO: Implement sending token to your backend if required
-    //guidence on where we can save this
+  private sendTokenToServer(token: string) {
+    this.appUserService.setFcmToken(token);
   }
 
   private handleForegroundNotification(notification: PushNotificationSchema) {
-    // Implement custom foreground notification handling
+    const title = notification.title ?? 'PICSA';
+    const body = notification.body ? `: ${notification.body}` : '';
+    this.notificationService.showUserNotification(
+      { message: `${title}${body}`, matIcon: 'notifications' },
+      { duration: 6000 },
+    );
   }
 
-  private handleNotificationClick(actionPerformed: ActionPerformed) {
-    // Implement navigation or other actions when notification is clicked
-    const notification = actionPerformed.notification;
-    // in the case notification has extra infromations like a route to navigate to
-    // this.router.navigate([notification.data.route]);
+  private async handleNotificationClick(actionPerformed: ActionPerformed) {
+    const data = actionPerformed.notification?.data ?? {};
+    const action = data.action ?? data.type;
+    if (action === 'app_update' || action === 'update') {
+      await this.appUpdateService.checkForUpdates();
+      if (data.openStore) {
+        await this.appUpdateService.openStore();
+      }
+    } else if (data.route) {
+      this.router.navigate([data.route]);
+    }
   }
 }

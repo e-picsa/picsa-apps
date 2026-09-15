@@ -24,6 +24,7 @@ dependencies {
     implementation project(':capacitor-camera')
     implementation project(':capacitor-share')
     implementation project(':capacitor-push-notifications')
+    implementation project(':capawesome-capacitor-app-update')
     implementation "androidx.webkit:webkit:1.4.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 }
