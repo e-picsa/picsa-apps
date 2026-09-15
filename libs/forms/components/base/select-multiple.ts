@@ -1,4 +1,4 @@
-import { computed, Directive, input } from '@angular/core';
+import { computed, Directive, input, signal } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
 // Import the super-powered CVA base class
@@ -16,17 +16,28 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
 
   public readonly filterFn = input<(option: T) => boolean>();
 
-  public selectOptions: T[] = [];
+  // signal-backed so `filteredOptions`/`selectedOptions` recompute if options are updated after init
+  private readonly selectOptionsSignal = signal<T[]>([]);
   public selectOptionsHashmap: Record<string, T> = {} as any;
 
+  public get selectOptions() {
+    return this.selectOptionsSignal();
+  }
+
   protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
-    this.selectOptions = selectOptions;
-    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(this.selectOptions, 'id');
+    this.setSelectOptions(selectOptions, selectOptionsHashmap);
+  }
+
+  /** Replace the available options, e.g. to merge in live custom entries alongside a hardcoded base list */
+  protected setSelectOptions(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
+    this.selectOptionsSignal.set(selectOptions);
+    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(selectOptions, 'id');
   }
 
   protected readonly filteredOptions = computed(() => {
+    const options = this.selectOptionsSignal();
     const fn = this.filterFn();
-    return fn ? this.selectOptions.filter(fn) : this.selectOptions;
+    return fn ? options.filter(fn) : options;
   });
 
   protected readonly selectedOptions = computed(() => {
