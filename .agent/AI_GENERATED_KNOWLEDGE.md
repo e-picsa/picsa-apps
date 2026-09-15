@@ -78,7 +78,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Database Triggers & Internal Edge Functions
 
 - **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
-- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n  - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
 - **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
 ### PostgreSQL Generated Column Nullability
@@ -106,7 +106,14 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
   - Route protection uses the functional `authRoleGuard` in `dashboard/src/app/modules/auth/guards`.
   - Template protection uses `AuthRoleRequiredDirective` (`*authRoleRequired="..."`).
-  - Navigation definitions in `navLinks.ts` define role requirements enforced by `authenticated-layout.component`.
+### User-Submitted Feedback & Storage Isolation
+
+- **Deno lockfile version**: keep `apps/picsa-server/supabase/functions/deno.lock` at v4 (edge runtime Deno 2.1.4 compatible) — newer local Deno upgrades it to v5 and breaks `supabase functions serve`; restore it after local deno test runs.
+- **Service-role-only tables & Private Buckets**: for user-submitted content (`feedback_reports`), REVOKE anon/authenticated + GRANT service_role with RLS and route all client access through edge functions; store screenshots in a private bucket (`feedback-screenshots`).
+- **Edge Runtime Multipart Uploads**: `multiparser` npm package is broken on the edge runtime. Use native `req.formData()` with a manual byte-level fallback parser (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if row insert fails (orphan cleanup).
+- **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
+- **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
+
 
 ---
 
@@ -139,6 +146,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
 ---
+
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
 
