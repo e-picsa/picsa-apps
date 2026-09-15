@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { CROPS_DATA, CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
+import { CROPS_DATA, ICropData } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { arrayToHashmap } from '@picsa/utils';
 
 import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
 
@@ -25,9 +26,18 @@ export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultiple
   /** Show reset option button with custom text and matIcon */
   public readonly resetOption = input<{ text: string; matIcon: string }>();
 
+  /** Additional user-created options (e.g. custom crops) rendered alongside the hardcoded list */
+  public readonly customOptions = input<ICropData[]>([]);
+  /** Show an "add custom" tile with custom text and matIcon */
+  public readonly addCustomOption = input<{ text: string; matIcon: string }>();
+  public readonly addCustomClicked = output<void>();
+
   constructor() {
     super();
-    this.initBase(CROPS_DATA, CROPS_DATA_HASHMAP);
+    effect(() => {
+      const options = [...CROPS_DATA, ...this.customOptions()];
+      this.setSelectOptions(options, arrayToHashmap(options, 'name'));
+    });
   }
 
   public handleSelect(id: string) {
