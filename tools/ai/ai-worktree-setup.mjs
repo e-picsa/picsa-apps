@@ -11,12 +11,6 @@
  *
  * Usage:
  *   node tools/ai/ai-worktree-setup.mjs   # direct invocation (required on fresh worktrees)
- *   yarn ai:setup                  # shorthand, only works AFTER dependencies are installed
- *
- * NOTE: on a fresh worktree `yarn ai:setup` fails before the script even runs
- * ("Couldn't find the node_modules state file") because Yarn cannot execute
- * scripts prior to install. Always use the direct `node ...` invocation for
- * first-time setup; `yarn ai:setup` is just a convenience alias afterwards.
  *
  * The script is idempotent: a fingerprint matching this script version,
  * worktree, and main checkout exits successfully without doing anything
@@ -49,7 +43,6 @@ function printHelp() {
 
 Usage:
   node tools/ai/ai-worktree-setup.mjs [options]   # use this on fresh worktrees
-  yarn ai:setup [options]                          # shorthand, post-install only
 
 Options:
   --force        Re-run even if the setup fingerprint already exists
@@ -104,18 +97,14 @@ function readFingerprint(worktreeRoot) {
 function fingerprintStatus(existing, { force, dryRun, worktreeRoot, mainRoot }) {
   if (!existing || force) return 'proceed';
   const valid =
-    existing.version === FINGERPRINT_VERSION &&
-    existing.worktree === worktreeRoot &&
-    existing.mainRepo === mainRoot;
+    existing.version === FINGERPRINT_VERSION && existing.worktree === worktreeRoot && existing.mainRepo === mainRoot;
   if (dryRun) {
     const note = valid ? 'a real run would exit here' : 'a real run would fail here';
     console.log(`ai-setup: (dry-run) fingerprint ${valid ? 'exists' : 'is stale'} — ${note} (use --force to re-run).`);
     return 'proceed';
   }
   if (valid) {
-    console.log(
-      `ai-setup: already initialised (${existing.installedAt ?? 'unknown date'}). Use --force to re-run.`,
-    );
+    console.log(`ai-setup: already initialised (${existing.installedAt ?? 'unknown date'}). Use --force to re-run.`);
     return 'skip';
   }
   console.error('ai-setup: stale fingerprint found (version, worktree, or main repo mismatch); re-run with --force.');
@@ -189,7 +178,6 @@ function main() {
 
   if (skipInstall) {
     console.log('\nai-setup: --skip-install, not running yarn install and not writing a fingerprint.');
-    console.log('Run the full `yarn ai:setup` (or with --force) to complete initialisation.');
     return 0;
   }
 

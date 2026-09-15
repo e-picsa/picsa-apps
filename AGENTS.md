@@ -44,7 +44,6 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 
 - **Check the fingerprint first**: if `.ai-worktree-setup.json` exists at the repo root, setup already ran — skip this section.
 - **Otherwise run setup immediately, before any other command**: `node tools/ai/ai-worktree-setup.mjs`. It installs dependencies via `yarn install --immutable` and copies git-ignored local files (env configs, `google-services.json`, supabase config) from the main checkout into the worktree.
-- **Invoke with `node` directly, NOT via `yarn`** — `yarn ai:setup` fails on fresh worktrees (`Couldn't find the node_modules state file`) because Yarn cannot run any script before install. (`yarn ai:setup` is only a shorthand for re-runs once dependencies exist.)
 - **Do NOT run `yarn install` directly** — the setup script covers the install plus the env/config copy, and writes the `.ai-worktree-setup.json` fingerprint that automated clients use to detect completed setup.
 - If setup fails, resolve the blocker and re-run (with `--force` if a partial fingerprint exists). The script never overwrites existing worktree files unless `--overwrite` is passed.
 
@@ -97,7 +96,7 @@ As an intelligent agent, you are responsible for maintaining the project's insti
    - ❌ **No Incomplete/Test Stubs**: Never commit verification or empty placeholder entries.
 4. **Structure & Curation**:
    - Do NOT append chronological journal entries (`Date: YYYY-MM-DD`, `Context: ...`).
-   - Group knowledge under the appropriate **topical section** (e.g., *Multi-Runtime & Bundling*, *Supabase & Triggers*, *Angular & Reactive State*, *Charts & SVG*, *Domain Logic*).
+   - Group knowledge under the appropriate **topical section** (e.g., _Multi-Runtime & Bundling_, _Supabase & Triggers_, _Angular & Reactive State_, _Charts & SVG_, _Domain Logic_).
    - If a fix makes an existing gotcha obsolete, **prune or update** the existing section instead of letting dead knowledge accumulate.
 5. **Regenerate Codebase Map on Structural Additions**:
    - **When to regenerate**: Do NOT run `yarn ai:gen-codemap` for minor bug fixes or method updates. ONLY regenerate when creating new structural elements that require extraction:
