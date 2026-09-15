@@ -25,8 +25,7 @@
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup",
     "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
     "ai:lint": "node tools/ai/ai-lint.mjs",
-    "ai:test": "node tools/ai/ai-test.mjs",
-    "ai:setup": "node tools/ai/ai-worktree-setup.mjs"
+    "ai:test": "node tools/ai/ai-test.mjs"
   },
   "private": true,
   "dependencies": {

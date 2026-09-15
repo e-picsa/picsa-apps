@@ -10,12 +10,13 @@
  *      agents and automated clients can detect that setup already ran.
  *
  * Usage:
- *   yarn ai:setup                  # full setup (copy files + install + fingerprint)
- *   yarn ai:setup --force          # re-run even if the fingerprint already exists
- *   yarn ai:setup --overwrite      # overwrite existing worktree files when copying
- *   yarn ai:setup --skip-install   # only copy files (no fingerprint is written)
- *   yarn ai:setup --main <path>    # copy from an explicit checkout instead of git detection
- *   yarn ai:setup --dry-run        # print what would happen without executing
+ *   node tools/ai/ai-worktree-setup.mjs   # direct invocation (required on fresh worktrees)
+ *   yarn ai:setup                  # shorthand, only works AFTER dependencies are installed
+ *
+ * NOTE: on a fresh worktree `yarn ai:setup` fails before the script even runs
+ * ("Couldn't find the node_modules state file") because Yarn cannot execute
+ * scripts prior to install. Always use the direct `node ...` invocation for
+ * first-time setup; `yarn ai:setup` is just a convenience alias afterwards.
  *
  * The script is idempotent: if the fingerprint exists it exits successfully
  * without doing anything (unless `--force` is passed), so automated clients
@@ -44,7 +45,8 @@ function printHelp() {
   console.log(`ai-worktree-setup: initialise a fresh git worktree
 
 Usage:
-  yarn ai:setup [options]
+  node tools/ai/ai-worktree-setup.mjs [options]   # use this on fresh worktrees
+  yarn ai:setup [options]                          # shorthand, post-install only
 
 Options:
   --force        Re-run even if the setup fingerprint already exists

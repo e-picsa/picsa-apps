@@ -43,8 +43,9 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 ### Worktree Initialisation (Run First in New Worktrees)
 
 - **Check the fingerprint first**: if `.ai-worktree-setup.json` exists at the repo root, setup already ran — skip this section.
-- **Otherwise run setup immediately, before any other command**: `yarn ai:setup`. It installs dependencies via `yarn install --immutable` and copies git-ignored local files (env configs, `google-services.json`, supabase config) from the main checkout into the worktree.
-- **Do NOT run `yarn install` directly** — `yarn ai:setup` covers the install plus the env/config copy, and writes the `.ai-worktree-setup.json` fingerprint that automated clients use to detect completed setup.
+- **Otherwise run setup immediately, before any other command**: `node tools/ai/ai-worktree-setup.mjs`. It installs dependencies via `yarn install --immutable` and copies git-ignored local files (env configs, `google-services.json`, supabase config) from the main checkout into the worktree.
+- **Invoke with `node` directly, NOT via `yarn`** — `yarn ai:setup` fails on fresh worktrees (`Couldn't find the node_modules state file`) because Yarn cannot run any script before install. (`yarn ai:setup` is only a shorthand for re-runs once dependencies exist.)
+- **Do NOT run `yarn install` directly** — the setup script covers the install plus the env/config copy, and writes the `.ai-worktree-setup.json` fingerprint that automated clients use to detect completed setup.
 - If setup fails, resolve the blocker and re-run (with `--force` if a partial fingerprint exists). The script never overwrites existing worktree files unless `--overwrite` is passed.
 
 ### Planning Mode Requirements
