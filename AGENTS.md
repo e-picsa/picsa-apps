@@ -40,6 +40,13 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 1. These rule files are the **SAME FILE**. Do not read more than one of them to conserve context window.
 2. You **MUST** still reference the detailed documentation files in the `.agent/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
 
+### Worktree Initialisation (Run First in New Worktrees)
+
+- **Check the fingerprint first**: if `.ai-worktree-setup.json` exists at the repo root, setup already ran — skip this section.
+- **Otherwise run setup immediately, before any other command**: `yarn ai:setup`. It installs dependencies via `yarn install --immutable` and copies git-ignored local files (env configs, `google-services.json`, supabase config) from the main checkout into the worktree.
+- **Do NOT run `yarn install` directly** — `yarn ai:setup` covers the install plus the env/config copy, and writes the `.ai-worktree-setup.json` fingerprint that automated clients use to detect completed setup.
+- If setup fails, resolve the blocker and re-run (with `--force` if a partial fingerprint exists). The script never overwrites existing worktree files unless `--overwrite` is passed.
+
 ### Planning Mode Requirements
 
 - **Respect Planning Mode in all cases**: Avoid making code changes without presenting a plan and receiving explicit approval, unless explicitly given permission to do so by the user. This ensures strict adherence to the planning workflow across all tasks.
@@ -48,16 +55,16 @@ This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other I
 
 To conserve context tokens and runtime, agents **MUST NOT** execute full application builds (`yarn build`, `yarn nx build`, `nx build`, `picsa-apps-app-native:build`) after making code changes. App builds run full AOT passes, bundle native Capacitor layers, and flood the context window with thousands of tokens of build logs.
 
-1. **Targeted Linting (Default for Syntax, Type, and Template Checks)**:
-   - Run linting **only** on the specific tool or library that was modified.
-   - Avoid linting massive shells like `picsa-apps-app-native`.
-   - **Library example**: `yarn nx lint components` or `yarn nx lint utils`
-   - **Tool example**: `yarn nx lint picsa-tools-crop-probability-tool` or `yarn nx lint picsa-tools-climate-tool`
-2. **Targeted Testing (Strictly Scoped to Modified Code)**:
-   - When verifying logic changes, run tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs).
-   - **NEVER** run broad project test suites or test across the general codebase.
-   - **Library example**: `yarn nx test utils --testFile=climate.utils.spec.ts`
-   - **Tool example**: `yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts`
+1. **Linting (ALWAYS via `yarn ai:lint`)**:
+   - After modifying files, run `yarn ai:lint` with no args. It auto-detects all files changed vs `HEAD` (staged + unstaged + untracked — no staging required), applies `prettier --write`, then `eslint --fix`.
+   - To lint specific files: `yarn ai:lint <path/to/file.ts> [...]`.
+   - Do NOT run `yarn nx lint <project>`, bare `eslint`, `prettier`, or `lint-staged` directly — `yarn ai:lint` already covers them in the correct order.
+   - Avoid linting massive shells like `picsa-apps-app-native` via `nx lint`.
+2. **Testing (ALWAYS via `yarn ai:test`)**:
+   - When verifying logic changes, run `yarn ai:test` with no args. It auto-detects changed files vs `HEAD`, maps each to its colocated `*.spec.ts`, and runs `yarn nx test <project> --testFile=<spec>` for the owning project.
+   - To test specific files: `yarn ai:test <path/to/file.ts> [...]` (source or spec paths both work).
+   - **ONLY** run specs covering code you created or modified. **NEVER** run broad project test suites or tests across the general codebase.
+   - Do NOT run `yarn nx test` directly — `yarn ai:test` resolves the project and `--testFile` for you.
 3. **When Builds Are Permitted**:
    - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
 

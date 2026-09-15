@@ -23,7 +23,10 @@
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
     "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup",
-    "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts"
+    "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
+    "ai:lint": "node tools/ai/ai-lint.mjs",
+    "ai:test": "node tools/ai/ai-test.mjs",
+    "ai:setup": "node tools/ai/ai-worktree-setup.mjs"
   },
   "private": true,
   "dependencies": {
