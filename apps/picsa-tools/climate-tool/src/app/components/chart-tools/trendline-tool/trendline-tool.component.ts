@@ -199,7 +199,8 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
    * Generates trendlines for SVG chart overlay.
    * Public graph display rule:
    * - Plotted as a solid coloured line ONLY when statistically distinguishable from zero (p < 0.05).
-   * - No line is plotted for inconclusive direction ('no_clear_trend') or insufficient data.
+   * - For inconclusive direction ('no_clear_trend') or 'insufficient_data' only the label badge
+   *   is rendered (no line), without any value - e.g. "trendline: No clear trend".
    */
   public override getTrendlines(): ITrendlineOverlay[] | undefined {
     if (this.chartService.timespanMode() === 'monthly') {
@@ -223,6 +224,20 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           strokeDasharray: '8 4',
           label: item.rateLabel,
         });
+      } else if (item.status === 'no_clear_trend' || item.status === 'insufficient_data') {
+        const fallback = this.getLabelOnlyCoords(item.key, item.stats);
+        const statusLabel = item.status === 'insufficient_data' ? 'Insufficient data' : 'No clear trend';
+        lines.push({
+          id: `trendline-${item.key}`,
+          seriesKey: item.key,
+          startX: fallback.startX,
+          endX: fallback.endX,
+          startY: fallback.startY,
+          endY: fallback.endY,
+          color: item.color,
+          labelOnly: true,
+          label: `${statusLabel}`,
+        });
       }
     }
 
@@ -231,5 +246,41 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
 
   public override getChartMessage(): IChartOverlayMessage | undefined {
     return undefined;
+  }
+
+  /**
+   * Resolve badge anchor coords for label-only overlays.
+   * Prefers fitted start/end when available so the badge sits near the right end
+   * (matching plotted trendlines and naturally separating multi-series badges).
+   * Falls back to the observed data extent with the last value when no fit exists.
+   */
+  private getLabelOnlyCoords(
+    key: string,
+    stats: ITrendlineStats,
+  ): { startX: number; endX: number; startY: number; endY: number } {
+    if (stats.startX !== 0 || stats.endX !== 0) {
+      return { startX: stats.startX, endX: stats.endX, startY: stats.startY, endY: stats.endY };
+    }
+    const def = this.chartService.chartDefinition();
+    const data = this.chartService.chartData();
+    const xVar = def?.xVar || 'Year';
+    let minX = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let lastY = 0;
+    for (const row of data) {
+      const x = row[xVar] as number;
+      const y = row[key] as number;
+      if (typeof x === 'number' && Number.isFinite(x) && typeof y === 'number' && Number.isFinite(y)) {
+        if (x < minX) minX = x;
+        if (x >= maxX) {
+          maxX = x;
+          lastY = y;
+        }
+      }
+    }
+    if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+      return { startX: 0, endX: 0, startY: 0, endY: 0 };
+    }
+    return { startX: minX, endX: maxX, startY: lastY, endY: lastY };
   }
 }

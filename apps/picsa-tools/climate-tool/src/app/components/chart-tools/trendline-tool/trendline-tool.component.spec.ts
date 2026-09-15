@@ -95,7 +95,7 @@ describe('TrendlineToolComponent', () => {
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should handle multi-series charts by plotting solid colored lines only for significant series and omitting inconclusive lines', () => {
+  it('should handle multi-series charts by plotting solid colored lines only for significant series and rendering label-only for inconclusive', () => {
     const tempMeta = {
       _id: 'temp',
       name: 'Temperature',
@@ -141,16 +141,20 @@ describe('TrendlineToolComponent', () => {
     expect(analyses[2].status).toBe('no_clear_trend');
     expect(analyses[2].stats.shouldPlotLine).toBe(false);
 
-    // Only the 2 statistically clear series have trendlines plotted; inconclusive has no line
+    // Only the 2 statistically clear series have lines plotted; inconclusive renders label-only with no line
     const trendlines = component.getTrendlines();
-    expect(trendlines?.length).toBe(2);
+    expect(trendlines?.length).toBe(3);
     expect(trendlines?.[0].color).toBe('#2b83ba');
+    expect(trendlines?.[0].labelOnly).toBeFalsy();
     expect(trendlines?.[1].color).toBe('#abdda4');
+    expect(trendlines?.[1].labelOnly).toBeFalsy();
+    expect(trendlines?.[2].labelOnly).toBe(true);
+    expect(trendlines?.[2].label).toBe('No clear trend');
 
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should not plot a trendline and should show no clear trend status when p >= 0.05', () => {
+  it('should render label-only without line and show no clear trend status when p >= 0.05', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -171,7 +175,9 @@ describe('TrendlineToolComponent', () => {
     fixture.detectChanges();
 
     const trendlines = component.getTrendlines();
-    expect(trendlines?.length).toBe(0);
+    expect(trendlines?.length).toBe(1);
+    expect(trendlines?.[0].labelOnly).toBe(true);
+    expect(trendlines?.[0].label).toBe('No clear trend');
 
     const analyses = component.seriesAnalyses();
     expect(analyses[0].status).toBe('no_clear_trend');
@@ -180,7 +186,7 @@ describe('TrendlineToolComponent', () => {
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should not plot a line when record has < 20 observations', () => {
+  it('should render label-only without line when record has < 20 observations', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -201,7 +207,9 @@ describe('TrendlineToolComponent', () => {
     fixture.detectChanges();
 
     const trendlines = component.getTrendlines();
-    expect(trendlines?.length).toBe(0);
+    expect(trendlines?.length).toBe(1);
+    expect(trendlines?.[0].labelOnly).toBe(true);
+    expect(trendlines?.[0].label).toBe('Insufficient data');
 
     const analyses = component.seriesAnalyses();
     expect(analyses[0].status).toBe('insufficient_data');
