@@ -37,6 +37,17 @@
 
         <!-- Concise Trend Outcome Badge & Rate -->
         <div class="flex items-center justify-between gap-2">
+          <!-- Estimated decadal rate of change (always shown if slope exists) -->
+          @if (item.stats.isSignificant && item.stats.changePerDecade !== null) {
+            <span
+              class="text-xs font-semibold whitespace-nowrap"
+              [class.text-slate-800]="item.stats.shouldPlotLine"
+              [class.text-slate-400]="!item.stats.shouldPlotLine"
+            >
+              {{ item.rateLabel }}
+            </span>
+          }
+
           @switch (item.status) {
             @case ('upward_trend') {
               <div class="trend-badge trend-active">
@@ -69,17 +80,6 @@
               </div>
             }
           }
-
-          <!-- Estimated decadal rate of change (always shown if slope exists) -->
-          <!-- @if (item.stats.changePerDecade !== null) {
-            <span
-              class="text-xs font-semibold whitespace-nowrap"
-              [class.text-slate-800]="item.stats.shouldPlotLine"
-              [class.text-slate-400]="!item.stats.shouldPlotLine"
-            >
-              {{ item.rateLabel }}
-            </span>
-          } -->
         </div>
 
         <!-- Explanatory note for insufficient or constant series -->
@@ -198,7 +198,7 @@
   </div>
 
   <!-- Methodology button -->
-  <button type="button" class="methodology-btn" (click)="openMethodologyDialog()">
+  <button matButton type="button" class="methodology-btn" (click)="openMethodologyDialog()">
     <mat-icon>help_outline</mat-icon>
     <span>{{ 'How is the trendline calculated?' | translate }}</span>
   </button>
