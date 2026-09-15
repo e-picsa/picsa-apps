@@ -529,15 +529,15 @@ export function formatDecadeRate(val: number | null | undefined, units: string, 
 }
 
 /**
- * Formats a 95% confidence interval for decadal change.
- * Temperature values keep 1 decimal place; all other values round to nearest integer.
+ * Splits a 95% confidence interval for decadal change into range and unit parts.
+ * Enables clean 2-line rendering in compact table displays.
  */
-export function formatConfidenceInterval(
+export function formatConfidenceIntervalParts(
   lower: number | null | undefined,
   upper: number | null | undefined,
   units: string,
   isTemperature: boolean,
-): string {
+): { range: string; unit: string } {
   if (
     lower === null ||
     lower === undefined ||
@@ -546,7 +546,7 @@ export function formatConfidenceInterval(
     upper === undefined ||
     !Number.isFinite(upper)
   ) {
-    return '—';
+    return { range: '—', unit: '' };
   }
 
   const formatOne = (v: number) => {
@@ -556,8 +556,28 @@ export function formatConfidenceInterval(
     return (clean > 0 ? '+' : '') + clean.toString();
   };
 
-  const unitStr = units ? ` ${units}` : '';
-  return `[${formatOne(lower)}, ${formatOne(upper)}]${unitStr} / decade`;
+  const unitStr = units ? `${units} / decade` : '/ decade';
+  return {
+    range: `[${formatOne(lower)}, ${formatOne(upper)}]`,
+    unit: unitStr,
+  };
+}
+
+/**
+ * Formats a 95% confidence interval for decadal change.
+ * Temperature values keep 1 decimal place; all other values round to nearest integer.
+ */
+export function formatConfidenceInterval(
+  lower: number | null | undefined,
+  upper: number | null | undefined,
+  units: string,
+  isTemperature: boolean,
+): string {
+  const parts = formatConfidenceIntervalParts(lower, upper, units, isTemperature);
+  if (parts.range === '—') {
+    return '—';
+  }
+  return `${parts.range} ${parts.unit}`;
 }
 
 /**
