@@ -159,6 +159,12 @@ export function fitLinearRegression(points: { x: number; y: number }[]): ITrendl
 /**
  * Calculates conventional Student's t-test p-value using `@stdlib/stats-base-dists-t-cdf`.
  *
+ * WHY THIS IS SEPARATED FROM REGRESSION:
+ * `simple-statistics` provides the descriptive trendline slope, intercept, and correlation coefficient (r),
+ * but does not compute hypothesis test p-values.
+ * We calculate p-values specifically to support significance classification (distinguishing statistically
+ * clear trends from uncertain or weak trends).
+ *
  * CAVEAT / METHODOLOGY LIMITATION:
  * This conventional t-test assumes independent errors and does NOT account for potential serial
  * autocorrelation (persistence) in climate time series. It represents an approximate assessment of

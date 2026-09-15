@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -112,15 +112,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
   /** Tracks expanded state of statistical details per series key (starts contracted) */
   public readonly expandedStats = signal<Record<string, boolean>>({});
 
-  constructor() {
-    super();
-    // Reactively synchronize SVG trendline overlay whenever series analyses recompute
-    effect(() => {
-      this.seriesAnalyses();
-      this.chartService.syncPointOverlay();
-    });
-  }
-
   public toggleStats(key: string): void {
     this.expandedStats.update((current) => ({
       ...current,
@@ -166,10 +157,11 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     return def.keys.map((key, index) => {
       const points: { x: number; y: number }[] = [];
       for (const row of data) {
-        const xVal = Number(row[xVar]);
-        const yVal = Number(row[key]);
-        if (Number.isFinite(xVal) && Number.isFinite(yVal)) {
-          points.push({ x: xVal, y: yVal });
+        const x = row[xVar] as number;
+        const y = row[key] as number;
+        // Never convert missing values to zero or treat incomplete totals as complete
+        if (typeof x === 'number' && Number.isFinite(x) && typeof y === 'number' && Number.isFinite(y)) {
+          points.push({ x, y });
         }
       }
 
@@ -228,7 +220,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           endY: item.stats.endY,
           color: item.color,
           strokeWidth: 2.5,
-          strokeDasharray: 'none',
+          strokeDasharray: '8 4',
           label: item.rateLabel,
         });
       }
