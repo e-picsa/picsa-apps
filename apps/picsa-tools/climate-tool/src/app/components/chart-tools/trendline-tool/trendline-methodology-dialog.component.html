@@ -18,21 +18,21 @@
       </div>
       <p>
         {{
-          'A trendline shows the general long-term direction of change over time (e.g. warming temperatures, shift in seasonal rainfall). It fits an ordinary least squares regression line to historical data.'
+          'A trendline summarizes the general multidecadal direction of historical change over time (e.g. warming temperatures, shift in seasonal rainfall). It fits an ordinary least squares regression line to historical records.'
             | translate
         }}
       </p>
     </section>
 
-    <!-- 2. Line visibility & Grey line explanation -->
+    <!-- 2. Line visibility -->
     <section class="methodology-section">
       <div class="section-heading">
         <mat-icon>visibility</mat-icon>
-        <h3>{{ 'Why are some lines colored, grey, or missing?' | translate }}</h3>
+        <h3>{{ 'When is a trendline displayed?' | translate }}</h3>
       </div>
       <p>
         {{
-          'A colored line indicates a statistically clear trend (p < 0.05). A grey dashed line shows an uncertain or weak trend where year-to-year variation is too high to confirm certainty. If no line appears at all, the observation record has too many missing years to calculate a reliable trend.'
+          'A solid, coloured trendline is displayed only when the estimated trend is statistically clear (p < 0.05) and passes data quality checks. When historical records are inconclusive (p ≥ 0.05) or data is insufficient, no trendline is drawn to avoid visually asserting an unconfirmed direction.'
             | translate
         }}
       </p>
@@ -66,7 +66,7 @@
           <h4>{{ 'Ordinary Least Squares (OLS) Regression' | translate }}</h4>
           <p>
             {{
-              'Linear regression fits a straight line minimizing the sum of squared differences between historical observations and fitted values. Slopes, intercepts, Pearson correlation (r), and R² are computed using standard OLS methods.'
+              'Linear regression fits a straight line minimizing the sum of squared differences between historical observations and fitted values. Slopes, intercepts, and R² are computed using standard OLS methods on verified calendar years.'
                 | translate
             }}
           </p>
@@ -74,18 +74,38 @@
           <h4>{{ 'Trend Classification Criteria' | translate }}</h4>
           <ul class="rules-list">
             <li>
-              <strong>{{ 'Statistically clear (colored line):' | translate }}</strong>
-              {{ 'p < 0.05. Strong evidence that the historical rate of change is distinguished from random yearly fluctuations.' | translate }}
+              <strong>{{ 'Upward trend (solid coloured line):' | translate }}</strong>
+              {{ 'Statistically clear increase (p < 0.05) with positive slope.' | translate }}
             </li>
             <li>
-              <strong>{{ 'Uncertain trend (grey dashed line):' | translate }}</strong>
-              {{ 'p ≥ 0.05 with noticeable historical change (|r| ≥ 0.15, R² ≥ 0.02). Direction is estimated, but yearly variation is too high to rule out random chance.' | translate }}
+              <strong>{{ 'Downward trend (solid coloured line):' | translate }}</strong>
+              {{ 'Statistically clear decrease (p < 0.05) with negative slope.' | translate }}
             </li>
             <li>
-              <strong>{{ 'Weak / minimal trend (grey dashed line):' | translate }}</strong>
-              {{ 'p ≥ 0.05 with negligible historical change (|r| < 0.15, R² < 0.02). Historical values fluctuate without a meaningful overall directional shift.' | translate }}
+              <strong>{{ 'No clear trend (no line):' | translate }}</strong>
+              {{ 'p ≥ 0.05. Natural year-to-year variation is too large relative to sample size to establish a directional trend.' | translate }}
+            </li>
+            <li>
+              <strong>{{ 'Insufficient data (no line):' | translate }}</strong>
+              {{ 'Record has too many missing years to calculate a reliable trend.' | translate }}
             </li>
           </ul>
+
+          <h4>{{ 'Statistical Inference & 95% Confidence Intervals' | translate }}</h4>
+          <p>
+            {{
+              'Significance is evaluated using a two-sided Student t-test on the regression slope with df = n - 2 degrees of freedom. Two-tailed 95% confidence intervals are computed to indicate the precision of the estimated decadal rate of change.'
+                | translate
+            }}
+          </p>
+
+          <h4>{{ 'Goodness of Fit (R²)' | translate }}</h4>
+          <p>
+            {{
+              'R² measures the proportion of variance explained by the trend. In highly variable climate series (such as rainfall), low R² values are common even when a statistically clear and practically important trend exists. R² is therefore provided for supplementary context, not used to accept or reject trendline display.'
+                | translate
+            }}
+          </p>
 
           <h4>{{ 'Data Completeness Rules' | translate }}</h4>
           <p>
@@ -96,10 +116,6 @@
           </p>
           <ul class="rules-list">
             <li>
-              <strong>{{ '10-Year View:' | translate }}</strong>
-              {{ 'At least 7 usable years within the most recent 10-year window.' | translate }}
-            </li>
-            <li>
               <strong>{{ '30-Year View:' | translate }}</strong>
               {{ 'At least 20 usable years within the most recent 30-year window.' | translate }}
             </li>
@@ -108,14 +124,6 @@
               {{ 'At least 20 usable years and at least 70% data completeness across the full record.' | translate }}
             </li>
           </ul>
-
-          <h4>{{ 'Statistical Significance (p-value)' | translate }}</h4>
-          <p>
-            {{
-              'Significance is evaluated using a two-sided Student t-test on the correlation coefficient with df = n - 2 degrees of freedom. A threshold of p < 0.05 is required for a trend to be classified as statistically clear.'
-                | translate
-            }}
-          </p>
         </div>
       </mat-expansion-panel>
     </mat-accordion>

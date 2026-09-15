@@ -28,8 +28,13 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **Tailwind CSS**: Preferred over custom SCSS.
 - **Internationalization (i18n)**: assume 20+ languages. NEVER hardcode user-facing text. Always use the `translate` pipe or appropriate service.
 
-## Coding Style
+## Coding Style & Long-Term Maintainability
 
+- **Long-Term Maintainability & Flat Architecture**:
+  - Keep code structures flat, clean, and maintainable over time.
+  - **Avoid deeply nested code** (such as nested `if`/`else` branches, nested ternaries, or sprawling callback trees) when handling edge cases or complex conditions.
+  - Use **early returns**, **guard clauses**, and **isolated helper functions** to handle validations, degenerate inputs, and edge cases before executing core logic.
+  - Prefer declarative dictionaries/lookup maps over sprawling `switch`/`if-else` blocks where applicable.
 - **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 
 ## Agent Meta-Instructions

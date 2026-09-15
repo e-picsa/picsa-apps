@@ -1,13 +1,13 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateService } from '@ngx-translate/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { TrendlineConfigService } from '../../../services/trendline-config.service';
 import {
   calculateLinearRegression,
+  formatConfidenceInterval,
+  formatDecadeRate,
   formatPValue,
   type ITrendlineStats,
   type TrendlinePeriod,
@@ -24,8 +24,10 @@ export interface ISeriesTrendAnalysis {
   stats: ITrendlineStats;
   status: TrendStatus;
   rateLabel: string;
+  ciLabel: string;
   decadeText: string;
   subtext?: string;
+  isTemperature: boolean;
 }
 
 @Component({
@@ -39,7 +41,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
   public override readonly usesPointOverlay = true;
 
   public readonly configService = inject(TrendlineConfigService);
-  private readonly translate = inject(TranslateService);
   private readonly dialog = inject(MatDialog);
 
   /** Tracks expanded state of statistical details per series key (starts contracted) */
@@ -94,11 +95,12 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
       const label = def.data_labels?.[key] || (def.keys.length === 1 ? def.name : String(key));
       const units = def.units || '';
 
-      const sign = stats.changePerDecade !== null && stats.changePerDecade >= 0 ? '+' : '';
-      const unitStr = units ? ` ${units}` : '';
-      const rateLabel =
-        stats.changePerDecade !== null ? `${sign}${stats.changePerDecade.toFixed(1)}${unitStr} / decade` : '';
-      const decadeText = rateLabel || '—';
+      const isTemperature =
+        units.toLowerCase().includes('°c') || units.toLowerCase().includes('c') || key.toLowerCase().includes('temp');
+
+      const rateLabel = formatDecadeRate(stats.changePerDecade, units, isTemperature);
+      const ciLabel = formatConfidenceInterval(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
+      const decadeText = stats.changePerDecade !== null ? rateLabel : '—';
 
       return {
         key,
@@ -107,12 +109,20 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         stats,
         status: stats.status,
         rateLabel,
+        ciLabel,
         decadeText,
         subtext: stats.subtext,
+        isTemperature,
       };
     });
   });
 
+  /**
+   * Generates trendlines for SVG chart overlay.
+   * Public graph display rule:
+   * - Plotted as a solid coloured line ONLY when statistically distinguishable from zero (p < 0.05).
+   * - No line is plotted for inconclusive direction ('no_clear_trend') or insufficient data.
+   */
   public override getTrendlines(): ITrendlineOverlay[] | undefined {
     if (this.chartService.timespanMode() === 'monthly') {
       return [];
@@ -123,23 +133,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
 
     for (const item of analyses) {
       if (item.stats.shouldPlotLine) {
-        const isSignificant = item.stats.status === 'significant_up' || item.stats.status === 'significant_down';
-        const isUncertain = item.stats.status === 'uncertain_trend';
-
-        let color = item.color;
-        const strokeDasharray = '8 4';
-        const strokeWidth = 2.5;
-        let label = item.rateLabel;
-
-        if (!isSignificant) {
-          // Grey line for non-significant trends (uncertain or weak)
-          color = '#98a2b3';
-          const tag = isUncertain
-            ? this.translate.instant(translateMarker('uncertain'))
-            : this.translate.instant(translateMarker('weak'));
-          label = `${item.rateLabel}\n${tag}`;
-        }
-
         lines.push({
           id: `trendline-${item.key}`,
           seriesKey: item.key,
@@ -147,10 +140,9 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           endX: item.stats.endX,
           startY: item.stats.startY,
           endY: item.stats.endY,
-          color,
-          strokeWidth,
-          strokeDasharray,
-          label,
+          color: item.color,
+          strokeWidth: 2.5,
+          label: item.rateLabel,
         });
       }
     }

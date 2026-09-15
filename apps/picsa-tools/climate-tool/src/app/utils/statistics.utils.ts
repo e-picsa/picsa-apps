@@ -1,18 +1,9 @@
 import cdf from '@stdlib/stats-base-dists-t-cdf';
 import { linearRegression, linearRegressionLine, sampleCorrelation } from 'simple-statistics';
 
-export type TrendlinePeriod = 'full' | '30_year' | '10_year';
+export type TrendlinePeriod = 'full' | '30_year';
 
-export type TrendStatus =
-  | 'significant_up'
-  | 'significant_down'
-  | 'uncertain_trend'
-  | 'weak_trend'
-  | 'no_trend'
-  | 'constant_y'
-  | 'insufficient_data'
-  | 'unavailable'
-  | 'descriptive';
+export type TrendStatus = 'upward_trend' | 'downward_trend' | 'no_clear_trend' | 'insufficient_data' | 'unavailable';
 
 export interface ITrendlineFit {
   slope: number;
@@ -32,6 +23,13 @@ export interface ISignificanceResult {
   pValue: number | null;
 }
 
+export interface IConfidenceIntervalResult {
+  ciLowerDecade: number | null;
+  ciUpperDecade: number | null;
+  seSlope: number | null;
+  tCrit: number | null;
+}
+
 export interface ITrendlineStats {
   n: number;
   isConsecutive: boolean;
@@ -44,6 +42,8 @@ export interface ITrendlineStats {
   r: number | null;
   rSquared: number | null;
   changePerDecade: number | null;
+  ciLowerDecade: number | null;
+  ciUpperDecade: number | null;
   tStat: number | null;
   df: number | null;
   pValue: number | null;
@@ -58,14 +58,10 @@ export interface ITrendlineStats {
 export const MIN_OBSERVATIONS_FULL = 20;
 /** Minimum number of observations required for 30-year period trend assessment */
 export const MIN_OBSERVATIONS_30_YEAR = 20;
-/** Minimum number of observations required for 10-year period trend assessment (at least 7 out of 10 years) */
-export const MIN_OBSERVATIONS_10_YEAR = 7;
 /** Minimum completeness ratio (observations / year span) across full record */
 export const MIN_COMPLETENESS_RATIO = 0.7;
 /** Maximum p-value for statistical significance (p < 0.05) */
 export const SIGNIFICANCE_P_THRESHOLD = 0.05;
-/** Correlation threshold below which a non-significant trend is considered weak/minimal rather than uncertain */
-export const WEAK_CORRELATION_THRESHOLD = 0.15;
 
 /**
  * Checks if a sorted array of points has consecutive x values (step = 1).
@@ -163,12 +159,6 @@ export function fitLinearRegression(points: { x: number; y: number }[]): ITrendl
 /**
  * Calculates conventional Student's t-test p-value using `@stdlib/stats-base-dists-t-cdf`.
  *
- * WHY THIS IS SEPARATED FROM REGRESSION:
- * `simple-statistics` provides the descriptive trendline slope, intercept, and correlation coefficient (r),
- * but does not compute hypothesis test p-values.
- * We calculate p-values specifically to support significance classification (distinguishing statistically
- * clear trends from uncertain or weak trends).
- *
  * CAVEAT / METHODOLOGY LIMITATION:
  * This conventional t-test assumes independent errors and does NOT account for potential serial
  * autocorrelation (persistence) in climate time series. It represents an approximate assessment of
@@ -200,214 +190,138 @@ export function calculateSignificance(r: number | null, n: number): ISignificanc
 }
 
 /**
+ * Computes the critical two-tailed Student's t value for a given df and significance level (default alpha = 0.05).
+ * Uses monotonic bisection on the Student's t cumulative distribution function.
+ */
+export function calculateCriticalT(df: number, alpha = 0.05): number {
+  if (df <= 0 || !Number.isFinite(df)) return 1.96;
+  const target = 1 - alpha / 2; // 0.975 for 95% CI
+  let low = 0;
+  let high = 100;
+
+  for (let i = 0; i < 25; i++) {
+    const mid = (low + high) / 2;
+    if (cdf(mid, df) < target) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  return (low + high) / 2;
+}
+
+/**
+ * Calculates standard error of the slope and two-tailed 95% confidence interval for change per decade.
+ */
+export function calculateConfidenceInterval(
+  points: { x: number; y: number }[],
+  slope: number | null,
+  intercept: number | null,
+  df: number | null,
+  alpha = 0.05,
+): IConfidenceIntervalResult {
+  if (slope === null || intercept === null || df === null || df <= 0 || points.length < 3) {
+    return { ciLowerDecade: null, ciUpperDecade: null, seSlope: null, tCrit: null };
+  }
+
+  const n = points.length;
+  let sumX = 0;
+  for (const p of points) sumX += p.x;
+  const meanX = sumX / n;
+
+  let ssXX = 0;
+  let ssRes = 0;
+  for (const p of points) {
+    const diffX = p.x - meanX;
+    ssXX += diffX * diffX;
+    const yHat = intercept + slope * p.x;
+    const res = p.y - yHat;
+    ssRes += res * res;
+  }
+
+  if (ssXX <= 0) {
+    return { ciLowerDecade: null, ciUpperDecade: null, seSlope: null, tCrit: null };
+  }
+
+  const seSlope = Math.sqrt(ssRes / (df * ssXX));
+  const tCrit = calculateCriticalT(df, alpha);
+  const marginSlope = tCrit * seSlope;
+
+  const lowerSlope = slope - marginSlope;
+  const upperSlope = slope + marginSlope;
+
+  return {
+    ciLowerDecade: lowerSlope * 10,
+    ciUpperDecade: upperSlope * 10,
+    seSlope,
+    tCrit,
+  };
+}
+
+/**
  * Application wrapper for trendline computation:
  * 1. Cleans and filters observation points (ensuring finite numbers and valid years).
- * 2. Applies period slicing ('full', '30_year', '10_year').
- * 3. Enforces data sufficiency guardrails:
- *    - 10-year view: evaluates the last 10-year window, requiring at least 7 usable years.
- *    - 30-year view: evaluates the last 30-year window, requiring at least 20 usable years.
- *    - Full record: requires at least 20 usable years and >= 70% completeness across span.
- * 4. Generates descriptive fit via `simple-statistics` and significance via `@stdlib/stats-base-dists-t-cdf`.
- * 5. Classifies the trend:
- *    - Statistically clear (p < pThreshold): plotted in series color.
- *    - Uncertain trend (p >= pThreshold with observable slope |r| >= 0.15): plotted as a grey dashed line.
- *    - Weak / minimal trend (p >= pThreshold with |r| < 0.15): plotted as a faint grey line.
- *    - Insufficient data: no line plotted on chart; specific data deficiency reason reported.
+ * 2. Applies period slicing ('full' or '30_year').
+ * 3. Enforces data sufficiency guardrails (at least 20 usable years, >= 70% completeness for full record).
+ * 4. Fits OLS regression and calculates Student's t inference + 95% Confidence Interval.
+ * 5. Classifies outcome:
+ *    - 'upward_trend' / 'downward_trend' (p < 0.05): plotted as a solid coloured line.
+ *    - 'no_clear_trend' (p >= 0.05): no line plotted.
+ *    - 'insufficient_data': no line plotted; limitation identified.
  */
 export function calculateLinearRegression(
   rawPoints: { x: number; y: number }[],
   period: TrendlinePeriod = 'full',
   pThreshold = SIGNIFICANCE_P_THRESHOLD,
 ): ITrendlineStats {
-  // 1. Data Cleaning & Sorting: Filter out NaN, null, and non-finite values; sort chronologically
+  // 1. Data Cleaning & Sorting
   const cleanPoints = rawPoints
     .filter((p) => typeof p.x === 'number' && Number.isFinite(p.x) && typeof p.y === 'number' && Number.isFinite(p.y))
     .sort((a, b) => a.x - b.x);
 
-  // Edge case: Fewer than 2 observations
   if (cleanPoints.length < 2) {
-    const n = cleanPoints.length;
-    const startX = n > 0 ? cleanPoints[0].x : 0;
-    const endX = n > 0 ? cleanPoints[n - 1].x : 0;
-    return {
-      n,
-      isConsecutive: true,
-      slope: null,
-      intercept: null,
-      startX,
-      endX,
-      startY: 0,
-      endY: 0,
-      r: null,
-      rSquared: null,
-      changePerDecade: null,
-      tStat: null,
-      df: null,
-      pValue: null,
-      isSignificant: false,
-      status: 'unavailable',
-      shouldPlotLine: false,
-      message: 'Trend assessment unavailable',
-      subtext: 'Requires at least 2 valid observations',
-    };
+    return buildUnavailableStats(cleanPoints.length, 'Requires at least 2 valid observations');
   }
 
-  // 2. Period Slicing:
-  // For 10-year and 30-year views, filter points within the most recent window relative to max recorded year
+  // 2. Period Slicing
   const maxYear = cleanPoints[cleanPoints.length - 1].x;
-  let points: { x: number; y: number }[];
-  let minRequiredObs: number;
-  let isSufficient = true;
-  let sufficiencyReason = '';
-
-  if (period === '10_year') {
-    points = cleanPoints.filter((p) => p.x >= maxYear - 9);
-    minRequiredObs = MIN_OBSERVATIONS_10_YEAR;
-    if (points.length < minRequiredObs) {
-      isSufficient = false;
-      sufficiencyReason = `Requires at least ${minRequiredObs} usable years in the 10-year period (found ${points.length})`;
-    }
-  } else if (period === '30_year') {
-    points = cleanPoints.filter((p) => p.x >= maxYear - 29);
-    minRequiredObs = MIN_OBSERVATIONS_30_YEAR;
-    if (points.length < minRequiredObs) {
-      isSufficient = false;
-      sufficiencyReason = `Requires at least ${minRequiredObs} usable years in the 30-year period (found ${points.length})`;
-    }
-  } else {
-    points = cleanPoints;
-    minRequiredObs = MIN_OBSERVATIONS_FULL;
-    const span = points[points.length - 1].x - points[0].x + 1;
-    const completeness = points.length / span;
-
-    if (points.length < minRequiredObs) {
-      isSufficient = false;
-      sufficiencyReason = `Requires at least ${minRequiredObs} usable years (found ${points.length})`;
-    } else if (completeness < MIN_COMPLETENESS_RATIO) {
-      isSufficient = false;
-      sufficiencyReason = `Observation record is less than ${Math.round(
-        MIN_COMPLETENESS_RATIO * 100,
-      )}% complete over its timespan`;
-    }
-  }
-
+  const { points, isSufficient, sufficiencyReason } = slicePeriodPoints(cleanPoints, period, maxYear);
   const n = points.length;
   const isConsecutive = checkConsecutiveYears(points);
-  const startX = points.length > 0 ? points[0].x : 0;
-  const endX = points.length > 0 ? points[points.length - 1].x : 0;
 
-  // If sliced window has fewer than 2 observations, we cannot fit a line
   if (n < 2) {
-    return {
+    return buildInsufficientDataStats(
       n,
       isConsecutive,
-      slope: null,
-      intercept: null,
-      startX,
-      endX,
-      startY: 0,
-      endY: 0,
-      r: null,
-      rSquared: null,
-      changePerDecade: null,
-      tStat: null,
-      df: null,
-      pValue: null,
-      isSignificant: false,
-      status: 'insufficient_data',
-      shouldPlotLine: false,
-      message: 'Not enough usable data to assess a trend.',
-      subtext: sufficiencyReason || 'Requires at least 2 valid observations in selected period',
-    };
+      sufficiencyReason || 'Requires at least 2 valid observations in selected period',
+    );
   }
 
-  // 3. Descriptive Fit using simple-statistics
+  // 3. Descriptive Fit
   const fit = fitLinearRegression(points);
-
-  // Degenerate case: Constant X
   if (!fit) {
-    return {
-      n,
-      isConsecutive,
-      slope: null,
-      intercept: null,
-      startX,
-      endX,
-      startY: 0,
-      endY: 0,
-      r: null,
-      rSquared: null,
-      changePerDecade: null,
-      tStat: null,
-      df: null,
-      pValue: null,
-      isSignificant: false,
-      status: 'unavailable',
-      shouldPlotLine: false,
-      message: 'Trend assessment unavailable',
-      subtext: 'Constant X values (no variation in time)',
-    };
+    return buildUnavailableStats(n, 'Constant X values (no variation in time)');
   }
 
-  // Degenerate case: Constant Y (horizontal line)
+  // Constant Y (horizontal line)
   if (fit.r === null && fit.slope === 0) {
-    return {
-      n,
-      isConsecutive,
-      slope: 0,
-      intercept: fit.intercept,
-      startX: fit.startX,
-      endX: fit.endX,
-      startY: fit.startY,
-      endY: fit.endY,
-      r: null,
-      rSquared: null,
-      changePerDecade: 0,
-      tStat: null,
-      df: null,
-      pValue: null,
-      isSignificant: false,
-      status: 'constant_y',
-      shouldPlotLine: false,
-      message: 'No clear trend detected for this period.',
-      subtext: 'All observation values are identical (constant Y)',
-    };
+    return buildConstantYStats(points, fit, isConsecutive);
   }
 
-  // 4. Significance Testing using @stdlib/stats-base-dists-t-cdf
+  // 4. Statistical Inference & Confidence Intervals
   const sig = calculateSignificance(fit.r, n);
+  const ci = calculateConfidenceInterval(points, fit.slope, fit.intercept, sig.df);
 
-  // 5. Data Sufficiency Evaluation:
-  // If data is insufficient, suppress line plotting on chart but return descriptive stats for the panel
+  // 5. Data Sufficiency Evaluation
   if (!isSufficient) {
-    return {
-      n,
-      isConsecutive,
-      slope: fit.slope,
-      intercept: fit.intercept,
-      startX: fit.startX,
-      endX: fit.endX,
-      startY: fit.startY,
-      endY: fit.endY,
-      r: fit.r,
-      rSquared: fit.rSquared,
-      changePerDecade: fit.changePerDecade,
-      tStat: sig.tStat,
-      df: sig.df,
-      pValue: sig.pValue,
-      isSignificant: false,
-      status: 'insufficient_data',
-      shouldPlotLine: false,
-      message: 'Not enough usable data to assess a trend.',
-      subtext: sufficiencyReason,
-    };
+    return buildInsufficientDataStats(n, isConsecutive, sufficiencyReason, fit, sig, ci);
   }
 
-  // 6. Trend Classification:
-  // Statistically Clear (p < pThreshold)
-  if (sig.pValue !== null && sig.pValue < pThreshold) {
-    const status: TrendStatus = fit.slope > 0 ? 'significant_up' : 'significant_down';
-    const direction = fit.slope > 0 ? 'Upward' : 'Downward';
+  // 6. Outcome Classification
+  const isSignificant = sig.pValue !== null && sig.pValue < pThreshold;
+  if (isSignificant) {
+    const status: TrendStatus = fit.slope > 0 ? 'upward_trend' : 'downward_trend';
+    const message = status === 'upward_trend' ? 'Upward trend' : 'Downward trend';
     return {
       n,
       isConsecutive,
@@ -420,27 +334,20 @@ export function calculateLinearRegression(
       r: fit.r,
       rSquared: fit.rSquared,
       changePerDecade: fit.changePerDecade,
+      ciLowerDecade: ci.ciLowerDecade,
+      ciUpperDecade: ci.ciUpperDecade,
       tStat: sig.tStat,
       df: sig.df,
       pValue: sig.pValue,
       isSignificant: true,
       status,
       shouldPlotLine: true,
-      message: `${direction} trend detected`,
+      message,
       subtext: `p = ${formatPValue(sig.pValue)} (statistically clear)`,
     };
   }
 
-  // When p >= pThreshold:
-  // Still display on graph as a grey line, differentiating between weak estimates and uncertain trends
-  const isWeak = fit.r === null || Math.abs(fit.r) < WEAK_CORRELATION_THRESHOLD;
-  const status: TrendStatus = isWeak ? 'weak_trend' : 'uncertain_trend';
-  const direction = fit.slope > 0 ? 'upward' : 'downward';
-  const message = isWeak ? 'Weak or minimal trend' : `Uncertain ${direction} trend`;
-  const subtext = isWeak
-    ? `p = ${formatPValue(sig.pValue)} (little historical change)`
-    : `p = ${formatPValue(sig.pValue)} (high year-to-year variation)`;
-
+  // Inconclusive / No clear trend (p >= pThreshold): NO line plotted on chart
   return {
     n,
     isConsecutive,
@@ -453,15 +360,204 @@ export function calculateLinearRegression(
     r: fit.r,
     rSquared: fit.rSquared,
     changePerDecade: fit.changePerDecade,
+    ciLowerDecade: ci.ciLowerDecade,
+    ciUpperDecade: ci.ciUpperDecade,
     tStat: sig.tStat,
     df: sig.df,
     pValue: sig.pValue,
     isSignificant: false,
-    status,
-    shouldPlotLine: true,
-    message,
+    status: 'no_clear_trend',
+    shouldPlotLine: false,
+    message: 'No clear trend',
+    subtext: `p = ${formatPValue(sig.pValue)} (inconclusive)`,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Flat Helper Functions for Guards and Formatting
+// ---------------------------------------------------------------------------
+
+function slicePeriodPoints(
+  cleanPoints: { x: number; y: number }[],
+  period: TrendlinePeriod,
+  maxYear: number,
+): { points: { x: number; y: number }[]; isSufficient: boolean; sufficiencyReason: string } {
+  if (period === '30_year') {
+    const points = cleanPoints.filter((p) => p.x >= maxYear - 29);
+    const isSufficient = points.length >= MIN_OBSERVATIONS_30_YEAR;
+    const sufficiencyReason = isSufficient
+      ? ''
+      : `Requires at least ${MIN_OBSERVATIONS_30_YEAR} usable years in the 30-year period (found ${points.length})`;
+    return { points, isSufficient, sufficiencyReason };
+  }
+
+  // Full Record
+  const points = cleanPoints;
+  const span = points[points.length - 1].x - points[0].x + 1;
+  const completeness = points.length / span;
+
+  if (points.length < MIN_OBSERVATIONS_FULL) {
+    return {
+      points,
+      isSufficient: false,
+      sufficiencyReason: `Requires at least ${MIN_OBSERVATIONS_FULL} usable years (found ${points.length})`,
+    };
+  }
+
+  if (completeness < MIN_COMPLETENESS_RATIO) {
+    return {
+      points,
+      isSufficient: false,
+      sufficiencyReason: `Observation record is less than ${Math.round(
+        MIN_COMPLETENESS_RATIO * 100,
+      )}% complete over its timespan`,
+    };
+  }
+
+  return { points, isSufficient: true, sufficiencyReason: '' };
+}
+
+function buildUnavailableStats(n: number, subtext: string): ITrendlineStats {
+  return {
+    n,
+    isConsecutive: true,
+    slope: null,
+    intercept: null,
+    startX: 0,
+    endX: 0,
+    startY: 0,
+    endY: 0,
+    r: null,
+    rSquared: null,
+    changePerDecade: null,
+    ciLowerDecade: null,
+    ciUpperDecade: null,
+    tStat: null,
+    df: null,
+    pValue: null,
+    isSignificant: false,
+    status: 'unavailable',
+    shouldPlotLine: false,
+    message: 'Unavailable',
     subtext,
   };
+}
+
+function buildConstantYStats(
+  points: { x: number; y: number }[],
+  fit: ITrendlineFit,
+  isConsecutive: boolean,
+): ITrendlineStats {
+  return {
+    n: points.length,
+    isConsecutive,
+    slope: 0,
+    intercept: fit.intercept,
+    startX: fit.startX,
+    endX: fit.endX,
+    startY: fit.startY,
+    endY: fit.endY,
+    r: null,
+    rSquared: null,
+    changePerDecade: 0,
+    ciLowerDecade: 0,
+    ciUpperDecade: 0,
+    tStat: null,
+    df: null,
+    pValue: null,
+    isSignificant: false,
+    status: 'no_clear_trend',
+    shouldPlotLine: false,
+    message: 'No clear trend',
+    subtext: 'All observation values are identical (constant Y)',
+  };
+}
+
+function buildInsufficientDataStats(
+  n: number,
+  isConsecutive: boolean,
+  subtext: string,
+  fit?: ITrendlineFit | null,
+  sig?: ISignificanceResult,
+  ci?: IConfidenceIntervalResult,
+): ITrendlineStats {
+  return {
+    n,
+    isConsecutive,
+    slope: fit?.slope ?? null,
+    intercept: fit?.intercept ?? null,
+    startX: fit?.startX ?? 0,
+    endX: fit?.endX ?? 0,
+    startY: fit?.startY ?? 0,
+    endY: fit?.endY ?? 0,
+    r: fit?.r ?? null,
+    rSquared: fit?.rSquared ?? null,
+    changePerDecade: fit?.changePerDecade ?? null,
+    ciLowerDecade: ci?.ciLowerDecade ?? null,
+    ciUpperDecade: ci?.ciUpperDecade ?? null,
+    tStat: sig?.tStat ?? null,
+    df: sig?.df ?? null,
+    pValue: sig?.pValue ?? null,
+    isSignificant: false,
+    status: 'insufficient_data',
+    shouldPlotLine: false,
+    message: 'Insufficient data',
+    subtext,
+  };
+}
+
+/**
+ * Formats decadal rate of change with sign and units.
+ * Temperature values keep 1 decimal place; all other values round to nearest integer.
+ */
+export function formatDecadeRate(val: number | null | undefined, units: string, isTemperature: boolean): string {
+  if (val === null || val === undefined || !Number.isFinite(val)) {
+    return '—';
+  }
+
+  let formattedVal: string;
+  if (isTemperature) {
+    formattedVal = val.toFixed(1);
+  } else {
+    const rounded = Math.round(val);
+    formattedVal = Object.is(rounded, -0) ? '0' : rounded.toString();
+  }
+
+  const sign = val > 0 ? '+' : '';
+  const unitStr = units ? ` ${units}` : '';
+  return `${sign}${formattedVal}${unitStr} / decade`;
+}
+
+/**
+ * Formats a 95% confidence interval for decadal change.
+ * Temperature values keep 1 decimal place; all other values round to nearest integer.
+ */
+export function formatConfidenceInterval(
+  lower: number | null | undefined,
+  upper: number | null | undefined,
+  units: string,
+  isTemperature: boolean,
+): string {
+  if (
+    lower === null ||
+    lower === undefined ||
+    !Number.isFinite(lower) ||
+    upper === null ||
+    upper === undefined ||
+    !Number.isFinite(upper)
+  ) {
+    return '—';
+  }
+
+  const formatOne = (v: number) => {
+    if (isTemperature) return (v > 0 ? '+' : '') + v.toFixed(1);
+    const r = Math.round(v);
+    const clean = Object.is(r, -0) ? 0 : r;
+    return (clean > 0 ? '+' : '') + clean.toString();
+  };
+
+  const unitStr = units ? ` ${units}` : '';
+  return `[${formatOne(lower)}, ${formatOne(upper)}]${unitStr} / decade`;
 }
 
 /**
