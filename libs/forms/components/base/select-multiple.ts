@@ -16,12 +16,16 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
 
   public readonly filterFn = input<(option: T) => boolean>();
 
-  // signal-backed so `filteredOptions`/`selectedOptions` recompute if options are updated after init
+  // signal-backed so `filteredOptions`/`selectedOptions` recompute when options change after init
   private readonly selectOptionsSignal = signal<T[]>([]);
-  public selectOptionsHashmap: Record<string, T> = {} as any;
+  private readonly selectOptionsHashmapSignal = signal<Record<string, T>>({});
 
   public get selectOptions() {
     return this.selectOptionsSignal();
+  }
+
+  public get selectOptionsHashmap() {
+    return this.selectOptionsHashmapSignal();
   }
 
   protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
@@ -31,7 +35,7 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
   /** Replace the available options, e.g. to merge in live custom entries alongside a hardcoded base list */
   protected setSelectOptions(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
     this.selectOptionsSignal.set(selectOptions);
-    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(selectOptions, 'id');
+    this.selectOptionsHashmapSignal.set(selectOptionsHashmap || arrayToHashmap(selectOptions, 'id'));
   }
 
   protected readonly filteredOptions = computed(() => {
@@ -43,7 +47,8 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
   protected readonly selectedOptions = computed(() => {
     // The base class might initialize value as `null`, so the fallback to `[]` here is perfect
     const vals = this.value() || [];
-    return vals.map((val) => this.selectOptionsHashmap[val]).filter(Boolean);
+    const hashmap = this.selectOptionsHashmapSignal();
+    return vals.map((val) => hashmap[val]).filter(Boolean);
   });
 
   public toggleSelected(id: string) {

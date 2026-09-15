@@ -132,8 +132,17 @@ export class CalendarTableComponent {
       if (card) {
         await this.cardService.saveCustomCard(card);
         control().value.set([...control().value(), card.id]);
+        await this.saveNow();
       }
     });
+  }
+
+  /** Persist immediately rather than waiting on the debounced auto-save, so a newly created
+   * custom card survives a refresh right after creation */
+  public async saveNow() {
+    if (this.dbLoaded() && this.form().valid()) {
+      await this.service.save(this.model());
+    }
   }
 
   private async loadCalendarById(id: string) {

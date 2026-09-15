@@ -7,6 +7,7 @@ import {
   inject,
   input,
   OnInit,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -44,6 +45,8 @@ function toCropOption(card: ICalendarCard): ICropData {
 })
 export class CalendarEditorComponent implements OnInit {
   public readonly form = input.required<FieldTree<CalendarDataEntry, string | number>>();
+  /** Emitted after a custom crop is saved, so a host with autosave can persist immediately */
+  public readonly customCropAdded = output<void>();
 
   private dialog = inject(MatDialog);
   private cardService = inject(SeasonalCalendarCardService);
@@ -133,6 +136,7 @@ export class CalendarEditorComponent implements OnInit {
         await this.cardService.saveCustomCard(card);
         const enterprisesField = this.form().meta.enterprises().value;
         enterprisesField.set([...enterprisesField(), card.id]);
+        this.customCropAdded.emit();
       }
     });
   }

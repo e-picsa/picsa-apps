@@ -26,9 +26,7 @@ export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultiple
   /** Show reset option button with custom text and matIcon */
   public readonly resetOption = input<{ text: string; matIcon: string }>();
 
-  /** Additional user-created options (e.g. custom crops) rendered alongside the hardcoded list */
   public readonly customOptions = input<ICropData[]>([]);
-  /** Show an "add custom" tile with custom text and matIcon */
   public readonly addCustomOption = input<{ text: string; matIcon: string }>();
   public readonly addCustomClicked = output<void>();
 
