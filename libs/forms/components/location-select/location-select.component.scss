@@ -1,3 +1,42 @@
 :host {
   display: block;
 }
+
+.form-location-select {
+  &__label {
+    font-size: 1.25rem;
+    padding: 3px;
+  }
+  &__selected {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 32px;
+    padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+
+    color: var(--ion-color-primary);
+    background: color-mix(in srgb, var(--ion-color-primary) 10%, transparent);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+
+    mat-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--ion-color-primary) 16%, transparent);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ion-color-primary);
+      outline-offset: 2px;
+    }
+  }
+}

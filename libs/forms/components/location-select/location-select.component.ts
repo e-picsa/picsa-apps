@@ -1,9 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
@@ -20,7 +32,7 @@ import { isEqual } from '@picsa/utils/object.utils';
  */
 @Component({
   selector: 'picsa-form-location-select',
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, PicsaTranslateModule, MatIcon],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +41,8 @@ export class FormLocationSelectComponent {
   public countryCode = input.required<string>();
 
   public value = input<(string | undefined)[]>([]);
+
+  public fieldTitle = input<boolean | undefined>(false);
 
   /** Optional method to apply to data before rendering locations in list */
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
@@ -39,6 +53,12 @@ export class FormLocationSelectComponent {
   public admin4Selected = signal<string | undefined>(undefined);
   public admin5Options = signal<{ id: string; label: string }[]>([]);
   public admin5Selected = signal<string | undefined>(undefined);
+
+  readonly editingAdmin4 = signal(false);
+  readonly editingAdmin5 = signal(false);
+
+  readonly admin4Select = viewChild<MatSelect>('admin4Select');
+  readonly admin5Select = viewChild<MatSelect>('admin5Select');
 
   public computedValue = computed<(string | undefined)[]>(
     () => this.getComputedValue(this.admin4Selected(), this.admin5Selected()),
@@ -56,6 +76,66 @@ export class FormLocationSelectComponent {
     const countryCode = this.countryCode();
     return this.getLocationData(countryCode);
   });
+
+  readonly selectedAdmin4Option = computed(() => {
+    const id = this.admin4Selected();
+    const data = this.locationData().admin_4;
+
+    return id ? data?.locations.find((option) => option.id === id) : undefined;
+  });
+
+  readonly selectedAdmin5Option = computed(() => {
+    const id = this.admin5Selected();
+
+    return id ? this.admin5Options().find((option) => option.id === id) : undefined;
+  });
+
+  public editAdmin4(): void {
+    this.editingAdmin4.set(true);
+    // The select only exists after editingAdmin4 becomes true.
+    afterNextRender(() => {
+      this.admin4Select()?.open();
+    });
+  }
+
+  public editAdmin5(): void {
+    if (!this.admin4Selected()) {
+      return;
+    }
+
+    this.editingAdmin5.set(true);
+
+    afterNextRender(() => {
+      this.admin5Select()?.open();
+    });
+  }
+
+  public closeAdmin4Editor(): void {
+    this.editingAdmin4.set(false);
+  }
+
+  public closeAdmin5Editor(): void {
+    this.editingAdmin5.set(false);
+  }
+
+  public onAdmin4SelectionChange(admin4Id: string): void {
+    const changed = admin4Id !== this.admin4Selected();
+
+    this.admin4Selected.set(admin4Id);
+
+    // District belongs to the selected province, so clear it only if needed.
+    if (changed) {
+      this.admin5Selected.set(undefined);
+      this.editingAdmin5.set(false);
+    }
+
+    this.closeAdmin4Editor();
+  }
+
+  public onAdmin5SelectionChange(admin5Id: string): void {
+    this.admin5Selected.set(admin5Id);
+    this.closeAdmin5Editor();
+  }
 
   constructor() {
     // Set input values when passed
