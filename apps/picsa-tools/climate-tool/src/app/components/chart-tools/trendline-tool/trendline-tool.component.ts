@@ -2,12 +2,14 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateService } from '@ngx-translate/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { TrendlineConfigService } from '../../../services/trendline-config.service';
 import {
   calculateLinearRegression,
+  formatConfidenceInterval,
+  formatConfidenceIntervalParts,
+  formatDecadeRate,
   formatPValue,
   type ITrendlineStats,
   type TrendlinePeriod,
@@ -24,9 +26,72 @@ export interface ISeriesTrendAnalysis {
   stats: ITrendlineStats;
   status: TrendStatus;
   rateLabel: string;
+  ciLabel: string;
+  ciRange: string;
+  ciUnit: string;
   decadeText: string;
   subtext?: string;
+  isTemperature: boolean;
 }
+
+export type StatIndicatorKey = 'ci' | 'p' | 'n' | 'r2';
+
+export interface IStatIndicatorDef {
+  key: StatIndicatorKey;
+  symbol: string;
+  isItalic: boolean;
+  menuAriaLabel: string;
+  title: string;
+  description: string;
+  noteKeys?: { threshold: string; label: string }[];
+}
+
+export const STAT_INDICATORS: IStatIndicatorDef[] = [
+  {
+    key: 'ci',
+    symbol: '95% CI',
+    isItalic: false,
+    menuAriaLabel: translateMarker('Info on confidence interval'),
+    title: translateMarker('95% Confidence Interval'),
+    description: translateMarker(
+      'The estimated range within which the true historical rate of change per decade is 95% likely to lie.',
+    ),
+  },
+  {
+    key: 'p',
+    symbol: 'p',
+    isItalic: true,
+    menuAriaLabel: translateMarker('Info on p-value'),
+    title: translateMarker('Statistical Significance (p)'),
+    description: translateMarker(
+      'Evaluates whether the historical change is statistically distinguishable from random year-to-year fluctuations.',
+    ),
+    noteKeys: [
+      { threshold: '< 0.05', label: translateMarker('Statistically clear trend (trendline displayed)') },
+      { threshold: '≥ 0.05', label: translateMarker('No clear trend (trendline omitted)') },
+    ],
+  },
+  {
+    key: 'n',
+    symbol: 'n',
+    isItalic: true,
+    menuAriaLabel: translateMarker('Info on sample size'),
+    title: translateMarker('Usable Years (n)'),
+    description: translateMarker(
+      'The number of verified complete annual or seasonal records included in the calculation.',
+    ),
+  },
+  {
+    key: 'r2',
+    symbol: 'R²',
+    isItalic: true,
+    menuAriaLabel: translateMarker('Info on coefficient of determination R²'),
+    title: translateMarker('Goodness of Fit (R²)'),
+    description: translateMarker(
+      'Measures the proportion of year-to-year variation accounted for by the linear trend (from 0.00 to 1.00). In variable climate series, low R² values are common even when an important trend exists.',
+    ),
+  },
+];
 
 @Component({
   selector: 'climate-trendline-tool',
@@ -39,8 +104,10 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
   public override readonly usesPointOverlay = true;
 
   public readonly configService = inject(TrendlineConfigService);
-  private readonly translate = inject(TranslateService);
   private readonly dialog = inject(MatDialog);
+
+  /** Definition array for statistical indicator columns to drive clean, loop-based rendering */
+  public readonly statIndicators = STAT_INDICATORS;
 
   /** Tracks expanded state of statistical details per series key (starts contracted) */
   public readonly expandedStats = signal<Record<string, boolean>>({});
@@ -64,19 +131,28 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     });
   }
 
-  /** Series trend analyses for all keys in the active chart */
+  public formatPValue(p: number | null | undefined): string {
+    return formatPValue(p);
+  }
+
+  /**
+   * Evaluates all data series defined on the active chart.
+   * Computes OLS fit, decadal slope, Student's t p-value, and 95% Confidence Interval.
+   */
   public readonly seriesAnalyses = computed<ISeriesTrendAnalysis[]>(() => {
-    // Trendline is strictly scoped to annual and seasonal indicators, not monthly
     if (this.chartService.timespanMode() === 'monthly') {
       return [];
     }
 
-    const data = this.chartData();
-    const def = this.chartDefinition();
-    if (!data?.length || !def?.keys?.length) return [];
+    const def = this.chartService.chartDefinition();
+    const data = this.chartService.chartData();
+    const period = this.configService.period();
+
+    if (!def || !data || data.length === 0) {
+      return [];
+    }
 
     const xVar = def.xVar || 'Year';
-    const period = this.configService.period();
 
     return def.keys.map((key, index) => {
       const points: { x: number; y: number }[] = [];
@@ -94,11 +170,13 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
       const label = def.data_labels?.[key] || (def.keys.length === 1 ? def.name : String(key));
       const units = def.units || '';
 
-      const sign = stats.changePerDecade !== null && stats.changePerDecade >= 0 ? '+' : '';
-      const unitStr = units ? ` ${units}` : '';
-      const rateLabel =
-        stats.changePerDecade !== null ? `${sign}${stats.changePerDecade.toFixed(1)}${unitStr} / decade` : '';
-      const decadeText = rateLabel || '—';
+      const isTemperature =
+        units.toLowerCase().includes('°c') || units.toLowerCase().includes('c') || key.toLowerCase().includes('temp');
+
+      const rateLabel = formatDecadeRate(stats.changePerDecade, units, isTemperature);
+      const ciLabel = formatConfidenceInterval(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
+      const ciParts = formatConfidenceIntervalParts(stats.ciLowerDecade, stats.ciUpperDecade, units, isTemperature);
+      const decadeText = stats.changePerDecade !== null ? rateLabel : '—';
 
       return {
         key,
@@ -107,12 +185,23 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
         stats,
         status: stats.status,
         rateLabel,
+        ciLabel,
+        ciRange: ciParts.range,
+        ciUnit: ciParts.unit,
         decadeText,
         subtext: stats.subtext,
+        isTemperature,
       };
     });
   });
 
+  /**
+   * Generates trendlines for SVG chart overlay.
+   * Public graph display rule:
+   * - Plotted as a solid coloured line ONLY when statistically distinguishable from zero (p < 0.05).
+   * - For inconclusive direction ('no_clear_trend') or 'insufficient_data' only the label badge
+   *   is rendered (no line), without any value - e.g. "trendline: No clear trend".
+   */
   public override getTrendlines(): ITrendlineOverlay[] | undefined {
     if (this.chartService.timespanMode() === 'monthly') {
       return [];
@@ -123,23 +212,6 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
 
     for (const item of analyses) {
       if (item.stats.shouldPlotLine) {
-        const isSignificant = item.stats.status === 'significant_up' || item.stats.status === 'significant_down';
-        const isUncertain = item.stats.status === 'uncertain_trend';
-
-        let color = item.color;
-        const strokeDasharray = '8 4';
-        const strokeWidth = 2.5;
-        let label = item.rateLabel;
-
-        if (!isSignificant) {
-          // Grey line for non-significant trends (uncertain or weak)
-          color = '#98a2b3';
-          const tag = isUncertain
-            ? this.translate.instant(translateMarker('uncertain'))
-            : this.translate.instant(translateMarker('weak'));
-          label = `${item.rateLabel}\n${tag}`;
-        }
-
         lines.push({
           id: `trendline-${item.key}`,
           seriesKey: item.key,
@@ -147,10 +219,24 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
           endX: item.stats.endX,
           startY: item.stats.startY,
           endY: item.stats.endY,
-          color,
-          strokeWidth,
-          strokeDasharray,
-          label,
+          color: item.color,
+          strokeWidth: 2.5,
+          strokeDasharray: '8 4',
+          label: item.rateLabel,
+        });
+      } else if (item.status === 'no_clear_trend' || item.status === 'insufficient_data') {
+        const fallback = this.getLabelOnlyCoords(item.key, item.stats);
+        const statusLabel = item.status === 'insufficient_data' ? 'Insufficient data' : 'No clear trend';
+        lines.push({
+          id: `trendline-${item.key}`,
+          seriesKey: item.key,
+          startX: fallback.startX,
+          endX: fallback.endX,
+          startY: fallback.startY,
+          endY: fallback.endY,
+          color: item.color,
+          labelOnly: true,
+          label: `${statusLabel}`,
         });
       }
     }
@@ -162,7 +248,39 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     return undefined;
   }
 
-  public formatPValue(p: number | null): string {
-    return formatPValue(p);
+  /**
+   * Resolve badge anchor coords for label-only overlays.
+   * Prefers fitted start/end when available so the badge sits near the right end
+   * (matching plotted trendlines and naturally separating multi-series badges).
+   * Falls back to the observed data extent with the last value when no fit exists.
+   */
+  private getLabelOnlyCoords(
+    key: string,
+    stats: ITrendlineStats,
+  ): { startX: number; endX: number; startY: number; endY: number } {
+    if (stats.startX !== 0 || stats.endX !== 0) {
+      return { startX: stats.startX, endX: stats.endX, startY: stats.startY, endY: stats.endY };
+    }
+    const def = this.chartService.chartDefinition();
+    const data = this.chartService.chartData();
+    const xVar = def?.xVar || 'Year';
+    let minX = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let lastY = 0;
+    for (const row of data) {
+      const x = row[xVar] as number;
+      const y = row[key] as number;
+      if (typeof x === 'number' && Number.isFinite(x) && typeof y === 'number' && Number.isFinite(y)) {
+        if (x < minX) minX = x;
+        if (x >= maxX) {
+          maxX = x;
+          lastY = y;
+        }
+      }
+    }
+    if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+      return { startX: 0, endX: 0, startY: 0, endY: 0 };
+    }
+    return { startX: minX, endX: maxX, startY: lastY, endY: lastY };
   }
 }

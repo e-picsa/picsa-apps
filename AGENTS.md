@@ -28,8 +28,14 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **Tailwind CSS**: Preferred over custom SCSS.
 - **Internationalization (i18n)**: assume 20+ languages. NEVER hardcode user-facing text. Always use the `translate` pipe or appropriate service.
 
-## Coding Style
+## Coding Style & Long-Term Maintainability
 
+- **Long-Term Maintainability & Flat Architecture**:
+  - Keep code structures flat, clean, and maintainable over time.
+  - **Avoid deeply nested code** (such as nested `if`/`else` branches, nested ternaries, or sprawling callback trees) when handling edge cases or complex conditions.
+  - Use **early returns**, **guard clauses**, and **isolated helper functions** to handle validations, degenerate inputs, and edge cases before executing core logic.
+  - Prefer declarative dictionaries/lookup maps over sprawling `switch`/`if-else` blocks where applicable.
+  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility.
 - **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 
 ## Agent Meta-Instructions
@@ -62,6 +68,7 @@ To conserve context tokens and runtime, agents **MUST NOT** execute full applica
    - Avoid linting massive shells like `picsa-apps-app-native` via `nx lint`.
 2. **Testing (ALWAYS via `yarn ai:test`)**:
    - When verifying logic changes, run `yarn ai:test` with no args. It auto-detects changed files vs `HEAD`, maps each to its colocated `*.spec.ts`, and runs `yarn nx test <project> --testFile=<spec>` for the owning project.
+   - **DO NOT run tests for template-only or style-only changes**: If your edits are strictly to templates (`*.html`), styles (`*.scss`, `*.css`, Tailwind classes), or markup formatting with no TypeScript logic or utility alterations, do NOT run test commands. Running tests for style/markup changes wastes tokens, slows down execution, and risks looping.
    - To test specific files: `yarn ai:test <path/to/file.ts> [...]` (source or spec paths both work).
    - **ONLY** run specs covering code you created or modified. **NEVER** run broad project test suites or tests across the general codebase.
    - Do NOT run `yarn nx test` directly — `yarn ai:test` resolves the project and `--testFile` for you.
