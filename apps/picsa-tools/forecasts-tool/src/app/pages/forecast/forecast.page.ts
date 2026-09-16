@@ -283,6 +283,7 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public confirmLocationChange(): void {
     const temp = this.tempLocation();
     if (temp && this.isTempLocationReady()) {
+      this.hasRefreshedSuccessfully.set(false);
       this.configurationService.updateUserSettings({ location: temp });
       this.locationOverlayOpen.set(false);
     }
