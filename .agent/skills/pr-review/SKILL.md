@@ -1,9 +1,9 @@
 ---
-name: review-pr
+name: "PR: Review"
 description: Project-tailored PR reviewer that assesses pull requests for scope creep, over-engineering, code smells, utility/model extraction opportunities, and Angular 21 / Picsa maintainability, producing high-signal mental maps and constructive inline feedback.
 ---
 
-# PR Review Skill: Maintainability & Scope Triage
+# PR: Review Skill - Maintainability & Scope Triage
 
 Use this skill when conducting an initial review of a pull request from a team member, or when evaluating a large feature branch before submitting a PR.
 
