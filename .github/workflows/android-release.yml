@@ -77,7 +77,9 @@ jobs:
           cache: "gradle"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       # - name: Build Android Debug APK
       #   working-directory: apps/picsa-apps/app-native/android

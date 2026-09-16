@@ -101,7 +101,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Build Android Debug APK
         if: env.BUILD_TYPE == 'debug'
