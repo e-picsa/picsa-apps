@@ -19,6 +19,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
 - **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
+- **[PR Initial Review](.agent/skills/review-pr/SKILL.md)**: Project-tailored workflow for conducting initial PR reviews (scope creep, over-engineering, code smells, util extraction, and maintainability).
 - **[PR Feedback Resolution](.agent/skills/address-pr-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
 
 ## Core Principles
@@ -82,8 +83,7 @@ To avoid overloading the context window and consuming excessive tokens, all AI/A
 - **Prioritize Native IDE Tools**: You MUST use your native, built-in tools for file exploration over standard terminal commands whenever possible.
   - Use your native `view_file` or `read_file` tools instead of terminal commands like `cat`, `type`, or `Get-Content`.
   - Use your native `grep_search` or IDE-provided search capabilities instead of `grep`, `findstr`, or `Select-String`.
-  - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.
-- **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
+  - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.\n- **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
 
 ## Self-Documentation & Codebase Knowledge Maintenance
 
