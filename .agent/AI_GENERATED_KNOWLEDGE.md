@@ -176,6 +176,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
 - Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
 
+### Declarative Timespan Range Configuration (`timespanRange`)
+
+- Avoid hardcoding chart ID checks in components or services (`if (id === 'temp_min' || id === 'temp_max')`).
+- Declare timespan range policy directly in chart definitions (`IChartMeta.timespanRange: 'full' | 'seasonal'`).
+- Temperature charts (`temp_min`, `temp_max`) declare `timespanRange: 'full'` to expose all 12 calendar months (`1..12`) and 12 running climatological 3-month periods (`DJF..NDJ`).
+- Seasonal charts (e.g. `rainfall`) default to `'seasonal'`, filtering to the country's active agricultural season (`Oct..Jun` / `OND..FMA`). Helpers `getMonthsForChart` and `getPeriodsForChart` derive available selections declaratively.
+
 ### Responsive Tool Customization Slots & Sidenav Container Layout
 
 - **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.\n- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.

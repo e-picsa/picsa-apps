@@ -1,5 +1,7 @@
 import type { IMonthlyStationData, IStationCapabilities, IStationMeta } from '@picsa/models';
 import {
+  ALL_CALENDAR_MONTHS,
+  ALL_THREE_MONTH_PERIODS,
   CLIMATE_CHART_DEFINITIONS,
   COUNTRY_ACTIVE_MONTHS,
   COUNTRY_THREE_MONTH_PERIODS,
@@ -9,6 +11,8 @@ import {
   getActiveMonthsForCountry,
   getActivePeriodsForCountry,
   getChartDefinitionText,
+  getMonthsForChart,
+  getPeriodsForChart,
 } from './index';
 
 describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
@@ -79,6 +83,45 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
       const frenchMonths = ['Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
       const frenchLabel = formatThreeMonthPeriodLabel(djf, frenchMonths);
       expect(frenchLabel).toBe('Déc – Févr (DJF)');
+    });
+
+    it('should export all 12 running 3-month periods with valid month triples', () => {
+      expect(ALL_THREE_MONTH_PERIODS.length).toBe(12);
+      const codes = ALL_THREE_MONTH_PERIODS.map((p) => p.code);
+      expect(codes).toEqual(['DJF', 'JFM', 'FMA', 'MAM', 'AMJ', 'MJJ', 'JJA', 'JAS', 'ASO', 'SON', 'OND', 'NDJ']);
+
+      for (const p of ALL_THREE_MONTH_PERIODS) {
+        expect(p.months.length).toBe(3);
+        for (const m of p.months) {
+          expect(m).toBeGreaterThanOrEqual(1);
+          expect(m).toBeLessThanOrEqual(12);
+        }
+      }
+    });
+
+    it('should resolve full calendar months and all 12 periods for full-range charts', () => {
+      const tempMinDef = CLIMATE_CHART_DEFINITIONS.default.temp_min;
+      const tempMaxDef = CLIMATE_CHART_DEFINITIONS.default.temp_max;
+
+      expect(getMonthsForChart(tempMinDef)).toEqual(ALL_CALENDAR_MONTHS);
+      expect(getMonthsForChart(tempMaxDef)).toEqual(ALL_CALENDAR_MONTHS);
+      expect(getMonthsForChart(tempMinDef).length).toBe(12);
+
+      expect(getPeriodsForChart(tempMinDef)).toEqual(ALL_THREE_MONTH_PERIODS);
+      expect(getPeriodsForChart(tempMaxDef)).toEqual(ALL_THREE_MONTH_PERIODS);
+      expect(getPeriodsForChart(tempMinDef).length).toBe(12);
+    });
+
+    it('should resolve active growing season months and 5 periods for seasonal charts and undefined', () => {
+      const rainfallDef = CLIMATE_CHART_DEFINITIONS.default.rainfall;
+
+      expect(getMonthsForChart(rainfallDef)).toEqual(DEFAULT_ACTIVE_MONTHS);
+      expect(getMonthsForChart(rainfallDef).length).toBe(9);
+      expect(getMonthsForChart(undefined)).toEqual(DEFAULT_ACTIVE_MONTHS);
+
+      expect(getPeriodsForChart(rainfallDef)).toEqual(DEFAULT_THREE_MONTH_PERIODS);
+      expect(getPeriodsForChart(rainfallDef).length).toBe(5);
+      expect(getPeriodsForChart(undefined)).toEqual(DEFAULT_THREE_MONTH_PERIODS);
     });
   });
 
