@@ -128,6 +128,9 @@ export type IThreeMonthSeason = IThreeMonthPeriod;
 /** Supported timespan display resolutions */
 export type ClimateTimespanMode = 'annual' | 'monthly' | 'three_month';
 
+/** Supported timespan month/period range policies */
+export type ClimateTimespanRange = 'seasonal' | 'full';
+
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
 export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days' | 'temp_min' | 'temp_max';
@@ -159,6 +162,8 @@ export interface IChartMeta {
   definitionMonthly?: string;
   /** Methodology definition for 3-month seasonal timespan view (e.g. for info tooltip / chart description) */
   definitionThreeMonth?: string;
+  /** Timespan month/period range policy. 'full' uses all 12 months/periods; 'seasonal' (default) filters to active growing season. */
+  timespanRange?: ClimateTimespanRange;
   legend?: {
     /** Specify whether to show chart legend */
     show?: boolean;

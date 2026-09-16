@@ -101,6 +101,102 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Seed CSV Line Endings (CRLF Trap)**: Database seed CSVs in `apps/picsa-server/supabase/data/` may have Windows-style CRLF (`\r\n`) line endings. When programmatically modifying or appending columns to these CSVs, always strip `\r` (split on `/\r?\n/`) and write with clean Unix LF (`\n`) endings; otherwise appending values to lines with unstripped `\r` results in the added token or comma rendering on a separate line.
 - **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
 
+### User Role Authorization Architecture
+
+- **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
+- **JWT Claim**: `custom_access_token_hook` injects these roles into the JWT `picsa_roles` claim.
+- **Client Authorization**:
+  - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
+  - Route protection uses the functional `authRoleGuard` in `dashboard/src/app/modules/auth/guards`.
+  - Template protection uses `AuthRoleRequiredDirective` (`*authRoleRequired="..."`).
+
+### User-Submitted Feedback & Storage Isolation
+
+- **Deno lockfile version**: keep `apps/picsa-server/supabase/functions/deno.lock` at v4 (edge runtime Deno 2.1.4 compatible) — newer local Deno upgrades it to v5 and breaks `supabase functions serve`; restore it after local deno test runs.
+- **Service-role-only tables & Private Buckets**: for user-submitted content (`feedback_reports`), REVOKE anon/authenticated + GRANT service_role with RLS and route all client access through edge functions; store screenshots in a private bucket (`feedback-screenshots`).
+- **Edge Runtime Multipart Uploads**: `multiparser` npm package is broken on the edge runtime. Use native `req.formData()` with a manual byte-level fallback parser (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if row insert fails (orphan cleanup).
+- **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
+- **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
+
+---
+
+## 4. Angular 21, Signals & Reactive Architecture
+
+### Material CDK Overlays & OnPush Change Detection
+
+- **Issue**: Angular Material components like `mat-select` render dropdown options in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's DOM tree. Under `ChangeDetectionStrategy.OnPush`, selection events do not bubble through the component's DOM tree, leaving the UI stale.
+- **Solution**: Use Angular 21 modern Signal Forms (`@angular/forms/signals`) rather than manual `ChangeDetectorRef` triggers:
+  - Define a writable signal: `public readonly model = signal<T>(initialState);`
+  - Define the form tree: `public readonly form = form(this.model, (path) => { ... });`
+  - Bind inputs with `[formField]="form.field"` (importing `FormField` from `@angular/forms/signals`).
+  - Reading `model().field` in the template automatically registers the signal dependency and triggers change detection on view updates regardless of DOM hierarchy.
+
+### Synchronous Effects vs Async Operations
+
+- Avoid writing async effects like `effect(async () => { await this.ready(); ... })`.
+- Angular tracks signal dependencies synchronously. Any signal accessed after the first `await` is not tracked. Concurrent async executions can also introduce race conditions.
+- Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
+- **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
+
+### Internationalization (i18n) Module Import in Standalone Components
+
+- Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
+- The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
+
+### Angular Component SCSS Budgets & Scoped Selector Expansion
+
+- **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
+- **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
+
+---
+
+## 5. Charts & SVG Visualizations (C3 / D3)
+
+### C3 Inline Style Precedence & Point Customization
+
+- C3 default stylesheets apply `.c3-circle { fill: currentColor !important }`.
+- When rendering custom SVG point shapes (`<polygon>`, `<rect>`, `<circle>`), apply inline styles with `!important` (e.g. `style="fill: ${color} !important; stroke: ${strokeColor} !important;"`) to prevent styles from reverting to black.
+- When replacing SVG circle nodes with non-circle tags, C3's built-in D3 resize handler cannot update `cx`/`cy`. Use C3's internal scale functions (`chartApi.x(d.x)` and `chartApi.getYValue(d)`) inside a `@HostListener('window:resize')` handler to maintain accurate pixel positioning on resize.
+
+### SVG Serialization for Canvas/PNG Export
+
+- When serializing an SVG to render onto an HTML5 Canvas via `new Image()`, copying all `window.getComputedStyle(element)` properties onto element attributes copies C3 stylesheet rules (`.c3 path { fill: none; stroke: #000; }`) onto custom overlay elements, overriding fills and breaking custom graphics.
+- Filter computed styles to essential presentation properties (`fill`, `stroke`, `opacity`, `font-*`) and explicitly exclude custom overlay groups (`.picsa-point-overlay`, `.picsa-legend-overlay`) so explicit XML attributes and inline styles are preserved.
+
+### C3 Callback Lifecycle Timing
+
+- `c3.generate()` invokes `config.onrendered` synchronously before returning the new chart instance.
+- Any wrapper component managing C3 lifecycle must ensure `onrendered` fires with the chart instance reference fully assigned to prevent downstream consumers from seeing `undefined`.
+
+### Signal Reactivity for SVG Point Overlays & Render Events
+
+- **Signal Delegation**: When a central service (`ClimateChartService`) maintains an `effect()` that calls an active tool handler (`activeToolHandler().getPointStyle(d)`), Angular automatically tracks signals read inside that delegate (e.g. `LineToolComponent.value()`). Modifying the child signal re-triggers the parent effect without RxJS Subjects.
+- **Render Notifications**: Replace `Subject<void>` for chart render events with a `chartRenderCount = signal(0)` counter. Export pipelines can await render completion using a promise helper queue without subscription leak risks.
+
+### Declarative Chart Tool Configuration
+
+- Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
+- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
+
+### Declarative Timespan Range Configuration (`timespanRange`)
+
+- Avoid hardcoding chart ID checks in components or services (`if (id === 'temp_min' || id === 'temp_max')`).
+- Declare timespan range policy directly in chart definitions (`IChartMeta.timespanRange: 'full' | 'seasonal'`).
+- Temperature charts (`temp_min`, `temp_max`) declare `timespanRange: 'full'` to expose all 12 calendar months (`1..12`) and 12 running climatological 3-month periods (`DJF..NDJ`).
+- Seasonal charts (e.g. `rainfall`) default to `'seasonal'`, filtering to the country's active agricultural season (`Oct..Jun` / `OND..FMA`). Helpers `getMonthsForChart` and `getPeriodsForChart` derive available selections declaratively.
+
+### Responsive Tool Customization Slots & Sidenav Container Layout
+
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.\n- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
+- **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
+- **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
+- **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
+
+### Unified Y-Value Formatting Across Chart Tools
+
+- Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
+
 ---
 
 ## 6. Domain Logic & Agronomy Data Rules
