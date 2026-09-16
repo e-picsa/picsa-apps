@@ -30,14 +30,15 @@ Run the following commands using native execution to inspect the target PR or br
 # When reviewing a GitHub PR by number or branch:
 gh pr view <PR_NUMBER_OR_BRANCH> --json number,title,body,baseRefName,headRefName,author,additions,deletions,changedFiles
 
-# Summary of changed files with churn statistics:
-gh pr diff <PR_NUMBER_OR_BRANCH> --stat
+# Per-file churn summary (additions / deletions):
+gh pr view <PR_NUMBER_OR_BRANCH> --json files --jq '.files[] | "\(.path) (+\(.additions)/-\(.deletions))"'
 
-# List changed files detecting renames and copies:
+# List changed file paths (supported natively by gh pr diff):
 gh pr diff <PR_NUMBER_OR_BRANCH> --name-only
 
 # Or when reviewing a local branch against default remote branch (develop/main):
-DEFAULT_BASE=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@') || DEFAULT_BASE="main"
+DEFAULT_BASE=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+[ -z "$DEFAULT_BASE" ] && { git rev-parse --verify origin/develop >/dev/null 2>&1 && DEFAULT_BASE="develop" || DEFAULT_BASE="main"; }
 git diff -M -C --stat $(git merge-base HEAD "origin/${DEFAULT_BASE}")...HEAD
 git diff -M -C --name-only $(git merge-base HEAD "origin/${DEFAULT_BASE}")...HEAD
 ```
@@ -58,6 +59,7 @@ Categorize touched files across monorepo boundaries to understand blast radius:
 | **UI & Theme** | `libs/theme/`, `libs/components/` | Shared UI tokens and presentational components. |
 | **Supabase / Backend** | `apps/picsa-server/supabase/` | Migrations, Edge Functions, database triggers, seed CSVs. |
 | **Workspace Config** | `package.json`, `tsconfig*`, `nx.json`, `tools/` | Workspace-wide impact. High scrutiny required. |
+| **Agent Tooling & Docs** | `.agent/`, `AGENTS.md`, `*.md` | Development workflows, skills, institutional knowledge. Low blast radius. |
 
 ### 3. Recommended Reading Order
 
@@ -151,7 +153,7 @@ To prevent shallow checklist fatigue and token bloat, execute only passes trigge
 | **Internationalization (i18n)** | Any `*.html` or user-facing `.ts` changed outside `apps/picsa-apps/dashboard/` |
 | **Monorepo / Lib Boundaries** | Any `libs/` path changed |
 | **Backend & Supabase** | Any `apps/picsa-server/` path changed |
-| **Workspace Config** | `package.json`, `tsconfig*`, `nx.json`, or `tools/` changed |
+| **Workspace & Tooling** | `package.json`, `tsconfig*`, `nx.json`, `tools/`, `.agent/`, or `AGENTS.md` changed |
 | **Bundle Impact** | New npm dependency added, or new external import in `libs/` |
 
 ---

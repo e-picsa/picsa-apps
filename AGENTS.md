@@ -83,7 +83,8 @@ To avoid overloading the context window and consuming excessive tokens, all AI/A
 - **Prioritize Native IDE Tools**: You MUST use your native, built-in tools for file exploration over standard terminal commands whenever possible.
   - Use your native `view_file` or `read_file` tools instead of terminal commands like `cat`, `type`, or `Get-Content`.
   - Use your native `grep_search` or IDE-provided search capabilities instead of `grep`, `findstr`, or `Select-String`.
-  - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.\n- **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
+  - Use your native directory listing tools (e.g., `list_dir`) instead of `ls` or `dir`.
+- **Reasoning**: Terminal commands output uncontrolled whitespace, shell formatting, and potentially massive file dumps without safeguards, whereas native tools are specifically optimized for LLM token efficiency and have built-in safety caps.
 
 ## Self-Documentation & Codebase Knowledge Maintenance
 
