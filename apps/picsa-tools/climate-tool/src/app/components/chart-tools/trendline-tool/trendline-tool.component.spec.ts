@@ -49,6 +49,7 @@ describe('TrendlineToolComponent', () => {
     expect(openSpy).toHaveBeenCalledWith(TrendlineMethodologyDialogComponent, {
       width: '100%',
       maxWidth: '560px',
+      maxHeight: '90vh',
       panelClass: 'no-padding',
       autoFocus: false,
     });

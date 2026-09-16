@@ -123,6 +123,7 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
     this.dialog.open(TrendlineMethodologyDialogComponent, {
       width: '100%',
       maxWidth: '560px',
+      maxHeight: '90vh',
       panelClass: 'no-padding',
       autoFocus: false,
     });
