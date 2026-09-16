@@ -59,7 +59,7 @@
     <!-- Editor dialog -->
     <ng-template #editDialogRef>
       <div style="overflow: auto; height: 90vh; width: 100%">
-        <seasonal-calendar-editor [form]="form" (customCropAdded)="saveNow()"></seasonal-calendar-editor>
+        <seasonal-calendar-editor [form]="form"></seasonal-calendar-editor>
         <button matButton="elevated" class="footer-button mt-4" color="primary" mat-dialog-close>Save</button>
       </div>
     </ng-template>
