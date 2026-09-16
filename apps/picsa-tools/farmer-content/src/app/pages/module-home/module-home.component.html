@@ -90,18 +90,23 @@
   >
     <!-- Custom tool header -->
     <div class="tool-header">
-      <button matButton color="primary" class="p-4 flex-1 max-w-32" (click)="hideTool()">
+      <button matButton color="primary" class="p-4 justify-self-start min-w-0" (click)="hideTool()">
         {{ 'Close' | translate }}
         <mat-icon>close</mat-icon>
       </button>
 
       <!-- Dynamic content injected into header (required for climate tool site select) -->
-      <div class="flex-1 overflow-hidden">
+      <div class="justify-self-center min-w-0 max-w-full overflow-hidden">
         <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
       </div>
 
       @if (showSidenavToggle()) {
-        <button matButton color="primary" class="p-4" (click)="componentsService.toggleSidenav()">
+        <button
+          matButton
+          color="primary"
+          class="p-4 justify-self-end min-w-0"
+          (click)="componentsService.toggleSidenav()"
+        >
           <span style="display: none" class="sm:!block"> {{ 'Options' | translate }}</span>
           <mat-icon>menu</mat-icon>
         </button>
