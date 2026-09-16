@@ -1,6 +1,5 @@
 import { DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IChartMeta, IStationData } from '@picsa/models';
@@ -15,7 +14,6 @@ describe('TrendlineToolComponent', () => {
   let fixture: ComponentFixture<TrendlineToolComponent>;
   let chartService: ClimateChartService;
   let configService: TrendlineConfigService;
-  let dialog: MatDialog;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -27,7 +25,6 @@ describe('TrendlineToolComponent', () => {
     component = fixture.componentInstance;
     chartService = TestBed.inject(ClimateChartService);
     configService = TestBed.inject(TrendlineConfigService);
-    dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
   });
 
@@ -38,8 +35,8 @@ describe('TrendlineToolComponent', () => {
 
   it('should update period and sync overlay when setPeriod is called', () => {
     const syncSpy = jest.spyOn(chartService, 'syncPointOverlay');
-    component.setPeriod('10_year');
-    expect(configService.period()).toBe('10_year');
+    component.setPeriod('30_year');
+    expect(configService.period()).toBe('30_year');
     expect(syncSpy).toHaveBeenCalled();
   });
 
@@ -52,7 +49,7 @@ describe('TrendlineToolComponent', () => {
     });
   });
 
-  it('should analyze single-series chart and plot trendline when trend is statistically clear (p < 0.05)', () => {
+  it('should analyze single-series chart and plot solid trendline when trend is statistically clear (p < 0.05)', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -76,26 +73,30 @@ describe('TrendlineToolComponent', () => {
     const analyses = component.seriesAnalyses();
     expect(analyses.length).toBe(1);
     expect(analyses[0].key).toBe('Rainfall');
-    expect(analyses[0].status).toBe('significant_up');
+    expect(analyses[0].status).toBe('upward_trend');
     expect(analyses[0].stats.slope).toBeCloseTo(10, 4);
     expect(analyses[0].stats.changePerDecade).toBeCloseTo(100, 4);
     expect(analyses[0].stats.pValue).toBeLessThan(0.001);
     expect(analyses[0].stats.shouldPlotLine).toBe(true);
-    expect(analyses[0].rateLabel).toContain('+100.0 mm / decade');
+    // Non-temperature rounds to nearest integer
+    expect(analyses[0].rateLabel).toContain('+100 mm / decade');
+    expect(analyses[0].ciRange).toBe('[+100, +100]');
+    expect(analyses[0].ciUnit).toBe('mm / decade');
 
-    // Trendline overlay is generated
+    // Trendline overlay is generated with solid line
     const trendlines = component.getTrendlines();
     expect(trendlines?.length).toBe(1);
     expect(trendlines?.[0].seriesKey).toBe('Rainfall');
     expect(trendlines?.[0].color).toBe('#13599e');
     expect(trendlines?.[0].startX).toBe(1990);
     expect(trendlines?.[0].endX).toBe(2014);
+    expect(trendlines?.[0].strokeWidth).toBe(2.5);
 
-    // Upper chart summary is omitted
+    // Upper chart summary message is omitted
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should handle multi-series charts (e.g. min, mean, max temperature) plotting colored lines for significant series and grey lines for non-significant', () => {
+  it('should handle multi-series charts by plotting solid colored lines only for significant series and rendering label-only for inconclusive', () => {
     const tempMeta = {
       _id: 'temp',
       name: 'Temperature',
@@ -114,8 +115,8 @@ describe('TrendlineToolComponent', () => {
     // 25 years: min_tmin and mean_tmin have upward trends; mean_tmax oscillates around 30 without trend
     const multiSeriesData = Array.from({ length: 25 }, (_, i) => ({
       Year: 1990 + i,
-      min_tmin: 10 + i * 0.1, // strong upward
-      mean_tmin: 15 + i * 0.08, // strong upward
+      min_tmin: 10 + i * 0.1, // strong upward (+1.0 °C / decade)
+      mean_tmin: 15 + i * 0.08, // strong upward (+0.8 °C / decade)
       mean_tmax: 30 + (i % 2 === 0 ? 0.8 : -0.8), // flat oscillating
     }));
 
@@ -126,30 +127,35 @@ describe('TrendlineToolComponent', () => {
     const analyses = component.seriesAnalyses();
     expect(analyses.length).toBe(3);
 
+    // Temperature keeps 1 decimal place
     expect(analyses[0].key).toBe('min_tmin');
-    expect(analyses[0].status).toBe('significant_up');
+    expect(analyses[0].status).toBe('upward_trend');
     expect(analyses[0].stats.shouldPlotLine).toBe(true);
+    expect(analyses[0].rateLabel).toContain('+1.0 °C / decade');
 
     expect(analyses[1].key).toBe('mean_tmin');
-    expect(analyses[1].status).toBe('significant_up');
+    expect(analyses[1].status).toBe('upward_trend');
     expect(analyses[1].stats.shouldPlotLine).toBe(true);
+    expect(analyses[1].rateLabel).toContain('+0.8 °C / decade');
 
     expect(analyses[2].key).toBe('mean_tmax');
-    expect(analyses[2].status).toBe('weak_trend');
-    expect(analyses[2].stats.shouldPlotLine).toBe(true);
+    expect(analyses[2].status).toBe('no_clear_trend');
+    expect(analyses[2].stats.shouldPlotLine).toBe(false);
 
-    // All 3 series have trendlines plotted (2 colored, 1 grey for the non-significant series)
+    // Only the 2 statistically clear series have lines plotted; inconclusive renders label-only with no line
     const trendlines = component.getTrendlines();
     expect(trendlines?.length).toBe(3);
     expect(trendlines?.[0].color).toBe('#2b83ba');
+    expect(trendlines?.[0].labelOnly).toBeFalsy();
     expect(trendlines?.[1].color).toBe('#abdda4');
-    expect(trendlines?.[2].color).toBe('#98a2b3'); // grey line
-    expect(trendlines?.[2].label).toContain('weak');
+    expect(trendlines?.[1].labelOnly).toBeFalsy();
+    expect(trendlines?.[2].labelOnly).toBe(true);
+    expect(trendlines?.[2].label).toBe('No clear trend');
 
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should plot a grey trendline and show weak trend status when p >= 0.05 and correlation is low', () => {
+  it('should render label-only without line and show no clear trend status when p >= 0.05', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -171,16 +177,17 @@ describe('TrendlineToolComponent', () => {
 
     const trendlines = component.getTrendlines();
     expect(trendlines?.length).toBe(1);
-    expect(trendlines?.[0].color).toBe('#98a2b3'); // grey line plotted
+    expect(trendlines?.[0].labelOnly).toBe(true);
+    expect(trendlines?.[0].label).toBe('No clear trend');
 
     const analyses = component.seriesAnalyses();
-    expect(analyses[0].status).toBe('weak_trend');
-    expect(analyses[0].stats.shouldPlotLine).toBe(true);
+    expect(analyses[0].status).toBe('no_clear_trend');
+    expect(analyses[0].stats.shouldPlotLine).toBe(false);
 
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should not plot a line when record has < 20 observations', () => {
+  it('should render label-only without line when record has < 20 observations', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -201,7 +208,9 @@ describe('TrendlineToolComponent', () => {
     fixture.detectChanges();
 
     const trendlines = component.getTrendlines();
-    expect(trendlines?.length).toBe(0);
+    expect(trendlines?.length).toBe(1);
+    expect(trendlines?.[0].labelOnly).toBe(true);
+    expect(trendlines?.[0].label).toBe('Insufficient data');
 
     const analyses = component.seriesAnalyses();
     expect(analyses[0].status).toBe('insufficient_data');
@@ -210,7 +219,7 @@ describe('TrendlineToolComponent', () => {
     expect(component.getChartMessage()).toBeUndefined();
   });
 
-  it('should update analysis when period changes from full to 10-year view', () => {
+  it('should update analysis when period changes from full to 30-year view', () => {
     const rainfallMeta = {
       _id: 'rainfall',
       name: 'Seasonal Rainfall',
@@ -220,15 +229,15 @@ describe('TrendlineToolComponent', () => {
       xVar: 'Year',
     };
 
-    // 40 years of data: flat for first 30 years, strong upward for last 10 years
+    // 50 years of data: flat for first 20 years, strong upward for last 30 years
     const data = [
-      ...Array.from({ length: 30 }, (_, i) => ({
-        Year: 1985 + i,
+      ...Array.from({ length: 20 }, (_, i) => ({
+        Year: 1975 + i,
         Rainfall: 600 + (i % 2 === 0 ? 5 : -5),
       })),
-      ...Array.from({ length: 10 }, (_, i) => ({
-        Year: 2015 + i,
-        Rainfall: 600 + i * 25,
+      ...Array.from({ length: 30 }, (_, i) => ({
+        Year: 1995 + i,
+        Rainfall: 600 + i * 10,
       })),
     ];
 
@@ -236,15 +245,15 @@ describe('TrendlineToolComponent', () => {
     chartService.chartData.set(data as unknown as IStationData[]);
     fixture.detectChanges();
 
-    // In 10-year view, evaluates only the last 10 years (2015-2024)
-    configService.setPeriod('10_year');
+    // In 30-year view, evaluates only the last 30 years (1995-2024)
+    configService.setPeriod('30_year');
     fixture.detectChanges();
 
     const analyses = component.seriesAnalyses();
-    expect(analyses[0].stats.n).toBe(10);
-    expect(analyses[0].stats.startX).toBe(2015);
+    expect(analyses[0].stats.n).toBe(30);
+    expect(analyses[0].stats.startX).toBe(1995);
     expect(analyses[0].stats.endX).toBe(2024);
-    expect(analyses[0].status).toBe('significant_up');
+    expect(analyses[0].status).toBe('upward_trend');
     expect(analyses[0].stats.shouldPlotLine).toBe(true);
   });
 

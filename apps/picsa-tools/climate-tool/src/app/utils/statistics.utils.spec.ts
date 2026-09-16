@@ -1,15 +1,18 @@
 import {
+  calculateConfidenceInterval,
+  calculateCriticalT,
   calculateLinearRegression,
   calculateSignificance,
   checkConsecutiveYears,
   fitLinearRegression,
+  formatConfidenceInterval,
+  formatDecadeRate,
   formatPValue,
-  MIN_OBSERVATIONS_10_YEAR,
   MIN_OBSERVATIONS_30_YEAR,
   MIN_OBSERVATIONS_FULL,
 } from './statistics.utils';
 
-describe('statistics.utils (OLS Regression & Significance)', () => {
+describe('statistics.utils (OLS Regression, Inference & Confidence Intervals)', () => {
   describe('checkConsecutiveYears', () => {
     it('should return true for consecutive series or small arrays', () => {
       expect(checkConsecutiveYears([])).toBe(true);
@@ -116,6 +119,68 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
     });
   });
 
+  describe('calculateCriticalT and calculateConfidenceInterval', () => {
+    it('should compute accurate t-critical values using bisection on Student t CDF', () => {
+      // For df = 28, two-tailed alpha = 0.05, t_crit is approx 2.0484
+      const tCrit28 = calculateCriticalT(28, 0.05);
+      expect(tCrit28).toBeCloseTo(2.048, 2);
+
+      // As df -> infinity, t_crit approaches 1.960
+      const tCritLarge = calculateCriticalT(1000, 0.05);
+      expect(tCritLarge).toBeCloseTo(1.96, 2);
+    });
+
+    it('should calculate 95% confidence interval for decadal change', () => {
+      // 30 points: y = 2x + 10 (perfect fit, zero residuals)
+      const points = Array.from({ length: 30 }, (_, i) => ({
+        x: 1990 + i,
+        y: 10 + 2 * (1990 + i),
+      }));
+
+      const ci = calculateConfidenceInterval(points, 2, 10, 28, 0.05);
+      expect(ci.seSlope).toBeCloseTo(0, 5);
+      // Slope is 2 -> changePerDecade is 20 -> CI is [20, 20]
+      expect(ci.ciLowerDecade).toBeCloseTo(20, 4);
+      expect(ci.ciUpperDecade).toBeCloseTo(20, 4);
+    });
+
+    it('should return null CI for invalid parameters', () => {
+      expect(calculateConfidenceInterval([], null, null, null)).toEqual({
+        ciLowerDecade: null,
+        ciUpperDecade: null,
+        seSlope: null,
+        tCrit: null,
+      });
+    });
+  });
+
+  describe('formatDecadeRate and formatConfidenceInterval rounding', () => {
+    it('should round non-temperature variables to nearest integer', () => {
+      // Rainfall mm
+      expect(formatDecadeRate(14.4, 'mm', false)).toBe('+14 mm / decade');
+      expect(formatDecadeRate(14.6, 'mm', false)).toBe('+15 mm / decade');
+      expect(formatDecadeRate(-8.2, 'mm', false)).toBe('-8 mm / decade');
+      expect(formatDecadeRate(-0.1, 'mm', false)).toBe('0 mm / decade'); // Avoid -0
+
+      expect(formatConfidenceInterval(2.8, 25.3, 'mm', false)).toBe('[+3, +25] mm / decade');
+      expect(formatConfidenceInterval(-10.4, 5.2, 'mm', false)).toBe('[-10, +5] mm / decade');
+    });
+
+    it('should format temperature variables to 1 decimal place', () => {
+      // Temperature °C
+      expect(formatDecadeRate(0.38, '°C', true)).toBe('+0.4 °C / decade');
+      expect(formatDecadeRate(-0.24, '°C', true)).toBe('-0.2 °C / decade');
+
+      expect(formatConfidenceInterval(0.12, 0.68, '°C', true)).toBe('[+0.1, +0.7] °C / decade');
+      expect(formatConfidenceInterval(-0.15, 0.45, '°C', true)).toBe('[-0.1, +0.5] °C / decade');
+    });
+
+    it('should handle null / non-finite values safely', () => {
+      expect(formatDecadeRate(null, 'mm', false)).toBe('—');
+      expect(formatConfidenceInterval(null, null, 'mm', false)).toBe('—');
+    });
+  });
+
   describe('calculateLinearRegression (application wrapper & guardrails)', () => {
     it('should require at least 20 observations for full record', () => {
       // 19 observations (1 fewer than MIN_OBSERVATIONS_FULL)
@@ -128,7 +193,7 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       expect(res.n).toBe(19);
       expect(res.status).toBe('insufficient_data');
       expect(res.shouldPlotLine).toBe(false);
-      expect(res.message).toBe('Not enough usable data to assess a trend.');
+      expect(res.message).toBe('Insufficient data');
       expect(res.subtext).toContain(`Requires at least ${MIN_OBSERVATIONS_FULL} usable years`);
 
       // Descriptive stats are still populated in the returned object
@@ -150,9 +215,10 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
 
       const res = calculateLinearRegression(chipataRecord, 'full');
       expect(res.n).toBe(74);
-      expect(res.status).toBe('significant_up');
+      expect(res.status).toBe('upward_trend');
       expect(res.shouldPlotLine).toBe(true);
       expect(res.pValue).toBeLessThan(0.05);
+      expect(res.ciLowerDecade).toBeGreaterThan(0);
     });
 
     it('should report insufficient data if full record has less than 70% completeness', () => {
@@ -169,50 +235,6 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       expect(res.subtext).toContain('less than 70% complete');
     });
 
-    it('should support 10-year view and qualify when at least 7 out of 10 years are present', () => {
-      // 10-year window where current year is missing: 8 valid years out of last 10
-      const record = [
-        ...Array.from({ length: 20 }, (_, i) => ({ x: 1990 + i, y: 100 + i })),
-        { x: 2015, y: 120 },
-        { x: 2016, y: 125 },
-        { x: 2017, y: 130 },
-        { x: 2018, y: 135 },
-        { x: 2019, y: 140 },
-        { x: 2020, y: 145 },
-        { x: 2021, y: 150 },
-        { x: 2023, y: 160 },
-      ];
-
-      const res10 = calculateLinearRegression(record, '10_year');
-      expect(res10.n).toBe(8); // 8 out of last 10 years (>= 7)
-      expect(res10.status).toBe('significant_up');
-      expect(res10.shouldPlotLine).toBe(true);
-      expect(res10.startX).toBe(2015);
-      expect(res10.endX).toBe(2023);
-    });
-
-    it('should report insufficient data for 10-year view when fewer than 7 observations are present', () => {
-      // Only 5 observations in the last 10 years
-      const sparseRecent = [
-        ...Array.from({ length: 30 }, (_, i) => ({ x: 1980 + i, y: 100 + i })),
-        { x: 2019, y: 130 },
-        { x: 2020, y: 132 },
-        { x: 2021, y: 134 },
-        { x: 2022, y: 136 },
-        { x: 2023, y: 138 },
-      ];
-
-      const res10 = calculateLinearRegression(sparseRecent, '10_year');
-      expect(res10.n).toBe(5);
-      expect(res10.status).toBe('insufficient_data');
-      expect(res10.shouldPlotLine).toBe(false);
-      expect(res10.subtext).toContain(
-        `Requires at least ${MIN_OBSERVATIONS_10_YEAR} usable years in the 10-year period`,
-      );
-      // Descriptive stats are still computed and returned
-      expect(res10.slope).toBeCloseTo(2, 4);
-    });
-
     it('should support 30-year view slicing based on most recent 30-year window', () => {
       const longRecord = Array.from({ length: 50 }, (_, i) => ({
         x: 1970 + i,
@@ -224,7 +246,7 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       expect(res30.startX).toBe(1990);
       expect(res30.endX).toBe(2019);
       expect(res30.shouldPlotLine).toBe(true);
-      expect(res30.status).toBe('significant_up');
+      expect(res30.status).toBe('upward_trend');
     });
 
     it('should report insufficient data for 30-year view when fewer than 20 observations are present', () => {
@@ -254,7 +276,7 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       expect(res.status).toBe('unavailable');
       expect(res.slope).toBeNull();
       expect(res.shouldPlotLine).toBe(false);
-      expect(res.message).toBe('Trend assessment unavailable');
+      expect(res.message).toBe('Unavailable');
       expect(res.subtext).toContain('Constant X values');
     });
 
@@ -265,24 +287,10 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       }));
 
       const res = calculateLinearRegression(constantY);
-      expect(res.status).toBe('constant_y');
+      expect(res.status).toBe('no_clear_trend');
       expect(res.slope).toBe(0);
       expect(res.shouldPlotLine).toBe(false);
-      expect(res.message).toBe('No clear trend detected for this period.');
-    });
-
-    it('should handle Two distinct x-values by returning fit stats but reporting insufficient data', () => {
-      const twoPoints = [
-        { x: 2000, y: 10 },
-        { x: 2005, y: 20 },
-      ];
-
-      const res = calculateLinearRegression(twoPoints);
-      expect(res.n).toBe(2);
-      expect(res.status).toBe('insufficient_data');
-      expect(res.shouldPlotLine).toBe(false);
-      expect(res.slope).toBe(2);
-      expect(res.changePerDecade).toBe(20);
+      expect(res.message).toBe('No clear trend');
     });
 
     it('should handle single point or empty input safely', () => {
@@ -310,14 +318,14 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       expect(res.endX).toBe(1993);
     });
 
-    it('should correctly handle significant upward and downward trends', () => {
+    it('should correctly classify significant upward and downward trends with solid lines', () => {
       const upPoints = Array.from({ length: 25 }, (_, i) => ({
         x: 1990 + i,
         y: 100 + 3 * i + (i % 2 === 0 ? 2 : -2),
       }));
 
       const resUp = calculateLinearRegression(upPoints);
-      expect(resUp.status).toBe('significant_up');
+      expect(resUp.status).toBe('upward_trend');
       expect(resUp.shouldPlotLine).toBe(true);
       expect(resUp.pValue).toBeLessThan(0.05);
 
@@ -327,39 +335,22 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
       }));
 
       const resDown = calculateLinearRegression(downPoints);
-      expect(resDown.status).toBe('significant_down');
+      expect(resDown.status).toBe('downward_trend');
       expect(resDown.shouldPlotLine).toBe(true);
       expect(resDown.pValue).toBeLessThan(0.05);
     });
 
-    it('should classify non-significant trend as weak_trend when correlation is minimal (|r| < 0.15)', () => {
-      // Oscillating around 100 with zero/minimal trend (|r| ~ 0)
-      const weakPoints = Array.from({ length: 25 }, (_, i) => ({
+    it('should classify non-significant trend as no_clear_trend and suppress trendline when p >= 0.05', () => {
+      // Oscillating around 100 with zero/minimal trend
+      const noisyPoints = Array.from({ length: 25 }, (_, i) => ({
         x: 1990 + i,
         y: 100 + (i % 2 === 0 ? 15 : -15),
       }));
 
-      const res = calculateLinearRegression(weakPoints);
-      expect(res.status).toBe('weak_trend');
-      expect(res.shouldPlotLine).toBe(true);
-      expect(res.message).toBe('Weak or minimal trend');
-      expect(res.r).not.toBeNull();
-      expect(Math.abs(res.r ?? 1)).toBeLessThan(0.15);
-      expect(res.pValue).toBeGreaterThanOrEqual(0.05);
-    });
-
-    it('should classify non-significant trend as uncertain_trend when there is observable slope but p >= 0.05', () => {
-      // Noticeable slope with high noise: |r| >= 0.15 but p >= 0.05
-      const noisyTrend = Array.from({ length: 20 }, (_, i) => ({
-        x: 2000 + i,
-        y: 100 + i * 1.2 + (i % 3 === 0 ? 30 : -20),
-      }));
-
-      const res = calculateLinearRegression(noisyTrend);
-      expect(res.status).toBe('uncertain_trend');
-      expect(res.shouldPlotLine).toBe(true);
-      expect(res.message).toContain('Uncertain');
-      expect(Math.abs(res.r ?? 0)).toBeGreaterThanOrEqual(0.15);
+      const res = calculateLinearRegression(noisyPoints);
+      expect(res.status).toBe('no_clear_trend');
+      expect(res.shouldPlotLine).toBe(false);
+      expect(res.message).toBe('No clear trend');
       expect(res.pValue).toBeGreaterThanOrEqual(0.05);
     });
   });
@@ -368,8 +359,10 @@ describe('statistics.utils (OLS Regression & Significance)', () => {
     it('should format p-values cleanly', () => {
       expect(formatPValue(null)).toBe('—');
       expect(formatPValue(NaN)).toBe('—');
-      expect(formatPValue(0.0001)).toBe('< 0.001');
-      expect(formatPValue(0.042)).toBe('0.042');
+      expect(formatPValue(undefined)).toBe('—');
+      expect(formatPValue(0.0004)).toBe('< 0.001');
+      expect(formatPValue(0.024)).toBe('0.024');
+      expect(formatPValue(0.05)).toBe('0.050');
       expect(formatPValue(0.1234)).toBe('0.123');
     });
   });

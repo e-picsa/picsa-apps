@@ -49,7 +49,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Heavy Document Export Isolation (DOCX/PDF)
 
-- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.\n- In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
+- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
+- In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
 
 ### TSX tsconfig-paths Resolution in Monorepos
 
@@ -78,7 +79,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Database Triggers & Internal Edge Functions
 
 - **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
-- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.\n - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+- **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.
+  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.
+  - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
 - **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
 ### PostgreSQL Generated Column Nullability
@@ -106,6 +109,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
   - Route protection uses the functional `authRoleGuard` in `dashboard/src/app/modules/auth/guards`.
   - Template protection uses `AuthRoleRequiredDirective` (`*authRoleRequired="..."`).
+
 ### User-Submitted Feedback & Storage Isolation
 
 - **Deno lockfile version**: keep `apps/picsa-server/supabase/functions/deno.lock` at v4 (edge runtime Deno 2.1.4 compatible) — newer local Deno upgrades it to v5 and breaks `supabase functions serve`; restore it after local deno test runs.
@@ -113,7 +117,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Edge Runtime Multipart Uploads**: `multiparser` npm package is broken on the edge runtime. Use native `req.formData()` with a manual byte-level fallback parser (`_shared/request.ts`), validate images via magic bytes (client-declared MIME is untrusted), and delete the uploaded object if row insert fails (orphan cleanup).
 - **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
 - **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
-
 
 ---
 
@@ -146,7 +149,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
 ---
-
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
 
@@ -225,14 +227,21 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Climate Tool Trendline Analytics & Presentation Rules
 
-- **Simple Linear Regression Metric Redundancy**: In single-predictor OLS regression ($X = \text{Year}$), $r^2 \equiv R^2$. Displaying Pearson $r$ alongside $R^2$ clutters UI grids without providing additional value because trend direction is already explicitly conveyed by the signed rate of change (e.g. `+1.2 \circ C / decade`) and badge text. The stats grid focuses concisely on $R^2$ (goodness-of-fit) and $p$ (statistical significance).
-- **Threshold Failure Highlighting**: $p$-values have an established scientific threshold ($p < 0.05$ statistically clear, $p \ge 0.05$ not statistically distinguished from chance). When $p \ge 0.05$, it is highlighted with warning styling (`.stat-value-failed`). Continuous metrics like $R^2$ do not have binary failure cutoffs in climate analysis and should not be styled as failing.
-- **Unified Trend Classification Criteria**:
-  - **Consistent Line Weight (2.5px)**: All trendlines maintain a uniform `strokeWidth = 2.5` and dashed pattern (`8 4`) across Full, 30-Year, and 10-Year views, preventing lines from appearing optical thinned or faint on shorter/uncertain records.
-  - **Statistically Clear** ($p < 0.05$): Rendered in the series color with rate of change label.
-  - **Uncertain Trend** ($p \ge 0.05$ and $|r| \ge 0.15$ / $R^2 \ge 0.02$): Directional change is observable, but yearly noise prevents statistical certainty. Rendered in grey (`#98a2b3`) with an `uncertain` label.
-  - **Weak or Minimal Trend** ($p \ge 0.05$ and $|r| < 0.15$ / $R^2 < 0.02$): Rate of change is negligible. Rendered in grey (`#98a2b3`) with a `weak` label.
-  - **Insufficient Data**: When observation count (< 20 for full/30-yr, < 7 for 10-yr) or completeness (< 70%) requirements fail, lines are suppressed completely to prevent misleading inferences.
+- **Display Rule & Cutoff**:
+  - A trendline is plotted **only** when statistically clear ($p < 0.05$). It is rendered as a **solid coloured line** in the series color (`strokeWidth = 2.5`).
+  - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
+- **4 Explicit Outcome Categories**:
+  1. `upward_trend`: $p < 0.05$ and slope $> 0$.
+  2. `downward_trend`: $p < 0.05$ and slope $< 0$.
+  3. `no_clear_trend`: $p \ge 0.05$ (inconclusive).
+  4. `insufficient_data`: fails sample size ($n < 20$) or completeness ratio ($< 70\%$).
+- **Public Views**: Only **30-year view** (multidecadal normal) and **Full-record view** ($\ge 20$ usable years, $\ge 70\%$ completeness) are supported. 10-year view is removed from climate trend classification.
+- **Precision & Rounding**:
+  - Round all decadal rates of change and confidence intervals to the **nearest integer** (e.g. `+14 mm / decade`, `95% CI: [+3, +25] mm / decade`).
+  - Exception: Temperature (`°C`) is formatted to **1 decimal place** (e.g. `+0.4 °C / decade`, `95% CI: [+0.1, +0.7] °C / decade`).
+- **Goodness-of-Fit ($R^2$) Role**:
+  - $R^2$ is provided purely as a descriptive measure of variance explained in the collapsible statistics panel.
+  - In highly variable climate series (e.g. rainfall), low $R^2$ is common even when an important trend exists. $R^2$ is never used as an arbitrary gating threshold or styled as "failing".
 - **Monthly Timespan Exclusion**: Trendline tools are strictly scoped to annual and seasonal indicators, hiding on monthly views where unadjusted seasonality would distort linear fits.
 
 ### Angular Material Component Conventions
