@@ -87,7 +87,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### PostgreSQL Generated Column Nullability
 
 - When adding or re-creating a `GENERATED ALWAYS AS (...) STORED` column in SQL migrations, PostgreSQL treats the column as nullable by default unless `NOT NULL` is explicitly declared (`ADD COLUMN id text NOT NULL GENERATED ALWAYS AS (...) STORED`).
-- Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string`.
+- Omitting `NOT NULL` causes Supabase CLI's TypeScript generator (`gen-types`) to emit `id: string | null` instead of `id: string``.
 
 ### Supabase Async Initialization & Offline Null Checks
 
@@ -148,6 +148,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
+### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
+
+- **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
+- **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
+- **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
+
 ---
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
@@ -176,7 +182,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Declarative Chart Tool Configuration
 
 - Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
-- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
+- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })``.
 
 ### Declarative Timespan Range Configuration (`timespanRange`)
 

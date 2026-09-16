@@ -22,4 +22,10 @@ describe('TrendlineMethodologyDialogComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should default showTechnical to false and toggle state', () => {
+    expect(component.showTechnical()).toBe(false);
+    component.showTechnical.set(true);
+    expect(component.showTechnical()).toBe(true);
+  });
 });

@@ -121,8 +121,11 @@ export class TrendlineToolComponent extends BaseChartToolComponent {
 
   public openMethodologyDialog(): void {
     this.dialog.open(TrendlineMethodologyDialogComponent, {
-      width: '540px',
-      maxWidth: '92vw',
+      width: '100%',
+      maxWidth: '560px',
+      maxHeight: '90vh',
+      panelClass: 'no-padding',
+      autoFocus: false,
     });
   }
 

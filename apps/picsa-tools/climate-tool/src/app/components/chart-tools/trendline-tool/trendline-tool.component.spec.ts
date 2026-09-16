@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IChartMeta, IStationData } from '@picsa/models';
@@ -41,11 +42,16 @@ describe('TrendlineToolComponent', () => {
   });
 
   it('should open methodology dialog when openMethodologyDialog is called', () => {
-    const openSpy = jest.spyOn(component['dialog'], 'open').mockReturnValue({} as any);
+    const openSpy = jest
+      .spyOn(component['dialog'], 'open')
+      .mockReturnValue({} as MatDialogRef<TrendlineMethodologyDialogComponent>);
     component.openMethodologyDialog();
     expect(openSpy).toHaveBeenCalledWith(TrendlineMethodologyDialogComponent, {
-      width: '540px',
-      maxWidth: '92vw',
+      width: '100%',
+      maxWidth: '560px',
+      maxHeight: '90vh',
+      panelClass: 'no-padding',
+      autoFocus: false,
     });
   });
 
