@@ -3,25 +3,11 @@
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
-  <!-- Inline offline/error notification -->
-  @if (showBanner() && locationReady()) {
-  <div class="sync-banner" [attr.data-state]="syncStatus().state">
-    <div>
-      <mat-icon>{{ syncStatus().state === 'offline' ? 'cloud_off' : 'error_outline' }}</mat-icon>
-    </div>
-    @if(syncErrorMessage()){<span>{{ syncErrorMessage()! | translate }}</span>}
-    <button type="button" class="sync-banner__close" (click)="closeBanner()" [attr.aria-label]="'Close' | translate">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-  }
-
   <!-- Location Select  -->
   <picsa-form-location-select
     [countryCode]="countryCode()"
     [value]="locationSelected()"
     (valueChanged)="handleLocationUpdate($event)"
-    [fieldTitle]="true"
   ></picsa-form-location-select>
 
   <!-- Toolbar: title + sync status + force refresh -->
@@ -55,7 +41,7 @@
           matButton="filled"
           color="primary"
           class="force-refresh-button"
-          [disabled]="syncing() || !locationReady() || syncStatus().state === 'offline'"
+          [disabled]="syncing() || !locationReady()"
           (click)="handleForceRefresh()"
         >
           @if (syncing()) {
@@ -73,25 +59,26 @@
       </div>
       }
     </div>
-    <section class="forecast-step">
-      @if (!locationReady()) {
-      <div class="forecast-placeholder">
-        <mat-icon>place</mat-icon>
-        <span>{{ 'Please select a province / district to view forecasts' | translate }}</span>
-      </div>
-      } @else {
-      <!-- Short Term (Weekly + Daily) -->
-      <h3 class="forecast-group-title">{{ 'Short Term' | translate }}</h3>
-      @for (category of shortTermCategories(); track category.id) {
-      <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
-      }
-      <!-- Seasonal (Downscaled + National) -->
-      <h3 class="forecast-group-title">{{ 'Seasonal' | translate }}</h3>
-      @for (category of seasonalCategories(); track category.id) {
-      <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
-      } }
-    </section>
   </div>
+
+  <section class="forecast-step">
+    @if (!locationReady()) {
+    <div class="forecast-placeholder">
+      <mat-icon>place</mat-icon>
+      <span>{{ 'Please select a province / district to view forecasts' | translate }}</span>
+    </div>
+    } @else {
+    <!-- Short Term (Weekly + Daily) -->
+    <h3 class="forecast-group-title">{{ 'Short Term' | translate }}</h3>
+    @for (category of shortTermCategories(); track category.id) {
+    <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+    }
+    <!-- Seasonal (Downscaled + National) -->
+    <h3 class="forecast-group-title">{{ 'Seasonal' | translate }}</h3>
+    @for (category of seasonalCategories(); track category.id) {
+    <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+    } }
+  </section>
 
   <!-- Resources -->
   <div class="resources">

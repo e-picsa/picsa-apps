@@ -14,7 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
@@ -41,7 +40,7 @@ const STRINGS = {
   Checking: translateMarker('Checking for updates…'),
   Offline: translateMarker('Offline - showing saved forecasts'),
   Error: translateMarker('Could not check for updates'),
-  NeverSynced: translateMarker('No data Available'),
+  NeverSynced: translateMarker('No data available'),
 };
 
 interface IForecastSummary {
@@ -93,8 +92,6 @@ const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 export class ForecastComponent implements OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
-  private snackbar = inject(MatSnackBar);
-  readonly dismissedBannerKey = signal<string | undefined>(undefined);
 
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
@@ -162,9 +159,7 @@ export class ForecastComponent implements OnDestroy {
     const lastSyncedAt = this.service.lastSyncedAt();
     const now = this.now();
 
-    const detail = lastSyncedAt
-      ? `${translateMarker('Last checked')}: ${formatRelativeTime(new Date(lastSyncedAt).getTime(), now)}`
-      : STRINGS.NeverSynced;
+    const detail = lastSyncedAt ? formatRelativeTime(new Date(lastSyncedAt).getTime(), now) : STRINGS.NeverSynced;
 
     if (this.syncing()) {
       return { state: 'updating', icon: 'sync', label: STRINGS.Checking };
@@ -181,34 +176,15 @@ export class ForecastComponent implements OnDestroy {
       : { state: 'success', icon: 'cloud_done', label: STRINGS.UpToDate, detail };
   });
 
-  /** Inline banner message shown when a refresh fails (cached data is retained) */
-  public syncErrorMessage = computed(() => (this.syncing() ? undefined : this.service.syncError()));
-
-  /** Track last notified error to avoid duplicate toasts */
-  private lastNotifiedError?: string;
-
   constructor() {
     effect(() => {
       const { location } = this.configurationService.userSettings();
       this.service.setForecastLocation(location);
     });
-    // Toast feedback for offline/error sync states (data remains cached)
-    effect(() => {
-      const state = this.service.syncState();
-      const message = this.service.syncError();
-      untracked(() => {
-        if ((state === 'offline' || state === 'error') && message && message !== this.lastNotifiedError) {
-          this.lastNotifiedError = message;
-          this.snackbar.open(message, undefined, { duration: 4000, panelClass: 'forecast-sync-snackbar' });
-        }
-        if (state === 'success') {
-          this.lastNotifiedError = undefined;
-        }
-      });
-    });
   }
 
   ngOnDestroy() {
+    clearInterval(this.nowInterval);
     this.service.setForecastLocation(undefined);
   }
 
@@ -289,22 +265,6 @@ export class ForecastComponent implements OnDestroy {
     if (label) return label;
     return storageFileToLabel(storage_file);
   }
-
-  // Banner is visible when there's an error that hasn't been dismissed
-  readonly bannerKey = computed(() => {
-    const error = this.syncErrorMessage();
-
-    return error ? `${this.locationSelected()}|${error}` : undefined;
-  });
-  readonly showBanner = computed(() => {
-    const key = this.bannerKey();
-
-    return key !== undefined && key !== this.dismissedBannerKey();
-  });
-
-  closeBanner(): void {
-    this.dismissedBannerKey.set(this.bannerKey());
-  }
 }
 
 function storageFileToLabel(storage_file: string) {
@@ -320,17 +280,14 @@ function formatRelativeTime(from: number, now: number) {
   const diff = Math.max(0, now - from);
   const minutes = Math.round(diff / 60_000);
 
-  if (minutes < 1) return translateMarker('just now');
-
-  if (minutes < 60) {
-    return `${minutes} ${translateMarker(minutes === 1 ? 'minute' : 'minutes')} ${translateMarker('ago')}`;
-  }
+  if (minutes < 1) return translateMarker('Just now');
+  if (minutes < 60) return translateMarker('Updated recently');
 
   const hours = Math.round(minutes / 60);
-  if (hours < 24) {
-    return `${hours} ${translateMarker(hours === 1 ? 'hour' : 'hours')} ${translateMarker('ago')}`;
-  }
+  if (hours < 24) return translateMarker('Updated today');
 
   const days = Math.round(hours / 24);
-  return `${days} ${translateMarker(days === 1 ? 'day' : 'days')} ${translateMarker('ago')}`;
+  if (days === 1) return translateMarker('Updated yesterday');
+
+  return new Date(from).toLocaleDateString();
 }

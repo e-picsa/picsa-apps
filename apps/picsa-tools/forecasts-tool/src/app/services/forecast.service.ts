@@ -235,11 +235,18 @@ export class ForecastService extends PicsaAsyncService {
         this.syncError.set(undefined);
 
         await this.supabaseService.ready();
-        if (!this.supabaseService.isAvailable() || !this.isOnline()) {
-          // Offline - keep cached data intact and surface feedback to the UI
+        if (!this.isOnline()) {
           if (!currentLoad.cancelled) {
             this.syncState.set('offline');
             this.syncError.set('No internet connection. Showing previously downloaded forecasts.');
+          }
+          return;
+        }
+
+        if (!this.supabaseService.isAvailable()) {
+          if (!currentLoad.cancelled) {
+            this.syncState.set('error');
+            this.syncError.set('Could not reach server. Showing previously downloaded forecasts.');
           }
           return;
         }
@@ -283,12 +290,12 @@ export class ForecastService extends PicsaAsyncService {
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
       if (!currentLoad.cancelled) {
-        const offline = !this.isOnline() || !this.supabaseService.isAvailable();
-        this.syncState.set(offline ? 'offline' : 'error');
+        const isOffline = !this.isOnline();
+        this.syncState.set(isOffline ? 'offline' : 'error');
         this.syncError.set(
-          offline
+          isOffline
             ? 'No internet connection. Showing previously downloaded forecasts.'
-            : 'Could not check for new forecasts. Showing previously downloaded forecasts.',
+            : 'Could not reach server. Showing previously downloaded forecasts.',
         );
       }
     } finally {
