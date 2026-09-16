@@ -190,6 +190,7 @@ const definitions: IChartDefinitions = {
     definitionThreeMonth: translateMarker(
       'The lowest daily minimum and mean daily minimum temperatures recorded across the selected 3-month period in each year',
     ),
+    timespanRange: 'full',
   },
   temp_max: {
     _id: 'temp_max',
@@ -226,6 +227,7 @@ const definitions: IChartDefinitions = {
     definitionThreeMonth: translateMarker(
       'The mean daily maximum and highest daily maximum temperatures recorded across the selected 3-month period in each year',
     ),
+    timespanRange: 'full',
   },
 };
 

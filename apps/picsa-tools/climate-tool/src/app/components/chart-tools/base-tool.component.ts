@@ -67,6 +67,8 @@ export interface ITrendlineOverlay {
   strokeDasharray?: string;
   opacity?: number;
   label?: string;
+  /** When true only the label badge is rendered and the line is hidden */
+  labelOnly?: boolean;
 }
 
 export interface IChartOverlayMessage {

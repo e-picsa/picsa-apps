@@ -3,9 +3,9 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { Router } from '@angular/router';
 import {
   formatThreeMonthPeriodLabel,
-  getActiveMonthsForCountry,
-  getActivePeriodsForCountry,
   getChartDefinitionText,
+  getMonthsForChart,
+  getPeriodsForChart,
   MONTH_DATA,
 } from '@picsa/data';
 import { PicsaTranslateService } from '@picsa/i18n';
@@ -73,11 +73,11 @@ export class ClimateChartService {
   readonly selectedPeriod = signal<IThreeMonthPeriod | undefined>(undefined);
 
   readonly availablePeriods = computed<IThreeMonthPeriod[]>(() => {
-    return getActivePeriodsForCountry(this.station()?.countryCode);
+    return getPeriodsForChart(this.chartDefinition(), this.station()?.countryCode);
   });
 
   readonly availableMonths = computed<number[]>(() => {
-    return getActiveMonthsForCountry(this.station()?.countryCode);
+    return getMonthsForChart(this.chartDefinition(), this.station()?.countryCode);
   });
 
   /** 1-to-1 capability guard: returns true only if the station explicitly advertises monthly support for this chart ID */
@@ -299,17 +299,25 @@ export class ClimateChartService {
       // Determine active station data based on timespan mode
       const mode = this.timespanMode();
       const isTimespan = this.canShowTimespan() && mode !== 'annual' && !!station;
-      const period =
-        isTimespan && mode === 'three_month' ? this.selectedPeriod() || this.availablePeriods()[0] : undefined;
-      if (period && !this.selectedPeriod()) {
-        this.selectedPeriod.set(period);
-      }
 
       if (isTimespan && mode === 'monthly') {
         const months = this.availableMonths();
         if (!months.includes(this.selectedMonth()) && months.length > 0) {
           this.selectedMonth.set(months[0]);
         }
+      }
+
+      if (isTimespan && mode === 'three_month') {
+        const periods = this.availablePeriods();
+        if (this.selectedPeriod() && !periods.some((p) => p.id === this.selectedPeriod()?.id) && periods.length > 0) {
+          this.selectedPeriod.set(periods[0]);
+        }
+      }
+
+      const period =
+        isTimespan && mode === 'three_month' ? this.selectedPeriod() || this.availablePeriods()[0] : undefined;
+      if (period && !this.selectedPeriod()) {
+        this.selectedPeriod.set(period);
       }
 
       const currentStationData = isTimespan
@@ -395,9 +403,9 @@ export class ClimateChartService {
       if (!months.includes(this.selectedMonth()) && months.length > 0) {
         this.selectedMonth.set(months[0]);
       }
-    } else if (mode === 'three_month' && !this.selectedPeriod()) {
+    } else if (mode === 'three_month') {
       const periods = this.availablePeriods();
-      if (periods.length > 0) {
+      if ((!this.selectedPeriod() || !periods.some((p) => p.id === this.selectedPeriod()?.id)) && periods.length > 0) {
         this.selectedPeriod.set(periods[0]);
       }
     }

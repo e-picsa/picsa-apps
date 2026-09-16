@@ -54,6 +54,7 @@ describe('ClimateChartService', () => {
     xLabel: 'Year',
     units: '°C',
     definition: '',
+    timespanRange: 'full',
     axes: {
       yMin: null,
       yMax: null,
@@ -359,6 +360,93 @@ describe('ClimateChartService', () => {
       const annualRange = 20 - 14;
       const monthlyRange = 24 - 6;
       expect(annualRange).toBeLessThan(monthlyRange);
+    });
+
+    it('should dynamically provide full 12 months and 12 periods for temperature charts, and 9 months / 5 periods for rainfall', async () => {
+      const stationWithMonthly: IStationMeta = {
+        ...mockStation,
+        countryCode: 'ZM',
+        capabilities: {
+          schemaVersion: 1,
+          monthly: ['rainfall', 'temp_min'],
+        },
+      };
+      service.station.set(stationWithMonthly);
+
+      // 1. Rainfall chart: seasonal months (9) and seasonal periods (5)
+      await service.setChart('rainfall');
+      expect(service.availableMonths()).toHaveLength(9);
+      expect(service.availableMonths()).toEqual([10, 11, 12, 1, 2, 3, 4, 5, 6]);
+      expect(service.availablePeriods()).toHaveLength(5);
+      expect(service.availablePeriods().map((p) => p.code)).toEqual(['OND', 'NDJ', 'DJF', 'JFM', 'FMA']);
+
+      // 2. Temp chart: full 12 calendar months and full 12 climatological periods
+      await service.setChart('temp_min');
+      expect(service.availableMonths()).toHaveLength(12);
+      expect(service.availableMonths()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+      expect(service.availablePeriods()).toHaveLength(12);
+      expect(service.availablePeriods().map((p) => p.code)).toEqual([
+        'DJF',
+        'JFM',
+        'FMA',
+        'MAM',
+        'AMJ',
+        'MJJ',
+        'JJA',
+        'JAS',
+        'ASO',
+        'SON',
+        'OND',
+        'NDJ',
+      ]);
+    });
+
+    it('should clamp selectedMonth to availableMonths when navigating from a temperature-only month to rainfall', async () => {
+      const stationWithMonthly: IStationMeta = {
+        ...mockStation,
+        countryCode: 'ZM',
+        capabilities: {
+          schemaVersion: 1,
+          monthly: ['rainfall', 'temp_min'],
+        },
+      };
+      service.station.set(stationWithMonthly);
+      await service.setTimespanMode('monthly');
+
+      // Select August (month 8) on temperature chart
+      await service.setChart('temp_min');
+      await service.setSelectedMonth(8);
+      expect(service.selectedMonth()).toBe(8);
+
+      // Switch to rainfall chart: August (8) is not in rainfall's availableMonths (10, 11, 12, 1, 2, 3, 4, 5, 6)
+      await service.setChart('rainfall');
+      expect(service.availableMonths()).not.toContain(8);
+      expect(service.selectedMonth()).toBe(service.availableMonths()[0]); // Falls back to first available (10)
+    });
+
+    it('should clamp selectedPeriod to availablePeriods when navigating from a temperature period to rainfall', async () => {
+      const stationWithMonthly: IStationMeta = {
+        ...mockStation,
+        countryCode: 'ZM',
+        capabilities: {
+          schemaVersion: 1,
+          monthly: ['rainfall', 'temp_min'],
+        },
+      };
+      service.station.set(stationWithMonthly);
+      await service.setTimespanMode('three_month');
+
+      // Select JAS on temperature chart
+      await service.setChart('temp_min');
+      const jasPeriod = service.availablePeriods().find((p) => p.code === 'JAS')!;
+      expect(jasPeriod).toBeDefined();
+      await service.setSelectedPeriod(jasPeriod);
+      expect(service.selectedPeriod()?.code).toBe('JAS');
+
+      // Switch to rainfall: JAS is not in rainfall's availablePeriods
+      await service.setChart('rainfall');
+      expect(service.availablePeriods().some((p) => p.code === 'JAS')).toBe(false);
+      expect(service.selectedPeriod()?.id).toBe(service.availablePeriods()[0].id);
     });
   });
 });
