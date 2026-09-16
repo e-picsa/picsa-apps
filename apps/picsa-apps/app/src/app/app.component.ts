@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device';
 import { ConfigurationService } from '@picsa/configuration';
-import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateService } from '@picsa/i18n';
 import { PicsaMigrationService } from '@picsa/migrations';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -70,55 +68,6 @@ export class AppComponent implements OnInit {
 
     this.loadEagerServices();
     this.loadDeferredServices();
-  }
-
-  public async showDebugInfo() {
-    const { operatingSystem, osVersion, webViewVersion } = await Device.getInfo();
-    const { identifier: device_id } = await Device.getId();
-    const updateDiagnostics = await this.appUpdateService.checkUpdateStatus();
-    const isInternalTester = this.appUserService.isInternalTester();
-
-    const debugInfo = {
-      app_version: APP_VERSION,
-      user_id: this.appUserService.userId(),
-      device_id,
-      is_internal_tester: isInternalTester,
-      update: updateDiagnostics,
-      operatingSystem,
-      osVersion,
-      webViewVersion,
-    };
-    const debugText = JSON.stringify(debugInfo, null, 2);
-    alert(debugText);
-    try {
-      navigator.clipboard.writeText(debugText);
-    } catch (error) {
-      // ignore clipboard error
-    }
-
-    // Action 1: If update has finished downloading, prompt to restart
-    if (this.appUpdateService.isUpdateDownloaded()) {
-      const confirmRestart = confirm('Update has downloaded! Restart the app now to apply the update?');
-      if (confirmRestart) {
-        await this.appUpdateService.completeUpdate();
-        return;
-      }
-    }
-
-    // Action 2: If update is available, prompt to trigger flexible download
-    if (this.appUpdateService.isUpdateAvailable()) {
-      const confirmDownload = confirm('A new version is available on Google Play. Start background download now?');
-      if (confirmDownload) {
-        await this.appUpdateService.startFlexibleUpdate();
-      }
-    }
-
-    // Action 3: Option to toggle Internal Tester mode
-    const testerPrompt = `Internal Tester Mode is currently ${isInternalTester ? 'ENABLED (Testing user)' : 'DISABLED (Standard user)'}.\n\nToggle Internal Tester status?`;
-    if (confirm(testerPrompt)) {
-      const newState = this.appUserService.toggleInternalTester();
-      alert(`Internal Tester Mode is now ${newState ? 'ENABLED' : 'DISABLED'}.`);
-    }
   }
 
   /** Load immediate services in background (non-blocking) */

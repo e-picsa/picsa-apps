@@ -6,7 +6,6 @@ import {
   effect,
   inject,
   input,
-  output,
   TemplateRef,
   viewChild,
   ViewContainerRef,
@@ -20,7 +19,6 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
 import {
@@ -72,9 +70,6 @@ export class AppLayoutComponent {
     ),
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
-  public version = APP_VERSION;
-
-  public versionClicked = output();
 
   constructor() {
     const componentService = inject(PicsaCommonComponentsService);
