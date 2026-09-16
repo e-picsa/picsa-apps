@@ -2,9 +2,12 @@ header {
   color: white;
   background-color: var(--color-primary);
   display: grid;
-  // Equal balancing columns keep central content viewport-centered
-  // regardless of asymmetric start/end content (e.g. back button with empty end)
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  position: relative;
+  // Start/end size to content, center takes remaining space and truncates.
+  // Plain text titles are absolute-centered (see [data-center='title'] below) so
+  // short titles stay viewport-centered regardless of asymmetric side content.
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 0.25rem;
   align-items: center;
   height: 3.5rem;
   line-height: 3.5rem;
@@ -27,15 +30,21 @@ header[data-style='inverted'] {
   justify-self: start;
   min-width: 0;
   max-width: 100%;
+  flex-shrink: 0;
+  // Keep interactive start content clickable if center content overflows
+  z-index: 1;
+  background: inherit;
 }
 
 .central-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  justify-self: center;
+  justify-self: stretch;
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 .end-content {
   display: flex;
@@ -44,13 +53,39 @@ header[data-style='inverted'] {
   justify-self: end;
   min-width: 0;
   max-width: 100%;
+  flex-shrink: 0;
+  // Keep interactive end content above the absolute-centered title layer
+  z-index: 1;
+  background: inherit;
+}
+// Plain text titles overlay the full header width (minus side guards) so they
+// stay viewport-centered even with asymmetric start/end content (e.g. menu
+// button with empty end slot on farmer/extension home). Portal content stays
+// in normal flow so projected controls remain interactive and truncatable.
+header[data-center='title'] .central-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4rem;
+  right: 4rem;
+  width: auto;
+  // Text-only layer must never block side buttons if guards are underestimated
+  pointer-events: none;
 }
 h1 {
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 4vw + 0.5rem, 2rem);
+  line-height: 1.2;
   padding: 0;
   margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
 }
 .title {
+  display: block;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
