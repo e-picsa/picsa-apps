@@ -5,6 +5,7 @@
 .trendline-methodology-container {
   display: flex;
   flex-direction: column;
+  max-height: calc(100vh - 32px);
 }
 
 /* Ensure MDC dialog title margin doesn't break header flex layout */
@@ -19,14 +20,15 @@
 
 .dialog-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 16px 16px 12px 24px;
   border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
 
   .title-with-icon {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     flex: 1;
     min-width: 0;
@@ -37,17 +39,20 @@
       height: 24px;
       color: #13599e;
       flex-shrink: 0;
+      margin-top: 1px;
     }
 
     h2[mat-dialog-title],
     h2 {
       margin: 0 !important;
       padding: 0 !important;
-      display: inline-block;
+      display: block;
       font-size: 1.15rem;
       font-weight: 700;
       color: #1e293b;
-      line-height: 1.3;
+      line-height: 1.35;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 
@@ -55,6 +60,7 @@
     flex-shrink: 0;
     color: #64748b;
     margin-right: -4px;
+    margin-top: -6px;
   }
 }
 
@@ -62,6 +68,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px; /* Line space between the questions / sections */
+  flex: 1 1 auto;
+  overflow-y: auto;
   max-height: 65vh;
   padding: 20px 24px !important;
   color: #334155;
@@ -186,6 +194,54 @@
 }
 
 .dialog-actions {
+  flex-shrink: 0;
   padding: 12px 24px 16px 24px !important;
   margin: 0 !important;
+  border-top: 1px solid #f1f5f9;
+}
+
+@media (max-width: 640px) {
+  .dialog-header {
+    padding: 14px 12px 10px 16px;
+
+    .title-with-icon {
+      gap: 8px;
+
+      .header-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      h2[mat-dialog-title],
+      h2 {
+        font-size: 1.05rem;
+        line-height: 1.3;
+      }
+    }
+  }
+
+  .dialog-body {
+    padding: 14px 16px !important;
+    gap: 14px;
+    max-height: 60vh;
+  }
+
+  .methodology-section {
+    p {
+      padding-left: 0;
+    }
+  }
+
+  .warning-box {
+    padding: 10px 12px;
+
+    p {
+      padding-left: 0;
+    }
+  }
+
+  .dialog-actions {
+    padding: 10px 16px 12px 16px !important;
+  }
 }
