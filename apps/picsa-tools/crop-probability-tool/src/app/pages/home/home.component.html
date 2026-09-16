@@ -1,11 +1,21 @@
 <div class="page-content">
+  <picsa-form-location-overlay
+    [(open)]="locationOverlayOpen"
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    [locationModifier]="locationModifier"
+    [subtitle]="STRINGS.SelectStation"
+    [allowCancel]="locationReady()"
+    (confirmed)="handleLocationConfirmed($event)"
+    (cancelled)="locationOverlayOpen.set(false)"
+  ></picsa-form-location-overlay>
+
   <!-- Station Select -->
-  <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
-    <picsa-form-location-select
-      [countryCode]="countryCode()"
-      (valueChanged)="handleLocationChange($event)"
-      [locationModifier]="locationModifier"
-    ></picsa-form-location-select>
+  <div class="flex items-center gap-2 mb-4">
+    <button matButton="outlined" (click)="locationOverlayOpen.set(true)">
+      <mat-icon>place</mat-icon>
+      <span class="truncate">{{ tableStationMeta()?.label || ('Select Location' | translate) }}</span>
+    </button>
     <!-- <picsa-tour-button [tourId]="stationId() ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button> -->
   </div>
   <!-- Table -->
