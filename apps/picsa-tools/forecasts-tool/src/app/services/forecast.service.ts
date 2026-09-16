@@ -204,6 +204,10 @@ export class ForecastService extends PicsaAsyncService {
     // Filter out downscaled config from country load because it is loaded by the specific location effect
     const countryConfigs = this.loaderConfigs.filter((c) => c.type !== 'downscaled');
 
+    this.loadingForecasts.set(true);
+    this.syncState.set('updating');
+    this.syncError.set(undefined);
+
     try {
       // 1. Load cached data first (extremely fast local queries)
       const cachedData = await Promise.all(
@@ -286,6 +290,8 @@ export class ForecastService extends PicsaAsyncService {
         if (currentLoad.cancelled) return;
 
         this.markSyncSuccess();
+      } else {
+        this.syncState.set('idle');
       }
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);

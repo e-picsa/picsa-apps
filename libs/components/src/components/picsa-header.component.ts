@@ -37,6 +37,7 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
         }
       </h1>
       <div class="end-content">
+        <ng-template [cdkPortalOutlet]="cdkPortalEnd()" #portalOutlet></ng-template>
         <!-- sidenav toggle -->
         @if (showSidenavToggle()) {
           <button matIconButton (click)="componentsService.toggleSidenav()">
@@ -72,6 +73,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   /** Inject dynamic content into header slots using angular cdk portal */
   public cdkPortalStart = signal<IHeaderOptions['cdkPortalStart']>(undefined);
   public cdkPortalCenter = signal<IHeaderOptions['cdkPortalCenter']>(undefined);
+  public cdkPortalEnd = signal<IHeaderOptions['cdkPortalEnd']>(undefined);
 
   public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
 
@@ -148,7 +150,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   }
 
   private setPortalContent(options: IHeaderOptions) {
-    const { cdkPortalStart, cdkPortalCenter } = options;
+    const { cdkPortalStart, cdkPortalCenter, cdkPortalEnd } = options;
     // Start Portal
     if (!cdkPortalStart) {
       this.cdkPortalStart.set(undefined);
@@ -160,6 +162,12 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
       this.cdkPortalCenter.set(undefined);
     } else if (!cdkPortalCenter.isAttached) {
       this.cdkPortalCenter.set(cdkPortalCenter);
+    }
+    // End Portal
+    if (!cdkPortalEnd) {
+      this.cdkPortalEnd.set(undefined);
+    } else if (!cdkPortalEnd.isAttached) {
+      this.cdkPortalEnd.set(cdkPortalEnd);
     }
   }
 }

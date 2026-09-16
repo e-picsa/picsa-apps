@@ -3,81 +3,119 @@
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
-  <!-- Location Select  -->
-  <picsa-form-location-select
-    [countryCode]="countryCode()"
-    [value]="locationSelected()"
-    (valueChanged)="handleLocationUpdate($event)"
-  ></picsa-form-location-select>
+  <!-- Header Center Slot (Location Button) -->
+  <ng-template #headerCenterPortal>
+    <div class="header-location-container">
+      <span class="header-location-title"> {{ 'Forecasts' | translate }} </span>
+      <button
+        matButton="outlined"
+        class="header-location-btn"
+        (click)="openLocationOverlay()"
+        [attr.aria-label]="'Change location' | translate"
+      >
+        <mat-icon class="header-location-btn__icon">map</mat-icon>
+        <span class="header-location-btn__label truncate">
+          {{ selectedLocationLabel() || ('Select Location' | translate) }}
+        </span>
+      </button>
+    </div>
+  </ng-template>
 
-  <!-- Toolbar: title + sync status + force refresh -->
-  <div class="forecast-toolbar">
-    <div class="forecast-toolbar__title capitalize">{{ 'Available Forecasts' | translate }}</div>
-    <div class="forecast-toolbar__actions">
-      @if(locationReady()){
-      <div class="flex flex-row justify-between items-center gap-2">
-        <!-- Sync status indicator -->
-        <div class="sync-status flex flex-col" [attr.data-state]="syncStatus().state">
-          <div class="flex flex-row items-center gap-1">
-            @if (syncing()) {
-            <div>
-              <mat-spinner class="sync-status__spinner" [diameter]="18"></mat-spinner>
-            </div>
-            } @else {
-            <div>
-              <mat-icon class="sync-status__icon">{{ syncStatus().icon }}</mat-icon>
-            </div>
-            }
-            <span class="sync-status__text sync-status__label text-center">{{ syncStatus().label | translate }}</span>
-          </div>
-          <div class="sync-status__text w-full">
-            @if (syncStatus().detail) {
-            <span class="sync-status__detail">({{ syncStatus().detail! | translate }})</span>
-            }
-          </div>
+  <!-- Header End Slot (Freshness + Refresh / Up-to-date Chip) -->
+  <ng-template #headerEndPortal>
+    <div class="header-actions">
+      <!-- Freshness / Offline Badge: only shown if not checked in 12h AND offline -->
+      @if (showOfflineBadge()) {
+      <div class="header-offline-badge" [attr.title]="'Offline' | translate">
+        <mat-icon>cloud_off</mat-icon>
+        <span class="hidden md:inline">{{ 'Offline' | translate }}</span>
+      </div>
+      }
+
+      <!-- Refresh / Up to date Action Indicator -->
+      <button
+        type="button"
+        class="header-sync-chip"
+        [class.is-refreshing]="isRefreshing()"
+        [class.is-uptodate]="hasRefreshedSuccessfully()"
+        [disabled]="isRefreshing() || hasRefreshedSuccessfully() || !locationReady()"
+        (click)="handleForceRefresh()"
+        [attr.aria-label]="(hasRefreshedSuccessfully() ? 'Up to date' : 'Refresh forecasts') | translate"
+        [attr.title]="(hasRefreshedSuccessfully() ? 'Forecasts are up to date' : 'Refresh forecasts') | translate"
+      >
+        <div class="header-sync-chip__icon-container">
+          <mat-icon class="header-sync-chip__icon sync-icon">refresh</mat-icon>
+          <mat-icon class="header-sync-chip__icon check-icon">check</mat-icon>
         </div>
-        <!-- Force refresh -->
+        <span class="header-sync-chip__label hidden sm:inline">
+          {{ (hasRefreshedSuccessfully() ? 'Up to date' : 'Refresh') | translate }}
+        </span>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Location Selection Modal Overlay -->
+  @if (locationOverlayOpen()) {
+  <div class="location-modal-backdrop">
+    <div class="location-modal-card">
+      <div class="location-modal-header">
+        <div class="flex items-center gap-2">
+          <mat-icon color="primary">place</mat-icon>
+          <h2 class="text-xl font-semibold m-0">{{ 'Select Location' | translate }}</h2>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 mt-1 mb-4">
+        {{ 'Please select a location to view local forecasts' | translate }}
+      </p>
+
+      <picsa-form-location-select
+        [countryCode]="countryCode()"
+        [value]="tempLocation() || locationSelected()"
+        (valueChanged)="handleTempLocationUpdate($event)"
+      ></picsa-form-location-select>
+
+      <div class="location-modal-actions flex justify-end gap-3 mt-4">
+        @if (locationReady()) {
+        <button matButton (click)="cancelLocationChange()">{{ 'Cancel' | translate }}</button>
+        }
         <button
           matButton="filled"
           color="primary"
-          class="force-refresh-button"
-          [disabled]="syncing() || !locationReady()"
-          (click)="handleForceRefresh()"
+          [disabled]="!isTempLocationReady()"
+          (click)="confirmLocationChange()"
         >
-          @if (syncing()) {
-          <mat-spinner [diameter]="18" class="force-refresh-button__spinner"></mat-spinner>
-          } @else {
-          <mat-icon>refresh</mat-icon>
-          }
-          <span>{{ 'Refresh' | translate }}</span>
+          {{ 'Confirm' | translate }}
         </button>
       </div>
-      } @else{
-      <div class="sync-status flex flex-row items-center justify-center">
-        <mat-icon class="sync-status__icon">place</mat-icon>
-        <span>{{ 'No location selected' | translate }}</span>
-      </div>
-      }
     </div>
   </div>
+  }
 
   <section class="forecast-step">
     @if (!locationReady()) {
-    <div class="forecast-placeholder">
+    <div class="forecast-placeholder cursor-pointer" (click)="openLocationOverlay()">
       <mat-icon>place</mat-icon>
       <span>{{ 'Please select a province / district to view forecasts' | translate }}</span>
     </div>
     } @else {
-    <!-- Short Term (Weekly + Daily) -->
-    <h3 class="forecast-group-title">{{ 'Short Term' | translate }}</h3>
-    @for (category of shortTermCategories(); track category.id) {
-    <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+    <div class="forecast-columns-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Short Term Column (Daily + Weekly) -->
+      <div class="forecast-column">
+        <h3 class="forecast-group-title">{{ 'Short Term' | translate }}</h3>
+        @for (category of shortTermCategories(); track category.id) {
+        <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+        }
+      </div>
+
+      <!-- Seasonal Column (Downscaled + National) -->
+      <div class="forecast-column">
+        <h3 class="forecast-group-title">{{ 'Seasonal' | translate }}</h3>
+        @for (category of seasonalCategories(); track category.id) {
+        <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+        }
+      </div>
+    </div>
     }
-    <!-- Seasonal (Downscaled + National) -->
-    <h3 class="forecast-group-title">{{ 'Seasonal' | translate }}</h3>
-    @for (category of seasonalCategories(); track category.id) {
-    <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
-    } }
   </section>
 
   <!-- Resources -->
@@ -103,9 +141,12 @@
       </div>
 
       @if (category.loading && category.forecasts.length === 0) {
-      <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
-      } @if (category.forecasts.length === 0) {
-      <div class="forecast-empty capitalize">{{ 'No forecasts available' | translate }}</div>
+      <div class="forecast-placeholder min-h-44 flex flex-col items-center justify-center gap-2">
+        <mat-spinner [diameter]="28"></mat-spinner>
+        <span class="text-sm text-slate-500">{{ 'Loading forecasts...' | translate }}</span>
+      </div>
+      } @else if (category.forecasts.length === 0) {
+      <div class="forecast-empty capitalize min-h-44">{{ 'No forecasts available' | translate }}</div>
       } @else {
       <div class="flex flex-wrap items-stretch gap-4 w-full">
         @for (forecast of category.forecasts; track forecast.id) {
