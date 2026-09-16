@@ -1,8 +1,22 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { TemplatePortal } from '@angular/cdk/portal';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
@@ -41,11 +55,15 @@ const STRINGS = {
     PicsaTourButton,
   ],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tourService = inject(TourService);
   private configService = inject(ConfigurationService);
+  private componentsService = inject(PicsaCommonComponentsService);
+  private viewContainer = inject(ViewContainerRef);
+
+  @ViewChild('headerCenterPortal') headerCenterPortal!: TemplateRef<unknown>;
 
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
@@ -103,6 +121,16 @@ export class HomeComponent implements OnInit {
     this.importLegacyLocation();
     this.tourService.registerTour('cropProbabilityTable', CROP_PROBABILITY_TABLE_TOUR);
     this.tourService.registerTour('cropProbabilitySelect', CROP_PROBABILITY_SELECT_TOUR);
+  }
+
+  ngAfterViewInit() {
+    this.componentsService.patchHeader({
+      cdkPortalCenter: new TemplatePortal(this.headerCenterPortal, this.viewContainer),
+    });
+  }
+
+  ngOnDestroy() {
+    this.componentsService.patchHeader({ cdkPortalCenter: undefined });
   }
 
   public handleLocationConfirmed(location: (string | undefined)[]) {
