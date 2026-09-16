@@ -375,18 +375,29 @@ describe('ClimateChartService', () => {
 
       // 1. Rainfall chart: seasonal months (9) and seasonal periods (5)
       await service.setChart('rainfall');
-      expect(service.availableMonths().length).toBe(9);
+      expect(service.availableMonths()).toHaveLength(9);
       expect(service.availableMonths()).toEqual([10, 11, 12, 1, 2, 3, 4, 5, 6]);
-      expect(service.availablePeriods().length).toBe(5);
+      expect(service.availablePeriods()).toHaveLength(5);
       expect(service.availablePeriods().map((p) => p.code)).toEqual(['OND', 'NDJ', 'DJF', 'JFM', 'FMA']);
 
       // 2. Temp chart: full 12 calendar months and full 12 climatological periods
       await service.setChart('temp_min');
-      expect(service.availableMonths().length).toBe(12);
+      expect(service.availableMonths()).toHaveLength(12);
       expect(service.availableMonths()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-      expect(service.availablePeriods().length).toBe(12);
+      expect(service.availablePeriods()).toHaveLength(12);
       expect(service.availablePeriods().map((p) => p.code)).toEqual([
-        'DJF', 'JFM', 'FMA', 'MAM', 'AMJ', 'MJJ', 'JJA', 'JAS', 'ASO', 'SON', 'OND', 'NDJ',
+        'DJF',
+        'JFM',
+        'FMA',
+        'MAM',
+        'AMJ',
+        'MJJ',
+        'JJA',
+        'JAS',
+        'ASO',
+        'SON',
+        'OND',
+        'NDJ',
       ]);
     });
 

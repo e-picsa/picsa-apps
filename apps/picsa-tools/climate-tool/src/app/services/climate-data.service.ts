@@ -154,7 +154,7 @@ export class ClimateDataService {
       return data || [];
     }
 
-    const periodSuffix = mode === 'three_month' && periods?.length ? `_${periods.length}` : '';
+    const periodSuffix = mode === 'three_month' && periods?.length ? `_${periods.map(({ id }) => id).join('_')}` : '';
     const cacheKey = `${stationId}_${mode}${periodSuffix}`;
     if (this.loadedTimespanBounds[cacheKey]) {
       return this.loadedTimespanBounds[cacheKey];

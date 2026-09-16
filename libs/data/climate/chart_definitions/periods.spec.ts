@@ -86,12 +86,12 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
     });
 
     it('should export all 12 running 3-month periods with valid month triples', () => {
-      expect(ALL_THREE_MONTH_PERIODS.length).toBe(12);
+      expect(ALL_THREE_MONTH_PERIODS).toHaveLength(12);
       const codes = ALL_THREE_MONTH_PERIODS.map((p) => p.code);
       expect(codes).toEqual(['DJF', 'JFM', 'FMA', 'MAM', 'AMJ', 'MJJ', 'JJA', 'JAS', 'ASO', 'SON', 'OND', 'NDJ']);
 
       for (const p of ALL_THREE_MONTH_PERIODS) {
-        expect(p.months.length).toBe(3);
+        expect(p.months).toHaveLength(3);
         for (const m of p.months) {
           expect(m).toBeGreaterThanOrEqual(1);
           expect(m).toBeLessThanOrEqual(12);
@@ -105,22 +105,22 @@ describe('Climate 3-Month Periods & Chart Definition Models (Issue 13)', () => {
 
       expect(getMonthsForChart(tempMinDef)).toEqual(ALL_CALENDAR_MONTHS);
       expect(getMonthsForChart(tempMaxDef)).toEqual(ALL_CALENDAR_MONTHS);
-      expect(getMonthsForChart(tempMinDef).length).toBe(12);
+      expect(getMonthsForChart(tempMinDef)).toHaveLength(12);
 
       expect(getPeriodsForChart(tempMinDef)).toEqual(ALL_THREE_MONTH_PERIODS);
       expect(getPeriodsForChart(tempMaxDef)).toEqual(ALL_THREE_MONTH_PERIODS);
-      expect(getPeriodsForChart(tempMinDef).length).toBe(12);
+      expect(getPeriodsForChart(tempMinDef)).toHaveLength(12);
     });
 
     it('should resolve active growing season months and 5 periods for seasonal charts and undefined', () => {
       const rainfallDef = CLIMATE_CHART_DEFINITIONS.default.rainfall;
 
       expect(getMonthsForChart(rainfallDef)).toEqual(DEFAULT_ACTIVE_MONTHS);
-      expect(getMonthsForChart(rainfallDef).length).toBe(9);
+      expect(getMonthsForChart(rainfallDef)).toHaveLength(9);
       expect(getMonthsForChart(undefined)).toEqual(DEFAULT_ACTIVE_MONTHS);
 
       expect(getPeriodsForChart(rainfallDef)).toEqual(DEFAULT_THREE_MONTH_PERIODS);
-      expect(getPeriodsForChart(rainfallDef).length).toBe(5);
+      expect(getPeriodsForChart(rainfallDef)).toHaveLength(5);
       expect(getPeriodsForChart(undefined)).toEqual(DEFAULT_THREE_MONTH_PERIODS);
     });
   });
