@@ -1,9 +1,9 @@
 ---
-name: address-pr-feedback
+name: "PR: Address Feedback"
 description: Inspects PR review comments, PR-Agent feedback, and SonarQube quality gate checks, critically evaluates suggestions with strict push-back rules, implements verified fixes, and prevents re-work loops.
 ---
 
-# Address PR Feedback Skill
+# PR: Address Feedback Skill
 
 Use this skill when instructed to review or resolve feedback on an open pull request in the current branch or worktree.
 
@@ -158,4 +158,4 @@ Before altering code, output a structured triage table to the user:
    - **DO NOT** post `/review` or `/improve` comments to trigger bot runs automatically.
    - New commits push without re-triggering PR-Agent automatically (`handle_push_trigger: 'false'`).
    - **MANDATORY NOTICE TO USER**: In your final response after completing changes or pushing, you MUST explicitly remind the user:
-     > **Re-Review Notice:** Automated review bots (PR-Agent) will not re-run automatically on push. If you want a fresh review, manually comment `/review` (or `/improve`) on the PR thread in GitHub, wait for the workflow to complete, and then invoke `$address-pr-feedback` again.
+     > **Re-Review Notice:** Automated review bots (PR-Agent) will not re-run automatically on push. If you want a fresh review, manually comment `/review` (or `/improve`) on the PR thread in GitHub, wait for the workflow to complete, and then invoke the PR: Address Feedback skill again.
