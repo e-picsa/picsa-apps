@@ -1,0 +1,113 @@
+<div class="page-content">
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="p-4 mb-4 bg-red-50 border border-red-200 rounded">
+      <p class="text-red-700">{{ error() ?? '' | translate }}</p>
+      <button matButton="elevated" color="primary" (click)="goBack()">{{ 'Back to list' | translate }}</button>
+    </div>
+  }
+
+  @if (notFound()) {
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <mat-icon class="text-6xl text-gray-300 mb-4">search_off</mat-icon>
+      <p class="text-gray-500 text-lg mb-4">{{ 'Feedback not found' | translate }}</p>
+      <button matButton="elevated" color="primary" (click)="goBack()">{{ 'Back to list' | translate }}</button>
+    </div>
+  }
+
+  @if (row(); as currentRow) {
+    <div class="mb-4">
+      <button matButton (click)="goBack()" class="inline-flex items-center gap-2">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'Back' | translate }}
+      </button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <h1 class="text-xl font-semibold">{{ 'Feedback report' | translate }}</h1>
+      <dashboard-feedback-badge kind="type" [value]="currentRow.type" />
+      <dashboard-feedback-badge kind="status" [value]="currentRow.status" />
+    </div>
+
+    <div class="text-sm text-gray-500 mb-6">
+      <span>{{ 'Created' | translate }}: {{ currentRow.created_at | date: 'medium' }}</span>
+      <span class="mx-2">·</span>
+      <span>{{ 'Updated' | translate }}: {{ currentRow.updated_at | date: 'medium' }}</span>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-3">
+      <div class="lg:col-span-2 space-y-6">
+        <section>
+          <h2 class="text-lg font-medium mb-2">{{ 'Comment' | translate }}</h2>
+          <p class="whitespace-pre-wrap break-words bg-gray-100 p-4 rounded-lg">{{ currentRow.comment }}</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-medium mb-2">{{ 'Screenshot' | translate }}</h2>
+          @if (!currentRow.screenshot_path) {
+            <p class="text-gray-400 italic p-4 bg-gray-50 rounded-lg">{{ 'No screenshot available' | translate }}</p>
+          } @else if (screenshotLoading()) {
+            <div class="flex justify-center p-4">
+              <mat-spinner diameter="32"></mat-spinner>
+            </div>
+          } @else if (screenshotError()) {
+            <p class="text-red-800 p-4 bg-red-50 rounded-lg">{{ 'Failed to load screenshot' | translate }}</p>
+          } @else if (screenshotUrl()) {
+            <img
+              [src]="screenshotUrl()"
+              [alt]="'Screenshot' | translate"
+              class="max-w-full max-h-[400px] rounded-lg border border-gray-200"
+            />
+          }
+        </section>
+
+        @if (diagnostics().length > 0) {
+          <section>
+            <h2 class="text-lg font-medium mb-2">{{ 'Diagnostics' | translate }}</h2>
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3">
+              @for (entry of diagnostics(); track entry.label) {
+                <div class="flex flex-col">
+                  <span class="text-xs text-gray-500 uppercase tracking-wide">{{ entry.label }}</span>
+                  <span class="text-sm font-medium">{{ entry.value }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+
+      <div class="lg:col-span-1">
+        <section class="bg-gray-50 rounded-lg p-4 space-y-4">
+          <h2 class="text-lg font-medium">{{ 'Admin panel' | translate }}</h2>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'Status' | translate }}</mat-label>
+            <mat-select [(ngModel)]="status">
+              @for (option of statusOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'Admin notes' | translate }}</mat-label>
+            <textarea matInput [(ngModel)]="adminNotes" rows="4" maxlength="2000"></textarea>
+            <mat-hint align="end">{{ adminNotes().length }} / 2000</mat-hint>
+          </mat-form-field>
+
+          <button matButton="elevated" color="primary" class="w-full" (click)="save()" [disabled]="!canSave()">
+            @if (saving()) {
+              <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
+            }
+            {{ 'Save' | translate }}
+          </button>
+        </section>
+      </div>
+    </div>
+  }
+</div>

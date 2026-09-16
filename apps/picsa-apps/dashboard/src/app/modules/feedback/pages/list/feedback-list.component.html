@@ -1,0 +1,92 @@
+<div class="page-content">
+  <div class="flex flex-wrap gap-4 items-center mb-4">
+    <mat-form-field appearance="outline" class="w-full sm:w-48">
+      <mat-label>{{ 'Status' | translate }}</mat-label>
+      <mat-select [(ngModel)]="selectedStatus">
+        @for (option of statusOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full sm:w-48">
+      <mat-label>{{ 'Type' | translate }}</mat-label>
+      <mat-select [(ngModel)]="selectedType">
+        @for (option of typeOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full sm:w-48">
+      <mat-label>{{ 'App version' | translate }}</mat-label>
+      <input matInput [(ngModel)]="appVersion" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full sm:w-48">
+      <mat-label>{{ 'OS' | translate }}</mat-label>
+      <input matInput [(ngModel)]="os" />
+    </mat-form-field>
+
+    <div class="flex gap-2">
+      <button matButton="elevated" color="primary" (click)="applyFilters()">{{ 'Apply' | translate }}</button>
+      <button matButton (click)="resetFilters()">{{ 'Reset' | translate }}</button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="p-4 mb-4 bg-red-50 border border-red-200 rounded">
+      <p class="text-red-700">{{ error() ?? '' | translate }}</p>
+      <button matButton (click)="loadList()">{{ 'Retry' | translate }}</button>
+    </div>
+  }
+
+  @if (!loading() && !error() && rows().length === 0) {
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <mat-icon class="text-6xl text-gray-300 mb-4">feedback</mat-icon>
+      <p class="text-gray-500 text-lg mb-4">{{ 'No feedback found' | translate }}</p>
+      @if (hasFiltersActive()) {
+        <button matButton="elevated" color="primary" (click)="resetFilters()">{{ 'Reset filters' | translate }}</button>
+      }
+    </div>
+  }
+
+  @if (!loading() && rows().length > 0) {
+    <div class="overflow-x-auto">
+      <picsa-data-table
+        [data]="rows()"
+        [options]="tableOptions"
+        [valueTemplates]="valueTemplates()"
+        (rowClick)="openDetail($event)"
+      ></picsa-data-table>
+    </div>
+  }
+</div>
+
+<ng-template #commentTemplate let-value>
+  <span class="block max-w-[320px] whitespace-nowrap overflow-hidden text-ellipsis" [title]="value">
+    {{ value }}
+  </span>
+</ng-template>
+
+<ng-template #statusTemplate let-value>
+  <dashboard-feedback-badge kind="status" [value]="value" />
+</ng-template>
+
+<ng-template #screenshotTemplate let-value>
+  @if (value) {
+    <mat-icon matTooltip="{{ 'Screenshot available' | translate }}">image</mat-icon>
+  } @else {
+    <mat-icon class="text-gray-300">image_not_supported</mat-icon>
+  }
+</ng-template>
+
+<ng-template #createdAtTemplate let-value>
+  {{ value | date: 'medium' }}
+</ng-template>
