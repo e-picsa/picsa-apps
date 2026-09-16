@@ -59,6 +59,11 @@ button.station-select {
 button.map-button {
   @apply text-xl h-10;
 }
+button.map-button-icon {
+  // Manual outline: MatIconButton has no variant input, so MDC never draws one.
+  // currentColor follows the header style (white on primary, primary on inverted).
+  border: 1px solid currentColor;
+}
 mat-option.station-select-option {
   @apply text-lg whitespace-nowrap px-2 sm:px-4;
 }

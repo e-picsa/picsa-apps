@@ -33,6 +33,16 @@ import { NavigationStackService } from '../services/navStack.service';
         display: inline;
       }
     }
+    // When icon-only the button keeps mat-button min-width (64px), unbalancing
+    // the header start slot against the 40px icon-button end slot and shifting
+    // centered content off-center. Collapse to icon-button sizing instead.
+    @media (max-width: 600px) {
+      button {
+        min-width: 40px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
   `,
   imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
 })

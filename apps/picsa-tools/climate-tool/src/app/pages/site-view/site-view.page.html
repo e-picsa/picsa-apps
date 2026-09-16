@@ -5,7 +5,7 @@
 <!-- Header to inject into global header component -->
 <ng-template #headerPortal>
   <div class="flex items-center w-auto max-w-full min-w-0 gap-1">
-    <div class="relative w-[120px] sm:w-[200px] min-w-0 shrink">
+    <div class="relative min-w-36 md:min-w-48">
       <button matButton color="primary" (click)="select.open()" class="station-select">
         @if(chartService.station(); as station){ <span class="station-select-label">{{station.name}}</span> }
         <mat-icon iconPositionEnd>expand_more</mat-icon>
@@ -26,9 +26,20 @@
       </mat-select>
     </div>
 
-    <button matButton color="primary" (click)="goToSiteSelect()" class="map-button hidden sm:inline-flex">
-      <mat-icon>place</mat-icon>
+    <!-- Desktop: text button (MDC display beats non-important Tailwind, hence !inline-flex) -->
+    <button matButton color="primary" (click)="goToSiteSelect()" class="map-button !hidden sm:!inline-flex">
+      <mat-icon>map</mat-icon>
       <span>{{ 'Map' | translate }}</span>
+    </button>
+    <!-- Mobile: outlined icon button with map icon -->
+    <button
+      matIconButton
+      color="primary"
+      (click)="goToSiteSelect()"
+      class="sm:!hidden"
+      [attr.aria-label]="'Map' | translate"
+    >
+      <mat-icon>map</mat-icon>
     </button>
   </div>
 </ng-template>
