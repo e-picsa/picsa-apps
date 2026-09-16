@@ -38,9 +38,5 @@ As an intelligent agent, you must improve your own workflow and help future agen
 ## 4. Verification Workflow (No Redundant Builds or Broad Test Suites)
 
 - **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
-- **Targeted Linting (Default)**: Verify syntax, template checks, and types by linting only the specific tool or library modified (avoiding heavy app shells):
-  - Specific Library: `yarn nx lint components` or `yarn nx lint utils`
-  - Specific Tool: `yarn nx lint picsa-tools-crop-probability-tool`
-- **Targeted Testing Only**: When verifying logic, execute tests **ONLY against spec files directly covering the code you created or modified** (or newly created/modified specs)—never run broad test suites across projects or the general codebase:
-  - Specific Tool: `yarn nx test picsa-tools-crop-probability-tool --testFile=<modified.spec.ts>`
-  - Specific Library: `yarn nx test utils --testFile=<modified.spec.ts>`
+- **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
+- **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.

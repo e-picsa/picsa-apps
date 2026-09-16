@@ -424,6 +424,7 @@ export function renderTrendlineOverlay(
     const strokeColor = d.color || '#333333';
     const strokeWidth = (d.strokeWidth ?? 2.5) * scale;
     const strokeDash = d.strokeDasharray || '6 4';
+    const isLabelOnly = !!d.labelOnly;
 
     const x1 = internal.x(d.startX);
     const x2 = internal.x(d.endX);
@@ -436,6 +437,7 @@ export function renderTrendlineOverlay(
       .attr('x2', x2)
       .attr('y1', y1)
       .attr('y2', y2)
+      .style('display', isLabelOnly ? 'none' : 'block')
       .style('stroke', strokeColor)
       .style('stroke-width', `${strokeWidth}px`)
       .style('stroke-dasharray', strokeDash)
