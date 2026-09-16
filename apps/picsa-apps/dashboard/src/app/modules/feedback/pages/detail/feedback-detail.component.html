@@ -7,7 +7,7 @@
 
   @if (error()) {
     <div class="p-4 mb-4 bg-red-50 border border-red-200 rounded">
-      <p class="text-red-700">{{ error() ?? '' | translate }}</p>
+      <p class="text-red-700">{{ error() }}</p>
       <button matButton="elevated" color="primary" (click)="goBack()">{{ 'Back to list' | translate }}</button>
     </div>
   }
@@ -101,10 +101,12 @@
           </mat-form-field>
 
           <button matButton="elevated" color="primary" class="w-full" (click)="save()" [disabled]="!canSave()">
-            @if (saving()) {
-              <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-            }
-            {{ 'Save' | translate }}
+            <span class="flex w-full items-center justify-center gap-2">
+              @if (saving()) {
+                <mat-spinner diameter="18" class="shrink-0" />
+              }
+              <span>{{ 'Save' | translate }}</span>
+            </span>
           </button>
         </section>
       </div>

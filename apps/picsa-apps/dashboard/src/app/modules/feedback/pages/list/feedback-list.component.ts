@@ -1,28 +1,20 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-  TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { FeedbackBadgeComponent } from '../../components/feedback-badge.component';
 import {
   FeedbackDashboardService,
   FeedbackFilters,
   FeedbackReportRow,
-  STATUS_OPTIONS,
-  TYPE_OPTIONS,
+  STATUS_FILTER_OPTIONS,
+  TYPE_FILTER_OPTIONS,
 } from '../../services/feedback-dashboard.service';
 
 const DISPLAYED_COLUMNS: string[] = ['type', 'comment', 'status', 'app_version', 'os', 'has_screenshot', 'created_at'];
@@ -44,6 +36,7 @@ interface FeedbackTableRow {
   imports: [
     FormsModule,
     DashboardMaterialModule,
+    FeedbackBadgeComponent,
     MatProgressSpinnerModule,
     PicsaDataTableComponent,
     PicsaTranslateModule,
@@ -55,25 +48,28 @@ interface FeedbackTableRow {
 export class FeedbackListComponent implements OnInit {
   private service = inject(FeedbackDashboardService);
   private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
+  private notificationService = inject(PicsaNotificationService);
   private translate = inject(PicsaTranslateService);
-
-  public commentTemplate = viewChild<TemplateRef<{ $implicit: string }>>('commentTemplate');
-  public statusTemplate = viewChild<TemplateRef<{ $implicit: string }>>('statusTemplate');
-  public screenshotTemplate = viewChild<TemplateRef<{ $implicit: boolean }>>('screenshotTemplate');
-  public createdAtTemplate = viewChild<TemplateRef<{ $implicit: string }>>('createdAtTemplate');
 
   public rows = signal<FeedbackTableRow[]>([]);
   public loading = signal<boolean>(true);
   public error = signal<string | null>(null);
 
-  public statusOptions = STATUS_OPTIONS;
-  public typeOptions = TYPE_OPTIONS;
+  public statusOptions = STATUS_FILTER_OPTIONS;
+  public typeOptions = TYPE_FILTER_OPTIONS;
 
-  public selectedStatus: FeedbackFilters['status'] = undefined;
-  public selectedType: FeedbackFilters['type'] = undefined;
-  public appVersion = '';
-  public os = '';
+  public selectedStatus = signal<FeedbackFilters['status']>(undefined);
+  public selectedType = signal<FeedbackFilters['type']>(undefined);
+  public appVersion = signal('');
+  public os = signal('');
+
+  public hasFiltersActive = computed(
+    () =>
+      this.selectedStatus() !== undefined ||
+      this.selectedType() !== undefined ||
+      this.appVersion().trim() !== '' ||
+      this.os().trim() !== '',
+  );
 
   public tableOptions: IDataTableOptions = {
     search: false,
@@ -81,33 +77,10 @@ export class FeedbackListComponent implements OnInit {
     paginatorSizes: [10, 25, 50, 100],
     formatHeader: (value) => {
       if (value === 'has_screenshot') return 'Screenshot';
-      if (value === 'app_version') return 'App version';
-      if (value === 'created_at') return 'Created';
       return formatHeaderDefault(value);
     },
     rowTrackBy: (_: number, row: FeedbackTableRow) => row.id,
   };
-
-  public valueTemplates = computed<Record<string, TemplateRef<{ $implicit: unknown }>>>(() => {
-    const templates: Record<string, TemplateRef<{ $implicit: unknown }>> = {};
-    const comment = this.commentTemplate();
-    const status = this.statusTemplate();
-    const screenshot = this.screenshotTemplate();
-    const createdAt = this.createdAtTemplate();
-    if (comment) templates['comment'] = comment;
-    if (status) templates['status'] = status;
-    if (screenshot) templates['has_screenshot'] = screenshot;
-    if (createdAt) templates['created_at'] = createdAt;
-    return templates;
-  });
-
-  public hasFiltersActive = computed(
-    () =>
-      this.selectedStatus !== undefined ||
-      this.selectedType !== undefined ||
-      this.appVersion.trim() !== '' ||
-      this.os.trim() !== '',
-  );
 
   async ngOnInit() {
     await this.loadList();
@@ -121,7 +94,7 @@ export class FeedbackListComponent implements OnInit {
       this.rows.set(data.map((r) => this.toTableRow(r)));
     } catch {
       this.error.set(this.translate.instant('Failed to load feedback'));
-      this.snackBar.open(this.translate.instant('Failed to load feedback'), 'Dismiss', { duration: 3000 });
+      this.notificationService.showErrorNotification(this.translate.instant('Failed to load feedback'));
     } finally {
       this.loading.set(false);
     }
@@ -132,10 +105,10 @@ export class FeedbackListComponent implements OnInit {
   }
 
   public resetFilters() {
-    this.selectedStatus = undefined;
-    this.selectedType = undefined;
-    this.appVersion = '';
-    this.os = '';
+    this.selectedStatus.set(undefined);
+    this.selectedType.set(undefined);
+    this.appVersion.set('');
+    this.os.set('');
     this.loadList();
   }
 
@@ -145,10 +118,10 @@ export class FeedbackListComponent implements OnInit {
 
   private buildFilters(): FeedbackFilters {
     const filters: FeedbackFilters = { limit: 100, offset: 0 };
-    if (this.selectedStatus) filters.status = this.selectedStatus;
-    if (this.selectedType) filters.type = this.selectedType;
-    if (this.appVersion.trim()) filters.app_version = this.appVersion.trim();
-    if (this.os.trim()) filters.os = this.os.trim();
+    if (this.selectedStatus()) filters.status = this.selectedStatus();
+    if (this.selectedType()) filters.type = this.selectedType();
+    if (this.appVersion().trim()) filters.app_version = this.appVersion().trim();
+    if (this.os().trim()) filters.os = this.os().trim();
     return filters;
   }
 

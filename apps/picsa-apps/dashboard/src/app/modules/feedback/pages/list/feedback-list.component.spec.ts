@@ -1,9 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { FeedbackBadgeComponent } from '../../components/feedback-badge.component';
 import { FeedbackDashboardService } from '../../services/feedback-dashboard.service';
@@ -14,25 +13,24 @@ describe('FeedbackListComponent', () => {
   let fixture: ComponentFixture<FeedbackListComponent>;
   let mockService: { list: jest.Mock };
   let mockRouter: { navigate: jest.Mock };
-  let mockSnackBar: { open: jest.Mock };
+  let mockNotification: { showErrorNotification: jest.Mock; showSuccessNotification: jest.Mock };
   let mockTranslate: { instant: jest.Mock };
 
   beforeEach(async () => {
     mockService = { list: jest.fn().mockResolvedValue([]) };
     mockRouter = { navigate: jest.fn() };
-    mockSnackBar = { open: jest.fn() };
+    mockNotification = { showErrorNotification: jest.fn(), showSuccessNotification: jest.fn() };
     mockTranslate = { instant: jest.fn().mockImplementation((v: string) => v) };
 
     await TestBed.configureTestingModule({
       imports: [FeedbackListComponent, FeedbackBadgeComponent, PicsaTranslateModule.forRoot(), NoopAnimationsModule],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
       .overrideComponent(FeedbackListComponent, {
         add: {
           providers: [
             { provide: FeedbackDashboardService, useValue: mockService },
             { provide: Router, useValue: mockRouter },
-            { provide: MatSnackBar, useValue: mockSnackBar },
+            { provide: PicsaNotificationService, useValue: mockNotification },
             { provide: PicsaTranslateService, useValue: mockTranslate },
           ],
         },
@@ -48,24 +46,16 @@ describe('FeedbackListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should populate valueTemplates with all four template keys after init', () => {
-    const templates = component.valueTemplates();
-    expect(Object.keys(templates)).toEqual(
-      expect.arrayContaining(['comment', 'status', 'has_screenshot', 'created_at']),
-    );
-    expect(Object.keys(templates).length).toBe(4);
-  });
-
   it('should load list on init with default limit and offset', () => {
     expect(mockService.list).toHaveBeenCalledWith({ limit: 100, offset: 0 });
   });
 
   it('should apply filters and reload, forwarding all four filters', async () => {
     mockService.list.mockClear();
-    component.selectedStatus = 'open';
-    component.selectedType = 'bug_report';
-    component.appVersion = '1.0.0';
-    component.os = 'Android';
+    component.selectedStatus.set('open');
+    component.selectedType.set('bug_report');
+    component.appVersion.set('1.0.0');
+    component.os.set('Android');
     component.applyFilters();
     await fixture.whenStable();
     expect(mockService.list).toHaveBeenLastCalledWith({
@@ -79,17 +69,17 @@ describe('FeedbackListComponent', () => {
   });
 
   it('should reset filters and reload with defaults', async () => {
-    component.selectedStatus = 'open';
-    component.selectedType = 'bug_report';
-    component.appVersion = '1.0.0';
-    component.os = 'Android';
+    component.selectedStatus.set('open');
+    component.selectedType.set('bug_report');
+    component.appVersion.set('1.0.0');
+    component.os.set('Android');
     mockService.list.mockClear();
     component.resetFilters();
     await fixture.whenStable();
-    expect(component.selectedStatus).toBeUndefined();
-    expect(component.selectedType).toBeUndefined();
-    expect(component.appVersion).toBe('');
-    expect(component.os).toBe('');
+    expect(component.selectedStatus()).toBeUndefined();
+    expect(component.selectedType()).toBeUndefined();
+    expect(component.appVersion()).toBe('');
+    expect(component.os()).toBe('');
     expect(mockService.list).toHaveBeenLastCalledWith({ limit: 100, offset: 0 });
   });
 
@@ -117,5 +107,12 @@ describe('FeedbackListComponent', () => {
     expect(component.rows()).toEqual([]);
     expect(component.loading()).toBe(false);
     expect(component.error()).toBeNull();
+  });
+
+  it('should show inline error and notify on load failure', async () => {
+    mockService.list.mockRejectedValueOnce(new Error('fail'));
+    await component.loadList();
+    expect(component.error()).toBe('Failed to load feedback');
+    expect(mockNotification.showErrorNotification).toHaveBeenCalledWith('Failed to load feedback');
   });
 });

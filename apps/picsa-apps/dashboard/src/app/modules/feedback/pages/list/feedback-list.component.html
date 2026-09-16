@@ -2,7 +2,7 @@
   <div class="flex flex-wrap gap-4 items-center mb-4">
     <mat-form-field appearance="outline" class="w-full sm:w-48">
       <mat-label>{{ 'Status' | translate }}</mat-label>
-      <mat-select [(ngModel)]="selectedStatus">
+      <mat-select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
         @for (option of statusOptions; track option.value) {
           <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
         }
@@ -11,7 +11,7 @@
 
     <mat-form-field appearance="outline" class="w-full sm:w-48">
       <mat-label>{{ 'Type' | translate }}</mat-label>
-      <mat-select [(ngModel)]="selectedType">
+      <mat-select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
         @for (option of typeOptions; track option.value) {
           <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
         }
@@ -20,12 +20,12 @@
 
     <mat-form-field appearance="outline" class="w-full sm:w-48">
       <mat-label>{{ 'App version' | translate }}</mat-label>
-      <input matInput [(ngModel)]="appVersion" />
+      <input matInput [ngModel]="appVersion()" (ngModelChange)="appVersion.set($event)" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full sm:w-48">
       <mat-label>{{ 'OS' | translate }}</mat-label>
-      <input matInput [(ngModel)]="os" />
+      <input matInput [ngModel]="os()" (ngModelChange)="os.set($event)" />
     </mat-form-field>
 
     <div class="flex gap-2">
@@ -42,7 +42,7 @@
 
   @if (error()) {
     <div class="p-4 mb-4 bg-red-50 border border-red-200 rounded">
-      <p class="text-red-700">{{ error() ?? '' | translate }}</p>
+      <p class="text-red-700">{{ error() }}</p>
       <button matButton (click)="loadList()">{{ 'Retry' | translate }}</button>
     </div>
   }
@@ -62,7 +62,12 @@
       <picsa-data-table
         [data]="rows()"
         [options]="tableOptions"
-        [valueTemplates]="valueTemplates()"
+        [valueTemplates]="{
+          comment: commentTemplate,
+          status: statusTemplate,
+          has_screenshot: screenshotTemplate,
+          created_at: createdAtTemplate,
+        }"
         (rowClick)="openDetail($event)"
       ></picsa-data-table>
     </div>

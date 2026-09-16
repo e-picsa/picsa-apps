@@ -32,8 +32,8 @@ export interface FeedbackSignedUrl {
   expires_in: number;
 }
 
-/** Shared status option labels (English-phrase keys for translate fallback). */
-export const STATUS_OPTIONS: Array<{ value: FeedbackFilters['status']; label: string }> = [
+/** Status options including "All" (undefined) — used by list filters. */
+export const STATUS_FILTER_OPTIONS: Array<{ value: FeedbackFilters['status']; label: string }> = [
   { value: undefined, label: 'All' },
   { value: 'open', label: 'Open' },
   { value: 'in_review', label: 'In review' },
@@ -41,9 +41,23 @@ export const STATUS_OPTIONS: Array<{ value: FeedbackFilters['status']; label: st
   { value: 'closed', label: 'Closed' },
 ];
 
-/** Shared type option labels (English-phrase keys for translate fallback). */
-export const TYPE_OPTIONS: Array<{ value: FeedbackFilters['type']; label: string }> = [
+/** Type options including "All" (undefined) — used by list filters. */
+export const TYPE_FILTER_OPTIONS: Array<{ value: FeedbackFilters['type']; label: string }> = [
   { value: undefined, label: 'All' },
+  { value: 'feedback', label: 'Feedback' },
+  { value: 'bug_report', label: 'Bug report' },
+];
+
+/** Selectable status values only (no "All") — used by detail select. */
+export const STATUS_OPTIONS: Array<{ value: Exclude<FeedbackFilters['status'], undefined>; label: string }> = [
+  { value: 'open', label: 'Open' },
+  { value: 'in_review', label: 'In review' },
+  { value: 'resolved', label: 'Resolved' },
+  { value: 'closed', label: 'Closed' },
+];
+
+/** Selectable type values only (no "All") — used by detail select. */
+export const TYPE_OPTIONS: Array<{ value: Exclude<FeedbackFilters['type'], undefined>; label: string }> = [
   { value: 'feedback', label: 'Feedback' },
   { value: 'bug_report', label: 'Bug report' },
 ];
