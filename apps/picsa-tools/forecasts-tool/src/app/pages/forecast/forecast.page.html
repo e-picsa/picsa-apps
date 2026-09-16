@@ -9,12 +9,12 @@
       <span class="text-lg sm:text-xl font-semibold text-white"> {{ 'Forecasts' | translate }} </span>
       <button
         matButton="outlined"
-        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30"
-        (click)="openLocationOverlay()"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30 [&_.mdc-button__label]:!text-white"
+        (click)="locationOverlayOpen.set(true)"
         [attr.aria-label]="'Change location' | translate"
       >
-        <mat-icon class="!text-[20px] !w-5 !h-5 text-white shrink-0">map</mat-icon>
-        <span class="truncate"> {{ selectedLocationLabel() || ('Select Location' | translate) }} </span>
+        <mat-icon class="!text-[20px] !w-5 !h-5 !text-white shrink-0">map</mat-icon>
+        <span class="truncate text-white"> {{ selectedLocationLabel() || ('Select Location' | translate) }} </span>
       </button>
     </div>
   </ng-template>
@@ -56,44 +56,14 @@
   </ng-template>
 
   <!-- Location Selection Modal Overlay -->
-  @if (locationOverlayOpen()) {
-  <div class="fixed inset-0 z-[1000] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-4">
-    <div
-      class="bg-white rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.25)] max-w-[480px] w-full p-6 max-h-[90vh] overflow-y-auto"
-    >
-      <div class="location-modal-header">
-        <div class="flex items-center gap-2">
-          <mat-icon color="primary">place</mat-icon>
-          <h2 class="text-xl font-semibold m-0">{{ 'Select Location' | translate }}</h2>
-        </div>
-      </div>
-      <p class="text-sm text-slate-600 mt-1 mb-4">
-        {{ 'Please select a location to view local forecasts' | translate }}
-      </p>
-
-      <picsa-form-location-select
-        class="block w-full [&_.flex]:flex-col [&_.flex]:gap-2 [&_.mat-mdc-form-field]:w-full"
-        [countryCode]="countryCode()"
-        [value]="tempLocation() || locationSelected()"
-        (valueChanged)="handleTempLocationUpdate($event)"
-      ></picsa-form-location-select>
-
-      <div class="location-modal-actions flex justify-end gap-3 mt-4">
-        @if (locationReady()) {
-        <button matButton (click)="cancelLocationChange()">{{ 'Cancel' | translate }}</button>
-        }
-        <button
-          matButton="filled"
-          color="primary"
-          [disabled]="!isTempLocationReady()"
-          (click)="confirmLocationChange()"
-        >
-          {{ 'Confirm' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-  }
+  <picsa-form-location-overlay
+    [(open)]="locationOverlayOpen"
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    [allowCancel]="locationReady()"
+    (confirmed)="handleLocationConfirmed($event)"
+    (cancelled)="locationOverlayOpen.set(false)"
+  ></picsa-form-location-overlay>
 
   <section class="mb-6 w-full">
     @if (locationReady()) {

@@ -163,6 +163,8 @@ function run() {
     'apps/picsa-server/**/*.ts',
     'apps/sites/*/src/**/*.ts',
     'libs/*/src/**/*.ts',
+    // Flat libs without a src/ directory (e.g. libs/forms, libs/utils, libs/models)
+    'libs/*/**/*.ts',
     'libs/*.ts',
     'libs/*/index.ts',
   ];

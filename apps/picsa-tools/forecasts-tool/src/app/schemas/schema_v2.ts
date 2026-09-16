@@ -35,7 +35,7 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
 
 export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
   const { country_code, downscaled_location, forecast_type, id, label, language_code, mimetype } = row;
-  return {
+  const mapped = {
     country_code,
     downscaled_location,
     forecast_type,
@@ -45,4 +45,10 @@ export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
     mimetype, // null storage files filtered during db query
     storage_file: row.storage_file as string,
   };
+  // Server allows nulls but the RxDB schema declares these props as non-nullable strings,
+  // so explicit nulls fail validation (COL20). Strip them - absent keys validate cleanly.
+  for (const key of ['forecast_type', 'language_code', 'mimetype'] as const) {
+    if (mapped[key] == null) delete (mapped as Record<string, unknown>)[key];
+  }
+  return mapped as IForecast_V2;
 };
