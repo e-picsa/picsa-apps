@@ -13,13 +13,24 @@ import { NavigationStackService } from '../services/navStack.service';
     @switch (variant) {
       @case ('white') {
         <button matButton style="color:white" (click)="navStackService.back()">
-          <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+          <mat-icon>arrow_back</mat-icon><span class="back-label">{{ 'Back' | translate }}</span>
         </button>
       }
       @default {
         <button matButton color="primary" (click)="navStackService.back()">
-          <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+          <mat-icon>arrow_back</mat-icon><span class="back-label">{{ 'Back' | translate }}</span>
         </button>
+      }
+    }
+  `,
+  styles: `
+    // Hide text label on narrow screens to preserve room for central header content
+    .back-label {
+      display: none;
+    }
+    @media (min-width: 600px) {
+      .back-label {
+        display: inline;
       }
     }
   `,
