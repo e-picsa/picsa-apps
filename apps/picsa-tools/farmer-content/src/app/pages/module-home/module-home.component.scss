@@ -23,7 +23,10 @@ header,
   @apply fixed left-0 w-screen h-screen z-10 overflow-auto flex flex-col;
 }
 .tool-header {
-  @apply flex items-center gap-1 sm:gap-2 md:gap-4 h-12;
+  @apply grid items-center gap-1 sm:gap-2 md:gap-4 h-12;
+  // Equal balancing columns keep central content viewport-centered
+  // regardless of asymmetric start/end content (e.g. close button with options toggle)
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 mat-icon.tool-icon {
   @apply h-16 w-16;

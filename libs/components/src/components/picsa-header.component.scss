@@ -1,7 +1,10 @@
 header {
   color: white;
   background-color: var(--color-primary);
-  display: flex;
+  display: grid;
+  // Equal balancing columns keep central content viewport-centered
+  // regardless of asymmetric start/end content (e.g. back button with empty end)
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   height: 3.5rem;
   line-height: 3.5rem;
@@ -21,27 +24,35 @@ header[data-style='inverted'] {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  @apply sm:min-w-24;
+  justify-self: start;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .central-content {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-self: center;
+  min-width: 0;
+  max-width: 100%;
 }
 .end-content {
-  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  @apply sm:min-w-24;
+  justify-self: end;
+  min-width: 0;
+  max-width: 100%;
 }
 h1 {
   font-size: 2rem;
   padding: 0;
+  margin: 0;
 }
 .title {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
