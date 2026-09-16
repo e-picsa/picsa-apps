@@ -87,6 +87,11 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/data/climate/climate-icons",
+            "output": "assets/climate-icons"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/climate-tool/src/assets",
             "output": "assets"
           },

@@ -1,0 +1,10 @@
+<button
+  matMiniFab
+  color="primary"
+  (click)="openFeedback()"
+  [style.bottom.px]="bottomInset()"
+  class="feedback-fab"
+  [attr.aria-label]="'Submit feedback' | translate"
+>
+  <mat-icon>chat</mat-icon>
+</button>

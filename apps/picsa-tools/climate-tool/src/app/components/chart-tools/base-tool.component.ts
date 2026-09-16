@@ -32,6 +32,7 @@ export interface ILegendItem {
   fill: string;
   stroke?: string;
   strokeWidth?: number;
+  size?: number;
 }
 
 export interface IOverlayLineLabel {
@@ -53,6 +54,31 @@ export interface IOverlayLine {
   label?: IOverlayLineLabel;
 }
 
+export interface ITrendlineOverlay {
+  id: string;
+  /** Key of data series used to resolve correct Y scale */
+  seriesKey?: string;
+  startX: number;
+  endX: number;
+  startY: number;
+  endY: number;
+  color: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
+  opacity?: number;
+  label?: string;
+  /** When true only the label badge is rendered and the line is hidden */
+  labelOnly?: boolean;
+}
+
+export interface IChartOverlayMessage {
+  text: string;
+  subtext?: string;
+  color?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
@@ -64,12 +90,12 @@ export abstract class BaseChartToolComponent {
 
   protected readonly chartDefinition = computed(() => this.chartService.chartDefinition());
   protected readonly chartSeriesData = computed(() => this.chartService.chartSeriesData());
-  protected readonly stationData = computed(() => this.chartService.stationData());
+  protected readonly chartData = computed(() => this.chartService.chartData());
   protected readonly chartConfig = computed(() => this.chartService.chartConfig());
 
   /**
-   * Set true in subclasses that implement `getPointStyle` or `getOverlayLines`, so the
-   * chart service knows to render the custom overlay and hide C3's default circles.
+   * Set true in subclasses that implement custom markers, lines, or trendlines so the
+   * chart service knows to run overlay synchronization.
    */
   public readonly usesPointOverlay: boolean = false;
 
@@ -96,13 +122,23 @@ export abstract class BaseChartToolComponent {
     return undefined;
   }
 
+  /** Override to draw declarative trendlines directly on the chart SVG canvas */
+  public getTrendlines(): ITrendlineOverlay[] | undefined {
+    return undefined;
+  }
+
+  /** Override to display a message banner directly on the chart SVG canvas */
+  public getChartMessage(): IChartOverlayMessage | undefined {
+    return undefined;
+  }
+
   public formatTooltipRow(year: number): ITooltipExtraRow | undefined {
     return undefined;
   }
 
   /** Set of x values (usually years) having at least one finite value on the active chart */
   protected readonly validXValues = computed(() => {
-    const data = this.stationData();
+    const data = this.chartData();
     const def = this.chartDefinition();
     const values = new Set<number>();
     if (!data?.length || !def) return values;

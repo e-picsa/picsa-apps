@@ -56,3 +56,14 @@ export const BUDGET_PERIOD_ROWS: IBudgetPeriodRow[] = [
   { type: 'outputs', label: translateMarker('Outputs'), sublabel: translateMarker('For Sale') },
   { type: 'produceConsumed', label: translateMarker('Produce Consumed') },
 ];
+
+/** Translation markers for scale options and period label prefixes */
+export const PERIOD_SCALE_MARKERS = [
+  translateMarker('years'),
+  translateMarker('months'),
+  translateMarker('weeks'),
+  translateMarker('days'),
+  translateMarker('Year'),
+  translateMarker('Week'),
+  translateMarker('Day'),
+];

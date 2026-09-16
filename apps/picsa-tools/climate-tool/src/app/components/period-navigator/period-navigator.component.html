@@ -1,0 +1,21 @@
+<div class="period-navigator-container">
+  <button
+    matIconButton
+    type="button"
+    (click)="chartService.previousPeriod()"
+    [attr.aria-label]="'Previous' | translate"
+    class="nav-btn"
+  >
+    <mat-icon>keyboard_arrow_left</mat-icon>
+  </button>
+  <span class="period-label">{{ chartService.currentPeriodLabel() }}</span>
+  <button
+    matIconButton
+    type="button"
+    (click)="chartService.nextPeriod()"
+    [attr.aria-label]="'Next' | translate"
+    class="nav-btn"
+  >
+    <mat-icon>keyboard_arrow_right</mat-icon>
+  </button>
+</div>

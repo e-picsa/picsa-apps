@@ -34,3 +34,9 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 - **NEVER** run destructive terminal commands such as `git restore`, `git reset --hard`, `git checkout .`, `git clean -fd`, or `rm -rf` under any circumstances unless explicitly requested by the user.
 - Even if attempting to undo a previous programmatic mistake, you must either manually revert the specific edits you made using file replacement tools, or explicitly ask the user for permission to execute a destructive `git` command to discard changes. This is to ensure you do not destroy uncommitted, in-progress work the user may have in their working directory.
+
+## 4. Verification Workflow (No Redundant Builds or Broad Test Suites)
+
+- **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
+- **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
+- **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.

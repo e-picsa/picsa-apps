@@ -1,5 +1,5 @@
 import { arrayToHashmap } from '@picsa/utils/data';
-import { IStationMeta } from '@picsa/models/src';
+import { IStationMeta } from '@picsa/models';
 import { ICountryCode } from './countries';
 
 export * from './countries';

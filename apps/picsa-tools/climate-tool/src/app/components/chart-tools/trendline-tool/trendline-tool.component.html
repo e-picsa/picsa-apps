@@ -1,0 +1,196 @@
+<div class="flex flex-col gap-2 w-full">
+  <!-- Analysis Period Selection -->
+  <div class="flex flex-col gap-1">
+    <label class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+      {{ 'Analysis Period' | translate }}
+    </label>
+    <mat-button-toggle-group
+      [value]="configService.period()"
+      (change)="setPeriod($event.value)"
+      class="compact-toggle-group"
+      hideSingleSelectionIndicator="true"
+    >
+      <mat-button-toggle value="full">
+        {{ 'Full' | translate }}
+      </mat-button-toggle>
+      <mat-button-toggle value="30_year">
+        {{ '30-Year' | translate }}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="flex flex-col gap-2 w-full">
+    @let analyses = seriesAnalyses();
+    @for (item of analyses; track item.key) {
+      @let showRate = item.stats.isSignificant && item.stats.changePerDecade !== null;
+      <mat-card
+        class="box-border p-2.5 bg-white rounded-lg border border-slate-200"
+        [attr.data-trend-outcome]="item.status"
+      >
+        <!-- Series title & dot (for multi-series charts) -->
+        @if (analyses.length > 1) {
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span class="flex items-center gap-1.5 font-semibold text-[13px] text-gray-800 truncate">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" [style.background-color]="item.color"></span>
+              {{ item.label | translate }}
+            </span>
+          </div>
+        }
+
+        <!-- Concise Trend Outcome Badge & Rate -->
+        <div class="flex items-center gap-2" [class.justify-between]="showRate" [class.justify-end]="!showRate">
+          <!-- Estimated decadal rate of change (only for statistically clear trends) -->
+          @if (showRate) {
+            <span class="text-xs font-semibold whitespace-nowrap text-slate-800">
+              {{ item.rateLabel }}
+            </span>
+          }
+
+          @switch (item.status) {
+            @case ('upward_trend') {
+              <div class="trend-badge trend-active">
+                <mat-icon>trending_up</mat-icon>
+                <span>{{ 'Upward trend' | translate }}</span>
+              </div>
+            }
+            @case ('downward_trend') {
+              <div class="trend-badge trend-active">
+                <mat-icon>trending_down</mat-icon>
+                <span>{{ 'Downward trend' | translate }}</span>
+              </div>
+            }
+            @case ('no_clear_trend') {
+              <div class="trend-badge trend-muted">
+                <mat-icon>remove</mat-icon>
+                <span>{{ 'No clear trend' | translate }}</span>
+              </div>
+            }
+            @case ('insufficient_data') {
+              <div class="trend-badge trend-muted">
+                <mat-icon>help_outline</mat-icon>
+                <span>{{ 'Insufficient data' | translate }}</span>
+              </div>
+            }
+            @default {
+              <div class="trend-badge trend-muted">
+                <mat-icon>help_outline</mat-icon>
+                <span>{{ 'Unavailable' | translate }}</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Technical Statistics Collapsible Section -->
+        @if (item.stats.slope !== null && item.stats.slope !== undefined) {
+          <div class="flex items-center mt-0.5 pt-1">
+            <button
+              matButton
+              type="button"
+              class="stats-toggle-btn"
+              (click)="toggleStats(item.key)"
+              [attr.aria-expanded]="expandedStats()[item.key]"
+              [attr.aria-label]="
+                (expandedStats()[item.key] ? 'Hide technical statistics' : 'Show technical statistics') | translate
+              "
+            >
+              <span>{{ 'Statistical Indicators' | translate }}</span>
+              <mat-icon class="!text-base !w-4 !h-4 !text-slate-400">
+                {{ expandedStats()[item.key] ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </button>
+          </div>
+
+          <!-- Statistical indicators table placed inside expandable section -->
+          @if (expandedStats()[item.key]) {
+            <div class="stats-table-container">
+              <table class="stats-table">
+                <thead>
+                  <tr class="bg-slate-100">
+                    @for (indicator of statIndicators; track indicator.key; let isLast = $last) {
+                      <th scope="col" [class]="!isLast ? 'border-r border-slate-200' : ''">
+                        <div class="inline-flex items-center justify-center gap-0.5">
+                          <button
+                            matButton
+                            type="button"
+                            class="stat-info-btn"
+                            [matMenuTriggerFor]="statMenu"
+                            [attr.aria-label]="indicator.menuAriaLabel | translate"
+                          >
+                            <div class="flex items-center justify-center">
+                              <span [class.italic]="indicator.isItalic" class="stat-var-name">
+                                {{ indicator.symbol }}
+                              </span>
+                              <mat-icon class="stat-info-icon">info_outline</mat-icon>
+                            </div>
+                          </button>
+                          <mat-menu #statMenu="matMenu" xPosition="before">
+                            <div class="stat-menu-content" (click)="$event.stopPropagation()">
+                              <div class="font-bold text-xs text-slate-900 mb-1">{{ indicator.title | translate }}</div>
+                              <p class="m-0 mb-1.5 text-slate-600">{{ indicator.description | translate }}</p>
+                              @if (indicator.noteKeys) {
+                                <ul class="m-0 pl-3.5 text-slate-500 text-[10.5px]">
+                                  @for (note of indicator.noteKeys; track note.threshold) {
+                                    <li class="mb-0.5">
+                                      <strong class="text-slate-800">{{ note.threshold }}</strong
+                                      >:
+                                      {{ note.label | translate }}
+                                    </li>
+                                  }
+                                </ul>
+                              }
+                            </div>
+                          </mat-menu>
+                        </div>
+                      </th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    @for (indicator of statIndicators; track indicator.key; let isLast = $last) {
+                      <td [class]="!isLast ? 'border-r border-slate-200' : ''">
+                        @switch (indicator.key) {
+                          @case ('ci') {
+                            <div class="stat-ci-cell">
+                              <div class="stat-cell-value">{{ item.ciRange }}</div>
+                              @if (item.ciUnit) {
+                                <div class="stat-ci-unit">{{ item.ciUnit }}</div>
+                              }
+                            </div>
+                          }
+                          @case ('p') {
+                            <span class="stat-cell-value">
+                              {{ formatPValue(item.stats.pValue) }}
+                            </span>
+                          }
+                          @case ('n') {
+                            <span class="stat-cell-value">{{ item.stats.n }}</span>
+                          }
+                          @case ('r2') {
+                            <span class="stat-cell-value">
+                              {{
+                                item.stats.rSquared !== null && item.stats.rSquared !== undefined
+                                  ? (item.stats.rSquared | number: '1.2-2')
+                                  : '—'
+                              }}
+                            </span>
+                          }
+                        }
+                      </td>
+                    }
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      </mat-card>
+    }
+  </div>
+
+  <!-- Methodology button -->
+  <button type="button" class="methodology-btn" (click)="openMethodologyDialog()">
+    <mat-icon>help_outline</mat-icon>
+    <span>{{ 'How is the trendline calculated?' | translate }}</span>
+  </button>
+</div>

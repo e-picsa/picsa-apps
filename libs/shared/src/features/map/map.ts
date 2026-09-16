@@ -15,7 +15,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import type { IStationMeta } from '@picsa/models/src/climate.models';
+import type { IStationMeta } from '@picsa/models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
 
 import L from 'leaflet';

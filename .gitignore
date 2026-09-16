@@ -27,6 +27,7 @@ node_modules
 
 # misc
 /.sass-cache
+/.ai-worktree-setup.json
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -82,3 +83,4 @@ libs/features/map/tiles/**/*.png
 .vercel
 .nx
 .temp
+.github/issues

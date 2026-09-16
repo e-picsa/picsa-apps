@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { FunctionsHttpError } from '@supabase/supabase-js';
+import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 
 import { SupabaseFunctionsService } from './supabase-functions.service';
 
@@ -67,5 +67,17 @@ describe('SupabaseFunctionsService', () => {
     mockInvoke.mockResolvedValue({ data: null, error });
 
     await expect(service.invoke('test-endpoint')).rejects.toThrow('User not authorized');
+  });
+
+  it('should tag thrown error with __picsaNetworkError when FunctionsFetchError occurs', async () => {
+    const error = new FunctionsFetchError({ requestId: 'req-1' } as any);
+    mockInvoke.mockResolvedValue({ data: null, error });
+
+    try {
+      await service.invoke('test-endpoint');
+      fail('Expected throw');
+    } catch (err: any) {
+      expect(err.__picsaNetworkError).toBe(true);
+    }
   });
 });

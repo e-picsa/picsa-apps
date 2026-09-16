@@ -23,6 +23,11 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
+          {
+            "glob": "**/*",
+            "input": "libs/data/climate/climate-icons",
+            "output": "assets/climate-icons"
+          },
           "apps/picsa-tools/climate-tool/src/assets"
         ],
         "styles": [

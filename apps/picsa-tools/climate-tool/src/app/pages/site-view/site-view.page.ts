@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IChartId } from '@picsa/models/src';
+import { IChartId } from '@picsa/models';
 import { map } from 'rxjs/operators';
 
 import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';

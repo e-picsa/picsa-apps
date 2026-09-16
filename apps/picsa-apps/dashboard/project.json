@@ -12,7 +12,6 @@
         "^production",
         "supabaseConfig",
         "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json",
-        "{workspaceRoot}/apps/picsa-tools/climate-tool/src/assets/climate-icons/**/*",
         "{workspaceRoot}/libs/shared-assets/**/*",
         "{workspaceRoot}/libs/i18n/assets/**/*",
         "{workspaceRoot}/libs/data/**/*"
@@ -51,7 +50,7 @@
           },
           {
             "glob": "*.*",
-            "input": "apps/picsa-tools/climate-tool/src/assets/climate-icons",
+            "input": "libs/data/climate/climate-icons",
             "output": "assets/climate-icons"
           },
           {
