@@ -53,6 +53,9 @@ async function listFeedback(req: Request): Promise<Response> {
       .order('created_at', { ascending: false })
       .range(filters.offset, filters.offset + filters.limit - 1);
 
+    if (filters.id) {
+      query = query.eq('id', filters.id);
+    }
     if (filters.status) {
       query = query.eq('status', filters.status);
     }
@@ -135,14 +138,14 @@ async function signedUrl(req: Request): Promise<Response> {
 
     const { data: urlData, error: urlError } = await supabase.storage
       .from('feedback')
-      .createSignedUrl(data.screenshot_path, 60);
+      .createSignedUrl(data.screenshot_path, 300);
 
     if (urlError) {
       console.error(urlError);
       return ErrorResponse(urlError.message);
     }
 
-    return JSONResponse({ signed_url: urlData.signedUrl, expires_in: 60 });
+    return JSONResponse({ signed_url: urlData.signedUrl, expires_in: 300 });
   } catch (err) {
     if (err instanceof Response) return err;
     console.error(err);
