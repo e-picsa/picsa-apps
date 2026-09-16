@@ -71,6 +71,7 @@ export class CalendarTableComponent {
   dialog = inject(MatDialog);
 
   public readonly customActivities = signal<ICropActivityDataEntry[]>([]);
+  public readonly customCrops = signal<ICalendarCard[]>([]);
 
   /** Toggle whether to enable editing features (names and crops) */
   public editMode = signal(false);
@@ -88,13 +89,16 @@ export class CalendarTableComponent {
 
   // Generate row labels from names of crops
   private formEnterprises = computed(() => this.form.meta.enterprises().value(), { equal: isEqual });
-  public rowLabels = computed(() => this.formEnterprises().map((crop) => this.cropsByName[crop]?.label));
+  public rowLabels = computed(() => this.formEnterprises().map((crop) => this.cropsByName()[crop]?.label));
 
   public shareStatus = signal('share');
   public shareDisabled = signal(false);
 
-  /** Lookup for crop labels displayed in table rows */
-  private readonly cropsByName = arrayToHashmap(CROPS_DATA, 'name');
+  /** Lookup for crop labels displayed in table rows, hardcoded crops plus any custom ones */
+  private readonly cropsByName = computed(() => ({
+    ...arrayToHashmap(CROPS_DATA, 'name'),
+    ...arrayToHashmap(this.customCrops(), 'id'),
+  }));
 
   constructor() {
     effect(() => {
@@ -121,6 +125,12 @@ export class CalendarTableComponent {
         .$.pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((docs) => {
           this.customActivities.set(docs.map((doc) => toActivityOption(doc._data)));
+        });
+      this.cardService.dbCollection
+        .find({ selector: { type: 'crop' } })
+        .$.pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((docs) => {
+          this.customCrops.set(docs.map((doc) => doc._data));
         });
     });
   }
