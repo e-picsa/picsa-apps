@@ -15,7 +15,6 @@ import { filter, map, Subject, takeUntil } from 'rxjs';
 
 import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';
 import { PicsaBackButtonComponent } from './back-button.component';
-import { PicsaNotificationBannerComponent } from './notification-banner/notification-banner.component';
 import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
 
 @Component({
@@ -51,13 +50,11 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
         }
       </div>
     </header>
-    <picsa-notification-banner></picsa-notification-banner>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
   imports: [
     PicsaBreadcrumbsComponent,
-    PicsaNotificationBannerComponent,
     MatIconModule,
     PicsaBackButtonComponent,
     PicsaTranslateModule,
@@ -141,19 +138,40 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private handleHeaderOptionsChange(options: IHeaderOptions) {
     const { title, style, hideBackButton, hideHeader } = options;
     requestAnimationFrame(() => {
-      if (title !== undefined) {
+      if (title && this.title() !== title) {
         this.title.set(title);
         this.titleService.setTitle(title);
       }
       if (style) {
         this.style.set(style);
       }
-      if (hideBackButton !== undefined) {
-        this.hideBackButton.set(hideBackButton);
-      }
-      if (hideHeader !== undefined) {
-        this.hideHeader.set(hideHeader);
-      }
+      this.setPortalContent(options);
+      // hide back button when set or if on farmer or extension homepages
+      const shouldHideBackButton = hideBackButton || ['/', '/farmer', '/extension'].includes(location.pathname);
+      this.hideBackButton.set(shouldHideBackButton);
+      this.hideHeader.set(hideHeader ? true : false);
     });
+  }
+
+  private setPortalContent(options: IHeaderOptions) {
+    const { cdkPortalStart, cdkPortalCenter, cdkPortalEnd } = options;
+    // Start Portal
+    if (!cdkPortalStart) {
+      this.cdkPortalStart.set(undefined);
+    } else if (!cdkPortalStart.isAttached) {
+      this.cdkPortalStart.set(cdkPortalStart);
+    }
+    // Center Portal
+    if (!cdkPortalCenter) {
+      this.cdkPortalCenter.set(undefined);
+    } else if (!cdkPortalCenter.isAttached) {
+      this.cdkPortalCenter.set(cdkPortalCenter);
+    }
+    // End Portal
+    if (!cdkPortalEnd) {
+      this.cdkPortalEnd.set(undefined);
+    } else if (!cdkPortalEnd.isAttached) {
+      this.cdkPortalEnd.set(cdkPortalEnd);
+    }
   }
 }
