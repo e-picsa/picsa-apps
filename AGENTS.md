@@ -19,7 +19,8 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
 - **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
 - **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
-- **[PR Feedback Resolution](.agent/skills/address-pr-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
+- **[PR: Review](.agent/skills/pr-review/SKILL.md)**: Project-tailored workflow for conducting initial PR reviews (scope creep, over-engineering, code smells, util extraction, and maintainability).
+- **[PR: Address Feedback](.agent/skills/pr-address-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
 
 ## Core Principles
 
@@ -35,7 +36,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
   - **Avoid deeply nested code** (such as nested `if`/`else` branches, nested ternaries, or sprawling callback trees) when handling edge cases or complex conditions.
   - Use **early returns**, **guard clauses**, and **isolated helper functions** to handle validations, degenerate inputs, and edge cases before executing core logic.
   - Prefer declarative dictionaries/lookup maps over sprawling `switch`/`if-else` blocks where applicable.
-  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility.
+  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility, however be sparing with this to avoid large css build (view encapsulation will repeat tailwind rules in built output).
 - **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 
 ## Agent Meta-Instructions

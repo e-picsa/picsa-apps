@@ -21,7 +21,11 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'picsa-header',
   template: `
-    <header [attr.data-style]="style()" [style.display]="hideHeader() ? 'none' : 'flex'">
+    <header
+      [attr.data-style]="style()"
+      [attr.data-center]="cdkPortalCenter() ? 'portal' : 'title'"
+      [style.display]="hideHeader() ? 'none' : 'grid'"
+    >
       <div class="start-content">
         <!-- HACK - menu button passed as portal but back-button hardcoded -->
         <picsa-back-button

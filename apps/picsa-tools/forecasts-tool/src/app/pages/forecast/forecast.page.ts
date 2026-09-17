@@ -139,18 +139,6 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   public locationOverlayOpen = signal(false);
-  public tempLocation = signal<(string | undefined)[] | undefined>(undefined);
-
-  public isTempLocationReady = computed(() => {
-    const temp = this.tempLocation();
-    const country = this.countryCode();
-    if (!country || !temp) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    if (geoData.admin_5) {
-      return !!temp[4] && !!temp[5];
-    }
-    return !!temp[4];
-  });
 
   public loading = computed(() => this.service.loadingForecasts());
   public loadingDownscaled = computed(() => this.service.loadingDownscaled());
@@ -214,11 +202,11 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
       this.service.setForecastLocation(location);
     });
 
-    // Auto-open overlay if location is not set when entering tool
+    // Auto-open location overlay if location is not set when entering tool
     effect(() => {
       const ready = this.locationReady();
       if (!ready) {
-        this.openLocationOverlay();
+        this.locationOverlayOpen.set(true);
       }
     });
   }
@@ -265,27 +253,10 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  public openLocationOverlay(): void {
-    this.tempLocation.set(this.locationSelected());
-    this.locationOverlayOpen.set(true);
-  }
-
-  public handleTempLocationUpdate(location: (string | undefined)[]) {
-    this.tempLocation.set(location);
-  }
-
-  public cancelLocationChange(): void {
-    if (this.locationReady()) {
-      this.locationOverlayOpen.set(false);
-    }
-  }
-
-  public confirmLocationChange(): void {
-    const temp = this.tempLocation();
-    if (temp && this.isTempLocationReady()) {
-      this.configurationService.updateUserSettings({ location: temp });
-      this.locationOverlayOpen.set(false);
-    }
+  public handleLocationConfirmed(location: (string | undefined)[]): void {
+    this.hasRefreshedSuccessfully.set(false);
+    this.configurationService.updateUserSettings({ location });
+    this.locationOverlayOpen.set(false);
   }
 
   ngOnDestroy() {

@@ -324,7 +324,7 @@ export class ForecastService extends PicsaAsyncService {
       return [];
     }
     const table = this.supabaseService.db.table('forecasts');
-    const query = table.select<'', IForecastRow>('').neq('storage_file', null).eq('forecast_type', forecast_type);
+    const query = table.select<'*', IForecastRow>('*').neq('storage_file', null).eq('forecast_type', forecast_type);
 
     if (country_code !== 'global') {
       query.eq('country_code', country_code);

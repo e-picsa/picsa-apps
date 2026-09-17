@@ -27,24 +27,24 @@
         class="box-border p-2.5 bg-white rounded-lg border border-slate-200"
         [attr.data-trend-outcome]="item.status"
       >
-        <!-- Series title & dot (for multi-series charts) -->
-        @if (analyses.length > 1) {
-          <div class="flex items-center justify-between gap-2 mb-1.5">
-            <span class="flex items-center gap-1.5 font-semibold text-[13px] text-gray-800 truncate">
-              <span class="w-2.5 h-2.5 rounded-full shrink-0" [style.background-color]="item.color"></span>
-              {{ item.label | translate }}
-            </span>
-          </div>
-        }
+        <!-- Series title & dot -->
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span class="flex items-center gap-1.5 font-semibold text-[13px] text-gray-800 truncate">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" [style.background-color]="item.color"></span>
+            {{ item.label | translate }}
+          </span>
+        </div>
 
         <!-- Concise Trend Outcome Badge & Rate -->
-        <div class="flex items-center gap-2" [class.justify-between]="showRate" [class.justify-end]="!showRate">
-          <!-- Estimated decadal rate of change (only for statistically clear trends) -->
-          @if (showRate) {
-            <span class="text-xs font-semibold whitespace-nowrap text-slate-800">
-              {{ item.rateLabel }}
-            </span>
-          }
+        <div class="flex items-center justify-between gap-2">
+          <!-- Estimated decadal rate of change (hidden when no statistically clear trend to preserve badge alignment) -->
+          <span
+            class="text-xs font-semibold whitespace-nowrap text-slate-800"
+            [class.invisible]="!showRate"
+            [attr.aria-hidden]="!showRate"
+          >
+            {{ item.rateLabel }}
+          </span>
 
           @switch (item.status) {
             @case ('upward_trend') {
