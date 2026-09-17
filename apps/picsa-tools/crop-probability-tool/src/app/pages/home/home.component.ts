@@ -191,6 +191,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const location = this.resolveLocationArray(legacyId);
     if (location) {
       this.configService.updateUserSettings({ location });
+      // Auto-open effect may have fired before import - close overlay as location now ready
+      this.locationOverlayOpen.set(false);
       localStorage.removeItem(STORED_LOCATION_FIELD);
       this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
     }
