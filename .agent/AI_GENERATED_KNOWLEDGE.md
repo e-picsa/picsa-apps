@@ -195,8 +195,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
 - **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
 - **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
-- **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
-- **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
+- **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.\n- **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
 - **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
 
 ### Unified Y-Value Formatting Across Chart Tools
@@ -256,3 +255,27 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
+
+---
+
+## 7. Error Handling & Monitoring Architecture
+
+### Sentry & Firebase Crashlytics Dual-Reporting Strategy
+
+- **Complementary Roles**:
+  - **Sentry (`@sentry/angular`)**: Primary error tracking for TypeScript/JavaScript exceptions across both Web (PWA) and Mobile (Capacitor webview). Provides full source-mapped stack traces, device/platform tagging, release tracking, and breadcrumbs.
+  - **Firebase Crashlytics**: Retained exclusively on Android for native OS-level crashes (via the Gradle plugin) and duplicate reporting of non-fatal exceptions via `CrashlyticsService.recordException`.
+- **Initialization Timing**:
+  - Sentry is initialized in `apps/picsa-apps/app/src/main.ts` via `initSentry()` _prior_ to `bootstrapApplication()` so early bootstrap and bundling failures are reported.
+  - `bootstrapApplication(...).catch(...)` explicitly forwards unhandled bootstrap rejections to Sentry.
+- **Central Exception Routing (`ErrorHandlerService`)**:
+  - `ErrorHandlerService` overrides Angular's `ErrorHandler.handleError(error)`.
+  - Automatically unwraps Angular/Zone.js errors (`(error as any)?.ngOriginalError || error`).
+  - Dispatches to `Sentry.captureException(...)` when Sentry is enabled.
+  - On native Android (`Capacitor.isNativePlatform()`), additionally dispatches to `crashlyticsService.recordException(...)` in a protected try/catch block.
+  - Always calls `super.handleError(error)` to preserve local console output.
+- **Inbound Noise Filtering & Quota Protection**:
+  - In `beforeSend`, errors originating from browser extensions (`chrome-extension:`, `moz-extension:`, `safari-extension:`) or Angular DevTools messaging hooks are discarded to avoid burning monthly event quotas.
+  - Sentry is enabled in production builds by default (`ENVIRONMENT.production`), with optional explicit overrides via `ENVIRONMENT.sentry.enabled`.
+- **Jest Mocking Gotcha (`@capacitor/core`)**:
+  - When mocking `@capacitor/core` in unit tests, always spread `jest.requireActual('@capacitor/core')` (`{ ...actual, Capacitor: { ...actual.Capacitor, isNativePlatform: jest.fn() } }`). `@capacitor/device` calls `core.registerPlugin` during module evaluation; completely overwriting `@capacitor/core` without `registerPlugin` causes `TypeError: core.registerPlugin is not a function`.
