@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { TranslateService } from '@ngx-translate/core';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IChartMeta, IStationData } from '@picsa/models';
 
@@ -21,6 +22,14 @@ describe('TrendlineToolComponent', () => {
       imports: [TrendlineToolComponent, DecimalPipe, PicsaTranslateModule.forRoot()],
       providers: [ClimateChartService, TrendlineConfigService, { provide: SocialSharing, useValue: {} }],
     }).compileComponents();
+
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('global_en', {
+      'Seasonal Rainfall': 'Seasonal Rainfall',
+      'Upward trend': 'Upward trend',
+      'No clear trend': 'No clear trend',
+    });
+    translate.use('global_en');
 
     fixture = TestBed.createComponent(TrendlineToolComponent);
     component = fixture.componentInstance;
@@ -100,6 +109,80 @@ describe('TrendlineToolComponent', () => {
 
     // Upper chart summary message is omitted
     expect(component.getChartMessage()).toBeUndefined();
+  });
+
+  it('should render chart heading and visible rate label for single-series chart when trend is clear', () => {
+    const rainfallMeta = {
+      _id: 'rainfall',
+      name: 'Seasonal Rainfall',
+      shortname: 'Rain',
+      keys: ['Rainfall'],
+      units: 'mm',
+      xVar: 'Year',
+      colors: ['#13599e'],
+    };
+
+    const strongUpwardData = Array.from({ length: 25 }, (_, i) => ({
+      Year: 1990 + i,
+      Rainfall: 500 + i * 10,
+    }));
+
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(strongUpwardData as unknown as IStationData[]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const card = compiled.querySelector('mat-card');
+    expect(card).toBeTruthy();
+
+    const titleSpan = card?.querySelector('.truncate');
+    expect(titleSpan).toBeTruthy();
+    expect(titleSpan?.textContent).toContain('Seasonal Rainfall');
+
+    const rateSpan = card?.querySelector('.whitespace-nowrap.text-slate-800');
+    expect(rateSpan).toBeTruthy();
+    expect(rateSpan?.classList.contains('invisible')).toBe(false);
+    expect(rateSpan?.textContent).toContain('+100 mm / decade');
+
+    const badge = card?.querySelector('.trend-badge');
+    expect(badge?.textContent).toContain('Upward trend');
+  });
+
+  it('should render chart heading and hide rate label for single-series chart when there is no clear trend', () => {
+    const rainfallMeta = {
+      _id: 'rainfall',
+      name: 'Seasonal Rainfall',
+      shortname: 'Rain',
+      keys: ['Rainfall'],
+      units: 'mm',
+      xVar: 'Year',
+      colors: ['#13599e'],
+    };
+
+    const flatData = Array.from({ length: 25 }, (_, i) => ({
+      Year: 1990 + i,
+      Rainfall: 600 + (i % 2 === 0 ? 40 : -40),
+    }));
+
+    chartService.chartDefinition.set(rainfallMeta as unknown as IChartMeta);
+    chartService.chartData.set(flatData as unknown as IStationData[]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const card = compiled.querySelector('mat-card');
+    expect(card).toBeTruthy();
+
+    const titleSpan = card?.querySelector('.truncate');
+    expect(titleSpan).toBeTruthy();
+    expect(titleSpan?.textContent).toContain('Seasonal Rainfall');
+
+    const rateSpan = card?.querySelector('.whitespace-nowrap.text-slate-800');
+    expect(rateSpan).toBeTruthy();
+    expect(rateSpan?.classList.contains('invisible')).toBe(true);
+    expect(rateSpan?.getAttribute('aria-hidden')).toBe('true');
+
+    const badge = card?.querySelector('.trend-badge');
+    expect(badge?.textContent).toContain('No clear trend');
   });
 
   it('should handle multi-series charts by plotting solid colored lines only for significant series and rendering label-only for inconclusive', () => {
