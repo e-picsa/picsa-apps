@@ -247,3 +247,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
+
+---
+
+## 7. CI / CD & Nx Remote Caching Strategy
+
+### Custom Nx Cache & Quota Management (`NX_CLOUD_DISABLE_CACHE`)
+
+- **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
+- **Quota Expiration Handling**: When Nx Cloud free tier quota expires or needs conservation, `NX_CLOUD_DISABLE_CACHE` defaults to `'true'` in `build-test.yml`, which automatically sets `NX_NO_CLOUD=true` and `NX_DISABLE_REMOTE_CACHE=true` while continuing to use GitHub Actions local `.nx/cache`. It can be toggled via repo variable `vars.NX_CLOUD_DISABLE_CACHE`.
+- **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
