@@ -128,7 +128,10 @@ export class PicsaPushNotificationService {
   private handleForegroundNotification(notification: PushNotificationSchema) {
     const title = notification.title ?? 'PICSA';
     const body = notification.body ? `: ${notification.body}` : '';
-    this.notificationService.showNotification(`${title}${body}`);
+    this.notificationService.showUserNotification(
+      { message: `${title}${body}`, matIcon: 'notifications' },
+      { duration: 6000 },
+    );
   }
 
   private async handleNotificationClick(notification: ActionPerformed) {

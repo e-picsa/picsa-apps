@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { PushNotifications } from '@capacitor/push-notifications';
+import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 
 import { AppUpdateService } from '../native/app-update';
 import { AppUserService } from './appUser.service';
@@ -40,7 +40,7 @@ describe('PicsaPushNotificationService', () => {
     checkForUpdates: jest.Mock;
     openStore: jest.Mock;
   };
-  let notificationServiceMock: { showNotification: jest.Mock };
+  let notificationServiceMock: { showUserNotification: jest.Mock };
   let routerMock: { navigateByUrl: jest.Mock };
   let listeners: { [key: string]: CallbackFn };
 
@@ -58,7 +58,7 @@ describe('PicsaPushNotificationService', () => {
     };
 
     notificationServiceMock = {
-      showNotification: jest.fn(),
+      showUserNotification: jest.fn(),
     };
 
     routerMock = {
@@ -164,6 +164,28 @@ describe('PicsaPushNotificationService', () => {
     listeners['registration']({ value: 'test-fcm-token-123' });
 
     expect(appUserServiceMock.setFcmToken).toHaveBeenCalledWith('test-fcm-token-123');
+  });
+
+  it('displays user notification when push notification received in foreground', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+    (Capacitor.getPlatform as jest.Mock).mockReturnValue('android');
+    (PushNotifications.checkPermissions as jest.Mock).mockResolvedValue({ receive: 'granted' });
+
+    await service.initializePushNotifications();
+
+    expect(listeners['pushNotificationReceived']).toBeDefined();
+    listeners['pushNotificationReceived']({
+      title: 'Update Available',
+      body: 'A new version of PICSA is ready',
+    } as PushNotificationSchema);
+
+    expect(notificationServiceMock.showUserNotification).toHaveBeenCalledWith(
+      {
+        message: 'Update Available: A new version of PICSA is ready',
+        matIcon: 'notifications',
+      },
+      { duration: 6000 },
+    );
   });
 
   it('handles update action when notification clicked', async () => {
