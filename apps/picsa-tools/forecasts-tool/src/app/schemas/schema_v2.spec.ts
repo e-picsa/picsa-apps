@@ -1,5 +1,5 @@
 import { IForecastRow } from '../types/forecast.types';
-import { SERVER_DB_MAPPING_V2 } from './schema_v2';
+import { COLLECTION_V2, SERVER_DB_MAPPING_V2 } from './schema_v2';
 
 const BASE_ROW = {
   country_code: 'zm',
@@ -36,5 +36,18 @@ describe('SERVER_DB_MAPPING_V2', () => {
     const mapped = SERVER_DB_MAPPING_V2(BASE_ROW);
     expect(mapped).toHaveProperty('downscaled_location', null);
     expect(mapped).toHaveProperty('label', BASE_ROW.label);
+  });
+});
+
+describe('COLLECTION_V2 migration', () => {
+  it('preserves v1 docs, dropping `location` and defaulting `downscaled_location`', () => {
+    const migrate = COLLECTION_V2.migrationStrategies?.[2];
+    expect(migrate).toBeDefined();
+    // v1 `location` was never populated, so nothing of value is lost in migration
+    const migrated = migrate?.({ ...BASE_ROW, location: [] });
+    expect(migrated).not.toBeNull();
+    expect(migrated).not.toHaveProperty('location');
+    expect(migrated).toHaveProperty('downscaled_location', null);
+    expect(migrated).toMatchObject({ id: BASE_ROW.id, storage_file: BASE_ROW.storage_file });
   });
 });

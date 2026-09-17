@@ -27,11 +27,12 @@ import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
 import { getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-item';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IResourceLink } from '@picsa/resources/schemas';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
 import { RxDocument } from 'rxdb';
@@ -49,6 +50,7 @@ const STRINGS = {
   ForecastsUpToDate: translateMarker('Forecasts are up to date'),
   SelectLocation: translateMarker('Select Location'),
   LoadingForecasts: translateMarker('Loading forecasts...'),
+  DownloadFailed: translateMarker('Could not download forecast. Check your connection and try again.'),
 };
 
 interface IForecastSummary {
@@ -92,6 +94,8 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
   private componentsService = inject(PicsaCommonComponentsService);
+  private notificationService = inject(PicsaNotificationService);
+  private translateService = inject(PicsaTranslateService);
   private viewContainer = inject(ViewContainerRef);
 
   @ViewChild('headerCenterPortal') headerCenterPortal!: TemplateRef<unknown>;
@@ -276,20 +280,25 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public async handleForecastClick(forecast: IForecastSummary) {
-    // open downloaded forecast
+    // open already-downloaded forecasts directly (fully offline)
     if (forecast.downloaded) {
       this.openForecast(forecast);
+      return;
     }
-    // download and open new forecast
-    else {
-      const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
-      if (downloader) {
-        await this.service.downloadForecastFile(forecast._doc, downloader);
-        forecast._doc = forecast._doc.getLatest();
-        if (forecast._doc.getAttachment(forecast.storage_file)) {
-          this.openForecast(forecast);
-        }
-      }
+    // download and open new forecasts (requires connection)
+    const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
+    if (!downloader) return;
+    try {
+      await this.service.downloadForecastFile(forecast._doc, downloader);
+    } catch (err) {
+      console.error('[Forecast] download failed', err);
+      const message = this.translateService.instant(STRINGS.DownloadFailed);
+      this.notificationService.showErrorNotification(message);
+      return;
+    }
+    forecast._doc = forecast._doc.getLatest();
+    if (forecast._doc.getAttachment(forecast.storage_file)) {
+      this.openForecast(forecast);
     }
   }
 

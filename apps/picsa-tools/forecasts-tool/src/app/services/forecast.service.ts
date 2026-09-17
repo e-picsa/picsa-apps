@@ -174,6 +174,11 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   public async downloadForecastFile(doc: RxDocument<IForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
+    // fail fast while offline - storage client is unavailable and the download cannot succeed
+    await this.supabaseService.ready();
+    if (!this.isOnline() || !this.supabaseService.isAvailable()) {
+      throw new Error('Cannot download forecast while offline');
+    }
     await downloaderUI.start();
     const { error, data } = await downloaderUI.completed();
 

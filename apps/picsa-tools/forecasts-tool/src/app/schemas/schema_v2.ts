@@ -28,8 +28,13 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
   isUserCollection: false,
   migrationStrategies: {
     ...COLLECTION_V1.migrationStrategies,
-    // schema change - clear all local docs and repopulate from server
-    2: () => null,
+    // v1 `location` was never populated (always []/null) and is unread by any code,
+    // so drop it and default `downscaled_location` - existing docs (and their
+    // downloaded attachments) survive the upgrade and repopulate from server
+    2: (oldDoc: IForecast_V1): IForecast_V2 => {
+      const { location, ...rest } = oldDoc;
+      return { ...rest, downscaled_location: null };
+    },
   },
 };
 
