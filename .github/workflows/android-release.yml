@@ -25,8 +25,15 @@ jobs:
   android_release:
     runs-on: ubuntu-latest
     env:
-      # Expose secret at job level so availability can be checked in step if conditions
+      SENTRY_AUTH_TOKEN_AVAILABLE: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
+
+    # On the upload step:
+    if: ${{ env.SENTRY_AUTH_TOKEN_AVAILABLE == 'true' }}
+    env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+      SENTRY_URL: https://de.sentry.io
     steps:
       - uses: actions/checkout@v7
         with:
