@@ -119,8 +119,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Edge Functions Deployment in Release Pipelines
 
-- **Release Workflows**: Deploying all functions during release via `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID` is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Incoming requests continue serving from the live version while the new version is verified and deployed.
-- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions when no function name is specified. For small function sets (~6 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+- **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
+- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions. For small function sets (~5 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
 
 ---
 
