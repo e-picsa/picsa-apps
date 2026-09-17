@@ -28,9 +28,16 @@ jobs:
       SENTRY_AUTH_TOKEN_AVAILABLE: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
 
     # On the upload step:
+    env:
+      SENTRY_AUTH_TOKEN_AVAILABLE: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
+
+    # On the upload step:
     if: ${{ env.SENTRY_AUTH_TOKEN_AVAILABLE == 'true' }}
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+      SENTRY_URL: https://de.sentry.io
       SENTRY_ORG: ${{ vars.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
       SENTRY_URL: https://de.sentry.io
