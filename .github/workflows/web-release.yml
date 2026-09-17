@@ -19,6 +19,9 @@ env:
 jobs:
   web_release:
     runs-on: ubuntu-latest
+    env:
+      # Expose secret at job level so availability can be checked in step if conditions
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -55,9 +58,8 @@ jobs:
           cat "$CONFIG_FILE"
 
       - name: Upload sourcemaps to Sentry
-        if: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
+        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_URL: https://de.sentry.io
