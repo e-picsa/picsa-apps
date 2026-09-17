@@ -28,12 +28,6 @@ interface LoaderConfig {
   includeStorage?: boolean;
 }
 
-class ForecastOfflineError extends Error {
-  constructor() {
-    super('Forecast server is offline/unavailable');
-  }
-}
-
 interface ILoadOptions {
   /** Bypass incremental `gt(id)` query bounds and re-validate all recent server records */
   force?: boolean;
@@ -111,7 +105,6 @@ export class ForecastService extends PicsaAsyncService {
         this.syncState.set('idle');
         this.lastSyncedAt.set(undefined);
         this.syncError.set(undefined);
-        this.loadingForecasts.set(false);
       }
     });
 
@@ -349,14 +342,6 @@ export class ForecastService extends PicsaAsyncService {
     }
 
     return (data || []).map((el) => SERVER_DB_MAPPING(el));
-  }
-
-  private async loadSeasonalForecasts(country_code: ICountryCode) {
-    const seasonalForecasts = FORECASTS_DB.filter(
-      (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
-    );
-    const dbDocs = await this.storeHardcodedData(seasonalForecasts);
-    this.seasonalForecastDocs.set(dbDocs);
   }
 
   private async loadDownscaledForecasts(country_code: string, admin_4: string, admin_5?: string) {

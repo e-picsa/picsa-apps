@@ -147,10 +147,6 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public loading = computed(() => this.service.loadingForecasts());
   public loadingDownscaled = computed(() => this.service.loadingDownscaled());
 
-  // Activity that should render the animated spinner
-  public refreshing = computed(() => this.service.isForceRefreshing());
-  public syncing = computed(() => this.loading() || this.loadingDownscaled() || this.refreshing());
-
   public resourceLinks = computed<IResourceLink[]>(() => {
     const { country_code } = this.configurationService.userSettings();
     return CLIMATE_RESOURCES[country_code] || [];
