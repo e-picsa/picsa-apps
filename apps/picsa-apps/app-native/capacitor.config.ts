@@ -33,6 +33,7 @@ const config: CapacitorConfig = {
     '@capacitor/camera',
     '@capacitor/share',
     '@capacitor/push-notifications',
+    '@capawesome/capacitor-app-update',
   ],
   plugins: {
     PushNotifications: {
