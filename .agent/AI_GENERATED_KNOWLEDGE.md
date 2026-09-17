@@ -86,8 +86,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
 - **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.
-  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.
-  - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
 - **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
 ### PostgreSQL Generated Column Nullability
@@ -124,6 +123,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
 - **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
 
+### Edge Functions Deployment in Release Pipelines
+
+- **Release Workflows**: Deploying all functions during release via `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID` is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Incoming requests continue serving from the live version while the new version is verified and deployed.
+- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions when no function name is specified. For small function sets (~6 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+
 ---
 
 ## 4. Angular 21, Signals & Reactive Architecture
@@ -153,6 +157,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
+
+### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
+
+- **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
+- **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
+- **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
 
 ---
 
@@ -193,7 +203,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Responsive Tool Customization Slots & Sidenav Container Layout
 
-- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.\n- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
+- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
 - **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
 - **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
 - **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
@@ -218,7 +229,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Climate Data Sync, Formatting & Audit Pipeline
 
-- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
+- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
 - **Idempotent CLI Runner**: The CLI runner (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) computes SHA-256 hashes of canonical station data. Preserving `lastUpdated` when data hashes match ensures zero git diffs on subsequent runs.
 - **Per-Country Station Organization**: Grouping stations by country (`data/stations/<country>/`) with separate `metadata.ts` and `capabilities.generated.ts` cleanly isolates PRs and prevents cross-country merge conflicts.
 - **Symmetric Capability Models**: Modeling `monthly?: IChartId[]` as a string array symmetrically matches `annual?: IChartId[]`, simplifying runtime availability checks (`station.capabilities?.[timespan]?.includes(chartId)`).
@@ -236,6 +247,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Display Rule & Cutoff**:
   - A trendline is plotted **only** when statistically clear ($p < 0.05$). It is rendered as a **solid coloured line** in the series color (`strokeWidth = 2.5`).
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
+- **Card Header & Rate Alignment in Sidenav Panel**:
+  - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
@@ -253,3 +267,14 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
+
+---
+
+## 7. CI / CD & Nx Remote Caching Strategy
+
+### Hybrid Local + Remote Caching Architecture
+
+- **Nx Cache Resolution Order**: Nx evaluates the local disk cache (`.nx/cache`) first. If an artifact matches locally, it replays immediately without downloading from Nx Cloud (avoiding network latency and bandwidth quota). Only on local cache misses does Nx query Nx Cloud remote cache.
+- **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
+- **Zero Configuration Overrides Needed**: Because Nx natively prioritizes local `.nx/cache`, no custom toggle variables (like `NX_CLOUD_DISABLE_CACHE`) are required in the workflow. Hybrid caching functions out of the box with just `NX_CLOUD_ACCESS_TOKEN`. If a full cloud bypass is ever desired in ad-hoc contexts, standard Nx variables like `NX_NO_CLOUD=true` can be provided externally without workflow changes.
+- **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
