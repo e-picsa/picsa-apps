@@ -13,9 +13,9 @@ import { PicsaNotificationService } from '../core/notification.service';
 export interface IAppUpdateDiagnostics {
   isNative: boolean;
   availability: string;
-  currentVersionCode?: number;
+  currentVersionCode?: string;
   currentVersionName?: string;
-  availableVersionCode?: number;
+  availableVersionCode?: string;
   availableVersionName?: string;
   installStatus?: string;
   error?: string;
@@ -169,8 +169,8 @@ export class AppUpdateService {
     this.listenerHandle = await AppUpdate.addListener('onFlexibleUpdateStateChange', (state: FlexibleUpdateState) => {
       console.log('[AppUpdate] Flexible update state change:', state);
       this.installStatus.set(state.installStatus);
-      this.bytesDownloaded.set(state.bytesDownloaded);
-      this.totalBytesToDownload.set(state.totalBytesToDownload);
+      this.bytesDownloaded.set(state.bytesDownloaded ?? 0);
+      this.totalBytesToDownload.set(state.totalBytesToDownload ?? 0);
 
       if (state.installStatus === FlexibleUpdateInstallStatus.DOWNLOADED) {
         this.notificationService.showSuccessNotification(
