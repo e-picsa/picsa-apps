@@ -9,7 +9,7 @@ import {
   OnInit,
   signal,
   TemplateRef,
-  ViewChild,
+  viewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
 
-  @ViewChild('headerCenterPortal') headerCenterPortal!: TemplateRef<unknown>;
+  private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
 
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
@@ -124,9 +124,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.componentsService.patchHeader({
-      cdkPortalCenter: new TemplatePortal(this.headerCenterPortal, this.viewContainer),
-    });
+    const portal = this.headerCenterPortal();
+    if (portal) {
+      this.componentsService.patchHeader({
+        cdkPortalCenter: new TemplatePortal(portal, this.viewContainer),
+      });
+    }
   }
 
   ngOnDestroy() {
