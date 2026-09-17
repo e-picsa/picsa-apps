@@ -31,6 +31,10 @@ export class PicsaPushNotificationService {
    */
   public async initializePushNotifications(): Promise<void> {
     if (!Capacitor.isNativePlatform()) {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        const perm = Notification.permission;
+        this.permissionStatus.set(perm === 'default' ? 'prompt' : (perm as PermissionState));
+      }
       return;
     }
     try {
@@ -58,11 +62,12 @@ export class PicsaPushNotificationService {
           this.permissionStatus.set(granted ? 'granted' : 'denied');
           return granted;
         } catch {
-          // ignore
+          this.permissionStatus.set('denied');
+          return false;
         }
       }
-      this.permissionStatus.set('granted');
-      return true;
+      this.permissionStatus.set('denied');
+      return false;
     }
 
     try {
@@ -97,25 +102,24 @@ export class PicsaPushNotificationService {
     // Remove any existing listeners to prevent duplicates
     await PushNotifications.removeAllListeners();
 
-    // Add listeners before registering so token and notification events are not missed
-    PushNotifications.addListener('registration', (token: Token) => {
-      console.log('[Push] Registration success');
-      this.sendTokenToServer(token.value);
-    });
-
-    PushNotifications.addListener('registrationError', (error: RegistrationError) => {
-      console.error('[Push] Error on registration:', error);
-    });
-
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      console.log('[Push] Received in foreground:', notification);
-      this.handleForegroundNotification(notification);
-    });
-
-    PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
-      console.log('[Push] Action performed:', notification);
-      await this.handleNotificationClick(notification);
-    });
+    // Await all listeners to ensure native registration does not emit events before listeners are installed
+    await Promise.all([
+      PushNotifications.addListener('registration', (token: Token) => {
+        console.log('[Push] Registration success');
+        this.sendTokenToServer(token.value);
+      }),
+      PushNotifications.addListener('registrationError', (error: RegistrationError) => {
+        console.error('[Push] Error on registration:', error);
+      }),
+      PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+        console.log('[Push] Received in foreground:', notification);
+        this.handleForegroundNotification(notification);
+      }),
+      PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
+        console.log('[Push] Action performed:', notification);
+        await this.handleNotificationClick(notification);
+      }),
+    ]);
 
     // Register with Apple / Google to receive push via FCM
     await PushNotifications.register();

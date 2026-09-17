@@ -205,4 +205,43 @@ describe('PicsaPushNotificationService', () => {
 
     expect(appUpdateServiceMock.openStore).toHaveBeenCalled();
   });
+
+  it('handles web notification permission when granted', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(false);
+    const originalNotification = window.Notification;
+    // Mock Notification on window
+    (window as unknown as { Notification: unknown }).Notification = {
+      requestPermission: jest.fn().mockResolvedValue('granted'),
+      permission: 'default',
+    };
+
+    const result = await service.requestNotificationPermissions();
+    expect(result).toBe(true);
+    expect(service.permissionStatus()).toBe('granted');
+
+    (window as unknown as { Notification: unknown }).Notification = originalNotification;
+  });
+
+  it('handles web notification permission when rejected or unavailable', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(false);
+    const originalNotification = window.Notification;
+
+    // Test rejection / error
+    (window as unknown as { Notification: unknown }).Notification = {
+      requestPermission: jest.fn().mockRejectedValue(new Error('Permission denied')),
+      permission: 'default',
+    };
+
+    let result = await service.requestNotificationPermissions();
+    expect(result).toBe(false);
+    expect(service.permissionStatus()).toBe('denied');
+
+    // Test when Notification API does not exist on window
+    delete (window as unknown as { Notification?: unknown }).Notification;
+    result = await service.requestNotificationPermissions();
+    expect(result).toBe(false);
+    expect(service.permissionStatus()).toBe('denied');
+
+    (window as unknown as { Notification: unknown }).Notification = originalNotification;
+  });
 });
