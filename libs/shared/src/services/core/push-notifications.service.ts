@@ -1,7 +1,13 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
-import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
+import { Capacitor, PermissionState } from '@capacitor/core';
+import {
+  ActionPerformed,
+  PushNotifications,
+  PushNotificationSchema,
+  RegistrationError,
+  Token,
+} from '@capacitor/push-notifications';
 
 import { AppUpdateService } from '../native/app-update';
 import { AppUserService } from './appUser.service';
@@ -16,64 +22,103 @@ export class PicsaPushNotificationService {
   private notificationService = inject(PicsaNotificationService);
   private router = inject(Router);
 
-  public async initializePushNotifications() {
+  public permissionStatus = signal<PermissionState | null>(null);
+  public isPermissionGranted = computed(() => this.permissionStatus() === 'granted');
+
+  /**
+   * Check permissions and initialize listeners if already granted.
+   * Does NOT proactively prompt the user on startup.
+   */
+  public async initializePushNotifications(): Promise<void> {
     if (!Capacitor.isNativePlatform()) {
       return;
     }
     try {
-      // Check if permission is already granted
       const permResult = await PushNotifications.checkPermissions();
+      this.permissionStatus.set(permResult.receive);
 
-      if (permResult.receive === 'prompt' || permResult.receive === 'prompt-with-rationale') {
-        // Request permissions
-        const reqResult = await PushNotifications.requestPermissions();
-        if (reqResult.receive !== 'granted') {
-          console.warn('[Push] Notification permission was denied');
-          return;
-        }
+      if (permResult.receive === 'granted') {
+        await this.registerPushListeners();
       }
-
-      // Create standard notification channel for Android 8.0+ (API 26+)
-      if (Capacitor.getPlatform() === 'android') {
-        await PushNotifications.createChannel({
-          id: 'default',
-          name: 'General',
-          description: 'General notifications and release updates',
-          importance: 4, // HIGH
-          visibility: 1, // PUBLIC
-          sound: 'default',
-          vibration: true,
-        });
-      }
-
-      // Register with Apple / Google to receive push via FCM
-      await PushNotifications.register();
-
-      // Remove any existing listeners to prevent duplicates
-      await PushNotifications.removeAllListeners();
-
-      // Add listeners
-      PushNotifications.addListener('registration', (token: Token) => {
-        console.log('[Push] Registration success:', token.value);
-        this.sendTokenToServer(token.value);
-      });
-
-      PushNotifications.addListener('registrationError', (error: any) => {
-        console.error('[Push] Error on registration:', error);
-      });
-
-      PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-        console.log('[Push] Received in foreground:', notification);
-        this.handleForegroundNotification(notification);
-      });
-
-      PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
-        console.log('[Push] Action performed:', notification);
-        await this.handleNotificationClick(notification);
-      });
     } catch (err) {
       console.error('[Push] Error initializing push notifications:', err);
     }
+  }
+
+  /**
+   * Prompt the user for push notification permissions on-demand.
+   * Triggered by user interaction (e.g. notification banner).
+   */
+  public async requestNotificationPermissions(): Promise<boolean> {
+    if (!Capacitor.isNativePlatform()) {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        try {
+          const res = await Notification.requestPermission();
+          const granted = res === 'granted';
+          this.permissionStatus.set(granted ? 'granted' : 'denied');
+          return granted;
+        } catch {
+          // ignore
+        }
+      }
+      this.permissionStatus.set('granted');
+      return true;
+    }
+
+    try {
+      const reqResult = await PushNotifications.requestPermissions();
+      this.permissionStatus.set(reqResult.receive);
+
+      if (reqResult.receive === 'granted') {
+        await this.registerPushListeners();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('[Push] Error requesting push notification permissions:', err);
+      return false;
+    }
+  }
+
+  private async registerPushListeners(): Promise<void> {
+    // Create standard notification channel for Android 8.0+ (API 26+)
+    if (Capacitor.getPlatform() === 'android') {
+      await PushNotifications.createChannel({
+        id: 'default',
+        name: 'General',
+        description: 'General notifications and release updates',
+        importance: 4, // HIGH
+        visibility: 1, // PUBLIC
+        sound: 'default',
+        vibration: true,
+      });
+    }
+
+    // Remove any existing listeners to prevent duplicates
+    await PushNotifications.removeAllListeners();
+
+    // Add listeners before registering so token and notification events are not missed
+    PushNotifications.addListener('registration', (token: Token) => {
+      console.log('[Push] Registration success');
+      this.sendTokenToServer(token.value);
+    });
+
+    PushNotifications.addListener('registrationError', (error: RegistrationError) => {
+      console.error('[Push] Error on registration:', error);
+    });
+
+    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+      console.log('[Push] Received in foreground:', notification);
+      this.handleForegroundNotification(notification);
+    });
+
+    PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
+      console.log('[Push] Action performed:', notification);
+      await this.handleNotificationClick(notification);
+    });
+
+    // Register with Apple / Google to receive push via FCM
+    await PushNotifications.register();
   }
 
   private sendTokenToServer(token: string) {
@@ -83,22 +128,17 @@ export class PicsaPushNotificationService {
   private handleForegroundNotification(notification: PushNotificationSchema) {
     const title = notification.title ?? 'PICSA';
     const body = notification.body ? `: ${notification.body}` : '';
-    this.notificationService.showUserNotification(
-      { message: `${title}${body}`, matIcon: 'notifications' },
-      { duration: 6000 },
-    );
+    this.notificationService.showNotification(`${title}${body}`);
   }
 
-  private async handleNotificationClick(actionPerformed: ActionPerformed) {
-    const data = actionPerformed.notification?.data ?? {};
-    const action = data.action ?? data.type;
-    if (action === 'app_update' || action === 'update') {
-      await this.appUpdateService.checkForUpdates();
-      if (data.openStore) {
-        await this.appUpdateService.openStore();
-      }
-    } else if (data.route) {
-      this.router.navigate([data.route]);
+  private async handleNotificationClick(notification: ActionPerformed) {
+    const data = notification.notification?.data;
+    if (data?.action === 'app_update' || data?.openStore) {
+      await this.appUpdateService.openStore();
+      return;
+    }
+    if (data?.url) {
+      this.router.navigateByUrl(data.url);
     }
   }
 }

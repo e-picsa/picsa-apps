@@ -14,10 +14,9 @@ jest.mock('@capacitor/core', () => {
     ...actual,
     Capacitor: {
       ...actual.Capacitor,
-      isNativePlatform: jest.fn(),
-      getPlatform: jest.fn(),
+      isNativePlatform: jest.fn().mockReturnValue(true),
+      getPlatform: jest.fn().mockReturnValue('android'),
     },
-    registerPlugin: jest.fn().mockReturnValue({}),
   };
 });
 
@@ -26,27 +25,45 @@ jest.mock('@capacitor/push-notifications', () => ({
     checkPermissions: jest.fn(),
     requestPermissions: jest.fn(),
     createChannel: jest.fn(),
-    register: jest.fn(),
     removeAllListeners: jest.fn(),
     addListener: jest.fn(),
+    register: jest.fn(),
   },
 }));
+
+type CallbackFn = (...args: unknown[]) => unknown;
 
 describe('PicsaPushNotificationService', () => {
   let service: PicsaPushNotificationService;
   let appUserServiceMock: { setFcmToken: jest.Mock };
-  let appUpdateServiceMock: { checkForUpdates: jest.Mock; openStore: jest.Mock };
-  let notificationServiceMock: { showUserNotification: jest.Mock };
-  let routerMock: { navigate: jest.Mock };
-  type CallbackFn = (...args: any[]) => any;
-  const listeners: Record<string, CallbackFn> = {};
+  let appUpdateServiceMock: {
+    checkForUpdates: jest.Mock;
+    openStore: jest.Mock;
+  };
+  let notificationServiceMock: { showNotification: jest.Mock };
+  let routerMock: { navigateByUrl: jest.Mock };
+  let listeners: { [key: string]: CallbackFn };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    appUserServiceMock = { setFcmToken: jest.fn() };
-    appUpdateServiceMock = { checkForUpdates: jest.fn().mockResolvedValue(null), openStore: jest.fn() };
-    notificationServiceMock = { showUserNotification: jest.fn() };
-    routerMock = { navigate: jest.fn() };
+    listeners = {};
+
+    appUserServiceMock = {
+      setFcmToken: jest.fn(),
+    };
+
+    appUpdateServiceMock = {
+      checkForUpdates: jest.fn().mockResolvedValue(undefined),
+      openStore: jest.fn().mockResolvedValue(undefined),
+    };
+
+    notificationServiceMock = {
+      showNotification: jest.fn(),
+    };
+
+    routerMock = {
+      navigateByUrl: jest.fn(),
+    };
 
     (PushNotifications.addListener as jest.Mock).mockImplementation((event: string, fn: CallbackFn) => {
       listeners[event] = fn;
@@ -74,7 +91,18 @@ describe('PicsaPushNotificationService', () => {
     expect(PushNotifications.register).not.toHaveBeenCalled();
   });
 
-  it('registers and configures notification channel on Android', async () => {
+  it('does not proactively prompt the user if permission is prompt on app startup', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+    (PushNotifications.checkPermissions as jest.Mock).mockResolvedValue({ receive: 'prompt' });
+
+    await service.initializePushNotifications();
+
+    expect(PushNotifications.requestPermissions).not.toHaveBeenCalled();
+    expect(PushNotifications.register).not.toHaveBeenCalled();
+    expect(service.isPermissionGranted()).toBe(false);
+  });
+
+  it('registers and configures notification channel on Android if already granted', async () => {
     (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
     (Capacitor.getPlatform as jest.Mock).mockReturnValue('android');
     (PushNotifications.checkPermissions as jest.Mock).mockResolvedValue({ receive: 'granted' });
@@ -86,10 +114,42 @@ describe('PicsaPushNotificationService', () => {
     expect(PushNotifications.createChannel).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'default', name: 'General' }),
     );
-    expect(PushNotifications.register).toHaveBeenCalled();
     expect(PushNotifications.addListener).toHaveBeenCalledWith('registration', expect.any(Function));
     expect(PushNotifications.addListener).toHaveBeenCalledWith('pushNotificationReceived', expect.any(Function));
     expect(PushNotifications.addListener).toHaveBeenCalledWith('pushNotificationActionPerformed', expect.any(Function));
+    expect(PushNotifications.register).toHaveBeenCalled();
+    expect(service.isPermissionGranted()).toBe(true);
+
+    // Listeners must be registered before calling register() to prevent missing synchronous/early token events
+    const addListenerSpy = PushNotifications.addListener as jest.Mock;
+    const registerSpy = PushNotifications.register as jest.Mock;
+    expect(addListenerSpy.mock.invocationCallOrder[0]).toBeLessThan(registerSpy.mock.invocationCallOrder[0]);
+  });
+
+  it('requests permissions on-demand and registers when granted', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+    (Capacitor.getPlatform as jest.Mock).mockReturnValue('android');
+    (PushNotifications.requestPermissions as jest.Mock).mockResolvedValue({ receive: 'granted' });
+    (PushNotifications.register as jest.Mock).mockResolvedValue(undefined);
+    (PushNotifications.removeAllListeners as jest.Mock).mockResolvedValue(undefined);
+
+    const granted = await service.requestNotificationPermissions();
+
+    expect(granted).toBe(true);
+    expect(PushNotifications.requestPermissions).toHaveBeenCalled();
+    expect(PushNotifications.register).toHaveBeenCalled();
+    expect(service.isPermissionGranted()).toBe(true);
+  });
+
+  it('returns false when permissions request is denied', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+    (PushNotifications.requestPermissions as jest.Mock).mockResolvedValue({ receive: 'denied' });
+
+    const granted = await service.requestNotificationPermissions();
+
+    expect(granted).toBe(false);
+    expect(PushNotifications.register).not.toHaveBeenCalled();
+    expect(service.isPermissionGranted()).toBe(false);
   });
 
   it('passes received FCM token to AppUserService', async () => {
@@ -121,7 +181,6 @@ describe('PicsaPushNotificationService', () => {
       },
     });
 
-    expect(appUpdateServiceMock.checkForUpdates).toHaveBeenCalled();
     expect(appUpdateServiceMock.openStore).toHaveBeenCalled();
   });
 });

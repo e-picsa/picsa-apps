@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -63,6 +63,45 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
           </div>
           <mat-slide-toggle [checked]="isInternalTester()" (change)="onToggleTester($event.checked)" color="primary">
           </mat-slide-toggle>
+        </div>
+
+        <!-- Push Notification Token Card -->
+        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-semibold uppercase text-gray-500 dark:text-neutral-400">
+              {{ 'Notification Token' | translate }}
+            </div>
+            @if (fcmToken()) {
+              <span
+                class="text-[11px] font-mono text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded font-medium"
+              >
+                {{ 'Active' | translate }}
+              </span>
+            } @else {
+              <span
+                class="text-[11px] text-gray-500 dark:text-neutral-400 bg-gray-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded"
+              >
+                {{ 'Not registered' | translate }}
+              </span>
+            }
+          </div>
+          <div class="flex items-center gap-2">
+            <div
+              class="flex-1 text-xs font-mono bg-gray-50 dark:bg-neutral-800 p-2 rounded border border-gray-200 dark:border-neutral-700 truncate select-all text-gray-800 dark:text-neutral-200"
+              [title]="fcmToken() ?? ('No notification token registered' | translate)"
+            >
+              {{ fcmToken() ?? ('No notification token registered' | translate) }}
+            </div>
+            @if (fcmToken()) {
+              <button
+                matIconButton
+                (click)="copyNotificationToken()"
+                [attr.aria-label]="'Copy notification token' | translate"
+              >
+                <mat-icon class="text-sm">content_copy</mat-icon>
+              </button>
+            }
+          </div>
         </div>
 
         <!-- Google Play Update Status Card -->
@@ -132,9 +171,9 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
         class="pt-4 border-t border-gray-200 dark:border-neutral-700 flex flex-wrap items-center justify-between gap-2"
       >
         <div class="flex items-center gap-2">
-          <button matButton (click)="copyDebugJson()">
+          <button matButton="filled" color="primary" (click)="copyDebugJson()">
             <mat-icon class="text-sm">content_copy</mat-icon>
-            {{ 'Copy JSON' | translate }}
+            {{ 'Copy Debug Info' | translate }}
           </button>
           <button matButton (click)="refreshDiagnostics()">
             <mat-icon class="text-sm">refresh</mat-icon>
@@ -149,7 +188,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
               {{ 'Play Store' | translate }}
             </button>
           }
-          <button matButton="filled" (click)="close()">
+          <button matButton (click)="close()">
             {{ 'Close' | translate }}
           </button>
         </div>
@@ -165,6 +204,7 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
 
   public appVersion = APP_VERSION;
   public isInternalTester = this.appUserService.isInternalTester;
+  public fcmToken = this.appUserService.fcmToken;
 
   public isUpdateAvailable = this.appUpdateService.isUpdateAvailable;
   public isUpdateDownloading = this.appUpdateService.isUpdateDownloading;
@@ -173,7 +213,24 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
   public deviceInfo = signal<DeviceInfo | null>(null);
   public deviceId = signal<DeviceId | null>(null);
   public diagnostics = signal<IAppUpdateDiagnostics | null>(null);
-  public formattedJson = signal<string>('');
+
+  public formattedJson = computed(() => {
+    const info = this.deviceInfo();
+    const id = this.deviceId();
+    const updateDiag = this.diagnostics();
+    const payload = {
+      app_version: this.appVersion,
+      user_id: this.appUserService.userId(),
+      is_internal_tester: this.isInternalTester(),
+      notification_token: this.fcmToken(),
+      device_id: id?.identifier,
+      operatingSystem: info?.operatingSystem,
+      osVersion: info?.osVersion,
+      webViewVersion: info?.webViewVersion,
+      update: updateDiag,
+    };
+    return JSON.stringify(payload, null, 2);
+  });
 
   async ngOnInit() {
     await this.refreshDiagnostics();
@@ -190,19 +247,6 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
       this.deviceInfo.set(info);
       this.deviceId.set(id);
       this.diagnostics.set(updateDiag);
-
-      const payload = {
-        app_version: this.appVersion,
-        user_id: this.appUserService.userId(),
-        is_internal_tester: this.isInternalTester(),
-        device_id: id?.identifier,
-        operatingSystem: info?.operatingSystem,
-        osVersion: info?.osVersion,
-        webViewVersion: info?.webViewVersion,
-        update: updateDiag,
-      };
-
-      this.formattedJson.set(JSON.stringify(payload, null, 2));
     } catch {
       // ignore
     }
@@ -213,7 +257,6 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
     this.notificationService.showSuccessNotification(
       checked ? 'Internal Tester mode enabled' : 'Internal Tester mode disabled',
     );
-    this.refreshDiagnostics();
   }
 
   public async startDownload(): Promise<void> {
@@ -227,6 +270,17 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
 
   public async openStore(): Promise<void> {
     await this.appUpdateService.openStore();
+  }
+
+  public async copyNotificationToken(): Promise<void> {
+    const token = this.fcmToken();
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(token);
+      this.notificationService.showSuccessNotification('Notification token copied to clipboard');
+    } catch {
+      this.notificationService.showErrorNotification('Failed to copy to clipboard');
+    }
   }
 
   public async copyDebugJson(): Promise<void> {

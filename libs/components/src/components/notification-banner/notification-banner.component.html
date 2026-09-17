@@ -1,0 +1,36 @@
+@if (visible()) {
+  <aside
+    class="picsa-notification-banner"
+    role="region"
+    aria-label="App Notifications"
+    (click)="onActionClicked(notification())"
+  >
+    <div class="banner-inner">
+      <div class="banner-left">
+        <div class="icon-circle">
+          <mat-icon>{{ notification().icon || 'notifications' }}</mat-icon>
+        </div>
+        <div class="text-content">
+          <div class="title-row">
+            <span class="badge">{{ 'Notice' | translate }}</span>
+            <span class="title">{{ notification().title | translate }}</span>
+          </div>
+          <p class="message">{{ notification().message | translate }}</p>
+        </div>
+      </div>
+      <div class="banner-actions" (click)="$event.stopPropagation()">
+        <button matButton="filled" color="primary" class="action-btn" (click)="onActionClicked(notification())">
+          {{ notification().actionLabel || 'Allow' | translate }}
+        </button>
+        <button
+          matIconButton
+          class="dismiss-btn"
+          (click)="onDismissClicked()"
+          [attr.aria-label]="'Dismiss' | translate"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </aside>
+}

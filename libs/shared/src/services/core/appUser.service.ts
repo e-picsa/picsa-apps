@@ -1,32 +1,30 @@
-import { computed, effect, inject, Injectable, isDevMode, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments/src/version';
-import { Database } from '@picsa/server-types';
+import { IAppUser } from '@picsa/server-types';
 import { debounceSignal } from '@picsa/utils/angular';
-import { isEqual } from '@picsa/utils/object.utils';
+import isEqual from 'lodash/isEqual';
 
 import { ErrorHandlerService } from './error-handler.service';
 import { NetworkService } from './network.service';
 import { SupabaseService } from './supabase/supabase.service';
 
-type IAppUser = Database['public']['Tables']['app_users'];
-
 const INTERNAL_TESTER_STORAGE_KEY = 'picsa_is_internal_tester';
 
 /**
- * Handle sync between local appUser data and db app_user table
- * This is a 1-way push, where local config is source of truth
- * and simply updates row in DB on change
+ * Sync user profile to `app_users` table
+ * NOTE - Currently anonymous users not supported in table so only sync if user
+ * authenticated
  */
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AppUserService {
   private configurationService = inject(ConfigurationService);
   private supabaseService = inject(SupabaseService);
-  private networkService = inject(NetworkService);
   private errorService = inject(ErrorHandlerService);
-
-  public enabled = signal(false);
+  private networkService = inject(NetworkService);
 
   /** User supabase auth_user id as db only allows user to write to own row */
   public userId = computed(() => this.supabaseService.auth.authUser()?.id);
@@ -35,7 +33,8 @@ export class AppUserService {
 
   private platform = Capacitor.getPlatform();
 
-  private fcmToken = signal<string | null>(null);
+  private fcmTokenSignal = signal<string | null>(null);
+  public fcmToken = computed(() => this.fcmTokenSignal());
   private fcmTokenUpdatedAt = signal<string | null>(null);
   private internalTesterSignal = signal<boolean>(this.loadInternalTesterSetting());
 
@@ -90,43 +89,46 @@ export class AppUserService {
       }
     });
 
-    // When user is online attempt to load profile from DB (create if does not exist)
+    // When signed-in and connected try to load db profile
     effect(async () => {
       if (!this.enabled()) return;
-      if (!this.shouldTrackUser()) return;
       await this.supabaseService.ready();
       if (!this.supabaseService.isAvailable()) return;
       const userId = this.userId();
       const isOnline = this.networkService.isOnline();
       if (isOnline && userId && !this.dbProfile()) {
-        const dbProfile = await this.loadDbUserProfile(userId);
-        if (dbProfile) {
-          this.dbProfile.set(dbProfile);
-          if (dbProfile.fcm_token_updated_at && !this.fcmTokenUpdatedAt()) {
-            this.fcmTokenUpdatedAt.set(dbProfile.fcm_token_updated_at);
-          }
-          if (dbProfile.is_internal_tester && !this.internalTesterSignal()) {
-            this.setInternalTester(true, false);
-          }
-        } else {
-          await this.createUserProfile(userId);
-        }
+        await this.syncDbProfile(userId);
       }
     });
 
-    // When user is online attempt sync pending update
+    // When profile changes attempt sync to DB
     effect(async () => {
       if (!this.enabled()) return;
-      if (!this.shouldTrackUser()) return;
       await this.supabaseService.ready();
       if (!this.supabaseService.isAvailable()) return;
-      const userId = this.userId();
-      const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
-      if (isOnline && userId && pendingUpdate) {
-        await this.updateUserProfile(userId);
+      if (pendingUpdate) {
+        await this.updateUserProfile(pendingUpdate);
       }
     });
+  }
+
+  private async syncDbProfile(userId: string) {
+    const dbProfile = await this.loadDbUserProfile(userId);
+    if (!dbProfile) {
+      await this.createUserProfile(userId);
+      return;
+    }
+    this.dbProfile.set(dbProfile);
+    if (dbProfile.fcm_token && !this.fcmToken()) {
+      this.fcmTokenSignal.set(dbProfile.fcm_token);
+    }
+    if (dbProfile.fcm_token_updated_at && !this.fcmTokenUpdatedAt()) {
+      this.fcmTokenUpdatedAt.set(dbProfile.fcm_token_updated_at);
+    }
+    if (dbProfile.is_internal_tester && !this.internalTesterSignal()) {
+      this.setInternalTester(true, false);
+    }
   }
 
   private async loadDbUserProfile(user_id: string) {
@@ -139,52 +141,55 @@ export class AppUserService {
   }
 
   private async createUserProfile(user_id: string) {
-    if (!this.supabaseService.isAvailable()) return;
     const userProfile = this.userProfile();
     const { data, error } = await this.table
-      .insert({ ...userProfile, user_id })
+      .insert({
+        ...userProfile,
+        user_id,
+      })
       .select('*')
       .single();
     if (error) {
       this.errorService.handleError(error);
     }
     if (data) {
-      console.log('[App User] profile created', data);
+      console.log('[App User] profile created');
       this.dbProfile.set(data);
     }
   }
 
-  private async updateUserProfile(user_id: string) {
-    if (!this.supabaseService.isAvailable()) return;
-    const userProfile = this.userProfile();
-    const dbProfile = this.dbProfile();
-
-    const update = this.generateDBUpdate(userProfile, dbProfile || {});
-    if (Object.keys(update).length === 0) return;
-    const { data, error } = await this.table.update(update).eq('user_id', user_id).select().single();
+  private async updateUserProfile(update: Partial<IAppUser['Update']>) {
+    const userId = this.userId();
+    if (!userId) return;
+    const { data, error } = await this.table.update(update).eq('user_id', userId).select('*').single();
     if (error) {
       this.errorService.handleError(error);
     }
     if (data) {
-      console.log('[App User] profile updated', update);
       this.dbProfile.set(data);
     }
   }
 
-  private generateDBUpdate(userProfile: Partial<IAppUser['Row']>, dbProfile: Partial<IAppUser['Row']>) {
-    const update: IAppUser['Update'] = {};
+  private generateDBUpdate(
+    userProfile: Omit<IAppUser['Insert'], 'user_id'>,
+    dbProfile: IAppUser['Row'],
+  ): Partial<IAppUser['Update']> {
+    const update: Partial<IAppUser['Update']> = {};
     for (const [key, value] of Object.entries(userProfile)) {
-      if (!isEqual(value, dbProfile[key])) {
+      if (value !== null && value !== undefined && value !== dbProfile[key]) {
         update[key] = value;
       }
     }
     return update;
   }
 
-  /** Only track in app_users on native platforms or if user is authenticated (non-anonymous) */
-  private shouldTrackUser(): boolean {
-    if (Capacitor.isNativePlatform()) {
-      return true;
+  /**
+   * Only authenticated users currently have write access to table
+   * Can support anonymous in future if required
+   */
+  private enabled() {
+    if (!this.supabaseService.isAvailable()) {
+      return false;
     }
     const authUser = this.supabaseService.auth.authUser();
     return Boolean(authUser && !authUser.is_anonymous);
@@ -193,7 +198,7 @@ export class AppUserService {
   public setFcmToken(token: string) {
     if (this.fcmToken() !== token) {
       console.log('[App User] Setting FCM Token');
-      this.fcmToken.set(token);
+      this.fcmTokenSignal.set(token);
       this.fcmTokenUpdatedAt.set(new Date().toISOString());
     }
   }
@@ -210,20 +215,16 @@ export class AppUserService {
       try {
         localStorage.setItem(INTERNAL_TESTER_STORAGE_KEY, String(value));
       } catch {
-        // ignore storage errors
+        // ignore localStorage errors
       }
     }
   }
 
   private loadInternalTesterSetting(): boolean {
     try {
-      const stored = localStorage.getItem(INTERNAL_TESTER_STORAGE_KEY);
-      if (stored !== null) {
-        return stored === 'true';
-      }
+      return localStorage.getItem(INTERNAL_TESTER_STORAGE_KEY) === 'true';
     } catch {
-      // ignore storage errors
+      return false;
     }
-    return isDevMode();
   }
 }

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 
@@ -8,17 +9,18 @@ import { PicsaVersionDebugDialogComponent } from './version-debug-dialog.compone
 @Component({
   selector: 'picsa-version-debug',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [MatIconModule],
   template: `
     <button
       type="button"
       (click)="openDialog()"
-      class="inline-flex items-center gap-1 cursor-pointer select-none opacity-80 hover:opacity-100 transition-opacity bg-transparent border-0 p-0 text-inherit font-inherit"
+      class="inline-flex items-center gap-1 cursor-pointer select-none px-2 py-0.5 rounded text-xs border border-gray-300 dark:border-neutral-600 bg-white/70 dark:bg-neutral-800/70 hover:bg-white dark:hover:bg-neutral-800 text-gray-700 dark:text-neutral-200 transition-colors shadow-xs"
       [attr.aria-label]="'App version ' + version()"
     >
+      <mat-icon class="!text-[14px] !w-3.5 !h-3.5 leading-none text-gray-500 dark:text-neutral-400">info</mat-icon>
       <span>v{{ version() }}</span>
       @if (showTesterBadge() && isInternalTester()) {
-        <span class="text-[10px] px-1 py-0.5 rounded font-semibold bg-amber-500/20 text-amber-600 dark:text-amber-400">
+        <span class="text-[10px] px-1 py-0.2 rounded font-semibold bg-amber-500/20 text-amber-600 dark:text-amber-400">
           Tester
         </span>
       }

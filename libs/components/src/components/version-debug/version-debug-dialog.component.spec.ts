@@ -23,6 +23,7 @@ describe('PicsaVersionDebugDialogComponent', () => {
   let appUserServiceMock: {
     isInternalTester: ReturnType<typeof signal<boolean>>;
     userId: jest.Mock;
+    fcmToken: ReturnType<typeof signal<string | null>>;
     setInternalTester: jest.Mock;
   };
   let appUpdateServiceMock: {
@@ -44,6 +45,7 @@ describe('PicsaVersionDebugDialogComponent', () => {
     appUserServiceMock = {
       isInternalTester: signal(false),
       userId: jest.fn().mockReturnValue('test-user-id'),
+      fcmToken: signal('mock-fcm-token-12345'),
       setInternalTester: jest.fn(),
     };
     appUpdateServiceMock = {
@@ -64,6 +66,12 @@ describe('PicsaVersionDebugDialogComponent', () => {
       showErrorNotification: jest.fn(),
     };
 
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: jest.fn().mockResolvedValue(undefined),
+      },
+    });
+
     await TestBed.configureTestingModule({
       imports: [PicsaVersionDebugDialogComponent, PicsaTranslateModule.forRoot()],
       providers: [
@@ -79,17 +87,32 @@ describe('PicsaVersionDebugDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('loads diagnostics on init', async () => {
+  it('loads diagnostics on init including notification token', async () => {
     await component.ngOnInit();
     expect(Device.getInfo).toHaveBeenCalled();
     expect(appUpdateServiceMock.checkUpdateStatus).toHaveBeenCalled();
     expect(component.formattedJson()).toContain('5012000');
+    expect(component.formattedJson()).toContain('mock-fcm-token-12345');
   });
 
   it('toggles internal tester status', () => {
     component.onToggleTester(true);
     expect(appUserServiceMock.setInternalTester).toHaveBeenCalledWith(true, true);
     expect(notificationServiceMock.showSuccessNotification).toHaveBeenCalledWith('Internal Tester mode enabled');
+  });
+
+  it('copies debug JSON to clipboard', async () => {
+    await component.copyDebugJson();
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(component.formattedJson());
+    expect(notificationServiceMock.showSuccessNotification).toHaveBeenCalledWith('Diagnostics copied to clipboard');
+  });
+
+  it('copies notification token to clipboard', async () => {
+    await component.copyNotificationToken();
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('mock-fcm-token-12345');
+    expect(notificationServiceMock.showSuccessNotification).toHaveBeenCalledWith(
+      'Notification token copied to clipboard',
+    );
   });
 
   it('triggers flexible download', async () => {
