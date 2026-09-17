@@ -51,7 +51,7 @@
       <footer>
         <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
         <a routerLink="/terms">{{ 'App Terms' | translate }}</a>
-        <div (click)="versionClicked.emit()">v{{ version }}</div>
+        <picsa-version-debug />
       </footer>
     </div>
   </mat-drawer>

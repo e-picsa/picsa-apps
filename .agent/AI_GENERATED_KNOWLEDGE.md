@@ -61,6 +61,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Strict Colocation Next to Source**: Unit test specifications (`*.spec.ts`) must always be colocated directly next to the source file they test (e.g. `libs/utils/climate.utils.spec.ts` next to `libs/utils/climate.utils.ts`, and `libs/data/climate/chart_definitions/periods.spec.ts` next to `periods.ts`).
 - Avoid scattering library or utility tests into consumer application folders (such as `apps/picsa-tools/climate-tool/src/app/data/`). Libraries (`libs/utils`, `libs/data`) maintain their own Nx project/Jest targets (`yarn nx test utils`, `yarn nx test data`), keeping tests discovered cleanly without jumping across the monorepo.
 
+### Capacitor Plugin Inclusion in Monorepo (`includePlugins`)
+
+- In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
+- Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+
+### Capacitor Push Notifications & User Profile Sync Lifecycle
+
+- **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
+- **Listener Registration Order Before `register()`**: Call `PushNotifications.removeAllListeners()` and register event listeners (`registration`, `registrationError`, `pushNotificationReceived`, `pushNotificationActionPerformed`) _before_ invoking `PushNotifications.register()`. On native platforms (iOS and Android), the registration callback can emit immediately during `register()`, causing early token events to be dropped if listeners are attached afterwards.
+- **Client FCM Token Restoration on Startup**: When loading an existing user profile from `app_users`, restore `dbProfile.fcm_token` into the local `fcmToken` signal if not already set. Because `userProfile` is a computed signal (`fcm_token: this.fcmToken()`) and `pendingDBUpdate` computes diffs against `dbProfile`, failing to restore `dbProfile.fcm_token` causes the computed signal to emit `fcm_token: null`, scheduling an update that inadvertently clears the user's stored FCM token in Supabase.
+- **Push Token Logging Security**: Never log raw device push tokens (`token.value`) in console outputs. Redact tokens to avoid exposing sensitive push credentials in production device logs.
+
 ### TypeScript Strictness & SonarCloud Rules (S2871, Number Parsing, Duplication)
 
 - **Deterministic Array Sorting (S2871)**: Never use bare `Array.prototype.sort()` or `toSorted()` on string arrays or object keys. Always supply an explicit comparator `(a, b) => a.localeCompare(b)` to avoid locale-dependent sorting anomalies.
@@ -80,7 +93,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Avoid Synchronous External Calls**: UI interactions should not hit external APIs or send emails synchronously. Use `AFTER INSERT/UPDATE` database triggers to invoke background tasks.
 - **Preferred Trigger Method**: Always use `public.call_edge_function(name, body)` wrapped in a PL/pgSQL trigger function rather than `supabase_functions.http_request`.
-  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.\n - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
+  - `public.call_edge_function` dynamically retrieves `project_url` and `anon_key` from `private.get_secret(...)`, keeping migrations portable across environments.
+  - In contrast, `supabase_functions.http_request` requires hardcoding URLs (e.g., `http://172.17.0.1:54321/...`), which breaks across local, staging, and production environments.
 - **Deterministic Local Anon Key**: The Supabase CLI local `anon_key` is deterministic. It is seeded into `vault.decrypted_secrets` via `supabase/seed.sql` (`select vault.create_secret('eyJhb...', 'anon_key', 'supabase local anon key');`) so trigger calls authenticate locally out-of-the-box without missing authorization header errors.
 
 ### PostgreSQL Generated Column Nullability
