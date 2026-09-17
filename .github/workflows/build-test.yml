@@ -2,12 +2,15 @@
 
 name: Build Test
 on:
+  # Runs on pull requests targeting main (read-only cache restore)
   pull_request:
     branches:
       - main
+  # Triggers automatically post-merge to populate/update the authoritative Nx cache on main
   push:
     branches:
       - main
+  # Fallback manual trigger if cache needs an ad-hoc rebuild
   workflow_dispatch:
 
 # Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
@@ -30,6 +33,8 @@ jobs:
         id: cache-epoch
         run: echo "week=$(date +%Y-W%V)" >> $GITHUB_OUTPUT
 
+      # Restores .nx/cache from the latest authoritative build on main.
+      # Local hits replay directly without downloading artifacts from Nx Cloud.
       - name: Restore Nx Cache
         uses: actions/cache/restore@v5
         id: nx-cache
@@ -59,12 +64,14 @@ jobs:
       - name: Build
         run: yarn nx build
 
-      # Self-repair: Evict stale (>7 days) & LRU items if .nx/cache exceeds 1.5GB (main branch only)
+      # Self-repair: Evict stale (>7 days) & LRU items if .nx/cache exceeds 1.5GB
+      # Runs only on post-merge runs on main to keep the authoritative cache trimmed.
       - name: Prune Stale Nx Cache Entries
         if: github.ref == 'refs/heads/main'
         run: node tools/workflows/prune-nx-cache.mjs
 
-      # Authoritative write: Save cache only on main branch merges/runs
+      # Authoritative write: Save cache only on post-merge runs on main so PR branches
+      # read a warm cache without polluting or thrashing repository cache storage.
       - name: Save Nx Cache
         if: github.ref == 'refs/heads/main'
         uses: actions/cache/save@v5
