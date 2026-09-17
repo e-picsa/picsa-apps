@@ -290,9 +290,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## 8. CI / CD & Nx Remote Caching Strategy
 
-### Hybrid Local + Remote Caching Architecture
+### Local-Only + CI Remote Caching Architecture
 
-- **Nx Cache Resolution Order**: Nx evaluates the local disk cache (`.nx/cache`) first. If an artifact matches locally, it replays immediately without downloading from Nx Cloud (avoiding network latency and bandwidth quota). Only on local cache misses does Nx query Nx Cloud remote cache.
+- **Nx Cloud Disabled Locally by Default**: `nx.json` contains no `nxCloudAccessToken`, so local runs use only the on-disk cache (`.nx/cache`) and consume zero Nx Cloud quota. All developers share nothing remotely by default.
+- **CI-Only Remote Cache**: `.github/workflows/build-test.yml` enables Nx Cloud by setting `NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}` (read-write secret) at the job level. No token in `nx.json` means no cloud connection outside CI unless explicitly opted in.
+- **Personal Opt-In**: Individual developers wanting remote cache can set their own `NX_CLOUD_ACCESS_TOKEN=<personal-or-workspace-token>` environment variable locally. Never commit personal tokens to `nx.json`.
 - **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
-- **Zero Configuration Overrides Needed**: Because Nx natively prioritizes local `.nx/cache`, no custom toggle variables (like `NX_CLOUD_DISABLE_CACHE`) are required in the workflow. Hybrid caching functions out of the box with just `NX_CLOUD_ACCESS_TOKEN`. If a full cloud bypass is ever desired in ad-hoc contexts, standard Nx variables like `NX_NO_CLOUD=true` can be provided externally without workflow changes.
 - **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
