@@ -117,6 +117,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
 - **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
 
+### Edge Functions Deployment in Release Pipelines
+
+- **Release Workflows**: Deploying all functions during release via `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID` is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Incoming requests continue serving from the live version while the new version is verified and deployed.
+- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions when no function name is specified. For small function sets (~6 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+
 ---
 
 ## 4. Angular 21, Signals & Reactive Architecture
