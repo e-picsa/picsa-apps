@@ -262,9 +262,33 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
 
----
+## 7. Error Handling & Monitoring Architecture
 
-## 7. CI / CD & Nx Remote Caching Strategy
+### Sentry & Firebase Crashlytics Dual-Reporting Strategy
+
+- **Complementary Roles**:
+  - **Sentry (`@sentry/angular`)**: Primary error tracking for TypeScript/JavaScript exceptions across both Web (PWA) and Mobile (Capacitor webview). Provides full source-mapped stack traces, device/platform tagging, release tracking, and breadcrumbs.
+  - **Firebase Crashlytics**: Retained exclusively on Android for native OS-level crashes (via the Gradle plugin) and duplicate reporting of non-fatal exceptions via `CrashlyticsService.recordException`.
+- **Initialization Timing**:
+  - Sentry is initialized in `apps/picsa-apps/app/src/main.ts` via `initSentry()` _prior_ to `bootstrapApplication()` so early bootstrap and bundling failures are reported.
+  - `bootstrapApplication(...).catch(...)` explicitly forwards unhandled bootstrap rejections to Sentry.
+- **Central Exception Routing (`ErrorHandlerService`)**:
+  - `ErrorHandlerService` overrides Angular's `ErrorHandler.handleError(error)`.
+  - Automatically unwraps Angular/Zone.js errors (`(error as any)?.ngOriginalError || error`).
+  - Dispatches to `Sentry.captureException(...)` when Sentry is enabled.
+  - On native Android (`Capacitor.isNativePlatform()`), additionally dispatches to `crashlyticsService.recordException(...)` in a protected try/catch block.
+  - Always calls `super.handleError(error)` to preserve local console output.
+- **Inbound Noise Filtering & Quota Protection**:
+  - In `beforeSend`, errors originating from browser extensions (`chrome-extension:`, `moz-extension:`, `safari-extension:`) or Angular DevTools messaging hooks are discarded to avoid burning monthly event quotas.
+  - Sentry is enabled in production builds by default (`ENVIRONMENT.production`), with optional explicit overrides via `ENVIRONMENT.sentry.enabled`.
+- **Production Sourcemaps & CI Release Ingestion**:
+  - `apps/picsa-apps/app/project.json` configures `sourceMap: { "scripts": true, "styles": false, "hidden": true }` for production. `hidden: true` emits `.map` files on disk for debug symbolication while omitting `//# sourceMappingURL=` comments from bundles.
+  - In release workflows (`web-release.yml` and `android-release.yml`), `sentry-cli sourcemaps inject` stamps bundles with deterministic Debug IDs and `sentry-cli sourcemaps upload` uploads them to Sentry.
+  - `.map` files are deleted before hosting deployment or Capacitor sync (`find dist -name "*.map" -delete`) to prevent shipping source files to users or bundling them into native Android binaries.
+- **Jest Mocking Gotcha (`@capacitor/core`)**:
+  - When mocking `@capacitor/core` in unit tests, always spread `jest.requireActual('@capacitor/core')` (`{ ...actual, Capacitor: { ...actual.Capacitor, isNativePlatform: jest.fn() } }`). `@capacitor/device` calls `core.registerPlugin` during module evaluation; completely overwriting `@capacitor/core` without `registerPlugin` causes `TypeError: core.registerPlugin is not a function`.
+
+## 8. CI / CD & Nx Remote Caching Strategy
 
 ### Hybrid Local + Remote Caching Architecture
 

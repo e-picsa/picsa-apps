@@ -33,10 +33,17 @@ export interface IFirebaseConfig {
   measurementId: string;
 }
 
+// sentry
+export interface ISentryConfig {
+  dsn: string;
+  enabled?: boolean;
+}
+
 // combined settings
 export interface IEnvironment {
   production: boolean;
   firebase: IFirebaseConfig;
+  sentry?: ISentryConfig;
   group: IGroupSettings;
   /** Enable custom service replacement for e2e tests */
   useMockServices?: boolean;

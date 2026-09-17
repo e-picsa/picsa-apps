@@ -7,6 +7,7 @@
 # - ANDROID_SIGNING_KEY_B64
 # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON
 # - GOOGLE_SERVICES_JSON
+# - SENTRY_AUTH_TOKEN (optional, for sourcemap upload)
 
 name: Android - Release to Google Play
 on:
@@ -51,8 +52,8 @@ jobs:
         run: |
           echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
 
-      - name: Build App
-        run: yarn nx run picsa-apps-app-native:build
+      - name: Build Web Assets
+        run: yarn nx run picsa-apps-app:build
 
       - name: Verify supabase config in built output
         run: |
@@ -64,6 +65,20 @@ jobs:
           fi
           echo "✅ Found supabase config in build output"
           cat "$CONFIG_FILE"
+
+      - name: Upload sourcemaps to Sentry
+        if: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          SENTRY_URL: https://de.sentry.io
+        run: |
+          yarn sentry-cli sourcemaps inject dist/apps/picsa-apps/app
+          yarn sentry-cli sourcemaps upload dist/apps/picsa-apps/app
+
+      - name: Strip sourcemaps before sync
+        run: find dist/apps/picsa-apps/app -name "*.map" -type f -delete
 
       - name: Sync Capacitor
         run: npx cap sync
