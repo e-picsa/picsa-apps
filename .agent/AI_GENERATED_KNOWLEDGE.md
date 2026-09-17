@@ -154,10 +154,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
 - **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
 
-### Angular Material Component Conventions
-
-- **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
-
 ---
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
@@ -186,7 +182,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Declarative Chart Tool Configuration
 
 - Chart tools must not be conditionally hardcoded inside UI components (e.g. `if (_id === 'temp_min')`).
-- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })`.
+- Declare tool availability in chart definitions (`libs/data/climate/chart_definitions`). Define a base `DEFAULT_TOOLS` object with `enabled: true` and merge overrides using `merge(DEFAULT_TOOLS, { [toolName]: { enabled: false } })``.
 
 ### Declarative Timespan Range Configuration (`timespanRange`)
 
@@ -254,11 +250,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - In highly variable climate series (e.g. rainfall), low $R^2$ is common even when an important trend exists. $R^2$ is never used as an arbitrary gating threshold or styled as "failing".
 - **Monthly Timespan Exclusion**: Trendline tools are strictly scoped to annual and seasonal indicators, hiding on monthly views where unadjusted seasonality would distort linear fits.
 
----
+### Angular Material Component Conventions
 
-## 7. CI/CD & Mobile Toolchains (Android / Capacitor)
-
-### Android SDK Tools Package Deprecation in `setup-android`
-
-- **Problem**: Google discontinued serving the legacy `tools` package from its Android SDK repository (`Warning: Failed to find package 'tools'`). The GitHub Action `android-actions/setup-android` (including `@v3` and `@v4.0.1`) defaults to `packages: 'tools platform-tools'`. When invoked without overriding `packages`, the action executes `sdkmanager tools` and fails with exit code 1.
-- **Solution**: Simply upgrading from `@v3` to `@v4` does not resolve the issue on its own because the default package list still includes `tools` upstream (PR #538 remains pending). You must explicitly override `packages: 'platform-tools'` in the action's `with:` block.
+- **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
