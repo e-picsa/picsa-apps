@@ -218,7 +218,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Climate Data Sync, Formatting & Audit Pipeline
 
-- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
+- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
 - **Idempotent CLI Runner**: The CLI runner (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) computes SHA-256 hashes of canonical station data. Preserving `lastUpdated` when data hashes match ensures zero git diffs on subsequent runs.
 - **Per-Country Station Organization**: Grouping stations by country (`data/stations/<country>/`) with separate `metadata.ts` and `capabilities.generated.ts` cleanly isolates PRs and prevents cross-country merge conflicts.
 - **Symmetric Capability Models**: Modeling `monthly?: IChartId[]` as a string array symmetrically matches `annual?: IChartId[]`, simplifying runtime availability checks (`station.capabilities?.[timespan]?.includes(chartId)`).
@@ -238,7 +238,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
 - **Card Header & Rate Alignment in Sidenav Panel**:
   - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
-  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]="!showRate"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
@@ -261,8 +261,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## 7. CI / CD & Nx Remote Caching Strategy
 
-### Custom Nx Cache & Quota Management (`NX_CLOUD_DISABLE_CACHE`)
+### Hybrid Local + Remote Caching Architecture
 
+- **Nx Cache Resolution Order**: Nx evaluates the local disk cache (`.nx/cache`) first. If an artifact matches locally, it replays immediately without downloading from Nx Cloud (avoiding network latency and bandwidth quota). Only on local cache misses does Nx query Nx Cloud remote cache.
 - **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
-- **Quota Expiration Handling**: When Nx Cloud free tier quota expires or needs conservation, `NX_CLOUD_DISABLE_CACHE` defaults to `'true'` in `build-test.yml`, which automatically sets `NX_NO_CLOUD=true` and `NX_DISABLE_REMOTE_CACHE=true` while continuing to use GitHub Actions local `.nx/cache`. It can be toggled via repo variable `vars.NX_CLOUD_DISABLE_CACHE`.
+- **Zero Configuration Overrides Needed**: Because Nx natively prioritizes local `.nx/cache`, no custom toggle variables (like `NX_CLOUD_DISABLE_CACHE`) are required in the workflow. Hybrid caching functions out of the box with just `NX_CLOUD_ACCESS_TOKEN`. If a full cloud bypass is ever desired in ad-hoc contexts, standard Nx variables like `NX_NO_CLOUD=true` can be provided externally without workflow changes.
 - **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).

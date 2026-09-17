@@ -71,23 +71,16 @@ function safeRemove(itemPath) {
   return false;
 }
 
-function runPrune() {
-  if (!fs.existsSync(cacheDir)) {
-    console.log(`[prune-nx-cache] Cache directory not found at ${cacheDir}. Nothing to prune.`);
-    return;
+function collectEntries(directory, now) {
+  if (!fs.existsSync(directory)) {
+    return [];
   }
 
-  const dirEntries = fs.readdirSync(cacheDir, { withFileTypes: true });
-  if (dirEntries.length === 0) {
-    console.log(`[prune-nx-cache] Cache directory ${cacheDir} is empty.`);
-    return;
-  }
-
-  const now = Date.now();
+  const dirEntries = fs.readdirSync(directory, { withFileTypes: true });
   const entries = [];
 
   for (const dirEntry of dirEntries) {
-    const fullPath = path.join(cacheDir, dirEntry.name);
+    const fullPath = path.join(directory, dirEntry.name);
     try {
       const stat = fs.statSync(fullPath);
       const size = dirEntry.isDirectory() ? getPathSize(fullPath) : stat.size;
@@ -104,27 +97,22 @@ function runPrune() {
     }
   }
 
-  let totalSize = entries.reduce((acc, e) => acc + e.size, 0);
-  console.log(`[prune-nx-cache] Starting cache prune on ${cacheDir}`);
-  console.log(`[prune-nx-cache] Total entries: ${entries.length}, Total size: ${formatMb(totalSize)}`);
-  console.log(
-    `[prune-nx-cache] Thresholds: max=${formatMb(maxSizeBytes)}, target=${formatMb(targetSizeBytes)}, maxAge=${maxAgeDays} days`,
-  );
+  return entries;
+}
 
+function pruneExpiredEntries(entries, now, expirationMs) {
+  const activeEntries = [];
   let removedCount = 0;
   let reclaimedBytes = 0;
 
-  // Phase 1: Prune entries older than maxAgeDays or orphaned tmp files
-  const activeEntries = [];
   for (const entry of entries) {
     const isTemp = entry.name.endsWith('.tmp') || entry.name.startsWith('.tmp');
-    const isExpired = now - entry.mtimeMs > maxAgeMs;
+    const isExpired = now - entry.mtimeMs > expirationMs;
 
     if (isExpired || (isTemp && now - entry.mtimeMs > 60 * 60 * 1000)) {
       if (safeRemove(entry.fullPath)) {
         removedCount++;
         reclaimedBytes += entry.size;
-        totalSize -= entry.size;
       }
     } else {
       activeEntries.push(entry);
@@ -137,25 +125,59 @@ function runPrune() {
     );
   }
 
-  // Phase 2: If remaining totalSize > maxSizeBytes, perform LRU eviction until <= targetSizeBytes
-  if (totalSize > maxSizeBytes) {
-    console.log(
-      `[prune-nx-cache] Cache size (${formatMb(totalSize)}) exceeds maximum allowed (${formatMb(maxSizeBytes)}). Triggering LRU eviction...`,
-    );
-    activeEntries.sort((a, b) => a.mtimeMs - b.mtimeMs);
+  return activeEntries;
+}
 
-    let lruRemoved = 0;
-    for (const entry of activeEntries) {
-      if (totalSize <= targetSizeBytes) break;
-      if (safeRemove(entry.fullPath)) {
-        lruRemoved++;
-        totalSize -= entry.size;
-      }
-    }
-    console.log(`[prune-nx-cache] Evicted ${lruRemoved} LRU entries.`);
+function evictLruEntries(activeEntries, currentSize, maxLimitBytes, targetLimitBytes) {
+  if (currentSize <= maxLimitBytes) {
+    return currentSize;
   }
 
-  console.log(`[prune-nx-cache] Prune completed. Final cache size: ${formatMb(Math.max(0, totalSize))}`);
+  console.log(
+    `[prune-nx-cache] Cache size (${formatMb(currentSize)}) exceeds maximum allowed (${formatMb(maxLimitBytes)}). Triggering LRU eviction...`,
+  );
+  activeEntries.sort((a, b) => a.mtimeMs - b.mtimeMs);
+
+  let lruRemoved = 0;
+  let remainingSize = currentSize;
+
+  for (const entry of activeEntries) {
+    if (remainingSize <= targetLimitBytes) break;
+    if (safeRemove(entry.fullPath)) {
+      lruRemoved++;
+      remainingSize -= entry.size;
+    }
+  }
+
+  console.log(`[prune-nx-cache] Evicted ${lruRemoved} LRU entries.`);
+  return remainingSize;
+}
+
+function runPrune() {
+  if (!fs.existsSync(cacheDir)) {
+    console.log(`[prune-nx-cache] Cache directory not found at ${cacheDir}. Nothing to prune.`);
+    return;
+  }
+
+  const now = Date.now();
+  const entries = collectEntries(cacheDir, now);
+  if (entries.length === 0) {
+    console.log(`[prune-nx-cache] Cache directory ${cacheDir} is empty.`);
+    return;
+  }
+
+  const initialSize = entries.reduce((acc, e) => acc + e.size, 0);
+  console.log(`[prune-nx-cache] Starting cache prune on ${cacheDir}`);
+  console.log(`[prune-nx-cache] Total entries: ${entries.length}, Total size: ${formatMb(initialSize)}`);
+  console.log(
+    `[prune-nx-cache] Thresholds: max=${formatMb(maxSizeBytes)}, target=${formatMb(targetSizeBytes)}, maxAge=${maxAgeDays} days`,
+  );
+
+  const activeEntries = pruneExpiredEntries(entries, now, maxAgeMs);
+  const activeSize = activeEntries.reduce((acc, e) => acc + e.size, 0);
+  const finalSize = evictLruEntries(activeEntries, activeSize, maxSizeBytes, targetSizeBytes);
+
+  console.log(`[prune-nx-cache] Prune completed. Final cache size: ${formatMb(Math.max(0, finalSize))}`);
 }
 
 runPrune();

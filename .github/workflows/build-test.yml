@@ -21,11 +21,6 @@ jobs:
     env:
       # read-write token provided by secret. All other workflows will use hardcoded readonly
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      # Toggle to disable Nx remote cloud cache (avoids hitting Nx Cloud quota limits). Default: true
-      NX_CLOUD_DISABLE_CACHE: ${{ vars.NX_CLOUD_DISABLE_CACHE || 'true' }}
-      # Align standard Nx remote-cache bypass flags with NX_CLOUD_DISABLE_CACHE
-      NX_NO_CLOUD: ${{ vars.NX_CLOUD_DISABLE_CACHE == 'false' && 'false' || 'true' }}
-      NX_DISABLE_REMOTE_CACHE: ${{ vars.NX_CLOUD_DISABLE_CACHE == 'false' && 'false' || 'true' }}
     steps:
       - uses: actions/checkout@v7
         with:
