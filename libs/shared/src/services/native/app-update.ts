@@ -48,12 +48,9 @@ export class AppUpdateService {
       const appUpdateInfo: AppUpdateInfo = await AppUpdate.getAppUpdateInfo();
       this.updateInfo.set(appUpdateInfo);
       this.updateAvailability.set(appUpdateInfo.updateAvailability);
-      if (appUpdateInfo.installStatus !== undefined) {
-        this.installStatus.set(appUpdateInfo.installStatus);
-      }
+      this.installStatus.set(appUpdateInfo.installStatus ?? null);
 
       if (appUpdateInfo.installStatus === FlexibleUpdateInstallStatus.DOWNLOADED) {
-        this.installStatus.set(FlexibleUpdateInstallStatus.DOWNLOADED);
         this.notificationService.showSuccessNotification(
           'A new update has been downloaded. Restart the app to apply.',
           { duration: 10000 },
@@ -108,9 +105,7 @@ export class AppUpdateService {
       const info = await AppUpdate.getAppUpdateInfo();
       this.updateInfo.set(info);
       this.updateAvailability.set(info.updateAvailability);
-      if (info.installStatus !== undefined) {
-        this.installStatus.set(info.installStatus);
-      }
+      this.installStatus.set(info.installStatus ?? null);
       return {
         isNative: true,
         availability: this.formatAvailability(info.updateAvailability),

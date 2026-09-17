@@ -12,17 +12,12 @@ import { SupabaseService } from './supabase/supabase.service';
 
 const INTERNAL_TESTER_STORAGE_KEY = 'picsa_is_internal_tester';
 
-/**
- * Sync user profile to `app_users` table
- * NOTE - Currently anonymous users not supported in table so only sync if user
- * authenticated
- */
 @Injectable({
   providedIn: 'root',
 })
 export class AppUserService {
-  private configurationService = inject(ConfigurationService);
   private supabaseService = inject(SupabaseService);
+  private configurationService = inject(ConfigurationService);
   private errorService = inject(ErrorHandlerService);
   private networkService = inject(NetworkService);
 
@@ -108,8 +103,9 @@ export class AppUserService {
       if (!this.enabled() || !this.shouldTrackUser()) return;
       await this.supabaseService.ready();
       if (!this.supabaseService.isAvailable()) return;
+      const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
-      if (pendingUpdate) {
+      if (isOnline && pendingUpdate) {
         await this.updateUserProfile(pendingUpdate);
       }
     });
@@ -122,11 +118,18 @@ export class AppUserService {
       return;
     }
     this.dbProfile.set(dbProfile);
-    if (dbProfile.fcm_token && !this.fcmToken()) {
-      this.fcmTokenSignal.set(dbProfile.fcm_token);
-    }
-    if (dbProfile.fcm_token_updated_at && !this.fcmTokenUpdatedAt()) {
-      this.fcmTokenUpdatedAt.set(dbProfile.fcm_token_updated_at);
+    if (dbProfile.fcm_token) {
+      if (dbProfile.fcm_token === this.fcmToken()) {
+        // Token in DB is the same as locally received token: preserve DB timestamp to avoid unnecessary sync
+        if (dbProfile.fcm_token_updated_at) {
+          this.fcmTokenUpdatedAt.set(dbProfile.fcm_token_updated_at);
+        }
+      } else if (!this.fcmToken()) {
+        this.fcmTokenSignal.set(dbProfile.fcm_token);
+        if (dbProfile.fcm_token_updated_at) {
+          this.fcmTokenUpdatedAt.set(dbProfile.fcm_token_updated_at);
+        }
+      }
     }
     if (dbProfile.is_internal_tester && !this.internalTesterSignal()) {
       this.setInternalTester(true, false);
@@ -178,8 +181,12 @@ export class AppUserService {
   ): Partial<IAppUser['Update']> {
     const update: Partial<IAppUser['Update']> = {};
     for (const [key, value] of Object.entries(userProfile)) {
-      if (value !== null && value !== undefined && value !== dbProfile[key]) {
-        update[key] = value;
+      const dbVal = dbProfile[key as keyof IAppUser['Row']];
+      const normLocal = value === undefined ? null : value;
+      const normDb = dbVal === undefined ? null : dbVal;
+      if (!isEqual(normLocal, normDb)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (update as any)[key] = value;
       }
     }
     return update;
@@ -194,9 +201,13 @@ export class AppUserService {
     return Boolean(authUser && !authUser.is_anonymous);
   }
 
+  /**
+   * Update FCM token for push notifications and record timestamp.
+   * If token is already equal to current or restored token, skips update.
+   */
   public setFcmToken(token: string) {
     if (this.fcmToken() !== token) {
-      console.log('[App User] Setting FCM Token');
+      console.log('[App User] Updating FCM token');
       this.fcmTokenSignal.set(token);
       this.fcmTokenUpdatedAt.set(new Date().toISOString());
     }

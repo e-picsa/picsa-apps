@@ -123,4 +123,26 @@ describe('AppUpdateService', () => {
     expect(diagnostics.currentVersionCode).toBe('5012000');
     expect(diagnostics.availability).toBe('UPDATE_NOT_AVAILABLE');
   });
+
+  it('resets installStatus to null if subsequent check omits installStatus', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+    // First check reports DOWNLOADED
+    (AppUpdate.getAppUpdateInfo as jest.Mock).mockResolvedValueOnce({
+      updateAvailability: AppUpdateAvailability.UPDATE_AVAILABLE,
+      flexibleUpdateAllowed: true,
+      installStatus: FlexibleUpdateInstallStatus.DOWNLOADED,
+    });
+
+    await service.checkForUpdates();
+    expect(service.isUpdateDownloaded()).toBe(true);
+
+    // Second check reports no installStatus (e.g. after update was applied/cleared)
+    (AppUpdate.getAppUpdateInfo as jest.Mock).mockResolvedValueOnce({
+      updateAvailability: AppUpdateAvailability.UPDATE_NOT_AVAILABLE,
+    });
+
+    await service.checkUpdateStatus();
+    expect(service.installStatus()).toBeNull();
+    expect(service.isUpdateDownloaded()).toBe(false);
+  });
 });

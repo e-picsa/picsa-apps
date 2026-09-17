@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ConfigurationService } from '@picsa/configuration';
+import { APP_VERSION } from '@picsa/environments/src/version';
 
 import { AppUserService } from './appUser.service';
 import { ErrorHandlerService } from './error-handler.service';
@@ -157,5 +158,29 @@ describe('AppUserService', () => {
     await serviceInternal.syncDbProfile('test-user-id');
 
     expect(createSpy).toHaveBeenCalledWith('test-user-id');
+  });
+
+  it('aligns fcm_token_updated_at when local token already matches DB profile to avoid redundant sync', async () => {
+    service.setFcmToken('same-token');
+    mockTable.maybeSingle.mockResolvedValue({
+      data: {
+        user_id: 'test-user-id',
+        country_code: 'mw',
+        language_code: 'en',
+        user_type: 'farmer',
+        platform: 'android',
+        app_version: APP_VERSION,
+        fcm_token: 'same-token',
+        fcm_token_updated_at: '2026-01-01T00:00:00Z',
+        is_internal_tester: false,
+      },
+      error: null,
+    });
+
+    await (service as unknown as { syncDbProfile: (userId: string) => Promise<void> }).syncDbProfile('test-user-id');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pendingUpdate = (service as unknown as { pendingDBUpdate: () => any }).pendingDBUpdate();
+    expect(pendingUpdate).toBeNull();
   });
 });
