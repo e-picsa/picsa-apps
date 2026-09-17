@@ -1,5 +1,5 @@
 ---
-name: 'PR: Review'
+name: 'pr-review'
 description: Project-tailored PR reviewer that assesses pull requests for scope creep, over-engineering, code smells, utility/model extraction opportunities, and Angular 21 / Picsa maintainability, producing high-signal mental maps and constructive inline feedback.
 ---
 
