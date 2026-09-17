@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { Capacitor } from '@capacitor/core';
 import { Device, DeviceId, DeviceInfo } from '@capacitor/device';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
@@ -36,21 +37,28 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
   public deviceId = signal<DeviceId | null>(null);
   public diagnostics = signal<IAppUpdateDiagnostics | null>(null);
 
+  public isNative = computed(() => this.diagnostics()?.isNative ?? Capacitor.isNativePlatform());
+
   public formattedJson = computed(() => {
     const info = this.deviceInfo();
     const id = this.deviceId();
-    const updateDiag = this.diagnostics();
-    const payload = {
+    const isNative = this.isNative();
+    const payload: Record<string, unknown> = {
       app_version: this.appVersion,
+      platform: isNative ? (info?.platform ?? 'native') : 'web',
       user_id: this.appUserService.userId(),
       is_internal_tester: this.isInternalTester(),
-      notification_token: this.fcmToken(),
       device_id: id?.identifier,
       operatingSystem: info?.operatingSystem,
-      osVersion: info?.osVersion,
-      webViewVersion: info?.webViewVersion,
-      update: updateDiag,
     };
+
+    if (isNative) {
+      payload['notification_token'] = this.fcmToken();
+      payload['osVersion'] = info?.osVersion;
+      payload['webViewVersion'] = info?.webViewVersion;
+      payload['update'] = this.diagnostics();
+    }
+
     return JSON.stringify(payload, null, 2);
   });
 
@@ -60,10 +68,11 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
 
   public async refreshDiagnostics(): Promise<void> {
     try {
+      const isNative = Capacitor.isNativePlatform();
       const [info, id, updateDiag] = await Promise.all([
         Device.getInfo().catch(() => null),
         Device.getId().catch(() => null),
-        this.appUpdateService.checkUpdateStatus(),
+        isNative ? this.appUpdateService.checkUpdateStatus() : Promise.resolve(null),
       ]);
 
       this.deviceInfo.set(info);

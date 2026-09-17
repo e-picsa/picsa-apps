@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
@@ -8,6 +9,17 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 
 import { PicsaVersionDebugDialogComponent } from './version-debug-dialog.component';
+
+jest.mock('@capacitor/core', () => {
+  const actual = jest.requireActual('@capacitor/core');
+  return {
+    ...actual,
+    Capacitor: {
+      ...actual.Capacitor,
+      isNativePlatform: jest.fn().mockReturnValue(true),
+    },
+  };
+});
 
 jest.mock('@capacitor/device', () => ({
   Device: {
@@ -41,6 +53,7 @@ describe('PicsaVersionDebugDialogComponent', () => {
   };
 
   beforeEach(async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
     dialogRefMock = { close: jest.fn() };
     appUserServiceMock = {
       isInternalTester: signal(false),
@@ -123,5 +136,25 @@ describe('PicsaVersionDebugDialogComponent', () => {
   it('closes dialog', () => {
     component.close();
     expect(dialogRefMock.close).toHaveBeenCalled();
+  });
+
+  it('omits native-only cards and fields on web', async () => {
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(false);
+    appUpdateServiceMock.checkUpdateStatus.mockResolvedValueOnce({
+      isNative: false,
+      availability: 'WEB_NOT_SUPPORTED',
+    });
+    await component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(component.isNative()).toBe(false);
+    const json = component.formattedJson();
+    expect(json).not.toContain('notification_token');
+    expect(json).not.toContain('update');
+
+    const nativeElement: HTMLElement = fixture.nativeElement;
+    expect(nativeElement.textContent).not.toContain('Google Play Update');
+    expect(nativeElement.textContent).not.toContain('Notification Token');
+    expect(nativeElement.textContent).toContain('Web');
   });
 });
