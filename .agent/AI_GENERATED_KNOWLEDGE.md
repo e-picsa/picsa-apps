@@ -261,3 +261,14 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
+
+---
+
+## 7. CI / CD & Nx Remote Caching Strategy
+
+### Hybrid Local + Remote Caching Architecture
+
+- **Nx Cache Resolution Order**: Nx evaluates the local disk cache (`.nx/cache`) first. If an artifact matches locally, it replays immediately without downloading from Nx Cloud (avoiding network latency and bandwidth quota). Only on local cache misses does Nx query Nx Cloud remote cache.
+- **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
+- **Zero Configuration Overrides Needed**: Because Nx natively prioritizes local `.nx/cache`, no custom toggle variables (like `NX_CLOUD_DISABLE_CACHE`) are required in the workflow. Hybrid caching functions out of the box with just `NX_CLOUD_ACCESS_TOKEN`. If a full cloud bypass is ever desired in ad-hoc contexts, standard Nx variables like `NX_NO_CLOUD=true` can be provided externally without workflow changes.
+- **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
