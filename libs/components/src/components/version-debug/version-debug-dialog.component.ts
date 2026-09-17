@@ -14,25 +14,33 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
   selector: 'picsa-version-debug-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatDialogModule, MatButtonModule, MatIconModule, MatSlideToggleModule, PicsaTranslateModule],
+  styles: `
+    :host {
+      display: block;
+      max-width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+  `,
   template: `
-    <div class="p-6 max-w-lg w-full">
+    <div class="p-4 sm:p-6 max-w-full box-border overflow-x-hidden">
       <!-- Dialog Header -->
       <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-neutral-700">
-        <div class="flex items-center gap-2">
-          <mat-icon class="text-primary">developer_mode</mat-icon>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white m-0">
-            {{ 'Diagnostics & Updates' | translate }}
+        <div class="flex items-center gap-2 min-w-0">
+          <mat-icon class="text-primary shrink-0">developer_mode</mat-icon>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white m-0 truncate">
+            {{ 'Debug Info' | translate }}
           </h2>
         </div>
-        <button matIconButton (click)="close()" [attr.aria-label]="'Close' | translate">
+        <button matIconButton (click)="close()" [attr.aria-label]="'Close' | translate" class="shrink-0">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
       <!-- Dialog Body -->
-      <div class="py-4 space-y-4 max-h-[70vh] overflow-y-auto">
+      <div class="py-4 space-y-4 max-h-[70vh] overflow-y-auto overflow-x-hidden min-w-0">
         <!-- Version & Build Info -->
-        <div class="bg-gray-50 dark:bg-neutral-800 p-3 rounded-lg flex items-center justify-between">
+        <div class="bg-gray-50 dark:bg-neutral-800 p-3 rounded-lg flex items-center justify-between gap-2 min-w-0">
           <div>
             <div class="text-xs text-gray-500 dark:text-neutral-400 uppercase font-semibold">
               {{ 'App Version' | translate }}
@@ -52,8 +60,10 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
         </div>
 
         <!-- Internal Tester Switch -->
-        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center justify-between">
-          <div class="pr-3">
+        <div
+          class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center justify-between gap-2 min-w-0"
+        >
+          <div class="pr-3 min-w-0">
             <div class="text-sm font-semibold text-gray-900 dark:text-white">
               {{ 'Internal Tester Mode' | translate }}
             </div>
@@ -61,33 +71,38 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
               {{ 'Identifies this device as a testing user in Supabase' | translate }}
             </div>
           </div>
-          <mat-slide-toggle [checked]="isInternalTester()" (change)="onToggleTester($event.checked)" color="primary">
+          <mat-slide-toggle
+            [checked]="isInternalTester()"
+            (change)="onToggleTester($event.checked)"
+            color="primary"
+            class="shrink-0"
+          >
           </mat-slide-toggle>
         </div>
 
         <!-- Push Notification Token Card -->
-        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2">
-          <div class="flex items-center justify-between">
+        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2 min-w-0">
+          <div class="flex items-center justify-between gap-2">
             <div class="text-xs font-semibold uppercase text-gray-500 dark:text-neutral-400">
               {{ 'Notification Token' | translate }}
             </div>
             @if (fcmToken()) {
               <span
-                class="text-[11px] font-mono text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded font-medium"
+                class="text-[11px] font-mono text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded font-medium shrink-0"
               >
                 {{ 'Active' | translate }}
               </span>
             } @else {
               <span
-                class="text-[11px] text-gray-500 dark:text-neutral-400 bg-gray-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded"
+                class="text-[11px] text-gray-500 dark:text-neutral-400 bg-gray-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded shrink-0"
               >
                 {{ 'Not registered' | translate }}
               </span>
             }
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 min-w-0">
             <div
-              class="flex-1 text-xs font-mono bg-gray-50 dark:bg-neutral-800 p-2 rounded border border-gray-200 dark:border-neutral-700 truncate select-all text-gray-800 dark:text-neutral-200"
+              class="flex-1 min-w-0 text-xs font-mono bg-gray-50 dark:bg-neutral-800 p-2 rounded border border-gray-200 dark:border-neutral-700 truncate select-all text-gray-800 dark:text-neutral-200"
               [title]="fcmToken() ?? ('No notification token registered' | translate)"
             >
               {{ fcmToken() ?? ('No notification token registered' | translate) }}
@@ -95,6 +110,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
             @if (fcmToken()) {
               <button
                 matIconButton
+                class="shrink-0"
                 (click)="copyNotificationToken()"
                 [attr.aria-label]="'Copy notification token' | translate"
               >
@@ -105,13 +121,13 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
         </div>
 
         <!-- Google Play Update Status Card -->
-        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2">
-          <div class="flex items-center justify-between">
+        <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2 min-w-0">
+          <div class="flex items-center justify-between gap-2">
             <div class="text-xs font-semibold uppercase text-gray-500 dark:text-neutral-400">
               {{ 'Google Play Update' | translate }}
             </div>
             <span
-              class="text-xs font-semibold px-2 py-0.5 rounded"
+              class="text-xs font-semibold px-2 py-0.5 rounded shrink-0"
               [class.bg-green-100]="isUpdateAvailable() || isUpdateDownloaded()"
               [class.text-green-700]="isUpdateAvailable() || isUpdateDownloaded()"
               [class.bg-gray-100]="!isUpdateAvailable() && !isUpdateDownloaded()"
@@ -123,7 +139,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
 
           @if (isUpdateDownloaded()) {
             <div
-              class="p-2 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded text-xs flex items-center justify-between"
+              class="p-2 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded text-xs flex flex-wrap items-center justify-between gap-2"
             >
               <span>{{ 'Update is downloaded and ready to apply!' | translate }}</span>
               <button matButton="filled" color="primary" (click)="completeUpdate()">
@@ -136,7 +152,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
               <span>{{ 'Downloading update in background...' | translate }}</span>
             </div>
           } @else if (isUpdateAvailable()) {
-            <div class="flex items-center justify-between pt-1">
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
               <span class="text-xs text-gray-600 dark:text-neutral-300">
                 {{ 'New version available:' | translate }}
                 {{ diagnostics()?.availableVersionName || diagnostics()?.availableVersionCode }}
@@ -155,12 +171,12 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
         </div>
 
         <!-- Raw Diagnostic JSON details -->
-        <details class="text-xs border border-gray-200 dark:border-neutral-700 rounded-lg p-2">
+        <details class="text-xs border border-gray-200 dark:border-neutral-700 rounded-lg p-2 min-w-0">
           <summary class="font-semibold text-gray-700 dark:text-neutral-300 cursor-pointer select-none">
             {{ 'View Full System JSON' | translate }}
           </summary>
           <pre
-            class="mt-2 p-2 bg-gray-100 dark:bg-neutral-900 rounded overflow-x-auto text-[11px] leading-tight font-mono text-gray-800 dark:text-neutral-200"
+            class="mt-2 p-2 bg-gray-100 dark:bg-neutral-900 rounded overflow-x-auto max-w-full text-[11px] leading-tight font-mono text-gray-800 dark:text-neutral-200"
             >{{ formattedJson() }}</pre
           >
         </details>
@@ -170,7 +186,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
       <div
         class="pt-4 border-t border-gray-200 dark:border-neutral-700 flex flex-wrap items-center justify-between gap-2"
       >
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <button matButton="filled" color="primary" (click)="copyDebugJson()">
             <mat-icon class="text-sm">content_copy</mat-icon>
             {{ 'Copy Debug Info' | translate }}
@@ -181,7 +197,7 @@ import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/
           </button>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           @if (diagnostics()?.isNative) {
             <button matButton (click)="openStore()">
               <mat-icon class="text-sm">open_in_new</mat-icon>
@@ -259,17 +275,13 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
     );
   }
 
-  public async startDownload(): Promise<void> {
-    await this.appUpdateService.startFlexibleUpdate();
-    await this.refreshDiagnostics();
-  }
-
-  public async completeUpdate(): Promise<void> {
-    await this.appUpdateService.completeUpdate();
-  }
-
-  public async openStore(): Promise<void> {
-    await this.appUpdateService.openStore();
+  public async copyDebugJson(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.formattedJson());
+      this.notificationService.showSuccessNotification('Diagnostics copied to clipboard');
+    } catch {
+      this.notificationService.showErrorNotification('Failed to copy diagnostics');
+    }
   }
 
   public async copyNotificationToken(): Promise<void> {
@@ -279,17 +291,20 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
       await navigator.clipboard.writeText(token);
       this.notificationService.showSuccessNotification('Notification token copied to clipboard');
     } catch {
-      this.notificationService.showErrorNotification('Failed to copy to clipboard');
+      this.notificationService.showErrorNotification('Failed to copy notification token');
     }
   }
 
-  public async copyDebugJson(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(this.formattedJson());
-      this.notificationService.showSuccessNotification('Diagnostics copied to clipboard');
-    } catch {
-      this.notificationService.showErrorNotification('Failed to copy to clipboard');
-    }
+  public async startDownload(): Promise<void> {
+    await this.appUpdateService.startFlexibleUpdate();
+  }
+
+  public async completeUpdate(): Promise<void> {
+    await this.appUpdateService.completeUpdate();
+  }
+
+  public async openStore(): Promise<void> {
+    await this.appUpdateService.openStore();
   }
 
   public close(): void {
