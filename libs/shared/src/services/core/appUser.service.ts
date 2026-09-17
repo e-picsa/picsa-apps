@@ -199,13 +199,9 @@ export class AppUserService {
     return update;
   }
 
-  /** Only track in app_users on native platforms or if user is authenticated (non-anonymous) */
+  /** Only track in app_users on native platforms to prevent web user table bloat */
   private shouldTrackUser(): boolean {
-    if (Capacitor.isNativePlatform()) {
-      return true;
-    }
-    const authUser = this.supabaseService.auth.authUser();
-    return Boolean(authUser && !authUser.is_anonymous);
+    return Capacitor.isNativePlatform();
   }
 
   /**

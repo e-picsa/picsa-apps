@@ -41,29 +41,29 @@
       }
     </div>
 
-    <!-- Internal Tester Switch -->
-    <div
-      class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center justify-between gap-2 min-w-0"
-    >
-      <div class="pr-3 min-w-0">
-        <div class="text-sm font-semibold text-gray-900 dark:text-white">
-          {{ 'Internal Tester Mode' | translate }}
-        </div>
-        <div class="text-xs text-gray-500 dark:text-neutral-400">
-          {{ 'Identifies this device as a testing user in Supabase' | translate }}
-        </div>
-      </div>
-      <mat-slide-toggle
-        [checked]="isInternalTester()"
-        (change)="onToggleTester($event.checked)"
-        color="primary"
-        class="shrink-0"
-      >
-      </mat-slide-toggle>
-    </div>
-
     <!-- Native-Only Functionality -->
     @if (isNative()) {
+      <!-- Internal Tester Switch -->
+      <div
+        class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center justify-between gap-2 min-w-0"
+      >
+        <div class="pr-3 min-w-0">
+          <div class="text-sm font-semibold text-gray-900 dark:text-white">
+            {{ 'Internal Tester Mode' | translate }}
+          </div>
+          <div class="text-xs text-gray-500 dark:text-neutral-400">
+            {{ 'Identifies this device as a testing user in Supabase' | translate }}
+          </div>
+        </div>
+        <mat-slide-toggle
+          [checked]="isInternalTester()"
+          (change)="onToggleTester($event.checked)"
+          color="primary"
+          class="shrink-0"
+        >
+        </mat-slide-toggle>
+      </div>
+
       <!-- Push Notification Token Card -->
       <div class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg space-y-2 min-w-0">
         <div class="flex items-center justify-between gap-2">

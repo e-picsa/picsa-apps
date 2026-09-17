@@ -46,13 +46,13 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
     const payload: Record<string, unknown> = {
       app_version: this.appVersion,
       platform: isNative ? (info?.platform ?? 'native') : 'web',
-      user_id: this.appUserService.userId(),
-      is_internal_tester: this.isInternalTester(),
       device_id: id?.identifier,
       operatingSystem: info?.operatingSystem,
     };
 
     if (isNative) {
+      payload['user_id'] = this.appUserService.userId();
+      payload['is_internal_tester'] = this.isInternalTester();
       payload['notification_token'] = this.fcmToken();
       payload['osVersion'] = info?.osVersion;
       payload['webViewVersion'] = info?.webViewVersion;

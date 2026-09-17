@@ -106,6 +106,7 @@ describe('PicsaVersionDebugDialogComponent', () => {
     expect(appUpdateServiceMock.checkUpdateStatus).toHaveBeenCalled();
     expect(component.formattedJson()).toContain('5012000');
     expect(component.formattedJson()).toContain('mock-fcm-token-12345');
+    expect(component.formattedJson()).toContain('test-user-id');
   });
 
   it('toggles internal tester status', () => {
@@ -151,10 +152,13 @@ describe('PicsaVersionDebugDialogComponent', () => {
     const json = component.formattedJson();
     expect(json).not.toContain('notification_token');
     expect(json).not.toContain('update');
+    expect(json).not.toContain('is_internal_tester');
+    expect(json).not.toContain('user_id');
 
     const nativeElement: HTMLElement = fixture.nativeElement;
     expect(nativeElement.textContent).not.toContain('Google Play Update');
     expect(nativeElement.textContent).not.toContain('Notification Token');
+    expect(nativeElement.textContent).not.toContain('Internal Tester Mode');
     expect(nativeElement.textContent).toContain('Web');
   });
 });
