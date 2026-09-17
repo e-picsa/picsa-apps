@@ -3,6 +3,7 @@ import { Route } from '@angular/router';
 import { ClimateFeature } from './modules/climate/climate.routes';
 import { CropFeature } from './modules/crop-information/crop.routes';
 import { DeploymentFeature } from './modules/deployment/deployment.routes';
+import { FeedbackFeature } from './modules/feedback/feedback.routes';
 import { HomeFeature } from './modules/home/home.routes';
 import { MapFeature } from './modules/map/map.routes';
 import { ResourcesFeature } from './modules/resources/resources.routes';
@@ -56,6 +57,10 @@ export const appRoutes: Route[] = [
   {
     path: MapFeature.ROOT_PATH,
     loadChildren: () => import('./modules/map/map.routes').then((m) => m.MapFeature.ROUTES),
+  },
+  {
+    path: FeedbackFeature.ROOT_PATH,
+    loadChildren: () => import('./modules/feedback/feedback.module').then((m) => m.FeedbackModule),
   },
   {
     path: '**',
