@@ -26,6 +26,8 @@ export class AppUserService {
   private errorService = inject(ErrorHandlerService);
   private networkService = inject(NetworkService);
 
+  public enabled = signal(false);
+
   /** User supabase auth_user id as db only allows user to write to own row */
   public userId = computed(() => this.supabaseService.auth.authUser()?.id);
 
@@ -91,7 +93,7 @@ export class AppUserService {
 
     // When signed-in and connected try to load db profile
     effect(async () => {
-      if (!this.enabled()) return;
+      if (!this.enabled() || !this.shouldTrackUser()) return;
       await this.supabaseService.ready();
       if (!this.supabaseService.isAvailable()) return;
       const userId = this.userId();
@@ -103,7 +105,7 @@ export class AppUserService {
 
     // When profile changes attempt sync to DB
     effect(async () => {
-      if (!this.enabled()) return;
+      if (!this.enabled() || !this.shouldTrackUser()) return;
       await this.supabaseService.ready();
       if (!this.supabaseService.isAvailable()) return;
       const pendingUpdate = this.pendingDBUpdateDebounded();
@@ -183,13 +185,10 @@ export class AppUserService {
     return update;
   }
 
-  /**
-   * Only authenticated users currently have write access to table
-   * Can support anonymous in future if required
-   */
-  private enabled() {
-    if (!this.supabaseService.isAvailable()) {
-      return false;
+  /** Only track in app_users on native platforms or if user is authenticated (non-anonymous) */
+  private shouldTrackUser(): boolean {
+    if (Capacitor.isNativePlatform()) {
+      return true;
     }
     const authUser = this.supabaseService.auth.authUser();
     return Boolean(authUser && !authUser.is_anonymous);
