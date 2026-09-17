@@ -13,9 +13,9 @@ import { PicsaNotificationService } from '../core/notification.service';
 export interface IAppUpdateDiagnostics {
   isNative: boolean;
   availability: string;
-  currentVersionCode?: string;
+  currentVersionCode?: number;
   currentVersionName?: string;
-  availableVersionCode?: string;
+  availableVersionCode?: number;
   availableVersionName?: string;
   installStatus?: string;
   error?: string;
@@ -26,14 +26,13 @@ export interface IAppUpdateDiagnostics {
 })
 export class AppUpdateService {
   private notificationService = inject(PicsaNotificationService);
-
   private listenerHandle: PluginListenerHandle | null = null;
 
-  public updateAvailability = signal<AppUpdateAvailability>(AppUpdateAvailability.UNKNOWN);
-  public installStatus = signal<FlexibleUpdateInstallStatus | null>(null);
   public updateInfo = signal<AppUpdateInfo | null>(null);
-  public bytesDownloaded = signal<number | undefined>(undefined);
-  public totalBytesToDownload = signal<number | undefined>(undefined);
+  public updateAvailability = signal<AppUpdateAvailability | null>(null);
+  public installStatus = signal<FlexibleUpdateInstallStatus | null>(null);
+  public bytesDownloaded = signal<number>(0);
+  public totalBytesToDownload = signal<number>(0);
 
   public isUpdateAvailable = computed(() => this.updateAvailability() === AppUpdateAvailability.UPDATE_AVAILABLE);
   public isUpdateDownloading = computed(() => this.installStatus() === FlexibleUpdateInstallStatus.DOWNLOADING);
@@ -68,35 +67,41 @@ export class AppUpdateService {
     }
   }
 
-  /** Starts a flexible update process and listens for download state changes */
+  /** Start background flexible update download */
   public async startFlexibleUpdate(): Promise<void> {
     try {
       await this.ensureFlexibleUpdateListener();
       await AppUpdate.startFlexibleUpdate();
+      this.notificationService.showUserNotification(
+        {
+          message: 'A new update is downloading in the background...',
+          matIcon: 'system_update',
+        },
+        { duration: 5000 },
+      );
     } catch (error) {
-      console.error('[AppUpdate] Error during flexible update:', error);
+      console.error('[AppUpdate] Error starting flexible update:', error);
     }
   }
 
-  /** Completes flexible update by restarting app */
+  /** Restart app and complete downloaded flexible update */
   public async completeUpdate(): Promise<void> {
     try {
       await AppUpdate.completeFlexibleUpdate();
     } catch (error) {
-      console.error('[AppUpdate] Error completing update:', error);
+      console.error('[AppUpdate] Error completing flexible update:', error);
     }
   }
 
-  /** Opens app entry in the Google Play Store */
+  /** Open Google Play Store for immediate / fallback update */
   public async openStore(): Promise<void> {
     try {
-      await AppUpdate.openAppStore({ androidPackageName: 'io.picsa.extension' });
+      await AppUpdate.openAppStore();
     } catch (error) {
-      console.error('[AppUpdate] Error opening app store:', error);
+      console.error('[AppUpdate] Error opening store:', error);
     }
   }
 
-  /** Retrieves detailed diagnostics on update status for debug popups */
   public async checkUpdateStatus(): Promise<IAppUpdateDiagnostics> {
     if (!Capacitor.isNativePlatform()) {
       return { isNative: false, availability: 'WEB_NOT_SUPPORTED' };
@@ -115,11 +120,12 @@ export class AppUpdateService {
         availableVersionName: info.availableVersionName,
         installStatus: info.installStatus !== undefined ? this.formatInstallStatus(info.installStatus) : undefined,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
       return {
         isNative: true,
         availability: 'ERROR',
-        error: err?.message ?? String(err),
+        error: errorMsg,
       };
     }
   }

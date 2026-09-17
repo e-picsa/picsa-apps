@@ -75,39 +75,46 @@ export class AppUserService {
 
   constructor() {
     // Ensure auth user signed in (native platform only for anonymous users to prevent web user table bloat)
-    effect(async () => {
+    effect(() => {
       if (!this.enabled()) return;
-      await this.supabaseService.ready();
-      if (!this.supabaseService.isAvailable()) return;
       const isOnline = this.networkService.isOnline();
       const userId = this.userId();
-      if (isOnline && !userId && Capacitor.isNativePlatform()) {
+      if (!isOnline || userId || !Capacitor.isNativePlatform()) return;
+
+      void (async () => {
+        await this.supabaseService.ready();
+        if (!this.supabaseService.isAvailable()) return;
         await this.supabaseService.auth.signInAppUserOrAnonymous();
-      }
+      })().catch((err) => this.errorService.handleError(err));
     });
 
     // When signed-in and connected try to load db profile
-    effect(async () => {
+    effect(() => {
       if (!this.enabled() || !this.shouldTrackUser()) return;
-      await this.supabaseService.ready();
-      if (!this.supabaseService.isAvailable()) return;
       const userId = this.userId();
       const isOnline = this.networkService.isOnline();
-      if (isOnline && userId && !this.dbProfile()) {
+      const hasDbProfile = Boolean(this.dbProfile());
+      if (!isOnline || !userId || hasDbProfile) return;
+
+      void (async () => {
+        await this.supabaseService.ready();
+        if (!this.supabaseService.isAvailable()) return;
         await this.syncDbProfile(userId);
-      }
+      })().catch((err) => this.errorService.handleError(err));
     });
 
     // When profile changes attempt sync to DB
-    effect(async () => {
+    effect(() => {
       if (!this.enabled() || !this.shouldTrackUser()) return;
-      await this.supabaseService.ready();
-      if (!this.supabaseService.isAvailable()) return;
       const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
-      if (isOnline && pendingUpdate) {
+      if (!isOnline || !pendingUpdate) return;
+
+      void (async () => {
+        await this.supabaseService.ready();
+        if (!this.supabaseService.isAvailable()) return;
         await this.updateUserProfile(pendingUpdate);
-      }
+      })().catch((err) => this.errorService.handleError(err));
     });
   }
 

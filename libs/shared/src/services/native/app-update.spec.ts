@@ -47,12 +47,16 @@ jest.mock('@capawesome/capacitor-app-update', () => ({
 
 describe('AppUpdateService', () => {
   let service: AppUpdateService;
-  let notificationServiceMock: { showSuccessNotification: jest.Mock };
+  let notificationServiceMock: {
+    showSuccessNotification: jest.Mock;
+    showUserNotification: jest.Mock;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
     notificationServiceMock = {
       showSuccessNotification: jest.fn(),
+      showUserNotification: jest.fn(),
     };
 
     TestBed.configureTestingModule({
