@@ -2,6 +2,7 @@
 
 # Required Secrets
 # - FIREBASE_SERVICE_ACCOUNT
+# - SENTRY_AUTH_TOKEN (optional, for sourcemap upload)
 
 name: Web Release
 on:
@@ -18,6 +19,8 @@ env:
 jobs:
   web_release:
     runs-on: ubuntu-latest
+    env:
+      SENTRY_AUTH_TOKEN_AVAILABLE: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -52,6 +55,20 @@ jobs:
           fi
           echo "✅ Found supabase config in build output"
           cat "$CONFIG_FILE"
+
+      - name: Upload sourcemaps to Sentry
+        if: ${{ env.SENTRY_AUTH_TOKEN_AVAILABLE == 'true' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          SENTRY_URL: https://de.sentry.io
+        run: |
+          yarn sentry-cli sourcemaps inject dist/apps/picsa-apps/app
+          yarn sentry-cli sourcemaps upload dist/apps/picsa-apps/app
+
+      - name: Strip sourcemaps before deployment
+        run: find dist/apps/picsa-apps/app -name "*.map" -type f -delete
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

@@ -61,6 +61,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Strict Colocation Next to Source**: Unit test specifications (`*.spec.ts`) must always be colocated directly next to the source file they test (e.g. `libs/utils/climate.utils.spec.ts` next to `libs/utils/climate.utils.ts`, and `libs/data/climate/chart_definitions/periods.spec.ts` next to `periods.ts`).
 - Avoid scattering library or utility tests into consumer application folders (such as `apps/picsa-tools/climate-tool/src/app/data/`). Libraries (`libs/utils`, `libs/data`) maintain their own Nx project/Jest targets (`yarn nx test utils`, `yarn nx test data`), keeping tests discovered cleanly without jumping across the monorepo.
 
+### Capacitor Plugin Inclusion in Monorepo (`includePlugins`)
+
+- In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
+- Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+
+### Capacitor Push Notifications & User Profile Sync Lifecycle
+
+- **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
+- **Listener Registration Order Before `register()`**: Call `PushNotifications.removeAllListeners()` and register event listeners (`registration`, `registrationError`, `pushNotificationReceived`, `pushNotificationActionPerformed`) _before_ invoking `PushNotifications.register()`. On native platforms (iOS and Android), the registration callback can emit immediately during `register()`, causing early token events to be dropped if listeners are attached afterwards.
+- **Client FCM Token Restoration on Startup**: When loading an existing user profile from `app_users`, restore `dbProfile.fcm_token` into the local `fcmToken` signal if not already set. Because `userProfile` is a computed signal (`fcm_token: this.fcmToken()`) and `pendingDBUpdate` computes diffs against `dbProfile`, failing to restore `dbProfile.fcm_token` causes the computed signal to emit `fcm_token: null`, scheduling an update that inadvertently clears the user's stored FCM token in Supabase.
+- **Push Token Logging Security**: Never log raw device push tokens (`token.value`) in console outputs. Redact tokens to avoid exposing sensitive push credentials in production device logs.
+
 ### TypeScript Strictness & SonarCloud Rules (S2871, Number Parsing, Duplication)
 
 - **Deterministic Array Sorting (S2871)**: Never use bare `Array.prototype.sort()` or `toSorted()` on string arrays or object keys. Always supply an explicit comparator `(a, b) => a.localeCompare(b)` to avoid locale-dependent sorting anomalies.
@@ -118,6 +131,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zod Caps for Device Info**: when setting validation caps, accommodate real-world User-Agent strings (~150-200 chars) and use non-strict objects (`z.object`) to prevent dropping submissions from client builds with extended metadata.
 - **Supabase Studio API Port in `config.toml`**: `[studio] api_url` must explicitly include the API port (`http://localhost:54321`). Omitting the port causes Supabase Studio's backend to rewrite signed URLs and client storage links to port 80 (`http://localhost/...`), resulting in `ERR_CONNECTION_REFUSED` on image previews in Studio.
 
+### Edge Functions Deployment in Release Pipelines
+
+- **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
+- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions. For small function sets (~5 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+
 ---
 
 ## 4. Angular 21, Signals & Reactive Architecture
@@ -147,6 +165,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
+
+### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
+
+- **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
+- **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
+- **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
 
 ---
 
@@ -187,7 +211,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Responsive Tool Customization Slots & Sidenav Container Layout
 
-- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.\n- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
+- **Sidebar Customization vs Bottom Clutter**: Deep tool customization controls (such as the ENSO grade filter chips) should reside in the sidebar/drawer options panel (`climate-chart-options`) rather than stacked below the fixed-height chart in `chart-layout`. On mobile viewports, controls below the chart are hidden offscreen, whereas the drawer ensures immediate accessibility.
+- **Single Scroll Container & Preventing Layout Shifts**: Never declare `overflow-y: auto; height: 100%` inside child components placed within `mat-sidenav` / `picsa-sidenav-layout`. The outer sidenav inner container already provides vertical scrolling. Adding an inner scroll creates a double scrollbar and robs horizontal width (~16px), causing flex containers to wrap onto new lines.
 - **Chart Card Grid Dimensions**: In `view-select`, chart cards maintain their standard dimensions (`max-width: 80px; width: 100%;` with `50px` icon images and `flex-wrap: wrap; gap: 8px`), neatly laying out cards in rows of 3 without horizontal compression or truncation.
 - **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
 - **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
@@ -212,7 +237,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### Climate Data Sync, Formatting & Audit Pipeline
 
-- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
+- **Deterministic CSV Formatting**: For rain-only meteorological stations, omitting temperature columns altogether (`month,Rainfall` vs `month,Rainfall,min_tmin,mean_tmax,max_tmax`) cuts file size by >60%. Floats are rounded to 1 decimal place to eliminate sensor noise and float representation drift.
 - **Idempotent CLI Runner**: The CLI runner (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) computes SHA-256 hashes of canonical station data. Preserving `lastUpdated` when data hashes match ensures zero git diffs on subsequent runs.
 - **Per-Country Station Organization**: Grouping stations by country (`data/stations/<country>/`) with separate `metadata.ts` and `capabilities.generated.ts` cleanly isolates PRs and prevents cross-country merge conflicts.
 - **Symmetric Capability Models**: Modeling `monthly?: IChartId[]` as a string array symmetrically matches `annual?: IChartId[]`, simplifying runtime availability checks (`station.capabilities?.[timespan]?.includes(chartId)`).
@@ -230,6 +255,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Display Rule & Cutoff**:
   - A trendline is plotted **only** when statistically clear ($p < 0.05$). It is rendered as a **solid coloured line** in the series color (`strokeWidth = 2.5`).
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
+- **Card Header & Rate Alignment in Sidenav Panel**:
+  - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
@@ -247,3 +275,39 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
+
+## 7. Error Handling & Monitoring Architecture
+
+### Sentry & Firebase Crashlytics Dual-Reporting Strategy
+
+- **Complementary Roles**:
+  - **Sentry (`@sentry/angular`)**: Primary error tracking for TypeScript/JavaScript exceptions across both Web (PWA) and Mobile (Capacitor webview). Provides full source-mapped stack traces, device/platform tagging, release tracking, and breadcrumbs.
+  - **Firebase Crashlytics**: Retained exclusively on Android for native OS-level crashes (via the Gradle plugin) and duplicate reporting of non-fatal exceptions via `CrashlyticsService.recordException`.
+- **Initialization Timing**:
+  - Sentry is initialized in `apps/picsa-apps/app/src/main.ts` via `initSentry()` _prior_ to `bootstrapApplication()` so early bootstrap and bundling failures are reported.
+  - `bootstrapApplication(...).catch(...)` explicitly forwards unhandled bootstrap rejections to Sentry.
+- **Central Exception Routing (`ErrorHandlerService`)**:
+  - `ErrorHandlerService` overrides Angular's `ErrorHandler.handleError(error)`.
+  - Automatically unwraps Angular/Zone.js errors (`(error as any)?.ngOriginalError || error`).
+  - Dispatches to `Sentry.captureException(...)` when Sentry is enabled.
+  - On native Android (`Capacitor.isNativePlatform()`), additionally dispatches to `crashlyticsService.recordException(...)` in a protected try/catch block.
+  - Always calls `super.handleError(error)` to preserve local console output.
+- **Inbound Noise Filtering & Quota Protection**:
+  - In `beforeSend`, errors originating from browser extensions (`chrome-extension:`, `moz-extension:`, `safari-extension:`) or Angular DevTools messaging hooks are discarded to avoid burning monthly event quotas.
+  - Sentry is enabled in production builds by default (`ENVIRONMENT.production`), with optional explicit overrides via `ENVIRONMENT.sentry.enabled`.
+- **Production Sourcemaps & CI Release Ingestion**:
+  - `apps/picsa-apps/app/project.json` configures `sourceMap: { "scripts": true, "styles": false, "hidden": true }` for production. `hidden: true` emits `.map` files on disk for debug symbolication while omitting `//# sourceMappingURL=` comments from bundles.
+  - In release workflows (`web-release.yml` and `android-release.yml`), `sentry-cli sourcemaps inject` stamps bundles with deterministic Debug IDs and `sentry-cli sourcemaps upload` uploads them to Sentry.
+  - `.map` files are deleted before hosting deployment or Capacitor sync (`find dist -name "*.map" -delete`) to prevent shipping source files to users or bundling them into native Android binaries.
+- **Jest Mocking Gotcha (`@capacitor/core`)**:
+  - When mocking `@capacitor/core` in unit tests, always spread `jest.requireActual('@capacitor/core')` (`{ ...actual, Capacitor: { ...actual.Capacitor, isNativePlatform: jest.fn() } }`). `@capacitor/device` calls `core.registerPlugin` during module evaluation; completely overwriting `@capacitor/core` without `registerPlugin` causes `TypeError: core.registerPlugin is not a function`.
+
+## 8. CI / CD & Nx Remote Caching Strategy
+
+### Local-Only + CI Remote Caching Architecture
+
+- **Nx Cloud Disabled Locally by Default**: `nx.json` contains no `nxCloudAccessToken`, so local runs use only the on-disk cache (`.nx/cache`) and consume zero Nx Cloud quota. All developers share nothing remotely by default.
+- **CI-Only Remote Cache**: `.github/workflows/build-test.yml` enables Nx Cloud by setting `NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}` (read-write secret) at the job level. No token in `nx.json` means no cloud connection outside CI unless explicitly opted in.
+- **Personal Opt-In**: Individual developers wanting remote cache can set their own `NX_CLOUD_ACCESS_TOKEN=<personal-or-workspace-token>` environment variable locally. Never commit personal tokens to `nx.json`.
+- **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
+- **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).

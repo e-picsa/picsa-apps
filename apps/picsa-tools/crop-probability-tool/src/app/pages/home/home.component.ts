@@ -1,11 +1,29 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { TemplatePortal } from '@angular/cdk/portal';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  TemplateRef,
+  viewChild,
+  ViewContainerRef,
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { IGeolocationData } from '@picsa/data/geoLocation';
+import { ICountryCode } from '@picsa/data';
+import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaTourButton, TourService } from '@picsa/shared/services/core/tour';
-import { map } from 'rxjs';
+import { isEqual } from '@picsa/utils/object.utils';
 
 import { CropProbabilityTableComponent } from '../../components/crop-probability-table/crop-probability-table.component';
 import { PROBABILITY_TABLE_DATA } from '../../data';
@@ -17,23 +35,57 @@ interface IQueryParams {
   locationId?: string;
 }
 
+/** Legacy single-segment station id, superseded by user settings location */
 const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
+
+const STRINGS = {
+  SelectStation: translateMarker('Please select a location to view crop information'),
+};
 
 @Component({
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
+  imports: [
+    PicsaFormsModule,
+    CropProbabilityTableComponent,
+    MatButtonModule,
+    MatIcon,
+    PicsaTranslateModule,
+    PicsaTourButton,
+  ],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tourService = inject(TourService);
   private configService = inject(ConfigurationService);
+  private componentsService = inject(PicsaCommonComponentsService);
+  private viewContainer = inject(ViewContainerRef);
 
-  public locationId = toSignal(this.route.queryParams.pipe(map(({ locationId }: IQueryParams) => locationId)));
+  private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
 
-  public countryCode = computed(() => this.configService.deploymentSettings().country_code);
+  public countryCode = computed(() => this.configService.userSettings().country_code);
+  public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
+
+  public locationReady = computed(() => {
+    const location = this.locationSelected();
+    const country = this.countryCode();
+    if (!country || !location) return false;
+    const geoData = getGeoLocationData(country as ICountryCode);
+    if (geoData.admin_5) {
+      return !!location[4] && !!location[5];
+    }
+    return !!location[4];
+  });
+
+  /** Deepest selected location segment, used to match probability tables */
+  public locationId = computed(() => {
+    const location = this.locationSelected();
+    return location[5] ?? location[4];
+  });
+
+  public locationOverlayOpen = signal(false);
 
   public tableStationData = signal<IStationCropData[] | undefined>(undefined);
 
@@ -56,19 +108,37 @@ export class HomeComponent implements OnInit {
         this.tableStationData.set(data);
       }
     });
+
+    // Auto-open location overlay if location is not set when entering tool
+    effect(() => {
+      if (!this.locationReady()) {
+        this.locationOverlayOpen.set(true);
+      }
+    });
   }
 
   ngOnInit(): void {
-    //  load previously selected location
-    const locationId = this.locationId();
-    if (!locationId) {
-      const savedLocation = localStorage.getItem(STORED_LOCATION_FIELD);
-      if (savedLocation) {
-        this.handleLocationChange([savedLocation]);
-      }
-    }
+    this.importLegacyLocation();
     this.tourService.registerTour('cropProbabilityTable', CROP_PROBABILITY_TABLE_TOUR);
     this.tourService.registerTour('cropProbabilitySelect', CROP_PROBABILITY_SELECT_TOUR);
+  }
+
+  ngAfterViewInit() {
+    const portal = this.headerCenterPortal();
+    if (portal) {
+      this.componentsService.patchHeader({
+        cdkPortalCenter: new TemplatePortal(portal, this.viewContainer),
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.componentsService.patchHeader({ cdkPortalCenter: undefined });
+  }
+
+  public handleLocationConfirmed(location: (string | undefined)[]) {
+    this.configService.updateUserSettings({ location });
+    this.locationOverlayOpen.set(false);
   }
 
   /** Modify locations to only include values that have probability data */
@@ -112,13 +182,33 @@ export class HomeComponent implements OnInit {
     return data;
   }
 
-  public handleLocationChange(location: (string | undefined)[]) {
-    const targetLocation = location.filter((v) => v !== undefined).pop();
-    localStorage.setItem(STORED_LOCATION_FIELD, targetLocation as string);
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { locationId: targetLocation },
-      replaceUrl: true,
-    });
+  /** One-time import of pre-overlay saved locations into user settings */
+  private importLegacyLocation() {
+    if (this.locationReady()) return;
+    const { locationId } = this.route.snapshot.queryParams as IQueryParams;
+    const legacyId = locationId ?? localStorage.getItem(STORED_LOCATION_FIELD) ?? undefined;
+    if (!legacyId) return;
+    const location = this.resolveLocationArray(legacyId);
+    if (location) {
+      this.configService.updateUserSettings({ location });
+      // Auto-open effect may have fired before import - close overlay as location now ready
+      this.locationOverlayOpen.set(false);
+      localStorage.removeItem(STORED_LOCATION_FIELD);
+      this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    }
   }
+
+  private resolveLocationArray(locationId: string): (string | undefined)[] | undefined {
+    const country = this.countryCode();
+    if (!country) return undefined;
+    const tables = PROBABILITY_TABLE_DATA[country] ?? [];
+    const entry = tables.find((v) => v.id === locationId || v.id.endsWith(`/${locationId}`));
+    if (!entry) return undefined;
+    const [admin_4, admin_5] = entry.id.split('/');
+    // Station options with sublocations use the full table id as option value
+    const admin5Value = entry.id.includes('--') ? entry.id : admin_5;
+    return [undefined, undefined, country, undefined, admin_4, admin5Value];
+  }
+
+  protected readonly STRINGS = STRINGS;
 }

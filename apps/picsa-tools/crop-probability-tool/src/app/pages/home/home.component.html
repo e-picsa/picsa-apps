@@ -1,13 +1,31 @@
 <div class="page-content">
-  <!-- Station Select -->
-  <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
-    <picsa-form-location-select
-      [countryCode]="countryCode()"
-      (valueChanged)="handleLocationChange($event)"
-      [locationModifier]="locationModifier"
-    ></picsa-form-location-select>
-    <!-- <picsa-tour-button [tourId]="stationId() ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button> -->
-  </div>
+  <!-- Header Center Slot (Location Button) -->
+  <ng-template #headerCenterPortal>
+    <div class="flex items-center justify-center gap-2 text-white max-w-full leading-none">
+      <span class="text-lg sm:text-xl font-semibold text-white"> {{ 'Crop Probability' | translate }} </span>
+      <button
+        matButton="outlined"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30 [&_.mdc-button__label]:!text-white"
+        (click)="locationOverlayOpen.set(true)"
+        [attr.aria-label]="'Change location' | translate"
+      >
+        <mat-icon class="!text-[20px] !w-5 !h-5 !text-white shrink-0">place</mat-icon>
+        <span class="truncate text-white"> {{ tableStationMeta()?.label || ('Select Location' | translate) }} </span>
+      </button>
+    </div>
+  </ng-template>
+
+  <picsa-form-location-overlay
+    [(open)]="locationOverlayOpen"
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    [locationModifier]="locationModifier"
+    [subtitle]="STRINGS.SelectStation"
+    [allowCancel]="locationReady()"
+    (confirmed)="handleLocationConfirmed($event)"
+    (cancelled)="locationOverlayOpen.set(false)"
+  ></picsa-form-location-overlay>
+
   <!-- Table -->
   @if (tableStationMeta(); as tableMeta) {
     @if (tableStationData(); as stationData) {
@@ -17,7 +35,7 @@
         filterCrop="maize"
       ></crop-probability-table>
     } @else {
-      Loading...
+      {{ 'Loading...' | translate }}
     }
   }
 </div>
