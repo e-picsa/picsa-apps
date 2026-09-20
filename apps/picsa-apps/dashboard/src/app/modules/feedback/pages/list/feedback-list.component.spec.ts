@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { FeedbackBadgeComponent } from '../../components/feedback-badge.component';
 import { FeedbackDashboardService } from '../../services/feedback-dashboard.service';
@@ -13,13 +12,11 @@ describe('FeedbackListComponent', () => {
   let fixture: ComponentFixture<FeedbackListComponent>;
   let mockService: { list: jest.Mock };
   let mockRouter: { navigate: jest.Mock };
-  let mockNotification: { showErrorNotification: jest.Mock; showSuccessNotification: jest.Mock };
   let mockTranslate: { instant: jest.Mock };
 
   beforeEach(async () => {
     mockService = { list: jest.fn().mockResolvedValue([]) };
     mockRouter = { navigate: jest.fn() };
-    mockNotification = { showErrorNotification: jest.fn(), showSuccessNotification: jest.fn() };
     mockTranslate = { instant: jest.fn().mockImplementation((v: string) => v) };
 
     await TestBed.configureTestingModule({
@@ -30,7 +27,6 @@ describe('FeedbackListComponent', () => {
           providers: [
             { provide: FeedbackDashboardService, useValue: mockService },
             { provide: Router, useValue: mockRouter },
-            { provide: PicsaNotificationService, useValue: mockNotification },
             { provide: PicsaTranslateService, useValue: mockTranslate },
           ],
         },
@@ -109,10 +105,9 @@ describe('FeedbackListComponent', () => {
     expect(component.error()).toBeNull();
   });
 
-  it('should show inline error and notify on load failure', async () => {
+  it('should show inline error on load failure', async () => {
     mockService.list.mockRejectedValueOnce(new Error('fail'));
     await component.loadList();
     expect(component.error()).toBe('Failed to load feedback');
-    expect(mockNotification.showErrorNotification).toHaveBeenCalledWith('Failed to load feedback');
   });
 });

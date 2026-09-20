@@ -107,9 +107,13 @@ export class FeedbackDetailComponent implements OnInit {
         await this.loadScreenshot(id);
       }
     } catch {
-      this.error.set(this.translate.instant('Failed to load feedback'));
+      if (this.currentId === id) {
+        this.error.set(this.translate.instant('Failed to load feedback'));
+      }
     } finally {
-      this.loading.set(false);
+      if (this.currentId === id) {
+        this.loading.set(false);
+      }
     }
   }
 
@@ -118,12 +122,17 @@ export class FeedbackDetailComponent implements OnInit {
     this.screenshotError.set(false);
     try {
       const { signed_url } = await this.service.getSignedUrl(id);
+      if (this.currentId !== id) return;
       this.screenshotUrl.set(signed_url || null);
       if (!signed_url) this.screenshotError.set(true);
     } catch {
-      this.screenshotError.set(true);
+      if (this.currentId === id) {
+        this.screenshotError.set(true);
+      }
     } finally {
-      this.screenshotLoading.set(false);
+      if (this.currentId === id) {
+        this.screenshotLoading.set(false);
+      }
     }
   }
 

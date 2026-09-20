@@ -5,7 +5,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { FeedbackBadgeComponent } from '../../components/feedback-badge.component';
@@ -48,7 +47,6 @@ interface FeedbackTableRow {
 export class FeedbackListComponent implements OnInit {
   private service = inject(FeedbackDashboardService);
   private router = inject(Router);
-  private notificationService = inject(PicsaNotificationService);
   private translate = inject(PicsaTranslateService);
 
   public rows = signal<FeedbackTableRow[]>([]);
@@ -94,7 +92,6 @@ export class FeedbackListComponent implements OnInit {
       this.rows.set(data.map((r) => this.toTableRow(r)));
     } catch {
       this.error.set(this.translate.instant('Failed to load feedback'));
-      this.notificationService.showErrorNotification(this.translate.instant('Failed to load feedback'));
     } finally {
       this.loading.set(false);
     }

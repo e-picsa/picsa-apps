@@ -164,4 +164,68 @@ describe('FeedbackDetailComponent', () => {
     await fixture.whenStable();
     expect(component.row()?.id).toBe('row-456');
   });
+
+  it('should not set error or clear loading when a stale getById rejects', async () => {
+    // Use a row without a screenshot_path so loadScreenshot is not triggered
+    // (the default getSignedUrl mock is a pending promise in this test).
+    const rowNoScreenshot = { ...mockRow2, screenshot_path: null as string | null };
+
+    const pending: Record<string, { resolve: (v: any) => void; reject: (e: any) => void }> = {};
+    mockService.getById.mockImplementation(
+      (id: string) =>
+        new Promise((resolve, reject) => {
+          pending[id] = { resolve, reject };
+        }),
+    );
+
+    // Request row-123 (slow)
+    paramMap$.next(buildParamMap('row-123'));
+    // Request row-456 (fast)
+    paramMap$.next(buildParamMap('row-456'));
+
+    // Resolve row-456 successfully
+    pending['row-456'].resolve(rowNoScreenshot);
+    await fixture.whenStable();
+    expect(component.row()?.id).toBe('row-456');
+    expect(component.loading()).toBe(false);
+    expect(component.error()).toBeNull();
+
+    // Stale row-123 rejects — must not touch error or loading for row-456
+    pending['row-123'].reject(new Error('network'));
+    await fixture.whenStable();
+    expect(component.error()).toBeNull();
+    expect(component.loading()).toBe(false);
+  });
+
+  it('should not apply stale screenshot URL after navigation', async () => {
+    // row-123 has a screenshot; row-456 does not
+    const row123 = { ...mockRow, screenshot_path: 'reports/row-123.png' };
+    const row456 = { ...mockRow2, screenshot_path: null as string | null };
+
+    const getSignedUrlPending: Record<string, (v: any) => void> = {};
+    mockService.getById.mockImplementation(async (id: string) => (id === 'row-123' ? row123 : row456));
+    mockService.getSignedUrl.mockImplementation(
+      (id: string) =>
+        new Promise((resolve) => {
+          getSignedUrlPending[id] = resolve;
+        }),
+    );
+
+    // Request row-123 (has screenshot — will block on getSignedUrl)
+    paramMap$.next(buildParamMap('row-123'));
+    await fixture.whenStable();
+    expect(component.screenshotLoading()).toBe(true);
+
+    // Navigate to row-456 (no screenshot) — loadScreenshot is not called for row-456
+    paramMap$.next(buildParamMap('row-456'));
+    await fixture.whenStable();
+    expect(component.row()?.id).toBe('row-456');
+    expect(component.screenshotUrl()).toBeNull();
+
+    // Stale getSignedUrl for row-123 resolves — must not apply
+    getSignedUrlPending['row-123']({ signed_url: 'https://stale.com/img.png', expires_in: 300 });
+    await fixture.whenStable();
+    expect(component.screenshotUrl()).toBeNull();
+    expect(component.screenshotLoading()).toBe(false);
+  });
 });
