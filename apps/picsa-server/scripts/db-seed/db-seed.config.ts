@@ -69,12 +69,10 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   crop_data: {
     omitColumns: ['id'],
     schema: 'public',
-    filter: { country_code: SEED_COUNTRIES },
   },
   crop_data_downscaled: {
     omitColumns: ['id'],
     schema: 'public',
-    filter: { station_id: SEED_STATION_IDS },
   },
   resource_collections: {
     schema: 'public',
