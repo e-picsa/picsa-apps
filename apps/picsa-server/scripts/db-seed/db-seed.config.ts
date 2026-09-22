@@ -57,38 +57,24 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   // Public schema tables
   climate_stations: {
     omitColumns: ['id'],
-    schema: 'public',
     filter: { id: SEED_STATION_IDS },
   },
   climate_station_data: {
     batchSize: 50,
-    schema: 'public',
     orderBy: 'station_id',
     filter: { station_id: SEED_STATION_IDS },
   },
   crop_data: {
     omitColumns: ['id'],
-    schema: 'public',
   },
   crop_data_downscaled: {
     omitColumns: ['id'],
-    schema: 'public',
   },
-  resource_collections: {
-    schema: 'public',
-  },
-  resource_files: {
-    schema: 'public',
-  },
-  resource_files_child: {
-    schema: 'public',
-  },
-  resource_links: {
-    schema: 'public',
-  },
-  translations: {
-    schema: 'public',
-  },
+  resource_collections: {},
+  resource_files: {},
+  resource_files_child: {},
+  resource_links: {},
+  translations: {},
   // Geo schema tables (no single 'id' column - sort by primary key instead)
   countries: {
     schema: 'geo',
