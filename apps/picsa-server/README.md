@@ -30,8 +30,12 @@ yarn nx run picsa-server:seed-export
 
 ### Behaviour notes
 
-- Tables with `serverSync: false` in `scripts/db-seed/db-seed.config.ts`
-  (`deployments`, `user_profiles`, `user_roles`) are local-first and skipped.
+- Only tables listed in `scripts/db-seed/db-seed.config.ts` are exported.
+  Local-first tables (`deployments`, `user_profiles`, `user_roles`) are
+  intentionally omitted from config, so export never overwrites them.
+- Shared `SEED_COUNTRIES` / `SEED_STATION_IDS` consts keep station-linked
+  tables (`climate_stations`, `climate_station_data`, `crop_data_downscaled`)
+  scoped to the same representative locations.
 - `climate_station_data` exports a filtered subset only (see `filter` in config).
 - A `0 rows` export with the secret key means the remote table is genuinely
   empty (the secret key bypasses RLS, so this is never an access issue).

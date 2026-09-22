@@ -42,10 +42,12 @@ class SupabaseSeedExport {
     // Ensure seed directory exists
     await mkdir(SEED_DIR, { recursive: true });
 
-    // Filter tables: only export where serverSync !== false
-    const exportTables = Object.entries(SEED_DATA_CONFIGURATION)
-      .filter(([, config]) => config.serverSync !== false)
-      .map(([table, config]) => ({ table, config })) as ExportTableConfig[];
+    // Export every table in config - local-first tables are omitted from
+    // SEED_DATA_CONFIGURATION so they are never overwritten from remote
+    const exportTables = Object.entries(SEED_DATA_CONFIGURATION).map(([table, config]) => ({
+      table,
+      config,
+    })) as ExportTableConfig[];
 
     console.log(`📋 Tables to export: ${exportTables.map((t) => t.table).join(', ')}\n`);
 
@@ -92,7 +94,7 @@ class SupabaseSeedExport {
     table: string,
     schema: string,
     batchSize: number,
-    filter: Record<string, string | number | boolean> | undefined,
+    filter: ISeedDataConfiguration['filter'],
     omitColumns: string[],
   ): Promise<{ rows: number; skipped: boolean }> {
     let offset = 0;
@@ -103,10 +105,10 @@ class SupabaseSeedExport {
     while (true) {
       let query = this.client.schema(schema).from(table).select('*');
 
-      // Apply filters if specified
+      // Apply filters if specified (arrays match any entry via IN)
       if (filter) {
         for (const [key, value] of Object.entries(filter)) {
-          query = query.eq(key, value);
+          query = Array.isArray(value) ? query.in(key, value) : query.eq(key, value);
         }
       }
 
