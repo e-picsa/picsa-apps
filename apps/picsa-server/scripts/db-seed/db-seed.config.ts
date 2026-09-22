@@ -22,10 +22,19 @@ export interface ISeedDataConfiguration {
    * Array values match any entry (e.g., { station_id: ['zm/chipata_met', 'zm/petauke_met'] })
    */
   filter?: Record<string, string | number | boolean | (string | number | boolean)[]>;
+  /**
+   * Column value overrides or transform functions applied during CSV import.
+   * Supports static values (e.g. `{ cover_image: 'global/images/placeholder.svg', storage_file: null }`)
+   * or transform functions `(value: any, row: any) => any`.
+   */
+  columnMappings?: Record<string, any | ((value: any, row: any) => any)>;
 }
 
 /** Metadata columns stripped from every export (DB defaults repopulate on import) */
 export const SEED_METADATA_COLUMNS = ['created_at', 'updated_at'];
+
+/** Deterministic local seed admin user ID from seed.sql */
+export const SEED_ADMIN_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 /** Representative seed countries shared across country-scoped tables */
 export const SEED_COUNTRIES = ['zm', 'mw', 'zw'];
@@ -56,8 +65,8 @@ export const SEED_STATION_IDS = [
 export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   // Public schema tables
   climate_stations: {
+    priority: 1,
     omitColumns: ['id'],
-    filter: { id: SEED_STATION_IDS },
   },
   climate_station_data: {
     batchSize: 50,
@@ -70,19 +79,45 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   crop_data_downscaled: {
     omitColumns: ['id'],
   },
-  resource_collections: {},
-  resource_files: {},
-  resource_files_child: {},
-  resource_links: {},
+  deployments: {
+    priority: 1,
+  },
+  resource_collections: {
+    columnMappings: {
+      owner: SEED_ADMIN_USER_ID,
+    },
+  },
+  resource_files: {
+    priority: 1,
+    columnMappings: {
+      cover_image: 'global/images/placeholder.svg',
+      storage_file: null,
+      owner: SEED_ADMIN_USER_ID,
+    },
+  },
+  resource_files_child: {
+    columnMappings: {
+      cover_image: 'global/images/placeholder.svg',
+      storage_file: null,
+      owner: SEED_ADMIN_USER_ID,
+    },
+  },
+  resource_links: {
+    columnMappings: {
+      owner: SEED_ADMIN_USER_ID,
+    },
+  },
   translations: {},
   // Geo schema tables (no single 'id' column - sort by primary key instead)
   countries: {
     schema: 'geo',
     orderBy: 'code',
+    priority: 1,
   },
   locales: {
     schema: 'geo',
     orderBy: 'code',
+    omitColumns: ['code'],
   },
   boundaries: {
     schema: 'geo',
