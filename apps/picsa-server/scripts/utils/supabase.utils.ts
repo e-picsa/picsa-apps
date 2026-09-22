@@ -134,8 +134,8 @@ export function getRemoteSupabaseClient() {
  *
  * One-way pull guarantee:
  * The seed-export script (scripts/db-seed/db-seed-export.ts) performs only
- * SELECT queries (.select/.eq/.range) plus local CSV writes and a local
- * gen-types run. It contains no insert/update/delete/upsert/remove calls, so
+ * SELECT queries (.select/.eq/.range) plus local CSV writes. It contains no
+ * insert/update/delete/upsert/remove calls, so
  * the privileged key can never write to remote even though RLS is bypassed.
  * Keep it that way - do not add write operations to the export path.
  */
@@ -161,16 +161,17 @@ export function getExportSupabaseClient(): SupabaseClient<Database> {
   }
 
   if (!isPlaceholder(secretKey)) {
-    console.log(`[Seed Export Client] Target: ${remoteUrl} (secret key, pull-only)\n`);
+    // Project ref is treated as sensitive - log key type only, never the URL
+    console.log(`[Seed Export Client] Connected with secret key (pull-only)\n`);
     exportSupabase = createClient<Database>(remoteUrl, secretKey);
     return exportSupabase;
   }
 
   if (!isPlaceholder(publishableKey)) {
     console.error('\n⚠️  Warning: only a publishable key is configured - RLS will block most seed tables.');
-    console.error('  Expect 0-row CSVs except on RLS-open tables.');
+    console.error('  Expect skipped tables except on RLS-open tables.');
     console.error('  For full export, set SUPABASE_REMOTE_SECRET_KEY in .env.server instead.\n');
-    console.log(`[Seed Export Client] Target: ${remoteUrl} (publishable key, pull-only)\n`);
+    console.log(`[Seed Export Client] Connected with publishable key (pull-only)\n`);
     exportSupabase = createClient<Database>(remoteUrl, publishableKey);
     return exportSupabase;
   }

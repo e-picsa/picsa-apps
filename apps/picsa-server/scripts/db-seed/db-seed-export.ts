@@ -1,13 +1,11 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import Papa from 'papaparse';
 import { writeFile, mkdir } from 'fs/promises';
 import { resolve } from 'path';
-import { execSync } from 'child_process';
 
 import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
 import { getExportSupabaseClient } from '../utils/supabase.utils';
 
-const ROOT_DIR = resolve(__dirname, '../../../../');
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 
@@ -29,7 +27,7 @@ interface ExportTableConfig {
  * 20260129134800_rls_updates.sql, 20260201000000_rls_updates additional.sql,
  * 20260128102700_deploment_admin.sql, 20260425120000_budget_sharing.sql), but
  * performs only remote SELECT queries (.select/.eq/.range). The only writes
- * are local: CSV files via writeFile and a local gen-types run. Do not add
+ * are local CSV files via writeFile. Do not add
  * insert/update/delete/upsert calls to this file.
  */
 class SupabaseSeedExport {
@@ -51,7 +49,7 @@ class SupabaseSeedExport {
 
     console.log(`📋 Tables to export: ${exportTables.map((t) => t.table).join(', ')}\n`);
 
-    const results: { table: string; rows: number; schema: string; file: string }[] = [];
+    const results: { table: string; rows: number; schema: string; skipped: boolean }[] = [];
 
     // Export each table sequentially
     for (const { table, config } of exportTables) {
@@ -61,9 +59,13 @@ class SupabaseSeedExport {
       const omitColumns = config.omitColumns ?? [];
 
       try {
-        const { rows, file } = await this.exportTable(table, schema, batchSize, filter, omitColumns);
-        results.push({ table, rows, schema, file });
-        console.log(`✅ Exported ${schema}.${table}: ${rows} rows → ${file}\n`);
+        const { rows, skipped } = await this.exportTable(table, schema, batchSize, filter, omitColumns);
+        results.push({ table, rows, schema, skipped });
+        if (skipped) {
+          console.log(`⚠️  Skipped ${schema}.${table}: 0 rows returned, no file written\n`);
+        } else {
+          console.log(`✅ Exported ${schema}.${table}: ${rows} rows\n`);
+        }
       } catch (error) {
         console.error(`❌ Failed to export ${schema}.${table}:`, error);
         process.exit(1);
@@ -76,25 +78,11 @@ class SupabaseSeedExport {
       results.map((r) => ({
         Table: r.table,
         Schema: r.schema,
-        Rows: r.rows,
-        File: r.file.replace(SEED_DIR + '/', ''),
+        Rows: r.skipped ? 'skipped (0 rows)' : r.rows,
       })),
     );
 
-    console.log(`\n✅ Seed export completed! ${results.length} tables exported to ${SEED_DIR}`);
-
-    // Run gen-types to update TypeScript definitions
-    console.log('\n🔄 Regenerating TypeScript types...');
-    try {
-      execSync('yarn nx run picsa-server:gen-types', {
-        cwd: ROOT_DIR,
-        stdio: 'inherit',
-      });
-      console.log('✅ TypeScript types regenerated\n');
-    } catch (error) {
-      console.error('⚠️  Type generation failed (run manually with: yarn nx run picsa-server:gen-types)');
-      console.error(error);
-    }
+    console.log(`\n✅ Seed export completed! Files written to ${SEED_DIR}`);
   }
 
   /**
@@ -106,13 +94,11 @@ class SupabaseSeedExport {
     batchSize: number,
     filter: Record<string, string | number | boolean> | undefined,
     omitColumns: string[],
-  ): Promise<{ rows: number; file: string }> {
+  ): Promise<{ rows: number; skipped: boolean }> {
     let offset = 0;
     const allRows: any[] = [];
 
-    console.log(
-      `📥 Fetching ${schema}.${table} (batch size: ${batchSize}${filter ? `, filter: ${JSON.stringify(filter)}` : ''})...`,
-    );
+    console.log(`📥 Fetching ${schema}.${table}...`);
 
     while (true) {
       let query = this.client.schema(schema).from(table).select('*');
@@ -128,6 +114,15 @@ class SupabaseSeedExport {
       const { data, error } = await query.range(offset, offset + batchSize - 1);
 
       if (error) {
+        // PostgREST returns "Invalid schema" when the schema is not exposed in
+        // the remote project's Data API settings - point at the fix directly.
+        if (error.message.includes('Invalid schema')) {
+          throw new Error(
+            `Query failed for ${schema}.${table}: schema "${schema}" is not exposed on remote. ` +
+              `Add it under Data API settings (Dashboard → Project Settings → API → Exposed schemas), ` +
+              `matching schemas in supabase/config.toml. Original error: ${error.message}`,
+          );
+        }
         throw new Error(`Query failed for ${schema}.${table}: ${error.message}`);
       }
 
@@ -142,6 +137,11 @@ class SupabaseSeedExport {
       if (allRows.length % (batchSize * 10) === 0) {
         console.log(`   ... fetched ${allRows.length} rows so far`);
       }
+    }
+
+    // Never write empty files - they break seed import and add repo noise
+    if (allRows.length === 0) {
+      return { rows: 0, skipped: true };
     }
 
     // Process rows: omit columns, stringify JSON objects/arrays
@@ -174,7 +174,7 @@ class SupabaseSeedExport {
     const filePath = resolve(SEED_DIR, fileName);
     await writeFile(filePath, csv, 'utf-8');
 
-    return { rows: allRows.length, file: filePath };
+    return { rows: allRows.length, skipped: false };
   }
 }
 

@@ -14,7 +14,7 @@ export interface ISeedDataConfiguration {
   batchSize?: number;
   /** Database schema (default: 'public') */
   schema?: keyof Database;
-  /** Optional filter query for subset exports (e.g., { country_code: 'zm', station_id: 'chipata_met' }) */
+  /** Optional column-value filter for subset exports (e.g., { country_code: 'zm' }) */
   filter?: Record<string, string | number | boolean>;
 }
 
@@ -101,11 +101,13 @@ export const SEED_DATA_CONFIGURATION: Record<IDBTableName, ISeedDataConfiguratio
     batchSize: 250,
     schema: 'budget',
   },
-  // Climate station data with filter for specific station
+  // Climate station data subset for a single station. station_id is a FK to the
+  // generated climate_stations.id (country_code || '/' || station_id), so the
+  // composite 'zm/chipata_met' value filters cleanly in a single query
   climate_station_data: {
     serverSync: true,
     batchSize: 50,
     schema: 'public',
-    filter: { country_code: 'zm', station_id: 'chipata_met' },
+    filter: { station_id: 'zm/chipata_met' },
   },
 };
