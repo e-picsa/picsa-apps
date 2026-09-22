@@ -36,6 +36,8 @@ const MIME_TYPES: Record<string, string> = {
   '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   '.csv': 'text/csv',
   '.txt': 'text/plain',
+  '.html': 'text/html',
+  '.htm': 'text/html',
   '.rtf': 'application/rtf',
   '.json': 'application/json',
   '.xml': 'application/xml',

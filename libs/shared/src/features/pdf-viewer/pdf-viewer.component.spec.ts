@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PdfViewerComponent } from './pdf-viewer.component';
 
@@ -8,7 +9,7 @@ describe('PdfViewerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PdfViewerComponent],
+      imports: [PdfViewerComponent, PicsaTranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PdfViewerComponent);

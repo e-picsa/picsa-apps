@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PdfViewerComponent } from '@picsa/shared/features';
+import { PdfViewerComponent } from '@picsa/shared/features/pdf-viewer';
 import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { RxDocument } from 'rxdb';
 
@@ -32,14 +32,17 @@ export class ForecastViewerComponent implements OnDestroy {
 
   public errorMessage = signal<string>('');
 
+  /** Current storage file being viewed */
+  private currentStorageFile: string | null = null;
+
   /** URI to forecast file data */
   private uri: string | null = null;
 
   /** Html forecasts will be parsed as SafeHtml for render in a div */
   public htmlForecastData = signal<SafeHtml | undefined>(undefined);
 
-  /** PDF forecasts will be linked as URI for render in the <picsa-pdf-viewer> component */
-  public pdfForecastData = signal<string | undefined>(undefined);
+  /** PDF forecasts will be linked as URI or Blob for render in the <picsa-pdf-viewer> component */
+  public pdfForecastData = signal<string | Blob | Uint8Array | undefined>(undefined);
 
   constructor() {
     effect(async () => {
@@ -61,16 +64,31 @@ export class ForecastViewerComponent implements OnDestroy {
   private clearForecastData() {
     this.pdfForecastData.set(undefined);
     this.htmlForecastData.set(undefined);
+    if (this.currentStorageFile) {
+      this.dbAttachmentService.revokeFileAttachmentURIs([this.currentStorageFile]);
+      this.currentStorageFile = null;
+    }
     if (this.uri) {
       URL.revokeObjectURL(this.uri);
       this.uri = null;
     }
   }
 
-  /** Retrieve forecast attachment URI and call content render */
+  /** Retrieve forecast attachment URI or Blob and call content render */
   private async openForecast(forecast: IViewerForecast) {
-    this.uri = await this.dbAttachmentService.getFileAttachmentURI(forecast._doc, forecast.storage_file);
+    this.currentStorageFile = forecast.storage_file;
     const fileType = forecast.storage_file.split('.').pop()?.toLowerCase();
+
+    // For PDFs on web, pass raw Blob directly to avoid blob URL fetch/revocation issues
+    if (fileType === 'pdf') {
+      const blob = await this.dbAttachmentService.getFileAttachmentBlob(forecast._doc, forecast.storage_file);
+      if (blob) {
+        this.pdfForecastData.set(blob);
+        return;
+      }
+    }
+
+    this.uri = await this.dbAttachmentService.getFileAttachmentURI(forecast._doc, forecast.storage_file);
     if (this.uri && fileType) {
       return this.renderForecastContent(this.uri, fileType as any);
     }

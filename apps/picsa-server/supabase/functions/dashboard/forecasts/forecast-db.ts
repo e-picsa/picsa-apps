@@ -1,21 +1,16 @@
-import { getServiceRoleClient } from '../_shared/client.ts';
-import { getJsonData } from '../_shared/request.ts';
-import { ErrorResponse } from '../_shared/response.ts';
-import { JSONResponse } from '../_shared/response.ts';
+import { getServiceRoleClient } from '../../_shared/client.ts';
+import { getJsonData } from '../../_shared/request.ts';
+import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 
 import type {
   climateApiPaths,
   IApiClimateForecast,
   IDBClimateForecastInsert,
   IForecastDBAPIResponse,
-} from './types.ts';
+} from '../types.ts';
 
 /**
- * Read the endpoint from env. Note, if running climate api in local docker container update `.env` to:
- * ```env
- * CLIMATE_API_ENDPOINT=http://host.docker.internal:8000
- * ```
- * https://github.com/orgs/supabase/discussions/9837
+ * External Climate API endpoint
  */
 export const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
 export const ALL_COUNTRY_CODES = ['mw', 'zm'];
@@ -25,16 +20,15 @@ import createClient from 'openapi-fetch';
 export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_ENDPOINT, mode: 'cors' });
 
 /**
- * Update cliamte forecast db rows
+ * Update climate forecast db rows from external API
  */
 export const forecastDB = async (req: Request) => {
-  // TODO - Improve validators and feedback
   let { country_code, query_prefix } = await getJsonData(req);
 
   // Retrieve single country if specified, default all
   const country_codes = country_code ? [country_code] : ALL_COUNTRY_CODES;
 
-  // Default query for documents stored in the current month,
+  // Default query for documents stored in the current month
   if (!query_prefix) {
     query_prefix = new Date().toISOString().replace(/-/, '').substring(0, 6);
   }

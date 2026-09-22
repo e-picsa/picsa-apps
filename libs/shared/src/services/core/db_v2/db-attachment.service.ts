@@ -84,6 +84,19 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   }
 
   /**
+   * Retrieve a doc attachment as a raw Blob (useful for web components that accept Blobs directly like ngx-extended-pdf-viewer)
+   * On native platforms this returns null since native uses on-disk file URIs instead of base64 in-memory data
+   */
+  public async getFileAttachmentBlob(doc: RxDocument<any>, filename: string): Promise<Blob | null> {
+    if (!filename) {
+      return null;
+    }
+    const attachment = await this.getAttachmentDoc(doc, filename);
+    if (!attachment || !attachment.data) return null;
+    return base64ToBlob(attachment.data, attachment.type);
+  }
+
+  /**
    * Release a file attachment URI when no longer required
    * @param attachmentNames specific resource attachmentNames to revoke
    * These will usually be the doc.filename property (if exists) or doc.id

@@ -1,5 +1,7 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
+import { isDevEnvironment, useProdClimateApi } from '../../_shared/env.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
+import { forecastFileMock } from '../forecasts/index.ts';
 import createClient from 'openapi-fetch';
 import type * as ClimateApi from '../../../types/climate-api.types.ts';
 
@@ -164,6 +166,12 @@ export const climate = async (req: Request) => {
 
       case 'forecast-file': {
         const { row } = payload;
+        if (isDevEnvironment() && !useProdClimateApi()) {
+          console.log('[Climate:forecast-file] Routing to local mock handler');
+          const res = await forecastFileMock(row);
+          return JSONResponse(res);
+        }
+
         const { country_code, id } = row;
         const filepath = id.replace(`${country_code}/`, '');
 
