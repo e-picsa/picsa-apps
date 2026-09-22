@@ -168,16 +168,25 @@ class SupabaseSeed {
         if (aPriority === bPriority) return a.length > b.length ? 1 : -1;
         return aPriority < bPriority ? 1 : -1;
       });
+
+    // Empty tables in reverse dependency order before seeding to satisfy foreign key constraints
+    await this.emptyDBTables(tableNames);
+
     const results: any[] = [];
-    console.log('Import Order: ', tableNames);
+    console.log('\nImport Order: ', tableNames);
     for (const tableName of tableNames) {
       const csvFileName = `${tableName}_rows.csv`;
       const csvPath = resolve(SEED_DIR, csvFileName);
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
-      const seedConfig = SEED_DATA_CONFIGURATION[tableName];
+      const seedConfig = SEED_DATA_CONFIGURATION[tableName] || {};
       const parsedRows = parseCSVRows(csvRows, seedConfig);
-      const { error, data, status, statusText } = await this.client.from(tableName).upsert(parsedRows).select('*');
+      const { schema = 'public' } = seedConfig;
+      const { error, data, status, statusText } = await this.client
+        .schema(schema)
+        .from(tableName)
+        .upsert(parsedRows)
+        .select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
         console.error({ status, statusText, error });
@@ -186,6 +195,52 @@ class SupabaseSeed {
       results.push({ table: tableName, rows: data.length });
     }
     console.table(results);
+  }
+
+  /**
+   * Empty all seed tables in reverse dependency order before seeding
+   * (child tables before parent tables to avoid foreign key constraint violations)
+   */
+  private async emptyDBTables(tableNames: string[]) {
+    console.log('\nEmptying DB tables...');
+    const reverseOrder = [...tableNames].reverse();
+    for (const tableName of reverseOrder) {
+      const count = await this.emptyTable(tableName);
+      console.log(`[${tableName}] emptied (${count} rows removed)`);
+    }
+  }
+
+  /**
+   * Empty all rows from a table before seeding.
+   * PostgREST requires a WHERE clause due to Postgres safeupdate. We dynamically read
+   * the first column from the seed CSV to build a non-null filter without manual mapping.
+   */
+  private async emptyTable(tableName: string): Promise<number> {
+    const seedConfig = SEED_DATA_CONFIGURATION[tableName] || {};
+    const { schema = 'public' } = seedConfig;
+    const firstCol = this.getFirstCsvColumn(tableName);
+
+    const { error, count } = await this.client
+      .schema(schema)
+      .from(tableName)
+      .delete({ count: 'exact' })
+      .not(firstCol, 'is', null);
+
+    if (error) {
+      console.error(`[${tableName}] failed to empty table`, error);
+      process.exit(1);
+    }
+    return count ?? 0;
+  }
+
+  /**
+   * Extract the first column from a seed CSV to use as a non-null filter column
+   */
+  private getFirstCsvColumn(tableName: string): string {
+    const csvFileName = `${tableName}_rows.csv`;
+    const csvPath = resolve(SEED_DIR, csvFileName);
+    const firstLine = readFileSync(csvPath, { encoding: 'utf8' }).split(/\r?\n/)[0];
+    return firstLine.split(',')[0].trim().replace(/^"|"$/g, '') || 'id';
   }
 }
 
@@ -204,6 +259,12 @@ function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
     for (const [key, value] of Object.entries<any>(row)) {
       if (typeof value === 'string' && ['{', '['].includes(value[0])) {
         row[key] = JSON.parse(value);
+      }
+    }
+    // Apply column mappings / overrides if configured
+    if (config.columnMappings) {
+      for (const [column, mapping] of Object.entries(config.columnMappings)) {
+        row[column] = typeof mapping === 'function' ? mapping(row[column], row) : mapping;
       }
     }
     return row;
