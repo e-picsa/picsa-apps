@@ -150,17 +150,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
 - **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions. For small function sets (~5 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
 
-### Colocated Edge Function Mocks (`index.mock.ts`) & Dev/Prod Switching
+### Sample Forecast Data & Local Development Fixtures
 
-- **No Standalone Mock Functions**: Never create standalone mock edge functions (e.g. `supabase/functions/mock-climate-api/index.ts`). Because `supabase functions deploy` deploys every top-level folder containing `index.ts`, standalone mocks get inadvertently deployed to production Supabase Cloud.
-- **Colocated Mock Pattern**: Colocate mock handlers inside the owning function module (e.g. `dashboard/forecasts/index.mock.ts`) next to `index.ts`. The module `index.ts` acts as a clean router switch:
-  ```ts
-  if (isDevEnvironment() && !useProdClimateApi()) {
-    return forecastDBMock(req);
-  }
-  return forecastDBProd(req);
-  ```
-- **Environment Detection & Override**: `_shared/env.ts` provides `isDevEnvironment()` (checks `ENVIRONMENT` and local Supabase URL) and `useProdClimateApi()` (checks `USE_PROD_CLIMATE_API === 'true'`). This avoids inline `if` conditions in production handlers while providing a clear debugging pathway to test against live production APIs locally.
+- **Avoid Backend Mock Over-Engineering**: Do not create complex programmatic PDF compilers or mock router branches in Supabase Edge Functions.
+- **Static Storage Fixtures**: Fixed sample assets (such as `sample_daily.pdf`, `sample_seasonal.pdf`, `sample_weekly.html`) reside in `supabase/data/storage/global/forecasts/` and are seeded into the local Supabase `global` bucket via `yarn nx run picsa-server:seed`.
+- **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
+- **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
 
 ---
 

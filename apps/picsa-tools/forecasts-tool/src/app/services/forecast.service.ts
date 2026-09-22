@@ -35,6 +35,10 @@ export class ForecastService extends PicsaAsyncService {
 
   public enabled = signal(false);
 
+  /** Set to true to bypass local stubs and test raw server data (?bypassStubs=true) */
+  public bypassStubs =
+    typeof window !== 'undefined' && new URLSearchParams(window.location?.search).get('bypassStubs') === 'true';
+
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
@@ -183,8 +187,14 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            const serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
+            let serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
             if (currentLoad.cancelled) return;
+
+            // When testing locally / offline, if server returns no records and no cached records exist,
+            // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true
+            if (serverForecasts.length === 0 && cached.length === 0 && !this.bypassStubs) {
+              serverForecasts = this.getStubForecasts(country_code, config.type);
+            }
 
             if (serverForecasts.length > 0) {
               const { success, error } = await this.saveForecasts(serverForecasts);
@@ -311,5 +321,38 @@ export class ForecastService extends PicsaAsyncService {
 
   private async saveForecasts(forecasts: IForecast[]) {
     return await this.dbCollection.bulkUpsert(forecasts);
+  }
+
+  private getStubForecasts(country_code: CountryCodeLegacy, forecast_type: ForecastType): IForecast[] {
+    const today = new Date().toISOString().slice(0, 10);
+    if (forecast_type === 'daily') {
+      return [
+        {
+          id: `stub/daily/${country_code}`,
+          country_code,
+          forecast_type: 'daily',
+          label: `Daily Weather Forecast (${today})`,
+          language_code: 'en',
+          storage_file: 'global/forecasts/sample_daily.pdf',
+          mimetype: 'application/pdf',
+          downscaled_location: null,
+        },
+      ];
+    }
+    if (forecast_type === 'weekly') {
+      return [
+        {
+          id: `stub/weekly/${country_code}`,
+          country_code,
+          forecast_type: 'weekly',
+          label: `7-Day Weather Outlook (${today})`,
+          language_code: 'en',
+          storage_file: 'global/forecasts/sample_weekly.html',
+          mimetype: 'text/html',
+          downscaled_location: null,
+        },
+      ];
+    }
+    return [];
   }
 }
