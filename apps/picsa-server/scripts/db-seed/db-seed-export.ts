@@ -80,7 +80,7 @@ class SupabaseSeedExport {
       results.map((r) => ({
         Table: r.table,
         Schema: r.schema,
-        Rows: r.skipped ? 'skipped (0 rows)' : r.rows,
+        Rows: r.skipped ? '0 (no output)' : r.rows,
       })),
     );
 
