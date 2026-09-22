@@ -6,5 +6,8 @@
     "types": ["node"],
     "importHelpers": false
   },
-  "files": ["scripts/db-seed/db-seed.ts"]
+  // Covers Node-run scripts. supabase/functions is intentionally excluded -
+  // edge functions target the Deno runtime (remote imports, Deno globals)
+  // and are verified via `deno check` / test-functions instead.
+  "include": ["scripts/**/*.ts"]
 }

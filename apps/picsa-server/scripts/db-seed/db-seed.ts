@@ -8,7 +8,7 @@ import { globSync } from 'glob';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
 
-import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+import { SEED_DATA_CONFIGURATION, SEED_METADATA_COLUMNS, ISeedDataConfiguration } from './db-seed.config';
 import { writeFile } from 'fs/promises';
 
 const ROOT_DIR = resolve(__dirname, '../../../../');
@@ -195,7 +195,8 @@ if (require.main === module) {
 
 /** Iterate over parsed csv rows and convert parse any stringified json content */
 function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
-  const { omitColumns = [] } = config;
+  // Metadata columns are always stripped (DB defaults repopulate on upsert)
+  const omitColumns = new Set([...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])]);
   return rows.map((row) => {
     for (const column of omitColumns) {
       delete row[column];

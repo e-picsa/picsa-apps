@@ -109,6 +109,14 @@
         "command": "yarn tsx scripts/backup/backup-storage.ts",
         "cwd": "apps/picsa-server"
       }
+    },
+    "seed-export": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/supabase/data", "{projectRoot}/.env.server"],
+      "options": {
+        "command": "yarn tsx scripts/db-seed/db-seed-export.ts",
+        "cwd": "apps/picsa-server"
+      }
     }
   }
 }
