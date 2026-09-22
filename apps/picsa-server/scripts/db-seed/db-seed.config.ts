@@ -13,11 +13,19 @@ export interface ISeedDataConfiguration {
   /** Database schema (default: 'public') */
   schema?: keyof Database;
   /**
+   * Column(s) to sort by on export for deterministic CSV output (default: 'id').
+   * Sorting happens server-side so it works even when the column itself is omitted.
+   */
+  orderBy?: string | string[];
+  /**
    * Optional column-value filter for subset exports (e.g., { country_code: 'zm' }).
    * Array values match any entry (e.g., { station_id: ['zm/chipata_met', 'zm/petauke_met'] })
    */
   filter?: Record<string, string | number | boolean | (string | number | boolean)[]>;
 }
+
+/** Metadata columns stripped from every export (DB defaults repopulate on import) */
+export const SEED_METADATA_COLUMNS = ['created_at', 'updated_at'];
 
 /** Representative seed countries shared across country-scoped tables */
 export const SEED_COUNTRIES = ['zm', 'mw', 'zw'];
@@ -37,15 +45,15 @@ export const SEED_STATION_IDS = [
   'zw/plumtree',
 ];
 
-type IDBTableName = string; // Allow any table name including cross-schema
-
 /**
  * Single source of truth for seed tables, used for both local import and
- * remote export. Presence in this config means "sync from remote on export" -
- * local-first tables (deployments, user_profiles, user_roles) are intentionally
- * omitted so export never overwrites them (they are still seeded from local CSVs).
+ * remote export. Table names allow any schema (e.g. geo.countries resolve via
+ * the per-entry `schema` field). Presence in this config means "sync from
+ * remote on export" - local-first tables (deployments, user_profiles,
+ * user_roles) are intentionally omitted so export never overwrites them
+ * (they are still seeded from local CSVs).
  */
-export const SEED_DATA_CONFIGURATION: Record<IDBTableName, ISeedDataConfiguration> = {
+export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   // Public schema tables
   climate_stations: {
     omitColumns: ['id'],
@@ -55,6 +63,7 @@ export const SEED_DATA_CONFIGURATION: Record<IDBTableName, ISeedDataConfiguratio
   climate_station_data: {
     batchSize: 50,
     schema: 'public',
+    orderBy: 'station_id',
     filter: { station_id: SEED_STATION_IDS },
   },
   crop_data: {
@@ -82,15 +91,18 @@ export const SEED_DATA_CONFIGURATION: Record<IDBTableName, ISeedDataConfiguratio
   translations: {
     schema: 'public',
   },
-  // Geo schema tables
+  // Geo schema tables (no single 'id' column - sort by primary key instead)
   countries: {
     schema: 'geo',
+    orderBy: 'code',
   },
   locales: {
     schema: 'geo',
+    orderBy: 'code',
   },
   boundaries: {
     schema: 'geo',
+    orderBy: ['country_code', 'admin_level'],
   },
   // Budget schema tables
   budgets: {

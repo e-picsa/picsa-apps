@@ -1,9 +1,9 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import Papa from 'papaparse';
-import { writeFile, mkdir } from 'fs/promises';
-import { resolve } from 'path';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
-import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+import { SEED_DATA_CONFIGURATION, SEED_METADATA_COLUMNS, ISeedDataConfiguration } from './db-seed.config';
 import { getExportSupabaseClient } from '../utils/supabase.utils';
 
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
@@ -36,7 +36,7 @@ class SupabaseSeedExport {
   public async run() {
     console.log('\n🚀 Starting seed data export from remote Supabase...\n');
 
-    // Get export client (remote, readonly anon key)
+    // Get export client (remote, secret key - pull-only usage, see class docs)
     this.client = getExportSupabaseClient();
 
     // Ensure seed directory exists
@@ -58,10 +58,12 @@ class SupabaseSeedExport {
       const schema = config.schema || 'public';
       const batchSize = config.batchSize ?? 250;
       const filter = config.filter;
-      const omitColumns = config.omitColumns ?? [];
+      const orderBy = config.orderBy ?? 'id';
+      // Metadata columns are always stripped (DB defaults repopulate on import)
+      const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
 
       try {
-        const { rows, skipped } = await this.exportTable(table, schema, batchSize, filter, omitColumns);
+        const { rows, skipped } = await this.exportTable(table, schema, batchSize, filter, orderBy, omitColumns);
         results.push({ table, rows, schema, skipped });
         if (skipped) {
           console.log(`⚠️  Skipped ${schema}.${table}: 0 rows returned, no file written\n`);
@@ -95,15 +97,42 @@ class SupabaseSeedExport {
     schema: string,
     batchSize: number,
     filter: ISeedDataConfiguration['filter'],
+    orderBy: string | string[],
     omitColumns: string[],
   ): Promise<{ rows: number; skipped: boolean }> {
+    console.log(`📥 Fetching ${schema}.${table}...`);
+
+    const allRows = await this.fetchAllRows(table, schema, batchSize, filter, orderBy);
+
+    // Never write empty files - they break seed import and add repo noise
+    if (allRows.length === 0) {
+      return { rows: 0, skipped: true };
+    }
+
+    await this.writeTableCsv(table, allRows, omitColumns);
+
+    return { rows: allRows.length, skipped: false };
+  }
+
+  /** Fetch every row via chunked pagination with deterministic ordering */
+  private async fetchAllRows(
+    table: string,
+    schema: string,
+    batchSize: number,
+    filter: ISeedDataConfiguration['filter'],
+    orderBy: string | string[],
+  ): Promise<any[]> {
     let offset = 0;
     const allRows: any[] = [];
 
-    console.log(`📥 Fetching ${schema}.${table}...`);
-
     while (true) {
       let query = this.client.schema(schema).from(table).select('*');
+
+      // Deterministic row order for stable CSV diffs. Ordering is applied
+      // server-side so sort columns work even when omitted from output.
+      for (const column of Array.isArray(orderBy) ? orderBy : [orderBy]) {
+        query = query.order(column);
+      }
 
       // Apply filters if specified (arrays match any entry via IN)
       if (filter) {
@@ -116,16 +145,7 @@ class SupabaseSeedExport {
       const { data, error } = await query.range(offset, offset + batchSize - 1);
 
       if (error) {
-        // PostgREST returns "Invalid schema" when the schema is not exposed in
-        // the remote project's Data API settings - point at the fix directly.
-        if (error.message.includes('Invalid schema')) {
-          throw new Error(
-            `Query failed for ${schema}.${table}: schema "${schema}" is not exposed on remote. ` +
-              `Add it under Data API settings (Dashboard → Project Settings → API → Exposed schemas), ` +
-              `matching schemas in supabase/config.toml. Original error: ${error.message}`,
-          );
-        }
-        throw new Error(`Query failed for ${schema}.${table}: ${error.message}`);
+        throw buildExportError(schema, table, error);
       }
 
       if (!data || data.length === 0) {
@@ -141,13 +161,13 @@ class SupabaseSeedExport {
       }
     }
 
-    // Never write empty files - they break seed import and add repo noise
-    if (allRows.length === 0) {
-      return { rows: 0, skipped: true };
-    }
+    return allRows;
+  }
 
+  /** Strip omitted columns, stringify JSON values and write the CSV file */
+  private async writeTableCsv(table: string, rows: any[], omitColumns: string[]): Promise<void> {
     // Process rows: omit columns, stringify JSON objects/arrays
-    const processedRows = allRows.map((row) => {
+    const processedRows = rows.map((row) => {
       const processed: Record<string, any> = { ...row };
 
       // Remove omitted columns
@@ -175,9 +195,21 @@ class SupabaseSeedExport {
     const fileName = `${table}_rows.csv`;
     const filePath = resolve(SEED_DIR, fileName);
     await writeFile(filePath, csv, 'utf-8');
-
-    return { rows: allRows.length, skipped: false };
   }
+}
+
+/** Map PostgREST errors to actionable messages (e.g. unexposed remote schemas) */
+function buildExportError(schema: string, table: string, error: { message: string }): Error {
+  // PostgREST returns "Invalid schema" when the schema is not exposed in
+  // the remote project's Data API settings - point at the fix directly.
+  if (error.message.includes('Invalid schema')) {
+    return new Error(
+      `Query failed for ${schema}.${table}: schema "${schema}" is not exposed on remote. ` +
+        `Add it under Data API settings (Dashboard → Project Settings → API → Exposed schemas), ` +
+        `matching schemas in supabase/config.toml. Original error: ${error.message}`,
+    );
+  }
+  return new Error(`Query failed for ${schema}.${table}: ${error.message}`);
 }
 
 if (require.main === module) {

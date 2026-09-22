@@ -2,7 +2,7 @@ import execa from 'execa';
 import fs from 'fs';
 import path from 'path';
 
-import { checkSupabaseLinkStatus, getAppSchemas, getExcludedTables, ILinkStatus } from '../utils/supabase.utils';
+import { checkSupabaseLinkStatus, getAppSchemas, getExcludedTables } from '../utils/supabase.utils';
 
 const backupDir = path.resolve(__dirname, './backups');
 const serverRootDir = path.resolve(__dirname, '../..');

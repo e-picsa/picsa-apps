@@ -36,6 +36,9 @@ yarn nx run picsa-server:seed-export
 - Shared `SEED_COUNTRIES` / `SEED_STATION_IDS` consts keep station-linked
   tables (`climate_stations`, `climate_station_data`, `crop_data_downscaled`)
   scoped to the same representative locations.
+- `created_at` / `updated_at` are stripped from every export (DB defaults
+  repopulate on import). Tables sort by `id` for stable diffs — override via
+  `orderBy` in config where no `id` column exists (e.g. geo tables).
 - `climate_station_data` exports a filtered subset only (see `filter` in config).
 - A `0 rows` export with the secret key means the remote table is genuinely
   empty (the secret key bypasses RLS, so this is never an access issue).
