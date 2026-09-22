@@ -6,6 +6,10 @@ import type { IStationCapabilities } from '@picsa/models';
  * Do NOT edit manually.
  */
 export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
+  beitbridge: {
+    schemaVersion: 1,
+    years: [],
+  },
   buffalo_range: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
@@ -13,6 +17,18 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1965, 2024],
     totalMissingYears: 9,
     annual: ['rainfall', 'start', 'end', 'length'],
+  },
+  buhera: {
+    schemaVersion: 1,
+    years: [],
+  },
+  chipinge: {
+    schemaVersion: 1,
+    years: [],
+  },
+  chisengu: {
+    schemaVersion: 1,
+    years: [],
   },
   chisumbanje: {
     schemaVersion: 1,
@@ -22,6 +38,10 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalMissingYears: 11,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
+  makoholi: {
+    schemaVersion: 1,
+    years: [],
+  },
   masvingo: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
@@ -29,6 +49,10 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1951, 2024],
     totalMissingYears: 6,
     annual: ['rainfall', 'start', 'end', 'length'],
+  },
+  matopos: {
+    schemaVersion: 1,
+    years: [],
   },
   mt_darwin: {
     schemaVersion: 1,
@@ -38,6 +62,10 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalMissingYears: 2,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
+  nyanga: {
+    schemaVersion: 1,
+    years: [],
+  },
   plumtree: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
@@ -45,5 +73,21 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     years: [1963, 2022],
     totalMissingYears: 3,
     annual: ['rainfall', 'start', 'end', 'length'],
+  },
+  rupike: {
+    schemaVersion: 1,
+    years: [],
+  },
+  rusape: {
+    schemaVersion: 1,
+    years: [],
+  },
+  west_nicholson: {
+    schemaVersion: 1,
+    years: [],
+  },
+  zaka: {
+    schemaVersion: 1,
+    years: [],
   },
 };

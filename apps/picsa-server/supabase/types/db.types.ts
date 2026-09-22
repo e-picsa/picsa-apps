@@ -212,6 +212,9 @@ export type Database = {
           app_version: string | null;
           country_code: CountryCodeLegacy | null;
           created_at: string;
+          fcm_token: string | null;
+          fcm_token_updated_at: string | null;
+          is_internal_tester: boolean;
           label: string | null;
           language_code: string | null;
           platform: string | null;
@@ -223,6 +226,9 @@ export type Database = {
           app_version?: string | null;
           country_code?: CountryCodeLegacy | null;
           created_at?: string;
+          fcm_token?: string | null;
+          fcm_token_updated_at?: string | null;
+          is_internal_tester?: boolean;
           label?: string | null;
           language_code?: string | null;
           platform?: string | null;
@@ -234,6 +240,9 @@ export type Database = {
           app_version?: string | null;
           country_code?: CountryCodeLegacy | null;
           created_at?: string;
+          fcm_token?: string | null;
+          fcm_token_updated_at?: string | null;
+          is_internal_tester?: boolean;
           label?: string | null;
           language_code?: string | null;
           platform?: string | null;
@@ -316,6 +325,7 @@ export type Database = {
           id: string | null;
           latitude: number | null;
           longitude: number | null;
+          met_station_id: string | null;
           station_id: string;
           station_name: string | null;
         };
@@ -326,6 +336,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          met_station_id?: string | null;
           station_id: string;
           station_name?: string | null;
         };
@@ -336,6 +347,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          met_station_id?: string | null;
           station_id?: string;
           station_name?: string | null;
         };

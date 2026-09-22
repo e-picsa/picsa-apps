@@ -1,0 +1,27 @@
+.feedback-fab {
+  position: fixed;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 2px 4px -1px rgb(0 0 0 / 30%),
+    0 4px 8px 0 rgb(0 0 0 / 20%),
+    0 1px 14px 0 rgb(0 0 0 / 15%);
+
+  &:hover {
+    box-shadow:
+      0 4px 6px -2px rgb(0 0 0 / 35%),
+      0 6px 10px 0 rgb(0 0 0 / 25%),
+      0 2px 18px 0 rgb(0 0 0 / 20%);
+  }
+
+  ::ng-deep .mdc-button__label {
+    display: contents;
+  }
+
+  ::ng-deep mat-icon {
+    line-height: 1;
+  }
+}

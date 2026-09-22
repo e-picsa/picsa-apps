@@ -8,7 +8,7 @@
  * 4. Context token limits and LiteLLM model support
  *
  * Usage:
- *   node tools/workflows/check-pr-agent-updates.mjs [--dry-run] [--output-github] [--prefer-family=luna|minimax]
+ *   node .github/workflows/pr-agent-update-check.mjs [--dry-run] [--output-github] [--prefer-family=luna|minimax]
  */
 
 import fs from 'node:fs';
@@ -27,9 +27,7 @@ const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
 const isGitHubOutput = args.includes('--output-github');
 const preferFamilyArg =
-  args.find((a) => a.startsWith('--prefer-family='))?.split('=')[1] ||
-  process.env.PREFER_FAMILY ||
-  '';
+  args.find((a) => a.startsWith('--prefer-family='))?.split('=')[1] || process.env.PREFER_FAMILY || '';
 
 const ALLOWED_HOSTS = new Set(['api.github.com', 'openrouter.ai', 'raw.githubusercontent.com']);
 
@@ -136,7 +134,7 @@ async function getOpenRouterCatalog() {
 async function getLiteLlmModelCatalog() {
   try {
     return await fetchJson(
-      'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json'
+      'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json',
     );
   } catch (err) {
     console.warn('Warning: Could not fetch LiteLLM catalog:', err.message);
@@ -151,11 +149,7 @@ function isModelRecognizedInLiteLlm(modelKey, litellmCatalog) {
   if (!litellmCatalog) return true;
   const lower = modelKey.toLowerCase();
   const withoutProvider = lower.replace(/^(openrouter|gemini)\//, '');
-  return Boolean(
-    litellmCatalog[lower] ||
-    litellmCatalog[withoutProvider] ||
-    litellmCatalog[modelKey]
-  );
+  return Boolean(litellmCatalog[lower] || litellmCatalog[withoutProvider] || litellmCatalog[modelKey]);
 }
 
 /**
@@ -164,13 +158,12 @@ function isModelRecognizedInLiteLlm(modelKey, litellmCatalog) {
 function findLatestGeminiFlash(openRouterModels, litellmCatalog) {
   const candidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    const isFlash = (
+    const isFlash =
       id.startsWith('google/gemini-') &&
       id.includes('flash') &&
       !id.includes('image') &&
       !id.includes('batch') &&
-      !id.includes('preview')
-    );
+      !id.includes('preview');
     if (!isFlash) return false;
 
     // Filter out models unrecognized by LiteLLM
@@ -198,13 +191,12 @@ function findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog) 
   // 1. Luna candidates
   const lunaCandidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    const isLuna = (
+    const isLuna =
       id.includes('luna') &&
       !id.includes('batch') &&
       !id.includes('pro') &&
       !id.includes('8b') &&
-      (m.context_length || 0) >= 128000
-    );
+      (m.context_length || 0) >= 128000;
     if (!isLuna) return false;
     return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
   });
@@ -217,12 +209,11 @@ function findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog) 
   // 2. MiniMax candidates
   const minimaxCandidates = openRouterModels.filter((m) => {
     const id = m.id.toLowerCase();
-    const isMinimax = (
+    const isMinimax =
       id.startsWith('minimax/minimax-') &&
       !id.includes('batch') &&
       !id.includes('her') &&
-      (m.context_length || 0) >= 128000
-    );
+      (m.context_length || 0) >= 128000;
     if (!isMinimax) return false;
     return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
   });
@@ -347,10 +338,7 @@ async function main() {
   }
 
   // Calculate lowest common context tokens
-  const contextWindows = [
-    latestGeminiFlash.context_length || 1048576,
-    lowCostModel.context_length || 1048576,
-  ];
+  const contextWindows = [latestGeminiFlash.context_length || 1048576, lowCostModel.context_length || 1048576];
   const proposedTokens = Math.min(...contextWindows);
 
   console.log(`\nProposed Primary Model:  ${sanitizeLog(proposedPrimaryModel)}`);
@@ -368,14 +356,16 @@ async function main() {
   const changesList = [];
   if (actionChanged) {
     changesList.push(
-      `- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`
+      `- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`,
     );
   }
   if (modelChanged) {
     changesList.push(`- **Primary Model**: \`${currentModel}\` → \`${proposedPrimaryModel}\``);
   }
   if (fallbacksChanged) {
-    changesList.push(`- **Fallback Models**: \`${JSON.stringify(currentFallbacks)}\` → \`${JSON.stringify(proposedFallbacks)}\``);
+    changesList.push(
+      `- **Fallback Models**: \`${JSON.stringify(currentFallbacks)}\` → \`${JSON.stringify(proposedFallbacks)}\``,
+    );
   }
   if (tokensChanged) {
     changesList.push(`- **Max Context Tokens**: \`${currentTokens}\` → \`${proposedTokens}\``);
@@ -397,7 +387,7 @@ async function main() {
   if (actionChanged && actionMatch) {
     newWorkflowContent = newWorkflowContent.replace(
       actionRegex,
-      `uses: the-pr-agent/pr-agent@${latestRelease.sha} #${latestRelease.tag}`
+      `uses: the-pr-agent/pr-agent@${latestRelease.sha} #${latestRelease.tag}`,
     );
   }
 
@@ -413,12 +403,9 @@ async function main() {
   if (tokensChanged && tokensMatch) {
     newConfigContent = newConfigContent.replace(
       /custom_model_max_tokens\s*=\s*\d+/,
-      `custom_model_max_tokens = ${proposedTokens}`
+      `custom_model_max_tokens = ${proposedTokens}`,
     );
-    newConfigContent = newConfigContent.replace(
-      /max_model_tokens\s*=\s*\d+/,
-      `max_model_tokens = ${proposedTokens}`
-    );
+    newConfigContent = newConfigContent.replace(/max_model_tokens\s*=\s*\d+/, `max_model_tokens = ${proposedTokens}`);
   }
 
   if (!isDryRun) {
@@ -453,7 +440,7 @@ ${changesList.join('\n')}
 | **Fallback 2 (Mirror)** \`${proposedGeminiMirror}\` | ${latestGeminiFlash.context_length?.toLocaleString()} tokens | $${Number(latestGeminiFlash.pricing?.prompt || 0) * 1_000_000} / 1M | $${Number(latestGeminiFlash.pricing?.completion || 0) * 1_000_000} / 1M |
 
 ---
-*Auto-generated by \`tools/workflows/check-pr-agent-updates.mjs\`*
+*Auto-generated by \`.github/workflows/pr-agent-update-check.mjs\`*
 `;
 
   if (isGitHubOutput) {
@@ -470,6 +457,6 @@ ${changesList.join('\n')}
 }
 
 main().catch((err) => {
-  console.error('Error running check-pr-agent-updates:', err);
+  console.error('Error running pr-agent-update-check.mjs:', err);
   process.exit(1);
 });

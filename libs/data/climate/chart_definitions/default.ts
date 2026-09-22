@@ -3,12 +3,18 @@ import { deepClone } from '@picsa/utils';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import merge from 'deepmerge';
 
-import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
+import {
+  LINE_TOOL_COLORS,
+  LINE_TOOL_OPTIONS,
+  PROBABILITY_TOOL_OPTIONS,
+  TRENDLINE_TOOL_OPTIONS,
+} from '../tool_definitions';
 
 const DEFAULT_TOOLS: IChartTools = {
   line: LINE_TOOL_OPTIONS,
   probability: PROBABILITY_TOOL_OPTIONS,
   terciles: { enabled: true },
+  trendline: TRENDLINE_TOOL_OPTIONS,
   el_nino: { enabled: true },
   la_nina: { enabled: true },
 };
@@ -155,12 +161,12 @@ const definitions: IChartDefinitions = {
     name: translateMarker('Minimum Temperatures'),
     shortname: translateMarker('Min Temps'),
     image: 'assets/climate-icons/temp_min.svg',
-    keys: ['min_tmin', 'mean_tmin'],
+    keys: ['mean_tmin', 'min_tmin'],
     data_labels: {
       min_tmin: translateMarker('Lowest minimum daily temp'),
       mean_tmin: translateMarker('Mean minimum daily temp'),
     },
-    colors: ['#005b85', '#42c3ff'],
+    colors: ['#42c3ff', '#005b85'],
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
@@ -184,18 +190,20 @@ const definitions: IChartDefinitions = {
     definitionThreeMonth: translateMarker(
       'The lowest daily minimum and mean daily minimum temperatures recorded across the selected 3-month period in each year',
     ),
+    timespanRange: 'full',
   },
   temp_max: {
     _id: 'temp_max',
     name: translateMarker('Maximum Temperatures'),
     shortname: translateMarker('Max Temps'),
     image: 'assets/climate-icons/temp_max.svg',
-    keys: ['mean_tmax', 'max_tmax'],
+    keys: ['max_tmax', 'mean_tmax'],
     data_labels: {
       mean_tmax: translateMarker('Mean maximum daily temp'),
       max_tmax: translateMarker('Highest maximum daily temp'),
     },
-    colors: ['#f76e6e', '#850000'],
+    colors: ['#850000', '#f76e6e'],
+    viewSelectColor: '#f76e6e',
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
     xLabel: '',
@@ -219,6 +227,7 @@ const definitions: IChartDefinitions = {
     definitionThreeMonth: translateMarker(
       'The mean daily maximum and highest daily maximum temperatures recorded across the selected 3-month period in each year',
     ),
+    timespanRange: 'full',
   },
 };
 

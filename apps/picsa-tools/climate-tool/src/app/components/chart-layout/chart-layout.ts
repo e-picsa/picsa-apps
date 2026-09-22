@@ -47,7 +47,3 @@ export class ClimateChartLayoutComponent implements AfterViewInit {
     }
   }
 }
-
-/*****************************************************************************
- *   Defaults and Interfaces
- ****************************************************************************/

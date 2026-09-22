@@ -8,17 +8,30 @@
 }
 
 .timespan-mode-toggle {
+  box-sizing: border-box !important;
   width: 100%;
   display: flex;
   border-radius: 6px;
   overflow: hidden;
+
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box !important;
+  }
 
   ::ng-deep {
     .mat-pseudo-checkbox {
       display: none !important;
     }
 
+    .mat-button-toggle-group {
+      box-sizing: border-box !important;
+    }
+
     .mat-button-toggle {
+      box-sizing: border-box !important;
       flex: 1;
       text-align: center;
       font-size: 0.85rem;
