@@ -82,6 +82,9 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   deployments: {
     priority: 1,
   },
+  forecasts: {
+    filter: { forecast_type: ['seasonal', 'downscaled'] },
+  },
   resource_collections: {
     columnMappings: {
       owner: SEED_ADMIN_USER_ID,
