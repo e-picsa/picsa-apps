@@ -275,6 +275,32 @@ describe('feedback admin (integration)', () => {
     }
   });
 
+  it('list filters by id and returns empty for unknown id', async () => {
+    // Fetch an existing row's id via an unfiltered list
+    const listReq = buildRequest('/dashboard/feedback/list', {});
+    const listRes = await feedback(listReq);
+    assertEquals(listRes.status, 200);
+    const rows = await listRes.json();
+    assertEquals(rows.length >= 1, true);
+    const existingId = rows[0].id;
+
+    // Filter by that id — should return exactly 1 row with matching id
+    const req = buildRequest('/dashboard/feedback/list', { id: existingId });
+    const res = await feedback(req);
+    assertEquals(res.status, 200);
+    const body = await res.json();
+    assertEquals(body.length, 1);
+    assertEquals(body[0].id, existingId);
+
+    // Filter by a random uuid that doesn't exist — should return empty array
+    const randomId = crypto.randomUUID();
+    const req2 = buildRequest('/dashboard/feedback/list', { id: randomId });
+    const res2 = await feedback(req2);
+    assertEquals(res2.status, 200);
+    const body2 = await res2.json();
+    assertEquals(body2.length, 0);
+  });
+
   it('update changes status', async () => {
     const id = testIds[0];
     const req = buildRequest('/dashboard/feedback/update', {
@@ -348,6 +374,6 @@ describe('feedback admin (integration)', () => {
     const body = await res.json();
     assertEquals(typeof body.signed_url, 'string');
     assertStringIncludes(body.signed_url, 'feedback');
-    assertEquals(body.expires_in, 60);
+    assertEquals(body.expires_in, 300);
   });
 });
