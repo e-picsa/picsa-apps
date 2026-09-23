@@ -52,19 +52,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
 - In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
 
-### PDF.js / `ngx-extended-pdf-viewer` PDF Generation & Blob URL Lifecycles
-
-- **Strict PDF Specification Enforcement**: PDF.js strictly validates cross-reference (`xref`) tables and object stream lengths. Unlike lenient desktop viewers, PDF.js throws `Bad (uncompressed) XRef entry: <ref>` (e.g., `Bad (uncompressed) XRef entry: 4R`) during page rendering if object byte offsets in `xref` don't point to the exact byte offset where `<N> 0 obj` begins, or if stream byte lengths are off by even 1 byte.
-- **Exact Syntax Rules**:
-  1. Each `xref` table entry line must be exactly 20 bytes long: 10-digit offset, 1 space, 5-digit generation, 1 space, `n`/`f`, 1 space, and `\n` (e.g. `0000000241 00000 n \n`).
-  2. `<< /Length ... >>` in object stream dictionaries must strictly match the byte count of the stream data between `stream\n` and `\nendstream`.
-  3. `startxref` must declare the exact byte offset where `xref\n` begins.
-  4. Never hand-craft raw PDF strings with hardcoded offset estimates. Compute offsets programmatically using `new TextEncoder().encode(...).length` across accumulated objects and headers so byte offsets never desynchronize when text changes.
-- **Direct `Blob` vs `blob:` Object URL Lifecycles in `ngx-extended-pdf-viewer`**:
-  - `ngx-extended-pdf-viewer` accepts `Blob | Uint8Array` directly in `[src]`.
-  - Passing a `blob:` URL string forces PDF.js to create a `PDFNetworkStream` that fetches the URL via XHR. If the object URL has been revoked (e.g., component cleanup or singleton service cache desync), the browser returns `net::ERR_FILE_NOT_FOUND` (status 0). Zone.js intercepts this and throws `Uncaught TypeError: Failed to construct 'Headers': Invalid name`, and PDF.js attempts to parse an aborted response stream, cascading into parser errors.
-  - Passing the raw `Blob` directly to `[src]` loads the document directly from memory (`LocalPdfManager`), eliminating network calls, HTTP header parsing, and blob URL revocation timing traps.
-
 ### TSX tsconfig-paths Resolution in Monorepos
 
 - When executing standalone TypeScript scripts using `node ./node_modules/tsx/dist/cli.mjs` from the repository root, pass `--tsconfig tsconfig.base.json` so that path aliases defined in the base configuration (`@picsa/models`, `@picsa/utils`) resolve correctly at runtime.

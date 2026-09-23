@@ -2,6 +2,7 @@ import { effect, inject, Injectable, signal, WritableSignal } from '@angular/cor
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import { ENVIRONMENT } from '@picsa/environments';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
@@ -35,9 +36,9 @@ export class ForecastService extends PicsaAsyncService {
 
   public enabled = signal(false);
 
-  /** Set to true to bypass local stubs and test raw server data (?bypassStubs=true) */
+  /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
   public bypassStubs =
-    typeof window !== 'undefined' && new URLSearchParams(window.location?.search).get('bypassStubs') === 'true';
+    ENVIRONMENT.production && new URLSearchParams(window?.location?.search).get('bypassStubs') === 'true';
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
@@ -195,7 +196,7 @@ export class ForecastService extends PicsaAsyncService {
             if (currentLoad.cancelled) return;
 
             // When testing locally / offline, if server returns no records and no cached records exist,
-            // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true
+            // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
             if (serverForecasts.length === 0 && cached.length === 0 && !this.bypassStubs) {
               serverForecasts = this.getStubForecasts(country_code, config.type);
             }
