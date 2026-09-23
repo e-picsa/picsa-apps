@@ -58,6 +58,15 @@ header[data-style='inverted'] {
   z-index: 1;
   background: inherit;
 }
+
+.notification-bell-btn {
+  color: inherit !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // Plain text titles overlay the full header width (minus side guards) so they
 // stay viewport-centered even with asymmetric start/end content (e.g. menu
 // button with empty end slot on farmer/extension home). Portal content stays

@@ -1,0 +1,43 @@
+.notification-feed-container {
+  min-height: 80vh;
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.notification-card {
+  transition: all 0.2s ease-in-out;
+  border-left: 4px solid #cbd5e1;
+
+  &.is-unread {
+    border-left-color: var(--color-primary, #1e3a8a);
+    background-color: #f8fafc;
+  }
+
+  &.is-high-priority {
+    border-left-color: #ef4444;
+  }
+
+  &:hover {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.channel-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary, #1e3a8a);
+  border-radius: 50%;
+  display: inline-block;
+}

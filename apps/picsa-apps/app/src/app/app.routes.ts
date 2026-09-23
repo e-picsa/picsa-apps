@@ -58,6 +58,27 @@ export const appRoutes: Routes = [
     title: 'PICSA',
   },
 
+  // Notification routes
+  {
+    path: 'notifications',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/notifications/feed/notification-feed.page').then((mod) => mod.NotificationFeedPageComponent),
+        title: 'Notifications',
+      },
+      {
+        path: 'preferences',
+        loadComponent: () =>
+          import('./pages/notifications/preferences/notification-preferences.page').then(
+            (mod) => mod.NotificationPreferencesPageComponent,
+          ),
+        title: 'Notification Preferences',
+      },
+    ],
+  },
+
   {
     path: 'privacy',
     loadComponent: () => import('./pages/privacy/privacy.component').then((mod) => mod.PrivacyComponent),

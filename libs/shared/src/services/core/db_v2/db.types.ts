@@ -7,6 +7,8 @@ const DB_COLLECTION_NAMES = [
   'budget_cards',
   'feedback_queue',
   'forecasts',
+  'notification_preferences',
+  'notifications',
   'options_tool',
   'photos',
   'resources_tool_collections',

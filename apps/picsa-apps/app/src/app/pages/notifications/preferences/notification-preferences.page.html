@@ -1,0 +1,92 @@
+<div class="notification-preferences-container max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+  <!-- Header Bar -->
+  <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Notification Preferences</h1>
+      <p class="text-sm text-gray-500">
+        Control how and when you receive advisories, forecasts, and app announcements.
+      </p>
+    </div>
+    <a matButton="outlined" routerLink="/notifications">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Feed
+    </a>
+  </div>
+
+  <!-- Device Push Notification Permission Card -->
+  <mat-card class="permission-card p-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <mat-icon
+          class="permission-icon text-3xl mt-0.5"
+          [class.text-green-600]="permissionStatus() === 'granted'"
+          [class.text-amber-500]="permissionStatus() === 'prompt' || !permissionStatus()"
+          [class.text-red-500]="permissionStatus() === 'denied'"
+        >
+          @if (permissionStatus() === 'granted') { check_circle } @else if (permissionStatus() === 'denied') { block }
+          @else { notifications_active }
+        </mat-icon>
+        <div>
+          <h2 class="text-base font-semibold text-gray-900">
+            System Notification Status:
+            <span
+              class="capitalize font-bold"
+              [class.text-green-600]="permissionStatus() === 'granted'"
+              [class.text-amber-600]="permissionStatus() === 'prompt' || !permissionStatus()"
+              [class.text-red-600]="permissionStatus() === 'denied'"
+            >
+              {{ permissionStatus() || 'Not requested' }}
+            </span>
+          </h2>
+          <p class="text-sm text-gray-600 mt-1">
+            @if (permissionStatus() === 'granted') { Push notifications are active on this device. } @else if
+            (permissionStatus() === 'denied') { Notifications are blocked in your browser or device settings. To receive
+            push alerts, please enable notifications in your system app settings. } @else { Enable push notifications to
+            receive critical time-sensitive alerts even when the app is closed. }
+          </p>
+        </div>
+      </div>
+
+      @if (permissionStatus() !== 'granted' && permissionStatus() !== 'denied') {
+      <button
+        matButton="filled"
+        color="primary"
+        class="whitespace-nowrap flex-shrink-0"
+        (click)="onRequestPermissions()"
+      >
+        Enable Push Notifications
+      </button>
+      }
+    </div>
+  </mat-card>
+
+  <!-- Notification Categories / Channels -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900 mb-3">Notification Channels</h2>
+    <p class="text-sm text-gray-500 mb-4">
+      Choose the categories of updates and advisories you want delivered to your feed.
+    </p>
+
+    <div class="space-y-3">
+      @for (config of channelConfigs; track config.key) {
+      <mat-card class="p-4">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-start gap-3">
+            <mat-icon class="text-gray-600 mt-1">{{ config.icon }}</mat-icon>
+            <div>
+              <h3 class="text-sm font-semibold text-gray-900">{{ config.title }}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">{{ config.description }}</p>
+            </div>
+          </div>
+
+          <mat-slide-toggle
+            [checked]="channels()[config.key]"
+            [aria-label]="config.title"
+            (change)="onToggleChannel(config.key, $event.checked)"
+          ></mat-slide-toggle>
+        </div>
+      </mat-card>
+      }
+    </div>
+  </div>
+</div>

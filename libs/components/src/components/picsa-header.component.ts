@@ -1,5 +1,6 @@
 import { PortalModule } from '@angular/cdk/portal';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Title } from '@angular/platform-browser';
@@ -8,9 +9,11 @@ import {
   DefaultTitleStrategy,
   NavigationEnd,
   Router,
+  RouterLink,
   RouterStateSnapshot,
 } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaNotificationFeedService } from '@picsa/shared/services/core/notifications';
 import { filter, map, Subject, takeUntil } from 'rxjs';
 
 import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';
@@ -42,6 +45,17 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
       </h1>
       <div class="end-content">
         <ng-template [cdkPortalOutlet]="cdkPortalEnd()" #portalOutlet></ng-template>
+        <!-- notification bell -->
+        <a matIconButton routerLink="/notifications" aria-label="Notifications" class="notification-bell-btn">
+          <mat-icon
+            [matBadge]="unreadCount()"
+            [matBadgeHidden]="unreadCount() === 0"
+            matBadgeColor="warn"
+            matBadgeSize="small"
+          >
+            notifications
+          </mat-icon>
+        </a>
         <!-- sidenav toggle -->
         @if (showSidenavToggle()) {
           <button matIconButton (click)="componentsService.toggleSidenav()">
@@ -59,11 +73,14 @@ import { PicsaBreadcrumbsComponent } from './picsa-breadcrumbs.component';
     PicsaBackButtonComponent,
     PicsaTranslateModule,
     MatButtonModule,
+    MatBadgeModule,
     PortalModule,
+    RouterLink,
   ],
 })
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);
+  private notificationFeedService = inject(PicsaNotificationFeedService);
   private router = inject(Router);
   private titleStrategy = inject(DefaultTitleStrategy);
   private titleService = inject(Title);
@@ -80,6 +97,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   public cdkPortalEnd = signal<IHeaderOptions['cdkPortalEnd']>(undefined);
 
   public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
+  public unreadCount = computed(() => this.notificationFeedService.unreadCount());
 
   constructor() {
     effect(() => {
