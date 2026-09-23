@@ -13,9 +13,11 @@ yarn nx run picsa-server:seed-export
 ### Prerequisites
 
 1. **Credentials** — copy the template and fill in real values (file is gitignored):
+
    ```bash
    cp apps/picsa-server/.env.server.example apps/picsa-server/.env.server
    ```
+
    Use the **secret key** (`sb_secret_...`). The publishable key is RLS-blocked on
    most seed tables, and `budget.budgets` plus `geo.countries`/`geo.locales` are
    secret-only. The script is one-way pull only (SELECT queries + local CSV
