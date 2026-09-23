@@ -2,7 +2,11 @@
   @for (crop of filteredOptions(); track crop.id) {
     <div ngClass="filter-icons">
       <div (click)="handleSelect(crop.name)" ngClass="icon" [attr.data-selected]="value().includes(crop.name)">
-        <mat-icon [svgIcon]="'picsa_crops:' + crop.svgIcon"></mat-icon>
+        @if (crop.svgIcon) {
+          <mat-icon [svgIcon]="'picsa_crops:' + crop.svgIcon"></mat-icon>
+        } @else {
+          <img class="option-img" [src]="crop.assetIconPath" />
+        }
         <div ngClass="name">{{ crop.label | translate }}</div>
       </div>
     </div>
@@ -13,6 +17,15 @@
       <div (click)="handleReset()" ngClass="icon">
         <mat-icon>{{ reset.matIcon }}</mat-icon>
         <div ngClass="name">{{ reset.text | translate }}</div>
+      </div>
+    </div>
+  }
+  <!-- Optional add-custom button -->
+  @if (addCustomOption(); as addCustom) {
+    <div ngClass="filter-icons">
+      <div (click)="addCustomClicked.emit()" ngClass="icon">
+        <mat-icon>{{ addCustom.matIcon }}</mat-icon>
+        <div ngClass="name">{{ addCustom.text | translate }}</div>
       </div>
     </div>
   }
