@@ -100,7 +100,7 @@ describe('ClimateAdminPageComponent', () => {
   });
 
   it('should open StationDiffDialogComponent when openStationDiffDialog is called', () => {
-    const mockStation: any = { id: 'salima', station_id: 'salima', station_name: 'Salima' };
+    const mockStation: any = { id: 101, station_id: 'salima', station_name: 'Salima' };
     const mockEvent = {
       preventDefault: jest.fn(),
       stopImmediatePropagation: jest.fn(),
@@ -113,6 +113,9 @@ describe('ClimateAdminPageComponent', () => {
     expect(mockDialog.open).toHaveBeenCalledWith(
       StationDiffDialogComponent,
       expect.objectContaining({
+        data: expect.objectContaining({
+          station: mockStation,
+        }),
         panelClass: 'no-padding',
         autoFocus: false,
       }),

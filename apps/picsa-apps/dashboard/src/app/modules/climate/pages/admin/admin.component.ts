@@ -373,7 +373,7 @@ export class ClimateAdminPageComponent {
     }
     const stationId = station.station_id;
     const appData = this.allStationAppData()[stationId] || [];
-    const stationData = this.allStationDataHashmap()[station.id as string];
+    const stationData = this.allStationDataHashmap()[stationId];
     const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
     const diffSummary = compareStationDatasets(stationId, appData, dbData);
 
@@ -438,7 +438,7 @@ export class ClimateAdminPageComponent {
         updateSignal: this.getRowUpdateSignal(station),
         products: [],
       };
-      const stationData = allStationDataHashmap[station.id as string];
+      const stationData = allStationDataHashmap[station.station_id];
       if (stationData) {
         summary.updated_at = stationData.updated_at;
         summary.products = this.generateProductSummary(stationData);
@@ -496,7 +496,7 @@ export class ClimateAdminPageComponent {
     return stations.map((station) => {
       const stationId = station.station_id;
       const appData = allStationAppData[stationId] || [];
-      const stationData = allStationDataHashmap[station.id as string];
+      const stationData = allStationDataHashmap[stationId];
       const dbDisplayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
       const diff = compareStationDatasets(stationId, appData, dbDisplayData);
 
