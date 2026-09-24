@@ -38,7 +38,7 @@ Options:
 With no file args, changed files (staged + unstaged + untracked vs HEAD) are
 auto-detected. Each source file maps to its colocated *.spec.ts; spec files
 passed directly run as-is. Each spec runs via its owning Nx project:
-  yarn nx test <project> --testFile=<spec basename>`);
+  yarn nx test <project> --testFile=<spec project-relative path>`);
 }
 
 /** Map a changed file to its covering spec (repo-relative), or null. */
@@ -137,7 +137,8 @@ function runSpec(spec, passthrough, dryRun) {
     console.error(`\n(ai-test: project "${project.name}" has no test target for ${spec})`);
     return 1;
   }
-  return runCommand('yarn', ['nx', 'test', project.name, `--testFile=${path.basename(spec)}`, ...passthrough], {
+  const projectRelative = path.relative(project.root, spec).split(path.sep).join('/');
+  return runCommand('yarn', ['nx', 'test', project.name, `--testFile=${projectRelative}`, ...passthrough], {
     dryRun,
   });
 }

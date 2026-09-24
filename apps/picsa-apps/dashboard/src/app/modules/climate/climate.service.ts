@@ -1,11 +1,13 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import type { IStationData } from '@picsa/models';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
+import { parse as parseCSV } from 'papaparse';
 import { catchError, concat, concatMap, from, map, mergeMap, of } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
@@ -57,6 +59,8 @@ export class ClimateService extends PicsaAsyncService {
     ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId))),
   );
 
+  private appDataCache = new Map<string, IStationData[]>();
+
   constructor() {
     super();
     this.ready();
@@ -94,6 +98,66 @@ export class ClimateService extends PicsaAsyncService {
     });
   }
 
+  /**
+   * Load bundled station CSV summary from app assets.
+   */
+  public async getStationAppData(countryCode: string, stationId: string): Promise<IStationData[] | null> {
+    const cacheKey = `${countryCode}/${stationId}`;
+    if (this.appDataCache.has(cacheKey)) {
+      return this.appDataCache.get(cacheKey) || null;
+    }
+
+    try {
+      const response = await fetch(`assets/summaries/${countryCode}/${stationId}.csv`);
+      if (!response.ok) {
+        return null;
+      }
+      const csvText = await response.text();
+      const parsed = parseCSV<IStationData>(csvText, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+      });
+
+      const validRows = (parsed.data || [])
+        .filter((r) => typeof r.Year === 'number' && !isNaN(r.Year))
+        .map((r) => {
+          const cleaned: Record<string, any> = {};
+          for (const [k, v] of Object.entries(r)) {
+            cleaned[k] = v === 'null' || v === 'NA' || v === '' ? null : v;
+          }
+          return cleaned as IStationData;
+        })
+        .sort((a, b) => a.Year - b.Year);
+
+      this.appDataCache.set(cacheKey, validRows);
+      return validRows;
+    } catch (err) {
+      console.warn(`Could not load app summary for ${cacheKey}:`, err);
+      return null;
+    }
+  }
+
+  /**
+   * Load bundled station CSV summaries for multiple stations.
+   */
+  public async getAllStationsAppData(
+    countryCode: string,
+    stations: IStationRow[],
+  ): Promise<Record<string, IStationData[]>> {
+    const results: Record<string, IStationData[]> = {};
+    const promises = stations.map(async (st) => {
+      const stationId = st.station_id;
+      if (!stationId) return;
+      const data = await this.getStationAppData(countryCode, stationId);
+      if (data) {
+        results[stationId] = data;
+      }
+    });
+    await Promise.all(promises);
+    return results;
+  }
+
   public updateStationDataFromApi(station: IStationRow, concurrent = false) {
     const requests = [
       {
@@ -112,14 +176,6 @@ export class ClimateService extends PicsaAsyncService {
         id: 'Monthly Temperatures',
         fn: this.loadFromAPI.monthlyTemperatures(station),
       },
-      // {
-      //   id: 'Season Start',
-      //   fn: this.loadFromAPI.seasonStart(station),
-      // },
-      // {
-      //   id: 'Extremes',
-      //   fn: this.loadFromAPI.extremes(station),
-      // },
     ];
 
     // Start all requests with pending status

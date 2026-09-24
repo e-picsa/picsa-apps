@@ -253,6 +253,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Within-Batch Duplicate Observation Handling**: Upstream sync feeds can emit multiple records for the same station, month, and metric (e.g. overlapping time slices or correction batches). `pivotLongToWideMonthly` tracks duplicates via `IPivotOptions.onDuplicate`. Identical duplicates are de-duplicated cleanly, while conflicting values (`existing !== incoming`) log warnings and are captured as `DUPLICATE_OBSERVATION_CONFLICT` violations in the audit report.
 - **Git Commit Date Retrieval & Timestamp Idempotency**: Station `lastUpdated` uses a clean `YYYY-MM-DD` date derived from `git log -1 --format="%as"` over the station's CSV files. When `contentHash` is unchanged across subsequent runs, the existing `lastUpdated` is strictly preserved, guaranteeing 100% idempotency (zero git diffs).
 
+### Multi-Column Climate Product Diffing & Overlaid C3 Preview
+
+- **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
+- **Overlaid C3 Preview**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (e.g. `Rainfall_db` and `Rainfall_app`) with distinct colors (`#1976d2` for DB, `#e65100` for App). Native series toggling (`legend: { show: true }`) and grouped tooltips (`tooltip: { grouped: true }`) allow users to seamlessly compare points without manual mode switching.
+
 ### RONI ENSO Season Classification & Grade Definitions
 
 - **RONI Event Criteria**: A season is classified as El Niño (or La Niña) when the running 3-month mean SST anomaly equals or exceeds $+0.5^\circ\text{C}$ (or $\le -0.5^\circ\text{C}$) for at least 5 consecutive overlapping 3-month periods. For example, 1953-1954 has 5 consecutive periods $\ge +0.5^\circ\text{C}$ (JJA to OND) and is classified as Weak El Niño (`WE`, grade 1), preserving historical continuity in `EL_NINO_YEARS`.
