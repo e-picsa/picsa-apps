@@ -1,94 +1,316 @@
 <div class="page-content">
-  <h2>Admin</h2>
-  <div style="display: flex; align-items: center; gap: 2em">
-    <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
-    <!-- Data Download -->
-    <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
-      <mat-icon>download</mat-icon>Download All
-    </button>
-    <!-- Data Refresh -->
-    <button matButton="outlined" color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
-      <mat-icon>refresh</mat-icon>
-      <span>
-        @if (refreshCount() > -1) {
-          {{ refreshCount() }} / {{ tableData().length }}
-        } @else {
-          Refresh All
-        }
-      </span>
-    </button>
-  </div>
-  <picsa-data-table
-    style="margin-top: 1em"
-    [data]="tableData()"
-    [options]="tableOptions"
-    [valueTemplates]="{
-      updated_at: updatedAtTemplate,
-      products: productsTemplate,
-      rainfall_issues: rainfallIssuesTemplate,
-      rainfall_export_data: downloadTemplate,
-    }"
-  >
-    <ng-template #updatedAtTemplate let-value>
-      {{ value | date: 'mediumDate' }}
-    </ng-template>
+  <h2>Climate Data Admin</h2>
 
-    <!-- Products summary -->
-    <ng-template #productsTemplate let-products let-row="row">
-      <div class="flex gap-2 items-center">
-        <!-- Pending product download status -->
-        @if (row.updateSignal().started) {
-          @for (statusUpdate of row.updateSignal().statuses; track $index) {
-            @let status = statusUpdate.status;
+  <mat-tab-group animationDuration="0ms" class="admin-tabs">
+    <!-- TAB 1: DATA SYSTEM -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">cloud</mat-icon>
+        <span>Data System</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <div class="tab-header-actions">
+          <p class="tab-description">
+            Inspect data system station records, data completeness, and trigger API refresh updates.
+          </p>
+          <div class="action-buttons">
+            <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
+              <mat-icon>download</mat-icon>Download All
+            </button>
+            <button
+              matButton="outlined"
+              color="primary"
+              (click)="refreshAllStations()"
+              [disabled]="refreshCount() > -1"
+            >
+              <mat-icon>refresh</mat-icon>
+              <span>
+                @if (refreshCount() > -1) {
+                  {{ refreshCount() }} / {{ dbTableData().length }}
+                } @else {
+                  Refresh All
+                }
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="dbTableData()"
+          [options]="dbTableOptions"
+          [valueTemplates]="{
+            updated_at: updatedAtTemplate,
+            products: productsTemplate,
+            rainfall_issues: rainfallIssuesTemplate,
+            rainfall_export_data: downloadDbTemplate,
+          }"
+        >
+          <ng-template #updatedAtTemplate let-value>
+            {{ value | date: 'mediumDate' }}
+          </ng-template>
+
+          <ng-template #productsTemplate let-products let-row="row">
+            <div class="flex gap-2 items-center">
+              @if (row.updateSignal().started) {
+                @for (statusUpdate of row.updateSignal().statuses; track $index) {
+                  @let status = statusUpdate.status;
+                  <button
+                    matIconButton
+                    [matTooltip]="statusUpdate.id"
+                    class="status-icon"
+                    [attr.data-status]="status"
+                    (click)="handleSummaryClick($event, row, statusUpdate)"
+                  >
+                    @switch (status) {
+                      @case ('pending') {
+                        <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                      }
+                      @case ('fulfilled') {
+                        <mat-icon color="primary">check_circle</mat-icon>
+                      }
+                      @case ('rejected') {
+                        <mat-icon color="warn">error</mat-icon>
+                      }
+                    }
+                  </button>
+                }
+              } @else {
+                @for (product of products; track $index) {
+                  <button
+                    matIconButton
+                    [matTooltip]="product.id"
+                    class="status-icon"
+                    (click)="refreshStation(row, $event)"
+                  >
+                    @if (product.available) {
+                      <mat-icon color="primary">check</mat-icon>
+                    } @else {
+                      <mat-icon color="warn">close</mat-icon>
+                    }
+                  </button>
+                }
+              }
+            </div>
+          </ng-template>
+
+          <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
+            @if (issues) {
+              <div [matTooltip]="row.rainfall_issues_details.join(',\n')" class="text-warn flex items-center">
+                <mat-icon>announcement</mat-icon>
+              </div>
+            }
+          </ng-template>
+
+          <ng-template #downloadDbTemplate let-row="row">
             <button
               matIconButton
-              [matTooltip]="statusUpdate.id"
-              class="status-icon"
+              (click)="downloadStationCSV(row, $event)"
+              [disabled]="!row.rainfall_export_data"
+              matTooltip="Download Data System CSV"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
+          </ng-template>
+        </picsa-data-table>
+      </div>
+    </mat-tab>
+
+    <!-- TAB 2: APP DATA -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">smartphone</mat-icon>
+        <span>App Data</span>
+      </ng-template>
+
+      <div class="tab-content">
+        <div class="tab-header-actions">
+          <p class="tab-description">
+            Station summary CSV files bundled directly into the application assets
+            (<code>assets/summaries/&lt;country&gt;/&lt;station_id&gt;.csv</code>).
+          </p>
+          <div class="action-buttons">
+            <button matButton="outlined" color="primary" (click)="downloadAllAppStationsCSV()">
+              <mat-icon>download</mat-icon>Download All App CSVs
+            </button>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="appTableData()"
+          [options]="appTableOptions"
+          [valueTemplates]="{
+            has_bundled_data: bundledStatusTemplate,
+            products: appProductsTemplate,
+            actions: appActionTemplate,
+          }"
+        >
+          <ng-template #bundledStatusTemplate let-hasBundled>
+            @if (hasBundled) {
+              <span class="status-chip chip-in-sync"> <mat-icon class="chip-icon">check_circle</mat-icon>Bundled </span>
+            } @else {
+              <span class="status-chip chip-no-data"> <mat-icon class="chip-icon">cancel</mat-icon>Missing </span>
+            }
+          </ng-template>
+
+          <ng-template #appProductsTemplate let-products>
+            <div class="product-tags">
+              @for (product of products; track product) {
+                <span class="product-tag">{{ product }}</span>
+              }
+              @if (products.length === 0) {
+                <span class="text-muted">-</span>
+              }
+            </div>
+          </ng-template>
+
+          <ng-template #appActionTemplate let-row="row">
+            <button
+              matIconButton
+              (click)="downloadAppStationCSV(row, $event)"
+              [disabled]="!row.has_bundled_data"
+              matTooltip="Download App CSV"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
+          </ng-template>
+        </picsa-data-table>
+      </div>
+    </mat-tab>
+
+    <!-- TAB 3: DATA COMPARISON (DIFF) -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">difference</mat-icon>
+        <span>Data Comparison (Diff)</span>
+        @if (diffStats().diff > 0) {
+          <span class="tab-badge">{{ diffStats().diff }}</span>
+        }
+      </ng-template>
+
+      <div class="tab-content">
+        <div class="diff-header-container">
+          <div class="diff-kpi-bar">
+            <div class="kpi-pill kpi-total">
+              <span class="kpi-label">Total Stations:</span>
+              <span class="kpi-value">{{ diffStats().total }}</span>
+            </div>
+            <div class="kpi-pill kpi-in-sync">
+              <span class="kpi-label">In Sync:</span>
+              <span class="kpi-value">{{ diffStats().inSync }}</span>
+            </div>
+            <div class="kpi-pill kpi-diff">
+              <span class="kpi-label">Divergent:</span>
+              <span class="kpi-value">{{ diffStats().diff }}</span>
+            </div>
+            <div class="kpi-pill kpi-db-only">
+              <span class="kpi-label">Data System Only:</span>
+              <span class="kpi-value">{{ diffStats().dbOnly }}</span>
+            </div>
+            <div class="kpi-pill kpi-app-only">
+              <span class="kpi-label">App Only:</span>
+              <span class="kpi-value">{{ diffStats().appOnly }}</span>
+            </div>
+          </div>
+
+          <div class="diff-filter-bar">
+            <mat-checkbox [checked]="showOnlyDiffs()" (change)="showOnlyDiffs.set($event.checked)">
+              Show only stations with differences ({{ diffStats().diff }})
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="diffTableData()"
+          [options]="diffTableOptions"
+          [valueTemplates]="{
+            diff_status: diffStatusTemplate,
+            years_added: addedYearsTemplate,
+            years_removed: removedYearsTemplate,
+            values_changed: changedValuesTemplate,
+            affected_products_summary: affectedProductsTemplate,
+            actions: diffActionTemplate,
+          }"
+        >
+          <!-- Status Badge -->
+          <ng-template #diffStatusTemplate let-status let-row="row">
+            <button
+              type="button"
+              class="diff-badge-btn"
               [attr.data-status]="status"
-              (click)="handleSummaryClick($event, row, statusUpdate)"
+              [matTooltip]="getDiffTooltip(row.diff)"
+              (click)="openStationDiffDialog(row.station, $event)"
             >
               @switch (status) {
-                @case ('pending') {
-                  <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                @case ('in_sync') {
+                  <mat-icon class="diff-icon text-success">check_circle</mat-icon>
+                  <span>In Sync</span>
                 }
-                @case ('fulfilled') {
-                  <mat-icon color="primary">check_circle</mat-icon>
+                @case ('diff') {
+                  <mat-icon class="diff-icon text-diff">difference</mat-icon>
+                  <span>Diff</span>
                 }
-                @case ('rejected') {
-                  <mat-icon color="warn">error</mat-icon>
+                @case ('db_only') {
+                  <mat-icon class="diff-icon text-neutral">cloud</mat-icon>
+                  <span>Data System only</span>
+                }
+                @case ('app_only') {
+                  <mat-icon class="diff-icon text-neutral">smartphone</mat-icon>
+                  <span>App only</span>
+                }
+                @default {
+                  <span class="text-muted">No data</span>
                 }
               }
             </button>
-          }
-        } @else {
-          <!-- Product download summary -->
-          @for (product of products; track $index) {
-            <button matIconButton [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
-              @if (product.available) {
-                <mat-icon color="primary">check</mat-icon>
-              } @else {
-                <mat-icon color="warn">close</mat-icon>
-              }
+          </ng-template>
+
+          <!-- Added Years -->
+          <ng-template #addedYearsTemplate let-val>
+            @if (val > 0) {
+              <span class="metric-badge badge-added">+{{ val }}</span>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </ng-template>
+
+          <!-- Removed Years -->
+          <ng-template #removedYearsTemplate let-val>
+            @if (val > 0) {
+              <span class="metric-badge badge-removed">-{{ val }}</span>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </ng-template>
+
+          <!-- Changed Values -->
+          <ng-template #changedValuesTemplate let-val>
+            @if (val > 0) {
+              <span class="metric-badge badge-changed">~{{ val }}</span>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </ng-template>
+
+          <!-- Affected Products Summary -->
+          <ng-template #affectedProductsTemplate let-val>
+            <span class="affected-summary" [matTooltip]="val">{{ val }}</span>
+          </ng-template>
+
+          <!-- Compare Action Button -->
+          <ng-template #diffActionTemplate let-row="row">
+            <button
+              matButton="outlined"
+              color="primary"
+              class="compare-btn"
+              (click)="openStationDiffDialog(row.station, $event)"
+              matTooltip="Inspect product differences and preview overlaid charts"
+            >
+              <mat-icon>show_chart</mat-icon>Preview
             </button>
-          }
-        }
+          </ng-template>
+        </picsa-data-table>
       </div>
-    </ng-template>
-    <!-- Rainfall issues  -->
-    <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
-      @if (issues) {
-        <div [matTooltip]="row.rainfall_issues_details.join(',\n')">
-          <mat-icon>announcement</mat-icon>
-        </div>
-      }
-    </ng-template>
-    <!-- CSV download column  -->
-    <ng-template #downloadTemplate let-row="row">
-      <div class="flex gap-2 items-center">
-<button matIconButton (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
-          <mat-icon>download</mat-icon>
-        </button>
-      </div>
-    </ng-template>
-  </picsa-data-table>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -1,0 +1,218 @@
+<div class="diff-dialog-container">
+  <!-- Dialog Header -->
+  <div class="diff-dialog-header">
+    <div class="header-titles">
+      <div class="flex items-center gap-3">
+        <h2 class="title">{{ data.station.station_name }}</h2>
+        <span class="station-code">{{ data.station.station_id }}</span>
+        <!-- Overall Status Badge -->
+        @switch (data.diffSummary.status) {
+          @case ('in_sync') {
+            <span class="status-badge status-in-sync">
+              <mat-icon class="badge-icon">check_circle</mat-icon> In Sync
+            </span>
+          }
+          @case ('diff') {
+            <span class="status-badge status-diff">
+              <mat-icon class="badge-icon">difference</mat-icon> Differences Found
+            </span>
+          }
+          @case ('db_only') {
+            <span class="status-badge status-neutral">Data System Only</span>
+          }
+          @case ('app_only') {
+            <span class="status-badge status-neutral">App Only</span>
+          }
+          @default {
+            <span class="status-badge status-neutral">No Data</span>
+          }
+        }
+      </div>
+
+      <!-- Quick Summary Stats -->
+      <div class="header-stats">
+        <span
+          class="stat-pill stat-added"
+          [matTooltip]="'Years added in Data System but not present in bundled App CSV'"
+        >
+          <strong>+{{ data.diffSummary.totalYearsAddedCount }}</strong> yrs added
+        </span>
+        <span class="stat-pill stat-removed" [matTooltip]="'Years present in App CSV but missing from Data System'">
+          <strong>-{{ data.diffSummary.totalYearsRemovedCount }}</strong> yrs removed
+        </span>
+        <span class="stat-pill stat-changed" [matTooltip]="'Years with modified numerical values'">
+          <strong>~{{ data.diffSummary.totalChangedValuesCount }}</strong> values modified
+        </span>
+      </div>
+    </div>
+
+    <button matIconButton (click)="close()" aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="diff-dialog-content">
+    <!-- Product Tabs / Pills -->
+    <div class="product-selector-bar">
+      @for (product of products; track product.id) {
+        @let summary = data.diffSummary.products[product.id];
+        <button
+          type="button"
+          class="product-tab"
+          [class.active]="selectedProductId() === product.id"
+          (click)="selectProduct(product.id)"
+        >
+          <span class="tab-label">{{ product.label }}</span>
+          @if (summary) {
+            @if (!summary.hasData) {
+              <span class="tab-badge badge-empty">None</span>
+            } @else if (summary.isInSync) {
+              <span class="tab-badge badge-sync">✓</span>
+            } @else {
+              <span class="tab-badge badge-diff">
+                +{{ summary.yearsAdded.length }}/-{{ summary.yearsRemoved.length }}/~{{ summary.changedCount }}
+              </span>
+            }
+          }
+        </button>
+      }
+    </div>
+
+    <!-- Active Product Overview Card -->
+    @if (selectedProductSummary(); as pSummary) {
+      <div class="product-overview-card">
+        <div class="overview-item">
+          <span class="overview-label">App Year Range</span>
+          <span class="overview-val">
+            @if (pSummary.appYearSpan) {
+              {{ pSummary.appYearSpan[0] }} – {{ pSummary.appYearSpan[1] }}
+            } @else {
+              None
+            }
+          </span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-label">Data System Year Range</span>
+          <span class="overview-val">
+            @if (pSummary.dbYearSpan) {
+              {{ pSummary.dbYearSpan[0] }} – {{ pSummary.dbYearSpan[1] }}
+            } @else {
+              None
+            }
+          </span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-label">Years Added</span>
+          <span class="overview-val val-added">+{{ pSummary.yearsAdded.length }}</span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-label">Years Removed</span>
+          <span class="overview-val val-removed">-{{ pSummary.yearsRemoved.length }}</span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-label">Values Changed</span>
+          <span class="overview-val val-changed">~{{ pSummary.changedCount }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Overlaid Chart Section -->
+    <div class="chart-section">
+      <div class="chart-header">
+        <div class="chart-title">{{ selectedProduct().label }} — Data Comparison Preview</div>
+        <div class="chart-hint">
+          Overlaid preview: Data System (blue) vs App Data (orange). Click series in the legend below to toggle.
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <picsa-chart [config]="chartConfig()"></picsa-chart>
+      </div>
+    </div>
+
+    <!-- Changes Table Section -->
+    <div class="table-section">
+      <div class="table-header">
+        <h3>Change Details ({{ selectedProduct().label }})</h3>
+      </div>
+
+      @if (selectedProductSummary(); as pSummary) {
+        @if (pSummary.changes.length > 0) {
+          <div class="changes-table-wrapper">
+            <table class="changes-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Metric</th>
+                  <th>App Value</th>
+                  <th>Data System Value</th>
+                  <th>Difference</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (change of pSummary.changes; track change.year + change.field) {
+                  <tr>
+                    <td class="font-semibold">{{ change.year }}</td>
+                    <td>{{ change.field }}</td>
+                    <td>
+                      @if (change.appValue !== null) {
+                        {{ change.appValue | number: '1.0-2' }} {{ selectedProduct().units }}
+                      } @else {
+                        <span class="text-muted">—</span>
+                      }
+                    </td>
+                    <td>
+                      @if (change.dbValue !== null) {
+                        {{ change.dbValue | number: '1.0-2' }} {{ selectedProduct().units }}
+                      } @else {
+                        <span class="text-muted">—</span>
+                      }
+                    </td>
+                    <td>
+                      @if (change.diff !== null) {
+                        <span [class.text-positive]="change.diff > 0" [class.text-negative]="change.diff < 0">
+                          {{ change.diff > 0 ? '+' : '' }}{{ change.diff | number: '1.0-2' }}
+                          {{ selectedProduct().units }}
+                        </span>
+                      } @else {
+                        <span class="text-muted">—</span>
+                      }
+                    </td>
+                    <td>
+                      @switch (change.type) {
+                        @case ('year_added') {
+                          <span class="type-badge badge-added">Added in DB</span>
+                        }
+                        @case ('year_removed') {
+                          <span class="type-badge badge-removed">Removed from DB</span>
+                        }
+                        @case ('value_changed') {
+                          <span class="type-badge badge-changed">Value Changed</span>
+                        }
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else if (pSummary.isInSync) {
+          <div class="empty-state state-success">
+            <mat-icon>check_circle_outline</mat-icon>
+            <span>All values match between bundled App data and DB records for this product.</span>
+          </div>
+        } @else {
+          <div class="empty-state state-neutral">
+            <mat-icon>info_outline</mat-icon>
+            <span>No data available for this product in either dataset.</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="diff-dialog-footer">
+    <button matButton="outlined" (click)="close()">Close</button>
+  </div>
+</div>

@@ -253,6 +253,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Within-Batch Duplicate Observation Handling**: Upstream sync feeds can emit multiple records for the same station, month, and metric (e.g. overlapping time slices or correction batches). `pivotLongToWideMonthly` tracks duplicates via `IPivotOptions.onDuplicate`. Identical duplicates are de-duplicated cleanly, while conflicting values (`existing !== incoming`) log warnings and are captured as `DUPLICATE_OBSERVATION_CONFLICT` violations in the audit report.
 - **Git Commit Date Retrieval & Timestamp Idempotency**: Station `lastUpdated` uses a clean `YYYY-MM-DD` date derived from `git log -1 --format="%as"` over the station's CSV files. When `contentHash` is unchanged across subsequent runs, the existing `lastUpdated` is strictly preserved, guaranteeing 100% idempotency (zero git diffs).
 
+### Multi-Column Climate Product Diffing & Overlaid C3 Preview
+
+- **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
+- **Overlaid C3 Preview**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (e.g. `Rainfall_db` and `Rainfall_app`) with distinct colors (`#1976d2` for DB, `#e65100` for App). Native series toggling (`legend: { show: true }`) and grouped tooltips (`tooltip: { grouped: true }`) allow users to seamlessly compare points without manual mode switching.
+
 ### RONI ENSO Season Classification & Grade Definitions
 
 - **RONI Event Criteria**: A season is classified as El Niño (or La Niña) when the running 3-month mean SST anomaly equals or exceeds $+0.5^\circ\text{C}$ (or $\le -0.5^\circ\text{C}$) for at least 5 consecutive overlapping 3-month periods. For example, 1953-1954 has 5 consecutive periods $\ge +0.5^\circ\text{C}$ (JJA to OND) and is classified as Weak El Niño (`WE`, grade 1), preserving historical continuity in `EL_NINO_YEARS`.
@@ -319,3 +324,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Personal Opt-In**: Individual developers wanting remote cache can set their own `NX_CLOUD_ACCESS_TOKEN=<personal-or-workspace-token>` environment variable locally. Never commit personal tokens to `nx.json`.
 - **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
 - **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
+
+### Pull Request Template & PR-Agent Auto-Generation Workflow
+
+- **Mandatory Template (`.github/pull_request_template.md`)**: Whenever opening or editing a PR, always format the description matching `.github/pull_request_template.md`:
+  - `## Developer Summary`: Concise architectural highlights and context for reviewers.
+  - `## Related Issues`: Clear issue links using keywords (`Closes #123`, `Relates to #456`, `Part of Epic #789`).
+  - `## Screenshots / Videos`: UI / visual change evidence.
+  - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
+
+### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
+
+- **CRITICAL MAPPING GOTCHA**: In the Supabase table `climate_station_data`, the column is named `station_id`, but its foreign key constraint is:
+  `constraint climate_station_data_station_id_fkey foreign key (station_id) references climate_stations (id)`
+- Therefore, in `climate_station_data` rows, the field `station_id` stores `station.id` (the database primary key of `climate_stations`), **NOT** `station.station_id` (the slug).
+- When indexing `allStationData` rows via `arrayToHashmap(allStationData, "station_id")`, the dictionary keys are `station.id`. Lookups MUST use `allStationDataHashmap[station.id as string]`.
+- Conversely, bundled app CSV data (`allStationAppData`) is loaded from `assets/summaries/<country>/<station_id>.csv` and is keyed by `station.station_id` (the slug).
+- **PR-Agent Push-Back**: Automated review bots frequently flag `allStationDataHashmap[station.id]` as a suspected bug assuming `station_id` must match `station.station_id`. This is a false positive and must be firmly pushed back on.
