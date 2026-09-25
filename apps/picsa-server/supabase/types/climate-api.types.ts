@@ -54,6 +54,10 @@ export interface paths {
      */
     get: operations['download_document_v1_documents__country___filepath__get'];
   };
+  '/v1/select_query/': {
+    /** Run Select Query */
+    post: operations['run_select_query_v1_select_query__post'];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -509,6 +513,46 @@ export interface components {
       /** Na Prop */
       na_prop?: number;
     };
+    /** SelectQueryRequest */
+    SelectQueryRequest: {
+      /**
+       * Table Name
+       * @enum {string}
+       */
+      table_name: 'crop' | 'definition' | 'station' | 'summary' | 'summary_station_metadata';
+      /**
+       * Columns
+       * @description Optional list of allowed columns. Empty means all allowed columns.
+       */
+      columns?: string[];
+      /** Station Id */
+      station_id: string;
+      /**
+       * Order By
+       * @description Optional sort column. Must be allowed for the selected table.
+       */
+      order_by?: string;
+      /**
+       * Order Direction
+       * @default desc
+       * @enum {string}
+       */
+      order_direction?: 'asc' | 'desc';
+      /**
+       * Max Rows
+       * @default 100
+       */
+      max_rows?: number;
+    };
+    /** SelectQueryResponse */
+    SelectQueryResponse: {
+      /** Columns */
+      columns: string[];
+      /** Row Count */
+      row_count: number;
+      /** Rows */
+      rows: Record<string, never>[];
+    };
     /** StartRains */
     StartRains: {
       /** Start Day */
@@ -900,6 +944,28 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['DocumentMetadata'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  /** Run Select Query */
+  run_select_query_v1_select_query__post: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SelectQueryRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          'application/json': components['schemas']['SelectQueryResponse'];
         };
       };
       /** @description Validation Error */
