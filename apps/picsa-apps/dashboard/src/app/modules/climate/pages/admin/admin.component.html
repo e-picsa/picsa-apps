@@ -1,20 +1,20 @@
 <div class="page-content">
   <h2>Climate Data Admin</h2>
 
-  <mat-tab-group animationDuration="0ms" class="admin-tabs">
+  <mat-tab-group animationDuration="0ms" class="mt-4">
     <!-- TAB 1: DATA SYSTEM -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">cloud</mat-icon>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cloud</mat-icon>
         <span>Data System</span>
       </ng-template>
 
-      <div class="tab-content">
-        <div class="tab-header-actions">
-          <p class="tab-description">
+      <div class="py-4">
+        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
             Inspect data system station records, data completeness, and trigger API refresh updates.
           </p>
-          <div class="action-buttons">
+          <div class="flex items-center gap-3">
             <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
               <mat-icon>download</mat-icon>Download All
             </button>
@@ -119,17 +119,17 @@
     <!-- TAB 2: APP DATA -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">smartphone</mat-icon>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">smartphone</mat-icon>
         <span>App Data</span>
       </ng-template>
 
-      <div class="tab-content">
-        <div class="tab-header-actions">
-          <p class="tab-description">
+      <div class="py-4">
+        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
             Station summary CSV files bundled directly into the application assets
             (<code>assets/summaries/&lt;country&gt;/&lt;station_id&gt;.csv</code>).
           </p>
-          <div class="action-buttons">
+          <div class="flex items-center gap-3">
             <button matButton="outlined" color="primary" (click)="downloadAllAppStationsCSV()">
               <mat-icon>download</mat-icon>Download All App CSVs
             </button>
@@ -147,16 +147,26 @@
         >
           <ng-template #bundledStatusTemplate let-hasBundled>
             @if (hasBundled) {
-              <span class="status-chip chip-in-sync"> <mat-icon class="chip-icon">check_circle</mat-icon>Bundled </span>
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base">check_circle</mat-icon>Bundled
+              </span>
             } @else {
-              <span class="status-chip chip-no-data"> <mat-icon class="chip-icon">cancel</mat-icon>Missing </span>
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#ffebee] text-[#c62828]"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base">cancel</mat-icon>Missing
+              </span>
             }
           </ng-template>
 
           <ng-template #appProductsTemplate let-products>
-            <div class="product-tags">
+            <div class="flex flex-wrap gap-1.5">
               @for (product of products; track product) {
-                <span class="product-tag">{{ product }}</span>
+                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[0.72rem] font-medium">{{
+                  product
+                }}</span>
               }
               @if (products.length === 0) {
                 <span class="text-muted">-</span>
@@ -181,39 +191,52 @@
     <!-- TAB 3: DATA COMPARISON (DIFF) -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">difference</mat-icon>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
         <span>Data Comparison (Diff)</span>
         @if (diffStats().diff > 0) {
-          <span class="tab-badge">{{ diffStats().diff }}</span>
+          <span
+            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
+            >{{ diffStats().diff }}</span
+          >
         }
       </ng-template>
 
-      <div class="tab-content">
-        <div class="diff-header-container">
-          <div class="diff-kpi-bar">
-            <div class="kpi-pill kpi-total">
-              <span class="kpi-label">Total Stations:</span>
-              <span class="kpi-value">{{ diffStats().total }}</span>
+      <div class="py-4">
+        <div class="flex flex-col gap-3 mb-4">
+          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium">
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f8fafc] text-[#334155] border-[#e2e8f0]"
+            >
+              <span class="opacity-85">Total Stations:</span>
+              <span class="font-bold">{{ diffStats().total }}</span>
             </div>
-            <div class="kpi-pill kpi-in-sync">
-              <span class="kpi-label">In Sync:</span>
-              <span class="kpi-value">{{ diffStats().inSync }}</span>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f0fdf4] text-[#166534] border-[#bbf7d0]"
+            >
+              <span class="opacity-85">In Sync:</span>
+              <span class="font-bold">{{ diffStats().inSync }}</span>
             </div>
-            <div class="kpi-pill kpi-diff">
-              <span class="kpi-label">Divergent:</span>
-              <span class="kpi-value">{{ diffStats().diff }}</span>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]"
+            >
+              <span class="opacity-85">Divergent:</span>
+              <span class="font-bold">{{ diffStats().diff }}</span>
             </div>
-            <div class="kpi-pill kpi-db-only">
-              <span class="kpi-label">Data System Only:</span>
-              <span class="kpi-value">{{ diffStats().dbOnly }}</span>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
+            >
+              <span class="opacity-85">Data System Only:</span>
+              <span class="font-bold">{{ diffStats().dbOnly }}</span>
             </div>
-            <div class="kpi-pill kpi-app-only">
-              <span class="kpi-label">App Only:</span>
-              <span class="kpi-value">{{ diffStats().appOnly }}</span>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#faf5ff] text-[#6b21a8] border-[#e9d5ff]"
+            >
+              <span class="opacity-85">App Only:</span>
+              <span class="font-bold">{{ diffStats().appOnly }}</span>
             </div>
           </div>
 
-          <div class="diff-filter-bar">
+          <div class="flex items-center py-1">
             <mat-checkbox [checked]="showOnlyDiffs()" (change)="showOnlyDiffs.set($event.checked)">
               Show only stations with differences ({{ diffStats().diff }})
             </mat-checkbox>
@@ -243,19 +266,19 @@
             >
               @switch (status) {
                 @case ('in_sync') {
-                  <mat-icon class="diff-icon text-success">check_circle</mat-icon>
+                  <mat-icon class="diff-icon text-[#2e7d32]">check_circle</mat-icon>
                   <span>In Sync</span>
                 }
                 @case ('diff') {
-                  <mat-icon class="diff-icon text-diff">difference</mat-icon>
+                  <mat-icon class="diff-icon text-[#e65100]">difference</mat-icon>
                   <span>Diff</span>
                 }
                 @case ('db_only') {
-                  <mat-icon class="diff-icon text-neutral">cloud</mat-icon>
+                  <mat-icon class="diff-icon">cloud</mat-icon>
                   <span>Data System only</span>
                 }
                 @case ('app_only') {
-                  <mat-icon class="diff-icon text-neutral">smartphone</mat-icon>
+                  <mat-icon class="diff-icon">smartphone</mat-icon>
                   <span>App only</span>
                 }
                 @default {
@@ -268,7 +291,9 @@
           <!-- Added Years -->
           <ng-template #addedYearsTemplate let-val>
             @if (val > 0) {
-              <span class="metric-badge badge-added">+{{ val }}</span>
+              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#e8f5e9] text-[#1b5e20]"
+                >+{{ val }}</span
+              >
             } @else {
               <span class="text-muted">-</span>
             }
@@ -277,7 +302,9 @@
           <!-- Removed Years -->
           <ng-template #removedYearsTemplate let-val>
             @if (val > 0) {
-              <span class="metric-badge badge-removed">-{{ val }}</span>
+              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#ffebee] text-[#b71c1c]"
+                >-{{ val }}</span
+              >
             } @else {
               <span class="text-muted">-</span>
             }
@@ -286,7 +313,9 @@
           <!-- Changed Values -->
           <ng-template #changedValuesTemplate let-val>
             @if (val > 0) {
-              <span class="metric-badge badge-changed">~{{ val }}</span>
+              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#fff3e0] text-[#e65100]"
+                >~{{ val }}</span
+              >
             } @else {
               <span class="text-muted">-</span>
             }
@@ -294,7 +323,7 @@
 
           <!-- Affected Products Summary -->
           <ng-template #affectedProductsTemplate let-val>
-            <span class="affected-summary" [matTooltip]="val">{{ val }}</span>
+            <span class="text-xs text-gray-600 inline-block max-w-[250px] truncate" [matTooltip]="val">{{ val }}</span>
           </ng-template>
 
           <!-- Compare Action Button -->
@@ -302,7 +331,7 @@
             <button
               matButton="outlined"
               color="primary"
-              class="compare-btn"
+              class="!text-xs [&_mat-icon]:!w-[1.1rem] [&_mat-icon]:!h-[1.1rem] [&_mat-icon]:!text-[1.1rem] [&_mat-icon]:mr-1"
               (click)="openStationDiffDialog(row.station, $event)"
               matTooltip="Inspect product differences and preview overlaid charts"
             >
