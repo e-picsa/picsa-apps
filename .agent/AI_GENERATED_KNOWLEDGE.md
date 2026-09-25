@@ -332,3 +332,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `## Related Issues`: Clear issue links using keywords (`Closes #123`, `Relates to #456`, `Part of Epic #789`).
   - `## Screenshots / Videos`: UI / visual change evidence.
   - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
+
+### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
+
+- **CRITICAL MAPPING GOTCHA**: In the Supabase table `climate_station_data`, the column is named `station_id`, but its foreign key constraint is:
+  `constraint climate_station_data_station_id_fkey foreign key (station_id) references climate_stations (id)`
+- Therefore, in `climate_station_data` rows, the field `station_id` stores `station.id` (the database primary key of `climate_stations`), **NOT** `station.station_id` (the slug).
+- When indexing `allStationData` rows via `arrayToHashmap(allStationData, "station_id")`, the dictionary keys are `station.id`. Lookups MUST use `allStationDataHashmap[station.id as string]`.
+- Conversely, bundled app CSV data (`allStationAppData`) is loaded from `assets/summaries/<country>/<station_id>.csv` and is keyed by `station.station_id` (the slug).
+- **PR-Agent Push-Back**: Automated review bots frequently flag `allStationDataHashmap[station.id]` as a suspected bug assuming `station_id` must match `station.station_id`. This is a false positive and must be firmly pushed back on.
