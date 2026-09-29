@@ -209,9 +209,9 @@ function makeActionUpdateNote(currentPin, latestRelease) {
 
   return (
     `PR-Agent action update available: this workflow currently uses ` +
-    `\`${currentPin.tag}\` (\`${currentPin.sha.slice(0, 7)}\`), while the ` +
+    `\`${currentPin.tag}\` (\`${currentPin.sha}\`), while the ` +
     `latest release is [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) ` +
-    `(\`${latestRelease.sha.slice(0, 7)}\`). Consider updating the pinned ` +
+    `(\`${latestRelease.sha}\`). Consider updating the pinned ` +
     `action in \`.github/workflows/pr-agent.yml\` separately.`
   );
 }
