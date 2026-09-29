@@ -144,10 +144,14 @@ function findLatestGeminiFlash(models, catalog) {
 function findLatestLuna(models, catalog) {
   const candidates = models.filter((model) => {
     const id = model.id.toLowerCase();
-    const isLuna =
-      /(?:^|[-/])luna(?:$|[-/])/.test(id) && !id.includes('batch') && (model.context_length || 0) >= 128000;
 
-    return isLuna && isLiteLlmModel(`openrouter/${model.id}`, catalog);
+    return (
+      /(?:^|[-/])luna(?:$|[-/])/.test(id) &&
+      !id.includes('pro') &&
+      !id.includes('batch') &&
+      (model.context_length || 0) >= 128000 &&
+      isLiteLlmModel(`openrouter/${model.id}`, catalog)
+    );
   });
 
   candidates.sort((a, b) => {
