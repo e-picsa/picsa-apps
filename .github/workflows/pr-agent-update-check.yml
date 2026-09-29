@@ -1,4 +1,4 @@
-name: PR-Agent Update Check
+name: PR Agent Update Check
 
 on:
   schedule:
