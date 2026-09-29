@@ -1,21 +1,15 @@
-# Weekly automated check to keep PR-Agent and AI models up-to-date
-
-name: Check PR-Agent & Model Updates
+name: Check PR-Agent Model Updates
 
 on:
   schedule:
     # Run every Monday at 08:00 UTC
     - cron: '0 8 * * 1'
   workflow_dispatch:
-    inputs:
-      prefer_family:
-        description: 'Preferred low-cost model family (luna, minimax, or leave blank)'
-        required: false
-        default: ''
 
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   check_updates:
@@ -29,20 +23,14 @@ jobs:
         with:
           node-version: 24.x
 
-      - name: Check for PR-Agent & Model Updates
+      - name: Check for model updates
         id: check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PREFER_FAMILY: ${{ inputs.prefer_family }}
-        run: |
-          PREFER_FLAG=()
-          if [ -n "$PREFER_FAMILY" ]; then
-            PREFER_FLAG+=( "--prefer-family=$PREFER_FAMILY" )
-          fi
-          node .github/workflows/pr-agent-update-check.mjs --output-github "${PREFER_FLAG[@]}"
+        run: node .github/workflows/pr-agent-update-check.mjs --output-github
 
       - name: Create Pull Request
+        id: create_pr
         if: steps.check.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
@@ -54,3 +42,36 @@ jobs:
             dependencies
             maintenance
           delete-branch: true
+
+      - name: Comment with PR-Agent action update recommendation
+        if: >-
+          steps.check.outputs.action_update_available == 'true' &&
+          steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.create_pr.outputs.pull-request-number }}
+          ACTION_NOTE: ${{ steps.check.outputs.action_note }}
+        run: |
+          set -euo pipefail
+
+          marker='<!-- pr-agent-sha-update -->'
+          comment_body=$(printf '%s\n\n%s' "$marker" "$ACTION_NOTE")
+          comments_url="repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
+
+          existing_comment_id=$(
+            gh api --paginate "$comments_url" \
+              --jq '.[] | select(.body | contains("<!-- pr-agent-sha-update -->")) | .id' \
+              | sed -n '1p'
+          )
+
+          if [ -n "$existing_comment_id" ]; then
+            gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_comment_id}" \
+              --method PATCH \
+              -f body="$comment_body"
+            echo "Updated the existing PR-Agent action recommendation comment."
+          else
+            gh api "$comments_url" \
+              --method POST \
+              -f body="$comment_body"
+            echo "Posted a PR-Agent action recommendation comment."
+          fi
