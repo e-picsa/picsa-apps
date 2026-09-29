@@ -366,7 +366,18 @@ async function main() {
     }
   }
 
-  const title = `chore: update PR-Agent models (${geminiId})`;
+  const titleParts = [];
+
+  if (modelChanged) {
+    titleParts.push(`primary ${geminiId}`);
+  }
+
+  if (fallbacksChanged) {
+    titleParts.push(`fallback ${luna.id}`);
+  }
+
+  const title = `chore: update PR-Agent models (${titleParts.join(', ')})`;
+
   const body = `## 🤖 Automated PR-Agent Model Upgrade
 
 Weekly automated check detected model or context configuration updates.
