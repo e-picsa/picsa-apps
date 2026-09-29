@@ -144,8 +144,10 @@ function findLatestGeminiFlash(models, catalog) {
 function findLatestLuna(models, catalog) {
   const candidates = models.filter((model) => {
     const id = model.id.toLowerCase();
+    const isLuna =
+      /(?:^|[-/])luna(?:$|[-/])/.test(id) && !id.includes('batch') && (model.context_length || 0) >= 128000;
 
-    return id.includes('luna') && !id.includes('batch') && isLiteLlmModel(`openrouter/${model.id}`, catalog);
+    return isLuna && isLiteLlmModel(`openrouter/${model.id}`, catalog);
   });
 
   candidates.sort((a, b) => {
