@@ -8,7 +8,7 @@
 
 [config]
 model = "gemini/gemini-3.8-flash"
-fallback_models = ["openrouter/openai/gpt-6-luna-pro"]
+fallback_models = ["openrouter/openai/gpt-6-luna"]
 # max tokens required for newer models not known by current version of pr-agent used in actions 
 # use lowest common of fallback models
 custom_model_max_tokens = 1048576
