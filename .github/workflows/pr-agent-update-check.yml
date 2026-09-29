@@ -51,11 +51,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.create_pr.outputs.pull-request-number }}
           ACTION_NOTE: ${{ steps.check.outputs.action_note }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
 
           marker='<!-- pr-agent-sha-update -->'
-          comment_body=$(printf '%s\n\n%s' "$marker" "$ACTION_NOTE")
+          edit_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/edit/${DEFAULT_BRANCH}/.github/workflows/pr-agent.yml"
+          comment_body=$(printf '%s\n\n%s\n\n[Edit the workflow file on GitHub](%s) to update the pinned action, then create a PR.' "$marker" "$ACTION_NOTE" "$edit_url")
           comments_url="repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
 
           existing_comment_id=$(
