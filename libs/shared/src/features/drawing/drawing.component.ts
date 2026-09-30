@@ -117,8 +117,11 @@ export class PicsaDrawingComponent {
     // Ensure all points are calculated relative to svg container
     this.calculateContainerOffset();
 
-    // ensure previous segment finalised (in case pointerup not fired) and start new segment
+    // ensure previous segment finalised (in case pointerup not fired) and start a new segment
+    // with the currently selected tool/color/width (activeSegment may otherwise hold a stale style
+    // snapshot from before the last tool change)
     this.finaliseActiveSegment();
+    this.activeSegment = this.createNewSegment();
 
     // ensure initial point set on active segment
     this.addPointToActiveSegment(event.pageX, event.pageY);
@@ -136,6 +139,7 @@ export class PicsaDrawingComponent {
   handlePointerUp() {
     if (this.tool() !== 'eraser' && this.activeSegment.points.length > 0) {
       this.finaliseActiveSegment();
+      this.activeSegment = this.createNewSegment();
     }
     // output current full svg
     const data = this.sanitizeOutputSVG();
@@ -231,7 +235,6 @@ export class PicsaDrawingComponent {
   public finaliseActiveSegment() {
     if (this.activeSegment.points.length > 0) {
       this.segments.push(this.activeSegment);
-      this.activeSegment = this.createNewSegment();
     }
   }
 }
