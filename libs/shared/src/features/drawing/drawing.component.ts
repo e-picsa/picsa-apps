@@ -21,7 +21,23 @@ import { getStroke, StrokeOptions } from 'perfect-freehand';
 
 import { generateID } from '../../services/core/db/db.service';
 
-type DrawingTool = 'pen' | 'highlighter' | 'eraser';
+type StrokeTool = 'pen' | 'highlighter';
+/** Shapes dragged out from a bounding box, rendered differently per tool */
+type BoxTool = 'rectangle' | 'square' | 'circle' | 'triangle' | 'redaction';
+const BOX_TOOLS: BoxTool[] = ['rectangle', 'square', 'circle', 'triangle', 'redaction'];
+/** Box tools whose drag is locked to a 1:1 aspect ratio */
+const SQUARE_ASPECT_TOOLS: BoxTool[] = ['square', 'circle'];
+/** Shapes offered in the grouped "Shapes" menu (redaction stays its own standalone tool) */
+type MenuShapeTool = 'rectangle' | 'square' | 'circle' | 'triangle' | 'arrow';
+const MENU_SHAPE_TOOLS: MenuShapeTool[] = ['rectangle', 'square', 'circle', 'triangle', 'arrow'];
+const MENU_SHAPE_LABELS: Record<MenuShapeTool, string> = {
+  rectangle: 'Rectangle',
+  square: 'Square',
+  circle: 'Circle',
+  triangle: 'Triangle',
+  arrow: 'Arrow',
+};
+type DrawingTool = StrokeTool | 'eraser' | BoxTool | 'arrow';
 
 /** Preset colors shown in the toolbar swatch grid */
 const COLOR_SWATCHES = [
@@ -63,8 +79,39 @@ type Segment = {
   /** Stroke width snapshotted from toolbar at creation time */
   width: number;
   /** Tool used to draw the segment, used to render highlighter opacity/blend */
-  tool: DrawingTool;
+  tool: StrokeTool;
 };
+
+type Rect = { x: number; y: number; width: number; height: number };
+
+type Shape = {
+  /** Unique id for each shape for efficient tracking */
+  id: string;
+  /** Rectangle or redaction, reactive since it grows/shrinks live while dragging */
+  rect: WritableSignal<Rect>;
+  tool: BoxTool;
+  /** Outline color snapshotted from toolbar at creation time (rectangle only) */
+  color: string;
+  /** Outline width snapshotted from toolbar at creation time (rectangle only) */
+  strokeWidth: number;
+};
+
+type Line = { x1: number; y1: number; x2: number; y2: number };
+
+type Arrow = {
+  /** Unique id for each arrow, also used for its marker (arrowhead) element */
+  id: string;
+  /** Reactive since it grows live while dragging */
+  line: WritableSignal<Line>;
+  color: string;
+  strokeWidth: number;
+};
+
+/** A single undoable action, tracked in creation order across strokes, shapes and arrows */
+type HistoryEntry =
+  | { kind: 'segment'; item: Segment }
+  | { kind: 'shape'; item: Shape }
+  | { kind: 'arrow'; item: Arrow };
 
 @Component({
   selector: 'picsa-custom-drawing',
@@ -116,8 +163,30 @@ export class PicsaDrawingComponent {
   /** List of all saved segments */
   public segments: Segment[] = [];
 
-  /** List of segments removed pending redo */
-  private redoStack: Segment[] = [];
+  /** Rectangle/redaction shape currently being dragged out, if any */
+  public activeShape: Shape | null = null;
+
+  /** List of all saved shapes */
+  public shapes: Shape[] = [];
+
+  /** Corner the current shape drag started from, in canvas-local coordinates */
+  private shapeDragOrigin: [number, number] | null = null;
+
+  /** Arrow currently being dragged out, if any */
+  public activeArrow: Arrow | null = null;
+
+  /** List of all saved arrows */
+  public arrows: Arrow[] = [];
+
+  public readonly menuShapeTools = MENU_SHAPE_TOOLS;
+  public readonly menuShapeLabels = MENU_SHAPE_LABELS;
+  public shapesActive = computed(() => MENU_SHAPE_TOOLS.includes(this.tool() as MenuShapeTool));
+
+  /** Actions in creation order, across strokes, shapes and arrows, used to drive undo/redo */
+  private history: HistoryEntry[] = [];
+
+  /** Actions removed pending redo */
+  private redoStack: HistoryEntry[] = [];
 
   /**
    * When the svg is rendered in a parent element track position
@@ -151,6 +220,11 @@ export class PicsaDrawingComponent {
 
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
 
+  /** Pick a shape from the grouped "Shapes" menu and activate it */
+  public selectShapeTool(shapeTool: MenuShapeTool) {
+    this.tool.set(shapeTool);
+  }
+
   handlePointerDown(event: PointerEvent) {
     // Set svg element as target for future pointer events (will release automatically on pointerup)
     // https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture
@@ -162,6 +236,33 @@ export class PicsaDrawingComponent {
 
     if (this.tool() === 'eraser') {
       this.eraseAtPoint(event.pageX, event.pageY);
+      return;
+    }
+
+    if (BOX_TOOLS.includes(this.tool() as BoxTool)) {
+      const [left, top] = this.containerOffset;
+      const origin: [number, number] = [event.pageX - left, event.pageY - top];
+      this.shapeDragOrigin = origin;
+      this.activeShape = {
+        id: generateID(5),
+        tool: this.tool() as BoxTool,
+        rect: signal({ x: origin[0], y: origin[1], width: 0, height: 0 }),
+        color: this.color(),
+        strokeWidth: this.strokeWidth(),
+      };
+      return;
+    }
+
+    if (this.tool() === 'arrow') {
+      const [left, top] = this.containerOffset;
+      const x = event.pageX - left;
+      const y = event.pageY - top;
+      this.activeArrow = {
+        id: generateID(5),
+        line: signal({ x1: x, y1: y, x2: x, y2: y }),
+        color: this.color(),
+        strokeWidth: this.strokeWidth(),
+      };
       return;
     }
 
@@ -181,11 +282,40 @@ export class PicsaDrawingComponent {
       this.eraseAtPoint(event.pageX, event.pageY);
       return;
     }
+    if (this.activeShape && this.shapeDragOrigin) {
+      const [left, top] = this.containerOffset;
+      const currentX = event.pageX - left;
+      const currentY = event.pageY - top;
+      const [startX, startY] = this.shapeDragOrigin;
+      this.activeShape.rect.set(boundingRect(startX, startY, currentX, currentY, this.activeShape.tool));
+      return;
+    }
+    if (this.activeArrow) {
+      const [left, top] = this.containerOffset;
+      const start = this.activeArrow.line();
+      this.activeArrow.line.set({ ...start, x2: event.pageX - left, y2: event.pageY - top });
+      return;
+    }
     this.addPointToActiveSegment(event.pageX, event.pageY);
   }
 
   handlePointerUp() {
-    if (this.tool() !== 'eraser' && this.activeSegment.points.length > 0) {
+    if (this.activeShape) {
+      const rect = this.activeShape.rect();
+      // ignore accidental clicks that never dragged out a visible box
+      if (rect.width > 2 && rect.height > 2) {
+        this.finaliseActiveShape();
+      }
+      this.activeShape = null;
+      this.shapeDragOrigin = null;
+    } else if (this.activeArrow) {
+      const line = this.activeArrow.line();
+      // ignore accidental clicks that never dragged out a visible arrow
+      if (Math.hypot(line.x2 - line.x1, line.y2 - line.y1) > 4) {
+        this.finaliseActiveArrow();
+      }
+      this.activeArrow = null;
+    } else if (this.tool() !== 'eraser' && this.activeSegment.points.length > 0) {
       this.finaliseActiveSegment();
       this.activeSegment = this.createNewSegment();
     }
@@ -261,7 +391,8 @@ export class PicsaDrawingComponent {
       points: [],
       color: this.color(),
       width: this.strokeWidth(),
-      tool: this.tool(),
+      // only ever called while pen/highlighter is selected (see handlePointerDown/Up)
+      tool: this.tool() as StrokeTool,
     };
     return segment;
   }
@@ -299,30 +430,99 @@ export class PicsaDrawingComponent {
   public clearDraw() {
     this.activeSegment = this.createNewSegment();
     this.segments = [];
+    this.activeShape = null;
+    this.shapeDragOrigin = null;
+    this.shapes = [];
+    this.activeArrow = null;
+    this.arrows = [];
+    this.history = [];
+    this.redoStack = [];
   }
 
-  /* Undo previous Stroke render */
+  /* Undo previous action (stroke, shape or arrow) */
   public undoSvgStroke() {
-    const lastSegment = this.segments.pop();
-    if (lastSegment) {
-      this.redoStack.push(lastSegment);
+    const last = this.history.pop();
+    if (!last) return;
+    if (last.kind === 'segment') {
+      this.segments = this.segments.filter((segment) => segment !== last.item);
+    } else if (last.kind === 'shape') {
+      this.shapes = this.shapes.filter((shape) => shape !== last.item);
+    } else {
+      this.arrows = this.arrows.filter((arrow) => arrow !== last.item);
     }
+    this.redoStack.push(last);
   }
 
-  /* Redo Stroke render */
+  /* Redo previously undone action (stroke, shape or arrow) */
   public redoSvgStroke() {
-    const lastSegment = this.redoStack.pop();
-    if (lastSegment) {
-      this.segments.push(lastSegment);
+    const last = this.redoStack.pop();
+    if (!last) return;
+    if (last.kind === 'segment') {
+      this.segments = [...this.segments, last.item];
+    } else if (last.kind === 'shape') {
+      this.shapes = [...this.shapes, last.item];
+    } else {
+      this.arrows = [...this.arrows, last.item];
     }
+    this.history.push(last);
   }
 
   /* End the current stroke */
   public finaliseActiveSegment() {
     if (this.activeSegment.points.length > 0) {
       this.segments.push(this.activeSegment);
+      this.history.push({ kind: 'segment', item: this.activeSegment });
     }
   }
+
+  /* End the current shape drag */
+  public finaliseActiveShape() {
+    if (this.activeShape) {
+      this.shapes.push(this.activeShape);
+      this.history.push({ kind: 'shape', item: this.activeShape });
+    }
+  }
+
+  /** Saved shapes plus the one currently being dragged out, for a single render pass */
+  public displayShapes(): Shape[] {
+    return this.activeShape ? [...this.shapes, this.activeShape] : this.shapes;
+  }
+
+  /** Triangle outline inscribed in a bounding rect: apex top-center, base spanning the bottom */
+  public trianglePoints(rect: Rect): string {
+    const { x, y, width, height } = rect;
+    return `${x + width / 2},${y} ${x},${y + height} ${x + width},${y + height}`;
+  }
+
+  /* End the current arrow drag */
+  public finaliseActiveArrow() {
+    if (this.activeArrow) {
+      this.arrows.push(this.activeArrow);
+      this.history.push({ kind: 'arrow', item: this.activeArrow });
+    }
+  }
+}
+
+/**
+ * Build a bounding rect from a drag's start/current point, keeping the start corner fixed.
+ * Square/circle tools are locked to a 1:1 aspect ratio, growing from the same start corner.
+ */
+function boundingRect(startX: number, startY: number, currentX: number, currentY: number, tool: BoxTool): Rect {
+  if (SQUARE_ASPECT_TOOLS.includes(tool)) {
+    const size = Math.max(Math.abs(currentX - startX), Math.abs(currentY - startY));
+    return {
+      x: currentX < startX ? startX - size : startX,
+      y: currentY < startY ? startY - size : startY,
+      width: size,
+      height: size,
+    };
+  }
+  return {
+    x: Math.min(startX, currentX),
+    y: Math.min(startY, currentY),
+    width: Math.abs(currentX - startX),
+    height: Math.abs(currentY - startY),
+  };
 }
 
 /** Squared distance from a point to the closest point on a line segment */

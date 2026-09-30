@@ -13,7 +13,26 @@
       <mat-button-toggle value="highlighter">{{ 'Highlighter' | translate }}</mat-button-toggle>
 
       <mat-button-toggle value="eraser">{{ 'Eraser' | translate }}</mat-button-toggle>
+
+      <mat-button-toggle value="redaction">{{ 'Redact' | translate }}</mat-button-toggle>
     </mat-button-toggle-group>
+
+    <!-- Grouped Shapes Menu Trigger -->
+    <button
+      matButton="outlined"
+      [matMenuTriggerFor]="shapesMenu"
+      [class.active]="shapesActive()"
+      class="shapes-trigger"
+    >
+      <span>{{ 'Shapes' | translate }}</span>
+      <mat-icon iconPositionEnd>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #shapesMenu="matMenu">
+      @for (shapeTool of menuShapeTools; track shapeTool) {
+        <button mat-menu-item (click)="selectShapeTool(shapeTool)">{{ menuShapeLabels[shapeTool] | translate }}</button>
+      }
+    </mat-menu>
 
     <!-- Color Palette Swatches -->
     <div class="color-swatches">
@@ -21,9 +40,9 @@
         <button
           type="button"
           class="color-swatch"
-          [class.active]="tool() !== 'eraser' && color() === swatch"
+          [class.active]="tool() !== 'eraser' && tool() !== 'redaction' && color() === swatch"
           [style.background-color]="swatch"
-          [disabled]="tool() === 'eraser'"
+          [disabled]="tool() === 'eraser' || tool() === 'redaction'"
           [matTooltip]="swatch"
           (click)="color.set(swatch)"
         ></button>
@@ -32,7 +51,7 @@
       <button
         type="button"
         class="color-swatch custom-swatch"
-        [disabled]="tool() === 'eraser'"
+        [disabled]="tool() === 'eraser' || tool() === 'redaction'"
         [matTooltip]="'Custom color' | translate"
         (click)="customColorInput.click()"
       ></button>
@@ -47,7 +66,12 @@
     </div>
 
     <!-- Stroke/Eraser Width Dropdown Trigger -->
-    <button matButton="outlined" [matMenuTriggerFor]="widthMenu" class="width-trigger">
+    <button
+      matButton="outlined"
+      [matMenuTriggerFor]="widthMenu"
+      [disabled]="tool() === 'redaction'"
+      class="width-trigger"
+    >
       <span class="width-dot" [style.width.px]="strokeWidth()" [style.height.px]="strokeWidth()"></span>
       <mat-icon iconPositionEnd>expand_more</mat-icon>
     </button>
@@ -91,6 +115,26 @@
       (mouseup)="handlePointerUp()"
       (pointerup)="handlePointerUp()"
     >
+      <defs>
+        @for (arrow of arrows; track arrow.id) {
+          <marker [attr.id]="'arrowhead-' + arrow.id" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" [attr.fill]="arrow.color" />
+          </marker>
+        }
+        @if (activeArrow) {
+          <marker
+            [attr.id]="'arrowhead-' + activeArrow.id"
+            markerWidth="10"
+            markerHeight="10"
+            refX="8"
+            refY="5"
+            orient="auto"
+          >
+            <path d="M0,0 L10,5 L0,10 Z" [attr.fill]="activeArrow.color" />
+          </marker>
+        }
+      </defs>
+
       <!-- Previously rendered segments -->
       @for (segment of segments; track segment.id) {
         <path
@@ -112,10 +156,83 @@
           [style.mix-blend-mode]="activeSegment.tool === 'highlighter' ? 'multiply' : null"
         />
       }
+
+      <!-- Shapes: saved plus the one currently being dragged out -->
+      @for (shape of displayShapes(); track shape.id) {
+        @switch (shape.tool) {
+          @case ('redaction') {
+            <rect
+              [attr.x]="shape.rect().x"
+              [attr.y]="shape.rect().y"
+              [attr.width]="shape.rect().width"
+              [attr.height]="shape.rect().height"
+              fill="black"
+            />
+          }
+          @case ('circle') {
+            <ellipse
+              [attr.cx]="shape.rect().x + shape.rect().width / 2"
+              [attr.cy]="shape.rect().y + shape.rect().height / 2"
+              [attr.rx]="shape.rect().width / 2"
+              [attr.ry]="shape.rect().height / 2"
+              fill="none"
+              [attr.stroke]="shape.color"
+              [attr.stroke-width]="shape.strokeWidth"
+            />
+          }
+          @case ('triangle') {
+            <polygon
+              [attr.points]="trianglePoints(shape.rect())"
+              fill="none"
+              [attr.stroke]="shape.color"
+              [attr.stroke-width]="shape.strokeWidth"
+            />
+          }
+          @default {
+            <rect
+              [attr.x]="shape.rect().x"
+              [attr.y]="shape.rect().y"
+              [attr.width]="shape.rect().width"
+              [attr.height]="shape.rect().height"
+              fill="none"
+              [attr.stroke]="shape.color"
+              [attr.stroke-width]="shape.strokeWidth"
+            />
+          }
+        }
+      }
+
+      <!-- Previously drawn arrows -->
+      @for (arrow of arrows; track arrow.id) {
+        <line
+          [attr.x1]="arrow.line().x1"
+          [attr.y1]="arrow.line().y1"
+          [attr.x2]="arrow.line().x2"
+          [attr.y2]="arrow.line().y2"
+          [attr.stroke]="arrow.color"
+          [attr.stroke-width]="arrow.strokeWidth"
+          stroke-linecap="round"
+          [attr.marker-end]="'url(#arrowhead-' + arrow.id + ')'"
+        />
+      }
+
+      <!-- Active arrow being dragged out -->
+      @if (activeArrow) {
+        <line
+          [attr.x1]="activeArrow.line().x1"
+          [attr.y1]="activeArrow.line().y1"
+          [attr.x2]="activeArrow.line().x2"
+          [attr.y2]="activeArrow.line().y2"
+          [attr.stroke]="activeArrow.color"
+          [attr.stroke-width]="activeArrow.strokeWidth"
+          stroke-linecap="round"
+          [attr.marker-end]="'url(#arrowhead-' + activeArrow.id + ')'"
+        />
+      }
     </svg>
 
     <!-- Draw Prompt Overlay -->
-    @if (segments.length === 0 && !activeSegment.path()) {
+    @if (segments.length === 0 && shapes.length === 0 && arrows.length === 0 && !activeSegment.path()) {
       <div class="draw-logo">
         <mat-icon>draw</mat-icon>
         <div>{{ 'Draw Here' | translate }}</div>

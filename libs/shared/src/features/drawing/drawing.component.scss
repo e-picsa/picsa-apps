@@ -84,6 +84,19 @@
   }
 }
 
+/* Grouped Shapes Menu Trigger */
+.shapes-trigger {
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+
+  &.active {
+    background-color: var(--color-primary-50, #e0f7fa);
+  }
+}
+
 /* Width Dropdown Trigger Height Matching */
 .width-trigger {
   height: 38px !important;
