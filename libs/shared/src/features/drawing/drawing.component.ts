@@ -11,12 +11,15 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
 
 import { generateID } from '../../services/core/db/db.service';
+
+type DrawingTool = 'pen' | 'highlighter' | 'eraser';
 
 type Segment = {
   /** Unique id for each segment for efficient tracking */
@@ -25,11 +28,17 @@ type Segment = {
   points: [number, number, number][];
   /** Generate svg path */
   path: WritableSignal<string>;
+  /** Stroke color snapshotted from toolbar at creation time */
+  color: string;
+  /** Stroke width snapshotted from toolbar at creation time */
+  width: number;
+  /** Tool used to draw the segment, used to render highlighter opacity/blend */
+  tool: DrawingTool;
 };
 
 @Component({
   selector: 'picsa-custom-drawing',
-  imports: [MatButtonModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
+  imports: [MatButtonModule, MatButtonToggleModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +52,15 @@ export class PicsaDrawingComponent {
   viewbox = computed(() => `0 0 ${this.size()} ${this.size()}`);
 
   public onChange = output<string>();
+
+  /** Currently selected tool */
+  public tool = signal<DrawingTool>('pen');
+
+  /** Currently selected stroke color (pen/highlighter only) */
+  public color = signal('#1a1a1a');
+
+  /** Currently selected stroke width (pen/highlighter only) */
+  public strokeWidth = signal(8);
 
   /** List of segment currently being drawn */
   public activeSegment = this.createNewSegment();
@@ -65,9 +83,8 @@ export class PicsaDrawingComponent {
   /** Number of decimal places svg path calculated to */
   private precision = 2;
 
-  /** Perfect-freehand configuration */
-  private strokeOptions: StrokeOptions = {
-    size: 24,
+  /** Perfect-freehand configuration (size applied per-segment, see renderActiveSegment) */
+  private baseStrokeOptions: Omit<StrokeOptions, 'size'> = {
     thinning: 0.5,
     smoothing: 0.5,
     streamline: 0.5,
@@ -92,6 +109,11 @@ export class PicsaDrawingComponent {
     const target = event.target as SVGElement;
     target.setPointerCapture(event.pointerId);
 
+    if (this.tool() === 'eraser') {
+      this.eraseAtPoint(event.clientX, event.clientY);
+      return;
+    }
+
     // Ensure all points are calculated relative to svg container
     this.calculateContainerOffset();
 
@@ -104,16 +126,32 @@ export class PicsaDrawingComponent {
 
   handlePointerMove(event: PointerEvent) {
     if (event.buttons !== 1) return;
+    if (this.tool() === 'eraser') {
+      this.eraseAtPoint(event.clientX, event.clientY);
+      return;
+    }
     this.addPointToActiveSegment(event.pageX, event.pageY);
   }
 
   handlePointerUp() {
-    if (this.activeSegment.points.length > 0) {
+    if (this.tool() !== 'eraser' && this.activeSegment.points.length > 0) {
       this.finaliseActiveSegment();
     }
     // output current full svg
     const data = this.sanitizeOutputSVG();
     this.onChange.emit(data);
+  }
+
+  /** Remove any segment rendered under the given point (eraser tool) */
+  private eraseAtPoint(clientX: number, clientY: number) {
+    const svgEl = this.svgElement.nativeElement;
+    const hits = document.elementsFromPoint(clientX, clientY);
+    const erasedIds = new Set(
+      hits.filter((el): el is SVGPathElement => el instanceof SVGPathElement && svgEl.contains(el)).map((el) => el.id),
+    );
+    if (erasedIds.size > 0) {
+      this.segments = this.segments.filter((segment) => !erasedIds.has(segment.id));
+    }
   }
 
   /** Replace ngcontent, inserted classes and comments from svg */
@@ -127,7 +165,14 @@ export class PicsaDrawingComponent {
   }
 
   private createNewSegment() {
-    const segment: Segment = { id: generateID(5), path: signal(''), points: [] };
+    const segment: Segment = {
+      id: generateID(5),
+      path: signal(''),
+      points: [],
+      color: this.color(),
+      width: this.strokeWidth(),
+      tool: this.tool(),
+    };
     return segment;
   }
 
@@ -155,7 +200,7 @@ export class PicsaDrawingComponent {
 
   /** Render an svg path element generated from current list of points */
   private renderActiveSegment() {
-    const stroke = getStroke(this.activeSegment.points, this.strokeOptions);
+    const stroke = getStroke(this.activeSegment.points, { ...this.baseStrokeOptions, size: this.activeSegment.width });
     const path = getSvgPathFromStroke(stroke, this.precision);
     this.activeSegment.path.set(path);
   }

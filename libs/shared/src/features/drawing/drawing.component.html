@@ -1,4 +1,29 @@
 <div class="dialog-container">
+  <div class="tool-buttons">
+    <mat-button-toggle-group [value]="tool()" (change)="tool.set($event.value)">
+      <mat-button-toggle value="pen"><mat-icon>edit</mat-icon>{{ 'Pen' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="highlighter"
+        ><mat-icon>ink_highlighter</mat-icon>{{ 'Highlighter' | translate }}</mat-button-toggle
+      >
+      <mat-button-toggle value="eraser"><mat-icon>ink_eraser</mat-icon>{{ 'Eraser' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+    <input
+      type="color"
+      class="color-input"
+      [value]="color()"
+      [disabled]="tool() === 'eraser'"
+      (input)="color.set($any($event.target).value)"
+    />
+    <input
+      type="range"
+      class="width-input"
+      min="2"
+      max="40"
+      [value]="strokeWidth()"
+      [disabled]="tool() === 'eraser'"
+      (input)="strokeWidth.set($any($event.target).valueAsNumber)"
+    />
+  </div>
   <div class="edit-buttons">
     <button matButton="outlined" (click)="undoSvgStroke()"><mat-icon>undo</mat-icon>{{ 'Undo' | translate }}</button>
     <button matButton="outlined" (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
@@ -19,12 +44,24 @@
     >
       <!-- Previously rendered segments -->
       @for (segment of segments; track segment.id) {
-        <path [attr.d]="segment.path()" [id]="segment.id" />
+        <path
+          [attr.d]="segment.path()"
+          [id]="segment.id"
+          [attr.fill]="segment.color"
+          [attr.opacity]="segment.tool === 'highlighter' ? 0.4 : 1"
+          [style.mix-blend-mode]="segment.tool === 'highlighter' ? 'multiply' : null"
+        />
       }
 
       <!-- Active segment -->
       @if (activeSegment.path()) {
-        <path [attr.d]="activeSegment.path()" [id]="activeSegment.id" />
+        <path
+          [attr.d]="activeSegment.path()"
+          [id]="activeSegment.id"
+          [attr.fill]="activeSegment.color"
+          [attr.opacity]="activeSegment.tool === 'highlighter' ? 0.4 : 1"
+          [style.mix-blend-mode]="activeSegment.tool === 'highlighter' ? 'multiply' : null"
+        />
       }
     </svg>
     <!-- Draw Prompt Logo -->

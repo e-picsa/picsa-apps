@@ -26,3 +26,22 @@
   gap: 8px;
   margin-bottom: 8px;
 }
+
+.tool-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .color-input {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    background: none;
+  }
+
+  .width-input {
+    width: 100px;
+  }
+}
