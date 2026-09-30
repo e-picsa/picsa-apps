@@ -41,6 +41,16 @@ const COLOR_SWATCHES = [
 /** Preset stroke widths shown in the toolbar width menu */
 const WIDTH_PRESETS = [4, 12, 24];
 
+/** Eraser-shaped cursor shown over the canvas while the eraser tool is active */
+const ERASER_CURSOR_SVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28'>
+  <g transform='rotate(45 12 12)'>
+    <rect x='4' y='8' width='16' height='9' rx='2' fill='white' fill-opacity='0.95' stroke='black' stroke-width='1.6' />
+    <line x1='4' y1='13' x2='20' y2='13' stroke='black' stroke-width='1.6' />
+  </g>
+  <line x1='15' y1='21' x2='21' y2='21' stroke='black' stroke-width='1.6' stroke-linecap='round' />
+</svg>`;
+const ERASER_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(ERASER_CURSOR_SVG)}") 5 20, auto`;
+
 type Segment = {
   /** Unique id for each segment for efficient tracking */
   id: string;
@@ -94,6 +104,12 @@ export class PicsaDrawingComponent {
   public readonly colorSwatches = COLOR_SWATCHES;
   public readonly widthPresets = WIDTH_PRESETS;
 
+  /** Erase hit-radius, floored so it stays usable at small widths */
+  public eraserRadius = computed(() => Math.max(this.strokeWidth() / 2, 6));
+
+  /** Canvas cursor for the currently selected tool */
+  public canvasCursor = computed(() => (this.tool() === 'eraser' ? ERASER_CURSOR : 'auto'));
+
   /** List of segment currently being drawn */
   public activeSegment = this.createNewSegment();
 
@@ -141,13 +157,13 @@ export class PicsaDrawingComponent {
     const target = event.target as SVGElement;
     target.setPointerCapture(event.pointerId);
 
-    if (this.tool() === 'eraser') {
-      this.eraseAtPoint(event.clientX, event.clientY);
-      return;
-    }
-
     // Ensure all points are calculated relative to svg container
     this.calculateContainerOffset();
+
+    if (this.tool() === 'eraser') {
+      this.eraseAtPoint(event.pageX, event.pageY);
+      return;
+    }
 
     // ensure previous segment finalised (in case pointerup not fired) and start a new segment
     // with the currently selected tool/color/width (activeSegment may otherwise hold a stale style
@@ -162,7 +178,7 @@ export class PicsaDrawingComponent {
   handlePointerMove(event: PointerEvent) {
     if (event.buttons !== 1) return;
     if (this.tool() === 'eraser') {
-      this.eraseAtPoint(event.clientX, event.clientY);
+      this.eraseAtPoint(event.pageX, event.pageY);
       return;
     }
     this.addPointToActiveSegment(event.pageX, event.pageY);
@@ -178,16 +194,54 @@ export class PicsaDrawingComponent {
     this.onChange.emit(data);
   }
 
-  /** Remove any segment rendered under the given point (eraser tool) */
-  private eraseAtPoint(clientX: number, clientY: number) {
-    const svgEl = this.svgElement.nativeElement;
-    const hits = document.elementsFromPoint(clientX, clientY);
-    const erasedIds = new Set(
-      hits.filter((el): el is SVGPathElement => el instanceof SVGPathElement && svgEl.contains(el)).map((el) => el.id),
-    );
-    if (erasedIds.size > 0) {
-      this.segments = this.segments.filter((segment) => !erasedIds.has(segment.id));
+  /**
+   * Remove points within the eraser radius of the given point, splitting segments where
+   * points are removed from the middle rather than deleting the whole stroke
+   */
+  private eraseAtPoint(x: number, y: number) {
+    const [left, top] = this.containerOffset;
+    const cx = x - left;
+    const cy = y - top;
+    const radius = this.eraserRadius();
+
+    let didErase = false;
+    const nextSegments: Segment[] = [];
+    for (const segment of this.segments) {
+      const runs = splitPointsAroundCircle(segment.points, cx, cy, radius);
+      if (runs === null) {
+        nextSegments.push(segment);
+        continue;
+      }
+      didErase = true;
+      for (const points of runs) {
+        if (points.length > 1) {
+          nextSegments.push(this.createSegmentFromPoints(points, segment));
+        }
+      }
     }
+    if (didErase) {
+      this.segments = nextSegments;
+    }
+  }
+
+  /** Build a new segment from a point list, inheriting style from an existing segment */
+  private createSegmentFromPoints(
+    points: [number, number, number][],
+    style: Pick<Segment, 'color' | 'width' | 'tool'>,
+  ) {
+    // Pick only the style fields explicitly: callers pass the full original segment here, and
+    // spreading it would silently overwrite the fresh id/path/points below with the old ones
+    const segment: Segment = {
+      id: generateID(5),
+      path: signal(''),
+      points,
+      color: style.color,
+      width: style.width,
+      tool: style.tool,
+    };
+    const stroke = getStroke(segment.points, { ...this.baseStrokeOptions, size: segment.width });
+    segment.path.set(getSvgPathFromStroke(stroke, this.precision));
+    return segment;
   }
 
   /** Replace ngcontent, inserted classes and comments from svg */
@@ -269,6 +323,65 @@ export class PicsaDrawingComponent {
       this.segments.push(this.activeSegment);
     }
   }
+}
+
+/** Squared distance from a point to the closest point on a line segment */
+function distanceToSegmentSquared(px: number, py: number, x1: number, y1: number, x2: number, y2: number) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lengthSq = dx * dx + dy * dy;
+  const t = lengthSq === 0 ? 0 : Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lengthSq));
+  const closestX = x1 + t * dx;
+  const closestY = y1 + t * dy;
+  return (px - closestX) ** 2 + (py - closestY) ** 2;
+}
+
+/**
+ * Remove points falling within a circle from a point list, splitting the remainder into
+ * separate contiguous runs wherever points were removed from the middle. A point is erased
+ * if it, or either line segment connecting it to a neighbour, comes within the circle -
+ * this avoids gaps being missed when sampled points are spaced further apart than the radius.
+ * Returns null if no points were within the circle (segment left untouched).
+ */
+function splitPointsAroundCircle(
+  points: [number, number, number][],
+  cx: number,
+  cy: number,
+  radius: number,
+): [number, number, number][][] | null {
+  const radiusSq = radius ** 2;
+  const erased = points.map(([x, y]) => (x - cx) ** 2 + (y - cy) ** 2 <= radiusSq);
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const [x1, y1] = points[i];
+    const [x2, y2] = points[i + 1];
+    if (distanceToSegmentSquared(cx, cy, x1, y1, x2, y2) <= radiusSq) {
+      erased[i] = true;
+      erased[i + 1] = true;
+    }
+  }
+
+  if (!erased.some(Boolean)) {
+    return null;
+  }
+
+  const runs: [number, number, number][][] = [];
+  let current: [number, number, number][] = [];
+  points.forEach((point, i) => {
+    if (erased[i]) {
+      if (current.length > 0) {
+        runs.push(current);
+        current = [];
+      }
+    } else {
+      current.push(point);
+    }
+  });
+  if (current.length > 0) {
+    runs.push(current);
+  }
+
+  return runs;
 }
 
 const average = (a: number, b: number) => (a + b) / 2;

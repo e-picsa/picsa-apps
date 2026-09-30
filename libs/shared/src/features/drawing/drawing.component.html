@@ -46,13 +46,8 @@
       />
     </div>
 
-    <!-- Stroke Width Dropdown Trigger -->
-    <button
-      matButton="outlined"
-      [matMenuTriggerFor]="widthMenu"
-      [disabled]="tool() === 'eraser'"
-      class="width-trigger"
-    >
+    <!-- Stroke/Eraser Width Dropdown Trigger -->
+    <button matButton="outlined" [matMenuTriggerFor]="widthMenu" class="width-trigger">
       <span class="width-dot" [style.width.px]="strokeWidth()" [style.height.px]="strokeWidth()"></span>
       <mat-icon iconPositionEnd>expand_more</mat-icon>
     </button>
@@ -84,7 +79,7 @@
   </div>
 
   <!-- SVG Drawing Canvas Container -->
-  <div class="svg-container" [style.width.px]="size()" [style.height.px]="size()">
+  <div class="svg-container" [style.width.px]="size()" [style.height.px]="size()" [style.cursor]="canvasCursor()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       [attr.viewBox]="viewbox()"
