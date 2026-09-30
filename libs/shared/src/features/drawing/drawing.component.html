@@ -1,35 +1,90 @@
 <div class="dialog-container">
+  <!-- Toolbar Section -->
   <div class="tool-buttons">
-    <mat-button-toggle-group [value]="tool()" (change)="tool.set($event.value)">
-      <mat-button-toggle value="pen"><mat-icon>edit</mat-icon>{{ 'Pen' | translate }}</mat-button-toggle>
-      <mat-button-toggle value="highlighter"
-        ><mat-icon>ink_highlighter</mat-icon>{{ 'Highlighter' | translate }}</mat-button-toggle
-      >
-      <mat-button-toggle value="eraser"><mat-icon>ink_eraser</mat-icon>{{ 'Eraser' | translate }}</mat-button-toggle>
+    <!-- Tool Toggle Group -->
+    <mat-button-toggle-group
+      [value]="tool()"
+      (change)="tool.set($event.value)"
+      [hideSingleSelectionIndicator]="true"
+      aria-label="Annotation tools"
+    >
+      <mat-button-toggle value="pen">{{ 'Pen' | translate }}</mat-button-toggle>
+
+      <mat-button-toggle value="highlighter">{{ 'Highlighter' | translate }}</mat-button-toggle>
+
+      <mat-button-toggle value="eraser">{{ 'Eraser' | translate }}</mat-button-toggle>
     </mat-button-toggle-group>
-    <input
-      type="color"
-      class="color-input"
-      [value]="color()"
+
+    <!-- Color Palette Swatches -->
+    <div class="color-swatches">
+      @for (swatch of colorSwatches; track swatch) {
+        <button
+          type="button"
+          class="color-swatch"
+          [class.active]="tool() !== 'eraser' && color() === swatch"
+          [style.background-color]="swatch"
+          [disabled]="tool() === 'eraser'"
+          [matTooltip]="swatch"
+          (click)="color.set(swatch)"
+        ></button>
+      }
+
+      <button
+        type="button"
+        class="color-swatch custom-swatch"
+        [disabled]="tool() === 'eraser'"
+        [matTooltip]="'Custom color' | translate"
+        (click)="customColorInput.click()"
+      ></button>
+
+      <input
+        #customColorInput
+        type="color"
+        class="hidden-color-input"
+        [value]="color()"
+        (input)="color.set($any($event.target).value)"
+      />
+    </div>
+
+    <!-- Stroke Width Dropdown Trigger -->
+    <button
+      matButton="outlined"
+      [matMenuTriggerFor]="widthMenu"
       [disabled]="tool() === 'eraser'"
-      (input)="color.set($any($event.target).value)"
-    />
-    <input
-      type="range"
-      class="width-input"
-      min="2"
-      max="40"
-      [value]="strokeWidth()"
-      [disabled]="tool() === 'eraser'"
-      (input)="strokeWidth.set($any($event.target).valueAsNumber)"
-    />
+      class="width-trigger"
+    >
+      <span class="width-dot" [style.width.px]="strokeWidth()" [style.height.px]="strokeWidth()"></span>
+      <mat-icon iconPositionEnd>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #widthMenu="matMenu">
+      @for (width of widthPresets; track width) {
+        <button mat-menu-item class="width-option" (click)="strokeWidth.set(width)">
+          <span class="width-dot" [style.width.px]="width" [style.height.px]="width"></span>
+        </button>
+      }
+    </mat-menu>
   </div>
+
+  <!-- Action Row -->
   <div class="edit-buttons">
-    <button matButton="outlined" (click)="undoSvgStroke()"><mat-icon>undo</mat-icon>{{ 'Undo' | translate }}</button>
-    <button matButton="outlined" (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
-    <button matButton="outlined" style="margin-left: auto" (click)="clearDraw()">{{ 'Clear All' | translate }}</button>
+    <button matButton="outlined" (click)="undoSvgStroke()">
+      <mat-icon>undo</mat-icon>
+      <span>{{ 'Undo' | translate }}</span>
+    </button>
+
+    <button matButton="outlined" (click)="redoSvgStroke()">
+      <mat-icon>redo</mat-icon>
+      <span>{{ 'Redo' | translate }}</span>
+    </button>
+
+    <button matButton="outlined" color="warn" class="margin-left-auto" (click)="clearDraw()">
+      <span>{{ 'Clear All' | translate }}</span>
+    </button>
   </div>
-  <div class="svg-container" [style.width]="size() + 'px'" [style.height]="size() + 'px'">
+
+  <!-- SVG Drawing Canvas Container -->
+  <div class="svg-container" [style.width.px]="size()" [style.height.px]="size()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       [attr.viewBox]="viewbox()"
@@ -40,7 +95,6 @@
       (pointermove)="handlePointerMove($event)"
       (mouseup)="handlePointerUp()"
       (pointerup)="handlePointerUp()"
-      style="touch-action: none"
     >
       <!-- Previously rendered segments -->
       @for (segment of segments; track segment.id) {
@@ -64,7 +118,8 @@
         />
       }
     </svg>
-    <!-- Draw Prompt Logo -->
+
+    <!-- Draw Prompt Overlay -->
     @if (segments.length === 0 && !activeSegment.path()) {
       <div class="draw-logo">
         <mat-icon>draw</mat-icon>

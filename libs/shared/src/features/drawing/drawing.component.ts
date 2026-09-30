@@ -14,12 +14,32 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
 
 import { generateID } from '../../services/core/db/db.service';
 
 type DrawingTool = 'pen' | 'highlighter' | 'eraser';
+
+/** Preset colors shown in the toolbar swatch grid */
+const COLOR_SWATCHES = [
+  '#1a1a1a',
+  '#e53935',
+  '#fb8c00',
+  '#fdd835',
+  '#43a047',
+  '#ffffff',
+  '#9e9e9e',
+  '#26c6da',
+  '#1e88e5',
+  '#8e24aa',
+  '#d81b60',
+];
+
+/** Preset stroke widths shown in the toolbar width menu */
+const WIDTH_PRESETS = [4, 12, 24];
 
 type Segment = {
   /** Unique id for each segment for efficient tracking */
@@ -38,7 +58,15 @@ type Segment = {
 
 @Component({
   selector: 'picsa-custom-drawing',
-  imports: [MatButtonModule, MatButtonToggleModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
+  imports: [
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    PicsaTranslateModule,
+  ],
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +89,10 @@ export class PicsaDrawingComponent {
 
   /** Currently selected stroke width (pen/highlighter only) */
   public strokeWidth = signal(8);
+
+  /** Preset colors and widths rendered in the toolbar */
+  public readonly colorSwatches = COLOR_SWATCHES;
+  public readonly widthPresets = WIDTH_PRESETS;
 
   /** List of segment currently being drawn */
   public activeSegment = this.createNewSegment();
