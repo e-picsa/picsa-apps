@@ -343,15 +343,17 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(caps.schemaVersion).toBe(1);
       expect(caps.contentHash).toBe('hash123');
       expect(caps.years).toEqual([1960, 1961]);
-      expect(caps.totalMissingYears).toBe(0);
+      expect(caps.totalYears).toBe(2);
+      expect(caps.completeRainYears).toBe(2);
+      expect(caps.completeTempYears).toBe(0);
       expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length', 'extreme_rainfall_days', 'temp_max']);
       expect(caps.monthly).toEqual(['rainfall', 'temp_min', 'temp_max']);
     });
 
     it('should handle rain-only station capabilities correctly', () => {
       const annualData = [
-        { Year: 1980, Rainfall: 700 },
-        { Year: 1982, Rainfall: 750 },
+        { Year: 1980, Start: 300, End: 90, Length: 150, Rainfall: 700 },
+        { Year: 1982, Start: 310, End: 95, Length: 155, Rainfall: 750 },
       ] as IStationData[];
       const monthlyData: IMonthlyStationData[] = [
         { month: '1980-01', Rainfall: 100 },
@@ -364,19 +366,22 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       });
 
       expect(caps.years).toEqual([1980, 1982]);
-      // 1980, 1981, 1982 -> span 3 years, 1981 missing -> totalMissingYears = 1
-      expect(caps.totalMissingYears).toBe(1);
-      expect(caps.annual).toEqual(['rainfall']);
+      expect(caps.totalYears).toBe(3);
+      expect(caps.completeRainYears).toBe(2);
+      expect(caps.completeTempYears).toBeUndefined();
+      expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length']);
       expect(caps.monthly).toEqual(['rainfall']);
     });
 
     it('should handle station with no monthly data', () => {
-      const annualData = [{ Year: 1990, Rainfall: 600 }] as IStationData[];
+      const annualData = [{ Year: 1990, Start: 300, End: 90, Length: 150, Rainfall: 600 }] as IStationData[];
       const caps = calculateStationCapabilities({ annualData });
 
       expect(caps.years).toEqual([1990, 1990]);
-      expect(caps.totalMissingYears).toBe(0);
-      expect(caps.annual).toEqual(['rainfall']);
+      expect(caps.totalYears).toBe(1);
+      expect(caps.completeRainYears).toBe(1);
+      expect(caps.completeTempYears).toBeUndefined();
+      expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length']);
       expect(caps.monthly).toBeUndefined();
     });
 
@@ -388,8 +393,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       const caps = calculateStationCapabilities({ monthlyData });
 
       expect(caps.years).toEqual([1975, 1985]);
-      // 1975 to 1985 is 11 years, only 2 valid years observed -> 9 missing years
-      expect(caps.totalMissingYears).toBe(9);
+      expect(caps.totalYears).toBe(11);
+      expect(caps.completeRainYears).toBeUndefined();
+      expect(caps.completeTempYears).toBeUndefined();
       expect(caps.annual).toBeUndefined();
       expect(caps.monthly).toEqual(['rainfall']);
     });
@@ -498,7 +504,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
             id: 'chipata_met',
             status: 'UPDATED',
             years: [1950, 2020],
-            totalMissingYears: 2,
+            totalYears: 71,
+            completeRainYears: 68,
+            completeTempYears: 50,
             monthly: ['rainfall', 'temp_min', 'temp_max'],
             hash: 'abc123456789',
           },
@@ -535,6 +543,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(md).toContain('# Climate Data Sync & Health Audit Report');
       expect(md).toContain('chipata_met');
       expect(md).toContain('1950–2020');
+      expect(md).toContain('Total Yrs');
+      expect(md).toContain('Complete Rain Yrs');
+      expect(md).toContain('Complete Temp Yrs');
       expect(md).toContain('Historical Revisions (1)');
       expect(md).toContain('Missingness Regressions (1)');
       expect(md).toContain('Physical Consistency Sanity Checks (1)');
@@ -550,7 +561,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
             id: 'kasama_met',
             status: 'UNCHANGED',
             years: [1960, 2024],
-            totalMissingYears: 0,
+            totalYears: 65,
+            completeRainYears: 65,
+            completeTempYears: undefined,
             monthly: ['rainfall'],
           },
         ],

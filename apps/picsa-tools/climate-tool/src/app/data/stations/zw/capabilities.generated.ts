@@ -15,7 +15,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2026-05-17',
     contentHash: '9796c7774313fa231c69c0be12b72574d8c43533c5df1c08167489294c9a8257',
     years: [1965, 2024],
-    totalMissingYears: 9,
+    totalYears: 60,
+    completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   buhera: {
@@ -35,7 +36,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2026-05-17',
     contentHash: '15b4d1499783e3c5af0958593851dc1ac923dc88e48a7ab867cbf26673a02789',
     years: [1963, 2024],
-    totalMissingYears: 11,
+    totalYears: 62,
+    completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   makoholi: {
@@ -47,7 +49,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2026-05-17',
     contentHash: 'a62f8c15404ac503e86ce82a50342e7be636fd87820a214caf43d00ad4c6307d',
     years: [1951, 2024],
-    totalMissingYears: 6,
+    totalYears: 74,
+    completeRainYears: 68,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   matopos: {
@@ -59,7 +62,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2026-05-17',
     contentHash: '16c134d49757716f0e0076712f3b145c603daf076a5595094af6bce0e81523b7',
     years: [1962, 2022],
-    totalMissingYears: 2,
+    totalYears: 61,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   nyanga: {
@@ -71,7 +75,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2026-05-17',
     contentHash: '5870a335d9ac7e4b25e2fbc68216d027217b829353d03ac992ad235037a6ce46',
     years: [1963, 2022],
-    totalMissingYears: 3,
+    totalYears: 60,
+    completeRainYears: 57,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   rupike: {

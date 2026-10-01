@@ -355,62 +355,75 @@ export function calculateStationCapabilities(params: {
   );
   if (hasMonthlyMaxTemp) monthlyCharts.push('temp_max');
 
-  // Compute totalMissingYears
-  let totalMissingYears: number | undefined;
-  if (firstYear !== undefined && lastYear !== undefined) {
-    const validYears = new Set<number>();
+  // Compute completeRainYears and completeTempYears
+  let completeRainYears: number | undefined;
+  let completeTempYears: number | undefined;
 
-    if (annualData.length > 0) {
-      // Depend strictly on annual data for summary metadata
-      for (const row of annualData) {
-        if (typeof row.Year !== 'number' || Number.isNaN(row.Year)) continue;
-        const hasMetric =
-          (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
-          (typeof row.Start === 'number' && !Number.isNaN(row.Start)) ||
-          (typeof row.End === 'number' && !Number.isNaN(row.End)) ||
-          (typeof row.Length === 'number' && !Number.isNaN(row.Length)) ||
-          (typeof row.Extreme_events === 'number' && !Number.isNaN(row.Extreme_events)) ||
-          (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
-          (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
-          (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
-          (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
-          (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
-          (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
+  if (annualData.length > 0) {
+    let rainCount = 0;
+    let tempCount = 0;
+    let hasAnyTempData = false;
 
-        if (hasMetric) {
-          validYears.add(row.Year);
-        }
+    for (const row of annualData) {
+      if (typeof row.Year !== 'number' || Number.isNaN(row.Year)) continue;
+
+      // Complete rain year requires all 4 seasonal metrics (Rainfall, Start, End, Length)
+      const isCompleteRain =
+        typeof row.Rainfall === 'number' &&
+        !Number.isNaN(row.Rainfall) &&
+        typeof row.Start === 'number' &&
+        !Number.isNaN(row.Start) &&
+        typeof row.End === 'number' &&
+        !Number.isNaN(row.End) &&
+        typeof row.Length === 'number' &&
+        !Number.isNaN(row.Length);
+
+      if (isCompleteRain) {
+        rainCount++;
       }
-    } else {
-      // Fallback: check monthly data valid rows if no annual data
-      for (const row of monthlyData) {
-        const yr = Number.parseInt(row.month.slice(0, 4), 10);
-        if (!Number.isNaN(yr)) {
-          const hasMetric =
-            (typeof row.Rainfall === 'number' && !Number.isNaN(row.Rainfall)) ||
-            (typeof row.min_tmin === 'number' && !Number.isNaN(row.min_tmin)) ||
-            (typeof row.mean_tmin === 'number' && !Number.isNaN(row.mean_tmin)) ||
-            (typeof row.max_tmin === 'number' && !Number.isNaN(row.max_tmin)) ||
-            (typeof row.min_tmax === 'number' && !Number.isNaN(row.min_tmax)) ||
-            (typeof row.mean_tmax === 'number' && !Number.isNaN(row.mean_tmax)) ||
-            (typeof row.max_tmax === 'number' && !Number.isNaN(row.max_tmax));
-          if (hasMetric) {
-            validYears.add(yr);
-          }
-        }
+
+      // Complete temp year requires all 4 essential plotted metrics (min_tmin, mean_tmin, max_tmax, mean_tmax)
+      const hasTempInRow =
+        typeof row.min_tmin === 'number' ||
+        typeof row.mean_tmin === 'number' ||
+        typeof row.mean_tmax === 'number' ||
+        typeof row.max_tmax === 'number';
+
+      if (hasTempInRow) {
+        hasAnyTempData = true;
+      }
+
+      const isCompleteTemp =
+        typeof row.min_tmin === 'number' &&
+        !Number.isNaN(row.min_tmin) &&
+        typeof row.mean_tmin === 'number' &&
+        !Number.isNaN(row.mean_tmin) &&
+        typeof row.mean_tmax === 'number' &&
+        !Number.isNaN(row.mean_tmax) &&
+        typeof row.max_tmax === 'number' &&
+        !Number.isNaN(row.max_tmax);
+
+      if (isCompleteTemp) {
+        tempCount++;
       }
     }
 
-    const totalYearsSpan = lastYear - firstYear + 1;
-    totalMissingYears = Math.max(0, totalYearsSpan - validYears.size);
+    completeRainYears = rainCount;
+    if (hasAnyTempData || annualCharts.includes('temp_min') || annualCharts.includes('temp_max')) {
+      completeTempYears = tempCount;
+    }
   }
+
+  const totalYears = firstYear !== undefined && lastYear !== undefined ? lastYear - firstYear + 1 : undefined;
 
   return {
     schemaVersion,
     lastUpdated: lastUpdated || new Date().toISOString().slice(0, 10),
     contentHash,
     years: firstYear !== undefined && lastYear !== undefined ? [firstYear, lastYear] : [],
-    totalMissingYears,
+    totalYears,
+    completeRainYears,
+    completeTempYears,
     annual: annualCharts.length > 0 ? annualCharts : undefined,
     monthly: monthlyCharts.length > 0 ? monthlyCharts : undefined,
   };
@@ -580,15 +593,17 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
 
   // Stations summary table
   md += `## 1. Stations Summary\n\n`;
-  md += `| Station ID | Status | Historical Range | Missing Years | Monthly Charts | Content Hash |\n`;
-  md += `| :--- | :---: | :---: | :---: | :---: | :--- |\n`;
+  md += `| Station ID | Status | Historical Range | Total Yrs | Complete Rain Yrs | Complete Temp Yrs | Monthly Charts | Content Hash |\n`;
+  md += `| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |\n`;
 
   for (const s of stationsSummary) {
-    const range = s.years ? `${s.years[0]}–${s.years[1]}` : 'N/A';
-    const missing = s.totalMissingYears !== undefined ? `${s.totalMissingYears}` : '0';
+    const range = s.years && s.years.length === 2 ? `${s.years[0]}–${s.years[1]}` : 'N/A';
+    const totalYrs = s.totalYears !== undefined ? `${s.totalYears}` : '—';
+    const rain = s.completeRainYears !== undefined ? `${s.completeRainYears}` : '—';
+    const temp = s.completeTempYears !== undefined ? `${s.completeTempYears}` : '—';
     const monthlyCharts = s.monthly && s.monthly.length > 0 ? s.monthly.join(', ') : '—';
     const hash = s.hash ? `\`${s.hash.slice(0, 10)}...\`` : '—';
-    md += `| **${s.id}** | \`${s.status}\` | ${range} | ${missing} | ${monthlyCharts} | ${hash} |\n`;
+    md += `| **${s.id}** | \`${s.status}\` | ${range} | ${totalYrs} | ${rain} | ${temp} | ${monthlyCharts} | ${hash} |\n`;
   }
 
   md += `\n`;
