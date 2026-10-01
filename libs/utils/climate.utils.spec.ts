@@ -4,7 +4,9 @@ import {
   calculateStationCapabilities,
   aggregateThreeMonthSeries,
   convertMonthlyToStationData,
+  convertStationSummariesToRows,
   filterMonthlyDataByMonth,
+  formatAnnualCsv,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
   normalizeMonthKey,
@@ -12,6 +14,7 @@ import {
   parseMonthlyCsv,
   pivotLongToWideMonthly,
   roundClimateValue,
+  stationHasAnnualTemperature,
   stationHasTemperatureData,
 } from './climate.utils';
 
@@ -659,6 +662,104 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       const aggregated = aggregateThreeMonthSeries(monthlyData, djfPeriod);
       expect(aggregated.length).toBe(1);
       expect(aggregated[0].Rainfall).toBeNull();
+    });
+  });
+
+  describe('convertStationSummariesToRows', () => {
+    it('should correctly merge rainfall and temperature arrays sorted by year', () => {
+      const rainfall = [
+        { year: 1970, seasonal_rain: 850, start_rains_doy: 300, end_rains_doy: 90, season_length: 155 },
+        { year: 1971, seasonal_rain: 920, start_rains_doy: 310, end_season_doy: 95, season_length: 150 },
+      ];
+      const temperature = [
+        { year: 1969, mean_tmax: 29.44, min_tmin: 12.19 },
+        { year: 1970, mean_tmax: 30.12, min_tmin: 11.81 },
+      ];
+
+      const rows = convertStationSummariesToRows(rainfall, temperature);
+      expect(rows.length).toBe(3);
+      expect(rows.map((r) => r.Year)).toEqual([1969, 1970, 1971]);
+
+      // 1969: temp only
+      expect(rows[0].Year).toBe(1969);
+      expect(rows[0].mean_tmax).toBe(29.4);
+      expect(rows[0].min_tmin).toBe(12.2);
+      expect(rows[0].Rainfall).toBeUndefined();
+
+      // 1970: merged
+      expect(rows[1].Year).toBe(1970);
+      expect(rows[1].Rainfall).toBe(850);
+      expect(rows[1].Start).toBe(300);
+      expect(rows[1].End).toBe(90);
+      expect(rows[1].Length).toBe(155);
+      expect(rows[1].mean_tmax).toBe(30.1);
+      expect(rows[1].min_tmin).toBe(11.8);
+
+      // 1971: rainfall only with end_season_doy fallback
+      expect(rows[2].Year).toBe(1971);
+      expect(rows[2].End).toBe(95);
+      expect(rows[2].mean_tmax).toBeUndefined();
+    });
+
+    it('should normalize 0 seasonal rain and 0 doy values to undefined', () => {
+      const rainfall = [{ year: 1980, seasonal_rain: 0, start_rains_doy: 0, end_rains_doy: 0, season_length: 0 }];
+      const rows = convertStationSummariesToRows(rainfall, []);
+      expect(rows.length).toBe(1);
+      expect(rows[0].Rainfall).toBeUndefined();
+      expect(rows[0].Start).toBeUndefined();
+      expect(rows[0].End).toBeUndefined();
+      expect(rows[0].Length).toBeUndefined();
+    });
+  });
+
+  describe('stationHasAnnualTemperature', () => {
+    it('should return true if any temperature metric is present', () => {
+      expect(
+        stationHasAnnualTemperature([
+          { Year: 1980, Start: 1, End: 2, Length: 3, Rainfall: 10, Extreme_events: 0, mean_tmax: 25.5 },
+        ]),
+      ).toBe(true);
+    });
+
+    it('should return false if no temperature metric is present', () => {
+      expect(
+        stationHasAnnualTemperature([{ Year: 1980, Start: 1, End: 2, Length: 3, Rainfall: 10, Extreme_events: 0 }]),
+      ).toBe(false);
+    });
+  });
+
+  describe('formatAnnualCsv', () => {
+    it('should omit temperature columns when station has no temperature data', () => {
+      const data: IStationData[] = [
+        { Year: 1980, Start: 300, End: 90, Length: 155, Rainfall: 850, Extreme_events: undefined as any },
+        { Year: 1981, Start: 310, End: 95, Length: 150, Rainfall: 920, Extreme_events: undefined as any },
+      ];
+      const csv = formatAnnualCsv(data);
+      expect(csv).toBe('Year,Start,End,Length,Rainfall\n1980,300,90,155,850\n1981,310,95,150,920\n');
+    });
+
+    it('should include all columns when station has temperature observations', () => {
+      const data: IStationData[] = [
+        {
+          Year: 1980,
+          Start: 300,
+          End: 90,
+          Length: 155,
+          Rainfall: 850,
+          max_tmax: 35.0,
+          max_tmin: 22.0,
+          min_tmax: 20.0,
+          min_tmin: 10.0,
+          mean_tmax: 28.5,
+          mean_tmin: 16.2,
+          Extreme_events: undefined as any,
+        },
+      ];
+      const csv = formatAnnualCsv(data);
+      expect(csv).toContain(
+        'Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mean_tmin,Extreme_events\n',
+      );
+      expect(csv).toContain('1980,300,90,155,850,35,22,20,10,28.5,16.2,\n');
     });
   });
 });
