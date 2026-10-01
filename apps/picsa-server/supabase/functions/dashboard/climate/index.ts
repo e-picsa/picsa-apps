@@ -3,7 +3,7 @@ import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import createClient from 'openapi-fetch';
 import type * as ClimateApi from '../../../types/climate-api.types.ts';
 
-const API_ENDPOINT = 'https://api.epicsa.idems.international';
+const API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
 
 // Create typed client
 const apiClient = createClient<ClimateApi.paths>({
@@ -29,7 +29,7 @@ export const climate = async (req: Request) => {
       case 'rainfall-summaries': {
         const { station_name, id } = station;
         // Type-safe POST request
-        const { data: apiData, error: apiError } = await apiClient.POST('/v1/annual_rainfall_summaries/', {
+        const { data: apiData, error: apiError } = await apiClient.POST('/v2/annual_rainfall_summaries/', {
           body: {
             country: `${country_code}` as any,
             station_id: `${station_name}`,
@@ -58,7 +58,7 @@ export const climate = async (req: Request) => {
 
       case 'annual-temperature': {
         const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v1/annual_temperature_summaries/', {
+        const { data: apiData, error: apiError } = await apiClient.POST('/v2/annual_temperature_summaries/', {
           body: {
             country: `${country_code}` as any,
             station_id: `${station_name}`,
@@ -81,7 +81,7 @@ export const climate = async (req: Request) => {
 
       case 'crop-probabilities': {
         const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v1/crop_success_probabilities/', {
+        const { data: apiData, error: apiError } = await apiClient.POST('/v2/crop_success_probabilities/', {
           body: {
             country: `${country_code}` as any,
             station_id: `${station_name}`,
@@ -103,7 +103,7 @@ export const climate = async (req: Request) => {
 
       case 'monthly-temperatures': {
         const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v1/monthly_temperature_summaries/', {
+        const { data: apiData, error: apiError } = await apiClient.POST('/v2/monthly_temperature_summaries/', {
           body: {
             country: `${country_code}` as any,
             station_id: `${station_name}`,
@@ -133,10 +133,10 @@ export const climate = async (req: Request) => {
 
       case 'update-stations': {
         // This replaces 'station' in ApiMapping
-        // GET /v1/station/{country}
+        // GET /v2/station/{country}
         // Payload expects 'country_code'
         const targetCountry = payload.country_code;
-        const { data, error: apiError } = await apiClient.GET(`/v1/station/{country}`, {
+        const { data, error: apiError } = await apiClient.GET(`/v2/station/{country}`, {
           params: { path: { country: targetCountry as any } },
         });
 
@@ -180,7 +180,7 @@ export const climate = async (req: Request) => {
         // I will use fetch for file download to be safe and avoid type issues with blob parsing in the library wrapper
         // as user specifically asked for type safety on the API request side which is most valuable for the JSON endpoints.
 
-        const response = await fetch(`${API_ENDPOINT}/v1/documents/${country_code}/${filepath}`, {
+        const response = await fetch(`${API_ENDPOINT}/v2/documents/${country_code}/${filepath}`, {
           method: 'GET',
         });
 
