@@ -810,3 +810,120 @@ export function aggregateThreeMonthSeries(
 
   return result.sort((a, b) => a.Year - b.Year);
 }
+
+/**
+ * Convert database annual rainfall and temperature summary arrays into unified IStationData rows.
+ * Merges entries by year and handles country-specific DOY mappings and temperature rounding.
+ */
+export function convertStationSummariesToRows(
+  annualRainfallData?: any[] | null,
+  annualTemperatureData?: any[] | null,
+): IStationData[] {
+  const rainfall = annualRainfallData ?? [];
+  const temperature = annualTemperatureData ?? [];
+  const mergedMap = new Map<number, Record<string, any>>();
+
+  for (const r of rainfall) {
+    if (r && typeof r.year === 'number') {
+      mergedMap.set(r.year, { ...r });
+    }
+  }
+
+  for (const t of temperature) {
+    if (t && typeof t.year === 'number') {
+      const existing = mergedMap.get(t.year) ?? { year: t.year };
+      mergedMap.set(t.year, { ...existing, ...t });
+    }
+  }
+
+  const sortedYears = Array.from(mergedMap.keys()).sort((a, b) => a - b);
+  const rows: IStationData[] = [];
+
+  for (const year of sortedYears) {
+    const el = mergedMap.get(year)!;
+    const { max_tmax, max_tmin, min_tmax, min_tmin, mean_tmax, mean_tmin } = el;
+    const { end_season_doy, season_length, seasonal_rain, start_rains_doy, end_rains_doy } = el;
+
+    let endVal: number | undefined = undefined;
+    if (typeof end_rains_doy === 'number') endVal = end_rains_doy;
+    if (typeof end_season_doy === 'number') endVal = end_season_doy;
+
+    let rainVal: number | undefined = undefined;
+    if (typeof seasonal_rain === 'number') {
+      rainVal = seasonal_rain === 0 ? undefined : seasonal_rain;
+    }
+
+    const row: IStationData = {
+      Year: year,
+      Start: typeof start_rains_doy === 'number' && start_rains_doy !== 0 ? start_rains_doy : (undefined as any),
+      End: typeof endVal === 'number' && endVal !== 0 ? endVal : (undefined as any),
+      Length: typeof season_length === 'number' && season_length !== 0 ? season_length : (undefined as any),
+      Rainfall: rainVal as any,
+      Extreme_events: undefined as any,
+      min_tmin: (roundClimateValue(min_tmin) ?? undefined) as any,
+      mean_tmin: (roundClimateValue(mean_tmin) ?? undefined) as any,
+      max_tmin: (roundClimateValue(max_tmin) ?? undefined) as any,
+      min_tmax: (roundClimateValue(min_tmax) ?? undefined) as any,
+      mean_tmax: (roundClimateValue(mean_tmax) ?? undefined) as any,
+      max_tmax: (roundClimateValue(max_tmax) ?? undefined) as any,
+    };
+
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+/**
+ * Check if annual station records have any temperature observations.
+ */
+export function stationHasAnnualTemperature(data: IStationData[]): boolean {
+  return data.some(
+    (row) =>
+      (row.min_tmin !== undefined && row.min_tmin !== null) ||
+      (row.mean_tmin !== undefined && row.mean_tmin !== null) ||
+      (row.max_tmin !== undefined && row.max_tmin !== null) ||
+      (row.min_tmax !== undefined && row.min_tmax !== null) ||
+      (row.mean_tmax !== undefined && row.mean_tmax !== null) ||
+      (row.max_tmax !== undefined && row.max_tmax !== null),
+  );
+}
+
+/**
+ * Format annual station records into standard CSV text.
+ * Omits temperature and extreme event columns if station is rain-only to keep bundle sizes compact.
+ */
+export function formatAnnualCsv(data: IStationData[], includeTemperature?: boolean): string {
+  const hasTemp = includeTemperature ?? stationHasAnnualTemperature(data);
+
+  if (!hasTemp) {
+    let csv = 'Year,Start,End,Length,Rainfall\n';
+    for (const row of data) {
+      const year = row.Year ?? '';
+      const start = row.Start !== undefined && row.Start !== null ? row.Start : '';
+      const end = row.End !== undefined && row.End !== null ? row.End : '';
+      const len = row.Length !== undefined && row.Length !== null ? row.Length : '';
+      const rain = row.Rainfall !== undefined && row.Rainfall !== null ? row.Rainfall : '';
+      csv += `${year},${start},${end},${len},${rain}\n`;
+    }
+    return csv;
+  }
+
+  let csv = 'Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mean_tmin,Extreme_events\n';
+  for (const row of data) {
+    const year = row.Year ?? '';
+    const start = row.Start !== undefined && row.Start !== null ? row.Start : '';
+    const end = row.End !== undefined && row.End !== null ? row.End : '';
+    const len = row.Length !== undefined && row.Length !== null ? row.Length : '';
+    const rain = row.Rainfall !== undefined && row.Rainfall !== null ? row.Rainfall : '';
+    const maxTmax = row.max_tmax !== undefined && row.max_tmax !== null ? row.max_tmax : '';
+    const maxTmin = row.max_tmin !== undefined && row.max_tmin !== null ? row.max_tmin : '';
+    const minTmax = row.min_tmax !== undefined && row.min_tmax !== null ? row.min_tmax : '';
+    const minTmin = row.min_tmin !== undefined && row.min_tmin !== null ? row.min_tmin : '';
+    const meanTmax = row.mean_tmax !== undefined && row.mean_tmax !== null ? row.mean_tmax : '';
+    const meanTmin = row.mean_tmin !== undefined && row.mean_tmin !== null ? row.mean_tmin : '';
+    const extremes = row.Extreme_events !== undefined && row.Extreme_events !== null ? row.Extreme_events : '';
+    csv += `${year},${start},${end},${len},${rain},${maxTmax},${maxTmin},${minTmax},${minTmin},${meanTmax},${meanTmin},${extremes}\n`;
+  }
+  return csv;
+}

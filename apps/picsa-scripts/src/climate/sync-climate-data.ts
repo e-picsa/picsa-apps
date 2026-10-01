@@ -12,12 +12,15 @@ import type {
 import {
   auditMonthlyChanges,
   calculateStationCapabilities,
+  convertStationSummariesToRows,
+  formatAnnualCsv,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
   parseAnnualCsv,
   parseMonthlyCsv,
   pivotLongToWideMonthly,
 } from '@picsa/utils';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const ROOT_DIR = path.resolve(__dirname, '../../../../');
 const CLIMATE_TOOL_ASSETS = path.join(ROOT_DIR, 'apps/picsa-tools/climate-tool/src/assets/summaries');
@@ -31,6 +34,9 @@ export interface CliArgs {
   input?: string;
   auditOnly?: boolean;
   computeExisting?: boolean;
+  skipPull?: boolean;
+  local?: boolean;
+  env?: string;
   report?: string;
 }
 
@@ -43,6 +49,14 @@ export function parseCliArgs(): CliArgs {
       result.auditOnly = true;
     } else if (arg === '--compute-existing') {
       result.computeExisting = true;
+    } else if (arg === '--no-pull' || arg === '--skip-pull') {
+      result.skipPull = true;
+    } else if (arg === '--pull') {
+      result.skipPull = false;
+    } else if (arg === '--local') {
+      result.local = true;
+    } else if (arg.startsWith('--env=')) {
+      result.env = arg.replace('--env=', '');
     } else if (arg.startsWith('--country=')) {
       result.country = arg.replace('--country=', '').toLowerCase();
     } else if (arg.startsWith('--station=')) {
@@ -159,6 +173,238 @@ export function getStationGitLastUpdatedDate(filePaths: string[]): string {
 }
 
 /**
+ * Load station IDs registered in static country metadata (metadata.ts).
+ */
+export function loadRegisteredMetadataIds(country: string): Set<string> {
+  const metaPath = path.join(
+    ROOT_DIR,
+    `apps/picsa-tools/climate-tool/src/app/data/stations/${country.toLowerCase()}/metadata.ts`,
+  );
+  const ids = new Set<string>();
+  if (fs.existsSync(metaPath)) {
+    try {
+      const metaContent = fs.readFileSync(metaPath, 'utf-8');
+      const idMatches = metaContent.matchAll(/id:\s*['"]([^'"]+)['"]/g);
+      for (const m of idMatches) {
+        ids.add(m[1].toLowerCase());
+      }
+    } catch {
+      // Ignore if metadata extraction fails
+    }
+  }
+  return ids;
+}
+
+/**
+ * Initialize a Supabase client targeting remote server (default) or local dev container (--local).
+ */
+export function getSyncSupabaseClient(options: { local?: boolean; env?: string } = {}): SupabaseClient {
+  const dotenv = require('dotenv');
+
+  if (options.env) {
+    const envPath = path.resolve(process.cwd(), options.env);
+    if (!fs.existsSync(envPath)) {
+      throw new Error(`Specified env file does not exist: ${envPath}`);
+    }
+    dotenv.config({ path: envPath, override: true });
+  } else if (options.local) {
+    const localEnvPath = path.join(ROOT_DIR, 'apps/picsa-server/.env');
+    if (fs.existsSync(localEnvPath)) {
+      dotenv.config({ path: localEnvPath, override: true });
+    }
+  } else {
+    // Default: Remote server
+    const serverEnvPath = path.join(ROOT_DIR, 'apps/picsa-server/.env.server');
+    const localOverridePath = path.join(ROOT_DIR, 'apps/picsa-server/.env.local');
+    if (fs.existsSync(serverEnvPath)) {
+      dotenv.config({ path: serverEnvPath, override: true });
+    }
+    if (fs.existsSync(localOverridePath)) {
+      dotenv.config({ path: localOverridePath, override: false });
+    }
+  }
+
+  const url = options.local
+    ? process.env.SUPABASE_URL || 'http://localhost:54321'
+    : process.env.SUPABASE_REMOTE_URL || process.env.SUPABASE_URL;
+
+  const key = options.local
+    ? process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
+    : process.env.SUPABASE_REMOTE_SECRET_KEY ||
+      process.env.SUPABASE_REMOTE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_REMOTE_PUBLISHABLE_KEY ||
+      process.env.SUPABASE_REMOTE_ANON_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    const targetDesc = options.local ? 'local Supabase container' : 'remote Supabase project';
+    const configHint = options.local
+      ? 'Ensure apps/picsa-server/.env exists with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'
+      : 'Ensure apps/picsa-server/.env.server exists with SUPABASE_REMOTE_URL and SUPABASE_REMOTE_SECRET_KEY, or pass --local to target the local dev container.';
+    throw new Error(`Missing Supabase credentials for ${targetDesc}.\n${configHint}`);
+  }
+
+  console.log(`\n  🔌 Connected to Supabase (${options.local ? 'LOCAL' : 'REMOTE'}): ${url}`);
+  return createClient(url, key);
+}
+
+/**
+ * Synchronize station summaries from Supabase database to local app assets and capabilities.
+ */
+export async function syncFromDatabaseForCountry(
+  country: string,
+  client: SupabaseClient,
+  options: {
+    auditReport: IClimateAuditReport;
+    auditOnly?: boolean;
+    station?: string;
+  },
+): Promise<Record<string, IStationCapabilities>> {
+  const countryUpper = country.toUpperCase();
+  const countryLower = country.toLowerCase();
+  const countryDir = path.join(CLIMATE_TOOL_ASSETS, countryLower);
+
+  console.log(`\nProcessing database stations for ${countryUpper}...`);
+
+  // 1. Fetch stations for country to map station.id -> station.station_id (slug)
+  const { data: stations, error: stationsErr } = await client
+    .from('climate_stations')
+    .select('id, station_id, station_name')
+    .eq('country_code', countryLower);
+
+  if (stationsErr) {
+    throw new Error(`Failed to fetch climate_stations for ${countryUpper}: ${stationsErr.message}`);
+  }
+
+  const stationMap = new Map<string, { slug: string; name: string }>();
+  for (const s of stations || []) {
+    stationMap.set(s.id, { slug: s.station_id, name: s.station_name });
+  }
+
+  // 2. Fetch station data summaries
+  const { data: dataRows, error: dataErr } = await client
+    .from('climate_station_data')
+    .select('*')
+    .eq('country_code', countryLower);
+
+  if (dataErr) {
+    throw new Error(`Failed to fetch climate_station_data for ${countryUpper}: ${dataErr.message}`);
+  }
+
+  if (!dataRows || dataRows.length === 0) {
+    console.warn(`  ⚠️ No climate_station_data rows found in database for ${countryUpper}`);
+    return {};
+  }
+
+  console.log(`  Found ${dataRows.length} station records in database for ${countryUpper}`);
+
+  const existingCaps = loadCountryCapabilities(countryLower);
+  const updatedCaps: Record<string, IStationCapabilities> = { ...existingCaps };
+  const registeredMetaIds = loadRegisteredMetadataIds(countryLower);
+
+  for (const row of dataRows) {
+    const stationInfo = stationMap.get(row.station_id);
+    const stationSlug = (stationInfo?.slug || row.station_id.replace(`${countryLower}/`, '')).toLowerCase();
+
+    if (options.station && stationSlug !== options.station) {
+      continue;
+    }
+
+    const annualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
+    if (annualData.length === 0) {
+      console.warn(`  ⚠️ Station '${stationSlug}' has DB record but zero annual data entries.`);
+      continue;
+    }
+
+    const annualCsvContent = formatAnnualCsv(annualData);
+    const annualCsvPath = path.join(countryDir, `${stationSlug}.csv`);
+    const monthlyCsvPath = path.join(countryDir, `${stationSlug}.monthly.csv`);
+
+    let monthlyData: IMonthlyStationData[] = [];
+    if (fs.existsSync(monthlyCsvPath)) {
+      monthlyData = parseMonthlyCsv(fs.readFileSync(monthlyCsvPath, 'utf-8'));
+    }
+
+    const contentHash = computeSha256(annualCsvContent.trim());
+    const prevCap = existingCaps[stationSlug];
+    const isUnchanged = prevCap?.contentHash === contentHash;
+
+    // Use DB updated_at directly, formatted as YYYY-MM-DD
+    const stationLastUpdated = row.updated_at
+      ? row.updated_at.slice(0, 10)
+      : prevCap?.lastUpdated || new Date().toISOString().slice(0, 10);
+
+    const capabilities = calculateStationCapabilities({
+      annualData,
+      monthlyData,
+      contentHash,
+      lastUpdated: stationLastUpdated,
+    });
+
+    // Check metadata registration
+    const hasMetadata = registeredMetaIds.has(stationSlug);
+    if (!hasMetadata) {
+      console.warn(
+        `  ⚠️  Station '${stationSlug}' has DB data but no entry in metadata.ts! Populating warning capability entry to flag developer.`,
+      );
+      updatedCaps[stationSlug] = {
+        warning: 'No metadata available',
+      } as any;
+    } else {
+      updatedCaps[stationSlug] = capabilities;
+    }
+
+    let status: 'NEW' | 'UPDATED' | 'UNCHANGED' = 'NEW';
+    if (fs.existsSync(annualCsvPath)) {
+      status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
+    }
+
+    options.auditReport.stationsSummary.push({
+      id: `${countryLower}:${stationSlug}`,
+      status,
+      years: capabilities.years,
+      totalMissingYears: capabilities.totalMissingYears,
+      annual: capabilities.annual,
+      monthly: capabilities.monthly,
+      hasRainfall: (capabilities.annual?.includes('rainfall') || capabilities.monthly?.includes('rainfall')) ?? false,
+      hasTemperature:
+        (capabilities.annual?.includes('temp_min') ||
+          capabilities.annual?.includes('temp_max') ||
+          capabilities.monthly?.includes('temp_min') ||
+          capabilities.monthly?.includes('temp_max')) ??
+        false,
+      hash: contentHash,
+    });
+    options.auditReport.totalStationsProcessed++;
+
+    if (!options.auditOnly) {
+      if (!fs.existsSync(countryDir)) {
+        fs.mkdirSync(countryDir, { recursive: true });
+      }
+      fs.writeFileSync(annualCsvPath, annualCsvContent, 'utf-8');
+      console.log(`  ✅ Wrote: ${annualCsvPath} (${annualData.length} years, updated_at: ${stationLastUpdated})`);
+    }
+  }
+
+  // Populate default capabilities (years: []) for stations registered in metadata without data files
+  for (const stationId of registeredMetaIds) {
+    if (!updatedCaps[stationId]) {
+      updatedCaps[stationId] = {
+        schemaVersion: 1,
+        years: [],
+      };
+    }
+  }
+
+  if (!options.auditOnly) {
+    writeCountryCapabilities(countryLower, updatedCaps);
+  }
+
+  return updatedCaps;
+}
+
+/**
  * Retroactively compute capabilities for all existing station CSV files in a country.
  */
 export function computeExistingCapabilitiesForCountry(
@@ -233,25 +479,13 @@ export function computeExistingCapabilitiesForCountry(
   }
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
-  const metaPath = path.join(
-    ROOT_DIR,
-    `apps/picsa-tools/climate-tool/src/app/data/stations/${country}/metadata.ts`,
-  );
-  if (fs.existsSync(metaPath)) {
-    try {
-      const metaContent = fs.readFileSync(metaPath, "utf-8");
-      const idMatches = metaContent.matchAll(/id:\s*['"]([^'"]+)['"]/g);
-      for (const m of idMatches) {
-        const stationId = m[1];
-        if (!annualFiles.includes(`${stationId}.csv`)) {
-          updatedCaps[stationId] = {
-            schemaVersion: 1,
-            years: [],
-          };
-        }
-      }
-    } catch {
-      // Ignore if metadata extraction fails
+  const registeredMetaIds = loadRegisteredMetadataIds(country);
+  for (const stationId of registeredMetaIds) {
+    if (!annualFiles.includes(`${stationId}.csv`)) {
+      updatedCaps[stationId] = {
+        schemaVersion: 1,
+        years: [],
+      };
     }
   }
 
@@ -275,8 +509,41 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
   const reportPath = options.report || DEFAULT_REPORT_PATH;
 
-  // 1. Retroactive capabilities computation for existing data
-  if (options.computeExisting || (!options.input && !options.station)) {
+  const shouldPull = !options.skipPull && !options.computeExisting && !options.input;
+
+  // 1. Pull directly from Supabase by default (Remote by default, --local for local dev container)
+  if (shouldPull) {
+    const client = getSyncSupabaseClient({ local: options.local, env: options.env });
+    const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
+
+    for (const c of countriesToProcess) {
+      await syncFromDatabaseForCountry(c, client, {
+        auditReport,
+        auditOnly: options.auditOnly,
+        station: options.station,
+      });
+    }
+
+    // Write audit report
+    const reportMd = generateMarkdownAuditReport(auditReport);
+    const reportDir = path.dirname(reportPath);
+    if (!fs.existsSync(reportDir)) {
+      fs.mkdirSync(reportDir, { recursive: true });
+    }
+    fs.writeFileSync(reportPath, reportMd, 'utf-8');
+    console.log(`\n  📄 Audit report written: ${reportPath}`);
+
+    console.log(`\n======================================================`);
+    console.log(`[Database Climate Sync Complete]`);
+    console.log(`  Source: ${options.local ? 'LOCAL' : 'REMOTE'}`);
+    console.log(`  Total Stations Processed: ${auditReport.totalStationsProcessed}`);
+    console.log(`======================================================\n`);
+
+    return auditReport;
+  }
+
+  // 2. Retroactive capabilities computation for existing local data (when --skip-pull or --compute-existing)
+  if (options.computeExisting || options.skipPull) {
     const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
 
     for (const c of countriesToProcess) {
