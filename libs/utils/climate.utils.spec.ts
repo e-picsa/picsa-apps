@@ -511,6 +511,7 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
             hash: 'abc123456789',
           },
         ],
+        warnings: ['Sample test warning message'],
         historicalRevisions: [
           {
             stationId: 'chipata_met',
@@ -543,6 +544,7 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(md).toContain('# Climate Data Sync & Health Audit Report');
       expect(md).toContain('chipata_met');
       expect(md).toContain('1950–2020');
+      expect(md).toContain('**Total Warnings**: `1`');
       expect(md).toContain('Total Yrs');
       expect(md).toContain('Complete Rain Yrs');
       expect(md).toContain('Complete Temp Yrs');
@@ -550,6 +552,8 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(md).toContain('Missingness Regressions (1)');
       expect(md).toContain('Physical Consistency Sanity Checks (1)');
       expect(md).toContain('+10');
+      expect(md).toContain('## 5. Sync Warnings (1)');
+      expect(md).toContain('Sample test warning message');
     });
 
     it('should display clean messages when no revisions or regressions are present', () => {
@@ -572,9 +576,11 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
         sanityViolations: [],
       });
 
+      expect(md).toContain('**Total Warnings**: `0`');
       expect(md).toContain('No previously published historical data was modified.');
       expect(md).toContain('No regressions detected (no valid data became missing).');
       expect(md).toContain('All records passed temperature ordering, positive rainfall, and calendar sanity rules.');
+      expect(md).toContain('No warnings were generated during this run.');
     });
   });
 

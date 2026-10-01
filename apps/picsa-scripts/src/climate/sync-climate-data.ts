@@ -293,7 +293,10 @@ export async function syncFromDatabaseForCountry(
   }
 
   if (!dataRows || dataRows.length === 0) {
-    console.warn(`  ⚠️ No climate_station_data rows found in database for ${countryUpper}`);
+    const msg = `No climate_station_data rows found in database for ${countryUpper}`;
+    console.warn(`  ⚠️ ${msg}`);
+    options.auditReport.warnings = options.auditReport.warnings || [];
+    options.auditReport.warnings.push(msg);
     return {};
   }
 
@@ -313,7 +316,10 @@ export async function syncFromDatabaseForCountry(
 
     const annualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
     if (annualData.length === 0) {
-      console.warn(`  ⚠️ Station '${stationSlug}' has DB record but zero annual data entries.`);
+      const msg = `Station '${stationSlug}' has DB record but zero annual data entries.`;
+      console.warn(`  ⚠️ ${msg}`);
+      options.auditReport.warnings = options.auditReport.warnings || [];
+      options.auditReport.warnings.push(msg);
       continue;
     }
 
@@ -345,9 +351,10 @@ export async function syncFromDatabaseForCountry(
     // Check metadata registration
     const hasMetadata = registeredMetaIds.has(stationSlug);
     if (!hasMetadata) {
-      console.warn(
-        `  ⚠️  Station '${stationSlug}' has DB data but no entry in metadata.ts! Populating warning capability entry to flag developer.`,
-      );
+      const msg = `Station '${stationSlug}' has DB data but no entry in metadata.ts! Populating warning capability entry to flag developer.`;
+      console.warn(`  ⚠️  ${msg}`);
+      options.auditReport.warnings = options.auditReport.warnings || [];
+      options.auditReport.warnings.push(msg);
       updatedCaps[stationSlug] = {
         warning: 'No metadata available',
       } as any;
@@ -415,7 +422,10 @@ export function computeExistingCapabilitiesForCountry(
 ): Record<string, IStationCapabilities> {
   const countryDir = path.join(CLIMATE_TOOL_ASSETS, country);
   if (!fs.existsSync(countryDir)) {
-    console.warn(`  ⚠️ Assets folder for country '${country}' does not exist: ${countryDir}`);
+    const msg = `Assets folder for country '${country}' does not exist: ${countryDir}`;
+    console.warn(`  ⚠️ ${msg}`);
+    options.auditReport.warnings = options.auditReport.warnings || [];
+    options.auditReport.warnings.push(msg);
     return {};
   }
 
@@ -442,7 +452,7 @@ export function computeExistingCapabilitiesForCountry(
       monthlyData = parseMonthlyCsv(monthlyCsvContent);
     }
 
-    // Base summary metadata (contentHash, lastUpdated, years, totalMissingYears) on annual data
+    // Base summary metadata (contentHash, lastUpdated, years, totalYears, completeRainYears, completeTempYears) on annual data
     const contentHash = computeSha256(annualCsvContent.trim());
 
     const prevCap = existingCaps[stationId];
@@ -505,6 +515,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   const auditReport: IClimateAuditReport = {
     timestamp: today,
     totalStationsProcessed: 0,
+    warnings: [],
     stationsSummary: [],
     historicalRevisions: [],
     missingnessRegressions: [],
@@ -541,6 +552,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     console.log(`[Database Climate Sync Complete]`);
     console.log(`  Source: ${options.local ? 'LOCAL' : 'REMOTE'}`);
     console.log(`  Total Stations Processed: ${auditReport.totalStationsProcessed}`);
+    console.log(`  Total Warnings: ${auditReport.warnings?.length || 0}`);
     console.log(`======================================================\n`);
 
     return auditReport;
@@ -569,6 +581,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     console.log(`\n======================================================`);
     console.log(`[Retroactive Capabilities Computation Complete]`);
     console.log(`  Total Stations Processed: ${auditReport.totalStationsProcessed}`);
+    console.log(`  Total Warnings: ${auditReport.warnings?.length || 0}`);
     console.log(`======================================================\n`);
 
     return auditReport;
@@ -736,6 +749,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   console.log(`\n======================================================`);
   console.log(`[Climate Sync Complete]`);
   console.log(`  Total Stations: ${auditReport.totalStationsProcessed}`);
+  console.log(`  Total Warnings: ${auditReport.warnings?.length || 0}`);
   console.log(`  Historical Revisions: ${auditReport.historicalRevisions.length}`);
   console.log(`  Missingness Regressions: ${auditReport.missingnessRegressions.length}`);
   console.log(`  Sanity Violations: ${auditReport.sanityViolations.length}`);

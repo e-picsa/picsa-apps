@@ -295,6 +295,7 @@ export interface IMissingnessRegression {
 export interface IClimateAuditReport {
   timestamp: string;
   totalStationsProcessed: number;
+  warnings?: string[];
   stationsSummary: IStationAuditSummary[];
   historicalRevisions: IHistoricalRevision[];
   missingnessRegressions: IMissingnessRegression[];

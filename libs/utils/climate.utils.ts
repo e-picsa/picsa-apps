@@ -585,11 +585,15 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
     historicalRevisions,
     missingnessRegressions,
     sanityViolations,
+    warnings = [],
   } = report;
+
+  const totalWarnings = warnings.length;
 
   let md = `# Climate Data Sync & Health Audit Report\n\n`;
   md += `**Execution Time**: \`${timestamp}\`  \n`;
-  md += `**Total Stations Processed**: \`${totalStationsProcessed}\`\n\n`;
+  md += `**Total Stations Processed**: \`${totalStationsProcessed}\`  \n`;
+  md += `**Total Warnings**: \`${totalWarnings}\`\n\n`;
 
   // Stations summary table
   md += `## 1. Stations Summary\n\n`;
@@ -650,6 +654,19 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
     md += `| :--- | :---: | :--- | :--- |\n`;
     for (const v of sanityViolations) {
       md += `| **${v.stationId}** | \`${v.month}\` | \`${v.rule}\` | ${v.message} |\n`;
+    }
+    md += `\n`;
+  }
+
+  // Warnings section
+  md += `## 5. Sync Warnings (${totalWarnings})\n\n`;
+  if (totalWarnings === 0) {
+    md += `*No warnings were generated during this run.*\n\n`;
+  } else {
+    md += `> [!WARNING]\n`;
+    md += `> The following operational warnings were encountered during sync:\n\n`;
+    for (const w of warnings) {
+      md += `- ${w}\n`;
     }
     md += `\n`;
   }
