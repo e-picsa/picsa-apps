@@ -44,7 +44,10 @@ export function parseCliArgs(): CliArgs {
   const args = process.argv.slice(2);
   const result: CliArgs = {};
 
-  for (const arg of args) {
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    const nextArg = args[i + 1];
+
     if (arg === '--audit-only') {
       result.auditOnly = true;
     } else if (arg === '--compute-existing') {
@@ -57,14 +60,29 @@ export function parseCliArgs(): CliArgs {
       result.local = true;
     } else if (arg.startsWith('--env=')) {
       result.env = arg.replace('--env=', '');
+    } else if (arg === '--env' && nextArg && !nextArg.startsWith('--')) {
+      result.env = nextArg;
+      i++;
     } else if (arg.startsWith('--country=')) {
       result.country = arg.replace('--country=', '').toLowerCase();
+    } else if (arg === '--country' && nextArg && !nextArg.startsWith('--')) {
+      result.country = nextArg.toLowerCase();
+      i++;
     } else if (arg.startsWith('--station=')) {
       result.station = arg.replace('--station=', '').toLowerCase();
+    } else if (arg === '--station' && nextArg && !nextArg.startsWith('--')) {
+      result.station = nextArg.toLowerCase();
+      i++;
     } else if (arg.startsWith('--input=')) {
       result.input = path.resolve(process.cwd(), arg.replace('--input=', ''));
+    } else if (arg === '--input' && nextArg && !nextArg.startsWith('--')) {
+      result.input = path.resolve(process.cwd(), nextArg);
+      i++;
     } else if (arg.startsWith('--report=')) {
       result.report = path.resolve(process.cwd(), arg.replace('--report=', ''));
+    } else if (arg === '--report' && nextArg && !nextArg.startsWith('--')) {
+      result.report = path.resolve(process.cwd(), nextArg);
+      i++;
     }
   }
 
@@ -138,6 +156,9 @@ export const ${countryUpper}_STATION_CAPABILITIES: Record<string, IStationCapabi
     2,
   )};
 `;
+  if (fs.existsSync(capsPath) && fs.readFileSync(capsPath, 'utf-8') === content) {
+    return;
+  }
   fs.writeFileSync(capsPath, content, 'utf-8');
   console.log(`  ✅ Updated ${countryUpper} capabilities: ${capsPath} (${Object.keys(sortedCaps).length} stations)`);
 }
@@ -296,7 +317,10 @@ export async function syncFromDatabaseForCountry(
     const msg = `No climate_station_data rows found in database for ${countryUpper}`;
     console.warn(`  ⚠️ ${msg}`);
     options.auditReport.warnings = options.auditReport.warnings || [];
-    options.auditReport.warnings.push(msg);
+    options.auditReport.warnings.push({
+      message: 'No climate_station_data rows found in database',
+      country: countryUpper,
+    });
     return {};
   }
 
@@ -305,6 +329,10 @@ export async function syncFromDatabaseForCountry(
   const existingCaps = loadCountryCapabilities(countryLower);
   const updatedCaps: Record<string, IStationCapabilities> = { ...existingCaps };
   const registeredMetaIds = loadRegisteredMetadataIds(countryLower);
+
+  let newCount = 0;
+  let updatedCount = 0;
+  let unchangedCount = 0;
 
   for (const row of dataRows) {
     const stationInfo = stationMap.get(row.station_id);
@@ -316,10 +344,12 @@ export async function syncFromDatabaseForCountry(
 
     const annualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
     if (annualData.length === 0) {
-      const msg = `Station '${stationSlug}' has DB record but zero annual data entries.`;
-      console.warn(`  ⚠️ ${msg}`);
       options.auditReport.warnings = options.auditReport.warnings || [];
-      options.auditReport.warnings.push(msg);
+      options.auditReport.warnings.push({
+        message: 'Station has database record but zero annual data entries',
+        country: countryUpper,
+        stationId: stationSlug,
+      });
       continue;
     }
 
@@ -351,10 +381,12 @@ export async function syncFromDatabaseForCountry(
     // Check metadata registration
     const hasMetadata = registeredMetaIds.has(stationSlug);
     if (!hasMetadata) {
-      const msg = `Station '${stationSlug}' has DB data but no entry in metadata.ts! Populating warning capability entry to flag developer.`;
-      console.warn(`  ⚠️  ${msg}`);
       options.auditReport.warnings = options.auditReport.warnings || [];
-      options.auditReport.warnings.push(msg);
+      options.auditReport.warnings.push({
+        message: 'Station has DB data but no entry in metadata.ts (unmapped station)',
+        country: countryUpper,
+        stationId: stationSlug,
+      });
       updatedCaps[stationSlug] = {
         warning: 'No metadata available',
       } as any;
@@ -367,13 +399,38 @@ export async function syncFromDatabaseForCountry(
       status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
     }
 
+    if (status === 'NEW') newCount++;
+    else if (status === 'UPDATED') updatedCount++;
+    else unchangedCount++;
+
+    const prevTotalYears =
+      prevCap?.totalYears ??
+      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
+
+    const diffTotalYears =
+      capabilities.totalYears !== undefined && prevTotalYears !== undefined
+        ? capabilities.totalYears - prevTotalYears
+        : undefined;
+    const diffCompleteRainYears =
+      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
+        ? capabilities.completeRainYears - prevCap.completeRainYears
+        : undefined;
+    const diffCompleteTempYears =
+      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
+        ? capabilities.completeTempYears - prevCap.completeTempYears
+        : undefined;
+
     options.auditReport.stationsSummary.push({
-      id: `${countryLower}:${stationSlug}`,
+      country: countryUpper,
+      id: stationSlug,
       status,
       years: capabilities.years,
       totalYears: capabilities.totalYears,
       completeRainYears: capabilities.completeRainYears,
       completeTempYears: capabilities.completeTempYears,
+      diffTotalYears,
+      diffCompleteRainYears,
+      diffCompleteTempYears,
       annual: capabilities.annual,
       monthly: capabilities.monthly,
       hasRainfall: (capabilities.annual?.includes('rainfall') || capabilities.monthly?.includes('rainfall')) ?? false,
@@ -387,14 +444,18 @@ export async function syncFromDatabaseForCountry(
     });
     options.auditReport.totalStationsProcessed++;
 
-    if (!options.auditOnly) {
+    // Only write CSV file when station data has changed or is new
+    if (!options.auditOnly && status !== 'UNCHANGED') {
       if (!fs.existsSync(countryDir)) {
         fs.mkdirSync(countryDir, { recursive: true });
       }
       fs.writeFileSync(annualCsvPath, annualCsvContent, 'utf-8');
-      console.log(`  ✅ Wrote: ${annualCsvPath} (${annualData.length} years, updated_at: ${stationLastUpdated})`);
     }
   }
+
+  console.log(
+    `  ${countryUpper}: ${dataRows.length} station(s) (New: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount})`,
+  );
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
   for (const stationId of registeredMetaIds) {
@@ -425,7 +486,10 @@ export function computeExistingCapabilitiesForCountry(
     const msg = `Assets folder for country '${country}' does not exist: ${countryDir}`;
     console.warn(`  ⚠️ ${msg}`);
     options.auditReport.warnings = options.auditReport.warnings || [];
-    options.auditReport.warnings.push(msg);
+    options.auditReport.warnings.push({
+      message: 'Assets folder does not exist for country',
+      country: country.toUpperCase(),
+    });
     return {};
   }
 
@@ -471,13 +535,34 @@ export function computeExistingCapabilitiesForCountry(
 
     updatedCaps[stationId] = capabilities;
 
+    const prevTotalYears =
+      prevCap?.totalYears ??
+      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
+
+    const diffTotalYears =
+      capabilities.totalYears !== undefined && prevTotalYears !== undefined
+        ? capabilities.totalYears - prevTotalYears
+        : undefined;
+    const diffCompleteRainYears =
+      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
+        ? capabilities.completeRainYears - prevCap.completeRainYears
+        : undefined;
+    const diffCompleteTempYears =
+      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
+        ? capabilities.completeTempYears - prevCap.completeTempYears
+        : undefined;
+
     options.auditReport.stationsSummary.push({
-      id: `${country}:${stationId}`,
+      country: country.toUpperCase(),
+      id: stationId,
       status: isUnchanged ? 'UNCHANGED' : prevCap ? 'UPDATED' : 'NEW',
       years: capabilities.years,
       totalYears: capabilities.totalYears,
       completeRainYears: capabilities.completeRainYears,
       completeTempYears: capabilities.completeTempYears,
+      diffTotalYears,
+      diffCompleteRainYears,
+      diffCompleteTempYears,
       annual: capabilities.annual,
       monthly: capabilities.monthly,
       hasRainfall: (capabilities.annual?.includes('rainfall') || capabilities.monthly?.includes('rainfall')) ?? false,
@@ -702,13 +787,34 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
       status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
     }
 
+    const prevTotalYears =
+      prevCap?.totalYears ??
+      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
+
+    const diffTotalYears =
+      capabilities.totalYears !== undefined && prevTotalYears !== undefined
+        ? capabilities.totalYears - prevTotalYears
+        : undefined;
+    const diffCompleteRainYears =
+      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
+        ? capabilities.completeRainYears - prevCap.completeRainYears
+        : undefined;
+    const diffCompleteTempYears =
+      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
+        ? capabilities.completeTempYears - prevCap.completeTempYears
+        : undefined;
+
     auditReport.stationsSummary.push({
+      country: country.toUpperCase(),
       id: stationId,
       status,
       years: capabilities.years,
       totalYears: capabilities.totalYears,
       completeRainYears: capabilities.completeRainYears,
       completeTempYears: capabilities.completeTempYears,
+      diffTotalYears,
+      diffCompleteRainYears,
+      diffCompleteTempYears,
       annual: capabilities.annual,
       monthly: capabilities.monthly,
       hasRainfall: (capabilities.annual?.includes('rainfall') || capabilities.monthly?.includes('rainfall')) ?? false,
@@ -721,13 +827,12 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
       hash: contentHash,
     });
 
-    // Write monthly file if not audit-only
-    if (!options.auditOnly) {
+    // Write monthly file if not audit-only and station data changed
+    if (!options.auditOnly && status !== 'UNCHANGED') {
       if (!fs.existsSync(countryDir)) {
         fs.mkdirSync(countryDir, { recursive: true });
       }
       fs.writeFileSync(monthlyCsvPath, newMonthlyCsvContent, 'utf-8');
-      console.log(`  ✅ Wrote: ${monthlyCsvPath} (${newMonthlyData.length} months)`);
     }
   }
 

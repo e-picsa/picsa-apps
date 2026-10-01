@@ -577,14 +577,76 @@ export function auditMonthlyChanges(params: {
 /**
  * Format audit report into markdown tables for PR reviews and CI logging.
  */
+function formatMetricWithDiff(val: number | undefined, diff: number | undefined): string {
+  if (val === undefined) {
+    return '—';
+  }
+  if (diff !== undefined && diff !== 0) {
+    const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+    return `${val} (${diffStr})`;
+  }
+  return `${val}`;
+}
+
+/**
+ * Format a list of station audit summaries into a markdown table.
+ */
+function formatStationsTable(stations: IStationAuditSummary[]): string {
+  let md = `| Country | Station ID | Status | Historical Range | Total Yrs | Complete Rain Yrs | Complete Temp Yrs | Monthly Charts | Content Hash |\n`;
+  md += `| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |\n`;
+
+  for (const s of stations) {
+    let country = s.country ? s.country.toUpperCase() : '—';
+    let stationId = s.id;
+    if (stationId.includes(':')) {
+      const parts = stationId.split(':');
+      if (country === '—') {
+        country = parts[0].toUpperCase();
+      }
+      stationId = parts.slice(1).join(':');
+    }
+
+    const range = s.years && s.years.length === 2 ? `${s.years[0]}–${s.years[1]}` : 'N/A';
+    const totalYrs = formatMetricWithDiff(s.totalYears, s.diffTotalYears);
+    const rain = formatMetricWithDiff(s.completeRainYears, s.diffCompleteRainYears);
+    const temp = formatMetricWithDiff(s.completeTempYears, s.diffCompleteTempYears);
+    const monthlyCharts = s.monthly && s.monthly.length > 0 ? s.monthly.join(', ') : '—';
+    const hash = s.hash ? `\`${s.hash.slice(0, 10)}...\`` : '—';
+    md += `| ${country} | **${stationId}** | \`${s.status}\` | ${range} | ${totalYrs} | ${rain} | ${temp} | ${monthlyCharts} | ${hash} |\n`;
+  }
+  return md;
+}
+
+/**
+ * Format a list of stations into a simple 2-column markdown table (Country, Station ID).
+ */
+function formatSimpleStationsTable(stations: IStationAuditSummary[]): string {
+  let md = `| Country | Station ID |\n`;
+  md += `| :---: | :--- |\n`;
+
+  for (const s of stations) {
+    let country = s.country ? s.country.toUpperCase() : '—';
+    let stationId = s.id;
+    if (stationId.includes(':')) {
+      const parts = stationId.split(':');
+      if (country === '—') {
+        country = parts[0].toUpperCase();
+      }
+      stationId = parts.slice(1).join(':');
+    }
+    md += `| ${country} | **${stationId}** |\n`;
+  }
+  return md;
+}
+
 export function generateMarkdownAuditReport(report: IClimateAuditReport): string {
   const {
     timestamp,
     totalStationsProcessed,
-    stationsSummary,
-    historicalRevisions,
-    missingnessRegressions,
-    sanityViolations,
+    stationsSummary = [],
+    historicalRevisions = [],
+    missingnessRegressions = [],
+    sanityViolations = [],
     warnings = [],
   } = report;
 
@@ -595,22 +657,94 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
   md += `**Total Stations Processed**: \`${totalStationsProcessed}\`  \n`;
   md += `**Total Warnings**: \`${totalWarnings}\`\n\n`;
 
-  // Stations summary table
-  md += `## 1. Stations Summary\n\n`;
-  md += `| Station ID | Status | Historical Range | Total Yrs | Complete Rain Yrs | Complete Temp Yrs | Monthly Charts | Content Hash |\n`;
-  md += `| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |\n`;
+  // 1. Stations Summary - categorize into Subtractive, Additive, Value-Update Only, and Unchanged
+  const changedStations = stationsSummary.filter((s) => s.status !== 'UNCHANGED');
+  const unchangedStations = stationsSummary.filter((s) => s.status === 'UNCHANGED');
 
-  for (const s of stationsSummary) {
-    const range = s.years && s.years.length === 2 ? `${s.years[0]}–${s.years[1]}` : 'N/A';
-    const totalYrs = s.totalYears !== undefined ? `${s.totalYears}` : '—';
-    const rain = s.completeRainYears !== undefined ? `${s.completeRainYears}` : '—';
-    const temp = s.completeTempYears !== undefined ? `${s.completeTempYears}` : '—';
-    const monthlyCharts = s.monthly && s.monthly.length > 0 ? s.monthly.join(', ') : '—';
-    const hash = s.hash ? `\`${s.hash.slice(0, 10)}...\`` : '—';
-    md += `| **${s.id}** | \`${s.status}\` | ${range} | ${totalYrs} | ${rain} | ${temp} | ${monthlyCharts} | ${hash} |\n`;
+  const isSubtractive = (s: IStationAuditSummary): boolean => {
+    return (
+      (s.diffTotalYears !== undefined && s.diffTotalYears < 0) ||
+      (s.diffCompleteRainYears !== undefined && s.diffCompleteRainYears < 0) ||
+      (s.diffCompleteTempYears !== undefined && s.diffCompleteTempYears < 0)
+    );
+  };
+
+  const isAdditive = (s: IStationAuditSummary): boolean => {
+    if (isSubtractive(s)) {
+      return false;
+    }
+    return (
+      s.status === 'NEW' ||
+      (s.diffTotalYears !== undefined && s.diffTotalYears > 0) ||
+      (s.diffCompleteRainYears !== undefined && s.diffCompleteRainYears > 0) ||
+      (s.diffCompleteTempYears !== undefined && s.diffCompleteTempYears > 0)
+    );
+  };
+
+  const subtractiveStations = changedStations.filter(isSubtractive);
+  const additiveStations = changedStations.filter(isAdditive);
+  const valueUpdateStations = changedStations.filter((s) => !isSubtractive(s) && !isAdditive(s));
+
+  const sortStations = (a: IStationAuditSummary, b: IStationAuditSummary) => {
+    const cA = a.country || (a.id.includes(':') ? a.id.split(':')[0] : '');
+    const cB = b.country || (b.id.includes(':') ? b.id.split(':')[0] : '');
+    const countryCompare = cA.localeCompare(cB);
+    if (countryCompare !== 0) return countryCompare;
+    const idA = a.id.includes(':') ? a.id.split(':')[1] : a.id;
+    const idB = b.id.includes(':') ? b.id.split(':')[1] : b.id;
+    return idA.localeCompare(idB);
+  };
+
+  subtractiveStations.sort(sortStations);
+  additiveStations.sort(sortStations);
+  valueUpdateStations.sort(sortStations);
+  unchangedStations.sort(sortStations);
+
+  md += `## 1. Stations Summary\n\n`;
+
+  // 1.1 Subtractive changes (displayed first, independently)
+  md += `### Subtractive Changes (${subtractiveStations.length})\n\n`;
+  if (subtractiveStations.length === 0) {
+    md += `*No stations with subtractive changes.*\n\n`;
+  } else {
+    md += `<details open>\n`;
+    md += `<summary><strong>Subtractive Changes (${subtractiveStations.length})</strong></summary>\n\n`;
+    md += formatStationsTable(subtractiveStations);
+    md += `\n</details>\n\n`;
   }
 
-  md += `\n`;
+  // 1.2 Additive changes (displayed second)
+  md += `### Additive Changes (${additiveStations.length})\n\n`;
+  if (additiveStations.length === 0) {
+    md += `*No stations with additive changes.*\n\n`;
+  } else {
+    md += `<details open>\n`;
+    md += `<summary><strong>Additive Changes (${additiveStations.length})</strong></summary>\n\n`;
+    md += formatStationsTable(additiveStations);
+    md += `\n</details>\n\n`;
+  }
+
+  // 1.3 Value-update only (displayed third, simple 2-column table)
+  md += `### Value-Update Only (${valueUpdateStations.length})\n\n`;
+  if (valueUpdateStations.length === 0) {
+    md += `*No stations with value-only updates.*\n\n`;
+  } else {
+    md += `<details open>\n`;
+    md += `<summary><strong>Value-Update Only (${valueUpdateStations.length})</strong></summary>\n\n`;
+    md += formatSimpleStationsTable(valueUpdateStations);
+    md += `\n</details>\n\n`;
+  }
+
+  // 1.4 Unchanged stations: collapsed/hidden by default
+  md += `### Unchanged Stations (${unchangedStations.length})\n\n`;
+  if (unchangedStations.length === 0) {
+    md += `*No unchanged stations.*\n\n`;
+  } else {
+    md += `<details>\n`;
+    md += `<summary><strong>Unchanged Stations (${unchangedStations.length})</strong> — click to expand</summary>\n\n`;
+    md += formatStationsTable(unchangedStations);
+    md += `\n</details>\n\n`;
+  }
 
   // Historical revisions table
   md += `## 2. Historical Revisions (${historicalRevisions.length})\n\n`;
@@ -658,17 +792,89 @@ export function generateMarkdownAuditReport(report: IClimateAuditReport): string
     md += `\n`;
   }
 
-  // Warnings section
+  // Warnings section: grouped by warning category/message
   md += `## 5. Sync Warnings (${totalWarnings})\n\n`;
   if (totalWarnings === 0) {
     md += `*No warnings were generated during this run.*\n\n`;
   } else {
     md += `> [!WARNING]\n`;
     md += `> The following operational warnings were encountered during sync:\n\n`;
+
+    const warningGroups = new Map<string, Array<{ country?: string; stationId?: string }>>();
+
     for (const w of warnings) {
-      md += `- ${w}\n`;
+      let message = '';
+      let country: string | undefined;
+      let stationId: string | undefined;
+
+      if (typeof w === 'object' && w !== null) {
+        message = w.message;
+        country = w.country;
+        stationId = w.stationId;
+      } else if (typeof w === 'string') {
+        const metaMatch = w.match(/Station '([^']+)' has DB data but no entry in metadata\.ts/i);
+        const zeroMatch = w.match(/Station '([^']+)' has DB record but zero annual data entries/i);
+        const noRowsMatch = w.match(/No climate_station_data rows found in database for ([A-Za-z]+)/i);
+        const assetsMatch = w.match(/Assets folder for country '([^']+)' does not exist/i);
+
+        if (metaMatch) {
+          message = 'Station has DB data but no entry in metadata.ts (unregistered station)';
+          stationId = metaMatch[1];
+        } else if (zeroMatch) {
+          message = 'Station has database record but zero annual data entries';
+          stationId = zeroMatch[1];
+        } else if (noRowsMatch) {
+          message = 'No climate_station_data rows found in database';
+          country = noRowsMatch[1].toUpperCase();
+        } else if (assetsMatch) {
+          message = 'Assets folder does not exist for country';
+          country = assetsMatch[1].toUpperCase();
+        } else {
+          message = w;
+        }
+      }
+
+      if (!country && stationId && stationId.includes(':')) {
+        const parts = stationId.split(':');
+        country = parts[0].toUpperCase();
+        stationId = parts[1];
+      }
+
+      const list = warningGroups.get(message) || [];
+      list.push({ country, stationId });
+      warningGroups.set(message, list);
     }
-    md += `\n`;
+
+    for (const [msg, items] of warningGroups.entries()) {
+      md += `### ${msg} (${items.length})\n\n`;
+
+      const hasStations = items.some((item) => item.stationId);
+      if (hasStations) {
+        items.sort((a, b) => {
+          const cDiff = (a.country || '').localeCompare(b.country || '');
+          if (cDiff !== 0) return cDiff;
+          return (a.stationId || '').localeCompare(b.stationId || '');
+        });
+
+        md += `| Country | Station ID |\n`;
+        md += `| :---: | :--- |\n`;
+        for (const item of items) {
+          const c = item.country || '—';
+          const s = item.stationId ? `**${item.stationId}**` : '—';
+          md += `| ${c} | ${s} |\n`;
+        }
+        md += `\n`;
+      } else {
+        for (const item of items) {
+          if (item.country) {
+            md += `- **${item.country}**\n`;
+          } else {
+            md += `- ${msg}\n`;
+          }
+        }
+        md += `\n`;
+      }
+    }
   }
 
   return md;

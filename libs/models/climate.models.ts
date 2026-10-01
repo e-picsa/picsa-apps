@@ -271,11 +271,15 @@ export interface ISanityViolation {
 /** Summary of an individual station's data status and temporal range */
 export interface IStationAuditSummary {
   id: string;
+  country?: string;
   status: 'NEW' | 'UPDATED' | 'UNCHANGED';
   years?: readonly [start: number, end: number] | [number, number];
   totalYears?: number;
   completeRainYears?: number;
   completeTempYears?: number;
+  diffTotalYears?: number;
+  diffCompleteRainYears?: number;
+  diffCompleteTempYears?: number;
   annual?: IChartId[];
   monthly?: IChartId[];
   hasRainfall?: boolean;
@@ -291,11 +295,21 @@ export interface IMissingnessRegression {
   previousValue: number;
 }
 
+/** Structured warning emitted during climate data synchronization */
+export interface IClimateAuditWarning {
+  /** The warning description or category */
+  message: string;
+  /** Country code (e.g. 'MW', 'ZM', 'ZW') */
+  country?: string;
+  /** Station ID or slug if warning applies to a specific station */
+  stationId?: string;
+}
+
 /** Summary of automated change detection and data health inspection */
 export interface IClimateAuditReport {
   timestamp: string;
   totalStationsProcessed: number;
-  warnings?: string[];
+  warnings?: Array<string | IClimateAuditWarning>;
   stationsSummary: IStationAuditSummary[];
   historicalRevisions: IHistoricalRevision[];
   missingnessRegressions: IMissingnessRegression[];
