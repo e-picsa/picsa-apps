@@ -13,7 +13,7 @@ import type {
  * External Climate API endpoint
  */
 export const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
-export const ALL_COUNTRY_CODES = ['mw', 'zm'];
+export const ALL_COUNTRY_CODES = ['mw', 'zm', 'zw'];
 
 // Create typed fetch client from open-api definition exported by climate api
 import createClient from 'openapi-fetch';
@@ -74,7 +74,7 @@ async function getCountryUpdates(country_code: string, query_prefix: string) {
 
 async function getApiForecasts(query: { country_code: string; query_prefix?: string }) {
   const { country_code, query_prefix } = query;
-  const { data, error } = await apiClient.GET('/v1/documents/{country}', {
+  const { data, error } = await apiClient.GET('/v2/documents/{country}', {
     params: { path: { country: country_code as any }, query: { prefix: query_prefix, max_results: 1000 } },
   });
   if (error) {
