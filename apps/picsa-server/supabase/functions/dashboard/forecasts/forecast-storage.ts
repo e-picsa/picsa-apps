@@ -18,7 +18,7 @@ interface IReqParams {
  */
 export const forecastStorage = async (req: Request) => {
   // ensure api up and running before sending batched requests
-  await apiClient.GET('/v1/status/');
+  await apiClient.GET('/v2/status/');
   const params = await getJsonData<IReqParams>(req);
   const res = await new ForecastStorageUpdate().populateStorageFiles(params);
   return JSONResponse(res);
@@ -71,7 +71,7 @@ class ForecastStorageUpdate {
   ): Promise<{ data?: IDBClimateForecastRow; error?: any }> {
     const supabaseClient = getServiceRoleClient();
     // download from api
-    const req = apiClient.GET('/v1/documents/{country}/{filepath}', {
+    const req = apiClient.GET('/v2/documents/{country}/{filepath}', {
       params: { path: { country: country_code as any, filepath: id } },
       parseAs: 'blob',
     });
