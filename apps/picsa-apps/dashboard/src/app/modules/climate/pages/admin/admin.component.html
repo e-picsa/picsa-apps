@@ -79,14 +79,14 @@
                 @for (product of products; track $index) {
                   <button
                     matIconButton
-                    [matTooltip]="product.id"
+                    [matTooltip]="product.id + (product.available ? '' : ' (No data / Error - click to refresh)')"
                     class="status-icon"
                     (click)="refreshStation(row, $event)"
                   >
                     @if (product.available) {
                       <mat-icon color="primary">check</mat-icon>
                     } @else {
-                      <mat-icon color="warn">close</mat-icon>
+                      <mat-icon color="warn">error</mat-icon>
                     }
                   </button>
                 }
@@ -248,10 +248,10 @@
           [options]="diffTableOptions"
           [valueTemplates]="{
             diff_status: diffStatusTemplate,
-            years_added: addedYearsTemplate,
-            years_removed: removedYearsTemplate,
-            values_changed: changedValuesTemplate,
-            affected_products_summary: affectedProductsTemplate,
+            season_diff_percent: seasonPercentTemplate,
+            season_diff: seasonBreakdownTemplate,
+            temp_diff_percent: tempPercentTemplate,
+            temp_diff: tempBreakdownTemplate,
             actions: diffActionTemplate,
           }"
         >
@@ -288,42 +288,81 @@
             </button>
           </ng-template>
 
-          <!-- Added Years -->
-          <ng-template #addedYearsTemplate let-val>
-            @if (val > 0) {
-              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#e8f5e9] text-[#1b5e20]"
-                >+{{ val }}</span
+          <!-- Season Change % Column -->
+          <ng-template #seasonPercentTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupPercentTemplate"
+              [ngTemplateOutletContext]="{ summary: row.season_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Season Change Breakdown Column -->
+          <ng-template #seasonBreakdownTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupBreakdownTemplate"
+              [ngTemplateOutletContext]="{ summary: row.season_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Temp Change % Column -->
+          <ng-template #tempPercentTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupPercentTemplate"
+              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Temp Change Breakdown Column -->
+          <ng-template #tempBreakdownTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupBreakdownTemplate"
+              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Shared Group Percent Template -->
+          <ng-template #groupPercentTemplate let-summary="summary">
+            @if (!summary.hasData || summary.isAppOnly || summary.isDbOnly) {
+              <span class="text-muted text-xs">—</span>
+            } @else if (summary.isInSync) {
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
               >
+                <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
+              </span>
+            } @else if (summary.headlinePercentFormatted) {
+              <span
+                class="inline-flex items-center justify-center font-semibold text-xs px-2 py-0.5 rounded-md min-w-[2.75rem] bg-gray-100 text-gray-800 border border-gray-200"
+                [matTooltip]="
+                  summary.diffValuesCount +
+                  ' of ' +
+                  summary.totalValuesCount +
+                  ' values differ (' +
+                  summary.headlinePercentFormatted +
+                  ')'
+                "
+              >
+                {{ summary.headlinePercentFormatted }}
+              </span>
             } @else {
-              <span class="text-muted">-</span>
+              <span class="text-muted text-xs">—</span>
             }
           </ng-template>
 
-          <!-- Removed Years -->
-          <ng-template #removedYearsTemplate let-val>
-            @if (val > 0) {
-              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#ffebee] text-[#b71c1c]"
-                >-{{ val }}</span
-              >
+          <!-- Shared Group Breakdown Template -->
+          <ng-template #groupBreakdownTemplate let-summary="summary">
+            @if (!summary.hasData || summary.isAppOnly || summary.isInSync || summary.productLines.length === 0) {
+              <span class="text-muted text-xs">—</span>
             } @else {
-              <span class="text-muted">-</span>
+              <div class="flex flex-col text-xs text-gray-700 leading-snug whitespace-nowrap py-1">
+                @for (line of summary.productLines; track line.label) {
+                  <div>
+                    <span class="font-medium text-gray-800">{{ line.label }}</span>
+                    <span class="text-gray-500 ml-1">({{ line.summary }})</span>
+                  </div>
+                }
+              </div>
             }
-          </ng-template>
-
-          <!-- Changed Values -->
-          <ng-template #changedValuesTemplate let-val>
-            @if (val > 0) {
-              <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold bg-[#fff3e0] text-[#e65100]"
-                >~{{ val }}</span
-              >
-            } @else {
-              <span class="text-muted">-</span>
-            }
-          </ng-template>
-
-          <!-- Affected Products Summary -->
-          <ng-template #affectedProductsTemplate let-val>
-            <span class="text-xs text-gray-600 inline-block max-w-[250px] truncate" [matTooltip]="val">{{ val }}</span>
           </ng-template>
 
           <!-- Compare Action Button -->

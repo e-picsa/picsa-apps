@@ -1,5 +1,15 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,9 +48,13 @@ export interface IStationDiffDialogData {
   styleUrl: './station-diff-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StationDiffDialogComponent {
+export class StationDiffDialogComponent implements AfterViewInit {
+  private destroyRef = inject(DestroyRef);
   readonly data: IStationDiffDialogData = inject(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<StationDiffDialogComponent>);
+
+  @ViewChild('chartWrapper') chartWrapper?: ElementRef<HTMLDivElement>;
+  @ViewChild(PicsaChartComponent) chartComponent?: PicsaChartComponent;
 
   public products = CLIMATE_PRODUCTS;
 
@@ -62,8 +76,38 @@ export class StationDiffDialogComponent {
     return generateDiffChartConfig(this.data.appData, this.data.dbData, product);
   });
 
+  public ngAfterViewInit() {
+    // 1. Ensure chart fills full width once dialog entrance animation completes
+    this.dialogRef?.afterOpened?.()?.subscribe(() => {
+      this.resizeChart();
+    });
+
+    // 2. Delayed resize triggers to ensure full container width is filled
+    setTimeout(() => this.resizeChart(), 60);
+    setTimeout(() => this.resizeChart(), 250);
+
+    // 3. Observe wrapper container width changes
+    if (typeof ResizeObserver !== 'undefined' && this.chartWrapper?.nativeElement) {
+      const ro = new ResizeObserver(() => {
+        this.resizeChart();
+      });
+      ro.observe(this.chartWrapper.nativeElement);
+      this.destroyRef.onDestroy(() => ro.disconnect());
+    }
+  }
+
+  public resizeChart() {
+    const c3Chart = this.chartComponent?.chart();
+    if (c3Chart) {
+      c3Chart.resize();
+    } else if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('picsaChartRerender'));
+    }
+  }
+
   public selectProduct(productId: string) {
     this.selectedProductId.set(productId);
+    setTimeout(() => this.resizeChart(), 60);
   }
 
   public close() {

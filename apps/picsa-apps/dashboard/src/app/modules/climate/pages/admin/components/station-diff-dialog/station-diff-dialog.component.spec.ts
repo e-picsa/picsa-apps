@@ -1,14 +1,32 @@
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import type { IChartConfig } from '@picsa/models';
+import { PicsaChartComponent } from '@picsa/shared/features';
+import { of } from 'rxjs';
 
 import { compareStationDatasets } from '../../../../climate-diff.utils';
 import { IStationDiffDialogData, StationDiffDialogComponent } from './station-diff-dialog.component';
 
+@Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'picsa-chart',
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class MockPicsaChartComponent {
+  readonly config = input<IChartConfig | Record<string, unknown>>();
+  readonly chart = signal({ resize: jest.fn() } as any);
+}
+
 describe('StationDiffDialogComponent', () => {
   let component: StationDiffDialogComponent;
   let fixture: ComponentFixture<StationDiffDialogComponent>;
-  const mockDialogRef = { close: jest.fn() };
+  const mockDialogRef = {
+    close: jest.fn(),
+    afterOpened: jest.fn(() => of(undefined)),
+  };
 
   const mockData: IStationDiffDialogData = {
     station: {
@@ -48,7 +66,12 @@ describe('StationDiffDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: mockData },
         { provide: MatDialogRef, useValue: mockDialogRef },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(StationDiffDialogComponent, {
+        remove: { imports: [PicsaChartComponent] },
+        add: { imports: [MockPicsaChartComponent] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(StationDiffDialogComponent);
     component = fixture.componentInstance;
@@ -70,5 +93,15 @@ describe('StationDiffDialogComponent', () => {
   it('should close dialog when close() is called', () => {
     component.close();
     expect(mockDialogRef.close).toHaveBeenCalled();
+  });
+
+  it('should render colored diff boxes for divergent products and omit top-level summary stats', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.product-diff-boxes')).toBeTruthy();
+    expect(el.querySelector('.diff-box.box-added')).toBeTruthy();
+    expect(el.querySelector('.diff-box.box-removed')).toBeTruthy();
+    expect(el.querySelector('.diff-box.box-changed')).toBeTruthy();
+    expect(el.textContent).not.toContain('yrs added');
+    expect(el.textContent).not.toContain('yrs removed');
   });
 });
