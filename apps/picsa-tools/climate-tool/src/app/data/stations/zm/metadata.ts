@@ -2,6 +2,13 @@ import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions
 import type { IStationMeta } from '@picsa/models';
 import merge from 'deepmerge';
 
+/**
+ * Zambia Station Metadata & Overrides
+ *
+ * Provides verified coordinates (e.g. Chipepo, Mpulungu), localized districts,
+ * and chart definitions to correct upstream Climsoft errors.
+ * @see ../CLIMATE_API_ANOMALIES.md for documented upstream anomalies and future override refactoring.
+ */
 const stations: IStationMeta[] = [
   // Climate system data (merged)
   {

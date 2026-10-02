@@ -165,6 +165,9 @@ export const climate = async (req: Request) => {
         );
       }
 
+      // Sync station records from upstream API (/v2/station/{country}).
+      // Applies deduplication, WMO mapping, and non-destructive preservation of DB districts and coordinates.
+      // @see apps/picsa-tools/climate-tool/src/app/data/stations/CLIMATE_API_ANOMALIES.md for documented upstream issues.
       case 'update-stations': {
         const targetCountry = payload.country_code?.toLowerCase();
         const { data, error: apiError } = await apiClient.GET('/v2/station/{country}', {

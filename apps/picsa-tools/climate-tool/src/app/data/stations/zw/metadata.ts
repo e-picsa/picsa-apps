@@ -1,6 +1,13 @@
 import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMeta } from '@picsa/models';
 
+/**
+ * Zimbabwe Station Metadata & Overrides
+ *
+ * Provides canonical station identifiers, localized administrative districts,
+ * and WMO station IDs (metStationId) to correct upstream API omissions.
+ * @see ../CLIMATE_API_ANOMALIES.md for documented upstream anomalies and future override refactoring.
+ */
 const stations: IStationMeta[] = [
   {
     id: 'beitbridge_met',
