@@ -40,49 +40,76 @@ export interface CliArgs {
   report?: string;
 }
 
-export function parseCliArgs(): CliArgs {
-  const args = process.argv.slice(2);
+const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
+  '--audit-only': (res) => {
+    res.auditOnly = true;
+  },
+  '--compute-existing': (res) => {
+    res.computeExisting = true;
+  },
+  '--no-pull': (res) => {
+    res.skipPull = true;
+  },
+  '--skip-pull': (res) => {
+    res.skipPull = true;
+  },
+  '--pull': (res) => {
+    res.skipPull = false;
+  },
+  '--local': (res) => {
+    res.local = true;
+  },
+};
+
+const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
+  env: (res, val) => {
+    res.env = val;
+  },
+  country: (res, val) => {
+    res.country = val.toLowerCase();
+  },
+  station: (res, val) => {
+    res.station = val.toLowerCase();
+  },
+  input: (res, val) => {
+    res.input = path.resolve(process.cwd(), val);
+  },
+  report: (res, val) => {
+    res.report = path.resolve(process.cwd(), val);
+  },
+};
+
+export function parseCliArgs(argv = process.argv.slice(2)): CliArgs {
   const result: CliArgs = {};
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    const nextArg = args[i + 1];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
 
-    if (arg === '--audit-only') {
-      result.auditOnly = true;
-    } else if (arg === '--compute-existing') {
-      result.computeExisting = true;
-    } else if (arg === '--no-pull' || arg === '--skip-pull') {
-      result.skipPull = true;
-    } else if (arg === '--pull') {
-      result.skipPull = false;
-    } else if (arg === '--local') {
-      result.local = true;
-    } else if (arg.startsWith('--env=')) {
-      result.env = arg.replace('--env=', '');
-    } else if (arg === '--env' && nextArg && !nextArg.startsWith('--')) {
-      result.env = nextArg;
-      i++;
-    } else if (arg.startsWith('--country=')) {
-      result.country = arg.replace('--country=', '').toLowerCase();
-    } else if (arg === '--country' && nextArg && !nextArg.startsWith('--')) {
-      result.country = nextArg.toLowerCase();
-      i++;
-    } else if (arg.startsWith('--station=')) {
-      result.station = arg.replace('--station=', '').toLowerCase();
-    } else if (arg === '--station' && nextArg && !nextArg.startsWith('--')) {
-      result.station = nextArg.toLowerCase();
-      i++;
-    } else if (arg.startsWith('--input=')) {
-      result.input = path.resolve(process.cwd(), arg.replace('--input=', ''));
-    } else if (arg === '--input' && nextArg && !nextArg.startsWith('--')) {
-      result.input = path.resolve(process.cwd(), nextArg);
-      i++;
-    } else if (arg.startsWith('--report=')) {
-      result.report = path.resolve(process.cwd(), arg.replace('--report=', ''));
-    } else if (arg === '--report' && nextArg && !nextArg.startsWith('--')) {
-      result.report = path.resolve(process.cwd(), nextArg);
-      i++;
+    const booleanHandler = BOOLEAN_FLAGS[arg];
+    if (booleanHandler) {
+      booleanHandler(result);
+      continue;
+    }
+
+    if (!arg.startsWith('--')) {
+      continue;
+    }
+
+    const eqIndex = arg.indexOf('=');
+    const key = eqIndex !== -1 ? arg.slice(2, eqIndex) : arg.slice(2);
+    const handler = VALUED_OPTIONS[key];
+    if (!handler) {
+      continue;
+    }
+
+    if (eqIndex !== -1) {
+      handler(result, arg.slice(eqIndex + 1));
+    } else {
+      const nextArg = argv[i + 1];
+      if (nextArg && !nextArg.startsWith('--')) {
+        handler(result, nextArg);
+        i++;
+      }
     }
   }
 
@@ -214,6 +241,50 @@ export function loadRegisteredMetadataIds(country: string): Set<string> {
     }
   }
   return ids;
+}
+
+/**
+ * Calculate differences in capability metrics compared to previously stored capabilities.
+ */
+export function calculateCapabilityDiffs(
+  capabilities: IStationCapabilities,
+  prevCap?: IStationCapabilities,
+): {
+  diffTotalYears?: number;
+  diffCompleteRainYears?: number;
+  diffCompleteTempYears?: number;
+} {
+  const prevTotalYears =
+    prevCap?.totalYears ??
+    (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
+
+  return {
+    diffTotalYears:
+      capabilities.totalYears !== undefined && prevTotalYears !== undefined
+        ? capabilities.totalYears - prevTotalYears
+        : undefined,
+    diffCompleteRainYears:
+      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
+        ? capabilities.completeRainYears - prevCap.completeRainYears
+        : undefined,
+    diffCompleteTempYears:
+      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
+        ? capabilities.completeTempYears - prevCap.completeTempYears
+        : undefined,
+  };
+}
+
+/**
+ * Generate and write the markdown audit report to the target path.
+ */
+export function saveAuditReport(reportPath: string, auditReport: IClimateAuditReport): void {
+  const reportMd = generateMarkdownAuditReport(auditReport);
+  const reportDir = path.dirname(reportPath);
+  if (!fs.existsSync(reportDir)) {
+    fs.mkdirSync(reportDir, { recursive: true });
+  }
+  fs.writeFileSync(reportPath, reportMd, 'utf-8');
+  console.log(`\n  📄 Audit report written: ${reportPath}`);
 }
 
 /**
