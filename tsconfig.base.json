@@ -66,5 +66,5 @@
     "strictAttributeTypes": true,
     "strictStandalone": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "apps/picsa-server/supabase/functions"]
 }
