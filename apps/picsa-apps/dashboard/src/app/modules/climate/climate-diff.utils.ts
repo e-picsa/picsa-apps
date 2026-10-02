@@ -213,6 +213,21 @@ function compareProduct(
   // Sort all change records chronologically
   changes.sort((a, b) => a.year - b.year);
 
+  // Total evaluated values across distinct years for this product
+  const allYears = new Set([...appYears, ...dbYears]);
+  let totalValuesCount = 0;
+  for (const year of allYears) {
+    const appRow = appMap.get(year);
+    const dbRow = dbMap.get(year);
+    for (const key of product.keys) {
+      const hasAppVal = isValidNumber(appRow ? (appRow[key] as number | undefined) : undefined);
+      const hasDbVal = isValidNumber(dbRow ? (dbRow[key] as number | undefined) : undefined);
+      if (hasAppVal || hasDbVal) {
+        totalValuesCount++;
+      }
+    }
+  }
+
   const hasData = appYears.length > 0 || dbYears.length > 0;
   const isInSync = hasData && yearsAdded.length === 0 && yearsRemoved.length === 0 && changedCount === 0;
 
@@ -228,6 +243,7 @@ function compareProduct(
     dbYearSpan: dbYears.length > 0 ? [dbYears[0], dbYears[dbYears.length - 1]] : null,
     hasData,
     isInSync,
+    totalValuesCount,
   };
 }
 
@@ -322,23 +338,24 @@ export function generateDiffChartConfig(
     const keyDb = `${key}_db`;
     const keyApp = `${key}_app`;
 
-    valueKeys.push(keyDb, keyApp);
+    // Place App Data first so it renders at the bottom of the SVG stack (underneath Data System)
+    valueKeys.push(keyApp, keyDb);
 
     if (singleKey) {
-      names[keyDb] = 'Data System';
       names[keyApp] = 'App Data';
-      colors[keyDb] = '#1976d2'; // Solid primary blue
-      colors[keyApp] = '#e65100'; // Vibrant deep orange
+      names[keyDb] = 'Data System';
+      colors[keyApp] = 'rgba(230, 81, 0, 0.6)'; // High-contrast warm orange, increased transparency (underneath)
+      colors[keyDb] = 'rgba(13, 71, 161, 0.6)'; // High-contrast deep navy blue, increased transparency (on top)
     } else {
       const fieldName = FIELD_LABELS[key] || String(key);
-      names[keyDb] = `${fieldName} (Data System)`;
       names[keyApp] = `${fieldName} (App)`;
+      names[keyDb] = `${fieldName} (Data System)`;
       if (i === 0) {
-        colors[keyDb] = '#1976d2';
-        colors[keyApp] = '#e65100';
+        colors[keyApp] = 'rgba(230, 81, 0, 0.6)';
+        colors[keyDb] = 'rgba(13, 71, 161, 0.6)';
       } else {
-        colors[keyDb] = '#0288d1';
-        colors[keyApp] = '#f57c00';
+        colors[keyApp] = 'rgba(245, 124, 0, 0.6)';
+        colors[keyDb] = 'rgba(2, 119, 189, 0.6)';
       }
     }
   }
@@ -352,6 +369,7 @@ export function generateDiffChartConfig(
       names,
       x: 'Year',
       colors,
+      order: null as any,
       types: Object.fromEntries(valueKeys.map((k) => [k, 'line'])),
     },
     legend: {

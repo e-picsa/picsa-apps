@@ -43,11 +43,159 @@ describe('ClimateAdminPageComponent', () => {
 
   it('should configure Diff table options', () => {
     expect(component.diffTableOptions.displayColumns).toContain('diff_status');
-    expect(component.diffTableOptions.displayColumns).toContain('years_added');
-    expect(component.diffTableOptions.displayColumns).toContain('years_removed');
-    expect(component.diffTableOptions.displayColumns).toContain('values_changed');
+    expect(component.diffTableOptions.displayColumns).toContain('season_diff_percent');
+    expect(component.diffTableOptions.displayColumns).toContain('season_diff');
+    expect(component.diffTableOptions.displayColumns).toContain('temp_diff_percent');
+    expect(component.diffTableOptions.displayColumns).toContain('temp_diff');
     expect(component.diffTableOptions.displayColumns).toContain('actions');
+    expect(component.diffTableOptions.displayColumns).not.toContain('years_added');
     expect(component.diffTableOptions.formatHeader('diff_status')).toBe('Status');
+    expect(component.diffTableOptions.formatHeader('season_diff_percent')).toBe('Season Change %');
+    expect(component.diffTableOptions.formatHeader('season_diff')).toBe('Season Change');
+    expect(component.diffTableOptions.formatHeader('temp_diff_percent')).toBe('Temp Change %');
+    expect(component.diffTableOptions.formatHeader('temp_diff')).toBe('Temp Change');
+  });
+
+  it('should calculate group diff summary with % headline changes and product lines', () => {
+    const mockDiff: any = {
+      status: 'diff',
+      products: {
+        rainfall: {
+          label: 'Rainfall',
+          hasData: true,
+          isInSync: false,
+          yearsAdded: [],
+          yearsRemoved: [1962],
+          changedCount: 54,
+          changes: new Array(55).fill({}),
+          totalValuesCount: 100,
+          appYearSpan: [1960, 2020],
+          dbYearSpan: [1960, 2020],
+        },
+        start: {
+          label: 'Start of Season',
+          hasData: true,
+          isInSync: false,
+          yearsAdded: [],
+          yearsRemoved: [1962],
+          changedCount: 0,
+          changes: new Array(1).fill({}),
+          totalValuesCount: 100,
+          appYearSpan: [1960, 2020],
+          dbYearSpan: [1960, 2020],
+        },
+        end: {
+          label: 'End of Season',
+          hasData: true,
+          isInSync: true,
+          yearsAdded: [],
+          yearsRemoved: [],
+          changedCount: 0,
+          changes: [],
+          totalValuesCount: 100,
+          appYearSpan: [1960, 2020],
+          dbYearSpan: [1960, 2020],
+        },
+      },
+    };
+
+    const groupSummary = (component as any).calculateGroupDiffSummary(mockDiff, ['rainfall', 'start', 'end']);
+    expect(groupSummary.diffValuesCount).toBe(56); // 55 rainfall + 1 start
+    expect(groupSummary.totalValuesCount).toBe(300); // 100 * 3 products
+    expect(groupSummary.headlinePercentFormatted).toBe('18.7%'); // (56 / 300) * 100 = 18.666%
+    expect(groupSummary.hasData).toBe(true);
+    expect(groupSummary.isInSync).toBe(false);
+    expect(groupSummary.isAppOnly).toBe(false);
+    expect(groupSummary.isDbOnly).toBe(false);
+    expect(groupSummary.productLines).toEqual([
+      { label: 'Rainfall', summary: '-1, ~54' },
+      { label: 'Start of Season', summary: '-1' },
+    ]);
+  });
+
+  it('should suppress 100% headline and product breakdowns for app_only stations', () => {
+    const mockAppOnlyDiff: any = {
+      status: 'app_only',
+      products: {
+        rainfall: {
+          label: 'Rainfall',
+          hasData: true,
+          isInSync: false,
+          yearsAdded: [],
+          yearsRemoved: [1980, 1981],
+          changedCount: 0,
+          changes: new Array(2).fill({}),
+          totalValuesCount: 2,
+          appYearSpan: [1980, 1981],
+          dbYearSpan: null,
+        },
+      },
+    };
+
+    const summary = (component as any).calculateGroupDiffSummary(mockAppOnlyDiff, ['rainfall']);
+    expect(summary.isAppOnly).toBe(true);
+    expect(summary.headlinePercent).toBe(0);
+    expect(summary.headlinePercentFormatted).toBe('');
+    expect(summary.productLines).toEqual([]);
+  });
+
+  it('should suppress 100% headline but keep product breakdown for db_only stations', () => {
+    const mockDbOnlyDiff: any = {
+      status: 'db_only',
+      products: {
+        rainfall: {
+          label: 'Rainfall',
+          hasData: true,
+          isInSync: false,
+          yearsAdded: [1980, 1981],
+          yearsRemoved: [],
+          changedCount: 0,
+          changes: new Array(2).fill({}),
+          totalValuesCount: 2,
+          appYearSpan: null,
+          dbYearSpan: [1980, 1981],
+        },
+      },
+    };
+
+    const summary = (component as any).calculateGroupDiffSummary(mockDbOnlyDiff, ['rainfall']);
+    expect(summary.isDbOnly).toBe(true);
+    expect(summary.headlinePercent).toBe(0);
+    expect(summary.headlinePercentFormatted).toBe('');
+    expect(summary.productLines).toEqual([{ label: 'Rainfall', summary: '+2' }]);
+  });
+
+  it('should assume empty product data is unavailable due to error and mark available only when non-empty', () => {
+    const emptySummary = (component as any).generateProductSummary({
+      annual_rainfall_data: [],
+      crop_probability_data: null,
+      annual_temperature_data: undefined,
+      monthly_temperature_data: [],
+    });
+
+    expect(emptySummary).toEqual([
+      { id: 'Annual Rainfall', available: false },
+      { id: 'Crop Probabilities', available: false },
+      { id: 'Annual Temperatures', available: false },
+      { id: 'Monthly Temperatures', available: false },
+    ]);
+
+    const filledSummary = (component as any).generateProductSummary({
+      annual_rainfall_data: [{ year: 2020, seasonal_rain: 500 }],
+      crop_probability_data: null,
+      annual_temperature_data: [{ year: 2020, mean_tmax: 28 }],
+      monthly_temperature_data: [],
+    });
+
+    expect(filledSummary).toEqual([
+      { id: 'Annual Rainfall', available: true },
+      { id: 'Crop Probabilities', available: false },
+      { id: 'Annual Temperatures', available: true },
+      { id: 'Monthly Temperatures', available: false },
+    ]);
+
+    const absentSummary = (component as any).generateProductSummary(undefined);
+    expect(absentSummary.every((p: any) => p.available === false)).toBe(true);
   });
 
   it('should filter diffTableData when showOnlyDiffs is toggled', () => {

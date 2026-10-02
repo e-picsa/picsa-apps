@@ -84,6 +84,9 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   },
   forecasts: {
     filter: { forecast_type: ['seasonal', 'downscaled'] },
+    columnMappings: {
+      storage_file: 'global/forecasts/sample_seasonal.pdf',
+    },
   },
   resource_collections: {
     columnMappings: {

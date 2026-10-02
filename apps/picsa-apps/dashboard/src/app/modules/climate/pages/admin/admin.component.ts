@@ -62,6 +62,23 @@ export interface IStationAppSummary {
   app_data: IStationData[];
 }
 
+export interface IProductDiffLine {
+  label: string;
+  summary: string;
+}
+
+export interface IGroupDiffSummary {
+  headlinePercent: number;
+  headlinePercentFormatted: string;
+  diffValuesCount: number;
+  totalValuesCount: number;
+  hasData: boolean;
+  isInSync: boolean;
+  isAppOnly: boolean;
+  isDbOnly: boolean;
+  productLines: IProductDiffLine[];
+}
+
 export interface IStationDiffRow {
   name: string;
   station: IStationRow;
@@ -69,11 +86,16 @@ export interface IStationDiffRow {
   diff: IStationDiffSummary;
   app_years_count: number;
   db_years_count: number;
-  years_added: number;
-  years_removed: number;
-  values_changed: number;
-  affected_products_summary: string;
+  season_diff_percent: number;
+  season_diff: number;
+  season_summary: IGroupDiffSummary;
+  temp_diff_percent: number;
+  temp_diff: number;
+  temp_summary: IGroupDiffSummary;
 }
+
+const SEASON_PRODUCT_IDS = ['rainfall', 'start', 'end', 'length'];
+const TEMP_PRODUCT_IDS = ['temp_min', 'temp_max'];
 
 const REFRESH_BATCH_SIZE = 1; // TODO - increase batch size when api more consistent
 
@@ -103,10 +125,10 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
   'diff_status',
   'app_years_count',
   'db_years_count',
-  'years_added',
-  'years_removed',
-  'values_changed',
-  'affected_products_summary',
+  'season_diff_percent',
+  'season_diff',
+  'temp_diff_percent',
+  'temp_diff',
   'actions',
 ];
 
@@ -204,10 +226,10 @@ export class ClimateAdminPageComponent {
       if (v === 'diff_status') return 'Status';
       if (v === 'app_years_count') return 'App Years';
       if (v === 'db_years_count') return 'Data System Years';
-      if (v === 'years_added') return 'Data System Added (+Y)';
-      if (v === 'years_removed') return 'Data System Missing (-Y)';
-      if (v === 'values_changed') return 'Value Diffs (~Z)';
-      if (v === 'affected_products_summary') return 'Divergent Products';
+      if (v === 'season_diff_percent') return 'Season Change %';
+      if (v === 'season_diff') return 'Season Change';
+      if (v === 'temp_diff_percent') return 'Temp Change %';
+      if (v === 'temp_diff') return 'Temp Change';
       if (v === 'actions') return 'Action';
       return formatHeaderDefault(v);
     },
@@ -316,7 +338,13 @@ export class ClimateAdminPageComponent {
       this.service.updateStationDataFromApi(station).subscribe({
         next: (status) => {
           updateSignal.update(({ statuses, ...rest }) => {
-            statuses[status.index] = status;
+            const isFulfilled = status.status === 'fulfilled';
+            const valueData = status.value?.data ?? status.value;
+            const hasData = isFulfilled && this.hasProductData(valueData);
+            const resolvedStatus: IDataRefreshStatus =
+              isFulfilled && !hasData ? { ...status, status: 'rejected', reason: 'No data returned from API' } : status;
+
+            statuses[status.index] = resolvedStatus;
             return { ...rest, statuses: [...statuses] };
           });
         },
@@ -432,16 +460,15 @@ export class ClimateAdminPageComponent {
     allStationDataHashmap: Record<string, IClimateStationData['Row']>,
   ): IStationAdminSummary[] {
     return stations.map((station) => {
+      const stationData = allStationDataHashmap[station.id as string];
       let summary: IStationAdminSummary = {
         station,
         name: station.station_name as string,
         updateSignal: this.getRowUpdateSignal(station),
-        products: [],
+        products: this.generateProductSummary(stationData),
       };
-      const stationData = allStationDataHashmap[station.id as string];
       if (stationData) {
         summary.updated_at = stationData.updated_at;
-        summary.products = this.generateProductSummary(stationData);
         summary = { ...summary, ...this.generateRainfallSummary(stationData) };
       }
       return summary;
@@ -488,6 +515,97 @@ export class ClimateAdminPageComponent {
     });
   }
 
+  private calculateGroupDiffSummary(diff: IStationDiffSummary, productIds: string[]): IGroupDiffSummary {
+    const productLines: IProductDiffLine[] = [];
+    let hasData = false;
+    let anyOutOfSync = false;
+    let hasAppDataInGroup = false;
+    let hasDbDataInGroup = false;
+    let groupDiffValuesCount = 0;
+    let groupTotalValuesCount = 0;
+
+    for (const pid of productIds) {
+      const prodSummary = diff.products[pid];
+      if (!prodSummary || !prodSummary.hasData) {
+        continue;
+      }
+      hasData = true;
+      if (prodSummary.appYearSpan !== null) {
+        hasAppDataInGroup = true;
+      }
+      if (prodSummary.dbYearSpan !== null) {
+        hasDbDataInGroup = true;
+      }
+
+      const totalProdValues =
+        prodSummary.totalValuesCount ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupTotalValuesCount += totalProdValues;
+
+      const prodDiffCount =
+        prodSummary.changes?.length ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupDiffValuesCount += prodDiffCount;
+
+      if (!prodSummary.isInSync) {
+        anyOutOfSync = true;
+        const parts: string[] = [];
+        if (prodSummary.yearsAdded.length > 0) parts.push(`+${prodSummary.yearsAdded.length}`);
+        if (prodSummary.yearsRemoved.length > 0) parts.push(`-${prodSummary.yearsRemoved.length}`);
+        if (prodSummary.changedCount > 0) parts.push(`~${prodSummary.changedCount}`);
+
+        productLines.push({
+          label: prodSummary.label,
+          summary: parts.join(', '),
+        });
+      }
+    }
+
+    if (groupTotalValuesCount === 0 && groupDiffValuesCount > 0) {
+      groupTotalValuesCount = groupDiffValuesCount;
+    }
+
+    const isAppOnly = (hasAppDataInGroup && !hasDbDataInGroup) || diff.status === 'app_only';
+    const isDbOnly = (!hasAppDataInGroup && hasDbDataInGroup) || diff.status === 'db_only';
+
+    // For app-only, we do not propose any changes to the app, so suppress breakdowns
+    const finalProductLines = isAppOnly ? [] : productLines;
+
+    const isInSync = hasData && !anyOutOfSync;
+
+    // Suppress 100% headline calculation for db_only and app_only
+    let headlinePercent = 0;
+    let headlinePercentFormatted = '';
+
+    if (!isAppOnly && !isDbOnly && groupTotalValuesCount > 0) {
+      headlinePercent = (groupDiffValuesCount / groupTotalValuesCount) * 100;
+      headlinePercentFormatted = this.formatHeadlinePercent(headlinePercent, groupDiffValuesCount);
+    }
+
+    return {
+      headlinePercent,
+      headlinePercentFormatted,
+      diffValuesCount: groupDiffValuesCount,
+      totalValuesCount: groupTotalValuesCount,
+      hasData,
+      isInSync,
+      isAppOnly,
+      isDbOnly,
+      productLines: finalProductLines,
+    };
+  }
+
+  private formatHeadlinePercent(percent: number, diffCount: number): string {
+    if (diffCount === 0 || percent === 0) {
+      return '0%';
+    }
+    const rounded = Number(percent.toFixed(1));
+    if (rounded === 0) {
+      return '<0.1%';
+    }
+    return `${rounded}%`;
+  }
+
   private generateDiffSummaryData(
     stations: IStationRow[],
     allStationDataHashmap: Record<string, IClimateStationData['Row']>,
@@ -500,19 +618,8 @@ export class ClimateAdminPageComponent {
       const dbDisplayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
       const diff = compareStationDatasets(stationId, appData, dbDisplayData);
 
-      const affected: string[] = [];
-      for (const p of CLIMATE_PRODUCTS) {
-        const prodSummary = diff.products[p.id];
-        if (prodSummary && !prodSummary.isInSync && prodSummary.hasData) {
-          const parts: string[] = [];
-          if (prodSummary.yearsAdded.length > 0) parts.push(`+${prodSummary.yearsAdded.length}`);
-          if (prodSummary.yearsRemoved.length > 0) parts.push(`-${prodSummary.yearsRemoved.length}`);
-          if (prodSummary.changedCount > 0) parts.push(`~${prodSummary.changedCount}`);
-          affected.push(`${p.label} (${parts.join(', ')})`);
-        }
-      }
-
-      const affected_products_summary = affected.length > 0 ? affected.join('; ') : '-';
+      const season_summary = this.calculateGroupDiffSummary(diff, SEASON_PRODUCT_IDS);
+      const temp_summary = this.calculateGroupDiffSummary(diff, TEMP_PRODUCT_IDS);
 
       const appYears = appData.map((d) => d.Year).filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
       const dbYears = dbDisplayData
@@ -526,10 +633,12 @@ export class ClimateAdminPageComponent {
         diff,
         app_years_count: appYears.length,
         db_years_count: dbYears.length,
-        years_added: diff.totalYearsAddedCount,
-        years_removed: diff.totalYearsRemovedCount,
-        values_changed: diff.totalChangedValuesCount,
-        affected_products_summary,
+        season_diff_percent: season_summary.headlinePercent,
+        season_diff: season_summary.diffValuesCount,
+        season_summary,
+        temp_diff_percent: temp_summary.headlinePercent,
+        temp_diff: temp_summary.diffValuesCount,
+        temp_summary,
       };
     });
   }
@@ -575,14 +684,23 @@ export class ClimateAdminPageComponent {
     return {};
   }
 
-  private generateProductSummary(stationData: IClimateStationData['Row']) {
-    const { annual_rainfall_data, annual_temperature_data, crop_probability_data, monthly_temperature_data } =
-      stationData;
+  private hasProductData(data: unknown): boolean {
+    if (!data) return false;
+    if (Array.isArray(data)) return data.length > 0;
+    if (typeof data === 'object') return Object.keys(data).length > 0;
+    return true;
+  }
+
+  private generateProductSummary(stationData?: IClimateStationData['Row']) {
+    const annual_rainfall_data = stationData?.annual_rainfall_data;
+    const annual_temperature_data = stationData?.annual_temperature_data;
+    const crop_probability_data = stationData?.crop_probability_data;
+    const monthly_temperature_data = stationData?.monthly_temperature_data;
     const productSummaries: IProductSummary[] = [
-      { id: 'Annual Rainfall', available: annual_rainfall_data !== null },
-      { id: 'Crop Probabilities', available: crop_probability_data !== null },
-      { id: 'Annual Temperatures', available: annual_temperature_data !== null },
-      { id: 'Monthly Temperatures', available: monthly_temperature_data !== null },
+      { id: 'Annual Rainfall', available: this.hasProductData(annual_rainfall_data) },
+      { id: 'Crop Probabilities', available: this.hasProductData(crop_probability_data) },
+      { id: 'Annual Temperatures', available: this.hasProductData(annual_temperature_data) },
+      { id: 'Monthly Temperatures', available: this.hasProductData(monthly_temperature_data) },
     ];
     return productSummaries;
   }

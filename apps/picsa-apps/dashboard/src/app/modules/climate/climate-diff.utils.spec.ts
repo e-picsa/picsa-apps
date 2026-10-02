@@ -95,6 +95,14 @@ describe('climate-diff.utils', () => {
         appValue: 14.5,
         dbValue: 12.0,
       });
+      // 1 year with 2 keys evaluated = totalValuesCount 2
+      expect(tempSummary.totalValuesCount).toBe(2);
+    });
+
+    it('should calculate totalValuesCount across distinct years accurately', () => {
+      const res = compareStationDatasets('station_1', sampleAppData, sampleDbData);
+      // sampleAppData (1980, 1981, 1982) and sampleDbData (1981, 1982, 1983) span 4 unique years
+      expect(res.products.rainfall.totalValuesCount).toBe(4);
     });
   });
 
@@ -105,10 +113,15 @@ describe('climate-diff.utils', () => {
 
       expect(config.data).toBeDefined();
       expect(config.data?.x).toBe('Year');
-      expect(config.data?.keys?.value).toContain('Rainfall_db');
-      expect(config.data?.keys?.value).toContain('Rainfall_app');
+      expect(config.data?.order).toBeNull();
+      const appIndex = config.data?.keys?.value?.indexOf('Rainfall_app') ?? -1;
+      const dbIndex = config.data?.keys?.value?.indexOf('Rainfall_db') ?? -1;
+      expect(appIndex).toBeGreaterThan(-1);
+      expect(dbIndex).toBeGreaterThan(appIndex); // App data renders before (underneath) Data System
       expect(config.data?.names?.Rainfall_db).toBe('Data System');
       expect(config.data?.names?.Rainfall_app).toBe('App Data');
+      expect(config.data?.colors?.Rainfall_app).toContain('rgba');
+      expect(config.data?.colors?.Rainfall_db).toContain('rgba');
       expect(config.legend?.show).toBe(true);
       expect(config.tooltip?.grouped).toBe(true);
     });

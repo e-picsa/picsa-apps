@@ -246,6 +246,18 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
 
+### JSDOM C3 Layout Crash with Arbitrary Tailwind Classes in Unit Tests
+
+- **Problem**: When a component importing `PicsaChartComponent` is tested in Jest/JSDOM, C3 initialization (`c3.generate`) queries `d3.style(el, 'font-size')`, triggering JSDOM's `window.getComputedStyle()`. JSDOM's CSS selector engine (`nwsapi`) fails with syntax errors when evaluating stylesheet rules that contain Tailwind arbitrary value class selectors (e.g. `min-h-[280px]`).
+- **Solution**: In unit tests for parent dialogs/components containing charts, mock or override `PicsaChartComponent` in `TestBed`:
+  ```typescript
+  TestBed.configureTestingModule({...})
+    .overrideComponent(StationDiffDialogComponent, {
+      remove: { imports: [PicsaChartComponent] },
+      add: { imports: [MockPicsaChartComponent] },
+    });
+  ```
+
 ---
 
 ## 6. Domain Logic & Agronomy Data Rules
@@ -276,7 +288,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Multi-Column Climate Product Diffing & Overlaid C3 Preview
 
 - **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
-- **Overlaid C3 Preview**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (e.g. `Rainfall_db` and `Rainfall_app`) with distinct colors (`#1976d2` for DB, `#e65100` for App). Native series toggling (`legend: { show: true }`) and grouped tooltips (`tooltip: { grouped: true }`) allow users to seamlessly compare points without manual mode switching.
+- **Overlaid C3 Preview & SVG Stacking**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (`_app` first, `_db` second, with `data.order = null` to maintain series insertion order in C3/D3). App data lines are styled wider (`3.5px` stroke, `r: 4px` points) underneath the DB line (`2px` stroke, `r: 2.5px` points), and both use semi-transparent `rgba(...)` fills/strokes so identical values and overlapping points remain clearly visible.
+- **Empty Dataset vs Error State**: In database queries, empty product responses serialize as empty arrays (`[]`). Simple truthiness checks (`Boolean(data)`) evaluate to `true` for empty arrays. Code verifying data availability must check `Array.isArray(data) ? data.length > 0 : Boolean(data)` to treat empty responses as missing/error rather than available.
 
 ### RONI ENSO Season Classification & Grade Definitions
 

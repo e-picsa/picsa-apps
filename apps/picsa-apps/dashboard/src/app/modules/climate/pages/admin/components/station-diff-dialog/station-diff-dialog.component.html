@@ -43,28 +43,6 @@
           }
         }
       </div>
-
-      <!-- Quick Summary Stats -->
-      <div class="flex flex-wrap gap-2 text-[0.8125rem]">
-        <span
-          class="px-2 py-1 rounded text-xs bg-[#e3f2fd] text-[#1565c0]"
-          [matTooltip]="'Years added in Data System but not present in bundled App CSV'"
-        >
-          <strong>+{{ data.diffSummary.totalYearsAddedCount }}</strong> yrs added
-        </span>
-        <span
-          class="px-2 py-1 rounded text-xs bg-[#fbe9e7] text-[#d84315]"
-          [matTooltip]="'Years present in App CSV but missing from Data System'"
-        >
-          <strong>-{{ data.diffSummary.totalYearsRemovedCount }}</strong> yrs removed
-        </span>
-        <span
-          class="px-2 py-1 rounded text-xs bg-[#fff8e1] text-[#f57f17]"
-          [matTooltip]="'Years with modified numerical values'"
-        >
-          <strong>~{{ data.diffSummary.totalChangedValuesCount }}</strong> values modified
-        </span>
-      </div>
     </div>
 
     <button matIconButton (click)="close()" aria-label="Close dialog">
@@ -90,9 +68,17 @@
             } @else if (summary.isInSync) {
               <span class="tab-badge badge-sync">✓</span>
             } @else {
-              <span class="tab-badge badge-diff">
-                +{{ summary.yearsAdded.length }}/-{{ summary.yearsRemoved.length }}/~{{ summary.changedCount }}
-              </span>
+              <div class="product-diff-boxes">
+                <span class="diff-box box-added" [matTooltip]="'Years added: ' + summary.yearsAdded.length">
+                  {{ summary.yearsAdded.length }}
+                </span>
+                <span class="diff-box box-removed" [matTooltip]="'Years removed: ' + summary.yearsRemoved.length">
+                  {{ summary.yearsRemoved.length }}
+                </span>
+                <span class="diff-box box-changed" [matTooltip]="'Values modified: ' + summary.changedCount">
+                  {{ summary.changedCount }}
+                </span>
+              </div>
             }
           }
         </button>
@@ -147,8 +133,8 @@
           Overlaid preview: Data System (blue) vs App Data (orange). Click series in the legend below to toggle.
         </div>
       </div>
-      <div class="min-h-[280px] h-[320px] relative w-full">
-        <picsa-chart [config]="chartConfig()"></picsa-chart>
+      <div #chartWrapper class="min-h-[280px] h-[320px] relative w-full">
+        <picsa-chart [config]="chartConfig()" class="w-full h-full block"></picsa-chart>
       </div>
     </div>
 
