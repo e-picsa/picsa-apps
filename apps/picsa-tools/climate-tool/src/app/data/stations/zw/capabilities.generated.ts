@@ -6,11 +6,11 @@ import type { IStationCapabilities } from '@picsa/models';
  * Do NOT edit manually.
  */
 export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
-  beitbridge: {
+  beitbridge_met: {
     schemaVersion: 1,
     years: [],
   },
-  buffalo_range: {
+  buffalo_range_met: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
     contentHash: '9796c7774313fa231c69c0be12b72574d8c43533c5df1c08167489294c9a8257',
@@ -19,19 +19,19 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
-  buhera: {
+  buhera_met: {
     schemaVersion: 1,
     years: [],
   },
-  chipinge: {
+  chipinge_met: {
     schemaVersion: 1,
     years: [],
   },
-  chisengu: {
+  chisengu_met: {
     schemaVersion: 1,
     years: [],
   },
-  chisumbanje: {
+  chisumbanje_met: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
     contentHash: '15b4d1499783e3c5af0958593851dc1ac923dc88e48a7ab867cbf26673a02789',
@@ -40,11 +40,15 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
-  makoholi: {
+  kezi_met: {
     schemaVersion: 1,
     years: [],
   },
-  masvingo: {
+  makoholi_exp_station_met: {
+    schemaVersion: 1,
+    years: [],
+  },
+  masvingo_airport_met: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
     contentHash: 'a62f8c15404ac503e86ce82a50342e7be636fd87820a214caf43d00ad4c6307d',
@@ -53,7 +57,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeRainYears: 68,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
-  matopos: {
+  matopos_res_stn_met: {
     schemaVersion: 1,
     years: [],
   },
@@ -66,11 +70,11 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
-  nyanga: {
+  nyanga_exp_stn_met: {
     schemaVersion: 1,
     years: [],
   },
-  plumtree: {
+  plumtree_met: {
     schemaVersion: 1,
     lastUpdated: '2026-05-17',
     contentHash: '5870a335d9ac7e4b25e2fbc68216d027217b829353d03ac992ad235037a6ce46',
@@ -79,19 +83,19 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeRainYears: 57,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
-  rupike: {
+  rupike_irrigation_scheme_met: {
     schemaVersion: 1,
     years: [],
   },
-  rusape: {
+  rusape_met: {
     schemaVersion: 1,
     years: [],
   },
-  west_nicholson: {
+  west_nicholson_met: {
     schemaVersion: 1,
     years: [],
   },
-  zaka: {
+  zaka_met: {
     schemaVersion: 1,
     years: [],
   },

@@ -50,8 +50,8 @@ export const SEED_STATION_IDS = [
   'zm/petauke_met',
   'mw/nkhotakota',
   'mw/kasungu',
-  'zw/masvingo',
-  'zw/plumtree',
+  'zw/masvingo_airport_met',
+  'zw/plumtree_met',
 ];
 
 /**
