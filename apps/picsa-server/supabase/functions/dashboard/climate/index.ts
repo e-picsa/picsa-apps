@@ -2,6 +2,9 @@ import { getServiceRoleClient } from '../../_shared/client.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import createClient from 'openapi-fetch';
 import type * as ClimateApi from '../../../types/climate-api.types.ts';
+import type { Database } from '../../../types/db.types.ts';
+
+type ClimateStationData = Database['public']['Tables']['climate_station_data']['Insert'];
 
 const API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
 
@@ -16,16 +19,74 @@ interface SummaryApiResponse {
   metadata?: any;
 }
 
+interface StationSummaryConfig {
+  endpoint: keyof ClimateApi.paths;
+  dataField: keyof ClimateStationData;
+  metadataField: keyof ClimateStationData;
+  endpointName: string;
+  summaries?: readonly string[];
+  maxRows?: number;
+}
+
+export const STATION_SUMMARY_CONFIGS = {
+  'rainfall-summaries': {
+    endpoint: '/v2/annual_rainfall_summaries/',
+    dataField: 'annual_rainfall_data',
+    metadataField: 'annual_rainfall_metadata',
+    endpointName: 'rainfallSummaries',
+    summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
+    maxRows: 1000,
+  },
+  'annual-temperature': {
+    endpoint: '/v2/annual_temperature_summaries/',
+    dataField: 'annual_temperature_data',
+    metadataField: 'annual_temperature_metadata',
+    endpointName: 'annualTemperature',
+    summaries: ['mean_tmin', 'mean_tmax', 'min_tmin', 'min_tmax', 'max_tmin', 'max_tmax'],
+  },
+  'crop-probabilities': {
+    endpoint: '/v2/crop_success_probabilities/',
+    dataField: 'crop_probability_data',
+    metadataField: 'crop_probability_metadata',
+    endpointName: 'cropProbabilities',
+  },
+  'monthly-temperatures': {
+    endpoint: '/v2/monthly_temperature_summaries/',
+    dataField: 'monthly_temperature_data',
+    metadataField: 'monthly_temperature_metadata',
+    endpointName: 'monthlyTemperatures',
+  },
+  'season-start': {
+    endpoint: '/v2/season_start_probabilities/',
+    dataField: 'season_start_data',
+    metadataField: 'season_start_metadata',
+    endpointName: 'seasonStart',
+  },
+} as const satisfies Record<string, StationSummaryConfig>;
+
+export type StationSummaryAction = keyof typeof STATION_SUMMARY_CONFIGS;
+
+export type ClimateAction = StationSummaryAction | 'update-stations' | 'forecast-file';
+
+export const isStationSummaryAction = (action: string): action is StationSummaryAction => {
+  return Object.hasOwn(STATION_SUMMARY_CONFIGS, action);
+};
+
 const upsertStationSummary = async (
   supabase: ReturnType<typeof getServiceRoleClient>,
   station: { id: string; country_code: string; station_name?: string },
-  apiResult: { data?: SummaryApiResponse; error?: any },
-  dataField: string,
-  metadataField: string,
+  apiResult: { data?: SummaryApiResponse; error?: any; response?: Response },
+  dataField: keyof ClimateStationData,
+  metadataField: keyof ClimateStationData,
   endpointName: string,
 ) => {
-  const { data: apiData, error: apiError } = apiResult;
-  if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
+  const { data: apiData, error: apiError, response } = apiResult;
+  if (apiError) {
+    console.error(`[${endpointName}] API Error:`, apiError);
+    const status = response?.status && response.status >= 400 && response.status < 600 ? response.status : 502;
+    const errorPayload = typeof apiError === 'object' ? apiError : { message: String(apiError) };
+    return ErrorResponse(errorPayload, status);
+  }
 
   if (!apiData?.data || apiData.data.length === 0) {
     console.warn(
@@ -35,7 +96,7 @@ const upsertStationSummary = async (
   }
 
   const { error } = await supabase.from('climate_station_data').upsert({
-    country_code: station.country_code,
+    country_code: station.country_code as Database['public']['Enums']['country_code'],
     station_id: station.id,
     [dataField]: apiData.data,
     [metadataField]: apiData.metadata,
@@ -58,113 +119,52 @@ export const climate = async (req: Request) => {
   const { station, country_code } = payload;
 
   try {
-    switch (action) {
-      case 'rainfall-summaries': {
-        const { station_name, id } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v2/annual_rainfall_summaries/', {
-          body: {
-            country: `${country_code}` as any,
-            station_id: `${station_name}`,
-            summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
-          },
-        });
+    if (isStationSummaryAction(action)) {
+      if (!station?.station_name || !station?.id) {
+        return ErrorResponse(`[${action}] Station with id and station_name is required`, 400);
+      }
 
-        if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
+      const config = STATION_SUMMARY_CONFIGS[action];
+      const body: Record<string, any> = {
+        country: `${country_code}`,
+        station_id: `${station.station_name}`,
+      };
+      if ('summaries' in config && config.summaries) {
+        body.summaries = [...config.summaries];
+      }
 
-        // HACK - API issue returning huge data for some stations
-        if (apiData.data && apiData.data.length > 1000) {
-          console.error({ country_code, station_id: id, station_name, total_rows: apiData.data.length });
-          return ErrorResponse(`[rainfallSummary] Too many rows | ${station_name} ${apiData.data.length}`, 400);
-        }
+      const apiResult = await apiClient.POST(config.endpoint as any, { body } as any);
 
-        // Avoid overwriting existing data if API returned empty array
-        if (!apiData.data || apiData.data.length === 0) {
-          console.warn(
-            `[rainfallSummary] No data returned for ${station_name} (${country_code}), preserving existing data.`,
-          );
-          return JSONResponse(apiData);
-        }
-
-        const { error } = await supabase.from('climate_station_data').upsert({
-          country_code: station.country_code,
+      // Check row limit if configured (e.g. rainfall summaries API glitch returning thousands of rows)
+      if (
+        'maxRows' in config &&
+        config.maxRows &&
+        apiResult.data?.data &&
+        apiResult.data.data.length > config.maxRows
+      ) {
+        console.error({
+          country_code,
           station_id: station.id,
-          annual_rainfall_data: apiData.data,
-          annual_rainfall_metadata: apiData.metadata,
+          station_name: station.station_name,
+          total_rows: apiResult.data.data.length,
         });
-
-        if (error) throw error;
-        return JSONResponse(apiData);
-      }
-
-      case 'annual-temperature': {
-        const res = await apiClient.POST('/v2/annual_temperature_summaries/', {
-          body: {
-            country: `${country_code}` as any,
-            station_id: `${station.station_name}`,
-            summaries: ['mean_tmin', 'mean_tmax', 'min_tmin', 'min_tmax', 'max_tmin', 'max_tmax'],
-          },
-        });
-        return upsertStationSummary(
-          supabase,
-          station,
-          res,
-          'annual_temperature_data',
-          'annual_temperature_metadata',
-          'annualTemperature',
+        return ErrorResponse(
+          `[${config.endpointName}] Too many rows | ${station.station_name} ${apiResult.data.data.length}`,
+          400,
         );
       }
 
-      case 'crop-probabilities': {
-        const res = await apiClient.POST('/v2/crop_success_probabilities/', {
-          body: {
-            country: `${country_code}` as any,
-            station_id: `${station.station_name}`,
-          },
-        });
-        return upsertStationSummary(
-          supabase,
-          station,
-          res,
-          'crop_probability_data',
-          'crop_probability_metadata',
-          'cropProbabilities',
-        );
-      }
+      return upsertStationSummary(
+        supabase,
+        station,
+        apiResult,
+        config.dataField,
+        config.metadataField,
+        config.endpointName,
+      );
+    }
 
-      case 'monthly-temperatures': {
-        const res = await apiClient.POST('/v2/monthly_temperature_summaries/', {
-          body: {
-            country: `${country_code}` as any,
-            station_id: `${station.station_name}`,
-          },
-        });
-        return upsertStationSummary(
-          supabase,
-          station,
-          res,
-          'monthly_temperature_data',
-          'monthly_temperature_metadata',
-          'monthlyTemperatures',
-        );
-      }
-
-      case 'season-start': {
-        const res = await apiClient.POST('/v2/season_start_probabilities/', {
-          body: {
-            country: `${country_code}` as any,
-            station_id: `${station.station_name}`,
-          },
-        });
-        return upsertStationSummary(
-          supabase,
-          station,
-          res,
-          'season_start_data',
-          'season_start_metadata',
-          'seasonStart',
-        );
-      }
-
+    switch (action) {
       // Sync station records from upstream API (/v2/station/{country}).
       // Applies deduplication, WMO mapping, and non-destructive preservation of DB districts and coordinates.
       // @see apps/picsa-tools/climate-tool/src/app/data/stations/CLIMATE_API_ANOMALIES.md for documented upstream issues.
