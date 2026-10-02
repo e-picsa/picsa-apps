@@ -474,22 +474,10 @@ export async function syncFromDatabaseForCountry(
     else if (status === 'UPDATED') updatedCount++;
     else unchangedCount++;
 
-    const prevTotalYears =
-      prevCap?.totalYears ??
-      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
-
-    const diffTotalYears =
-      capabilities.totalYears !== undefined && prevTotalYears !== undefined
-        ? capabilities.totalYears - prevTotalYears
-        : undefined;
-    const diffCompleteRainYears =
-      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
-        ? capabilities.completeRainYears - prevCap.completeRainYears
-        : undefined;
-    const diffCompleteTempYears =
-      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
-        ? capabilities.completeTempYears - prevCap.completeTempYears
-        : undefined;
+    const { diffTotalYears, diffCompleteRainYears, diffCompleteTempYears } = calculateCapabilityDiffs(
+      capabilities,
+      prevCap,
+    );
 
     options.auditReport.stationsSummary.push({
       country: countryUpper,
@@ -606,22 +594,10 @@ export function computeExistingCapabilitiesForCountry(
 
     updatedCaps[stationId] = capabilities;
 
-    const prevTotalYears =
-      prevCap?.totalYears ??
-      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
-
-    const diffTotalYears =
-      capabilities.totalYears !== undefined && prevTotalYears !== undefined
-        ? capabilities.totalYears - prevTotalYears
-        : undefined;
-    const diffCompleteRainYears =
-      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
-        ? capabilities.completeRainYears - prevCap.completeRainYears
-        : undefined;
-    const diffCompleteTempYears =
-      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
-        ? capabilities.completeTempYears - prevCap.completeTempYears
-        : undefined;
+    const { diffTotalYears, diffCompleteRainYears, diffCompleteTempYears } = calculateCapabilityDiffs(
+      capabilities,
+      prevCap,
+    );
 
     options.auditReport.stationsSummary.push({
       country: country.toUpperCase(),
@@ -696,13 +672,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     }
 
     // Write audit report
-    const reportMd = generateMarkdownAuditReport(auditReport);
-    const reportDir = path.dirname(reportPath);
-    if (!fs.existsSync(reportDir)) {
-      fs.mkdirSync(reportDir, { recursive: true });
-    }
-    fs.writeFileSync(reportPath, reportMd, 'utf-8');
-    console.log(`\n  📄 Audit report written: ${reportPath}`);
+    saveAuditReport(reportPath, auditReport);
 
     console.log(`\n======================================================`);
     console.log(`[Database Climate Sync Complete]`);
@@ -726,13 +696,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     }
 
     // Write audit report
-    const reportMd = generateMarkdownAuditReport(auditReport);
-    const reportDir = path.dirname(reportPath);
-    if (!fs.existsSync(reportDir)) {
-      fs.mkdirSync(reportDir, { recursive: true });
-    }
-    fs.writeFileSync(reportPath, reportMd, 'utf-8');
-    console.log(`\n  📄 Audit report written: ${reportPath}`);
+    saveAuditReport(reportPath, auditReport);
 
     console.log(`\n======================================================`);
     console.log(`[Retroactive Capabilities Computation Complete]`);
@@ -858,22 +822,10 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
       status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
     }
 
-    const prevTotalYears =
-      prevCap?.totalYears ??
-      (prevCap?.years && prevCap.years.length === 2 ? prevCap.years[1] - prevCap.years[0] + 1 : undefined);
-
-    const diffTotalYears =
-      capabilities.totalYears !== undefined && prevTotalYears !== undefined
-        ? capabilities.totalYears - prevTotalYears
-        : undefined;
-    const diffCompleteRainYears =
-      capabilities.completeRainYears !== undefined && prevCap?.completeRainYears !== undefined
-        ? capabilities.completeRainYears - prevCap.completeRainYears
-        : undefined;
-    const diffCompleteTempYears =
-      capabilities.completeTempYears !== undefined && prevCap?.completeTempYears !== undefined
-        ? capabilities.completeTempYears - prevCap.completeTempYears
-        : undefined;
+    const { diffTotalYears, diffCompleteRainYears, diffCompleteTempYears } = calculateCapabilityDiffs(
+      capabilities,
+      prevCap,
+    );
 
     auditReport.stationsSummary.push({
       country: country.toUpperCase(),
@@ -912,14 +864,8 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     writeCountryCapabilities(country, updatedCaps);
   }
 
-  // Generate markdown audit report
-  const reportMd = generateMarkdownAuditReport(auditReport);
-  const reportDir = path.dirname(reportPath);
-  if (!fs.existsSync(reportDir)) {
-    fs.mkdirSync(reportDir, { recursive: true });
-  }
-  fs.writeFileSync(reportPath, reportMd, 'utf-8');
-  console.log(`  📄 Audit report written: ${reportPath}`);
+  // Generate and write markdown audit report
+  saveAuditReport(reportPath, auditReport);
 
   // Print summary to terminal
   console.log(`\n======================================================`);
