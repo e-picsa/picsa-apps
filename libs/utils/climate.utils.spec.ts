@@ -343,15 +343,17 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(caps.schemaVersion).toBe(1);
       expect(caps.contentHash).toBe('hash123');
       expect(caps.years).toEqual([1960, 1961]);
-      expect(caps.totalMissingYears).toBe(0);
+      expect(caps.totalYears).toBe(2);
+      expect(caps.completeRainYears).toBe(2);
+      expect(caps.completeTempYears).toBe(0);
       expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length', 'extreme_rainfall_days', 'temp_max']);
       expect(caps.monthly).toEqual(['rainfall', 'temp_min', 'temp_max']);
     });
 
     it('should handle rain-only station capabilities correctly', () => {
       const annualData = [
-        { Year: 1980, Rainfall: 700 },
-        { Year: 1982, Rainfall: 750 },
+        { Year: 1980, Start: 300, End: 90, Length: 150, Rainfall: 700 },
+        { Year: 1982, Start: 310, End: 95, Length: 155, Rainfall: 750 },
       ] as IStationData[];
       const monthlyData: IMonthlyStationData[] = [
         { month: '1980-01', Rainfall: 100 },
@@ -364,19 +366,22 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       });
 
       expect(caps.years).toEqual([1980, 1982]);
-      // 1980, 1981, 1982 -> span 3 years, 1981 missing -> totalMissingYears = 1
-      expect(caps.totalMissingYears).toBe(1);
-      expect(caps.annual).toEqual(['rainfall']);
+      expect(caps.totalYears).toBe(3);
+      expect(caps.completeRainYears).toBe(2);
+      expect(caps.completeTempYears).toBeUndefined();
+      expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length']);
       expect(caps.monthly).toEqual(['rainfall']);
     });
 
     it('should handle station with no monthly data', () => {
-      const annualData = [{ Year: 1990, Rainfall: 600 }] as IStationData[];
+      const annualData = [{ Year: 1990, Start: 300, End: 90, Length: 150, Rainfall: 600 }] as IStationData[];
       const caps = calculateStationCapabilities({ annualData });
 
       expect(caps.years).toEqual([1990, 1990]);
-      expect(caps.totalMissingYears).toBe(0);
-      expect(caps.annual).toEqual(['rainfall']);
+      expect(caps.totalYears).toBe(1);
+      expect(caps.completeRainYears).toBe(1);
+      expect(caps.completeTempYears).toBeUndefined();
+      expect(caps.annual).toEqual(['rainfall', 'start', 'end', 'length']);
       expect(caps.monthly).toBeUndefined();
     });
 
@@ -388,8 +393,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       const caps = calculateStationCapabilities({ monthlyData });
 
       expect(caps.years).toEqual([1975, 1985]);
-      // 1975 to 1985 is 11 years, only 2 valid years observed -> 9 missing years
-      expect(caps.totalMissingYears).toBe(9);
+      expect(caps.totalYears).toBe(11);
+      expect(caps.completeRainYears).toBeUndefined();
+      expect(caps.completeTempYears).toBeUndefined();
       expect(caps.annual).toBeUndefined();
       expect(caps.monthly).toEqual(['rainfall']);
     });
@@ -498,11 +504,15 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
             id: 'chipata_met',
             status: 'UPDATED',
             years: [1950, 2020],
-            totalMissingYears: 2,
+            totalYears: 71,
+            diffTotalYears: 1,
+            completeRainYears: 68,
+            completeTempYears: 50,
             monthly: ['rainfall', 'temp_min', 'temp_max'],
             hash: 'abc123456789',
           },
         ],
+        warnings: ['Sample test warning message'],
         historicalRevisions: [
           {
             stationId: 'chipata_met',
@@ -535,10 +545,16 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(md).toContain('# Climate Data Sync & Health Audit Report');
       expect(md).toContain('chipata_met');
       expect(md).toContain('1950–2020');
+      expect(md).toContain('**Total Warnings**: `1`');
+      expect(md).toContain('Total Yrs');
+      expect(md).toContain('Complete Rain Yrs');
+      expect(md).toContain('Complete Temp Yrs');
       expect(md).toContain('Historical Revisions (1)');
       expect(md).toContain('Missingness Regressions (1)');
       expect(md).toContain('Physical Consistency Sanity Checks (1)');
       expect(md).toContain('+10');
+      expect(md).toContain('## 5. Sync Warnings (1)');
+      expect(md).toContain('Sample test warning message');
     });
 
     it('should display clean messages when no revisions or regressions are present', () => {
@@ -550,7 +566,9 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
             id: 'kasama_met',
             status: 'UNCHANGED',
             years: [1960, 2024],
-            totalMissingYears: 0,
+            totalYears: 65,
+            completeRainYears: 65,
+            completeTempYears: undefined,
             monthly: ['rainfall'],
           },
         ],
@@ -559,9 +577,171 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
         sanityViolations: [],
       });
 
+      expect(md).toContain('**Total Warnings**: `0`');
       expect(md).toContain('No previously published historical data was modified.');
       expect(md).toContain('No regressions detected (no valid data became missing).');
       expect(md).toContain('All records passed temperature ordering, positive rainfall, and calendar sanity rules.');
+      expect(md).toContain('No warnings were generated during this run.');
+    });
+
+    it('should separate stations into Subtractive, Additive, Value-Update Only, and Unchanged sections', () => {
+      const md = generateMarkdownAuditReport({
+        timestamp: '2026-09-09',
+        totalStationsProcessed: 4,
+        stationsSummary: [
+          // Subtractive change (completeRainYears dropped by 1)
+          {
+            country: 'MW',
+            id: 'salima',
+            status: 'UPDATED',
+            years: [1960, 2024],
+            totalYears: 65,
+            completeRainYears: 60,
+            diffCompleteRainYears: -1,
+          },
+          // Additive change (totalYears increased by 1)
+          {
+            country: 'ZM',
+            id: 'chipata_met',
+            status: 'UPDATED',
+            years: [1950, 2021],
+            totalYears: 72,
+            diffTotalYears: 1,
+            completeRainYears: 65,
+          },
+          // Value-update only (status UPDATED, no diffs)
+          {
+            country: 'MW',
+            id: 'bolero',
+            status: 'UPDATED',
+            years: [1961, 2025],
+            totalYears: 65,
+            completeRainYears: 60,
+            diffTotalYears: 0,
+            diffCompleteRainYears: 0,
+          },
+          // Unchanged station
+          {
+            country: 'ZW',
+            id: 'plumtree',
+            status: 'UNCHANGED',
+            years: [1963, 2022],
+            totalYears: 60,
+          },
+        ],
+        historicalRevisions: [],
+        missingnessRegressions: [],
+        sanityViolations: [],
+      });
+
+      // 1. Subtractive changes displayed first with full table
+      expect(md).toContain('### Subtractive Changes (1)');
+      expect(md).toContain('| MW | **salima** | `UPDATED` | 1960–2024 | 65 | 60 (-1) | — | — | — |');
+
+      // 2. Additive changes displayed second with full table
+      expect(md).toContain('### Additive Changes (1)');
+      expect(md).toContain('| ZM | **chipata_met** | `UPDATED` | 1950–2021 | 72 (+1) | 65 | — | — | — |');
+
+      // 3. Value-update only displayed third with simple 2-column table
+      expect(md).toContain('### Value-Update Only (1)');
+      expect(md).toContain('| MW | **bolero** |');
+      // Bolero should NOT be in a 9-column table
+      expect(md).not.toContain('| MW | **bolero** | `UPDATED` |');
+
+      // 4. Unchanged stations collapsed
+      expect(md).toContain('### Unchanged Stations (1)');
+      expect(md).toContain('<details>');
+      expect(md).toContain('| ZW | **plumtree** |');
+
+      // Verify ordering in output: Subtractive before Additive before Value-Update before Unchanged
+      const idxSubtractive = md.indexOf('### Subtractive Changes');
+      const idxAdditive = md.indexOf('### Additive Changes');
+      const idxValueUpdate = md.indexOf('### Value-Update Only');
+      const idxUnchanged = md.indexOf('### Unchanged Stations');
+
+      expect(idxSubtractive).toBeLessThan(idxAdditive);
+      expect(idxAdditive).toBeLessThan(idxValueUpdate);
+      expect(idxValueUpdate).toBeLessThan(idxUnchanged);
+    });
+
+    it('should separate country code from station ID and format metric diffs', () => {
+      const md = generateMarkdownAuditReport({
+        timestamp: '2026-09-09',
+        totalStationsProcessed: 2,
+        stationsSummary: [
+          {
+            country: 'MW',
+            id: 'mw:baka_agric_research',
+            status: 'UPDATED',
+            years: [1959, 2025],
+            totalYears: 67,
+            diffTotalYears: 1,
+            completeRainYears: 62,
+            diffCompleteRainYears: -1,
+            completeTempYears: 30,
+            diffCompleteTempYears: 0,
+          },
+          {
+            country: 'ZM',
+            id: 'chipata_met',
+            status: 'UNCHANGED',
+            years: [1960, 2020],
+            totalYears: 61,
+            completeRainYears: 55,
+            completeTempYears: 20,
+          },
+        ],
+        historicalRevisions: [],
+        missingnessRegressions: [],
+        sanityViolations: [],
+      });
+
+      expect(md).toContain(
+        '| Country | Station ID | Status | Historical Range | Total Yrs | Complete Rain Yrs | Complete Temp Yrs | Monthly Charts | Content Hash |',
+      );
+      // MW station has separate columns and diffs for changed values (+1, -1, plain for 0)
+      expect(md).toContain('| MW | **baka_agric_research** | `UPDATED` | 1959–2025 | 67 (+1) | 62 (-1) | 30 | — | — |');
+      // ZM station has separate columns and plain values without diffs
+      expect(md).toContain('| ZM | **chipata_met** | `UNCHANGED` | 1960–2020 | 61 | 55 | 20 | — | — |');
+    });
+
+    it('should group warnings by type and format station warnings in a Country/Station table', () => {
+      const md = generateMarkdownAuditReport({
+        timestamp: '2026-09-09',
+        totalStationsProcessed: 3,
+        stationsSummary: [],
+        historicalRevisions: [],
+        missingnessRegressions: [],
+        sanityViolations: [],
+        warnings: [
+          {
+            message: 'Station has DB data but no entry in metadata.ts',
+            country: 'MW',
+            stationId: 'salima_airport',
+          },
+          {
+            message: 'Station has DB data but no entry in metadata.ts',
+            country: 'MW',
+            stationId: 'mangochi_met',
+          },
+          {
+            message: 'Station has database record but zero annual data entries',
+            country: 'ZM',
+            stationId: 'kabompo_met',
+          },
+          'No climate_station_data rows found in database for ZW',
+        ],
+      });
+
+      expect(md).toContain('## 5. Sync Warnings (4)');
+      expect(md).toContain('### Station has DB data but no entry in metadata.ts (2)');
+      expect(md).toContain('| Country | Station ID |');
+      expect(md).toContain('| MW | **salima_airport** |');
+      expect(md).toContain('| MW | **mangochi_met** |');
+      expect(md).toContain('### Station has database record but zero annual data entries (1)');
+      expect(md).toContain('| ZM | **kabompo_met** |');
+      expect(md).toContain('### No climate_station_data rows found in database (1)');
+      expect(md).toContain('- **ZW**');
     });
   });
 
