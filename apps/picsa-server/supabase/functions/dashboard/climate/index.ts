@@ -11,6 +11,40 @@ const apiClient = createClient<ClimateApi.paths>({
   headers: { 'Content-Type': 'application/json' },
 });
 
+interface SummaryApiResponse {
+  data?: any[];
+  metadata?: any;
+}
+
+const upsertStationSummary = async (
+  supabase: ReturnType<typeof getServiceRoleClient>,
+  station: { id: string; country_code: string; station_name?: string },
+  apiResult: { data?: SummaryApiResponse; error?: any },
+  dataField: string,
+  metadataField: string,
+  endpointName: string,
+) => {
+  const { data: apiData, error: apiError } = apiResult;
+  if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
+
+  if (!apiData?.data || apiData.data.length === 0) {
+    console.warn(
+      `[${endpointName}] No data returned for ${station.station_name} (${station.country_code}), preserving existing data.`,
+    );
+    return JSONResponse(apiData);
+  }
+
+  const { error } = await supabase.from('climate_station_data').upsert({
+    country_code: station.country_code,
+    station_id: station.id,
+    [dataField]: apiData.data,
+    [metadataField]: apiData.metadata,
+  });
+
+  if (error) throw error;
+  return JSONResponse(apiData);
+};
+
 export const climate = async (req: Request) => {
   const { pathname } = new URL(req.url);
   // Expected URL: /dashboard/climate/{action}
@@ -63,117 +97,72 @@ export const climate = async (req: Request) => {
       }
 
       case 'annual-temperature': {
-        const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v2/annual_temperature_summaries/', {
+        const res = await apiClient.POST('/v2/annual_temperature_summaries/', {
           body: {
             country: `${country_code}` as any,
-            station_id: `${station_name}`,
+            station_id: `${station.station_name}`,
             summaries: ['mean_tmin', 'mean_tmax', 'min_tmin', 'min_tmax', 'max_tmin', 'max_tmax'],
           },
         });
-
-        if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
-
-        if (!apiData.data || apiData.data.length === 0) {
-          console.warn(
-            `[annualTemperature] No data returned for ${station_name} (${country_code}), preserving existing data.`,
-          );
-          return JSONResponse(apiData);
-        }
-
-        const { error } = await supabase.from('climate_station_data').upsert({
-          country_code: station.country_code,
-          station_id: station.id,
-          annual_temperature_data: apiData.data,
-          annual_temperature_metadata: apiData.metadata,
-        });
-
-        if (error) throw error;
-        return JSONResponse(apiData);
+        return upsertStationSummary(
+          supabase,
+          station,
+          res,
+          'annual_temperature_data',
+          'annual_temperature_metadata',
+          'annualTemperature',
+        );
       }
 
       case 'crop-probabilities': {
-        const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v2/crop_success_probabilities/', {
+        const res = await apiClient.POST('/v2/crop_success_probabilities/', {
           body: {
             country: `${country_code}` as any,
-            station_id: `${station_name}`,
+            station_id: `${station.station_name}`,
           },
         });
-
-        if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
-
-        if (!apiData.data || apiData.data.length === 0) {
-          console.warn(
-            `[cropProbabilities] No data returned for ${station_name} (${country_code}), preserving existing data.`,
-          );
-          return JSONResponse(apiData);
-        }
-
-        const { error } = await supabase.from('climate_station_data').upsert({
-          country_code: station.country_code,
-          station_id: station.id,
-          crop_probability_data: apiData.data,
-          crop_probability_metadata: apiData.metadata,
-        });
-
-        if (error) throw error;
-        return JSONResponse(apiData);
+        return upsertStationSummary(
+          supabase,
+          station,
+          res,
+          'crop_probability_data',
+          'crop_probability_metadata',
+          'cropProbabilities',
+        );
       }
 
       case 'monthly-temperatures': {
-        const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v2/monthly_temperature_summaries/', {
+        const res = await apiClient.POST('/v2/monthly_temperature_summaries/', {
           body: {
             country: `${country_code}` as any,
-            station_id: `${station_name}`,
+            station_id: `${station.station_name}`,
           },
         });
-
-        if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
-
-        if (!apiData.data || apiData.data.length === 0) {
-          console.warn(
-            `[monthlyTemperatures] No data returned for ${station_name} (${country_code}), preserving existing data.`,
-          );
-          return JSONResponse(apiData);
-        }
-
-        const { error } = await supabase.from('climate_station_data').upsert({
-          country_code: station.country_code,
-          station_id: station.id,
-          monthly_temperature_data: apiData.data,
-          monthly_temperature_metadata: apiData.metadata,
-        });
-
-        if (error) throw error;
-        return JSONResponse(apiData);
+        return upsertStationSummary(
+          supabase,
+          station,
+          res,
+          'monthly_temperature_data',
+          'monthly_temperature_metadata',
+          'monthlyTemperatures',
+        );
       }
 
       case 'season-start': {
-        const { station_name } = station;
-        const { data: apiData, error: apiError } = await apiClient.POST('/v2/season_start_probabilities/', {
+        const res = await apiClient.POST('/v2/season_start_probabilities/', {
           body: {
             country: `${country_code}` as any,
-            station_id: `${station_name}`,
+            station_id: `${station.station_name}`,
           },
         });
-
-        if (apiError) throw new Error(`API Error: ${JSON.stringify(apiError)}`);
-
-        if (!apiData.data || apiData.data.length === 0) {
-          return JSONResponse(apiData);
-        }
-
-        const { error } = await supabase.from('climate_station_data').upsert({
-          country_code: station.country_code,
-          station_id: station.id,
-          season_start_data: apiData.data,
-          season_start_metadata: apiData.metadata,
-        });
-
-        if (error) throw error;
-        return JSONResponse(apiData);
+        return upsertStationSummary(
+          supabase,
+          station,
+          res,
+          'season_start_data',
+          'season_start_metadata',
+          'seasonStart',
+        );
       }
 
       case 'update-stations': {
@@ -204,17 +193,26 @@ export const climate = async (req: Request) => {
           }
         }
 
-        // 2. Fetch existing DB station records for country to preserve existing non-null districts and met_station_ids
-        const { data: existingStations } = await supabase
+        // 2. Fetch existing DB station records for country to preserve existing non-null districts, met_station_ids, and verified coordinates
+        const { data: existingStations, error: existingStationsError } = await supabase
           .from('climate_stations')
-          .select('station_id, district, met_station_id')
+          .select('station_id, district, met_station_id, latitude, longitude')
           .eq('country_code', targetCountry);
+
+        if (existingStationsError) throw existingStationsError;
 
         const existingDistrictMap = new Map<string, string>();
         const existingMetIdMap = new Map<string, string>();
+        const existingCoordMap = new Map<string, { latitude: number; longitude: number }>();
         for (const s of existingStations || []) {
           if (s.district) existingDistrictMap.set(s.station_id, s.district);
           if (s.met_station_id) existingMetIdMap.set(s.station_id, s.met_station_id);
+          if (s.latitude !== null && s.longitude !== null && !(Number(s.latitude) === 0 && Number(s.longitude) === 0)) {
+            existingCoordMap.set(s.station_id, {
+              latitude: Number(s.latitude),
+              longitude: Number(s.longitude),
+            });
+          }
         }
 
         // 3. Helper for clean station slugification
@@ -248,7 +246,7 @@ export const climate = async (req: Request) => {
           return true;
         });
 
-        // 5. Build station rows: preserve existing non-null DB district and met_station_id
+        // 5. Build station rows: preserve existing non-null DB district, met_station_id, and verified coordinates
         const update = candidateStations.map((d: any) => {
           const slug = toCleanSlug(d.station_id);
 
@@ -259,12 +257,30 @@ export const climate = async (req: Request) => {
           const metStationId =
             metStationIdMap.get(d.station_name) || existingMetIdMap.get(slug) || d.met_station_id || null;
 
+          // Coordinate validation and preservation:
+          // Check if upstream coordinates are valid (reject null, 0/0, out-of-range, or inverted signs)
+          const existingCoord = existingCoordMap.get(slug);
+          const rawLat = d.latitude !== null && d.latitude !== undefined ? Number(d.latitude) : null;
+          const rawLon = d.longitude !== null && d.longitude !== undefined ? Number(d.longitude) : null;
+
+          const isUpstreamCoordValid =
+            rawLat !== null &&
+            rawLon !== null &&
+            !(rawLat === 0 && rawLon === 0) &&
+            Math.abs(rawLat) <= 90 &&
+            Math.abs(rawLon) <= 180 &&
+            (['zw', 'zm', 'mw'].includes(targetCountry) ? rawLat < 0 && rawLon > 0 : true);
+
+          // Preserve existing verified DB coordinates to prevent upstream errors from corrupting locations
+          const latitude = existingCoord ? existingCoord.latitude : isUpstreamCoordValid ? rawLat : null;
+          const longitude = existingCoord ? existingCoord.longitude : isUpstreamCoordValid ? rawLon : null;
+
           return {
             station_id: slug,
             country_code: targetCountry,
             station_name: d.station_name,
-            latitude: d.latitude,
-            longitude: d.longitude,
+            latitude,
+            longitude,
             elevation: d.elevation,
             district,
             met_station_id: metStationId,

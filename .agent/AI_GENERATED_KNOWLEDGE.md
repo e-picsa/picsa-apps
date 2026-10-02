@@ -345,3 +345,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - When indexing `allStationData` rows via `arrayToHashmap(allStationData, "station_id")`, the dictionary keys are `station.id`. Lookups MUST use `allStationDataHashmap[station.id as string]`.
 - Conversely, bundled app CSV data (`allStationAppData`) is loaded from `assets/summaries/<country>/<station_id>.csv` and is keyed by `station.station_id` (the slug).
 - **PR-Agent Push-Back**: Automated review bots frequently flag `allStationDataHashmap[station.id]` as a suspected bug assuming `station_id` must match `station.station_id`. This is a false positive and must be firmly pushed back on.
+
+### Station Location & Coordinate Preservation During Climate Sync
+
+- **Upstream Location Traps**: Upstream climate data feeds frequently contain missing coordinates (`null`), `(0, 0)` coordinates placing stations in the Atlantic Ocean, swapped lat/long values, or incorrect legacy entries (e.g. `chipepo_met` placed in Lake Kariba at `-16.79, 27.88` instead of Gwembe at `-15.79, 28.14`).
+- **Preservation & Non-Destructive Sync Strategy**: In `dashboard/climate/index.ts`, `update-stations` preserves existing valid database coordinates (similar to `district`) so verified database locations are never overwritten by upstream syncs. Upstream coordinates are only ingested for new stations if they pass validation (`!(lat === 0 && lon === 0)` and valid hemispheric bounds).
+- **Database-Level Guard**: Table `climate_stations` enforces `climate_stations_valid_coords` (`CHECK ((latitude IS NULL AND longitude IS NULL) OR (NOT (latitude = 0 AND longitude = 0) AND latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180))`), physically preventing invalid `(0, 0)` coordinates from entering the database.

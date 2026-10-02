@@ -18,17 +18,27 @@ WHERE station_id = 'zw/________';
 DELETE FROM public.climate_stations
 WHERE country_code = 'zw' AND station_id = '________';
 
--- 3. Remove Zambia duplicate Climsoft legacy codes and AWS duplicates
+-- 3. Remove Zambia duplicate Climsoft legacy codes, underscore duplicates, and AWS duplicates
+UPDATE public.crop_data_downscaled
+SET station_id = NULL
+WHERE station_id IN (
+  'zm/chipat01', 'zm/lundaz01', 'zm/mfuwe001', 'zm/mseker01', 'zm/petauk01',
+  'zm/chipata_met_aws', 'zm/lusaka_city_airport_aws',
+  'zm/chipat__', 'zm/lundaz__', 'zm/mfuwe___', 'zm/mseker__', 'zm/mt__makulu_agrome', 'zm/petauk__'
+);
+
 DELETE FROM public.climate_station_data
 WHERE station_id IN (
   'zm/chipat01', 'zm/lundaz01', 'zm/mfuwe001', 'zm/mseker01', 'zm/petauk01',
-  'zm/chipata_met_aws', 'zm/lusaka_city_airport_aws'
+  'zm/chipata_met_aws', 'zm/lusaka_city_airport_aws',
+  'zm/chipat__', 'zm/lundaz__', 'zm/mfuwe___', 'zm/mseker__', 'zm/mt__makulu_agrome', 'zm/petauk__'
 );
 
 DELETE FROM public.climate_stations
 WHERE country_code = 'zm' AND station_id IN (
   'chipat01', 'lundaz01', 'mfuwe001', 'mseker01', 'petauk01',
-  'chipata_met_aws', 'lusaka_city_airport_aws'
+  'chipata_met_aws', 'lusaka_city_airport_aws',
+  'chipat__', 'lundaz__', 'mfuwe___', 'mseker__', 'mt__makulu_agrome', 'petauk__'
 );
 
 -- 4. Migrate double-underscore ZW station slugs to clean _met slugs in climate_stations
@@ -158,11 +168,36 @@ UPDATE public.climate_stations SET district = 'Phalombe' WHERE country_code = 'm
 UPDATE public.climate_stations SET district = 'Neno' WHERE country_code = 'mw' AND station_id = 'neno_boma' AND district IS NULL;
 UPDATE public.climate_stations SET district = 'Machinga' WHERE country_code = 'mw' AND station_id IN ('ntaja', 'ntaja_met') AND district IS NULL;
 
--- 10. Clean up any orphaned data rows in climate_station_data before re-adding FK
+-- 10. Correct invalid, zero, or inaccurate coordinates from metadata specifications
+UPDATE public.climate_stations SET latitude = -8.76, longitude = 31.1 WHERE country_code = 'zm' AND station_id = 'mpulungu_met';
+UPDATE public.climate_stations SET latitude = -15.79, longitude = 28.14 WHERE country_code = 'zm' AND station_id = 'chipepo_met';
+UPDATE public.climate_stations SET latitude = -10.59, longitude = 33.46 WHERE country_code = 'zm' AND station_id = 'muyombe_camp';
+UPDATE public.climate_stations SET latitude = -13.7050735, longitude = 35.037632 WHERE country_code = 'mw' AND station_id = 'makanjira';
+UPDATE public.climate_stations SET latitude = -14.3530807, longitude = 35.4706477 WHERE country_code = 'mw' AND station_id = 'namwera';
+UPDATE public.climate_stations SET latitude = -16.1, longitude = 35.6 WHERE country_code = 'mw' AND station_id = 'mimosa';
+UPDATE public.climate_stations SET latitude = -16.1, longitude = 34.8 WHERE country_code = 'mw' AND station_id = 'kasinthula';
+
+-- 11. Clean up any orphaned data rows in climate_station_data and crop_data_downscaled before re-adding FK
 DELETE FROM public.climate_station_data
 WHERE station_id NOT IN (SELECT id FROM public.climate_stations);
 
--- 11. Re-add foreign key constraints with ON UPDATE CASCADE
+UPDATE public.crop_data_downscaled
+SET station_id = NULL
+WHERE station_id IS NOT NULL
+  AND station_id NOT IN (SELECT id FROM public.climate_stations);
+
+-- 12. Prevent future zero or out-of-range coordinates at DB level
+ALTER TABLE public.climate_stations
+  DROP CONSTRAINT IF EXISTS climate_stations_valid_coords;
+
+ALTER TABLE public.climate_stations
+  ADD CONSTRAINT climate_stations_valid_coords
+  CHECK (
+    (latitude IS NULL AND longitude IS NULL) OR
+    (NOT (latitude = 0 AND longitude = 0) AND latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180)
+  );
+
+-- 13. Re-add foreign key constraints with ON UPDATE CASCADE
 ALTER TABLE public.climate_station_data
   ADD CONSTRAINT climate_station_data_station_id_fkey
   FOREIGN KEY (station_id) REFERENCES public.climate_stations(id)
