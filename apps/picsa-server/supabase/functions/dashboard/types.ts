@@ -4,7 +4,7 @@ import type { Database } from '../../types/db.types.ts';
 // climate
 export type climateApiPaths = ClimateApi.paths;
 export type climateApiComponents = ClimateApi.components;
-export type { ClimateAction, StationSummaryAction } from './climate/index.ts';
+export type { ClimateAction, StationSummaryAction } from './climate/config.ts';
 
 export type IDBClimateForecastRow = Database['public']['Tables']['forecasts']['Row'];
 export type IDBClimateForecastInsert = Database['public']['Tables']['forecasts']['Insert'];

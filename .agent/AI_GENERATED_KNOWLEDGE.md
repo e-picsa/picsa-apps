@@ -142,6 +142,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Required Top-Level Exception Isolation**: Function entrypoints must use `Deno.serve(async (req) => { ... })` and wrap router execution in an outer `try/catch` block returning `ErrorResponse(error.message, 500)`.
 - **CORS on All Status Codes**: All failure branches (including method rejections `400`, unhandled routes `501`, and upstream errors `502`/`504`) must include `corsHeaders` (with `'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT'`) so browser clients receive actionable HTTP status codes and structured JSON errors rather than false CORS blocks.
 
+### Deno Edge Functions Boundary & Type Isolation
+
+- **Pure Types Boundary**: Edge functions in `apps/picsa-server/supabase/functions/` run in Deno. `tsconfig.base.json` and `apps/picsa-server/tsconfig.json` explicitly exclude `apps/picsa-server/supabase/functions`.
+- **Never Import Executable Function Files in Shared Types**: Types consumed by Angular frontend apps (`@picsa/server-types`, `apps/picsa-server/supabase/types/functions.types.ts`, `../functions/*/types.ts`) must contain only pure TypeScript type definitions and interfaces. They must **never** import or re-export from executable function files (`index.ts`). Even a `export type { ... } from './climate/index.ts'` forces TypeScript's module resolution during Angular compilation (`ng serve` / `nx serve dashboard`) to traverse and typecheck the Deno file, causing build failures (`TS2304: Cannot find name 'Deno'`, `TS2307: Cannot find module 'https://...'`, `TS5097`).
+
+### openapi-fetch Discriminated Union Destructuring
+
+- `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
+- **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined`.
+
 ### Sample Forecast Data & Local Development Fixtures
 
 - **Avoid Backend Mock Over-Engineering**: Do not create complex programmatic PDF compilers or mock router branches in Supabase Edge Functions.
