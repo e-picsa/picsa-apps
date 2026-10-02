@@ -526,6 +526,13 @@ export async function syncFromDatabaseForCountry(
     }
   }
 
+  // Prune stale capability entries that are no longer registered in metadata
+  for (const key of Object.keys(updatedCaps)) {
+    if (!registeredMetaIds.has(key)) {
+      delete updatedCaps[key];
+    }
+  }
+
   if (!options.auditOnly) {
     writeCountryCapabilities(countryLower, updatedCaps);
   }
@@ -632,6 +639,13 @@ export function computeExistingCapabilitiesForCountry(
         schemaVersion: 1,
         years: [],
       };
+    }
+  }
+
+  // Prune stale capability entries that are no longer registered in metadata
+  for (const key of Object.keys(updatedCaps)) {
+    if (!registeredMetaIds.has(key)) {
+      delete updatedCaps[key];
     }
   }
 
