@@ -98,7 +98,7 @@ export class FeedbackListComponent implements OnInit {
   }
 
   public applyFilters() {
-    this.loadList();
+    void this.loadList();
   }
 
   public resetFilters() {
@@ -106,7 +106,7 @@ export class FeedbackListComponent implements OnInit {
     this.selectedType.set(undefined);
     this.appVersion.set('');
     this.os.set('');
-    this.loadList();
+    void this.loadList();
   }
 
   public openDetail(row: FeedbackTableRow) {
