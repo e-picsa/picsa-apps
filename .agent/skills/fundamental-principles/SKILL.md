@@ -40,3 +40,12 @@ As an intelligent agent, you must improve your own workflow and help future agen
 - **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
 - **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
 - **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.
+
+## 5. Pull Request Creation & PR Template Compliance
+
+- **Approval Prohibition**: **NEVER** commit, push to remote origin, create a non-draft PR, or convert a PR out of draft without explicit user approval.
+- **Mandatory PR Template Usage**: Whenever creating or updating a pull request description, you **MUST ALWAYS** follow the project PR template located at `.github/pull_request_template.md`:
+  - Fill out `## Developer Summary` with reviewer notes, pain points, or architectural summaries.
+  - Fill out `## Related Issues` linking issues with `Closes #[issue_number]`, `Relates to #[issue_number]`, or `Part of Epic #[epic_number]`.
+  - Include `## Screenshots / Videos` when visual or UI changes are made.
+  - **Preserve PR-Agent AI Summary Block**: Never delete or replace the `---` separator or the `## AI Summary` block (`pr_agent:summary`, `pr_agent:walkthrough`, `pr_agent:diagram`). PR-Agent relies on these exact markers to auto-generate and regenerate descriptions via `/describe`.

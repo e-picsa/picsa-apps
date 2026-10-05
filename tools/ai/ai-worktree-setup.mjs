@@ -34,6 +34,7 @@ const FILES_FROM_MAIN = [
   'apps/picsa-apps/app-native/android/app/google-services.json',
   'apps/picsa-scripts/.env',
   'apps/picsa-server/.env.local',
+  'apps/picsa-server/.env.server',
   'apps/picsa-server/supabase/functions/.env.local',
   'libs/environments/src/supabase/supabase.config.json',
 ];

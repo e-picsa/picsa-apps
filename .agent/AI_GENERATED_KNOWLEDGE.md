@@ -112,6 +112,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Station Slug as Canonical Primary Key**: In `climate_stations`, the primary key is `(country_code, station_id)` where `station_id` is always a clean, human-readable slug (e.g. `masvingo`, `buhera`, `chipata_met`), not an opaque numeric ID. Downstream foreign keys (`crop_data_downscaled.station_id`, `climate_station_data.station_id`), routing, and generated CSV filenames (`<station_id>.csv`) depend on this slug.
 - **National Met IDs**: Official national meteorological service or WMO station IDs (e.g. Zimbabwe MSD `67875010`) are stored in `met_station_id` (database column on `climate_stations` and `metStationId` on `IStationMeta`) for reference and linking. Avoid hardcoding station ID maps in code.
 - **Seed CSV Line Endings (CRLF Trap)**: Database seed CSVs in `apps/picsa-server/supabase/data/` may have Windows-style CRLF (`\r\n`) line endings. When programmatically modifying or appending columns to these CSVs, always strip `\r` (split on `/\r?\n/`) and write with clean Unix LF (`\n`) endings; otherwise appending values to lines with unstripped `\r` results in the added token or comma rendering on a separate line.
+- **Database Seeding & Foreign Key Deletion Ordering**: Supabase preloads the PostgreSQL `safeupdate` extension, which blocks any `DELETE` lacking a `WHERE` clause (`ERROR 21000: DELETE requires a WHERE clause`). In `db-seed.ts`, reading the first column from each table's seed CSV header and querying `.not(firstCol, 'is', null)` satisfies `safeupdate` dynamically without manual per-table column mappings. Additionally, tables must be emptied in reverse dependency order (children before parents, e.g. `locales` before `countries`, `user_roles` before `deployments`) and seeded in forward order (parents before children) to avoid foreign key violations.
 - **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
 
 ### User Role Authorization Architecture
@@ -134,7 +135,30 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Edge Functions Deployment in Release Pipelines
 
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
-- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions. For small function sets (~5 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+
+### Edge Runtime Phantom CORS Masking on Uncaught Exceptions
+
+- **Uncaught Exception Behavior**: When an Edge Function throws an uncaught exception, times out, or crashes, Supabase's Edge Runtime gateway emits a plain-text `HTTP 500 Internal Server Error` with `sb-error-code: EDGE_FUNCTION_ERROR`. Because this gateway-level error page contains no `Access-Control-Allow-Origin` header, the browser's `fetch()` rejects with a misleading CORS policy error (`No 'Access-Control-Allow-Origin' header is present`).
+- **Required Top-Level Exception Isolation**: Function entrypoints must use `Deno.serve(async (req) => { ... })` and wrap router execution in an outer `try/catch` block returning `ErrorResponse(error.message, 500)`.
+- **CORS on All Status Codes**: All failure branches (including method rejections `400`, unhandled routes `501`, and upstream errors `502`/`504`) must include `corsHeaders` (with `'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT'`) so browser clients receive actionable HTTP status codes and structured JSON errors rather than false CORS blocks.
+
+### Deno Edge Functions Boundary & Type Isolation
+
+- **Pure Types Boundary**: Edge functions in `apps/picsa-server/supabase/functions/` run in Deno. `tsconfig.base.json` and `apps/picsa-server/tsconfig.json` explicitly exclude `apps/picsa-server/supabase/functions`.
+- **Never Import Executable Function Files in Shared Types**: Types consumed by Angular frontend apps (`@picsa/server-types`, `apps/picsa-server/supabase/types/functions.types.ts`, `../functions/*/types.ts`) must contain only pure TypeScript type definitions and interfaces. They must **never** import or re-export from executable function files (`index.ts`). Even a `export type { ... } from './climate/index.ts'` forces TypeScript's module resolution during Angular compilation (`ng serve` / `nx serve dashboard`) to traverse and typecheck the Deno file, causing build failures (`TS2304: Cannot find name 'Deno'`, `TS2307: Cannot find module 'https://...'`, `TS5097`).
+
+### openapi-fetch Discriminated Union Destructuring
+
+- `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
+- **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined`.
+
+### Sample Forecast Data & Local Development Fixtures
+
+- **Avoid Backend Mock Over-Engineering**: Do not create complex programmatic PDF compilers or mock router branches in Supabase Edge Functions.
+- **Static Storage Fixtures**: Fixed sample assets (such as `sample_daily.pdf`, `sample_seasonal.pdf`, `sample_weekly.html`) reside in `supabase/data/storage/global/forecasts/` and are seeded into the local Supabase `global` bucket via `yarn nx run picsa-server:seed`.
+- **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
+- **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
 
 ---
 
@@ -222,6 +246,18 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
 
+### JSDOM C3 Layout Crash with Arbitrary Tailwind Classes in Unit Tests
+
+- **Problem**: When a component importing `PicsaChartComponent` is tested in Jest/JSDOM, C3 initialization (`c3.generate`) queries `d3.style(el, 'font-size')`, triggering JSDOM's `window.getComputedStyle()`. JSDOM's CSS selector engine (`nwsapi`) fails with syntax errors when evaluating stylesheet rules that contain Tailwind arbitrary value class selectors (e.g. `min-h-[280px]`).
+- **Solution**: In unit tests for parent dialogs/components containing charts, mock or override `PicsaChartComponent` in `TestBed`:
+  ```typescript
+  TestBed.configureTestingModule({...})
+    .overrideComponent(StationDiffDialogComponent, {
+      remove: { imports: [PicsaChartComponent] },
+      add: { imports: [MockPicsaChartComponent] },
+    });
+  ```
+
 ---
 
 ## 6. Domain Logic & Agronomy Data Rules
@@ -244,6 +280,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Missing Years Normalization**: In legacy data files (e.g. Zimbabwe Climsoft exports), `0` placeholders in season columns (`Start=0, End=0, Length=0, Rainfall=0`) must be normalized to `null` to accurately count missing years in $[Y_{\min}, Y_{\max}]$.
 - **Within-Batch Duplicate Observation Handling**: Upstream sync feeds can emit multiple records for the same station, month, and metric (e.g. overlapping time slices or correction batches). `pivotLongToWideMonthly` tracks duplicates via `IPivotOptions.onDuplicate`. Identical duplicates are de-duplicated cleanly, while conflicting values (`existing !== incoming`) log warnings and are captured as `DUPLICATE_OBSERVATION_CONFLICT` violations in the audit report.
 - **Git Commit Date Retrieval & Timestamp Idempotency**: Station `lastUpdated` uses a clean `YYYY-MM-DD` date derived from `git log -1 --format="%as"` over the station's CSV files. When `contentHash` is unchanged across subsequent runs, the existing `lastUpdated` is strictly preserved, guaranteeing 100% idempotency (zero git diffs).
+- **Upstream Climate API Exclusively on `/v2` (No `/v1` Fallback)**: Upstream `/v1` is legacy and deprecated for planned shutdown. All edge functions, scripts, and endpoints must strictly route to `/v2` (`https://api.epicsa.idems.international/v2/...`). Do NOT introduce fallbacks to `/v1`. Upstream database connection pooling has been enabled to resolve concurrency bottlenecks; handle transient query timeouts (`QUERY_TIMEOUT` / 504) gracefully by forwarding structured, retryable errors to the client rather than failing over to `/v1`.
+- **WMO Numeric Identifiers vs Named Station Collisions**: Upstream `/v2/station/zw` returns two entries per physical station: a named station (e.g. `BUFFALO RANGE (MET)`) and a numeric WMO index number (e.g. `67977040`). Numeric IDs return empty summaries on `/v2/annual_rainfall_summaries/`. Replacing non-alphabet characters (`/[^a-z]/gi`) collapses all numeric IDs into a single corrupted collision slug (`zw/________`). The sync pipeline must filter out numeric station rows, map the WMO numbers to `met_station_id`, and slugify named stations with clean single underscores (`buffalo_range_met`).
+- **Zambia Climsoft & AWS Duplicate Station Filtering**: `/v2/station/zm` emits duplicate 8-character Climsoft legacy codes (`CHIPAT01`) alongside canonical names (`CHIPATA MET`), as well as empty AWS stations (`CHIPATA MET AWS`). The sync edge function must filter these out when the base station exists to prevent duplicate cards in the app and dashboard.
+- **District Preservation & Non-Destructive Sync**: Upstream feeds return `district: null` for ZW and MW. Rather than maintaining fragile hardcoded dictionary mappings in the application or edge functions, missing districts are populated one-time via database migrations. The sync edge function preserves existing non-null database values (`existingDistrict || d.district || null`), ensuring subsequent sync runs never overwrite existing districts with `null`.
+
+### Multi-Column Climate Product Diffing & Overlaid C3 Preview
+
+- **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
+- **Overlaid C3 Preview & SVG Stacking**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (`_app` first, `_db` second, with `data.order = null` to maintain series insertion order in C3/D3). App data lines are styled wider (`3.5px` stroke, `r: 4px` points) underneath the DB line (`2px` stroke, `r: 2.5px` points), and both use semi-transparent `rgba(...)` fills/strokes so identical values and overlapping points remain clearly visible.
+- **Empty Dataset vs Error State**: In database queries, empty product responses serialize as empty arrays (`[]`). Simple truthiness checks (`Boolean(data)`) evaluate to `true` for empty arrays. Code verifying data availability must check `Array.isArray(data) ? data.length > 0 : Boolean(data)` to treat empty responses as missing/error rather than available.
 
 ### RONI ENSO Season Classification & Grade Definitions
 
@@ -311,3 +357,26 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Personal Opt-In**: Individual developers wanting remote cache can set their own `NX_CLOUD_ACCESS_TOKEN=<personal-or-workspace-token>` environment variable locally. Never commit personal tokens to `nx.json`.
 - **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
 - **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
+
+### Pull Request Template & PR-Agent Auto-Generation Workflow
+
+- **Mandatory Template (`.github/pull_request_template.md`)**: Whenever opening or editing a PR, always format the description matching `.github/pull_request_template.md`:
+  - `## Developer Summary`: Concise architectural highlights and context for reviewers.
+  - `## Related Issues`: Clear issue links using keywords (`Closes #123`, `Relates to #456`, `Part of Epic #789`).
+  - `## Screenshots / Videos`: UI / visual change evidence.
+  - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
+
+### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
+
+- **CRITICAL MAPPING GOTCHA**: In the Supabase table `climate_station_data`, the column is named `station_id`, but its foreign key constraint is:
+  `constraint climate_station_data_station_id_fkey foreign key (station_id) references climate_stations (id)`
+- Therefore, in `climate_station_data` rows, the field `station_id` stores `station.id` (the database primary key of `climate_stations`), **NOT** `station.station_id` (the slug).
+- When indexing `allStationData` rows via `arrayToHashmap(allStationData, "station_id")`, the dictionary keys are `station.id`. Lookups MUST use `allStationDataHashmap[station.id as string]`.
+- Conversely, bundled app CSV data (`allStationAppData`) is loaded from `assets/summaries/<country>/<station_id>.csv` and is keyed by `station.station_id` (the slug).
+- **PR-Agent Push-Back**: Automated review bots frequently flag `allStationDataHashmap[station.id]` as a suspected bug assuming `station_id` must match `station.station_id`. This is a false positive and must be firmly pushed back on.
+
+### Station Location & Coordinate Preservation During Climate Sync
+
+- **Upstream Location Traps**: Upstream climate data feeds frequently contain missing coordinates (`null`), `(0, 0)` coordinates placing stations in the Atlantic Ocean, swapped lat/long values, or incorrect legacy entries (e.g. `chipepo_met` placed in Lake Kariba at `-16.79, 27.88` instead of Gwembe at `-15.79, 28.14`).
+- **Preservation & Non-Destructive Sync Strategy**: In `dashboard/climate/index.ts`, `update-stations` preserves existing valid database coordinates (similar to `district`) so verified database locations are never overwritten by upstream syncs. Upstream coordinates are only ingested for new stations if they pass validation (`!(lat === 0 && lon === 0)` and valid hemispheric bounds).
+- **Database-Level Guard**: Table `climate_stations` enforces `climate_stations_valid_coords` (`CHECK ((latitude IS NULL AND longitude IS NULL) OR (NOT (latitude = 0 AND longitude = 0) AND latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180))`), physically preventing invalid `(0, 0)` coordinates from entering the database.

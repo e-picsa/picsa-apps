@@ -1,6 +1,6 @@
-import { getServiceRoleClient } from '../_shared/client.ts';
-import { JSONResponse, ErrorResponse } from '../_shared/response.ts';
-import type { IDBClimateForecastRow } from './types.ts';
+import { getServiceRoleClient } from '../../_shared/client.ts';
+import { JSONResponse, ErrorResponse } from '../../_shared/response.ts';
+import type { IDBClimateForecastRow } from '../types.ts';
 
 interface CleanupError {
   id: string;

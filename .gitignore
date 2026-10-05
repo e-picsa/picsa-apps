@@ -70,6 +70,7 @@ libs/features/map/tiles/assets-for-copy
 libs/features/map/tiles/**/*.png
 
 .env.local
+apps/picsa-server/.env.server
 *.keystore
 *.apk
 .firebase

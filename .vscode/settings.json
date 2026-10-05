@@ -6,7 +6,7 @@
   },
   "angular.enable-strict-mode-prompt": false,
   "css.customData": [".vscode/tailwind.json"],
-  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   // Deno configuration for supabase functions
   // NOTE - could be refactored to separate code-workspace
   // https://supabase.com/docs/guides/functions/local-development#setting-up-your-environment

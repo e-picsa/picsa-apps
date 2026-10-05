@@ -1,94 +1,384 @@
 <div class="page-content">
-  <h2>Admin</h2>
-  <div style="display: flex; align-items: center; gap: 2em">
-    <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
-    <!-- Data Download -->
-    <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
-      <mat-icon>download</mat-icon>Download All
-    </button>
-    <!-- Data Refresh -->
-    <button matButton="outlined" color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
-      <mat-icon>refresh</mat-icon>
-      <span>
-        @if (refreshCount() > -1) {
-          {{ refreshCount() }} / {{ tableData().length }}
-        } @else {
-          Refresh All
-        }
-      </span>
-    </button>
-  </div>
-  <picsa-data-table
-    style="margin-top: 1em"
-    [data]="tableData()"
-    [options]="tableOptions"
-    [valueTemplates]="{
-      updated_at: updatedAtTemplate,
-      products: productsTemplate,
-      rainfall_issues: rainfallIssuesTemplate,
-      rainfall_export_data: downloadTemplate,
-    }"
-  >
-    <ng-template #updatedAtTemplate let-value>
-      {{ value | date: 'mediumDate' }}
-    </ng-template>
+  <h2>Climate Data Admin</h2>
 
-    <!-- Products summary -->
-    <ng-template #productsTemplate let-products let-row="row">
-      <div class="flex gap-2 items-center">
-        <!-- Pending product download status -->
-        @if (row.updateSignal().started) {
-          @for (statusUpdate of row.updateSignal().statuses; track $index) {
-            @let status = statusUpdate.status;
+  <mat-tab-group animationDuration="0ms" class="mt-4">
+    <!-- TAB 1: DATA SYSTEM -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cloud</mat-icon>
+        <span>Data System</span>
+      </ng-template>
+
+      <div class="py-4">
+        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
+            Inspect data system station records, data completeness, and trigger API refresh updates.
+          </p>
+          <div class="flex items-center gap-3">
+            <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
+              <mat-icon>download</mat-icon>Download All
+            </button>
+            <button
+              matButton="outlined"
+              color="primary"
+              (click)="refreshAllStations()"
+              [disabled]="refreshCount() > -1"
+            >
+              <mat-icon>refresh</mat-icon>
+              <span>
+                @if (refreshCount() > -1) {
+                  {{ refreshCount() }} / {{ dbTableData().length }}
+                } @else {
+                  Refresh All
+                }
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="dbTableData()"
+          [options]="dbTableOptions"
+          [valueTemplates]="{
+            updated_at: updatedAtTemplate,
+            products: productsTemplate,
+            rainfall_issues: rainfallIssuesTemplate,
+            rainfall_export_data: downloadDbTemplate,
+          }"
+        >
+          <ng-template #updatedAtTemplate let-value>
+            {{ value | date: 'mediumDate' }}
+          </ng-template>
+
+          <ng-template #productsTemplate let-products let-row="row">
+            <div class="flex gap-2 items-center">
+              @if (row.updateSignal().started) {
+                @for (statusUpdate of row.updateSignal().statuses; track $index) {
+                  @let status = statusUpdate.status;
+                  <button
+                    matIconButton
+                    [matTooltip]="statusUpdate.id"
+                    class="status-icon"
+                    [attr.data-status]="status"
+                    (click)="handleSummaryClick($event, row, statusUpdate)"
+                  >
+                    @switch (status) {
+                      @case ('pending') {
+                        <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                      }
+                      @case ('fulfilled') {
+                        <mat-icon color="primary">check_circle</mat-icon>
+                      }
+                      @case ('rejected') {
+                        <mat-icon color="warn">error</mat-icon>
+                      }
+                    }
+                  </button>
+                }
+              } @else {
+                @for (product of products; track $index) {
+                  <button
+                    matIconButton
+                    [matTooltip]="product.id + (product.available ? '' : ' (No data / Error - click to refresh)')"
+                    class="status-icon"
+                    (click)="refreshStation(row, $event)"
+                  >
+                    @if (product.available) {
+                      <mat-icon color="primary">check</mat-icon>
+                    } @else {
+                      <mat-icon color="warn">error</mat-icon>
+                    }
+                  </button>
+                }
+              }
+            </div>
+          </ng-template>
+
+          <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
+            @if (issues) {
+              <div [matTooltip]="row.rainfall_issues_details.join(',\n')" class="text-warn flex items-center">
+                <mat-icon>announcement</mat-icon>
+              </div>
+            }
+          </ng-template>
+
+          <ng-template #downloadDbTemplate let-row="row">
             <button
               matIconButton
-              [matTooltip]="statusUpdate.id"
-              class="status-icon"
+              (click)="downloadStationCSV(row, $event)"
+              [disabled]="!row.rainfall_export_data"
+              matTooltip="Download Data System CSV"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
+          </ng-template>
+        </picsa-data-table>
+      </div>
+    </mat-tab>
+
+    <!-- TAB 2: APP DATA -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">smartphone</mat-icon>
+        <span>App Data</span>
+      </ng-template>
+
+      <div class="py-4">
+        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
+            Station summary CSV files bundled directly into the application assets
+            (<code>assets/summaries/&lt;country&gt;/&lt;station_id&gt;.csv</code>).
+          </p>
+          <div class="flex items-center gap-3">
+            <button matButton="outlined" color="primary" (click)="downloadAllAppStationsCSV()">
+              <mat-icon>download</mat-icon>Download All App CSVs
+            </button>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="appTableData()"
+          [options]="appTableOptions"
+          [valueTemplates]="{
+            has_bundled_data: bundledStatusTemplate,
+            products: appProductsTemplate,
+            actions: appActionTemplate,
+          }"
+        >
+          <ng-template #bundledStatusTemplate let-hasBundled>
+            @if (hasBundled) {
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base">check_circle</mat-icon>Bundled
+              </span>
+            } @else {
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#ffebee] text-[#c62828]"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base">cancel</mat-icon>Missing
+              </span>
+            }
+          </ng-template>
+
+          <ng-template #appProductsTemplate let-products>
+            <div class="flex flex-wrap gap-1.5">
+              @for (product of products; track product) {
+                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[0.72rem] font-medium">{{
+                  product
+                }}</span>
+              }
+              @if (products.length === 0) {
+                <span class="text-muted">-</span>
+              }
+            </div>
+          </ng-template>
+
+          <ng-template #appActionTemplate let-row="row">
+            <button
+              matIconButton
+              (click)="downloadAppStationCSV(row, $event)"
+              [disabled]="!row.has_bundled_data"
+              matTooltip="Download App CSV"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
+          </ng-template>
+        </picsa-data-table>
+      </div>
+    </mat-tab>
+
+    <!-- TAB 3: DATA COMPARISON (DIFF) -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
+        <span>Data Comparison (Diff)</span>
+        @if (diffStats().diff > 0) {
+          <span
+            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
+            >{{ diffStats().diff }}</span
+          >
+        }
+      </ng-template>
+
+      <div class="py-4">
+        <div class="flex flex-col gap-3 mb-4">
+          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium">
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f8fafc] text-[#334155] border-[#e2e8f0]"
+            >
+              <span class="opacity-85">Total Stations:</span>
+              <span class="font-bold">{{ diffStats().total }}</span>
+            </div>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f0fdf4] text-[#166534] border-[#bbf7d0]"
+            >
+              <span class="opacity-85">In Sync:</span>
+              <span class="font-bold">{{ diffStats().inSync }}</span>
+            </div>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]"
+            >
+              <span class="opacity-85">Divergent:</span>
+              <span class="font-bold">{{ diffStats().diff }}</span>
+            </div>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
+            >
+              <span class="opacity-85">Data System Only:</span>
+              <span class="font-bold">{{ diffStats().dbOnly }}</span>
+            </div>
+            <div
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#faf5ff] text-[#6b21a8] border-[#e9d5ff]"
+            >
+              <span class="opacity-85">App Only:</span>
+              <span class="font-bold">{{ diffStats().appOnly }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center py-1">
+            <mat-checkbox [checked]="showOnlyDiffs()" (change)="showOnlyDiffs.set($event.checked)">
+              Show only stations with differences ({{ diffStats().diff }})
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <picsa-data-table
+          [data]="diffTableData()"
+          [options]="diffTableOptions"
+          [valueTemplates]="{
+            diff_status: diffStatusTemplate,
+            season_diff_percent: seasonPercentTemplate,
+            season_diff: seasonBreakdownTemplate,
+            temp_diff_percent: tempPercentTemplate,
+            temp_diff: tempBreakdownTemplate,
+            actions: diffActionTemplate,
+          }"
+        >
+          <!-- Status Badge -->
+          <ng-template #diffStatusTemplate let-status let-row="row">
+            <button
+              type="button"
+              class="diff-badge-btn"
               [attr.data-status]="status"
-              (click)="handleSummaryClick($event, row, statusUpdate)"
+              [matTooltip]="getDiffTooltip(row.diff)"
+              (click)="openStationDiffDialog(row.station, $event)"
             >
               @switch (status) {
-                @case ('pending') {
-                  <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                @case ('in_sync') {
+                  <mat-icon class="diff-icon text-[#2e7d32]">check_circle</mat-icon>
+                  <span>In Sync</span>
                 }
-                @case ('fulfilled') {
-                  <mat-icon color="primary">check_circle</mat-icon>
+                @case ('diff') {
+                  <mat-icon class="diff-icon text-[#e65100]">difference</mat-icon>
+                  <span>Diff</span>
                 }
-                @case ('rejected') {
-                  <mat-icon color="warn">error</mat-icon>
+                @case ('db_only') {
+                  <mat-icon class="diff-icon">cloud</mat-icon>
+                  <span>Data System only</span>
+                }
+                @case ('app_only') {
+                  <mat-icon class="diff-icon">smartphone</mat-icon>
+                  <span>App only</span>
+                }
+                @default {
+                  <span class="text-muted">No data</span>
                 }
               }
             </button>
-          }
-        } @else {
-          <!-- Product download summary -->
-          @for (product of products; track $index) {
-            <button matIconButton [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
-              @if (product.available) {
-                <mat-icon color="primary">check</mat-icon>
-              } @else {
-                <mat-icon color="warn">close</mat-icon>
-              }
+          </ng-template>
+
+          <!-- Season Change % Column -->
+          <ng-template #seasonPercentTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupPercentTemplate"
+              [ngTemplateOutletContext]="{ summary: row.season_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Season Change Breakdown Column -->
+          <ng-template #seasonBreakdownTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupBreakdownTemplate"
+              [ngTemplateOutletContext]="{ summary: row.season_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Temp Change % Column -->
+          <ng-template #tempPercentTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupPercentTemplate"
+              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Temp Change Breakdown Column -->
+          <ng-template #tempBreakdownTemplate let-row="row">
+            <ng-container
+              [ngTemplateOutlet]="groupBreakdownTemplate"
+              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+            ></ng-container>
+          </ng-template>
+
+          <!-- Shared Group Percent Template -->
+          <ng-template #groupPercentTemplate let-summary="summary">
+            @if (!summary.hasData || summary.isAppOnly || summary.isDbOnly) {
+              <span class="text-muted text-xs">—</span>
+            } @else if (summary.isInSync) {
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+              >
+                <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
+              </span>
+            } @else if (summary.headlinePercentFormatted) {
+              <span
+                class="inline-flex items-center justify-center font-semibold text-xs px-2 py-0.5 rounded-md min-w-[2.75rem] bg-gray-100 text-gray-800 border border-gray-200"
+                [matTooltip]="
+                  summary.diffValuesCount +
+                  ' of ' +
+                  summary.totalValuesCount +
+                  ' values differ (' +
+                  summary.headlinePercentFormatted +
+                  ')'
+                "
+              >
+                {{ summary.headlinePercentFormatted }}
+              </span>
+            } @else {
+              <span class="text-muted text-xs">—</span>
+            }
+          </ng-template>
+
+          <!-- Shared Group Breakdown Template -->
+          <ng-template #groupBreakdownTemplate let-summary="summary">
+            @if (!summary.hasData || summary.isAppOnly || summary.isInSync || summary.productLines.length === 0) {
+              <span class="text-muted text-xs">—</span>
+            } @else {
+              <div class="flex flex-col text-xs text-gray-700 leading-snug whitespace-nowrap py-1">
+                @for (line of summary.productLines; track line.label) {
+                  <div>
+                    <span class="font-medium text-gray-800">{{ line.label }}</span>
+                    <span class="text-gray-500 ml-1">({{ line.summary }})</span>
+                  </div>
+                }
+              </div>
+            }
+          </ng-template>
+
+          <!-- Compare Action Button -->
+          <ng-template #diffActionTemplate let-row="row">
+            <button
+              matButton="outlined"
+              color="primary"
+              class="!text-xs [&_mat-icon]:!w-[1.1rem] [&_mat-icon]:!h-[1.1rem] [&_mat-icon]:!text-[1.1rem] [&_mat-icon]:mr-1"
+              (click)="openStationDiffDialog(row.station, $event)"
+              matTooltip="Inspect product differences and preview overlaid charts"
+            >
+              <mat-icon>show_chart</mat-icon>Preview
             </button>
-          }
-        }
+          </ng-template>
+        </picsa-data-table>
       </div>
-    </ng-template>
-    <!-- Rainfall issues  -->
-    <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
-      @if (issues) {
-        <div [matTooltip]="row.rainfall_issues_details.join(',\n')">
-          <mat-icon>announcement</mat-icon>
-        </div>
-      }
-    </ng-template>
-    <!-- CSV download column  -->
-    <ng-template #downloadTemplate let-row="row">
-      <div class="flex gap-2 items-center">
-<button matIconButton (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
-          <mat-icon>download</mat-icon>
-        </button>
-      </div>
-    </ng-template>
-  </picsa-data-table>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -2,48 +2,56 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { forecastStorage } from './forecast-storage.ts';
-import { forecastDB } from './forecast-db.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { ErrorResponse } from '../_shared/response.ts';
 import { admin } from './admin/index.ts';
 import { climate } from './climate/index.ts';
 import { deployments } from './deployments/index.ts';
 import { feedback } from './feedback/index.ts';
-import { forecastCleanup } from './forecast-cleanup.ts';
+import { forecastDB, forecastStorage, forecastCleanup } from './forecasts/index.ts';
 
-serve((req) => {
+Deno.serve(async (req: Request) => {
   // handle cors pre-flight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
   if (req.method !== 'POST') {
-    return new Response('Try sending a POST request instead', { status: 400 });
+    return new Response('Try sending a POST request instead', {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
-  const { pathname } = new URL(req.url);
-  // e.g. /dashboard/admin/list-users
-  const entryPoint = pathname.split('/')[2];
 
-  switch (entryPoint) {
-    case 'admin':
-      return admin(req);
-    case 'forecast-db':
-      return forecastDB(req);
-    case 'forecast-storage':
-      return forecastStorage(req);
-    case 'forecast-cleanup':
-      return forecastCleanup(req);
-    case 'climate':
-      return climate(req);
-    case 'deployments':
-      return deployments(req);
-    case 'feedback':
-      return feedback(req);
+  try {
+    const { pathname } = new URL(req.url);
+    // e.g. /dashboard/admin/list-users
+    const entryPoint = pathname.split('/')[2];
 
-    default:
-      return new Response(`Invalid endpoint: ${entryPoint}`, {
-        status: 501,
-      });
+    switch (entryPoint) {
+      case 'admin':
+        return await admin(req);
+      case 'forecast-db':
+        return await forecastDB(req);
+      case 'forecast-storage':
+        return await forecastStorage(req);
+      case 'forecast-cleanup':
+        return await forecastCleanup(req);
+      case 'climate':
+        return await climate(req);
+      case 'deployments':
+        return await deployments(req);
+      case 'feedback':
+        return await feedback(req);
+
+      default:
+        return new Response(`Invalid endpoint: ${entryPoint}`, {
+          status: 501,
+          headers: corsHeaders,
+        });
+    }
+  } catch (error: any) {
+    console.error('[dashboard] Unhandled function error:', error);
+    return ErrorResponse(error?.message || 'Internal Server Error', 500);
   }
 });
 

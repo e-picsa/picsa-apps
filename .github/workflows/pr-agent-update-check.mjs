@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Script to check for updates to:
- * 1. the-pr-agent GitHub Action releases
- * 2. Latest Gemini Flash models (direct API & OpenRouter mirror)
- * 3. Latest low-cost intelligent fallback models (Luna / MiniMax)
- * 4. Context token limits and LiteLLM model support
+ * Checks for the latest LiteLLM-compatible Google Gemini Flash and Luna
+ * models, then updates only .pr_agent.toml.
+ *
+ * If a primary or fallback model changes, the script checks whether a newer
+ * PR-Agent action release is available. It reports that update through
+ * GitHub Actions outputs so the workflow can post a PR conversation comment.
+ * This script never modifies workflow files.
  *
  * Usage:
- *   node .github/workflows/pr-agent-update-check.mjs [--dry-run] [--output-github] [--prefer-family=luna|minimax]
+ *   node .github/workflows/pr-agent-update-check.mjs [--dry-run] [--output-github]
  */
 
 import fs from 'node:fs';
@@ -16,447 +18,391 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const rootDir = path.resolve(__dirname, '../../');
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(scriptDir, '../../');
 
-const prAgentWorkflowPath = path.join(rootDir, '.github/workflows/pr-agent.yml');
-const prAgentConfigPath = path.join(rootDir, '.pr_agent.toml');
+const workflowPath = path.join(rootDir, '.github/workflows/pr-agent.yml');
+const configPath = path.join(rootDir, '.pr_agent.toml');
 
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
 const isGitHubOutput = args.includes('--output-github');
-const preferFamilyArg =
-  args.find((a) => a.startsWith('--prefer-family='))?.split('=')[1] || process.env.PREFER_FAMILY || '';
 
 const ALLOWED_HOSTS = new Set(['api.github.com', 'openrouter.ai', 'raw.githubusercontent.com']);
 
-/**
- * Validates and sanitizes a URL against allowed hosts and HTTPS protocol
- */
-function validateUrl(urlInput) {
-  let parsedUrl;
+function validateUrl(input) {
+  let url;
+
   try {
-    parsedUrl = new URL(urlInput);
+    url = new URL(input);
   } catch {
-    throw new Error(`Invalid URL: ${urlInput}`);
+    throw new Error(`Invalid URL: ${input}`);
   }
 
-  if (parsedUrl.protocol !== 'https:') {
-    throw new Error(`Forbidden protocol (HTTPS required): ${parsedUrl.protocol}`);
+  if (url.protocol !== 'https:') {
+    throw new Error(`HTTPS required for URL: ${input}`);
   }
 
-  if (!ALLOWED_HOSTS.has(parsedUrl.hostname)) {
-    throw new Error(`Forbidden host: ${parsedUrl.hostname}`);
+  if (!ALLOWED_HOSTS.has(url.hostname)) {
+    throw new Error(`Unexpected URL host: ${url.hostname}`);
   }
 
-  return parsedUrl;
+  return url;
 }
 
-/**
- * Sanitizes input to prevent CWE-117 log injection by stripping line breaks
- */
-function sanitizeLog(val) {
-  return String(val).replace(/[\r\n]+/g, ' ');
-}
-
-async function fetchJson(url, options = {}) {
-  const safeUrl = validateUrl(url);
+async function fetchJson(input, options = {}) {
+  const url = validateUrl(input);
   const headers = {
     'User-Agent': 'picsa-pr-agent-checker',
     ...(options.headers || {}),
   };
-  const res = await fetch(safeUrl, { ...options, headers });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${safeUrl.pathname}: ${res.status} ${res.statusText}`);
+  const response = await fetch(url, { ...options, headers });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url.pathname}: ${response.status} ${response.statusText}`);
   }
-  return res.json();
+
+  return response.json();
 }
 
-/**
- * Fetch latest PR-Agent release from GitHub
- */
-async function getLatestPrAgentRelease() {
-  const token = process.env.GITHUB_TOKEN;
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const releaseUrl = 'https://api.github.com/repos/the-pr-agent/pr-agent/releases/latest';
-
-  const release = await fetchJson(releaseUrl, { headers });
-  const tag = String(release.tag_name || '');
-  if (!/^[a-zA-Z0-9._-]+$/.test(tag)) {
-    throw new Error(`Unexpected tag format in release: ${tag}`);
-  }
-
-  // Resolve commit SHA directly via commits endpoint with encoded tag
-  const commitUrl = `https://api.github.com/repos/the-pr-agent/pr-agent/commits/${encodeURIComponent(tag)}`;
-  const commitData = await fetchJson(commitUrl, { headers });
-  const sha = String(commitData.sha || '');
-  if (!/^[a-f0-9]{40}$/.test(sha)) {
-    throw new Error(`Unexpected commit SHA format for tag ${tag}: ${sha}`);
-  }
-
-  return { tag, sha, htmlUrl: release.html_url };
+function parseVersionNumbers(value) {
+  const match = value.match(/(\d+(?:\.\d+)*)/);
+  return match ? match[1].split('.').map(Number) : [];
 }
 
-/**
- * Parse version numbers from string e.g. "gemini-3.8-flash" -> [3, 8]
- */
-function parseVersionNumbers(str) {
-  const match = str.match(/(\d+(?:\.\d+)*)/);
-  if (!match) return [];
-  return match[1].split('.').map(Number);
-}
+function compareVersions(a, b) {
+  const partsA = parseVersionNumbers(a);
+  const partsB = parseVersionNumbers(b);
 
-function compareVersions(v1, v2) {
-  const parts1 = parseVersionNumbers(v1);
-  const parts2 = parseVersionNumbers(v2);
-  const maxLen = Math.max(parts1.length, parts2.length);
+  for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+    const partA = partsA[i] || 0;
+    const partB = partsB[i] || 0;
 
-  for (let i = 0; i < maxLen; i++) {
-    const p1 = parts1[i] || 0;
-    const p2 = parts2[i] || 0;
-    if (p1 !== p2) return p1 - p2;
+    if (partA !== partB) {
+      return partA - partB;
+    }
   }
+
   return 0;
 }
 
-/**
- * Check OpenRouter models catalog
- */
-async function getOpenRouterCatalog() {
-  const data = await fetchJson('https://openrouter.ai/api/v1/models');
-  return data.data || [];
+async function getOpenRouterModels() {
+  const response = await fetchJson('https://openrouter.ai/api/v1/models');
+  return response.data || [];
 }
 
-/**
- * Check LiteLLM model database for PR-Agent compatibility
- */
-async function getLiteLlmModelCatalog() {
-  try {
-    return await fetchJson(
-      'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json',
-    );
-  } catch (err) {
-    console.warn('Warning: Could not fetch LiteLLM catalog:', err.message);
-    return null;
-  }
+async function getLiteLlmCatalog() {
+  return fetchJson('https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json');
 }
 
-/**
- * Check if a model is recognized in the LiteLLM catalog
- */
-function isModelRecognizedInLiteLlm(modelKey, litellmCatalog) {
-  if (!litellmCatalog) return true;
-  const lower = modelKey.toLowerCase();
-  const withoutProvider = lower.replace(/^(openrouter|gemini)\//, '');
-  return Boolean(litellmCatalog[lower] || litellmCatalog[withoutProvider] || litellmCatalog[modelKey]);
+function isLiteLlmModel(modelKey, catalog) {
+  const lowerKey = modelKey.toLowerCase();
+  const withoutProvider = lowerKey.replace(/^(openrouter|gemini)\//, '');
+
+  return Boolean(catalog[lowerKey] || catalog[withoutProvider] || catalog[modelKey]);
 }
 
-/**
- * Find latest Gemini Flash model, filtering for LiteLLM compatibility
- */
-function findLatestGeminiFlash(openRouterModels, litellmCatalog) {
-  const candidates = openRouterModels.filter((m) => {
-    const id = m.id.toLowerCase();
-    const isFlash =
-      id.startsWith('google/gemini-') &&
-      id.includes('flash') &&
-      !id.includes('image') &&
-      !id.includes('batch') &&
-      !id.includes('preview');
-    if (!isFlash) return false;
+function findLatestGeminiFlash(models, catalog) {
+  const candidates = models.filter((model) => {
+    const id = model.id.toLowerCase();
 
-    // Filter out models unrecognized by LiteLLM
-    const directId = `gemini/${m.id.replace(/^google\//, '')}`;
-    return isModelRecognizedInLiteLlm(directId, litellmCatalog);
+    if (
+      !id.startsWith('google/gemini-') ||
+      !id.includes('flash') ||
+      id.includes('image') ||
+      id.includes('batch') ||
+      id.includes('preview')
+    ) {
+      return false;
+    }
+
+    const directModel = `gemini/${model.id.replace(/^google\//, '')}`;
+    return isLiteLlmModel(directModel, catalog);
   });
 
   candidates.sort((a, b) => {
-    const vDiff = compareVersions(a.id, b.id);
-    if (vDiff !== 0) return -vDiff; // Descending
-    // Standard flash preferred over flash-lite at same version
+    const versionOrder = compareVersions(b.id, a.id);
+
+    if (versionOrder !== 0) {
+      return versionOrder;
+    }
+
+    // Prefer standard Flash over Flash-Lite at the same version.
     const aIsLite = a.id.includes('flash-lite');
     const bIsLite = b.id.includes('flash-lite');
-    if (aIsLite !== bIsLite) return aIsLite ? 1 : -1;
+
+    if (aIsLite !== bIsLite) {
+      return aIsLite ? 1 : -1;
+    }
+
     return (b.created || 0) - (a.created || 0);
   });
 
   return candidates[0] || null;
 }
 
-/**
- * Find latest low-cost intelligent fallback model (Luna or MiniMax), filtering for LiteLLM compatibility
- */
-function findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog) {
-  // 1. Luna candidates
-  const lunaCandidates = openRouterModels.filter((m) => {
-    const id = m.id.toLowerCase();
-    const isLuna =
-      id.includes('luna') &&
-      !id.includes('batch') &&
+function findLatestLuna(models, catalog) {
+  const candidates = models.filter((model) => {
+    const id = model.id.toLowerCase();
+
+    return (
+      /(?:^|[-/])luna(?:$|[-/])/.test(id) &&
       !id.includes('pro') &&
-      !id.includes('8b') &&
-      (m.context_length || 0) >= 128000;
-    if (!isLuna) return false;
-    return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
-  });
-  lunaCandidates.sort((a, b) => {
-    const vDiff = compareVersions(a.id, b.id);
-    if (vDiff !== 0) return -vDiff;
-    return (b.created || 0) - (a.created || 0);
-  });
-
-  // 2. MiniMax candidates
-  const minimaxCandidates = openRouterModels.filter((m) => {
-    const id = m.id.toLowerCase();
-    const isMinimax =
-      id.startsWith('minimax/minimax-') &&
       !id.includes('batch') &&
-      !id.includes('her') &&
-      (m.context_length || 0) >= 128000;
-    if (!isMinimax) return false;
-    return isModelRecognizedInLiteLlm(`openrouter/${m.id}`, litellmCatalog);
+      (model.context_length || 0) >= 128000 &&
+      isLiteLlmModel(`openrouter/${model.id}`, catalog)
+    );
   });
-  minimaxCandidates.sort((a, b) => {
-    const vDiff = compareVersions(a.id, b.id);
-    if (vDiff !== 0) return -vDiff;
+
+  candidates.sort((a, b) => {
+    const versionOrder = compareVersions(b.id, a.id);
+
+    if (versionOrder !== 0) {
+      return versionOrder;
+    }
+
     return (b.created || 0) - (a.created || 0);
   });
 
-  const bestLuna = lunaCandidates[0];
-  const bestMinimax = minimaxCandidates[0];
-
-  if (preferredFamily === 'minimax') {
-    return bestMinimax || bestLuna;
-  }
-  if (preferredFamily === 'luna') {
-    return bestLuna || bestMinimax;
-  }
-
-  // If no explicit preference, choose whichever is newer / higher context
-  if (bestLuna && bestMinimax) {
-    return (bestLuna.created || 0) >= (bestMinimax.created || 0) ? bestLuna : bestMinimax;
-  }
-  return bestLuna || bestMinimax || null;
+  return candidates[0] || null;
 }
 
-async function main() {
-  console.log('--- Checking for PR-Agent & Model Updates ---');
-
-  if (!fs.existsSync(prAgentWorkflowPath)) {
-    throw new Error(`Workflow file not found at ${prAgentWorkflowPath}`);
+function writeNoChangesOutput() {
+  if (isGitHubOutput && process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_changes=false\n');
   }
-  if (!fs.existsSync(prAgentConfigPath)) {
-    throw new Error(`Config file not found at ${prAgentConfigPath}`);
-  }
+}
 
-  const currentWorkflowContent = fs.readFileSync(prAgentWorkflowPath, 'utf8');
-  const currentConfigContent = fs.readFileSync(prAgentConfigPath, 'utf8');
+async function getLatestPrAgentRelease() {
+  const token = process.env.GITHUB_TOKEN;
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const release = await fetchJson('https://api.github.com/repos/the-pr-agent/pr-agent/releases/latest', { headers });
+  const tag = String(release.tag_name || '');
 
-  // Extract current PR-Agent tag and SHA
-  const actionRegex = /uses:\s+the-pr-agent\/pr-agent@([a-f0-9]+)\s*#\s*([^\s\n]+)/;
-  const actionMatch = currentWorkflowContent.match(actionRegex);
-  const currentSha = actionMatch ? actionMatch[1] : null;
-  const currentTag = actionMatch ? actionMatch[2] : null;
-
-  // Extract current model & fallbacks
-  const modelRegex = /model\s*=\s*"(gemini\/[^"]+)"/;
-  const modelMatch = currentConfigContent.match(modelRegex);
-  const currentModel = modelMatch ? modelMatch[1] : null;
-
-  const fallbacksRegex = /fallback_models\s*=\s*\[([^\]]+)\]/;
-  const fallbacksMatch = currentConfigContent.match(fallbacksRegex);
-  const currentFallbacks = fallbacksMatch
-    ? fallbacksMatch[1]
-        .split(',')
-        .map((s) => s.trim().replace(/^["']|["']$/g, ''))
-        .filter(Boolean)
-    : [];
-
-  const tokensRegex = /custom_model_max_tokens\s*=\s*(\d+)/;
-  const tokensMatch = currentConfigContent.match(tokensRegex);
-  const currentTokens = tokensMatch ? Number.parseInt(tokensMatch[1], 10) : null;
-
-  console.log(`Current PR-Agent Action: ${sanitizeLog(currentTag)} (${sanitizeLog(currentSha)})`);
-  console.log(`Current Primary Model:   ${sanitizeLog(currentModel)}`);
-  console.log(`Current Fallback Models: ${sanitizeLog(JSON.stringify(currentFallbacks))}`);
-  console.log(`Current Max Tokens:      ${sanitizeLog(currentTokens)}`);
-
-  // 1. Check latest PR-Agent action release
-  const latestRelease = await getLatestPrAgentRelease();
-  console.log(`\nLatest PR-Agent Action:  ${sanitizeLog(latestRelease.tag)} (${sanitizeLog(latestRelease.sha)})`);
-
-  // 2. Query models and verify compatibility against LiteLLM catalog
-  const openRouterModels = await getOpenRouterCatalog();
-  const litellmCatalog = await getLiteLlmModelCatalog();
-
-  const latestGeminiFlash = findLatestGeminiFlash(openRouterModels, litellmCatalog);
-  if (!latestGeminiFlash) {
-    throw new Error('Could not find any suitable LiteLLM-compatible Gemini Flash model in catalog');
+  if (!/^[a-zA-Z0-9._-]+$/.test(tag)) {
+    throw new Error(`Unexpected PR-Agent release tag: ${tag}`);
   }
 
-  // Gemini model names: OpenRouter has "google/gemini-3.8-flash", direct is "gemini/gemini-3.8-flash"
-  const directGeminiModelId = latestGeminiFlash.id.replace(/^google\//, '');
-  const proposedPrimaryModel = `gemini/${directGeminiModelId}`;
-  const proposedGeminiMirror = `openrouter/${latestGeminiFlash.id}`;
+  const commit = await fetchJson(
+    `https://api.github.com/repos/the-pr-agent/pr-agent/commits/${encodeURIComponent(tag)}`,
+    { headers },
+  );
+  const sha = String(commit.sha || '');
 
-  // Determine low-cost fallback family preference
-  let preferredFamily = preferFamilyArg;
-  if (!preferredFamily) {
-    if (currentFallbacks.some((f) => f.includes('minimax'))) {
-      preferredFamily = 'minimax';
-    } else if (currentFallbacks.some((f) => f.includes('luna'))) {
-      preferredFamily = 'luna';
-    } else {
-      preferredFamily = 'luna'; // Default
-    }
+  if (!/^[a-f0-9]{40}$/.test(sha)) {
+    throw new Error(`Unexpected commit SHA for PR-Agent release ${tag}`);
   }
 
-  const lowCostModel = findLowCostFallback(openRouterModels, preferredFamily, litellmCatalog);
-  if (!lowCostModel) {
-    throw new Error('Could not find any suitable LiteLLM-compatible low cost fallback model');
-  }
-  const proposedLowCostFallback = `openrouter/${lowCostModel.id}`;
-  const proposedFallbacks = [proposedLowCostFallback, proposedGeminiMirror];
+  return { tag, sha, htmlUrl: release.html_url };
+}
 
-  // Final validation guard: Ensure all proposed models are recognized in LiteLLM
-  if (litellmCatalog) {
-    const primaryOk = isModelRecognizedInLiteLlm(proposedPrimaryModel, litellmCatalog);
-    const lowCostOk = isModelRecognizedInLiteLlm(proposedLowCostFallback, litellmCatalog);
-    const mirrorOk = isModelRecognizedInLiteLlm(proposedGeminiMirror, litellmCatalog);
+function getCurrentActionPin(workflowContent) {
+  const match = workflowContent.match(/uses:\s+the-pr-agent\/pr-agent@([a-f0-9]{40})\s*#\s*([^\s\n]+)/);
 
-    if (!primaryOk || !lowCostOk || !mirrorOk) {
-      console.warn('⚠️ One or more proposed models are not recognized in the LiteLLM catalog.');
-      console.warn(`Primary: ${primaryOk}, LowCost: ${lowCostOk}, Mirror: ${mirrorOk}`);
-      console.warn('Aborting update to prevent proposing configurations that fail at runtime.');
-      if (isGitHubOutput && process.env.GITHUB_OUTPUT) {
-        fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_changes=false\n');
-      }
-      return;
-    }
-    console.log('✅ LiteLLM compatibility verified for all proposed models.');
+  return match ? { sha: match[1], tag: match[2] } : null;
+}
+
+function makeActionUpdateNote(currentPin, latestRelease) {
+  if (!currentPin) {
+    return 'Could not parse the current action pin in ' + '`.github/workflows/pr-agent.yml`; please check it manually.';
   }
 
-  // Calculate lowest common context tokens
-  const contextWindows = [latestGeminiFlash.context_length || 1048576, lowCostModel.context_length || 1048576];
-  const proposedTokens = Math.min(...contextWindows);
-
-  console.log(`\nProposed Primary Model:  ${sanitizeLog(proposedPrimaryModel)}`);
-  console.log(`Proposed Fallback Models: ${sanitizeLog(JSON.stringify(proposedFallbacks))}`);
-  console.log(`Proposed Max Tokens:      ${sanitizeLog(proposedTokens)}`);
-
-  // Check for changes
-  const actionChanged = currentTag !== latestRelease.tag || currentSha !== latestRelease.sha;
-  const modelChanged = currentModel !== proposedPrimaryModel;
-  const fallbacksChanged = JSON.stringify(currentFallbacks) !== JSON.stringify(proposedFallbacks);
-  const tokensChanged = currentTokens !== proposedTokens;
-
-  const hasChanges = actionChanged || modelChanged || fallbacksChanged || tokensChanged;
-
-  const changesList = [];
-  if (actionChanged) {
-    changesList.push(
-      `- **PR-Agent Action**: \`${currentTag}\` (\`${currentSha?.slice(0, 7)}\`) → [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) (\`${latestRelease.sha.slice(0, 7)}\`)`,
-    );
-  }
-  if (modelChanged) {
-    changesList.push(`- **Primary Model**: \`${currentModel}\` → \`${proposedPrimaryModel}\``);
-  }
-  if (fallbacksChanged) {
-    changesList.push(
-      `- **Fallback Models**: \`${JSON.stringify(currentFallbacks)}\` → \`${JSON.stringify(proposedFallbacks)}\``,
-    );
-  }
-  if (tokensChanged) {
-    changesList.push(`- **Max Context Tokens**: \`${currentTokens}\` → \`${proposedTokens}\``);
+  if (currentPin.sha === latestRelease.sha && currentPin.tag === latestRelease.tag) {
+    return '';
   }
 
-  if (!hasChanges) {
-    console.log('\n✅ All PR-Agent configurations and models are already up-to-date!');
-    if (isGitHubOutput && process.env.GITHUB_OUTPUT) {
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_changes=false\n');
-    }
+  return (
+    `PR-Agent action update available: this workflow currently uses ` +
+    `\`${currentPin.tag}\` (\`${currentPin.sha}\`), while the ` +
+    `latest release is [\`${latestRelease.tag}\`](${latestRelease.htmlUrl}) ` +
+    `(\`${latestRelease.sha}\`). Consider updating the pinned ` +
+    `action in \`.github/workflows/pr-agent.yml\` separately.`
+  );
+}
+
+function writeGitHubOutputs({ title, body, actionNote }) {
+  if (!isGitHubOutput || !process.env.GITHUB_OUTPUT) {
     return;
   }
 
-  console.log('\n⚠️ Updates detected:');
-  changesList.forEach((c) => console.log(sanitizeLog(c)));
+  const output = process.env.GITHUB_OUTPUT;
+  const bodyDelimiter = crypto.randomUUID();
 
-  // Update workflow file
-  let newWorkflowContent = currentWorkflowContent;
-  if (actionChanged && actionMatch) {
-    newWorkflowContent = newWorkflowContent.replace(
-      actionRegex,
-      `uses: the-pr-agent/pr-agent@${latestRelease.sha} #${latestRelease.tag}`,
+  fs.appendFileSync(output, 'has_changes=true\n');
+  fs.appendFileSync(output, `pr_title=${title}\n`);
+  fs.appendFileSync(output, `pr_body<<${bodyDelimiter}\n${body}\n${bodyDelimiter}\n`);
+
+  if (actionNote) {
+    const noteDelimiter = crypto.randomUUID();
+
+    fs.appendFileSync(output, 'action_update_available=true\n');
+    fs.appendFileSync(output, `action_note<<${noteDelimiter}\n${actionNote}\n${noteDelimiter}\n`);
+  } else {
+    fs.appendFileSync(output, 'action_update_available=false\n');
+  }
+
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, body);
+  }
+}
+
+async function main() {
+  console.log('--- Checking for PR-Agent model updates ---');
+
+  if (!fs.existsSync(workflowPath)) {
+    throw new Error(`Workflow file not found: ${workflowPath}`);
+  }
+
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`Config file not found: ${configPath}`);
+  }
+
+  const workflowContent = fs.readFileSync(workflowPath, 'utf8');
+  const configContent = fs.readFileSync(configPath, 'utf8');
+
+  const modelRegex = /model\s*=\s*"(gemini\/[^"]+)"/;
+  const fallbacksRegex = /fallback_models\s*=\s*\[([^\]]*)\]/;
+  const tokensRegex = /custom_model_max_tokens\s*=\s*(\d+)/;
+
+  const modelMatch = configContent.match(modelRegex);
+  const fallbacksMatch = configContent.match(fallbacksRegex);
+  const tokensMatch = configContent.match(tokensRegex);
+
+  if (!modelMatch || !fallbacksMatch || !tokensMatch) {
+    throw new Error('Could not parse model, fallback_models, or custom_model_max_tokens in .pr_agent.toml');
+  }
+
+  const currentModel = modelMatch[1];
+  const currentFallbacks = fallbacksMatch[1]
+    .split(',')
+    .map((value) => value.trim().replace(/^["']|["']$/g, ''))
+    .filter(Boolean);
+  const currentTokens = Number.parseInt(tokensMatch[1], 10);
+
+  console.log(`Current Primary Model:   ${currentModel}`);
+  console.log(`Current Fallback Models: ${JSON.stringify(currentFallbacks)}`);
+  console.log(`Current Max Tokens:      ${currentTokens}`);
+
+  const [models, catalog] = await Promise.all([getOpenRouterModels(), getLiteLlmCatalog()]);
+
+  const gemini = findLatestGeminiFlash(models, catalog);
+  const luna = findLatestLuna(models, catalog);
+
+  if (!gemini) {
+    throw new Error('Could not find a LiteLLM-compatible Google Gemini Flash model');
+  }
+
+  if (!luna) {
+    throw new Error('Could not find a LiteLLM-compatible Luna model');
+  }
+
+  const geminiId = gemini.id.replace(/^google\//, '');
+  const proposedModel = `gemini/${geminiId}`;
+  const proposedFallbacks = [`openrouter/${luna.id}`];
+  const proposedTokens = Math.min(gemini.context_length || 1048576, luna.context_length || 1048576);
+
+  const modelChanged = currentModel !== proposedModel;
+  const fallbacksChanged = JSON.stringify(currentFallbacks) !== JSON.stringify(proposedFallbacks);
+  const tokensChanged = currentTokens !== proposedTokens;
+
+  console.log(`\nProposed Primary Model:  ${proposedModel}`);
+  console.log(`Proposed Fallback Models: ${JSON.stringify(proposedFallbacks)}`);
+  console.log(`Proposed Max Tokens:      ${proposedTokens}`);
+
+  if (!modelChanged && !fallbacksChanged && !tokensChanged) {
+    console.log('\nModel configuration is already up-to-date.');
+    writeNoChangesOutput();
+    return;
+  }
+
+  const changes = [];
+
+  if (modelChanged) {
+    changes.push(`- **Primary Model:** \`${currentModel}\` → \`${proposedModel}\``);
+  }
+
+  if (fallbacksChanged) {
+    changes.push(
+      `- **Fallback Models:** \`${JSON.stringify(currentFallbacks)}\` → \`${JSON.stringify(proposedFallbacks)}\``,
     );
   }
 
-  // Update .pr_agent.toml file
-  let newConfigContent = currentConfigContent;
-  if (modelChanged && modelMatch) {
-    newConfigContent = newConfigContent.replace(modelRegex, `model = "${proposedPrimaryModel}"`);
+  if (tokensChanged) {
+    changes.push(`- **Max Context Tokens:** \`${currentTokens}\` → \`${proposedTokens}\``);
   }
-  if (fallbacksChanged && fallbacksMatch) {
+
+  let updatedConfig = configContent;
+
+  if (modelChanged) {
+    updatedConfig = updatedConfig.replace(modelRegex, `model = "${proposedModel}"`);
+  }
+
+  if (fallbacksChanged) {
     const formattedFallbacks = JSON.stringify(proposedFallbacks).replace(/,/g, ', ');
-    newConfigContent = newConfigContent.replace(fallbacksRegex, `fallback_models = ${formattedFallbacks}`);
+
+    updatedConfig = updatedConfig.replace(fallbacksRegex, `fallback_models = ${formattedFallbacks}`);
   }
-  if (tokensChanged && tokensMatch) {
-    newConfigContent = newConfigContent.replace(
-      /custom_model_max_tokens\s*=\s*\d+/,
-      `custom_model_max_tokens = ${proposedTokens}`,
-    );
-    newConfigContent = newConfigContent.replace(/max_model_tokens\s*=\s*\d+/, `max_model_tokens = ${proposedTokens}`);
+
+  if (tokensChanged) {
+    updatedConfig = updatedConfig.replace(tokensRegex, `custom_model_max_tokens = ${proposedTokens}`);
+    updatedConfig = updatedConfig.replace(/max_model_tokens\s*=\s*\d+/, `max_model_tokens = ${proposedTokens}`);
   }
 
   if (!isDryRun) {
-    fs.writeFileSync(prAgentWorkflowPath, newWorkflowContent, 'utf8');
-    fs.writeFileSync(prAgentConfigPath, newConfigContent, 'utf8');
-    console.log('\n💾 Successfully wrote updates to disk.');
+    // Deliberately update only the TOML configuration.
+    fs.writeFileSync(configPath, updatedConfig, 'utf8');
+    console.log('\nUpdated .pr_agent.toml.');
   } else {
-    console.log('\n[Dry Run] Files were not modified on disk.');
+    console.log('\n[Dry Run] .pr_agent.toml was not modified.');
   }
 
-  let prTitle = 'chore: update PR-Agent configuration';
-  if (actionChanged && (modelChanged || fallbacksChanged)) {
-    prTitle = `chore: update PR-Agent to ${latestRelease.tag} and latest models`;
-  } else if (actionChanged) {
-    prTitle = `chore: update PR-Agent action to ${latestRelease.tag}`;
-  } else if (modelChanged || fallbacksChanged) {
-    prTitle = `chore: update PR-Agent models (${proposedPrimaryModel.replace('gemini/', '')})`;
+  let actionNote = '';
+
+  // Only suggest an action update when a primary or fallback model changes.
+  if (modelChanged || fallbacksChanged) {
+    try {
+      const currentPin = getCurrentActionPin(workflowContent);
+      const latestRelease = await getLatestPrAgentRelease();
+      actionNote = makeActionUpdateNote(currentPin, latestRelease);
+    } catch (error) {
+      // An action-release lookup failure should not block a model PR.
+      console.warn('Warning: Could not check the PR-Agent action release:', error.message);
+    }
   }
 
-  const prBody = `## 🤖 Automated PR-Agent & Model Upgrade
+  const titleParts = [];
 
-Weekly automated check detected newer versions or model releases.
+  if (modelChanged) {
+    titleParts.push(`primary ${geminiId}`);
+  }
+
+  if (fallbacksChanged) {
+    titleParts.push(`fallback ${luna.id}`);
+  }
+
+  const title = `chore: update PR-Agent models (${titleParts.join(', ')})`;
+
+  const body = `## 🤖 Automated PR-Agent Model Upgrade
+
+Weekly automated check detected model or context configuration updates.
 
 ### Summary of Changes
-${changesList.join('\n')}
+${changes.join('\n')}
 
 ### Model Specifications
 | Model | Context Window | Prompt Pricing | Completion Pricing |
 |---|---|---|---|
-| **Primary (Gemini)** \`${proposedPrimaryModel}\` | ${latestGeminiFlash.context_length?.toLocaleString()} tokens | Free (Direct Gemini API) | Free (Direct Gemini API) |
-| **Fallback 1** \`${proposedLowCostFallback}\` | ${lowCostModel.context_length?.toLocaleString()} tokens | $${Number(lowCostModel.pricing?.prompt || 0) * 1_000_000} / 1M | $${Number(lowCostModel.pricing?.completion || 0) * 1_000_000} / 1M |
-| **Fallback 2 (Mirror)** \`${proposedGeminiMirror}\` | ${latestGeminiFlash.context_length?.toLocaleString()} tokens | $${Number(latestGeminiFlash.pricing?.prompt || 0) * 1_000_000} / 1M | $${Number(latestGeminiFlash.pricing?.completion || 0) * 1_000_000} / 1M |
+| **Primary (Gemini)** \`${proposedModel}\` | ${gemini.context_length?.toLocaleString() ?? 'Unknown'} tokens | Free (Direct Gemini API) | Free (Direct Gemini API) |
+| **Fallback (Luna)** \`${proposedFallbacks[0]}\` | ${luna.context_length?.toLocaleString() ?? 'Unknown'} tokens | $${Number(luna.pricing?.prompt || 0) * 1_000_000} / 1M | $${Number(luna.pricing?.completion || 0) * 1_000_000} / 1M |
 
 ---
 *Auto-generated by \`.github/workflows/pr-agent-update-check.mjs\`*
 `;
 
-  if (isGitHubOutput) {
-    if (process.env.GITHUB_OUTPUT) {
-      const delimiter = crypto.randomUUID();
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_changes=true\n`);
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `pr_title=${prTitle}\n`);
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `pr_body<<${delimiter}\n${prBody}\n${delimiter}\n`);
-    }
-    if (process.env.GITHUB_STEP_SUMMARY) {
-      fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, prBody);
-    }
-  }
+  writeGitHubOutputs({ title, body, actionNote });
 }
 
-main().catch((err) => {
-  console.error('Error running pr-agent-update-check.mjs:', err);
+main().catch((error) => {
+  console.error('Error running pr-agent-update-check.mjs:', error);
   process.exit(1);
 });
