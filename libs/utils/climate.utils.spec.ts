@@ -3,16 +3,20 @@ import {
   auditMonthlyChanges,
   calculateStationCapabilities,
   aggregateThreeMonthSeries,
+  convertMonthlyTemperatureSummariesToRows,
   convertMonthlyToStationData,
   convertStationSummariesToRows,
   filterMonthlyDataByMonth,
   formatAnnualCsv,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
+  mergeStationAnnualData,
+  mergeStationMonthlyData,
   normalizeMonthKey,
   parseAnnualCsv,
   parseMonthlyCsv,
   pivotLongToWideMonthly,
+  resolveClimateProducts,
   roundClimateValue,
   stationHasAnnualTemperature,
   stationHasTemperatureData,
@@ -940,6 +944,210 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
         'Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mean_tmin,Extreme_events\n',
       );
       expect(csv).toContain('1980,300,90,155,850,35,22,20,10,28.5,16.2,\n');
+    });
+  });
+
+  describe('resolveClimateProducts', () => {
+    it('should return all products when filter is undefined or empty', () => {
+      const all = resolveClimateProducts();
+      expect(all.size).toBe(7);
+      expect(all.has('rainfall')).toBe(true);
+      expect(all.has('temp_min')).toBe(true);
+      expect(all.has('temp_max')).toBe(true);
+      expect(all.has('start')).toBe(true);
+      expect(all.has('end')).toBe(true);
+      expect(all.has('length')).toBe(true);
+      expect(all.has('extremes')).toBe(true);
+
+      const emptyStr = resolveClimateProducts('');
+      expect(emptyStr.size).toBe(7);
+
+      const emptyArr = resolveClimateProducts([]);
+      expect(emptyArr.size).toBe(7);
+    });
+
+    it("should resolve 'temperature' group alias to ['temp_min', 'temp_max']", () => {
+      const tempSet = resolveClimateProducts('temperature');
+      expect(tempSet.size).toBe(2);
+      expect(tempSet.has('temp_min')).toBe(true);
+      expect(tempSet.has('temp_max')).toBe(true);
+      expect(tempSet.has('rainfall')).toBe(false);
+    });
+
+    it("should resolve 'seasonal' group alias to seasonal products", () => {
+      const seasonSet = resolveClimateProducts('seasonal');
+      expect(seasonSet.size).toBe(5);
+      expect(seasonSet.has('rainfall')).toBe(true);
+      expect(seasonSet.has('start')).toBe(true);
+      expect(seasonSet.has('end')).toBe(true);
+      expect(seasonSet.has('length')).toBe(true);
+      expect(seasonSet.has('extremes')).toBe(true);
+      expect(seasonSet.has('temp_min')).toBe(false);
+      expect(seasonSet.has('temp_max')).toBe(false);
+    });
+
+    it('should resolve individual product names and comma-separated tokens', () => {
+      const single = resolveClimateProducts('temp_min');
+      expect(single.size).toBe(1);
+      expect(single.has('temp_min')).toBe(true);
+
+      const multi = resolveClimateProducts('temp_min,temp_max');
+      expect(multi.size).toBe(2);
+      expect(multi.has('temp_min')).toBe(true);
+      expect(multi.has('temp_max')).toBe(true);
+    });
+
+    it('should normalize extreme_rainfall_days to extremes', () => {
+      const extremes = resolveClimateProducts('extreme_rainfall_days');
+      expect(extremes.size).toBe(1);
+      expect(extremes.has('extremes')).toBe(true);
+    });
+
+    it('should throw descriptive error on unknown product or group', () => {
+      expect(() => resolveClimateProducts('invalid_product')).toThrow(/Unknown climate product or group/);
+    });
+  });
+
+  describe('mergeStationAnnualData', () => {
+    const existing: IStationData[] = [
+      {
+        Year: 1980,
+        Start: 300,
+        End: 90,
+        Length: 155,
+        Rainfall: 850,
+        Extreme_events: 2,
+        mean_tmax: 28.0,
+        mean_tmin: 16.0,
+      },
+      {
+        Year: 1981,
+        Start: 310,
+        End: 95,
+        Length: 150,
+        Rainfall: 920,
+        Extreme_events: 1,
+        mean_tmax: 29.0,
+        mean_tmin: 17.0,
+      },
+    ];
+
+    it('should strictly preserve rainfall columns when updating only temperature', () => {
+      const incoming: (Partial<IStationData> & { Year: number })[] = [
+        { Year: 1980, mean_tmax: 30.5, mean_tmin: 18.2, min_tmin: 10.1, max_tmax: 36.0 },
+        { Year: 1981, mean_tmax: 31.0, mean_tmin: 19.0, min_tmin: 11.0, max_tmax: 37.0 },
+      ];
+
+      const merged = mergeStationAnnualData(existing, incoming, new Set(['temp_min', 'temp_max']));
+
+      expect(merged.length).toBe(2);
+      // Preserved seasonal values
+      expect(merged[0].Start).toBe(300);
+      expect(merged[0].End).toBe(90);
+      expect(merged[0].Length).toBe(155);
+      expect(merged[0].Rainfall).toBe(850);
+      expect(merged[0].Extreme_events).toBe(2);
+
+      // Updated temperature values
+      expect(merged[0].mean_tmax).toBe(30.5);
+      expect(merged[0].mean_tmin).toBe(18.2);
+      expect(merged[0].min_tmin).toBe(10.1);
+      expect(merged[0].max_tmax).toBe(36.0);
+    });
+
+    it('should append new years present only in incoming data with empty unselected fields', () => {
+      const incoming: (Partial<IStationData> & { Year: number })[] = [
+        { Year: 1979, mean_tmax: 27.5, mean_tmin: 15.5 },
+        { Year: 1980, mean_tmax: 30.0, mean_tmin: 18.0 },
+      ];
+
+      const merged = mergeStationAnnualData(existing, incoming, new Set(['temp_min', 'temp_max']));
+
+      expect(merged.length).toBe(3);
+      expect(merged[0].Year).toBe(1979);
+      expect(merged[0].mean_tmax).toBe(27.5);
+      expect(merged[0].Rainfall).toBeUndefined();
+      expect(merged[0].Start).toBeUndefined();
+
+      expect(merged[1].Year).toBe(1980);
+      expect(merged[1].Rainfall).toBe(850);
+      expect(merged[1].mean_tmax).toBe(30.0);
+    });
+
+    it('should strictly preserve temperature columns when updating only seasonal', () => {
+      const incoming: IStationData[] = [
+        { Year: 1980, Rainfall: 999, Start: 290, End: 85, Length: 160, Extreme_events: 0 },
+      ];
+
+      const merged = mergeStationAnnualData(existing, incoming, new Set(['rainfall', 'start', 'end', 'length']));
+
+      expect(merged[0].Rainfall).toBe(999);
+      expect(merged[0].Start).toBe(290);
+      // Temperature preserved
+      expect(merged[0].mean_tmax).toBe(28.0);
+      expect(merged[0].mean_tmin).toBe(16.0);
+    });
+  });
+
+  describe('mergeStationMonthlyData', () => {
+    const existingMonthly: IMonthlyStationData[] = [
+      { month: '1980-01', Rainfall: 150, mean_tmax: 27.0, mean_tmin: 18.0 },
+      { month: '1980-02', Rainfall: 120, mean_tmax: 28.0, mean_tmin: 19.0 },
+    ];
+
+    it('should preserve monthly rainfall when updating monthly temperature', () => {
+      const incoming: IMonthlyStationData[] = [
+        { month: '1980-01', mean_tmax: 29.5, mean_tmin: 17.5, min_tmin: 12.0, max_tmax: 33.0 },
+      ];
+
+      const merged = mergeStationMonthlyData(existingMonthly, incoming, new Set(['temp_min', 'temp_max']));
+
+      expect(merged.length).toBe(2);
+      expect(merged[0].month).toBe('1980-01');
+      expect(merged[0].Rainfall).toBe(150);
+      expect(merged[0].mean_tmax).toBe(29.5);
+      expect(merged[0].min_tmin).toBe(12.0);
+
+      // Month with no incoming update gets null/undefined for temperature
+      expect(merged[1].month).toBe('1980-02');
+      expect(merged[1].Rainfall).toBe(120);
+      expect(merged[1].mean_tmax).toBeNull();
+    });
+
+    it('should append new months from incoming data', () => {
+      const incoming: IMonthlyStationData[] = [{ month: '1979-12', mean_tmax: 26.0, mean_tmin: 17.0 }];
+
+      const merged = mergeStationMonthlyData(existingMonthly, incoming, new Set(['temp_min', 'temp_max']));
+
+      expect(merged.length).toBe(3);
+      expect(merged[0].month).toBe('1979-12');
+      expect(merged[0].mean_tmax).toBe(26.0);
+      expect(merged[0].Rainfall).toBeUndefined();
+    });
+  });
+
+  describe('convertMonthlyTemperatureSummariesToRows', () => {
+    it('should convert and sort database records with numeric year and month', () => {
+      const raw = [
+        { year: 1980, month: 2, mean_tmax: 28.54, mean_tmin: 17.16 },
+        { year: 1980, month: 1, mean_tmax: 27.31, mean_tmin: 16.49 },
+      ];
+
+      const rows = convertMonthlyTemperatureSummariesToRows(raw);
+      expect(rows.length).toBe(2);
+      expect(rows[0].month).toBe('1980-01');
+      expect(rows[0].mean_tmax).toBe(27.3);
+      expect(rows[0].mean_tmin).toBe(16.5);
+
+      expect(rows[1].month).toBe('1980-02');
+      expect(rows[1].mean_tmax).toBe(28.5);
+      expect(rows[1].mean_tmin).toBe(17.2);
+    });
+
+    it('should return empty array for null, undefined, or empty data', () => {
+      expect(convertMonthlyTemperatureSummariesToRows(null)).toEqual([]);
+      expect(convertMonthlyTemperatureSummariesToRows(undefined)).toEqual([]);
+      expect(convertMonthlyTemperatureSummariesToRows([])).toEqual([]);
     });
   });
 });

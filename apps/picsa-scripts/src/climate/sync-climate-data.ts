@@ -12,13 +12,17 @@ import type {
 import {
   auditMonthlyChanges,
   calculateStationCapabilities,
+  convertMonthlyTemperatureSummariesToRows,
   convertStationSummariesToRows,
   formatAnnualCsv,
   formatMonthlyCsv,
   generateMarkdownAuditReport,
+  mergeStationAnnualData,
+  mergeStationMonthlyData,
   parseAnnualCsv,
   parseMonthlyCsv,
   pivotLongToWideMonthly,
+  resolveClimateProducts,
 } from '@picsa/utils';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
@@ -38,6 +42,7 @@ export interface CliArgs {
   local?: boolean;
   env?: string;
   report?: string;
+  only?: string;
 }
 
 const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
@@ -76,6 +81,9 @@ const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
   },
   report: (res, val) => {
     res.report = path.resolve(process.cwd(), val);
+  },
+  only: (res, val) => {
+    res.only = val.toLowerCase();
   },
 };
 
@@ -351,13 +359,22 @@ export async function syncFromDatabaseForCountry(
     auditReport: IClimateAuditReport;
     auditOnly?: boolean;
     station?: string;
+    only?: string;
   },
 ): Promise<Record<string, IStationCapabilities>> {
   const countryUpper = country.toUpperCase();
   const countryLower = country.toLowerCase();
   const countryDir = path.join(CLIMATE_TOOL_ASSETS, countryLower);
 
+  const targetProducts = resolveClimateProducts(options.only);
+  const isTemperatureTargeted = targetProducts.has('temp_min') || targetProducts.has('temp_max');
+  const isOnlyTemperature =
+    targetProducts.size <= 2 && Array.from(targetProducts).every((p) => p === 'temp_min' || p === 'temp_max');
+
   console.log(`\nProcessing database stations for ${countryUpper}...`);
+  if (options.only) {
+    console.log(`  Target Products (--only): ${Array.from(targetProducts).join(', ')}`);
+  }
 
   // 1. Fetch stations for country to map station.id -> station.station_id (slug)
   const { data: stations, error: stationsErr } = await client
@@ -413,7 +430,53 @@ export async function syncFromDatabaseForCountry(
       continue;
     }
 
-    const annualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
+    const hasAnnualTemp = Array.isArray(row.annual_temperature_data) && row.annual_temperature_data.length > 0;
+    const hasMonthlyTemp = Array.isArray(row.monthly_temperature_data) && row.monthly_temperature_data.length > 0;
+
+    // Strict requirement: Breaking warning if annual temperature is targeted/present but monthly temperature is missing
+    if (isTemperatureTargeted && hasAnnualTemp && !hasMonthlyTemp) {
+      const warnMsg = `Missing corresponding monthly temperature data for station with annual temperature data: ${stationSlug} (${countryUpper})`;
+      console.error(`  ❌ [BREAKING] ${warnMsg}`);
+      options.auditReport.warnings = options.auditReport.warnings || [];
+      options.auditReport.warnings.push({
+        message: warnMsg,
+        country: countryUpper,
+        stationId: stationSlug,
+      });
+      options.auditReport.sanityViolations.push({
+        stationId: stationSlug,
+        month: 'ALL',
+        rule: 'MISSING_CORRESPONDING_MONTHLY_TEMPERATURE',
+        message: `Station has annual temperature data (${row.annual_temperature_data.length} records) but zero monthly temperature records in database`,
+        values: {
+          country: countryUpper,
+          stationId: stationSlug,
+          annualRecordsCount: row.annual_temperature_data.length,
+        },
+      });
+    }
+
+    const annualCsvPath = path.join(countryDir, `${stationSlug}.csv`);
+    const monthlyCsvPath = path.join(countryDir, `${stationSlug}.monthly.csv`);
+
+    // If targeted strictly to temperature but station has zero temperature records in DB, preserve existing and skip
+    if (isOnlyTemperature && !hasAnnualTemp && !hasMonthlyTemp) {
+      if (existingCaps[stationSlug]) {
+        updatedCaps[stationSlug] = existingCaps[stationSlug];
+      }
+      unchangedCount++;
+      continue;
+    }
+
+    // 1. Annual Data Processing
+    let existingAnnualData: IStationData[] = [];
+    if (fs.existsSync(annualCsvPath)) {
+      existingAnnualData = parseAnnualCsv(fs.readFileSync(annualCsvPath, 'utf-8'));
+    }
+
+    const candidateAnnualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
+    const annualData = mergeStationAnnualData(existingAnnualData, candidateAnnualData, targetProducts);
+
     if (annualData.length === 0) {
       options.auditReport.warnings = options.auditReport.warnings || [];
       options.auditReport.warnings.push({
@@ -425,17 +488,27 @@ export async function syncFromDatabaseForCountry(
     }
 
     const annualCsvContent = formatAnnualCsv(annualData);
-    const annualCsvPath = path.join(countryDir, `${stationSlug}.csv`);
-    const monthlyCsvPath = path.join(countryDir, `${stationSlug}.monthly.csv`);
 
+    // 2. Monthly Data Processing
     let monthlyData: IMonthlyStationData[] = [];
+    let existingMonthlyCsvContent = '';
     if (fs.existsSync(monthlyCsvPath)) {
-      monthlyData = parseMonthlyCsv(fs.readFileSync(monthlyCsvPath, 'utf-8'));
+      existingMonthlyCsvContent = fs.readFileSync(monthlyCsvPath, 'utf-8');
+      monthlyData = parseMonthlyCsv(existingMonthlyCsvContent);
+    }
+
+    let newMonthlyCsvContent = existingMonthlyCsvContent;
+    if (isTemperatureTargeted && hasMonthlyTemp) {
+      const incomingMonthly = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthly, targetProducts);
+      newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
     }
 
     const contentHash = computeSha256(annualCsvContent.trim());
     const prevCap = existingCaps[stationSlug];
-    const isUnchanged = prevCap?.contentHash === contentHash;
+    const isAnnualUnchanged = prevCap?.contentHash === contentHash;
+    const isMonthlyUnchanged = newMonthlyCsvContent.trim() === existingMonthlyCsvContent.trim();
+    const isUnchanged = isAnnualUnchanged && isMonthlyUnchanged;
 
     // Use DB updated_at directly, formatted as YYYY-MM-DD
     const stationLastUpdated = row.updated_at
@@ -509,6 +582,14 @@ export async function syncFromDatabaseForCountry(
         fs.mkdirSync(countryDir, { recursive: true });
       }
       fs.writeFileSync(annualCsvPath, annualCsvContent, 'utf-8');
+    }
+
+    // Write monthly CSV if changed
+    if (!options.auditOnly && newMonthlyCsvContent.trim() && !isMonthlyUnchanged) {
+      if (!fs.existsSync(countryDir)) {
+        fs.mkdirSync(countryDir, { recursive: true });
+      }
+      fs.writeFileSync(monthlyCsvPath, newMonthlyCsvContent, 'utf-8');
     }
   }
 
@@ -677,11 +758,16 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     const client = getSyncSupabaseClient({ local: options.local, env: options.env });
     const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
 
+    if (options.only) {
+      console.log(`  Scope (--only): ${options.only}`);
+    }
+
     for (const c of countriesToProcess) {
       await syncFromDatabaseForCountry(c, client, {
         auditReport,
         auditOnly: options.auditOnly,
         station: options.station,
+        only: options.only,
       });
     }
 
@@ -728,6 +814,9 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   console.log(`\nStarting Climate Data Sync for Country: ${country.toUpperCase()}`);
   console.log(`  Input: ${inputPath}`);
   console.log(`  Mode: ${options.auditOnly ? 'AUDIT ONLY' : 'SYNC & WRITE'}`);
+  if (options.only) {
+    console.log(`  Scope (--only): ${options.only}`);
+  }
 
   if (!fs.existsSync(inputPath)) {
     throw new Error(`Input file does not exist: ${inputPath}`);
@@ -756,7 +845,7 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   const updatedCaps: Record<string, IStationCapabilities> = { ...existingCaps };
 
   for (const [stationId, records] of stationGroups.entries()) {
-    const newMonthlyData = pivotLongToWideMonthly(records, {
+    const rawMonthlyData = pivotLongToWideMonthly(records, {
       onDuplicate: (dup) => {
         if (dup.isConflict) {
           auditReport.sanityViolations.push({
@@ -790,6 +879,11 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
       annualCsvContent = fs.readFileSync(annualCsvPath, 'utf-8');
       annualData = parseAnnualCsv(annualCsvContent);
     }
+
+    const targetProducts = resolveClimateProducts(options.only);
+    const newMonthlyData = options.only
+      ? mergeStationMonthlyData(previousMonthlyData, rawMonthlyData, targetProducts)
+      : rawMonthlyData;
 
     // Audit diffing
     const diff = auditMonthlyChanges({

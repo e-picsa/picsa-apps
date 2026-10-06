@@ -1165,3 +1165,246 @@ export function formatAnnualCsv(data: IStationData[], includeTemperature?: boole
   }
   return csv;
 }
+
+/*************************************************************************
+ *             Selective Product Synchronization & Merging
+ ************************************************************************/
+
+export type ClimateProductId = 'rainfall' | 'start' | 'end' | 'length' | 'temp_min' | 'temp_max' | 'extremes';
+
+export const CLIMATE_PRODUCT_GROUPS: Record<'temperature' | 'seasonal', ClimateProductId[]> = {
+  temperature: ['temp_min', 'temp_max'],
+  seasonal: ['rainfall', 'start', 'end', 'length', 'extremes'],
+};
+
+export const ALL_CLIMATE_PRODUCTS: ClimateProductId[] = [
+  'rainfall',
+  'start',
+  'end',
+  'length',
+  'temp_min',
+  'temp_max',
+  'extremes',
+];
+
+export const PRODUCT_ANNUAL_FIELDS: Record<ClimateProductId, (keyof IStationData)[]> = {
+  rainfall: ['Rainfall'],
+  start: ['Start'],
+  end: ['End'],
+  length: ['Length'],
+  extremes: ['Extreme_events'],
+  temp_min: ['min_tmin', 'mean_tmin', 'max_tmin'],
+  temp_max: ['min_tmax', 'mean_tmax', 'max_tmax'],
+};
+
+export const PRODUCT_MONTHLY_FIELDS: Record<
+  Extract<ClimateProductId, 'rainfall' | 'temp_min' | 'temp_max'>,
+  (keyof Omit<IMonthlyStationData, 'month'>)[]
+> = {
+  rainfall: ['Rainfall'],
+  temp_min: ['min_tmin', 'mean_tmin', 'max_tmin'],
+  temp_max: ['min_tmax', 'mean_tmax', 'max_tmax'],
+};
+
+/**
+ * Resolve a product filter string or array (e.g. 'temperature', 'seasonal', 'temp_min,temp_max')
+ * into a Set of validated ClimateProductId.
+ * If filter is omitted, undefined, or empty, returns all climate products.
+ */
+export function resolveClimateProducts(filter?: string | string[]): Set<ClimateProductId> {
+  if (!filter || (Array.isArray(filter) && filter.length === 0)) {
+    return new Set(ALL_CLIMATE_PRODUCTS);
+  }
+
+  const tokens = Array.isArray(filter) ? filter.flatMap((f) => f.split(',')) : filter.split(',');
+  const result = new Set<ClimateProductId>();
+
+  for (const rawToken of tokens) {
+    const token = rawToken.trim().toLowerCase();
+    if (!token) continue;
+
+    if (token in CLIMATE_PRODUCT_GROUPS) {
+      for (const prod of CLIMATE_PRODUCT_GROUPS[token as keyof typeof CLIMATE_PRODUCT_GROUPS]) {
+        result.add(prod);
+      }
+      continue;
+    }
+
+    if (token === 'extreme_rainfall_days' || token === 'extremes') {
+      result.add('extremes');
+      continue;
+    }
+
+    if (ALL_CLIMATE_PRODUCTS.includes(token as ClimateProductId)) {
+      result.add(token as ClimateProductId);
+      continue;
+    }
+
+    throw new Error(
+      `Unknown climate product or group '${token}'. Valid groups are 'temperature', 'seasonal'. Valid products are: ${ALL_CLIMATE_PRODUCTS.join(', ')}.`,
+    );
+  }
+
+  return result.size > 0 ? result : new Set(ALL_CLIMATE_PRODUCTS);
+}
+
+/**
+ * Merge incoming annual station records into existing annual records, selectively updating
+ * only the fields belonging to selectedProducts while strictly preserving unselected metrics.
+ */
+export function mergeStationAnnualData(
+  existingRows: IStationData[],
+  incomingRows: (Partial<IStationData> & { Year: number })[],
+  selectedProducts: Set<ClimateProductId>,
+): IStationData[] {
+  const fieldsToUpdate = new Set<keyof IStationData>();
+  for (const prod of selectedProducts) {
+    const fields = PRODUCT_ANNUAL_FIELDS[prod];
+    if (fields) {
+      for (const f of fields) {
+        fieldsToUpdate.add(f);
+      }
+    }
+  }
+
+  if (fieldsToUpdate.size === 0) {
+    return [...existingRows].sort((a, b) => a.Year - b.Year);
+  }
+
+  const incomingMap = new Map<number, Partial<IStationData> & { Year: number }>();
+  for (const row of incomingRows) {
+    if (typeof row.Year === 'number' && !Number.isNaN(row.Year)) {
+      incomingMap.set(row.Year, row);
+    }
+  }
+
+  const processedYears = new Set<number>();
+  const mergedRows: IStationData[] = [];
+
+  for (const existing of existingRows) {
+    const year = existing.Year;
+    processedYears.add(year);
+    const incoming = incomingMap.get(year);
+    const updated: Record<string, any> = { ...existing };
+
+    for (const field of fieldsToUpdate) {
+      updated[field] = incoming && incoming[field] !== undefined ? incoming[field] : undefined;
+    }
+
+    mergedRows.push(updated as IStationData);
+  }
+
+  // Add any years present only in incomingRows
+  for (const [year, incoming] of incomingMap.entries()) {
+    if (!processedYears.has(year)) {
+      const newRow: Record<string, any> = { Year: year };
+      for (const field of fieldsToUpdate) {
+        newRow[field] = incoming[field] !== undefined ? incoming[field] : undefined;
+      }
+      mergedRows.push(newRow as IStationData);
+    }
+  }
+
+  return mergedRows.sort((a, b) => a.Year - b.Year);
+}
+
+/**
+ * Merge incoming monthly station records into existing monthly records, selectively updating
+ * only the fields belonging to selectedProducts while strictly preserving unselected metrics.
+ */
+export function mergeStationMonthlyData(
+  existingRows: IMonthlyStationData[],
+  incomingRows: IMonthlyStationData[],
+  selectedProducts: Set<ClimateProductId>,
+): IMonthlyStationData[] {
+  const monthlyFieldsToUpdate = new Set<keyof Omit<IMonthlyStationData, 'month'>>();
+  for (const prod of selectedProducts) {
+    if (prod === 'rainfall' || prod === 'temp_min' || prod === 'temp_max') {
+      const fields = PRODUCT_MONTHLY_FIELDS[prod];
+      for (const f of fields) {
+        monthlyFieldsToUpdate.add(f);
+      }
+    }
+  }
+
+  if (monthlyFieldsToUpdate.size === 0) {
+    return [...existingRows].sort((a, b) => a.month.localeCompare(b.month));
+  }
+
+  const incomingMap = new Map<string, IMonthlyStationData>();
+  for (const row of incomingRows) {
+    if (row.month) {
+      incomingMap.set(row.month, row);
+    }
+  }
+
+  const processedMonths = new Set<string>();
+  const mergedRows: IMonthlyStationData[] = [];
+
+  for (const existing of existingRows) {
+    const month = existing.month;
+    processedMonths.add(month);
+    const incoming = incomingMap.get(month);
+    const updated: Record<string, any> = { ...existing };
+
+    for (const field of monthlyFieldsToUpdate) {
+      updated[field] = incoming && incoming[field] !== undefined ? incoming[field] : null;
+    }
+
+    mergedRows.push(updated as IMonthlyStationData);
+  }
+
+  // Add any months present only in incomingRows
+  for (const [month, incoming] of incomingMap.entries()) {
+    if (!processedMonths.has(month)) {
+      const newRow: Record<string, any> = { month };
+      for (const field of monthlyFieldsToUpdate) {
+        newRow[field] = incoming[field] !== undefined ? incoming[field] : null;
+      }
+      mergedRows.push(newRow as IMonthlyStationData);
+    }
+  }
+
+  return mergedRows.sort((a, b) => a.month.localeCompare(b.month));
+}
+
+/**
+ * Convert database monthly temperature summary records into typed IMonthlyStationData rows.
+ * Handles month normalization (numeric month + year, string 'YYYY-MM', or ISO date string).
+ */
+export function convertMonthlyTemperatureSummariesToRows(monthlyTemperatureData?: any[] | null): IMonthlyStationData[] {
+  if (!monthlyTemperatureData || !Array.isArray(monthlyTemperatureData)) {
+    return [];
+  }
+
+  const rows: IMonthlyStationData[] = [];
+
+  for (const entry of monthlyTemperatureData) {
+    if (!entry) continue;
+
+    let monthStr = '';
+    if (typeof entry.year === 'number' && typeof entry.month === 'number') {
+      monthStr = `${entry.year}-${String(entry.month).padStart(2, '0')}`;
+    } else if (typeof entry.month === 'string') {
+      monthStr = normalizeMonthKey(entry.month);
+    } else if (typeof entry.time_value === 'string') {
+      monthStr = normalizeMonthKey(entry.time_value);
+    }
+
+    if (!monthStr || !/^\d{4}-\d{2}$/.test(monthStr)) {
+      continue;
+    }
+
+    rows.push({
+      month: monthStr,
+      min_tmin: roundClimateValue(entry.min_tmin),
+      mean_tmin: roundClimateValue(entry.mean_tmin),
+      max_tmin: roundClimateValue(entry.max_tmin),
+      min_tmax: roundClimateValue(entry.min_tmax),
+      mean_tmax: roundClimateValue(entry.mean_tmax),
+      max_tmax: roundClimateValue(entry.max_tmax),
+    });
+  }
+
+  return rows.sort((a, b) => a.month.localeCompare(b.month));
+}
