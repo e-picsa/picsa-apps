@@ -13,14 +13,14 @@
             <span
               class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#e8f5e9] text-[#2e7d32]"
             >
-              <mat-icon class="!w-4 !h-4 !text-base">check_circle</mat-icon> In Sync
+              <mat-icon class="!text-[16px] !w-4 !h-4">check_circle</mat-icon> In Sync
             </span>
           }
           @case ('diff') {
             <span
               class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-[#fff3e0] text-[#e65100]"
             >
-              <mat-icon class="!w-4 !h-4 !text-base">difference</mat-icon> Differences Found
+              <mat-icon class="!text-[16px] !w-4 !h-4">difference</mat-icon> Differences Found
             </span>
           }
           @case ('db_only') {
@@ -41,6 +41,18 @@
               >No Data</span
             >
           }
+        }
+        @if (selectedProductGeneration()?.timestamp; as genTime) {
+          <span
+            class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200"
+            [matTooltip]="selectedProductGeneration()?.id ? 'Generation ID: ' + selectedProductGeneration()?.id : ''"
+          >
+            <mat-icon class="!text-[16px] !w-4 !h-4">schedule</mat-icon>
+            Generated: {{ genTime | date: 'mediumDate' }}
+            @if (selectedProductGeneration()?.id; as genId) {
+              <span class="font-mono text-[11px] opacity-80">({{ genId }})</span>
+            }
+          </span>
         }
       </div>
     </div>
@@ -121,6 +133,29 @@
         <div class="flex flex-col gap-1">
           <span class="text-xs text-gray-500">Values Changed</span>
           <span class="text-base font-semibold text-amber-600">~{{ pSummary.changedCount }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs text-gray-500">Generation Date</span>
+          <span class="text-base font-semibold">
+            @if (selectedProductGeneration()?.timestamp) {
+              {{ selectedProductGeneration()?.timestamp | date: 'mediumDate' }}
+            } @else {
+              <span class="text-gray-400 font-normal text-sm">—</span>
+            }
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs text-gray-500">Generation ID</span>
+          <span
+            class="text-base font-semibold font-mono text-sm truncate"
+            [matTooltip]="selectedProductGeneration()?.id || ''"
+          >
+            @if (selectedProductGeneration()?.id) {
+              {{ selectedProductGeneration()?.id }}
+            } @else {
+              <span class="text-gray-400 font-normal text-sm font-sans">—</span>
+            }
+          </span>
         </div>
       </div>
     }

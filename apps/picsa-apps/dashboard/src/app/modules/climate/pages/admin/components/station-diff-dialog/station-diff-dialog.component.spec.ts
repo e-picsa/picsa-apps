@@ -56,6 +56,17 @@ describe('StationDiffDialogComponent', () => {
         { Year: 1992, Rainfall: 750 },
       ],
     ),
+    stationData: {
+      updated_at: '2026-09-01T00:00:00Z',
+      annual_rainfall_metadata: {
+        generation_timestamp: '2026-10-01T10:00:00Z',
+        generation_id: 'gen_rain_99',
+      },
+      annual_temperature_metadata: {
+        generation_timestamp: '2026-10-02T15:00:00Z',
+        generation_id: 'gen_temp_88',
+      },
+    } as any,
   };
 
   beforeEach(async () => {
@@ -103,5 +114,27 @@ describe('StationDiffDialogComponent', () => {
     expect(el.querySelector('.diff-box.box-changed')).toBeTruthy();
     expect(el.textContent).not.toContain('yrs added');
     expect(el.textContent).not.toContain('yrs removed');
+  });
+
+  it('should compute selectedProductGeneration when stationData is present', () => {
+    // Initial selectedProductId is 'rainfall', populated from mockData.stationData
+    expect(component.selectedProductGeneration()).toEqual({
+      timestamp: '2026-10-01T10:00:00Z',
+      id: 'gen_rain_99',
+    });
+
+    // Switch to temp_min
+    component.selectProduct('temp_min');
+    expect(component.selectedProductGeneration()).toEqual({
+      timestamp: '2026-10-02T15:00:00Z',
+      id: 'gen_temp_88',
+    });
+
+    // Switch to product without specific metadata - falls back to station updated_at
+    component.selectProduct('extremes');
+    expect(component.selectedProductGeneration()).toEqual({
+      timestamp: '2026-09-01T00:00:00Z',
+      id: undefined,
+    });
   });
 });
