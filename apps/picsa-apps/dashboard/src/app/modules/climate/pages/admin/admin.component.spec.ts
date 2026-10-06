@@ -43,6 +43,7 @@ describe('ClimateAdminPageComponent', () => {
 
   it('should configure Diff table options', () => {
     expect(component.diffTableOptions.displayColumns).toContain('diff_status');
+    expect(component.diffTableOptions.displayColumns).toContain('updated_at');
     expect(component.diffTableOptions.displayColumns).toContain('season_diff_percent');
     expect(component.diffTableOptions.displayColumns).toContain('season_diff');
     expect(component.diffTableOptions.displayColumns).toContain('temp_diff_percent');
@@ -50,6 +51,7 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.diffTableOptions.displayColumns).toContain('actions');
     expect(component.diffTableOptions.displayColumns).not.toContain('years_added');
     expect(component.diffTableOptions.formatHeader('diff_status')).toBe('Status');
+    expect(component.diffTableOptions.formatHeader('updated_at')).toBe('Data System Generated');
     expect(component.diffTableOptions.formatHeader('season_diff_percent')).toBe('Season Change %');
     expect(component.diffTableOptions.formatHeader('season_diff')).toBe('Season Change');
     expect(component.diffTableOptions.formatHeader('temp_diff_percent')).toBe('Temp Change %');
@@ -174,28 +176,63 @@ describe('ClimateAdminPageComponent', () => {
     });
 
     expect(emptySummary).toEqual([
-      { id: 'Annual Rainfall', available: false },
-      { id: 'Crop Probabilities', available: false },
-      { id: 'Annual Temperatures', available: false },
-      { id: 'Monthly Temperatures', available: false },
+      { id: 'Annual Rainfall', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Crop Probabilities', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Annual Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Monthly Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
     ]);
 
     const filledSummary = (component as any).generateProductSummary({
       annual_rainfall_data: [{ year: 2020, seasonal_rain: 500 }],
+      annual_rainfall_metadata: { generation_timestamp: '2026-10-01T12:00:00Z', generation_id: 'gen_rain_1' },
       crop_probability_data: null,
       annual_temperature_data: [{ year: 2020, mean_tmax: 28 }],
       monthly_temperature_data: [],
     });
 
     expect(filledSummary).toEqual([
-      { id: 'Annual Rainfall', available: true },
-      { id: 'Crop Probabilities', available: false },
-      { id: 'Annual Temperatures', available: true },
-      { id: 'Monthly Temperatures', available: false },
+      {
+        id: 'Annual Rainfall',
+        available: true,
+        generation_timestamp: '2026-10-01T12:00:00Z',
+        generation_id: 'gen_rain_1',
+      },
+      { id: 'Crop Probabilities', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Annual Temperatures', available: true, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Monthly Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
     ]);
 
     const absentSummary = (component as any).generateProductSummary(undefined);
     expect(absentSummary.every((p: any) => p.available === false)).toBe(true);
+  });
+
+  it('should format product tooltip with generation metadata when available', () => {
+    expect(component.getProductTooltip({ id: 'Annual Rainfall', available: false })).toBe(
+      'Annual Rainfall (No data / Error - click to refresh)',
+    );
+
+    const withGen = component.getProductTooltip({
+      id: 'Annual Rainfall',
+      available: true,
+      generation_timestamp: '2026-10-01T12:00:00Z',
+      generation_id: 'gen_123',
+    });
+    expect(withGen).toContain('Annual Rainfall (Generated:');
+    expect(withGen).toContain('ID: gen_123');
+
+    const withoutId = component.getProductTooltip({
+      id: 'Annual Rainfall',
+      available: true,
+      generation_timestamp: '2026-10-01T12:00:00Z',
+    });
+    expect(withoutId).toContain('Annual Rainfall (Generated:');
+    expect(withoutId).not.toContain('ID:');
+
+    const plain = component.getProductTooltip({
+      id: 'Annual Rainfall',
+      available: true,
+    });
+    expect(plain).toBe('Annual Rainfall');
   });
 
   it('should filter diffTableData when showOnlyDiffs is toggled', () => {

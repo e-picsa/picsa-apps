@@ -28,7 +28,7 @@ export interface paths {
   '/v2/crop_success_probabilities/': {
     /**
      * Get Crop Success Probabilities
-     * @description Retrieve crop success probabilities from PostgreSQL.
+     * @description Retrieve full crop success probabilities lookup table from PostgreSQL.
      */
     post: operations['get_crop_success_probabilities_v2_crop_success_probabilities__post'];
   };
@@ -154,6 +154,13 @@ export interface components {
     };
     /** AnnualRainfallSummariesResponce */
     AnnualRainfallSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['AnnualRainfallSummariesMetadata'];
       /** Data */
       data: components['schemas']['AnnualRainfallSummariesdata'][];
@@ -255,6 +262,13 @@ export interface components {
     };
     /** AnnualTemperatureSummariesResponce */
     AnnualTemperatureSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['TemperatureSummariesMetadata'];
       /** Data */
       data: components['schemas']['AnnualTempartureSummariesdata'][];
@@ -288,20 +302,16 @@ export interface components {
        * @default Kasungu
        */
       station_id?: string;
-      /** Water Requirements */
-      water_requirements?: number[];
-      /** Planting Length */
-      planting_length?: number[];
-      /** Planting Dates */
-      planting_dates?: number[];
-      /**
-       * Start Before Season
-       * @default true
-       */
-      start_before_season?: boolean;
     };
     /** CropSuccessProbabilitiesResponce */
     CropSuccessProbabilitiesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['CropSuccessProbabilitiesMetadata'];
       /** Data */
       data: components['schemas']['CropSuccessProbabilitiesdata'][];
@@ -460,6 +470,13 @@ export interface components {
     };
     /** MonthlyTemperatureSummariesResponce */
     MonthlyTemperatureSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['TemperatureSummariesMetadata'];
       /** Data */
       data: components['schemas']['MonthlyTempartureSummariesdata'][];
@@ -521,6 +538,13 @@ export interface components {
     };
     /** SeasonStartProbabilitiesResponce */
     SeasonStartProbabilitiesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['SeasonStartProbabilitiesMetadata'];
       /** Data */
       data: components['schemas']['SeasonStartProbabilitiesdata'][];
@@ -593,6 +617,11 @@ export interface components {
        * @default 100
        */
       max_rows?: number;
+      /**
+       * Generation Id
+       * @description Optional generation/definition identifier to filter by.
+       */
+      generation_id?: string;
     };
     /** SelectQueryResponse */
     SelectQueryResponse: {
@@ -602,6 +631,13 @@ export interface components {
       row_count: number;
       /** Rows */
       rows: Record<string, never>[];
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
     };
     /** StartRains */
     StartRains: {
@@ -673,6 +709,13 @@ export interface components {
         | 'mw_workshops'
         | 'zw_workshops'
         | 'internal_tests';
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
+      /** Generation Id */
+      generation_id?: string;
       /** Definitions Id */
       definitions_id: unknown[];
       /** Climsoft List */
@@ -708,6 +751,11 @@ export interface components {
         | 'mw_workshops'
         | 'zw_workshops'
         | 'internal_tests';
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
     };
     /** StationDefinitionDataResponce */
     StationDefinitionDataResponce: {
@@ -1091,7 +1139,7 @@ export interface operations {
   };
   /**
    * Get Crop Success Probabilities
-   * @description Retrieve crop success probabilities from PostgreSQL.
+   * @description Retrieve full crop success probabilities lookup table from PostgreSQL.
    */
   get_crop_success_probabilities_v2_crop_success_probabilities__post: {
     requestBody: {

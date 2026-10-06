@@ -33,7 +33,12 @@ interface IStatusUpdate {
   completed: boolean;
 }
 
-type IProductSummary = { id: string; available: boolean };
+export interface IProductSummary {
+  id: string;
+  available: boolean;
+  generation_timestamp?: string;
+  generation_id?: string;
+}
 
 export interface IStationAdminSummary {
   name: string;
@@ -86,6 +91,9 @@ export interface IStationDiffRow {
   diff: IStationDiffSummary;
   app_years_count: number;
   db_years_count: number;
+  updated_at?: string;
+  generation_timestamp?: string;
+  generation_id?: string;
   season_diff_percent: number;
   season_diff: number;
   season_summary: IGroupDiffSummary;
@@ -123,6 +131,7 @@ const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
 const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
   'name',
   'diff_status',
+  'updated_at',
   'app_years_count',
   'db_years_count',
   'season_diff_percent',
@@ -224,6 +233,7 @@ export class ClimateAdminPageComponent {
     handleRowClick: (row: IStationDiffRow) => this.openStationDiffDialog(row.station),
     formatHeader: (v) => {
       if (v === 'diff_status') return 'Status';
+      if (v === 'updated_at') return 'Data System Generated';
       if (v === 'app_years_count') return 'App Years';
       if (v === 'db_years_count') return 'Data System Years';
       if (v === 'season_diff_percent') return 'Season Change %';
@@ -411,6 +421,7 @@ export class ClimateAdminPageComponent {
         diffSummary,
         appData,
         dbData,
+        stationData,
       },
       panelClass: 'no-padding',
       autoFocus: false,
@@ -626,6 +637,13 @@ export class ClimateAdminPageComponent {
         .map((d) => d.Year)
         .filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
 
+      const rainMeta = stationData?.annual_rainfall_metadata as
+        | { generation_timestamp?: string; generation_id?: string }
+        | null
+        | undefined;
+      const genTimestamp = rainMeta?.generation_timestamp || stationData?.updated_at;
+      const genId = rainMeta?.generation_id;
+
       return {
         name: station.station_name as string,
         station,
@@ -633,6 +651,9 @@ export class ClimateAdminPageComponent {
         diff,
         app_years_count: appYears.length,
         db_years_count: dbYears.length,
+        updated_at: stationData?.updated_at,
+        generation_timestamp: genTimestamp,
+        generation_id: genId,
         season_diff_percent: season_summary.headlinePercent,
         season_diff: season_summary.diffValuesCount,
         season_summary,
@@ -691,18 +712,73 @@ export class ClimateAdminPageComponent {
     return true;
   }
 
-  private generateProductSummary(stationData?: IClimateStationData['Row']) {
-    const annual_rainfall_data = stationData?.annual_rainfall_data;
-    const annual_temperature_data = stationData?.annual_temperature_data;
-    const crop_probability_data = stationData?.crop_probability_data;
-    const monthly_temperature_data = stationData?.monthly_temperature_data;
+  private generateProductSummary(stationData?: IClimateStationData['Row']): IProductSummary[] {
+    const rainMeta = stationData?.annual_rainfall_metadata as
+      | { generation_timestamp?: string; generation_id?: string }
+      | null
+      | undefined;
+    const cropMeta = stationData?.crop_probability_metadata as
+      | { generation_timestamp?: string; generation_id?: string }
+      | null
+      | undefined;
+    const annualTempMeta = stationData?.annual_temperature_metadata as
+      | { generation_timestamp?: string; generation_id?: string }
+      | null
+      | undefined;
+    const monthlyTempMeta = stationData?.monthly_temperature_metadata as
+      | { generation_timestamp?: string; generation_id?: string }
+      | null
+      | undefined;
+
     const productSummaries: IProductSummary[] = [
-      { id: 'Annual Rainfall', available: this.hasProductData(annual_rainfall_data) },
-      { id: 'Crop Probabilities', available: this.hasProductData(crop_probability_data) },
-      { id: 'Annual Temperatures', available: this.hasProductData(annual_temperature_data) },
-      { id: 'Monthly Temperatures', available: this.hasProductData(monthly_temperature_data) },
+      {
+        id: 'Annual Rainfall',
+        available: this.hasProductData(stationData?.annual_rainfall_data),
+        generation_timestamp: rainMeta?.generation_timestamp,
+        generation_id: rainMeta?.generation_id,
+      },
+      {
+        id: 'Crop Probabilities',
+        available: this.hasProductData(stationData?.crop_probability_data),
+        generation_timestamp: cropMeta?.generation_timestamp,
+        generation_id: cropMeta?.generation_id,
+      },
+      {
+        id: 'Annual Temperatures',
+        available: this.hasProductData(stationData?.annual_temperature_data),
+        generation_timestamp: annualTempMeta?.generation_timestamp,
+        generation_id: annualTempMeta?.generation_id,
+      },
+      {
+        id: 'Monthly Temperatures',
+        available: this.hasProductData(stationData?.monthly_temperature_data),
+        generation_timestamp: monthlyTempMeta?.generation_timestamp,
+        generation_id: monthlyTempMeta?.generation_id,
+      },
     ];
     return productSummaries;
+  }
+
+  public getProductTooltip(product: IProductSummary): string {
+    if (!product.available) {
+      return `${product.id} (No data / Error - click to refresh)`;
+    }
+    let tip = product.id;
+    if (product.generation_timestamp) {
+      const formattedDate = new Date(product.generation_timestamp).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      tip += ` (Generated: ${formattedDate}`;
+      if (product.generation_id) {
+        tip += ` • ID: ${product.generation_id}`;
+      }
+      tip += ')';
+    } else if (product.generation_id) {
+      tip += ` (ID: ${product.generation_id})`;
+    }
+    return tip;
   }
 
   /** create or reuse signal to provide live data refresh updates */

@@ -23,6 +23,8 @@ const apiClient = createClient<ClimateApi.paths>({
 interface SummaryApiResponse {
   data?: any[];
   metadata?: any;
+  generation_id?: string;
+  generation_timestamp?: string;
 }
 
 const upsertStationSummary = async (
@@ -40,11 +42,18 @@ const upsertStationSummary = async (
     return JSONResponse(apiData);
   }
 
+  // Preserve upstream generation metadata within product metadata JSON
+  const mergedMetadata = {
+    ...(apiData.metadata || {}),
+    ...(apiData.generation_timestamp ? { generation_timestamp: apiData.generation_timestamp } : {}),
+    ...(apiData.generation_id ? { generation_id: apiData.generation_id } : {}),
+  };
+
   const { error } = await supabase.from('climate_station_data').upsert({
     country_code: station.country_code as Database['public']['Enums']['country_code'],
     station_id: station.id,
     [dataField]: apiData.data,
-    [metadataField]: apiData.metadata,
+    [metadataField]: mergedMetadata,
   });
 
   if (error) throw error;

@@ -24,14 +24,25 @@ import {
   IStationDiffSummary,
 } from '../../../../climate-diff.types';
 import { generateDiffChartConfig } from '../../../../climate-diff.utils';
-import type { IStationRow } from '../../../../types';
+import type { IClimateStationData, IStationRow } from '../../../../types';
 
 export interface IStationDiffDialogData {
   station: IStationRow;
   diffSummary: IStationDiffSummary;
   appData: IStationData[];
   dbData: IStationData[];
+  stationData?: IClimateStationData['Row'];
 }
+
+const PRODUCT_METADATA_MAP: Record<string, keyof IClimateStationData['Row']> = {
+  rainfall: 'annual_rainfall_metadata',
+  start: 'annual_rainfall_metadata',
+  end: 'annual_rainfall_metadata',
+  length: 'annual_rainfall_metadata',
+  temp_min: 'annual_temperature_metadata',
+  temp_max: 'annual_temperature_metadata',
+  extremes: 'extremes_metadata',
+};
 
 @Component({
   selector: 'dashboard-station-diff-dialog',
@@ -69,6 +80,17 @@ export class StationDiffDialogComponent implements AfterViewInit {
   public selectedProductSummary = computed<IProductDiffSummary | undefined>(() => {
     const id = this.selectedProductId();
     return this.data.diffSummary?.products?.[id];
+  });
+
+  public selectedProductGeneration = computed<{ timestamp?: string; id?: string } | undefined>(() => {
+    const stationData = this.data.stationData;
+    if (!stationData) return undefined;
+    const productId = this.selectedProductId();
+    const metaField = PRODUCT_METADATA_MAP[productId] || 'annual_rainfall_metadata';
+    const meta = stationData[metaField] as { generation_timestamp?: string; generation_id?: string } | null | undefined;
+    const timestamp = meta?.generation_timestamp || stationData.updated_at;
+    const id = meta?.generation_id;
+    return { timestamp, id };
   });
 
   public chartConfig = computed<IChartConfig>(() => {

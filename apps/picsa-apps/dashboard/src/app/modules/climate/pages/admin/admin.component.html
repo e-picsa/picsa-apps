@@ -79,7 +79,7 @@
                 @for (product of products; track $index) {
                   <button
                     matIconButton
-                    [matTooltip]="product.id + (product.available ? '' : ' (No data / Error - click to refresh)')"
+                    [matTooltip]="getProductTooltip(product)"
                     class="status-icon"
                     (click)="refreshStation(row, $event)"
                   >
@@ -248,6 +248,7 @@
           [options]="diffTableOptions"
           [valueTemplates]="{
             diff_status: diffStatusTemplate,
+            updated_at: diffUpdatedAtTemplate,
             season_diff_percent: seasonPercentTemplate,
             season_diff: seasonBreakdownTemplate,
             temp_diff_percent: tempPercentTemplate,
@@ -255,6 +256,19 @@
             actions: diffActionTemplate,
           }"
         >
+          <!-- Data System Generated / Updated Column -->
+          <ng-template #diffUpdatedAtTemplate let-value let-row="row">
+            @if (row.generation_timestamp) {
+              <span [matTooltip]="row.generation_id ? 'Generation ID: ' + row.generation_id : ''">
+                {{ row.generation_timestamp | date: 'mediumDate' }}
+              </span>
+            } @else if (value) {
+              <span>{{ value | date: 'mediumDate' }}</span>
+            } @else {
+              <span class="text-muted text-xs">—</span>
+            }
+          </ng-template>
+
           <!-- Status Badge -->
           <ng-template #diffStatusTemplate let-status let-row="row">
             <button
