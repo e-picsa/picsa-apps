@@ -200,12 +200,12 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   magoye_agromet: {
     schemaVersion: 1,
-    lastUpdated: '2025-08-08',
-    contentHash: 'b8e9194d2beadebe55945e5aa06881d1a7c0a81928db8ccf66e333d7a3e8d393',
+    lastUpdated: '2026-10-05',
+    contentHash: '90d2939383e004f358546cd7a28da4ce9dffd08c5e4361923c25d8aef606331a',
     years: [1977, 2025],
     totalYears: 49,
-    completeRainYears: 42,
-    completeTempYears: 39,
+    completeRainYears: 41,
+    completeTempYears: 28,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
   },
   mansa_agro: {

@@ -177,6 +177,22 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     seasonProbabilities: [0.4, 0.8],
     data: async () => import('./muchinga--chinsali.json').then((v) => v.default as IStationCropData[]),
   },
+  {
+    id: 'southern/mazabuka',
+    label: 'Mazabuka',
+    station_label: 'KAFUE POLDER',
+    dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
+    seasonProbabilities: [0.3, 0.6, 0.9],
+    data: async () => import('./southern--mazabuka.json').then((v) => v.default as IStationCropData[]),
+  },
+  {
+    id: 'southern/monze',
+    label: 'Monze',
+    station_label: 'MAGOYE AGROMET',
+    dateHeadings: ['15-Nov', '30-Nov', '15-Dec'],
+    seasonProbabilities: [0.2, 0.5, 0.8],
+    data: async () => import('./southern--monze.json').then((v) => v.default as IStationCropData[]),
+  },
 ];
 
 export default ZM_CROP_DATA;
