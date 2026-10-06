@@ -12,6 +12,7 @@ import type {
 import {
   auditMonthlyChanges,
   calculateStationCapabilities,
+  type ClimateProductId,
   convertMonthlyTemperatureSummariesToRows,
   convertStationSummariesToRows,
   formatAnnualCsv,
@@ -500,7 +501,12 @@ export async function syncFromDatabaseForCountry(
     let newMonthlyCsvContent = existingMonthlyCsvContent;
     if (isTemperatureTargeted && hasMonthlyTemp) {
       const incomingMonthly = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
-      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthly, targetProducts);
+      const monthlyTemperatureProducts = new Set<ClimateProductId>(
+        Array.from(targetProducts).filter(
+          (product): product is ClimateProductId => product === 'temp_min' || product === 'temp_max',
+        ),
+      );
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthly, monthlyTemperatureProducts);
       newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
     }
 
