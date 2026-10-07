@@ -85,3 +85,9 @@ apps/picsa-server/.env.server
 .nx
 .temp
 .github/issues
+
+# Database backups and local sync dumps
+apps/picsa-server/.cache
+apps/picsa-server/supabase/.cache
+apps/picsa-server/scripts/backup/backups
+apps/picsa-server/scripts/db-seed/cache
