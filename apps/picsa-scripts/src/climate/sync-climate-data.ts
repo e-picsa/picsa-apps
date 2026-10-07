@@ -380,6 +380,7 @@ export async function refreshUpstreamDataForCountry(
   options: {
     station?: string;
     only?: string;
+    auditReport?: IClimateAuditReport;
   } = {},
 ): Promise<{ totalStations: number; successfulRequests: number; failedRequests: number }> {
   const countryUpper = country.toUpperCase();
@@ -439,18 +440,44 @@ export async function refreshUpstreamDataForCountry(
         });
 
         if (invokeErr) {
-          console.warn(
-            `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) API error: ${invokeErr.message}`,
-          );
+          let errorDetail = invokeErr.message;
+          try {
+            if ('context' in invokeErr && typeof (invokeErr as any).context?.json === 'function') {
+              const body = await (invokeErr as any).context.json();
+              if (body?.message) {
+                errorDetail += ` (${body.message})`;
+              } else if (body?.error?.message) {
+                errorDetail += ` (${body.error.message})`;
+              }
+            }
+          } catch {
+            // ignore context json parse error
+          }
+          console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) API error: ${errorDetail}`);
           failedRequests++;
+          if (options.auditReport) {
+            options.auditReport.warnings = options.auditReport.warnings || [];
+            options.auditReport.warnings.push({
+              country: countryUpper,
+              stationId: stationSlug,
+              message: `Upstream Climate API refresh error (${action})`,
+            });
+          }
         } else {
           successfulRequests++;
         }
-      } catch (err) {
-        console.warn(
-          `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${err?.message || err}`,
-        );
+      } catch (err: any) {
+        const errorMsg = err?.message || String(err);
+        console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${errorMsg}`);
         failedRequests++;
+        if (options.auditReport) {
+          options.auditReport.warnings = options.auditReport.warnings || [];
+          options.auditReport.warnings.push({
+            country: countryUpper,
+            stationId: stationSlug,
+            message: `Upstream Climate API refresh error (${action})`,
+          });
+        }
       }
     }
   }
@@ -881,10 +908,11 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
         const result = await refreshUpstreamDataForCountry(c, client, {
           station: options.station,
           only: options.only,
+          auditReport,
         });
-        if (result.failedRequests > 0) {
+        if (result.totalStations > 0 && result.successfulRequests === 0 && result.failedRequests > 0) {
           throw new Error(
-            `Upstream Climate API refresh failed for ${c.toUpperCase()}: ${result.failedRequests} request(s) failed.`,
+            `Upstream Climate API refresh completely failed for ${c.toUpperCase()}: all ${result.failedRequests} request(s) failed.`,
           );
         }
       }

@@ -273,7 +273,7 @@ export interface IStationAuditSummary {
   id: string;
   country?: string;
   status: 'NEW' | 'UPDATED' | 'UNCHANGED';
-  years?: readonly [start: number, end: number] | [number, number];
+  years?: readonly [start: number, end: number] | [number, number] | [];
   totalYears?: number;
   completeRainYears?: number;
   completeTempYears?: number;
