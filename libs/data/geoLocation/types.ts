@@ -8,6 +8,8 @@ export interface IGeolocationAdmin6Location {
   id: string;
   label: string;
   admin_4: string;
+  /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
+  topoName?: string;
 }
 
 export interface IGeolocationData {

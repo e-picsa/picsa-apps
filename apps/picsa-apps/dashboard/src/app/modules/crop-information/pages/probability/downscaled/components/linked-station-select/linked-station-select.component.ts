@@ -183,8 +183,10 @@ export class CropLinkedStationSelectComponent {
     const location = locations.find((v) => v.id === locationId);
 
     if (location) {
-      const normalizedTarget = this.normalizeName(location.label);
-      return geojson.features.find((f) => this.normalizeName(f.properties.name) === normalizedTarget);
+      const candidates = [location.label, (location as { topoName?: string }).topoName].filter((v): v is string => !!v);
+      return geojson.features.find((f) =>
+        candidates.some((name) => this.normalizeName(f.properties.name) === this.normalizeName(name)),
+      );
     }
     return undefined;
   }
