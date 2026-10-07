@@ -22,6 +22,7 @@ interface ICropDataDownscaledTableData {
   admin_4?: string;
   admin_5?: string;
   location: string;
+  location_id: string;
   station: string | null;
   total_crops: number;
   total_varieties: number;
@@ -66,9 +67,9 @@ export class CropProbabilityComponent {
   }
 
   public goToDownscaled(row: ICropDataDownscaledTableData) {
-    const { admin_4, admin_5 } = row;
-    const targetLocation = admin_5 || admin_4;
-    this.router.navigate([targetLocation], { relativeTo: this.route });
+    // Always navigate by the raw location id - geo labels (admin_4/admin_5) are only
+    // populated when the location exists in the geo lookup, so they can be undefined
+    this.router.navigate([row.location_id], { relativeTo: this.route });
   }
 
   private async generateDownscaledTableData(country_code: CountryCodeLegacy) {
@@ -88,6 +89,7 @@ export class CropProbabilityComponent {
         }
         const entry: ICropDataDownscaledTableData = {
           location: location_id,
+          location_id,
           station: climate_stations?.station_name || null,
           total_crops,
           total_varieties,
@@ -132,8 +134,20 @@ export class CropProbabilityComponent {
           entry.admin_4 = location;
         }
         entry.location = locationDetails.label;
+      } else {
+        // No geo match (e.g. district ids not yet in the geo lookup) - display a
+        // humanised label instead of the raw id, navigation still uses location_id
+        entry.location = formatLocationLabel(location);
       }
       return entry;
     });
   }
+}
+
+/** Convert a raw location id (e.g. `mt_darwin`) to a display label (`Mt Darwin`) */
+function formatLocationLabel(location_id: string) {
+  return location_id
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 }
