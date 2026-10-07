@@ -6,17 +6,6 @@
       [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
     ></picsa-form-crop-select>
   }
-  <button
-    matButton
-    color="primary"
-    aria-label="Share"
-    class="ml-auto"
-    (click)="sharePicture()"
-    [disabled]="shareDisabled()"
-  >
-    <mat-icon>share</mat-icon>
-    <span>{{ shareStatus() | translate }}</span>
-  </button>
 </div>
 
 <section id="cropProbabilityTable" class="table-container mat-mdc-table">

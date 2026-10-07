@@ -1,7 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -149,15 +148,6 @@ describe('CropProbabilityTableComponent', () => {
 
       expect(component.shareDisabled()).toBe(false);
       expect(component.shareStatus()).toBe('Export failed');
-    });
-
-    it('should trigger sharePicture when the share button is clicked', () => {
-      jest.spyOn(component, 'sharePicture');
-      const shareButton = fixture.debugElement.query(By.css('button[aria-label="Share"]'));
-      expect(shareButton).toBeTruthy();
-
-      shareButton.nativeElement.click();
-      expect(component.sharePicture).toHaveBeenCalled();
     });
   });
 });
