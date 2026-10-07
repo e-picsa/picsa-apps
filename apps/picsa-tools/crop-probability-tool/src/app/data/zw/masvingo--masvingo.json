@@ -1,0 +1,440 @@
+[
+  {
+    "crop": "maize-(short-season)",
+    "data": [
+      {
+        "variety": "Pan 413, PHB3506W, SC 555, SC 419",
+        "days": "120",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.1,
+          0.3,
+          0.3,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "135",
+        "water": [
+          450
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.1,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "maize-(medium-season)",
+    "data": [
+      {
+        "variety": "Pan 53, PHB30G19, SC 659, PGS 65, PGS 63, PGS 61, PGS 51",
+        "days": "135",
+        "water": [
+          450
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "150",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "maize-(long-season)",
+    "data": [
+      {
+        "variety": "Pan 7M81, P3812W, SC 727",
+        "days": "150-160",
+        "water": [
+          null
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "Shirikure , Vumba , Marcia, SC SILA, SV 1, SV 2, SV 3, SV 3",
+        "days": "90",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.3,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "finger-millet",
+    "data": [
+      {
+        "variety": "FMV 1, FMV 2",
+        "days": "130",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.2,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "145",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "pearl-millet",
+    "data": [
+      {
+        "variety": "PMV-1, PMV-2, PMV3, Tsholotsho",
+        "days": "75",
+        "water": [
+          250
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.1
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.3,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "variety": "Germany 2,  Alisha",
+        "days": "120",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.3,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "150",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sesame",
+    "data": [
+      {
+        "variety": "White Sesame, Golden/Brown Sesam",
+        "days": "80-90",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.1,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "IT 18, CBC1, CBC 2",
+        "days": "75-80",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.3,
+          0.3,
+          0.4,
+          0.3,
+          0.1
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "SC Nyanda ,  Valencia, Makulu Red,  Natal Common",
+        "days": "85-105",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.1,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sugar-beans",
+    "data": [
+      {
+        "variety": "Kware , Cardinal Bounty, SC Sharp",
+        "days": "75",
+        "water": [
+          250
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.1
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "roundnuts",
+    "data": [
+      {
+        "variety": "Cream Black eye, Cream Brown eye Cream no eye, Brown, Black, Red",
+        "days": "110",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.3,
+          0.3,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "150",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "Perodovic . Masasa",
+        "days": "80",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.2,
+          0.3,
+          0.3,
+          0.4,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          0
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.3,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "Albar, G51",
+        "days": "12\n0",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0.1,
+          0.2,
+          0.3,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "150",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  }
+]

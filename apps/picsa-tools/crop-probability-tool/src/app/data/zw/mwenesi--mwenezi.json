@@ -1,0 +1,517 @@
+[
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "Macia",
+        "days": "65",
+        "water": [
+          250
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.3,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "",
+        "days": "90",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "Sila",
+        "days": "90",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "Hwedza",
+        "days": "90",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "mandende",
+        "days": "120",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "150",
+        "water": [
+          600
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "pearl-millet",
+    "data": [
+      {
+        "variety": "Okashana 1, PMV3",
+        "days": "75",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.2,
+          0.2,
+          0.2,
+          0.1
+        ]
+      },
+      {
+        "variety": "PMV3, Okashana 1",
+        "days": "90",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "Musweweshoko",
+        "days": "90",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          500
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "Sc 401,sc 403",
+        "days": "90",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "PAN 413",
+        "days": "90",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          550
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "SC 513",
+        "days": "120",
+        "water": [
+          550
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "RED COB",
+        "days": "90-100",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "8 LINE",
+        "days": "120-130",
+        "water": [
+          550
+        ],
+        "probabilities": [
+          550,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "ground-nuts",
+    "data": [
+      {
+        "variety": "Nyanda",
+        "days": "60",
+        "water": [
+          270
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.2,
+          0.1,
+          0.1
+        ]
+      },
+      {
+        "variety": "",
+        "days": "90",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "Natal Common",
+        "days": "90",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          550
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "bambaranuts",
+    "data": [
+      {
+        "variety": "Misodzi ",
+        "days": "90-100",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "Nyimo  tsvuku",
+        "days": "90-100",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "CBC2",
+        "days": "60",
+        "water": [
+          300
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.2,
+          0.1,
+          0.1
+        ]
+      },
+      {
+        "variety": "Nyemba yokutanda",
+        "days": "90",
+        "water": [
+          400
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0.1,
+          0.1,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "120",
+        "water": [
+          550
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "QM 301",
+        "days": "180",
+        "water": [
+          700
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "QM 302",
+        "days": "150",
+        "water": [
+          600
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "",
+        "days": "180",
+        "water": [
+          700
+        ],
+        "probabilities": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "variety": "Mahyco , Jaguar",
+        "days": "90-105",
+        "water": [
+          350
+        ],
+        "probabilities": [
+          0,
+          0.1,
+          0.1,
+          0.1,
+          0.2,
+          0.1,
+          0
+        ]
+      }
+    ]
+  }
+]
