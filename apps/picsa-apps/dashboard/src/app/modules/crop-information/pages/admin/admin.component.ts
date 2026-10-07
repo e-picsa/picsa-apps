@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 import { IGeolocationAdmin5Location } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
@@ -22,7 +23,9 @@ import {
   plantDayToDateLabel,
   roundToNearest,
 } from '../../utils/probability.utils';
+import { CropDuplicateCropsComponent } from './components/components/duplicate-crops.component';
 import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
+import { CropMissingStationInfoComponent } from './components/components/missing-station-info.component';
 
 interface ICropDataImport {
   location_id: string;
@@ -56,7 +59,10 @@ interface ICropDataImport {
     PicsaDataTableComponent,
     DashboardMaterialModule,
     CropMissingLocationsComponent,
+    CropMissingStationInfoComponent,
+    CropDuplicateCropsComponent,
     PicsaFormsModule,
+    MatTabsModule,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',

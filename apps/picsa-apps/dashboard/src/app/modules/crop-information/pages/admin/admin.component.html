@@ -59,9 +59,30 @@
     }
   </mat-accordion>
 
-  <!-- Quality Control -->
-  <h2>Quality Control</h2>
-  <dashboard-crop-missing-locations></dashboard-crop-missing-locations>
+  <!-- Quality Control Tabs -->
+  <h2 class="mt-6">Quality Control</h2>
+  <mat-tab-group class="mt-2" animationDuration="0ms">
+    <!-- Tab 1: Location Data Coverage -->
+    <mat-tab label="Location Data Coverage">
+      <div class="p-4">
+        <dashboard-crop-missing-locations></dashboard-crop-missing-locations>
+      </div>
+    </mat-tab>
+
+    <!-- Tab 2: Stations Missing Crop Info -->
+    <mat-tab label="Stations Missing Crop Info">
+      <div class="p-4">
+        <dashboard-crop-missing-station-info></dashboard-crop-missing-station-info>
+      </div>
+    </mat-tab>
+
+    <!-- Tab 3: Duplicate Crop & Variety Inspector -->
+    <mat-tab label="Duplicate Crop & Variety Inspector">
+      <div class="p-4">
+        <dashboard-crop-duplicate-crops></dashboard-crop-duplicate-crops>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 
 <!-- Template Export Location Select -->

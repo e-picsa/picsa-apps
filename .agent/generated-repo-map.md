@@ -35,7 +35,7 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (417 files scanned)
+## Codebase Symbol Index (423 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -159,8 +159,17 @@
   - `Class` **CropInformationModule**
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts`)
   - `Component` **DashboardCropAdminComponent** (methods: [handleDataLoad, downloadTemplate, processImport, exportCropProbabilityTables])
+- **[duplicate-crops.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts`)
+  - `Component` **CropDuplicateCropsComponent** (methods: [ngAfterViewInit, addToWhitelist, removeFromWhitelist, whitelistGroup, copyVariants])
+- **[duplicate-crops.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts`)
+  - `Interface` **ICropVarietyPair**
+  - `Interface` **IDuplicateGroup**
+  - `Function` **normalizeName**
+  - `Function` **groupDuplicateVarieties**
 - **[missing-locations.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts`)
   - `Component` **CropMissingLocationsComponent** (methods: [addPlaceholderLocations])
+- **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
+  - `Component` **CropMissingStationInfoComponent** (methods: [copyStationIds])
 - **[language-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts`)
   - `Component` **CropProbabilityLanguageSelectComponent**
 - **[linked-station-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts`)
@@ -183,9 +192,12 @@
   - `Service` **CropInformationService** (methods: [init, delete, insert, upsert, upsertDownscaled])
   - `Type` **ICropData**
   - `Type` **ICropDataDownscaled**
+  - `Type` **IClimateStationData**
+  - `Type` **IClimateStations**
   - `Type` **ICropDataDownscaledWaterRequirements**
   - `Type` **ICropDataMergedWaterRequirement**
   - `Type` **ICropDataMerged**
+  - `Type` **IStationDataWithMeta**
 - **[crop-probability-docx.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts`)
   - `Service` **CropProbabilityDocxService** (methods: [exportDocx, buildDocxDocument, formatProbability])
   - `Interface` **IExportDocxOptions**
@@ -251,6 +263,19 @@
   - `Component` **ResourceCollectionEditComponent**
 - **[resource-collections.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts`)
   - `Component` **ResourceCollectionsComponent** (methods: [ngOnInit])
+- **[resources-farmer-videos.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.component.ts`)
+  - `Component` **ResourcesFarmerVideosComponent** (methods: [getColumnCoverage, openPreview, openVariantPreview, copyUrl])
+- **[resources-farmer-videos.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.utils.ts`)
+  - `Interface` **IFarmerVideoConfig**
+  - `Interface` **ITranslationCell**
+  - `Interface` **IFarmerVideoMatrixRow**
+  - `Interface` **IVideoPreviewData**
+  - `Interface` **IFarmerVideoStats**
+  - `Type` **VideoCategory**
+  - `Type` **TranslationCellStatus**
+  - `Function` **getDirectToFarmerVideos**
+  - `Function` **getVideosForCountry**
+  - `Function` **getLocalesForCountry**
 - **[resource-file-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts`)
   - `Component` **ResourceFileEditComponent** (methods: [ngOnInit, saveResource, openExternalResource, promptDelete, handleUploadComplete])
 - **[resource-files.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts`)
@@ -462,13 +487,13 @@
   - `Interface` **IBudget**
   - `Interface` **IBudgetPeriodData**
   - `Interface` **IBudgetMeta**
+  - `Interface` **IBudgetPeriodLabel**
   - `Interface` **IBudgetQueryParams**
   - `Interface` **IBudgetActiveCell**
   - `Interface` **IBudgetDatabase**
   - `Interface` **IBudgetCodeDoc**
   - `Type` **IBudgetPeriodType**
   - `Type` **IEnterpriseScaleLentgh**
-  - `Type` **IBudgetValueScale**
 - **[v1.models.ts](../apps/picsa-tools/budget-tool/src/app/models/legacy/v1.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/legacy/v1.models.ts`)
   - `Interface` **V1Budget**
 - **[v2.models.ts](../apps/picsa-tools/budget-tool/src/app/models/legacy/v2.models.ts)** (`apps/picsa-tools/budget-tool/src/app/models/legacy/v2.models.ts`)
@@ -503,6 +528,7 @@
 - **[budget.store.ts](../apps/picsa-tools/budget-tool/src/app/store/budget.store.ts)** (`apps/picsa-tools/budget-tool/src/app/store/budget.store.ts`)
   - `Service` **BudgetStore** (methods: [setActiveBudget, unloadActiveBudget, patchBudget, saveEditor, scaleValueCounters])
   - `Type` **IBudgetCounterSVGIcons**
+  - `Function` **generatePeriodLabels**
 - **[templates.ts](../apps/picsa-tools/budget-tool/src/app/store/templates.ts)** (`apps/picsa-tools/budget-tool/src/app/store/templates.ts`)
   - `Interface` **IBudgetPeriodRow**
 - **[app.component.ts](../apps/picsa-tools/climate-tool/src/app/app.component.ts)** (`apps/picsa-tools/climate-tool/src/app/app.component.ts`)
@@ -518,8 +544,10 @@
   - `Interface` **IOverlayLine**
   - `Type` **PointShape**
 - **[el-nino-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/el-nino-tool/el-nino-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/el-nino-tool/el-nino-tool.component.ts`)
+  - `Class` **BaseEnsoTool** (methods: [toggleGrade, selectAllGrades, clearAllGrades, isGradeSelected, getLegendItems])
   - `Component` **ElNinoToolComponent**
   - `Component` **LaNinaToolComponent**
+  - `Interface` **IEnsoGradeDisplayItem**
 - **[line-date-picker-header.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker-header.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker-header.ts`)
   - `Component` **LineDatePickerHeaderComponent** (methods: [ngOnDestroy, previousClicked, nextClicked])
 - **[line-date-picker.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/line-tool/line-date-picker.ts`)
@@ -533,7 +561,7 @@
 - **[tool-select.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts`)
   - `Component` **ToolSelectComponent**
 - **[climate-chart-options.component.ts](../apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts`)
-  - `Component` **ClimateChartOptionsComponent** (methods: [showShareDialog])
+  - `Component` **ClimateChartOptionsComponent** (methods: [closeToolCustomisation, showShareDialog])
 - **[material.module.ts](../apps/picsa-tools/climate-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/climate-tool/src/app/components/material.module.ts`)
   - `Class` **PicsaClimateMaterialModule**
 - **[period-navigator.component.ts](../apps/picsa-tools/climate-tool/src/app/components/period-navigator/period-navigator.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/period-navigator/period-navigator.component.ts`)
@@ -572,7 +600,9 @@
   - `Function` **clearLineOverlay**
   - `Function` **clearPointOverlay**
 - **[chart.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts`)
+  - `Function` **isTemperatureChart**
   - `Function` **generateChartConfig**
+  - `Function` **calculateDataRanges**
   - `Function` **formatYValue**
 - **[app.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/app.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/app.component.ts`)
   - `Component` **PicsaCropProbabilityTool**
@@ -1099,4 +1129,6 @@
   - `Migration` **20260805140000_add_country_code_to_crop_data.sql**
 - **[20260808091500_allow_null_maturity_period.sql](../apps/picsa-server/supabase/migrations/20260808091500_allow_null_maturity_period.sql)** (`apps/picsa-server/supabase/migrations/20260808091500_allow_null_maturity_period.sql`)
   - `Migration` **20260808091500_allow_null_maturity_period.sql**
+- **[20260910000000_drop_crop_override_data.sql](../apps/picsa-server/supabase/migrations/20260910000000_drop_crop_override_data.sql)** (`apps/picsa-server/supabase/migrations/20260910000000_drop_crop_override_data.sql`)
+  - `Migration` **20260910000000_drop_crop_override_data.sql**
 

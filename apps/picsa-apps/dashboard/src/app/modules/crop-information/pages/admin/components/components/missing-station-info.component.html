@@ -1,0 +1,40 @@
+<div class="space-y-4">
+  <!-- Summary Stats -->
+  <div class="flex flex-wrap gap-4">
+    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">info</mat-icon>
+      <span>{{ stats().total }} stations with crop probability data</span>
+    </div>
+    <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
+      <mat-icon class="text-green-600">check_circle</mat-icon>
+      <span>{{ stats().ok }} OK in DB</span>
+    </div>
+    <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
+      <mat-icon class="text-red-600">error</mat-icon>
+      <span>{{ stats().missing }} Missing Downscaled Record</span>
+    </div>
+    <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
+      <mat-icon class="text-orange-600">warning</mat-icon>
+      <span>{{ stats().empty }} Empty Water Requirements</span>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="flex items-center gap-4">
+    <button matButton="filled" color="primary" (click)="copyStationIds()" [disabled]="stats().problems === 0">
+      <mat-icon>content_copy</mat-icon>
+      Copy {{ stats().problems }} Station IDs
+    </button>
+    <span class="text-sm text-gray-500">Copies comma-separated station IDs for stations missing crop info</span>
+  </div>
+
+  <!-- Data Table -->
+  @if (problemStations().length > 0) {
+    <picsa-data-table [data]="problemStations()" [options]="tableOptions"></picsa-data-table>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>
+      <p class="text-gray-600">All stations with crop probability data have water requirements defined</p>
+    </div>
+  }
+</div>
