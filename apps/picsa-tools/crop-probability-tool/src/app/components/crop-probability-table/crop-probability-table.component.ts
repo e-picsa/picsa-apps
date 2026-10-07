@@ -32,7 +32,9 @@ export type IProbabilityTableRow = IStationCropDataItem & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent {
-  private readonly printProvider = inject(PrintProvider);
+  private printProvider = inject(PrintProvider);
+
+  private initialFilterApplied = false;
 
   public cropDataHashmap = CROPS_DATA_HASHMAP;
 
@@ -70,30 +72,41 @@ export class CropProbabilityTableComponent {
   public cropFilterFn = computed(() => {
     const data = this.stationData();
     if (!data) return undefined;
-    const cropNames = new Set(data.map((d) => d.crop));
-    return (crop: ICropData) => cropNames.has(crop.id as ICropName) || cropNames.has(crop.name as ICropName);
+    const cropNames = new Set(data.map((d) => d.crop.toLowerCase()));
+    return (crop: ICropData) =>
+      cropNames.has((crop.id || '').toLowerCase() as ICropName) ||
+      cropNames.has((crop.name || '').toLowerCase() as ICropName);
   });
 
   /** Track image sharing state */
   public shareStatus = signal<'Share' | 'Preparing image....' | string>('Share');
 
-  public shareDisabled = computed(() => this.shareStatus() !== 'Share');
+  public shareDisabled = computed(() => this.shareStatus() === 'Preparing image....');
 
   constructor() {
     this.dataSource.filterPredicate = (row: IProbabilityTableRow, filter: string) => {
-      return !filter || row.crop === filter;
+      const normalizedFilter = (filter || '').trim().toLowerCase();
+      if (!normalizedFilter || normalizedFilter === 'all' || normalizedFilter === 'show all') {
+        return true;
+      }
+      return (row.crop || '').trim().toLowerCase() === normalizedFilter;
     };
 
     effect(() => {
       const initial = this.filterCrop();
-      if (initial && !this.selectedCropName()) {
+      if (initial && !this.initialFilterApplied) {
+        this.initialFilterApplied = true;
         this.selectedCropName.set(initial);
       }
     });
 
     effect(() => {
       const selected = this.selectedCropName();
-      this.dataSource.filter = selected || '';
+      if (!selected || selected === 'all' || selected === 'show all') {
+        this.dataSource.filter = '';
+      } else {
+        this.dataSource.filter = selected.trim().toLowerCase();
+      }
     });
 
     effect(() => {
@@ -122,7 +135,7 @@ export class CropProbabilityTableComponent {
   }
 
   public formatProbability(value: number | null | undefined): string {
-    if (value == null || Number.isNaN(value)) return '';
+    if (value == null || isNaN(value)) return '';
     return `${Math.round(value * 10)}/10`;
   }
 
@@ -132,7 +145,8 @@ export class CropProbabilityTableComponent {
     try {
       await _wait(200);
       const crop = this.selectedCropName();
-      const cropLabel = crop ? CROPS_DATA_HASHMAP[crop]?.label || crop.charAt(0).toUpperCase() + crop.slice(1) : '';
+      const isAll = !crop || crop === 'all' || crop === 'show all';
+      const cropLabel = !isAll ? CROPS_DATA_HASHMAP[crop]?.label || crop.charAt(0).toUpperCase() + crop.slice(1) : '';
       const stationLabel = this.tableMeta().label;
       const title = ['Crop Probability', stationLabel, cropLabel].filter(Boolean).join(' - ');
       await this.printProvider.shareHtmlDom('#cropProbabilityTable', title);
