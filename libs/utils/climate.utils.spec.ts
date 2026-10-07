@@ -16,6 +16,7 @@ import {
   parseAnnualCsv,
   parseMonthlyCsv,
   pivotLongToWideMonthly,
+  resolveClimateApiActions,
   resolveClimateProducts,
   roundClimateValue,
   stationHasAnnualTemperature,
@@ -1148,6 +1149,36 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(convertMonthlyTemperatureSummariesToRows(null)).toEqual([]);
       expect(convertMonthlyTemperatureSummariesToRows(undefined)).toEqual([]);
       expect(convertMonthlyTemperatureSummariesToRows([])).toEqual([]);
+    });
+  });
+  describe('resolveClimateApiActions', () => {
+    it('should return all API summary actions when all products are targeted', () => {
+      const all = resolveClimateProducts();
+      const actions = resolveClimateApiActions(all);
+      expect(actions).toEqual([
+        'rainfall-summaries',
+        'crop-probabilities',
+        'annual-temperature',
+        'monthly-temperatures',
+      ]);
+    });
+
+    it('should return only rainfall-summaries for rainfall filter', () => {
+      const products = resolveClimateProducts('rainfall');
+      const actions = resolveClimateApiActions(products);
+      expect(actions).toEqual(['rainfall-summaries', 'crop-probabilities']);
+    });
+
+    it('should return temperature actions for temperature group alias', () => {
+      const products = resolveClimateProducts('temperature');
+      const actions = resolveClimateApiActions(products);
+      expect(actions).toEqual(['annual-temperature', 'monthly-temperatures']);
+    });
+
+    it('should return temperature actions for temp_min or temp_max', () => {
+      const products = resolveClimateProducts('temp_min');
+      const actions = resolveClimateApiActions(products);
+      expect(actions).toEqual(['annual-temperature', 'monthly-temperatures']);
     });
   });
 });

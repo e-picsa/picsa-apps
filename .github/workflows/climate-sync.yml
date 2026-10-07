@@ -1,0 +1,172 @@
+name: Climate Data Sync
+
+on:
+  schedule:
+    # Run weekly on Monday at 04:00 UTC
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'Country to synchronize'
+        type: choice
+        options:
+          - all
+          - zm
+          - mw
+          - zw
+        default: 'all'
+      refresh_api:
+        description: 'Fetch latest data from Climate API into Supabase DB first'
+        type: boolean
+        default: true
+      only:
+        description: 'Subset of climate products to sync (e.g. rainfall, temperature)'
+        type: string
+        required: false
+        default: ''
+      station:
+        description: 'Target specific station slug (optional)'
+        type: string
+        required: false
+        default: ''
+
+concurrency:
+  group: climate-sync-${{ github.workflow }}-${{ github.ref }}-${{ inputs.country || 'all' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      countries: ${{ steps.set_countries.outputs.countries }}
+    steps:
+      - name: Determine target countries
+        id: set_countries
+        run: |
+          SELECTED_COUNTRY="${{ inputs.country || 'all' }}"
+          if [ "$SELECTED_COUNTRY" = "all" ]; then
+            echo 'countries=["zm", "mw", "zw"]' >> "$GITHUB_OUTPUT"
+          else
+            echo "countries=[\"$SELECTED_COUNTRY\"]" >> "$GITHUB_OUTPUT"
+          fi
+
+  sync_country:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1 # Run sequentially per country to avoid rate limiting on upstream Climate API
+      matrix:
+        country: ${{ fromJson(needs.prepare.outputs.countries) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          lfs: true
+          fetch-depth: 0 # Full history needed for station git commit date evaluation
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run Climate Sync
+        env:
+          SUPABASE_REMOTE_URL: ${{ secrets.SUPABASE_REMOTE_URL || vars.SUPABASE_REMOTE_URL || format('https://{0}.supabase.co', vars.SUPABASE_PROJECT_ID) }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_REMOTE_SECRET_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_REMOTE_SECRET_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          COUNTRY="${{ matrix.country }}"
+          ARGS="--country=$COUNTRY"
+
+          # Determine whether to refresh upstream API
+          REFRESH_UPSTREAM="${{ github.event_name == 'schedule' || inputs.refresh_api == true }}"
+          if [ "$REFRESH_UPSTREAM" = "true" ]; then
+            ARGS="$ARGS --refresh-api"
+          fi
+
+          if [ -n "${{ inputs.only }}" ]; then
+            ARGS="$ARGS --only=${{ inputs.only }}"
+          fi
+
+          if [ -n "${{ inputs.station }}" ]; then
+            ARGS="$ARGS --station=${{ inputs.station }}"
+          fi
+
+          echo "Running: yarn scripts:climate:sync $ARGS"
+          yarn scripts:climate:sync $ARGS
+
+      - name: Check for changes in ${{ matrix.country }}
+        id: check_changes
+        run: |
+          COUNTRY="${{ matrix.country }}"
+          SUMMARY_DIR="apps/picsa-tools/climate-tool/src/assets/summaries/$COUNTRY"
+          STATION_DIR="apps/picsa-tools/climate-tool/src/app/data/stations/$COUNTRY"
+
+          DIFF_OUTPUT=$(git status --porcelain "$SUMMARY_DIR" "$STATION_DIR")
+          if [ -n "$DIFF_OUTPUT" ]; then
+            echo "Changes detected for country $COUNTRY:"
+            echo "$DIFF_OUTPUT"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes detected for country $COUNTRY."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Read Markdown Audit Report
+        id: read_report
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          REPORT_FILE="dist/climate-sync-report.md"
+          if [ -f "$REPORT_FILE" ]; then
+            delimiter="$(openssl rand -hex 8)"
+            echo "report<<${delimiter}" >> "$GITHUB_OUTPUT"
+            cat "$REPORT_FILE" >> "$GITHUB_OUTPUT"
+            echo "${delimiter}" >> "$GITHUB_OUTPUT"
+          else
+            echo "report=Automated climate synchronization completed with updates." >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: content/climate-sync-${{ matrix.country }}
+          title: "content(climate): sync ${{ matrix.country }} station data"
+          commit-message: "content(climate): sync ${{ matrix.country }} station data"
+          labels: |
+            Tool: Climate
+            enhancement
+          delete-branch: true
+          add-paths: |
+            apps/picsa-tools/climate-tool/src/assets/summaries/${{ matrix.country }}
+            apps/picsa-tools/climate-tool/src/app/data/stations/${{ matrix.country }}
+          body: |
+            <!-- pr-agent-generated -->
+            ## Developer Summary
+
+            Automated climate data synchronization for `${{ matrix.country }}`.
+
+            ${{ steps.read_report.outputs.report }}
+
+            ## Related Issues
+
+            Part of Epic #713
+            Relates to #688
+
+            ---
+
+            ## AI Summary
+
+            > Will be generated on PR open. Regenerate by typing comment `/describe` in PR
+            > More info at https://docs.pr-agent.ai/tools/describe/
