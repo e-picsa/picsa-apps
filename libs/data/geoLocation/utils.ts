@@ -1,6 +1,47 @@
-import { IBoundaryData, IGeoJsonData, ITopoJson } from './types';
+import { IBoundaryData, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
 
 import * as topojson from 'topojson-client';
+
+/** Hierarchy slots in top-down order. Names are relative positions, not OSM level numbers. */
+export type GeoLocationSlot = 'admin_4' | 'admin_5' | 'admin_6';
+
+const ALL_SLOTS: GeoLocationSlot[] = ['admin_4', 'admin_5', 'admin_6'];
+
+/** Slots defined for a country, top-down (e.g. mw: [admin_4], zm: [admin_4, admin_5], zw: [admin_4, admin_6]) */
+export function getLocationSlots(data: IGeolocationData): GeoLocationSlot[] {
+  return ALL_SLOTS.filter((slot) => data[slot] !== undefined);
+}
+
+/** Locations at the deepest defined tier (e.g. districts) */
+export function getDeepestLocations(data: IGeolocationData): { id: string; label: string }[] {
+  const slots = getLocationSlots(data);
+  return data[slots[slots.length - 1]]?.locations ?? [];
+}
+
+/** OSM-style level number of the deepest tier, for topojson geometry filtering */
+export function getDeepestAdminLevel(data: IGeolocationData): 4 | 5 | 6 {
+  const slot = getLocationSlots(data).pop() as GeoLocationSlot;
+  return Number(slot.split('_')[1]) as 4 | 5 | 6;
+}
+
+/** Find a location by id, searching deepest tier first (district ids win over same-named provinces) */
+export function findLocationById(data: IGeolocationData, id: string) {
+  const slots = getLocationSlots(data);
+  for (let i = slots.length - 1; i >= 0; i--) {
+    const slot = slots[i];
+    const location = data[slot]?.locations.find((v) => v.id === id);
+    if (location) return { location, slot };
+  }
+  return undefined;
+}
+
+/** Convert a raw location id (e.g. `mt_darwin`) to a display label (`Mt Darwin`) */
+export function formatLocationIdAsLabel(location_id: string) {
+  return location_id
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
 
 export function topoJsonToGeoJson<T = any>(t: ITopoJson, adminLevel?: string | number): IGeoJsonData<T> {
   // convert the first named object in the topology

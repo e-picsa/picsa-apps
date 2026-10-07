@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { IGeolocationAdmin5Location } from '@picsa/data/geoLocation';
+import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -174,7 +174,7 @@ export class DashboardCropAdminComponent {
       const exportEntries: any[] = [];
 
       const locationData = this.deploymentService.activeDeploymentLocationData();
-      const locations = locationData.admin_5?.locations || locationData.admin_4?.locations || [];
+      const locations = getDeepestLocations(locationData);
 
       for (const row of downscaledRows || []) {
         if (!row.station_id || !row.water_requirements) continue;
@@ -218,7 +218,9 @@ export class DashboardCropAdminComponent {
         });
 
         // Find parent region ID and name
-        const match = locations.find((v) => v.id === row.location_id) as IGeolocationAdmin5Location;
+        const match = locations.find((v) => v.id === row.location_id) as
+          | { id: string; label: string; admin_4?: string }
+          | undefined;
         const parentId = match?.admin_4 || '';
         const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
         const label = match?.label || row.location_id;
@@ -340,7 +342,7 @@ export class DashboardCropAdminComponent {
 
   private getLocationList() {
     const locationData = this.deploymentService.activeDeploymentLocationData();
-    return locationData.admin_5?.locations || locationData.admin_4?.locations;
+    return getDeepestLocations(locationData);
   }
 
   private qualityControlData(data: ICropDataImport[] = []) {

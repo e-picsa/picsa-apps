@@ -19,7 +19,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaTourButton, TourService } from '@picsa/shared/services/core/tour';
@@ -73,7 +73,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const country = this.countryCode();
     if (!country || !location) return false;
     const geoData = getGeoLocationData(country as ICountryCode);
-    if (geoData.admin_5) {
+    // multi-tier countries require both top and sublocation segments (stored at indexes 4 and 5)
+    if (getLocationSlots(geoData).length > 1) {
       return !!location[4] && !!location[5];
     }
     return !!location[4];
@@ -144,38 +145,45 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Modify locations to only include values that have probability data */
   public locationModifier(data: IGeolocationData, country_code: string): IGeolocationData {
     const allData: IProbabilityTable[] = PROBABILITY_TABLE_DATA[country_code] || [];
-    // track locations of existing probability tables, which have id in format admin_4/admin_5
-    const availableLocations = { admin_4: [] as string[], admin_5: [] as string[] };
+    const slots = getLocationSlots(data);
+    // track table ids per level - ids use format parent[/child[--sublocation]]
+    const availableByLevel: string[][] = slots.map(() => []);
     for (const entry of allData) {
-      const [admin_4, admin_5] = entry.id.split('/');
-      availableLocations.admin_4.push(admin_4);
-      availableLocations.admin_5.push(admin_5);
-    }
-
-    // filter admin_4 to only include those with child probability tables available
-    data.admin_4.locations = data.admin_4.locations.filter((v) => availableLocations.admin_4.includes(v.id));
-
-    // filter admin_5 to only include those with child probability tables available
-    if (data.admin_5) {
-      data.admin_5.locations = data.admin_5.locations.filter((v) => availableLocations.admin_5.includes(v.id));
-
-      // HACK - zm data has multiple tables in same admin_5, e.g.
-      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
-      allData.forEach((entry) => {
-        const [admin_4, admin_5_with_sublocation] = entry.id.split('/');
-        const [admin_5, sublocation] = admin_5_with_sublocation.split('--');
-        if (sublocation) {
-          data.admin_5?.locations.push({ id: entry.id, label: entry.label, admin_4 });
-        }
+      entry.id.split('/').forEach((segment, i) => {
+        if (i < slots.length) availableByLevel[i].push(segment.split('--')[0]);
       });
     }
 
-    // HACK - mw data does not track admin_5 but crop probability tables include multiple per
-    // district so create entries to use in filter
-    else {
+    // filter each level to only include those with child probability tables available
+    slots.forEach((slot, i) => {
+      const locations = data[slot]?.locations ?? [];
+      (data[slot] as { locations: { id: string }[] }).locations = locations.filter((v) =>
+        availableByLevel[i].includes(v.id),
+      );
+    });
+
+    if (slots.length > 1) {
+      const deepSlot = slots[slots.length - 1];
+      const parentSlot = slots[slots.length - 2];
+      // HACK - data can have multiple tables in same sublocation, e.g.
+      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
+      allData.forEach((entry) => {
+        const segments = entry.id.split('/');
+        const [child, sublocation] = (segments[1] || '').split('--');
+        if (sublocation) {
+          (data[deepSlot]?.locations as unknown[]).push({
+            id: entry.id,
+            label: entry.label,
+            [parentSlot]: segments[0],
+          });
+        }
+      });
+    } else {
+      // HACK - single-tier geo data but crop probability tables include multiple per
+      // location so create entries to use in filter
       const additionalLocations = allData.map(({ id, label }) => {
-        const [admin_4, admin_5] = id.split('/');
-        return { id: admin_5, admin_4, label };
+        const [parent, child] = id.split('/');
+        return { id: child ?? parent, admin_4: parent, label };
       });
       data.admin_5 = { label: 'Location', locations: additionalLocations };
     }
