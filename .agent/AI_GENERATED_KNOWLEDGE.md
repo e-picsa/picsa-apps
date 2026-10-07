@@ -403,3 +403,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The CI workflow (`.github/workflows/climate-sync.yml`) runs weekly on schedule or on demand via `workflow_dispatch`. It executes per country with `max-parallel: 1` to protect upstream API throughput.
   - Full git history (`fetch-depth: 0`) is strictly required in checkout so `getStationGitLastUpdatedDate()` can query `git log` without incorrectly overwriting station commit timestamps with the run date.
   - PRs are created conditionally per country (`content/climate-sync-<country>`) only if files within `summaries/<country>` or `data/stations/<country>` change, formatting the markdown audit report directly into the PR body.
+
+### Crop SVG Vector Iconography & Botanical Design Conventions
+
+- **Vector Line Art Style (`libs/data/crops/svgs/`)**:
+  - Icons are monochrome outline vector illustrations (`stroke="#000000"`, `fill="none"` or compound cutouts), with no multi-color fills and transparent backgrounds.
+  - Standard square `viewBox="0 0 100 100"` with clean line weights (primary boundaries ~2.2–2.5px, secondary textures/veins/bristles ~1.2–1.5px) ensures crisp legibility when scaled down to 48x48px inside Angular Material `<mat-icon>` in `.icons-container`.
+  - **Occlusion Handling without Opaque Fills**: In UI components like `crop-select.scss`, selected items use dynamic theme backgrounds (e.g. `background: wheat`). Using opaque white fills (`fill="#fff"`) causes unsightly white boxes on colored backgrounds. To maintain transparency without background lines cutting through foreground objects, overlapping background paths must be trimmed precisely to the boundary of the foreground shapes.
+- **Botanical Identifiers**:
+  - **Millet (`millet.svg`)**: Distinguishable by the long, dense, cylindrical "cattail" or "bulrush" spike of pearl millet (*Pennisetum glaucum*) covered in small round grains with fine radiating bristles (involucral awns), a secondary tilted tiller spike, grass nodes, graceful arching ribbon leaves with midribs, and loose round millet seeds.
+  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the globular, subterranean pods of Bambara groundnut (*Vigna subterranea* / "roundnuts" / *nyimo*), an opened shell half showing the round nut nestled in the cup, smooth spherical nuts with their hallmark prominent oval hilum ("eye") with halo and micropyle slit, and a trifoliate leaf sprig (three leaflets) identifying the legume plant.
