@@ -46,8 +46,9 @@ jobs:
     steps:
       - name: Determine target countries
         id: set_countries
+        env:
+          SELECTED_COUNTRY: ${{ inputs.country || 'all' }}
         run: |
-          SELECTED_COUNTRY="${{ inputs.country || 'all' }}"
           if [ "$SELECTED_COUNTRY" = "all" ]; then
             echo 'countries=["zm", "mw", "zw"]' >> "$GITHUB_OUTPUT"
           else
@@ -84,26 +85,27 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_REMOTE_SECRET_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_REMOTE_SECRET_KEY }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          COUNTRY: ${{ matrix.country }}
+          REFRESH_UPSTREAM: ${{ github.event_name == 'schedule' || inputs.refresh_api == true }}
+          ONLY: ${{ inputs.only }}
+          STATION: ${{ inputs.station }}
         run: |
-          COUNTRY="${{ matrix.country }}"
-          ARGS="--country=$COUNTRY"
+          ARGS=("--country=$COUNTRY")
 
-          # Determine whether to refresh upstream API
-          REFRESH_UPSTREAM="${{ github.event_name == 'schedule' || inputs.refresh_api == true }}"
           if [ "$REFRESH_UPSTREAM" = "true" ]; then
-            ARGS="$ARGS --refresh-api"
+            ARGS+=("--refresh-api")
           fi
 
-          if [ -n "${{ inputs.only }}" ]; then
-            ARGS="$ARGS --only=${{ inputs.only }}"
+          if [ -n "$ONLY" ]; then
+            ARGS+=("--only=$ONLY")
           fi
 
-          if [ -n "${{ inputs.station }}" ]; then
-            ARGS="$ARGS --station=${{ inputs.station }}"
+          if [ -n "$STATION" ]; then
+            ARGS+=("--station=$STATION")
           fi
 
-          echo "Running: yarn scripts:climate:sync $ARGS"
-          yarn scripts:climate:sync $ARGS
+          echo "Running climate sync for $COUNTRY"
+          yarn scripts:climate:sync "${ARGS[@]}"
 
       - name: Check for changes in ${{ matrix.country }}
         id: check_changes

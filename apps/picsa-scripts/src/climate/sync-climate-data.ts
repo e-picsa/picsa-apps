@@ -874,10 +874,15 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
     if (options.refreshApi && !options.auditOnly) {
       for (const c of countriesToProcess) {
-        await refreshUpstreamDataForCountry(c, client, {
+        const result = await refreshUpstreamDataForCountry(c, client, {
           station: options.station,
           only: options.only,
         });
+        if (result.failedRequests > 0) {
+          throw new Error(
+            `Upstream Climate API refresh failed for ${c.toUpperCase()}: ${result.failedRequests} request(s) failed.`,
+          );
+        }
       }
     }
 
