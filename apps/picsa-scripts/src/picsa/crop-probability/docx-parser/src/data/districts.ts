@@ -7,6 +7,7 @@ const ZW_DISTRICTS = [
   { id: 'mangwe', label: 'Mangwe' },
   { id: 'mwenesi', label: 'Mwenezi' },
   { id: 'chipinge', label: 'Chipinge' },
+  { id: 'rushinga', label: 'Rushinga' },
 ];
 
 export const DISTRICTS: Partial<Record<ICountryCode, { [id: string]: { id: string; label: string } }>> = {
