@@ -160,6 +160,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
 - **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
 
+### Climate Data Sync & Upstream API Fault Tolerance
+
+- **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
+
 ---
 
 ## 4. Angular 21, Signals & Reactive Architecture
