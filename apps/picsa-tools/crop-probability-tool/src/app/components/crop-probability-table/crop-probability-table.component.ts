@@ -32,7 +32,7 @@ export type IProbabilityTableRow = IStationCropDataItem & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent {
-  private printProvider = inject(PrintProvider);
+  private readonly printProvider = inject(PrintProvider);
 
   public cropDataHashmap = CROPS_DATA_HASHMAP;
 
@@ -122,7 +122,7 @@ export class CropProbabilityTableComponent {
   }
 
   public formatProbability(value: number | null | undefined): string {
-    if (value == null || isNaN(value)) return '';
+    if (value == null || Number.isNaN(value)) return '';
     return `${Math.round(value * 10)}/10`;
   }
 
