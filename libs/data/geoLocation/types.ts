@@ -4,6 +4,12 @@ export interface IGeolocationAdmin5Location {
   admin_4: string;
 }
 
+export interface IGeolocationAdmin6Location {
+  id: string;
+  label: string;
+  admin_4: string;
+}
+
 export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
   /**
@@ -17,6 +23,15 @@ export interface IGeolocationData {
   admin_5?: {
     label: string;
     locations: IGeolocationAdmin5Location[];
+  };
+  /**
+   * Optional third tier (e.g. Zimbabwe districts, OSM admin level 6).
+   * Slots are relative hierarchy positions, not OSM numbers - each country
+   * defines which slots it uses (mw: 4, zm: 4+5, zw: 4+6).
+   **/
+  admin_6?: {
+    label: string;
+    locations: IGeolocationAdmin6Location[];
   };
 }
 

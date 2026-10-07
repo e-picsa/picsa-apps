@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { findLocationById, formatLocationIdAsLabel } from '@picsa/data/geoLocation';
 import { map } from 'rxjs';
 
 import { IAnnualRainfallSummariesData, ICropSuccessEntry, IStationRow } from '../../../../climate/types';
@@ -129,11 +130,14 @@ export class ProbabilityDownscaledComponent {
   private getLocationData(downscaledData?: ICropDataDownscaled['Row']) {
     if (downscaledData) {
       const locationData = this.deploymentService.activeDeploymentLocationData();
-      const locations = locationData.admin_5?.locations || locationData.admin_4.locations;
-      const match = locations.find((v) => v.id === downscaledData.location_id);
-      if (match) {
-        return match;
+      const found = findLocationById(locationData, downscaledData.location_id);
+      if (found) {
+        return found.location;
       }
+      // No geo match (e.g. districts not yet in the geo lookup) - fall back to a
+      // humanised label so headers and docx exports still show the location name
+      const { location_id } = downscaledData;
+      return { id: location_id, label: formatLocationIdAsLabel(location_id) };
     }
     return { id: '', label: '' };
   }
