@@ -79,7 +79,9 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --immutable --inline-builds
+        env:
+          YARN_ENABLE_SCRIPTS: "false"
+        run: yarn install --immutable
 
       - name: Run Climate Sync
         env:
