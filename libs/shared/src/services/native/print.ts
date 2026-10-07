@@ -30,7 +30,19 @@ export class PrintProvider {
     const body = document.querySelector('body') as HTMLBodyElement;
     body.append(clone);
     // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
-    const canvasElm = await html2canvas(clone, { allowTaint: true });
+    const canvasElm = await html2canvas(clone, {
+      allowTaint: true,
+      onclone: (_clonedDoc, element) => {
+        // html2canvas renders <tr> backgrounds sequentially from top to bottom, which paints
+        // over cells spanning down from earlier rows (rowspan). Ensure table row and group backgrounds
+        // are transparent in the cloned DOM so spanned cells are visible.
+        const rowContainers = element.querySelectorAll('tr, thead, tbody, tfoot');
+        rowContainers.forEach((container) => {
+          (container as HTMLElement).style.setProperty('background-color', 'transparent', 'important');
+          (container as HTMLElement).style.setProperty('background', 'transparent', 'important');
+        });
+      },
+    });
     // use set timeout to ensure resizing complete
     // TODO - check if required or if better solution could exist
     await _wait(200);
