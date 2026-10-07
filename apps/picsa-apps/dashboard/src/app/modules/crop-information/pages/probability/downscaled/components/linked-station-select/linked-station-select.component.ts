@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
-import { topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { getDeepestAdminLevel, getDeepestLocations, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -175,15 +175,18 @@ export class CropLinkedStationSelectComponent {
     if (!locationData) return undefined;
 
     const topojsonObj = await locationData.topoJson();
-    const adminLevel = locationData.admin_5 ? 5 : 4;
+    // filter to deepest tier with data - district geometries appear once level 6 topo exists
+    const adminLevel = getDeepestAdminLevel(locationData);
     const geojson = topoJsonToGeoJson(topojsonObj, adminLevel);
 
-    const locations = locationData.admin_5?.locations || locationData.admin_4.locations;
+    const locations = getDeepestLocations(locationData);
     const location = locations.find((v) => v.id === locationId);
 
     if (location) {
-      const normalizedTarget = this.normalizeName(location.label);
-      return geojson.features.find((f) => this.normalizeName(f.properties.name) === normalizedTarget);
+      const candidates = [location.label, (location as { topoName?: string }).topoName].filter((v): v is string => !!v);
+      return geojson.features.find((f) =>
+        candidates.some((name) => this.normalizeName(f.properties.name) === this.normalizeName(name)),
+      );
     }
     return undefined;
   }

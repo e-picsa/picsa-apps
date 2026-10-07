@@ -4,7 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData } from '@picsa/data/geoLocation';
+import {
+  findLocationById,
+  formatLocationIdAsLabel,
+  getGeoLocationData,
+  getLocationSlots,
+} from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
@@ -18,9 +23,10 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../services';
 
 interface ICropDataDownscaledTableData {
-  // include admin_4 location if location specifies
+  // include parent location label if location specifies a sublocation tier
   admin_4?: string;
   admin_5?: string;
+  admin_6?: string;
   location: string;
   location_id: string;
   station: string | null;
@@ -105,49 +111,40 @@ export class CropProbabilityComponent {
 
   /** Merge crop location id with lookup geojson data  **/
   private mergeDetailedLocationData(country_code: string, data: ICropDataDownscaledTableData[]) {
-    const { admin_4, admin_5 } = getGeoLocationData(country_code as ICountryCode);
-    const isAdmin5Location = admin_5 ? true : false;
-    const admin4Hashmap = arrayToHashmap(admin_4.locations, 'id');
+    const locationData = getGeoLocationData(country_code as ICountryCode);
+    const slots = getLocationSlots(locationData);
+    // top tier is always admin_4 - show as leading column when locations sit in a deeper tier
+    const topSlot = slots[0] as 'admin_4';
+    const isSublocation = slots.length > 1;
 
-    // Update table to show admin_4 column if location is admin_5
-    if (isAdmin5Location) {
+    // Update table to show top-tier column if location is a sublocation
+    if (isSublocation) {
       this.downscaledTableDataOptions.update((opts) => ({
         ...opts,
-        displayColumns: ['admin_4'].concat(opts.displayColumns || []),
+        displayColumns: [topSlot as string].concat(opts.displayColumns || []),
         formatHeader: (v) => {
-          if (v === 'admin_4') return admin_4.label;
+          if (v === topSlot) return locationData[topSlot].label;
           return formatHeaderDefault(v);
         },
       }));
     }
 
     // merge location label and parent location if required
-    const locationHashmap = arrayToHashmap(admin_5?.locations || admin_4.locations, 'id');
+    const topLocations = arrayToHashmap(locationData[topSlot].locations, 'id');
     return data.map((entry) => {
       const { location } = entry;
-      const locationDetails = locationHashmap[location];
-      if (locationDetails) {
-        if (isAdmin5Location) {
-          entry.admin_5 = location;
-          entry.admin_4 = admin4Hashmap[locationDetails['admin_4']].label;
-        } else {
-          entry.admin_4 = location;
+      const found = findLocationById(locationData, location);
+      if (found) {
+        entry[found.slot] = location;
+        if (isSublocation) {
+          const parentId = (found.location as Record<string, string | undefined>)[topSlot];
+          entry[topSlot] = (parentId && topLocations[parentId]?.label) || formatLocationIdAsLabel(location);
         }
-        entry.location = locationDetails.label;
+        entry.location = found.location.label;
       } else {
-        // No geo match (e.g. district ids not yet in the geo lookup) - display a
-        // humanised label instead of the raw id, navigation still uses location_id
-        entry.location = formatLocationLabel(location);
+        entry.location = formatLocationIdAsLabel(location);
       }
       return entry;
     });
   }
-}
-
-/** Convert a raw location id (e.g. `mt_darwin`) to a display label (`Mt Darwin`) */
-function formatLocationLabel(location_id: string) {
-  return location_id
-    .split('_')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
 }
