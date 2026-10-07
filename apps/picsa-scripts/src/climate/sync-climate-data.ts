@@ -339,11 +339,15 @@ export function getSyncSupabaseClient(options: { local?: boolean; env?: string }
     }
   }
 
-  const url = options.local
-    ? process.env.SUPABASE_URL || 'http://localhost:54321'
-    : process.env.SUPABASE_REMOTE_URL ||
-      process.env.SUPABASE_URL ||
-      (process.env.SUPABASE_PROJECT_ID ? `https://${process.env.SUPABASE_PROJECT_ID}.supabase.co` : undefined);
+  let url: string | undefined;
+  if (options.local) {
+    url = process.env.SUPABASE_URL || 'http://localhost:54321';
+  } else {
+    const projectIdUrl = process.env.SUPABASE_PROJECT_ID
+      ? `https://${process.env.SUPABASE_PROJECT_ID}.supabase.co`
+      : undefined;
+    url = process.env.SUPABASE_REMOTE_URL || process.env.SUPABASE_URL || projectIdUrl;
+  }
 
   const key = options.local
     ? process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
@@ -444,7 +448,7 @@ export async function refreshUpstreamDataForCountry(
         }
       } catch (err) {
         console.warn(
-          `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${(err && err.message) || err}`,
+          `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${err?.message || err}`,
         );
         failedRequests++;
       }

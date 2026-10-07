@@ -35,8 +35,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   prepare:
@@ -58,6 +57,9 @@ jobs:
   sync_country:
     needs: prepare
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     strategy:
       fail-fast: false
       max-parallel: 1 # Run sequentially per country to avoid rate limiting on upstream Climate API
@@ -77,7 +79,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --inline-builds
 
       - name: Run Climate Sync
         env:

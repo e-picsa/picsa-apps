@@ -1261,12 +1261,10 @@ export function resolveClimateApiActions(products: Set<ClimateProductId>): Clima
   const actions: ClimateApiSummaryAction[] = [];
   const seasonProducts: ClimateProductId[] = ['rainfall', 'start', 'end', 'length', 'extremes'];
   if (seasonProducts.some((p) => products.has(p))) {
-    actions.push('rainfall-summaries');
-    actions.push('crop-probabilities');
+    actions.push('rainfall-summaries', 'crop-probabilities');
   }
   if (products.has('temp_min') || products.has('temp_max')) {
-    actions.push('annual-temperature');
-    actions.push('monthly-temperatures');
+    actions.push('annual-temperature', 'monthly-temperatures');
   }
   return actions;
 }
