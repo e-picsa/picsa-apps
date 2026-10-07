@@ -33,7 +33,8 @@
         "styles": [
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          "node_modules/leaflet/dist/leaflet.css"
+          "node_modules/leaflet/dist/leaflet.css",
+          "node_modules/maplibre-gl/dist/maplibre-gl.css"
         ],
         "scripts": []
       },

@@ -184,6 +184,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
 - **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
 
+### Signal Effects in Unit Tests (`flushEffects` vs `detectChanges`)
+
+- **Problem**: In zoned Jest tests, calling `TestBed.flushEffects()` after a component synchronously emits an `EventEmitter` (e.g. a mocked third-party `load` callback that sets signals and emits `onMapReady`) nests an `ApplicationRef.tick` inside the already-running tick. Angular's recursion guard throws `NG0101: ApplicationRef.tick is called recursively`, which surfaces as `console.error` noise on every affected test.
+- **Solution**: Drive effect flushing with `fixture.detectChanges()` instead of `TestBed.flushEffects()` in such specs. Change detection flushes pending signal effects within the same tick, eliminating the nesting while keeping all assertions deterministic.
+
 ### Internationalization (i18n) Module Import in Standalone Components
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
