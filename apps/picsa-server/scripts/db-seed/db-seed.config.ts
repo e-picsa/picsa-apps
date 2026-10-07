@@ -1,7 +1,7 @@
 import type { Database } from '../../supabase/types';
 
 export interface ISeedDataConfiguration {
-  /** Omit columns from CSV (e.g. if auto-populated from other columns) */
+  /** Omit columns from CSV / DB insert (e.g. if auto-populated from other columns) */
   omitColumns?: string[];
   /**
    * Specify higher priority if table should be imported ahead of others
@@ -24,7 +24,7 @@ export interface ISeedDataConfiguration {
   filter?: Record<string, string | number | boolean | (string | number | boolean)[]>;
   /**
    * Column value overrides or transform functions applied during CSV import.
-   * Supports static values (e.g. `{ cover_image: 'global/images/placeholder.svg', storage_file: null }`)
+   * Supports static values (e.g. `{ cover_image: 'global/images/placeholder.svg', storage_file: null }`)\
    * or transform functions `(value: any, row: any) => any`.
    */
   columnMappings?: Record<string, any | ((value: any, row: any) => any)>;
@@ -55,14 +55,10 @@ export const SEED_STATION_IDS = [
 ];
 
 /**
- * Single source of truth for seed tables, used for both local import and
- * remote export. Table names allow any schema (e.g. geo.countries resolve via
- * the per-entry `schema` field). Presence in this config means "sync from
- * remote on export" - local-first tables (deployments, user_profiles,
- * user_roles) are intentionally omitted so export never overwrites them
- * (they are still seeded from local CSVs).
+ * Base configuration for seed tables defining schemas, priorities, column mappings,
+ * and sort orders.
  */
-export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
+export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
   // Public schema tables
   climate_stations: {
     priority: 1,
@@ -71,7 +67,6 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
   climate_station_data: {
     batchSize: 50,
     orderBy: 'station_id',
-    filter: { station_id: SEED_STATION_IDS },
   },
   crop_data: {
     omitColumns: ['id'],
@@ -83,7 +78,6 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
     priority: 1,
   },
   forecasts: {
-    filter: { forecast_type: ['seasonal', 'downscaled'] },
     columnMappings: {
       storage_file: 'global/forecasts/sample_seasonal.pdf',
     },
@@ -134,3 +128,31 @@ export const SEED_DATA_CONFIGURATION: Record<string, ISeedDataConfiguration> = {
     schema: 'budget',
   },
 };
+
+/**
+ * Standard seed configuration: filters datasets down to a representative subset
+ * for storage in repo CSVs (`supabase/data`).
+ */
+export const SEED_DATA_CONFIG: Record<string, ISeedDataConfiguration> = {
+  ...SEED_DATA_BASE,
+  climate_station_data: {
+    ...SEED_DATA_BASE.climate_station_data,
+    filter: { station_id: SEED_STATION_IDS },
+  },
+  forecasts: {
+    ...SEED_DATA_BASE.forecasts,
+    filter: { forecast_type: ['seasonal', 'downscaled'] },
+  },
+};
+
+/**
+ * Extended seed configuration: does not filter datasets, allowing a complete
+ * clone/mirror of remote records directly into the local database.
+ */
+export const SEED_DATA_EXTENDED_CONFIG: Record<string, ISeedDataConfiguration> = {
+  ...SEED_DATA_BASE,
+  // Extended configuration does not apply filters, pulling all remote rows
+};
+
+/** Alias for backward compatibility */
+export const SEED_DATA_CONFIGURATION = SEED_DATA_CONFIG;

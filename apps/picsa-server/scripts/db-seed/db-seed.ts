@@ -39,14 +39,14 @@ interface ISupabaseStatus {
  *
  * Called from command
  * ```sh
- * yarn nx run picsa-server:seed
+ * yarn nx run picsa-server:db:seed
  * ```
  *
  * @remarks
  * Whilst supabase does include a `seed.sql` file, the data can't be dynamically imported
  * from csv files https://github.com/orgs/supabase/discussions/9314
  */
-class SupabaseSeed {
+export class SupabaseSeed {
   private client: SupabaseClient<any, 'public', any>;
 
   public async run() {
