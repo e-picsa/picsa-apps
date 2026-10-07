@@ -10,8 +10,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
@@ -34,7 +32,7 @@ const STRINGS = {
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
-  imports: [FormsModule, MatButtonModule, MatIcon, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
+  imports: [FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent implements OnInit {
@@ -43,146 +41,90 @@ export class CropProbabilityTableComponent implements OnInit {
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
-  public probabilityColumns = signal<{ name: string; label: string; index: number }[]>([]);
+  public probabilityKeys: string[] = [];
 
-  /**
-   * Generate placeholders to populate an ng-container column for each probability date and value
-   * These only generate placeholders for the RHS columns as left rowspan merges first 4 columns to left
-   **/
-  public probabilityHeaderDefs = computed(() => {
-    const columns = this.probabilityColumns();
-    return {
-      dates: columns.map((v, i) => `prob-date-${i}`),
-      values: columns.map((v, i) => `prob-value-${i}`),
-    };
-  });
+  /** Unique crops available in the table */
+  public tableCrops = signal<ICropData[]>([]);
 
-  public dataSource: MatTableDataSource<ITableRow>;
-  public selectedCropName = model('');
+  public selectedCropName = model<string>();
 
-  public stationData = input.required<IStationCropData[]>();
+  public stationData = input.required<IStationCropData>();
+
   public tableMeta = input.required<IProbabilityTableMeta>();
 
-  /** Specify crop to use with initial filter */
-  public filterCrop = input<string>('');
+  public filterCrop = input<string>();
 
-  public shareStatus = signal<'Share' | string>('Share');
-  public shareDisabled = signal(false);
+  public dataSource = new MatTableDataSource<IStationCropDataItem>();
 
-  private tableData: ITableRow[] = [];
+  /** Dynamic width of table determined by number of columns */
+  public tableWidth = computed(() => {
+    const defaultColCount = 4;
+    const probabilityColCount = this.tableMeta().columns?.length || 0;
+    const colCount = defaultColCount + probabilityColCount;
+    return `${colCount * 120}px`;
+  });
 
-  public cropDataHashmap = CROPS_DATA_HASHMAP;
+  public cropFilterFn = computed(() => {
+    const crops = this.tableCrops();
+    if (!crops) return;
+    const keys = crops.map((crop) => crop.name);
+    return (entry: ICropData) => keys.includes(entry.name);
+  });
+
+  /** Track image sharing state */
+  public shareStatus = signal<'Share' | 'Preparing image....' | string>('Share');
+
+  public shareDisabled = computed(() => this.shareStatus() !== 'Share');
 
   constructor() {
-    // Load data and apply any initial filters
     effect(() => {
-      const stationData = this.stationData();
-      this.tableData = this.prepareTableRows(stationData);
-    });
-    effect(() => {
-      // Filter when selected crop name changes
-      this.selectedCropName();
-      this.filterData();
+      const selected = this.selectedCropName();
+      this.dataSource.filter = selected;
     });
   }
 
   ngOnInit() {
-    // Set the initial value from the input signal
-    this.selectedCropName.set(this.filterCrop());
+    this.initTable();
   }
 
-  public cropFilterFn = signal<((option: ICropData) => boolean) | undefined>(undefined);
-
-  /** Export the crop probability table as an image and trigger native/web share */
-  public async sharePicture(): Promise<void> {
-    this.shareDisabled.set(true);
+  /** Export rendered table to image and invoke system share sheet */
+  public async sharePicture() {
     this.shareStatus.set('Preparing image....');
-    await _wait(200);
     try {
-      await this.shareAsImage();
+      // DOM elements might not render properly if print is called synchronously
+      await _wait(200);
+      await this.printProvider.shareElementAsImage('cropProbabilityTable', {
+        title: this.tableMeta().label || 'Crop Probability',
+      });
       this.shareStatus.set('Share');
     } catch (error: unknown) {
       console.error('Failed to share crop probability table:', error);
       const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : undefined;
       this.shareStatus.set(errorMessage || 'Unable to share');
     } finally {
-      this.shareDisabled.set(false);
+      if (this.shareStatus() !== 'Share') {
+        setTimeout(() => {
+          this.shareStatus.set('Share');
+        }, 2000);
+      }
     }
   }
 
-  /** Internal image generation and share via PrintProvider */
-  public async shareAsImage(): Promise<void> {
-    const stationLabel = this.tableMeta().label || 'Crop Probability';
-    const crop = this.selectedCropName();
-    const cropLabel = crop ? this.cropDataHashmap[crop]?.label || crop : '';
-    const filename = ['Crop Probability', stationLabel, cropLabel].filter(Boolean).join(' - ');
-    await this.printProvider.shareHtmlDom('#cropProbabilityTable', filename);
-  }
+  private initTable() {
+    const { crops, columns } = this.stationData();
+    const sortedData = groupAndSortCropDataItems(crops);
+    this.dataSource.data = sortedData;
 
-  private filterData() {
-    const cropName = this.selectedCropName();
-    // flatten data rows which are grouped by crop
-    const dataSource = new MatTableDataSource(this.tableData);
-    // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
-    dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
-    this.generateCropFilters(this.stationData());
-    if (cropName) {
-      dataSource.filter = cropName.toLowerCase();
+    this.probabilityKeys = columns.map((col) => col.key);
+    this.displayedColumns = ['crop', 'variety', 'daysToMaturity', 'cropWaterRequirement', ...this.probabilityKeys];
+    // setup crops select
+    const uniqueCropNames = [...new Set(sortedData.map((d) => d.crop))];
+    const cropHashMap = arrayToHashmap(CROPS_DATA_HASHMAP, 'name');
+    this.tableCrops.set(uniqueCropNames.map((name) => cropHashMap[name]));
+    // initial filter
+    const initialFilter = this.filterCrop();
+    if (initialFilter) {
+      this.selectedCropName.set(initialFilter);
     }
-    this.dataSource = dataSource;
   }
-
-  /** Generate list of crops for filtering that exist in the data */
-  private generateCropFilters(stationData: IStationCropData[]) {
-    const availableCrops = arrayToHashmap(stationData, 'crop');
-    this.cropFilterFn.set(({ name }) => name in availableCrops);
-  }
-
-  /**
-   * Flatten grouped station data for easier use in table rows
-   * Split probabilities into individual columns
-   */
-  private prepareTableRows(stationData: IStationCropData[]) {
-    const { dateHeadings } = this.tableMeta();
-    const probabilityColumns = dateHeadings.map((label, index) => ({
-      label,
-      name: `probability_${index}`,
-      index,
-    }));
-    this.probabilityColumns.set(probabilityColumns);
-    const displayColumns = ['crop', 'variety', 'days', 'water', ...this.probabilityColumns().map((c) => c.name)];
-    this.displayedColumns = displayColumns;
-
-    const entries: ITableRow[] = [];
-    for (const { crop, data } of stationData) {
-      const groupedData = groupAndSortCropDataItems(data || []);
-      groupedData.forEach((item, index) => {
-        const { probabilities, ...rest } = item;
-        for (const { index, name } of this.probabilityColumns()) {
-          const val = probabilities?.[index];
-          rest[name] = val !== undefined ? val : null;
-        }
-        // set first row of each to span all crop rows (other rows set to 0 to omit)
-        const cropNameRowspan = index === 0 ? groupedData.length : 0;
-        entries.push({ ...rest, crop, cropNameRowspan });
-      });
-    }
-    return entries;
-  }
-
-  public formatProbability(val: number | string | null | undefined): string {
-    if (val === undefined || val === null || val === '') return '';
-    // already formated / 10
-    if (typeof val === 'string' && val.includes('/')) return val;
-    const num = Number(val);
-    if (Number.isNaN(num)) return '';
-    const outOfTen = Math.round(num * 10);
-    return `${outOfTen}/10`;
-  }
-}
-
-interface ITableRow extends IStationCropDataItem {
-  crop: string;
-  /** Number of rows the crop name should merge to take up */
-  cropNameRowspan: number;
 }
