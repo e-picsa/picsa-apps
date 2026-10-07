@@ -1,6 +1,7 @@
 $border-style: 1px solid var(--color-light);
 
-:host {
+:host,
+.table-container {
   display: block;
   --td-padding: 8px;
   --th-padding: 12px;
@@ -73,4 +74,73 @@ tr.footer-row {
 td.probability-cell,
 th.probability-cell {
   @apply min-w-14 p-0 whitespace-nowrap;
+}
+
+// DOM resizing for image sharing:
+// On small devices (mobile), .table-container is constrained to the screen with horizontal scroll.
+// In .print-mode, the cloned DOM element expands to a full fixed width (1000px) with overflow visible,
+// ensuring html2canvas captures the complete unclipped table.
+#cropProbabilityTable.print-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px !important;
+  min-width: 1000px !important;
+  max-width: 1000px !important;
+  overflow: visible !important;
+  background-color: #ffffff !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  z-index: 10000;
+
+  --td-padding: 8px;
+  --th-padding: 12px;
+  --row-height: 52px;
+  --color-light: #d8d8d8;
+
+  table {
+    width: 100% !important;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #d8d8d8 !important;
+  }
+
+  // Disable sticky positioning on cloned element during print capture to avoid offset bugs
+  th.mat-mdc-table-sticky,
+  td.mat-mdc-table-sticky {
+    position: static !important;
+  }
+
+  td.crop-title,
+  th.crop-title {
+    background-color: #ffffff !important;
+  }
+
+  h2 {
+    color: #000000 !important;
+    margin: 0 !important;
+  }
+
+  td.footer-cell,
+  tr.footer-row {
+    border: none !important;
+    background-color: transparent !important;
+  }
+
+  .footer-cell div {
+    color: #555555 !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }

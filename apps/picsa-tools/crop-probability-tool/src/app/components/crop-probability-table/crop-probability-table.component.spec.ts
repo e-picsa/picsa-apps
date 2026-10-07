@@ -1,8 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { PrintProvider } from '@picsa/shared/services/native/print';
 
 import { IStationCropData } from '../../models';
 import { CropProbabilityTableComponent } from './crop-probability-table.component';
@@ -10,11 +13,22 @@ import { CropProbabilityTableComponent } from './crop-probability-table.componen
 describe('CropProbabilityTableComponent', () => {
   let component: CropProbabilityTableComponent;
   let fixture: ComponentFixture<CropProbabilityTableComponent>;
+  let mockPrintProvider: { shareHtmlDom: jest.Mock };
 
   beforeEach(async () => {
+    mockPrintProvider = {
+      shareHtmlDom: jest.fn().mockResolvedValue(undefined),
+    };
+
     await TestBed.configureTestingModule({
       imports: [CropProbabilityTableComponent],
-      providers: [provideHttpClient(), provideRouter([]), importProvidersFrom(PicsaTranslateModule.forRoot())],
+      providers: [
+        provideHttpClient(),
+        provideRouter([]),
+        importProvidersFrom(PicsaTranslateModule.forRoot()),
+        { provide: PrintProvider, useValue: mockPrintProvider },
+        { provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CropProbabilityTableComponent);
@@ -75,5 +89,75 @@ describe('CropProbabilityTableComponent', () => {
     expect(rows[1].variety).toBe('SC600, PHB 30 G 19');
     expect(rows[1].days).toBe('130 - 135');
     expect(rows[1].cropNameRowspan).toBe(0);
+  });
+
+  describe('sharePicture', () => {
+    beforeEach(() => {
+      fixture.componentRef.setInput('tableMeta', {
+        id: 'test-kasungu',
+        label: 'Kasungu',
+        station_label: 'KASUNGU MET STATION',
+        seasonProbabilities: [0.5],
+        dateHeadings: ['15-Nov'],
+      });
+      fixture.componentRef.setInput('stationData', [
+        {
+          crop: 'maize',
+          data: [
+            {
+              variety: 'SC403',
+              days: '110',
+              water: [300],
+              probabilities: [0.8],
+            },
+          ],
+        },
+      ]);
+      fixture.detectChanges();
+    });
+
+    it('should call printProvider.shareHtmlDom with selector and filename without crop when all crops shown', async () => {
+      component.selectedCropName.set('');
+      const sharePromise = component.sharePicture();
+
+      expect(component.shareDisabled()).toBe(true);
+      expect(component.shareStatus()).toBe('Preparing image....');
+
+      await sharePromise;
+
+      expect(mockPrintProvider.shareHtmlDom).toHaveBeenCalledWith(
+        '#cropProbabilityTable',
+        'Crop Probability - Kasungu',
+      );
+      expect(component.shareDisabled()).toBe(false);
+      expect(component.shareStatus()).toBe('Share');
+    });
+
+    it('should include crop name in filename when crop is filtered', async () => {
+      component.selectedCropName.set('maize');
+      await component.sharePicture();
+
+      expect(mockPrintProvider.shareHtmlDom).toHaveBeenCalledWith(
+        '#cropProbabilityTable',
+        'Crop Probability - Kasungu - Maize',
+      );
+    });
+
+    it('should handle sharing errors gracefully', async () => {
+      mockPrintProvider.shareHtmlDom.mockRejectedValueOnce(new Error('Export failed'));
+      await component.sharePicture();
+
+      expect(component.shareDisabled()).toBe(false);
+      expect(component.shareStatus()).toBe('Export failed');
+    });
+
+    it('should trigger sharePicture when the share button is clicked', () => {
+      jest.spyOn(component, 'sharePicture');
+      const shareButton = fixture.debugElement.query(By.css('button[aria-label="Share"]'));
+      expect(shareButton).toBeTruthy();
+
+      shareButton.nativeElement.click();
+      expect(component.sharePicture).toHaveBeenCalled();
+    });
   });
 });

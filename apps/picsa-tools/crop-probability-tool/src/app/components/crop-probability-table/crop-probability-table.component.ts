@@ -1,22 +1,45 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, model, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { arrayToHashmap } from '@picsa/utils';
+import { PrintProvider } from '@picsa/shared/services/native/print';
+import { _wait, arrayToHashmap } from '@picsa/utils';
 
 import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '../../models';
 import { groupAndSortCropDataItems } from '../../utils/probability-table.utils';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const STRINGS = {
+  Share: translateMarker('Share'),
+  PreparingImage: translateMarker('Preparing image....'),
+  UnableToShare: translateMarker('Unable to share'),
+};
 
 @Component({
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
-  imports: [FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
+  imports: [FormsModule, MatButtonModule, MatIcon, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent implements OnInit {
+  private printProvider = inject(PrintProvider);
+
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
@@ -43,6 +66,9 @@ export class CropProbabilityTableComponent implements OnInit {
   /** Specify crop to use with initial filter */
   public filterCrop = input<string>('');
 
+  public shareStatus = signal<'Share' | string>('Share');
+  public shareDisabled = signal(false);
+
   private tableData: ITableRow[] = [];
 
   public cropDataHashmap = CROPS_DATA_HASHMAP;
@@ -67,6 +93,32 @@ export class CropProbabilityTableComponent implements OnInit {
 
   public cropFilterFn = signal<((option: ICropData) => boolean) | undefined>(undefined);
 
+  /** Export the crop probability table as an image and trigger native/web share */
+  public async sharePicture(): Promise<void> {
+    this.shareDisabled.set(true);
+    this.shareStatus.set('Preparing image....');
+    await _wait(200);
+    try {
+      await this.shareAsImage();
+      this.shareStatus.set('Share');
+    } catch (error: unknown) {
+      console.error('Failed to share crop probability table:', error);
+      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : undefined;
+      this.shareStatus.set(errorMessage || 'Unable to share');
+    } finally {
+      this.shareDisabled.set(false);
+    }
+  }
+
+  /** Internal image generation and share via PrintProvider */
+  public async shareAsImage(): Promise<void> {
+    const stationLabel = this.tableMeta().label || 'Crop Probability';
+    const crop = this.selectedCropName();
+    const cropLabel = crop ? this.cropDataHashmap[crop]?.label || crop : '';
+    const filename = ['Crop Probability', stationLabel, cropLabel].filter(Boolean).join(' - ');
+    await this.printProvider.shareHtmlDom('#cropProbabilityTable', filename);
+  }
+
   private filterData() {
     const cropName = this.selectedCropName();
     // flatten data rows which are grouped by crop
@@ -89,7 +141,7 @@ export class CropProbabilityTableComponent implements OnInit {
   /**
    * Flatten grouped station data for easier use in table rows
    * Split probabilities into individual columns
-   * */
+   */
   private prepareTableRows(stationData: IStationCropData[]) {
     const { dateHeadings } = this.tableMeta();
     const probabilityColumns = dateHeadings.map((label, index) => ({

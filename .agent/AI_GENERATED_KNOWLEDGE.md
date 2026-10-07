@@ -412,5 +412,33 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - **Bold Visual Weight**: Match companion icons (Cotton, Cowpeas, Groundnuts) with heavier line weights (`stroke-width: 3.2–3.6px` in a 100x100 canvas). Avoid intricate leaf venation or fine rootlet hatching that clutters or disappears at small sizes; use clean outer contours and single central midribs.
   - **Occlusion Handling without Opaque Fills**: In UI components like `crop-select.scss`, selected items use dynamic theme backgrounds (e.g. `background: wheat`). Using opaque white fills (`fill="#fff"`) causes unsightly white boxes on colored backgrounds. To maintain transparency without background lines cutting through foreground objects, overlapping background paths must be trimmed precisely to the boundary of the foreground shapes.
 - **Botanical Identifiers**:
-  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (*Pennisetum glaucum*) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
-  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (*Vigna subterranea* / "roundnuts" / *nyimo*), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (_Pennisetum glaucum_) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
+  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (_Vigna subterranea_ / "roundnuts" / _nyimo_), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+
+### DOM Element Resizing for Image Sharing (`PrintProvider.shareHtmlDom`)
+
+- **Print Mode Width Expansion**: When exporting scrollable UI components (such as wide data tables in budget tools or crop probability tables) as images on small/mobile screens, `html2canvas` captures only the visible viewport width unless the element is explicitly expanded.
+- **`.print-mode` SCSS Contract**: `PrintProvider.shareHtmlDom(selector, filename)` clones the target element, appends `.print-mode` to its class list, and attaches it to `document.body` for rasterization.
+- Ensure the component defines a `#elementId.print-mode` rule with:
+
+  ```scss
+  #cropProbabilityTable.print-mode {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px !important;
+    min-width: 1000px !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    padding: 16px !important;
+
+    // Reset sticky positioning on headers/cells to avoid misaligned canvas capture
+    th.mat-mdc-table-sticky,
+    td.mat-mdc-table-sticky {
+      position: static !important;
+    }
+  }
+  ```
+
+- **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
+- **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
