@@ -5,16 +5,11 @@ import {
   Component,
   computed,
   inject,
-  signal,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
@@ -23,15 +18,7 @@ import { groupDuplicateVarieties, ICropVarietyPair, IDuplicateGroup, normalizeNa
 
 @Component({
   selector: 'dashboard-crop-duplicate-crops',
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    PicsaDataTableComponent,
-  ],
+  imports: [MatButtonModule, MatIconModule, PicsaDataTableComponent],
   templateUrl: './duplicate-crops.component.html',
   styleUrl: './duplicate-crops.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,7 +26,6 @@ import { groupDuplicateVarieties, ICropVarietyPair, IDuplicateGroup, normalizeNa
 /**
  * Groups crop varieties normalizing to identical alphanumeric strings so that
  * spelling variants (e.g. PHB-30-D79 vs PHB-30D79) can be reconciled.
- * Generic terms such as "local" can be excluded via the interactive whitelist.
  */
 export class CropDuplicateCropsComponent implements AfterViewInit {
   private service = inject(CropInformationService);
@@ -55,12 +41,6 @@ export class CropDuplicateCropsComponent implements AfterViewInit {
     this.valueTemplates = { actions: this.actionsTemplate };
     this.cdr.markForCheck();
   }
-
-  /** Whitelist of terms to exclude from duplicate detection (matched after normalization) */
-  public whitelist = signal<string[]>(['local', 'local variety', 'local strain']);
-
-  /** Input for adding new whitelist term */
-  public newWhitelistTerm = signal('');
 
   /** All crop/variety pairs from baseline and downscaled tables */
   private allPairs = computed<ICropVarietyPair[]>(() => {
@@ -97,24 +77,16 @@ export class CropDuplicateCropsComponent implements AfterViewInit {
     return pairs;
   });
 
-  /** Whitelist as normalized set for quick lookup */
-  private whitelistSet = computed(() => new Set(this.whitelist().map((w) => normalizeName(w))));
-
   /** Duplicate groups keyed by normalized crop/variety, counting only distinct spellings */
-  public duplicateGroups = computed<IDuplicateGroup[]>(() =>
-    groupDuplicateVarieties(this.allPairs(), this.whitelist()),
-  );
+  public duplicateGroups = computed<IDuplicateGroup[]>(() => groupDuplicateVarieties(this.allPairs()));
 
   /** Summary stats */
   public stats = computed(() => {
     const groups = this.duplicateGroups();
-    const totalPairs = this.allPairs().length;
-    const whitelistedCount = this.allPairs().filter((p) => this.whitelistSet().has(p.variety)).length;
     return {
-      total_pairs: totalPairs,
+      total_pairs: this.allPairs().length,
       duplicate_groups: groups.length,
       total_variants: groups.reduce((sum, g) => sum + g.variant_count, 0),
-      whitelisted: whitelistedCount,
     };
   });
 
@@ -137,32 +109,6 @@ export class CropDuplicateCropsComponent implements AfterViewInit {
     },
     exportFilename: 'duplicate-crops.csv',
   };
-
-  /** Add term to whitelist */
-  public addToWhitelist() {
-    const term = this.newWhitelistTerm().trim();
-    if (!term) return;
-    const normalized = normalizeName(term);
-    if (!this.whitelist().some((w) => normalizeName(w) === normalized)) {
-      this.whitelist.update((list) => [...list, term]);
-    }
-    this.newWhitelistTerm.set('');
-  }
-
-  /** Remove term from whitelist */
-  public removeFromWhitelist(term: string) {
-    this.whitelist.update((list) => list.filter((w) => w !== term));
-  }
-
-  /** Whitelist the first variant spelling so the whole duplicate group is excluded */
-  public whitelistGroup(group: IDuplicateGroup) {
-    const firstVariant = group.variants.split(', ')[0];
-    if (!firstVariant) return;
-    const normalized = normalizeName(firstVariant);
-    if (!this.whitelist().some((w) => normalizeName(w) === normalized)) {
-      this.whitelist.update((list) => [...list, firstVariant]);
-    }
-  }
 
   /** Copy the variant spellings of a group to clipboard */
   public async copyVariants(group: IDuplicateGroup) {

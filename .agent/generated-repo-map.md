@@ -35,7 +35,7 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (423 files scanned)
+## Codebase Symbol Index (425 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -159,8 +159,17 @@
   - `Class` **CropInformationModule**
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts`)
   - `Component` **DashboardCropAdminComponent** (methods: [handleDataLoad, downloadTemplate, processImport, exportCropProbabilityTables])
+- **[crop-app-diff.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts`)
+  - `Component` **CropAppDiffComponent** (methods: [reload])
+  - `Interface` **IAppDbDiffRow**
+- **[crop-app-diff.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts`)
+  - `Interface` **IProbabilityTableSummary**
+  - `Function` **locationIdFromAppId**
+  - `Function` **summarizeProbabilityTable**
+  - `Function` **deepEqualJson**
+  - `Function` **findDifferingCrops**
 - **[duplicate-crops.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts`)
-  - `Component` **CropDuplicateCropsComponent** (methods: [ngAfterViewInit, addToWhitelist, removeFromWhitelist, whitelistGroup, copyVariants])
+  - `Component` **CropDuplicateCropsComponent** (methods: [ngAfterViewInit, copyVariants])
 - **[duplicate-crops.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts`)
   - `Interface` **ICropVarietyPair**
   - `Interface` **IDuplicateGroup**
@@ -203,6 +212,7 @@
   - `Interface` **IExportDocxOptions**
 - **[probability.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts`)
   - `Interface` **ISeasonStartProbability**
+  - `Interface` **IExpectedProbabilityTable**
   - `Type` **IProbabilityInterpolationStrategy**
   - `Type` **IProbabilityHashmap**
   - `Function` **findSurroundingKeys**
@@ -211,7 +221,6 @@
   - `Function` **cumulativeDistribution**
   - `Function` **generateProbabilityHashmap**
   - `Function` **interpolateValue**
-  - `Function` **getCropSuccessProbability**
 - **[admin-overview.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts`)
   - `Component` **DeploymentAdminSummaryComponent**
 - **[deployment-item.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts`)

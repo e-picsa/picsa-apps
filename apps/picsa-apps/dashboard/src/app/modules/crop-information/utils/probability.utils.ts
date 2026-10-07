@@ -288,6 +288,32 @@ export function generateTable(params: {
   return entries.sort(sortByPriorityCrops);
 }
 
+export interface IExpectedProbabilityTable {
+  table: IStationCropData[];
+  startProbabilities: ISeasonStartProbability[];
+}
+
+/**
+ * Single shared pipeline that builds the app probability table a location
+ * should currently have, from live data-system records. Returns null when the
+ * inputs are insufficient to generate a table (no rainfall data, no qualifying
+ * plant dates). Used by both the app data export and the app-vs-database diff.
+ */
+export function computeExpectedProbabilityTable(params: {
+  cropDataHashmap: Record<string, ICropData['Row']>;
+  waterRequirements: ICropDataDownscaledWaterRequirements;
+  rainfallData: IAnnualRainfallSummariesData[];
+  cropProbabilityData: ICropSuccessEntry[];
+}): IExpectedProbabilityTable | null {
+  const { cropDataHashmap, waterRequirements, rainfallData, cropProbabilityData } = params;
+  if (Object.keys(waterRequirements ?? {}).length === 0) return null;
+  const startProbabilities = calcSeasonStartProbabilities(rainfallData, cropProbabilityData);
+  if (startProbabilities.length === 0) return null;
+  const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
+  const table = generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
+  return { table, startProbabilities };
+}
+
 export function calcSeasonStartProbabilities(
   rainfallData: IAnnualRainfallSummariesData[],
   probabilityData: ICropSuccessEntry[],

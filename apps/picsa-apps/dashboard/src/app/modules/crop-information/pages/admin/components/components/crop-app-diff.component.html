@@ -1,0 +1,58 @@
+<div class="space-y-4">
+  <p class="text-sm text-gray-600">
+    Compares committed app probability tables against tables regenerated from live data-system
+    records. Reload after syncing or importing to confirm the app is up to date.
+  </p>
+
+  <div class="flex items-center gap-4">
+    <button matButton="outlined" (click)="reload()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon>Reload App Tables
+    </button>
+    @if (loading()) {
+      <span class="text-sm text-gray-500">Loading app tables…</span>
+    }
+    @if (loadError()) {
+      <span class="text-sm text-red-600">{{ loadError() }}</span>
+    }
+  </div>
+
+  @if (!loading() && !loadError()) {
+    <!-- Summary Stats -->
+    <div class="flex flex-wrap gap-4">
+      <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
+        <mat-icon class="text-blue-600">info</mat-icon>
+        <span>{{ stats().total }} locations compared</span>
+      </div>
+      <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
+        <mat-icon class="text-green-600">check_circle</mat-icon>
+        <span>{{ stats().inSync }} In Sync</span>
+      </div>
+      <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
+        <mat-icon class="text-red-600">error</mat-icon>
+        <span>{{ stats().differs }} Differs</span>
+      </div>
+      <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
+        <mat-icon class="text-orange-600">warning</mat-icon>
+        <span>{{ stats().missing }} Missing in App</span>
+      </div>
+      <div class="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded">
+        <mat-icon class="text-purple-600">link_off</mat-icon>
+        <span>{{ stats().orphaned }} Orphaned in App</span>
+      </div>
+      <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded">
+        <mat-icon class="text-gray-600">cloud_off</mat-icon>
+        <span>{{ stats().noSource }} No Source Data</span>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    @if (diffRows().length > 0) {
+      <picsa-data-table [data]="diffRows()" [options]="tableOptions"></picsa-data-table>
+    } @else {
+      <div class="flex items-center justify-center py-8">
+        <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
+        <p class="text-gray-600">No app tables and no data-system records to compare</p>
+      </div>
+    }
+  }
+</div>

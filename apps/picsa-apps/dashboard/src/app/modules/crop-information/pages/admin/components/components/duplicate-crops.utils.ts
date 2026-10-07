@@ -23,19 +23,15 @@ export interface IDuplicateGroup {
 
 /**
  * Group crop/variety pairs by normalized crop/variety key, returning only groups
- * with more than one distinct spelling. Pairs whose normalized variety matches
- * the whitelist are excluded before grouping.
+ * with more than one distinct spelling (e.g. PHB-30-D79 vs PHB-30D79).
  */
-export function groupDuplicateVarieties(pairs: ICropVarietyPair[], whitelist: string[]): IDuplicateGroup[] {
-  const whitelistSet = new Set(whitelist.map((w) => normalizeName(w)));
-
+export function groupDuplicateVarieties(pairs: ICropVarietyPair[]): IDuplicateGroup[] {
   const variantSpellings = new Map<string, Set<string>>();
   const crops = new Map<string, Set<string>>();
   const sources = new Map<string, Set<string>>();
   const locations = new Map<string, Set<string>>();
 
   for (const pair of pairs) {
-    if (whitelistSet.has(pair.variety)) continue;
     const key = `${pair.crop}/${pair.variety}`;
     if (!variantSpellings.has(key)) {
       variantSpellings.set(key, new Set());
