@@ -91,7 +91,7 @@ const ZM_DISTRICTS = [
   { id: 'mpulungu', label: 'Mpulungu', admin_4: 'northern' },
   { id: 'mungwi', label: 'Mungwi', admin_4: 'northern' },
   { id: 'nsama', label: 'Nsama', admin_4: 'northern' },
-  { id: 'senga', label: 'Senga', admin_4: 'northern' },
+  { id: 'senga', label: 'Senga', admin_4: 'northern', topoName: 'Senga Hill District' },
 
   //   Southern - 15
   { id: 'chikankata', label: 'Chikankata', admin_4: 'southern' },

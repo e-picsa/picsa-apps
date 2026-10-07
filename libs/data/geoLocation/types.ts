@@ -2,6 +2,8 @@ export interface IGeolocationAdmin5Location {
   id: string;
   label: string;
   admin_4: string;
+  /** Optional OSM boundary name when it differs from the display label */
+  topoName?: string;
 }
 
 export interface IGeolocationAdmin6Location {
@@ -20,7 +22,7 @@ export interface IGeolocationData {
    **/
   admin_4: {
     label: string;
-    locations: { id: string; label: string }[];
+    locations: { id: string; label: string; topoName?: string }[];
   };
   admin_5?: {
     label: string;
