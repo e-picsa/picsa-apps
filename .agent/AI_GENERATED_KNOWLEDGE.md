@@ -115,6 +115,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Database Seeding & Foreign Key Deletion Ordering**: Supabase preloads the PostgreSQL `safeupdate` extension, which blocks any `DELETE` lacking a `WHERE` clause (`ERROR 21000: DELETE requires a WHERE clause`). In `db-seed.ts`, reading the first column from each table's seed CSV header and querying `.not(firstCol, 'is', null)` satisfies `safeupdate` dynamically without manual per-table column mappings. Additionally, tables must be emptied in reverse dependency order (children before parents, e.g. `locales` before `countries`, `user_roles` before `deployments`) and seeded in forward order (parents before children) to avoid foreign key violations.
 - **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
 
+### Remote DB Mirroring & Extended Seed Architecture (`db:seed:extended` / `remote:pull`)
+
+- **Unified Seed Architecture in `db-seed-export.ts`**:
+  Instead of fragile external dump scripts, `db-seed-export.ts` handles both CSV export and direct database seeding.
+  - `SEED_DATA_BASE` (`scripts/db-seed/db-seed.config.ts`): Base schema, sort orders, priorities, column mappings, and metadata omissions.
+  - `SEED_DATA_CONFIG`: Extends base with subset filters (e.g. `SEED_STATION_IDS`) for committing minimal baseline CSVs to `supabase/data`.
+  - `SEED_DATA_EXTENDED_CONFIG`: Extends base _without_ filters to clone complete datasets directly into the local database without writing CSVs (`yarn nx run picsa-server:db:seed:extended`).
+- **Admin Permissions on Deployments**:
+  The seeded admin user (`00000000-0000-0000-0000-000000000000` / `admin@picsa.app`) requires rows in `public.user_roles` for every active deployment in `public.deployments` with roles `['admin', 'deployments.admin']`. This populates the `picsa_roles` JWT claim via the `custom_access_token_hook`, unlocking dashboard routes and permissions. This is automatically ensured by `seedDevUsersAndPermissions()` in both `db:seed` and `db:seed:extended`.
+- **Per-Table Extended Seed Cache**:
+  In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
+- **Dev Users & Storage Seeding**:
+  `supabase/seed.sql` creates local dev users (`admin@picsa.app`, `user@picsa.app`) automatically on `supabase db reset`. In extended mode, `db-seed-export.ts` directly seeds local storage objects and baseline configurations post-import so local logins work out of the box.
+
 ### User Role Authorization Architecture
 
 - **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
