@@ -1248,6 +1248,27 @@ export function resolveClimateProducts(filter?: string | string[]): Set<ClimateP
   return result.size > 0 ? result : new Set(ALL_CLIMATE_PRODUCTS);
 }
 
+export type ClimateApiSummaryAction =
+  | 'rainfall-summaries'
+  | 'annual-temperature'
+  | 'monthly-temperatures'
+  | 'crop-probabilities';
+
+/**
+ * Maps a set of target ClimateProductId to corresponding dashboard/climate Edge Function actions.
+ */
+export function resolveClimateApiActions(products: Set<ClimateProductId>): ClimateApiSummaryAction[] {
+  const actions: ClimateApiSummaryAction[] = [];
+  const seasonProducts: ClimateProductId[] = ['rainfall', 'start', 'end', 'length', 'extremes'];
+  if (seasonProducts.some((p) => products.has(p))) {
+    actions.push('rainfall-summaries', 'crop-probabilities');
+  }
+  if (products.has('temp_min') || products.has('temp_max')) {
+    actions.push('annual-temperature', 'monthly-temperatures');
+  }
+  return actions;
+}
+
 /**
  * Merge incoming annual station records into existing annual records, selectively updating
  * only the fields belonging to selectedProducts while strictly preserving unselected metrics.

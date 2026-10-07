@@ -23,6 +23,7 @@ import {
   parseAnnualCsv,
   parseMonthlyCsv,
   pivotLongToWideMonthly,
+  resolveClimateApiActions,
   resolveClimateProducts,
 } from '@picsa/utils';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -44,6 +45,7 @@ export interface CliArgs {
   env?: string;
   report?: string;
   only?: string;
+  refreshApi?: boolean;
 }
 
 const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
@@ -65,6 +67,12 @@ const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
   '--local': (res) => {
     res.local = true;
   },
+  '--refresh-api': (res) => {
+    res.refreshApi = true;
+  },
+  '--sync-upstream': (res) => {
+    res.refreshApi = true;
+  },
 };
 
 const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
@@ -85,6 +93,12 @@ const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
   },
   only: (res, val) => {
     res.only = val.toLowerCase();
+  },
+  'refresh-api': (res, val) => {
+    res.refreshApi = val !== 'false' && val !== '0';
+  },
+  'sync-upstream': (res, val) => {
+    res.refreshApi = val !== 'false' && val !== '0';
   },
 };
 
@@ -325,9 +339,15 @@ export function getSyncSupabaseClient(options: { local?: boolean; env?: string }
     }
   }
 
-  const url = options.local
-    ? process.env.SUPABASE_URL || 'http://localhost:54321'
-    : process.env.SUPABASE_REMOTE_URL || process.env.SUPABASE_URL;
+  let url: string | undefined;
+  if (options.local) {
+    url = process.env.SUPABASE_URL || 'http://localhost:54321';
+  } else {
+    const projectIdUrl = process.env.SUPABASE_PROJECT_ID
+      ? `https://${process.env.SUPABASE_PROJECT_ID}.supabase.co`
+      : undefined;
+    url = process.env.SUPABASE_REMOTE_URL || process.env.SUPABASE_URL || projectIdUrl;
+  }
 
   const key = options.local
     ? process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
@@ -348,6 +368,98 @@ export function getSyncSupabaseClient(options: { local?: boolean; env?: string }
 
   console.log(`\n  🔌 Connected to Supabase (${options.local ? 'LOCAL' : 'REMOTE'}): ${url}`);
   return createClient(url, key);
+}
+
+/**
+ * Refresh upstream Climate API data into Supabase database (climate_station_data)
+ * by invoking the dashboard/climate edge functions for each station in a country.
+ */
+export async function refreshUpstreamDataForCountry(
+  country: string,
+  client: SupabaseClient,
+  options: {
+    station?: string;
+    only?: string;
+  } = {},
+): Promise<{ totalStations: number; successfulRequests: number; failedRequests: number }> {
+  const countryUpper = country.toUpperCase();
+  const countryLower = country.toLowerCase();
+
+  const targetProducts = resolveClimateProducts(options.only);
+  const actions = resolveClimateApiActions(targetProducts);
+
+  if (actions.length === 0) {
+    console.log(`  No upstream API actions required for product filter '${options.only}'.`);
+    return { totalStations: 0, successfulRequests: 0, failedRequests: 0 };
+  }
+
+  console.log(`\nRefreshing upstream Climate API data for ${countryUpper}...`);
+  console.log(`  Target Actions: ${actions.join(', ')}`);
+
+  let query = client
+    .from('climate_stations')
+    .select('id, station_id, station_name, country_code')
+    .eq('country_code', countryLower);
+
+  if (options.station) {
+    query = query.eq('station_id', options.station);
+  }
+
+  const { data: stations, error: stationsErr } = await query;
+  if (stationsErr) {
+    throw new Error(`Failed to fetch climate_stations for ${countryUpper}: ${stationsErr.message}`);
+  }
+
+  if (!stations || stations.length === 0) {
+    console.warn(`  ⚠️ No climate_stations found in database for ${countryUpper}`);
+    return { totalStations: 0, successfulRequests: 0, failedRequests: 0 };
+  }
+
+  console.log(`  Found ${stations.length} station(s) to refresh from Climate API`);
+
+  let successfulRequests = 0;
+  let failedRequests = 0;
+
+  for (let i = 0; i < stations.length; i++) {
+    const s = stations[i];
+    const stationSlug = s.station_id;
+    const metStationName = s.station_name || stationSlug;
+
+    for (const action of actions) {
+      try {
+        const { error: invokeErr } = await client.functions.invoke(`dashboard/climate/${action}`, {
+          body: {
+            station: {
+              id: s.id,
+              country_code: s.country_code,
+              station_name: metStationName,
+            },
+            country_code: s.country_code,
+          },
+        });
+
+        if (invokeErr) {
+          console.warn(
+            `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) API error: ${invokeErr.message}`,
+          );
+          failedRequests++;
+        } else {
+          successfulRequests++;
+        }
+      } catch (err) {
+        console.warn(
+          `    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${err?.message || err}`,
+        );
+        failedRequests++;
+      }
+    }
+  }
+
+  console.log(
+    `  Completed upstream Climate API refresh for ${countryUpper}: ${successfulRequests} successful, ${failedRequests} failed.`,
+  );
+
+  return { totalStations: stations.length, successfulRequests, failedRequests };
 }
 
 /**
@@ -763,6 +875,20 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
   if (shouldPull) {
     const client = getSyncSupabaseClient({ local: options.local, env: options.env });
     const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
+
+    if (options.refreshApi && !options.auditOnly) {
+      for (const c of countriesToProcess) {
+        const result = await refreshUpstreamDataForCountry(c, client, {
+          station: options.station,
+          only: options.only,
+        });
+        if (result.failedRequests > 0) {
+          throw new Error(
+            `Upstream Climate API refresh failed for ${c.toUpperCase()}: ${result.failedRequests} request(s) failed.`,
+          );
+        }
+      }
+    }
 
     if (options.only) {
       console.log(`  Scope (--only): ${options.only}`);

@@ -386,3 +386,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Non-Destructive Partial Syncs**: Meteorological station CSV summaries contain multiple annual and monthly metrics (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). When executing targeted syncs (e.g. `--only=temperature` or `--only=seasonal`), existing CSV columns for unselected metrics must be strictly preserved on disk (`mergeStationAnnualData` / `mergeStationMonthlyData`).
 - **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report.
 
+### macOS AF_UNIX Socket Length in Nx Daemon
+
+- When running in long path environments on macOS, the Nx daemon socket creation may fail with `Attempted to open socket that exceeds the maximum socket length`. Setting `NX_SOCKET_DIR=/tmp/nx-tmp` (or passing it inline to test runs) prevents this failure.
+
+### Climate Data Sync Pipeline & Automated Upstream Ingestion
+
+- **2-Step Sync Pipeline (Upstream Climate API -> Supabase DB -> App CSV Assets)**:
+  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
+  - Step 2: `yarn scripts:climate:sync` pulls from `climate_station_data`, merges selectively (honoring `--only`), formats wide CSVs, recalculates capabilities in `capabilities.generated.ts`, and produces an audit report (`dist/climate-sync-report.md`).
+- **GitHub Actions Isolated Country Workflow**:
+  - The CI workflow (`.github/workflows/climate-sync.yml`) runs weekly on schedule or on demand via `workflow_dispatch`. It executes per country with `max-parallel: 1` to protect upstream API throughput.
+  - Full git history (`fetch-depth: 0`) is strictly required in checkout so `getStationGitLastUpdatedDate()` can query `git log` without incorrectly overwriting station commit timestamps with the run date.
+  - PRs are created conditionally per country (`content/climate-sync-<country>`) only if files within `summaries/<country>` or `data/stations/<country>` change, formatting the markdown audit report directly into the PR body.
