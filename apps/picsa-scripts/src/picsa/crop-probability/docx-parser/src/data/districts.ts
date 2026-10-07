@@ -5,7 +5,7 @@ import type { ICountryCode } from '@picsa/data';
 const ZW_DISTRICTS = [
   { id: 'masvingo', label: 'Masvingo' },
   { id: 'mangwe', label: 'Mangwe' },
-  { id: 'mwenesi', label: 'Mwenezi' },
+  { id: 'mwenezi', label: 'Mwenezi' },
   { id: 'chipinge', label: 'Chipinge' },
   { id: 'rushinga', label: 'Rushinga' },
 ];
