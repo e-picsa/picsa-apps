@@ -90,3 +90,4 @@ apps/picsa-server/.env.server
 apps/picsa-server/.cache
 apps/picsa-server/supabase/.cache
 apps/picsa-server/scripts/backup/backups
+apps/picsa-server/scripts/db-seed/cache

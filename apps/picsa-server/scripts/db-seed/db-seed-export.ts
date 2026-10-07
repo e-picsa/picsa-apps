@@ -1,7 +1,9 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import Papa from 'papaparse';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, readFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { execSync } from 'node:child_process';
 
 import {
   SEED_DATA_CONFIG,
@@ -9,11 +11,13 @@ import {
   SEED_METADATA_COLUMNS,
   ISeedDataConfiguration,
 } from './db-seed.config';
-import { getExportSupabaseClient, getLocalSupabaseClient } from '../utils/supabase.utils';
+import { getExportSupabaseClient } from '../utils/supabase.utils';
 import { SupabaseSeed } from './db-seed';
 
+const ROOT_DIR = resolve(__dirname, '../../../../');
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
+const CACHE_DIR = resolve(__dirname, 'cache');
 
 interface ExportTableConfig {
   table: string;
@@ -24,6 +28,7 @@ export interface SeedExportCliOptions {
   tables?: string[];
   country?: string;
   extended?: boolean;
+  noFetch?: boolean;
   writeCsv?: boolean;
 }
 
@@ -36,6 +41,10 @@ export function parseExportCliArgs(argv = process.argv.slice(2)): SeedExportCliO
     if (arg === '--extended') {
       options.extended = true;
       options.writeCsv = false;
+      continue;
+    }
+    if (arg === '--no-fetch') {
+      options.noFetch = true;
       continue;
     }
     if (arg === '--no-csv') {
@@ -89,11 +98,12 @@ export function parseExportCliArgs(argv = process.argv.slice(2)): SeedExportCliO
  * 1. Standard CSV Export (`yarn nx run picsa-server:db:seed:export`):
  *    Exports filtered seed data from remote into `supabase/data/*_rows.csv`.
  * 2. Extended Seed (`yarn nx run picsa-server:db:seed:extended`):
- *    Pulls full unfiltered remote data (`SEED_DATA_EXTENDED_CONFIG`) and directly
- *    seeds it into the local database without writing CSV files.
+ *    Pulls full unfiltered remote data (`SEED_DATA_EXTENDED_CONFIG`), verifies remote
+ *    access and caches records BEFORE resetting the local database, and directly seeds
+ *    into local Postgres without writing CSV files. Supports `--no-fetch` for offline caching.
  */
 export class SupabaseSeedExport {
-  private remoteClient: SupabaseClient<any, 'public', any>;
+  private remoteClient?: SupabaseClient<any, 'public', any>;
   private localClient?: SupabaseClient<any, 'public', any>;
 
   public async run(options: SeedExportCliOptions = parseExportCliArgs()) {
@@ -103,16 +113,6 @@ export class SupabaseSeedExport {
     console.log(
       `\n🚀 Starting ${isExtended ? 'extended database seed (direct to local DB)' : 'seed data export to CSV'}...\n`,
     );
-
-    // Get remote client (pull-only usage with secret key)
-    this.remoteClient = getExportSupabaseClient();
-
-    // If writing directly to local DB, initialize local client
-    if (!writeCsv) {
-      this.localClient = getLocalSupabaseClient();
-    } else {
-      await mkdir(SEED_DIR, { recursive: true });
-    }
 
     // Select configuration
     const activeConfig = isExtended ? SEED_DATA_EXTENDED_CONFIG : SEED_DATA_CONFIG;
@@ -147,45 +147,140 @@ export class SupabaseSeedExport {
     }
     console.log('');
 
+    // STEP 1: Obtain records (either from local cache via --no-fetch, or fetched from remote FIRST)
+    const tableDataMap: Record<string, { rows: any[]; schema: string; config: ISeedDataConfiguration }> = {};
+
+    if (isExtended && options.noFetch) {
+      console.log(`📦 [--no-fetch] Loading seed data from per-table cache directory: ${CACHE_DIR}`);
+      if (!existsSync(CACHE_DIR)) {
+        console.error(`\n❌ Cache directory not found: ${CACHE_DIR}`);
+        console.error('  Run extended seed without `--no-fetch` first to populate the cache.\n');
+        process.exit(1);
+      }
+      for (const { table, config } of exportTables) {
+        const tableCacheFile = resolve(CACHE_DIR, `${table}.json`);
+        if (existsSync(tableCacheFile)) {
+          const rawCache = await readFile(tableCacheFile, 'utf-8');
+          const rows = JSON.parse(rawCache);
+          tableDataMap[table] = {
+            rows,
+            schema: config.schema || 'public',
+            config,
+          };
+          console.log(`   Loaded ${rows.length} rows for ${table} from cache`);
+        } else {
+          console.warn(`⚠️  Cache file missing for ${table}: ${tableCacheFile}`);
+        }
+      }
+    } else {
+      // Connect to remote Supabase (one-way pull with secret key)
+      console.log('📡 Connecting to remote Supabase server...');
+      this.remoteClient = getExportSupabaseClient();
+
+      console.log('📥 Fetching remote tables before modifying local database...\n');
+      for (const { table, config } of exportTables) {
+        const schema = config.schema || 'public';
+        const batchSize = config.batchSize ?? 1000;
+        const orderBy = config.orderBy ?? 'id';
+        const filter = this.buildTableFilter(table, schema, config.filter, options.country);
+
+        try {
+          console.log(`📥 Fetching ${schema}.${table}...`);
+          const rows = await this.fetchAllRows(table, schema, batchSize, filter, orderBy);
+          tableDataMap[table] = { rows, schema, config };
+          console.log(`   Fetched ${rows.length} rows from ${schema}.${table}`);
+        } catch (error) {
+          console.error(`\n❌ Failed to fetch ${schema}.${table} from remote:`, error);
+          console.error('Local database has NOT been reset or modified.\n');
+          process.exit(1);
+        }
+      }
+
+      // If extended seed, cache fetched records locally in separate JSON files per table
+      if (isExtended) {
+        try {
+          await mkdir(CACHE_DIR, { recursive: true });
+          for (const [t, data] of Object.entries(tableDataMap)) {
+            const tableCacheFile = resolve(CACHE_DIR, `${t}.json`);
+            await writeFile(tableCacheFile, JSON.stringify(data.rows, null, 2), 'utf-8');
+          }
+          console.log(`\n💾 Saved fetched seed data to per-table cache in: ${CACHE_DIR}`);
+        } catch (cacheError) {
+          console.warn('⚠️  Could not write per-table cache files:', cacheError);
+        }
+      }
+    }
+
+    // STEP 2: Write to destination
     const results: { table: string; rows: number; schema: string; destination: string }[] = [];
 
-    // Export each table sequentially
-    for (const { table, config } of exportTables) {
-      const schema = config.schema || 'public';
-      const batchSize = config.batchSize ?? 1000;
-      const orderBy = config.orderBy ?? 'id';
-      const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
-
-      // Build effective filter combining config and country flags
-      const filter = this.buildTableFilter(table, schema, config.filter, options.country);
-
-      try {
-        console.log(`📥 Fetching ${schema}.${table}...`);
-        const rows = await this.fetchAllRows(table, schema, batchSize, filter, orderBy);
-
+    if (writeCsv) {
+      await mkdir(SEED_DIR, { recursive: true });
+      for (const [table, { rows, schema, config }] of Object.entries(tableDataMap)) {
         if (rows.length === 0) {
           console.log(`⚠️  Skipped ${schema}.${table}: 0 rows returned\n`);
           results.push({ table, rows: 0, schema, destination: 'skipped' });
           continue;
         }
-
-        if (writeCsv) {
-          await this.writeTableCsv(table, rows, omitColumns);
-          console.log(`✅ Exported ${schema}.${table}: ${rows.length} rows written to CSV\n`);
-          results.push({ table, rows: rows.length, schema, destination: 'csv' });
-        } else {
-          await this.upsertLocalRows(table, schema, rows, config, omitColumns);
-          console.log(`✅ Seeded ${schema}.${table}: ${rows.length} rows upserted to local DB\n`);
-          results.push({ table, rows: rows.length, schema, destination: 'local db' });
-        }
-      } catch (error) {
-        console.error(`❌ Failed to process ${schema}.${table}:`, error);
+        const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
+        await this.writeTableCsv(table, rows, omitColumns);
+        console.log(`✅ Exported ${schema}.${table}: ${rows.length} rows written to CSV\n`);
+        results.push({ table, rows: rows.length, schema, destination: 'csv' });
+      }
+      console.log(`\n✅ Seed export completed! Files written to ${SEED_DIR}`);
+    } else {
+      // Extended direct DB seeding:
+      // Remote data is confirmed! Now reset the local database.
+      console.log('\n🔄 Resetting local Supabase database to clean migration baseline...');
+      const supabaseCLIPath = resolve(ROOT_DIR, 'node_modules/.bin/supabase');
+      try {
+        execSync(`${supabaseCLIPath} db reset`, { cwd: SUPABASE_DIR, stdio: 'inherit' });
+      } catch (resetErr) {
+        console.error('❌ Failed to reset local database:', resetErr);
         process.exit(1);
       }
+
+      // Initialize local seed helper and client
+      const localSeed = new SupabaseSeed();
+      this.localClient = localSeed.initClient();
+      await localSeed.ensureClientReady();
+
+      // IMPORTANT: Upload local storage assets FIRST so foreign keys (like deployments.icon_path) resolve
+      console.log('\n📦 Step 1/4: Seeding local storage assets...');
+      await localSeed.importStorageObjects();
+
+      // Retrieve list of existing storage paths to safely validate foreign keys
+      const { data: storageObjectRows } = await this.localClient
+        .schema('public')
+        .from('storage_objects')
+        .select('path');
+      const validStoragePaths = new Set<string>((storageObjectRows || []).map((r: any) => r.path));
+
+      console.log('\n🌱 Step 2/4: Upserting extended database records...');
+      for (const [table, { rows, schema, config }] of Object.entries(tableDataMap)) {
+        if (rows.length === 0) {
+          results.push({ table, rows: 0, schema, destination: 'skipped' });
+          continue;
+        }
+
+        const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
+        await this.upsertLocalRows(table, schema, rows, config, omitColumns, validStoragePaths);
+        console.log(`✅ Seeded ${schema}.${table}: ${rows.length} rows upserted to local DB`);
+        results.push({ table, rows: rows.length, schema, destination: 'local db' });
+      }
+
+      console.log('\n👤 Step 3/4: Configuring dev users and deployment admin permissions...');
+      await localSeed.seedDevUsersAndPermissions();
+
+      console.log('\n🔑 Step 4/4: Storing frontend credentials...');
+      const credentials = localSeed.getCredentials();
+      await localSeed.storeFrontendCredentials(credentials.API_URL, credentials.ANON_KEY);
+
+      console.log('\n🎉 Extended seed complete! Local database fully reflects remote server data.');
     }
 
     // Summary
-    console.log('📊 Operation Summary:');
+    console.log('\n📊 Operation Summary:');
     console.table(
       results.map((r) => ({
         Table: r.table,
@@ -194,20 +289,6 @@ export class SupabaseSeedExport {
         Destination: r.destination,
       })),
     );
-
-    // If extended direct seed, run local seed to ensure storage objects and dev users are populated
-    if (!writeCsv) {
-      console.log('\n🌱 Initializing local storage objects and baseline configuration...');
-      try {
-        const localSeed = new SupabaseSeed();
-        await localSeed.run();
-      } catch (error: any) {
-        console.warn('⚠️  Notice: Local baseline seed returned a warning:', error?.message || error);
-      }
-      console.log('\n🎉 Extended seed complete! Local database now reflects remote server data.');
-    } else {
-      console.log(`\n✅ Seed export completed! Files written to ${SEED_DIR}`);
-    }
   }
 
   /**
@@ -247,6 +328,8 @@ export class SupabaseSeedExport {
     filter: Record<string, any> | undefined,
     orderBy: string | string[],
   ): Promise<any[]> {
+    if (!this.remoteClient) throw new Error('Remote client not initialized');
+
     let offset = 0;
     const allRows: any[] = [];
 
@@ -303,6 +386,7 @@ export class SupabaseSeedExport {
     rows: any[],
     config: ISeedDataConfiguration,
     omitColumns: string[],
+    validStoragePaths?: Set<string>,
   ): Promise<void> {
     if (!this.localClient) return;
 
@@ -317,6 +401,18 @@ export class SupabaseSeedExport {
           processed[col] = typeof mapping === 'function' ? mapping(processed[col], processed) : mapping;
         }
       }
+
+      // Safe foreign-key protection for deployments:
+      // If icon_path is set but does not exist in local storage_objects, set to null
+      if (table === 'deployments' && validStoragePaths && processed.icon_path) {
+        if (!validStoragePaths.has(processed.icon_path)) {
+          console.warn(
+            `⚠️  Deployment "${processed.id}": icon_path "${processed.icon_path}" not in local storage. Setting to null to satisfy foreign key.`,
+          );
+          processed.icon_path = null;
+        }
+      }
+
       return processed;
     });
 
@@ -374,7 +470,7 @@ function buildExportError(schema: string, table: string, error: { message: strin
 
 if (require.main === module) {
   new SupabaseSeedExport().run().catch((error) => {
-    console.error('❌ Export failed:', error);
+    console.error('❌ Operation failed:', error);
     process.exit(1);
   });
 }

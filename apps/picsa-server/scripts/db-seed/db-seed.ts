@@ -49,6 +49,20 @@ interface ISupabaseStatus {
 export class SupabaseSeed {
   private client: SupabaseClient<any, 'public', any>;
 
+  public initClient() {
+    const { SERVICE_ROLE_KEY, API_URL } = this.getCredentials();
+    this.client = createClient(API_URL, SERVICE_ROLE_KEY, {});
+    return this.client;
+  }
+
+  public getClient() {
+    return this.client;
+  }
+
+  public setClient(client: SupabaseClient<any, 'public', any>) {
+    this.client = client;
+  }
+
   public async run() {
     // log into supabase using service role to allow storage bucket manipulation
     const { SERVICE_ROLE_KEY, API_URL, ANON_KEY } = this.getCredentials();
@@ -58,18 +72,60 @@ export class SupabaseSeed {
     // import storage objects first as some db rows depend on storage db entry ref
     await this.importStorageObjects();
     await this.importDBRows();
+    await this.seedDevUsersAndPermissions();
     await this.storeFrontendCredentials(API_URL, ANON_KEY);
   }
 
+  /**
+   * Ensure local dev users and deployment admin permissions are configured
+   */
+  public async seedDevUsersAndPermissions() {
+    console.log('\n👤 Ensuring dev users and admin permissions on all deployments...');
+
+    // 1. Ensure dev user profiles exist
+    await this.client
+      .schema('public')
+      .from('user_profiles')
+      .upsert([
+        { id: '00000000-0000-0000-0000-000000000000', email: 'admin@picsa.app', name: 'Admin User' },
+        { id: '10000000-0000-0000-0000-000000000000', email: 'user@picsa.app', name: 'Standard User' },
+      ]);
+
+    // 2. Query all deployments and ensure admin user has full admin roles on every deployment
+    const { data: allDeployments, error: depError } = await this.client
+      .schema('public')
+      .from('deployments')
+      .select('id');
+
+    if (depError) {
+      console.warn('⚠️ Could not query deployments for user permissions:', depError);
+      return;
+    }
+
+    if (allDeployments && allDeployments.length > 0) {
+      const adminRoles = allDeployments.map((d: any) => ({
+        deployment_id: d.id,
+        user_id: '00000000-0000-0000-0000-000000000000',
+        roles: ['admin', 'deployments.admin'],
+      }));
+      const { error: rolesError } = await this.client.schema('public').from('user_roles').upsert(adminRoles);
+      if (rolesError) {
+        console.warn('⚠️ Could not upsert admin user_roles:', rolesError);
+      } else {
+        console.log(`   Granted admin permissions for admin@picsa.app across ${allDeployments.length} deployments.`);
+      }
+    }
+  }
+
   /** Populate credentials to frontend app to allow anon access */
-  private async storeFrontendCredentials(apiUrl: string, anonKey: string) {
+  public async storeFrontendCredentials(apiUrl: string, anonKey: string) {
     // Store credentials to frontend env config
     const frontendConfig = { apiUrl, anonKey };
     await writeFile(SUPABASE_ENV_ASSET, JSON.stringify(frontendConfig, null, 2));
   }
 
   /** Use the supabase cli to automatically detect credentials of server running locally */
-  private getCredentials() {
+  public getCredentials() {
     const supabaseCLIPath = resolve(ROOT_DIR, 'node_modules', '.bin', 'supabase');
     const res = execSync(`${supabaseCLIPath} status --output json`, { cwd: SUPABASE_DIR });
     try {
@@ -85,7 +141,7 @@ export class SupabaseSeed {
    * If calling seed operation immediately after reset the container may not be started
    * Attempt to access storage bucket list method, retrying in 5s intervals if not available
    */
-  private async ensureClientReady(retryCount = 0) {
+  public async ensureClientReady(retryCount = 0) {
     const { error } = await this.client.storage.listBuckets();
     if (error) {
       console.log('wait error', error.name, error.message);
@@ -105,7 +161,7 @@ export class SupabaseSeed {
    * Import all files in local supabase/data/storage folder into supabase storage
    * Creates new buckets as required and populates files to nested paths
    */
-  private async importStorageObjects() {
+  public async importStorageObjects() {
     console.log('\n', '\n', 'Storage');
     const { storage } = this.client;
     // list all storage files to upload
