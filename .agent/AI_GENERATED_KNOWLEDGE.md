@@ -252,12 +252,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### html2canvas Table Rowspan Occlusion Bug & Transparency Fix
 
-- **Problem**: When `html2canvas` renders an HTML table into an image, it draws rows (`<tr>`) sequentially from top to bottom. If `table`, `thead`, `tbody`, `tfoot`, or `tr` has any non-transparent background color (such as Angular Material MDC table's default `background-color: inherit` combined with a white table background), subsequent `<tr>` elements draw solid background rectangles across the entire table width. This paints directly over earlier cells spanning down across multiple rows (`rowspan`), causing vertically merged cells (such as the merged top-left table header and crop names) to appear blank white in the exported image.
+- **Problem**: When `html2canvas` renders an HTML table into an image, it draws rows (`<tr>`) sequentially from top to bottom.
+  1. **Background Occlusion**: If `table`, `thead`, `tbody`, `tfoot`, or `tr` has any non-transparent background color (such as Angular Material MDC table's default `background-color: inherit`), subsequent `<tr>` elements draw solid background rectangles across the entire table width. This paints directly over earlier cells spanning down across multiple rows (`rowspan`), causing vertically merged cells (such as the merged top-left table header and crop names) to appear blank white in the exported image.
+  2. **Row Border Slicing**: If `tr` has CSS borders (e.g. `border-top`, `border-bottom`), `html2canvas` paints row borders across the full width of each `<tr>` bounding box, cutting horizontal dividing lines directly through any multi-row merged cells (`rowspan`), visually unmerging them into sliced boxes.
+  3. **Angular CDK Table Sticky with Rowspan**: CDK Table's sticky styler assigns sticky offsets (`left: 0px`, `z-index: 1`) based on cell index in `row.children`. When `rowspan` causes subsequent rows to omit column 0, cell 0 of subsequent rows receives sticky styles, conflicting with print resets and stacking contexts.
 - **Solution**:
-  1. Set `background-color: transparent !important; background: transparent !important;` on `table, thead, tbody, tfoot, tr, tr.mat-mdc-header-row, tr.mat-mdc-row`.
+  1. Set `background-color: transparent !important; background: transparent !important; border: none !important;` on `table, thead, tbody, tfoot, tr, tr.mat-mdc-header-row, tr.mat-mdc-row, tr.mat-mdc-footer-row`. Only individual `th, td` cells should have borders.
   2. Apply background colors solely to individual table cells (`th, td`) and the outer print container.
-  3. Table cells with `rowspan` must have `position: relative; z-index: 1;` so their stacking context sits above unpositioned row elements.
-  4. In `PrintProvider.shareHtmlDom`, use `html2canvas(clone, { onclone: (_doc, el) => { ... } })` to defensively set transparent backgrounds on all `tr, thead, tbody, tfoot` elements in the cloned DOM tree.
+  3. Table cells with `rowspan` must have `position: relative !important; z-index: 2 !important;` so their stacking context sits above unpositioned row elements and overrides any `position: static !important` applied to CDK sticky cells.
+  4. Wrap inner text in spanning cells with a child element (`<span>`) styled with `position: relative; z-index: 3;`.
+  5. In `PrintProvider.shareHtmlDom`, use `html2canvas(clone, { onclone: (_doc, el) => { ... } })` to defensively set transparent backgrounds and `border: none !important` on all `tr, thead, tbody, tfoot` elements, and ensure `td[rowspan], th[rowspan]` are elevated with `position: relative !important; z-index: 2 !important`.
 
 ### JSDOM C3 Layout Crash with Arbitrary Tailwind Classes in Unit Tests
 

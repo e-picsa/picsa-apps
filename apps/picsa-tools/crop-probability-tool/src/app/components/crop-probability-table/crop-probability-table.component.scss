@@ -35,7 +35,6 @@ th.crop-title {
 }
 
 td,
-tr,
 th {
   border-top: $border-style !important;
   border-bottom: $border-style !important;
@@ -106,8 +105,8 @@ th.probability-cell {
     border-collapse: collapse !important;
   }
 
-  // Row and section backgrounds must be transparent so html2canvas doesn't paint
-  // subsequent row backgrounds over earlier cells spanning multiple rows (rowspan).
+  // Row and section backgrounds and borders must be transparent/none so html2canvas doesn't paint
+  // subsequent row backgrounds and borders over earlier cells spanning multiple rows (rowspan).
   tbody,
   thead,
   tfoot,
@@ -117,6 +116,7 @@ th.probability-cell {
   tr.mat-mdc-footer-row {
     background-color: transparent !important;
     background: transparent !important;
+    border: none !important;
   }
 
   th,
@@ -132,13 +132,13 @@ th.probability-cell {
     position: static !important;
   }
 
-  // Ensure cells with rowspan maintain proper stacking context
+  // Ensure cells with rowspan maintain proper stacking context above any row elements
   td[rowspan],
   th[rowspan],
   td.crop-title,
   td[mat-header-cell] {
-    position: relative;
-    z-index: 1;
+    position: relative !important;
+    z-index: 2 !important;
   }
 
   td.crop-title,
@@ -146,11 +146,12 @@ th.probability-cell {
     background-color: #ffffff !important;
   }
 
-  h2 {
+  h2,
+  .crop-label {
     color: #000000 !important;
     margin: 0 !important;
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
 
   td.footer-cell,

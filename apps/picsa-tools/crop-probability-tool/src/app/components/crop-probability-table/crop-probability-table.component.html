@@ -78,7 +78,7 @@
       <ng-container *matCellDef="let element">
         @if (element.cropNameRowspan > 0) {
           <td mat-cell class="crop-title" [attr.rowspan]="element.cropNameRowspan">
-            {{ cropDataHashmap[element.crop]?.label || element.crop | translate }}
+            <span class="crop-label">{{ cropDataHashmap[element.crop]?.label || element.crop | translate }}</span>
           </td>
         }
       </ng-container>

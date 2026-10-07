@@ -33,13 +33,24 @@ export class PrintProvider {
     const canvasElm = await html2canvas(clone, {
       allowTaint: true,
       onclone: (_clonedDoc, element) => {
-        // html2canvas renders <tr> backgrounds sequentially from top to bottom, which paints
+        // html2canvas renders <tr> backgrounds and borders sequentially from top to bottom, which paints
         // over cells spanning down from earlier rows (rowspan). Ensure table row and group backgrounds
-        // are transparent in the cloned DOM so spanned cells are visible.
+        // and borders are transparent/none in the cloned DOM so spanned cells are visible.
         const rowContainers = element.querySelectorAll('tr, thead, tbody, tfoot');
         rowContainers.forEach((container) => {
-          (container as HTMLElement).style.setProperty('background-color', 'transparent', 'important');
-          (container as HTMLElement).style.setProperty('background', 'transparent', 'important');
+          const el = container as HTMLElement;
+          el.style.setProperty('background-color', 'transparent', 'important');
+          el.style.setProperty('background', 'transparent', 'important');
+          el.style.setProperty('border', 'none', 'important');
+          el.style.setProperty('border-top', 'none', 'important');
+          el.style.setProperty('border-bottom', 'none', 'important');
+        });
+        // Ensure cells with rowspan have a positive stacking context so they render above row boxes
+        const spannedCells = element.querySelectorAll('td[rowspan], th[rowspan]');
+        spannedCells.forEach((cell) => {
+          const el = cell as HTMLElement;
+          el.style.setProperty('position', 'relative', 'important');
+          el.style.setProperty('z-index', '2', 'important');
         });
       },
     });
