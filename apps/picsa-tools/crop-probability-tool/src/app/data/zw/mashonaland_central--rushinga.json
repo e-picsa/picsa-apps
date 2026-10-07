@@ -1,0 +1,197 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "SC-403",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [300],
+        "probabilities": [0.9, 0.9, 0.8, 0.6]
+      },
+      {
+        "variety": "ZAP-41",
+        "days": "90 - 110",
+        "days_lower": 90,
+        "days_upper": 110,
+        "water": [300],
+        "probabilities": [0.9, 0.9, 0.7, 0.4]
+      },
+      {
+        "variety": "PG-551, PG-553, PG-561, SC-500, ZAP-53, ZAP-55",
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [350],
+        "probabilities": [0.8, 0.7, 0.6, 0.3]
+      },
+      {
+        "variety": "SC-417",
+        "days": "110",
+        "days_lower": 110,
+        "days_upper": 110,
+        "water": [300],
+        "probabilities": [1, 0.8, 0.6, 0.2]
+      },
+      {
+        "variety": "SC-419, PAN-413",
+        "days": "120 - 135",
+        "days_lower": 120,
+        "days_upper": 135,
+        "water": [300],
+        "probabilities": [0.8, 0.5, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "VUMBA-GEKWE",
+        "days": "80 - 100",
+        "days_lower": 80,
+        "days_upper": 100,
+        "water": [250],
+        "probabilities": [0.9, 0.9, 0.8, 0.6]
+      },
+      {
+        "variety": "SV-3",
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [250],
+        "probabilities": [0.9, 0.8, 0.6, 0.4]
+      },
+      {
+        "variety": "SC-SMILE",
+        "days": "105",
+        "days_lower": 105,
+        "days_upper": 105,
+        "water": [250],
+        "probabilities": [1, 0.9, 0.6, 0.4]
+      },
+      {
+        "variety": "MACIA",
+        "days": "110",
+        "days_lower": 110,
+        "days_upper": 110,
+        "water": [250],
+        "probabilities": [1, 0.9, 0.6, 0.3]
+      },
+      {
+        "variety": "SV-4",
+        "days": "120",
+        "days_lower": 120,
+        "days_upper": 120,
+        "water": [250],
+        "probabilities": [0.8, 0.6, 0.4, 0.2]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "VALENCIA, NATAL-COMMON",
+        "days": "85 - 105",
+        "days_lower": 85,
+        "days_upper": 105,
+        "water": [400],
+        "probabilities": [0.8, 0.8, 0.7, 0.4]
+      },
+      {
+        "variety": "TUMBE",
+        "days": "110 - 130",
+        "days_lower": 110,
+        "days_upper": 130,
+        "water": [400],
+        "probabilities": [0.8, 0.6, 0.3, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "PAN-7170, PAN-7180",
+        "days": "90 - 110",
+        "days_lower": 90,
+        "days_upper": 110,
+        "water": [300],
+        "probabilities": [0.9, 0.9, 0.7, 0.4]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "CBC-3",
+        "days": "65",
+        "days_lower": 65,
+        "days_upper": 65,
+        "water": [250],
+        "probabilities": [0.7, 0.9, 0.9, 0.8]
+      },
+      {
+        "variety": "CBC-2",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [250],
+        "probabilities": [0.9, 0.9, 0.9, 0.8]
+      },
+      {
+        "variety": "CBC-4, BLACK-EYED-BEAN",
+        "days": "80 - 100",
+        "days_lower": 80,
+        "days_upper": 100,
+        "water": [250],
+        "probabilities": [0.9, 0.9, 0.8, 0.6]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "BC-853, FQ-902, SZ-9314",
+        "days": "120 - 140",
+        "days_lower": 120,
+        "days_upper": 140,
+        "water": [450],
+        "probabilities": [0.6, 0.4, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "PMV-3",
+        "days": "75",
+        "days_lower": 75,
+        "days_upper": 75,
+        "water": [250],
+        "probabilities": [0.9, 0.9, 0.9, 0.8]
+      },
+      {
+        "variety": "OKASHANA",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [250],
+        "probabilities": [1, 0.9, 0.8, 0.7]
+      },
+      {
+        "variety": "PMV-1, PMV-2",
+        "days": "75 - 120",
+        "days_lower": 75,
+        "days_upper": 120,
+        "water": [250],
+        "probabilities": [0.9, 0.8, 0.6, 0.5]
+      }
+    ]
+  }
+]
