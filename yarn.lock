@@ -13948,15 +13948,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:^1.9.4":
-  version: 1.9.21
-  resolution: "@types/leaflet@npm:1.9.21"
-  dependencies:
-    "@types/geojson": "npm:*"
-  checksum: 10c0/96a86bdeff7bf56104242e97536f39005a53dd857853aa0c5de127ce2c72f3f36638f2a5b8d23e2e825a2bfe32113be731ab26634a3143413b891299c29621ce
-  languageName: node
-  linkType: hard
-
 "@types/lockfile@npm:1.0.4":
   version: 1.0.4
   resolution: "@types/lockfile@npm:1.0.4"
@@ -25437,13 +25428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.9.4":
-  version: 1.9.4
-  resolution: "leaflet@npm:1.9.4"
-  checksum: 10c0/f639441dbb7eb9ae3fcd29ffd7d3508f6c6106892441634b0232fafb9ffb1588b05a8244ec7085de2c98b5ed703894df246898477836cfd0ce5b96d4717b5ca1
-  languageName: node
-  linkType: hard
-
 "less-loader@npm:12.3.0":
   version: 12.3.0
   resolution: "less-loader@npm:12.3.0"
@@ -28709,7 +28693,6 @@ __metadata:
     "@types/hammerjs": "npm:^2.0.41"
     "@types/intro.js": "npm:^5.1.1"
     "@types/jest": "npm:30.0.0"
-    "@types/leaflet": "npm:^1.9.4"
     "@types/node": "npm:^24"
     "@types/papaparse": "npm:^5.5.2"
     "@types/parse": "npm:^2.18.16"
@@ -28778,7 +28761,6 @@ __metadata:
     jszip: "npm:^3.10.1"
     jwt-decode: "npm:^4.0.0"
     ky: "npm:^1.7.4"
-    leaflet: "npm:^1.9.4"
     lint-staged: "npm:^13.2.1"
     lottie-web: "npm:^5.12.2"
     maplibre-gl: "npm:^5.24.0"
