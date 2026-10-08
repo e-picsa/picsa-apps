@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -6,7 +6,10 @@ import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { IPicsaVideoData, RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -26,6 +29,9 @@ import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
   imports: [ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule, PicsaVideoPlayerComponent],
 })
 export class FarmerStepVideoPlayerComponent {
+  private resourcesToolService = inject(ResourcesToolService);
+  private notificationService = inject(PicsaNotificationService);
+
   public video = input.required<IPicsaVideoData>();
   public videoUri = signal<string | undefined>(undefined);
 
@@ -79,6 +85,18 @@ export class FarmerStepVideoPlayerComponent {
     }
     if (videoPlayer?.source()) {
       videoPlayer.playVideo();
+    }
+  }
+
+  public async shareVideo() {
+    const resource = this.videoResource();
+    if (!resource) return;
+    const shared = await this.resourcesToolService.shareResource(resource);
+    if (!shared) {
+      this.notificationService.showUserNotification({
+        message: 'Please download the video before sharing',
+        matIcon: 'info',
+      });
     }
   }
 }

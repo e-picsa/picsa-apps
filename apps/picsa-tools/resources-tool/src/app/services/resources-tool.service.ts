@@ -8,7 +8,11 @@ import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
-import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
+import {
+  IAttachment,
+  PicsaDatabase_V2_Service,
+  PicsaDatabaseAttachmentService,
+} from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { ShareService } from '@picsa/shared/services/core/share.service';
@@ -143,6 +147,80 @@ export class ResourcesToolService extends PicsaAsyncService {
     if (attachmentDoc) {
       return this.shareService.shareFromAttachments([attachmentDoc]);
     }
+  }
+
+  /**
+   * Check if a resource file attachment has been downloaded to local database
+   */
+  public async getResourceAttachmentDoc(resource: schemas.IResourceFile | string) {
+    await this.ready();
+    const id = typeof resource === 'string' ? resource : resource.id;
+    const doc = await this.dbFiles.findOne(id).exec();
+    if (doc) {
+      const filename = doc.filename || doc.id;
+      return this.dbAttachmentService.getAttachmentDoc(doc, filename);
+    }
+    return null;
+  }
+
+  /**
+   * Share a resource file via device sharing sheet (supporting Bluetooth / social sharing).
+   * If downloaded, opens the share sheet.
+   * If not downloaded, returns false.
+   */
+  public async shareResource(resource: schemas.IResourceFile | string): Promise<boolean> {
+    await this.ready();
+    const id = typeof resource === 'string' ? resource : resource.id;
+    const doc = await this.dbFiles.findOne(id).exec();
+    if (doc) {
+      const filename = doc.filename || doc.id;
+      const attachmentDoc = await this.dbAttachmentService.getAttachmentDoc(doc, filename);
+      if (attachmentDoc) {
+        try {
+          await this.shareService.shareFromAttachments([attachmentDoc], {
+            title: doc.title,
+            dialogTitle: 'Share Video',
+          });
+          return true;
+        } catch (error: unknown) {
+          // If file sharing fails or is unsupported on web, fallback to sharing online URL
+          if (doc.url) {
+            await this.shareLink(doc.url);
+            return true;
+          }
+          throw error;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Share multiple resources via device sharing sheet.
+   * Gathers all downloaded attachment docs and shares them together.
+   * Returns true if at least one file was shared, false if none downloaded.
+   */
+  public async shareResources(resources: (schemas.IResourceFile | string)[]): Promise<boolean> {
+    await this.ready();
+    const attachmentDocs: RxDocument<IAttachment>[] = [];
+    for (const resource of resources) {
+      const id = typeof resource === 'string' ? resource : resource.id;
+      const doc = await this.dbFiles.findOne(id).exec();
+      if (doc) {
+        const filename = doc.filename || doc.id;
+        const attachmentDoc = await this.dbAttachmentService.getAttachmentDoc(doc, filename);
+        if (attachmentDoc) {
+          attachmentDocs.push(attachmentDoc);
+        }
+      }
+    }
+    if (attachmentDocs.length > 0) {
+      await this.shareService.shareFromAttachments(attachmentDocs, {
+        dialogTitle: 'Share Videos',
+      });
+      return true;
+    }
+    return false;
   }
 
   private async populateHardcodedResources() {

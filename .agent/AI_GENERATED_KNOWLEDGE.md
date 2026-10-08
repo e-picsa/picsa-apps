@@ -202,6 +202,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ---
 
+### Jest ESM Transformation & Native Mocks in Tool Specs
+
+- **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
+- **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
+
+---
+
 ## 5. Charts & SVG Visualizations (C3 / D3)
 
 ### C3 Inline Style Precedence & Point Customization
@@ -412,5 +419,5 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - **Bold Visual Weight**: Match companion icons (Cotton, Cowpeas, Groundnuts) with heavier line weights (`stroke-width: 3.2–3.6px` in a 100x100 canvas). Avoid intricate leaf venation or fine rootlet hatching that clutters or disappears at small sizes; use clean outer contours and single central midribs.
   - **Occlusion Handling without Opaque Fills**: In UI components like `crop-select.scss`, selected items use dynamic theme backgrounds (e.g. `background: wheat`). Using opaque white fills (`fill="#fff"`) causes unsightly white boxes on colored backgrounds. To maintain transparency without background lines cutting through foreground objects, overlapping background paths must be trimmed precisely to the boundary of the foreground shapes.
 - **Botanical Identifiers**:
-  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (*Pennisetum glaucum*) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
-  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (*Vigna subterranea* / "roundnuts" / *nyimo*), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (_Pennisetum glaucum_) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
+  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (_Vigna subterranea_ / "roundnuts" / _nyimo_), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
