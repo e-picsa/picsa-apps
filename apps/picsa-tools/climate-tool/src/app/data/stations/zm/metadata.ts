@@ -292,7 +292,7 @@ const stations: IStationMeta[] = [
     name: 'NABUYA',
     latitude: -16.58,
     longitude: 27.34,
-    location: ['lavushimanda'],
+    location: ['PEMBA'],
   },
   {
     id: 'ndola_met',
