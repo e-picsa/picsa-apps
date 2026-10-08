@@ -2,10 +2,12 @@ import type { Database } from '../../supabase/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 let supabase: SupabaseClient<Database>;
 let remoteSupabase: SupabaseClient<Database>;
 let exportSupabase: SupabaseClient<Database>;
+let localSupabase: SupabaseClient<Database>;
 
 /**
  * Retrieve service-role supabase client using stored env credentials for local Docker development
@@ -306,4 +308,18 @@ export function getExcludedTables(): string[] {
   }
 
   return ['public.app_users', 'public.user_profiles', 'public.forecasts', 'public.climate_station_data'];
+}
+
+/**
+ * Retrieve local service-role Supabase client dynamically discovered via supabase CLI status
+ */
+export function getLocalSupabaseClient(): SupabaseClient<Database> {
+  if (localSupabase) return localSupabase;
+  const serverDir = path.resolve(__dirname, '../../');
+  const rootDir = path.resolve(serverDir, '../../');
+  const supabaseCLIPath = path.resolve(rootDir, 'node_modules/.bin/supabase');
+  const res = execSync(`${supabaseCLIPath} status --output json`, { cwd: path.resolve(serverDir, 'supabase') });
+  const status = JSON.parse(res.toString('utf8'));
+  localSupabase = createClient<Database>(status.API_URL, status.SERVICE_ROLE_KEY);
+  return localSupabase;
 }

@@ -1,6 +1,7 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -22,7 +23,7 @@ import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaTourButton, TourService } from '@picsa/shared/services/core/tour';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { CropProbabilityTableComponent } from '../../components/crop-probability-table/crop-probability-table.component';
@@ -46,14 +47,8 @@ const STRINGS = {
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [
-    PicsaFormsModule,
-    CropProbabilityTableComponent,
-    MatButtonModule,
-    MatIcon,
-    PicsaTranslateModule,
-    PicsaTourButton,
-  ],
+  imports: [PicsaFormsModule, CropProbabilityTableComponent, MatButtonModule, MatIcon, PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -64,6 +59,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private viewContainer = inject(ViewContainerRef);
 
   private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
+  private readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
+  public readonly tableComponent = viewChild(CropProbabilityTableComponent);
 
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
@@ -125,16 +122,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const portal = this.headerCenterPortal();
-    if (portal) {
-      this.componentsService.patchHeader({
-        cdkPortalCenter: new TemplatePortal(portal, this.viewContainer),
-      });
-    }
+    const centerPortal = this.headerCenterPortal();
+    const endPortal = this.headerEndPortal();
+    this.componentsService.patchHeader({
+      cdkPortalCenter: centerPortal ? new TemplatePortal(centerPortal, this.viewContainer) : undefined,
+      cdkPortalEnd: endPortal ? new TemplatePortal(endPortal, this.viewContainer) : undefined,
+    });
   }
 
   ngOnDestroy() {
-    this.componentsService.patchHeader({ cdkPortalCenter: undefined });
+    this.componentsService.patchHeader({
+      cdkPortalCenter: undefined,
+      cdkPortalEnd: undefined,
+    });
+  }
+
+  public shareTable() {
+    return this.tableComponent()?.sharePicture();
   }
 
   public handleLocationConfirmed(location: (string | undefined)[]) {
@@ -169,7 +173,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
       allData.forEach((entry) => {
         const segments = entry.id.split('/');
-        const [child, sublocation] = (segments[1] || '').split('--');
+        const [, sublocation] = (segments[1] || '').split('--');
         if (sublocation) {
           (data[deepSlot]?.locations as unknown[]).push({
             id: entry.id,

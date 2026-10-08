@@ -172,6 +172,7 @@ export class DashboardCropAdminComponent {
 
       const zip = new JSZip();
       const exportEntries: any[] = [];
+      let skippedEmpty = 0;
 
       const locationData = this.deploymentService.activeDeploymentLocationData();
       const locations = getDeepestLocations(locationData);
@@ -217,6 +218,16 @@ export class DashboardCropAdminComponent {
           probabilityHashmap,
         });
 
+        // Skip locations with no usable probability data (e.g. no upstream
+        // probability rows, or no overlap with local water requirements)
+        const hasValues = tableData.some((crop) =>
+          crop.data.some((item) => item.probabilities && item.probabilities.some((p) => p != null)),
+        );
+        if (!hasValues) {
+          skippedEmpty++;
+          continue;
+        }
+
         // Find parent region ID and name
         const match = locations.find((v) => v.id === row.location_id) as
           | { id: string; label: string; admin_4?: string }
@@ -247,6 +258,9 @@ export class DashboardCropAdminComponent {
         return;
       }
 
+      // Sort entries alphabetically by id for deterministic output
+      exportEntries.sort((a, b) => a.id.localeCompare(b.id));
+
       // Generate index.ts
       let indexContent = `import { IProbabilityTable, IStationCropData } from '../../models';\n\n`;
       const variableName = `${countryCode.toUpperCase()}_CROP_DATA`;
@@ -272,7 +286,11 @@ export class DashboardCropAdminComponent {
       const blob = await zip.generateAsync({ type: 'blob' });
       download(blob, `${countryCode}_crop_probabilities.zip`);
 
-      this.notificationService.showSuccessNotification('Crop probability tables exported successfully');
+      this.notificationService.showSuccessNotification(
+        skippedEmpty > 0
+          ? `Crop probability tables exported successfully (skipped ${skippedEmpty} location(s) with no data)`
+          : 'Crop probability tables exported successfully',
+      );
     } catch (e) {
       console.error(e);
       this.notificationService.showErrorNotification(`Export failed: ${(e as Record<string, string>).message || e}`);
