@@ -8,10 +8,18 @@
 
 .share-btn {
   @apply text-white;
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 
 .share-item-btn {
   @apply text-[var(--color-secondary)];
+
+  &:disabled {
+    @apply opacity-40 cursor-not-allowed;
+  }
 }
 
 .playlist-container {

@@ -9,7 +9,6 @@ import { ResourceDownloadComponent } from '@picsa/resources/components';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -30,10 +29,14 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 })
 export class FarmerStepVideoPlayerComponent {
   private resourcesToolService = inject(ResourcesToolService);
-  private notificationService = inject(PicsaNotificationService);
 
   public video = input.required<IPicsaVideoData>();
   public videoUri = signal<string | undefined>(undefined);
+  public downloadStatus = signal<string | undefined>(undefined);
+
+  public isDownloaded = computed(
+    () => this.downloadStatus() === 'complete' || this.downloaderComponent()?.downloadStatus() === 'complete',
+  );
 
   public videoLanguageOptions = computed(() =>
     this.video()
@@ -59,10 +62,16 @@ export class FarmerStepVideoPlayerComponent {
       const [languageDefaultOption] = this.videoLanguageOptions();
       this.videoLanguageSelected.set(languageDefaultOption);
     });
+    effect(() => {
+      this.videoResource();
+      this.downloadStatus.set(undefined);
+    });
   }
 
   public async handleDlStatusChange(downloader: ResourceDownloadComponent) {
-    if (downloader.downloadStatus() === 'complete') {
+    const status = downloader.downloadStatus();
+    this.downloadStatus.set(status);
+    if (status === 'complete') {
       const uri = await downloader.uri(false);
       if (uri) {
         this.videoUri.set(uri);
@@ -89,14 +98,9 @@ export class FarmerStepVideoPlayerComponent {
   }
 
   public async shareVideo() {
+    if (!this.isDownloaded()) return;
     const resource = this.videoResource();
     if (!resource) return;
-    const shared = await this.resourcesToolService.shareResource(resource);
-    if (!shared) {
-      this.notificationService.showUserNotification({
-        message: 'Please download the video before sharing',
-        matIcon: 'info',
-      });
-    }
+    await this.resourcesToolService.shareResource(resource);
   }
 }

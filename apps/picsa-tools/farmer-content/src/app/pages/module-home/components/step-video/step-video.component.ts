@@ -11,7 +11,6 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { IResourceFile } from '@picsa/resources/schemas';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 
@@ -33,7 +32,6 @@ import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 export class FarmerStepVideoComponent {
   private configurationService = inject(ConfigurationService);
   private resourcesToolService = inject(ResourcesToolService);
-  private notificationService = inject(PicsaNotificationService);
 
   public videos = input.required<IPicsaVideoData[]>();
   public stepTitle = input<string>();
@@ -61,25 +59,31 @@ export class FarmerStepVideoComponent {
 
   public viewMode = computed<'single' | 'playlist'>(() => (this.videos().length > 1 ? 'playlist' : 'single'));
 
+  public isShareDisabled = computed(() => {
+    if (this.viewMode() === 'single') {
+      return !this.singlePlayer()?.isDownloaded();
+    }
+    const players = this.playlistPlayers();
+    return players.length === 0 || !players.some((p) => p.isDownloaded());
+  });
+
   public async shareActiveVideo(event?: Event) {
     event?.stopPropagation();
+    if (this.isShareDisabled()) return;
     if (this.viewMode() === 'single') {
       await this.singlePlayer()?.shareVideo();
     } else {
-      const players = this.playlistPlayers();
+      const players = this.playlistPlayers().filter((p) => p.isDownloaded());
       const resources = players.map((p) => p.videoResource()).filter(Boolean) as IResourceFile[];
-      const shared = await this.resourcesToolService.shareResources(resources);
-      if (!shared) {
-        this.notificationService.showUserNotification({
-          message: 'Please download the video before sharing',
-          matIcon: 'info',
-        });
+      if (resources.length > 0) {
+        await this.resourcesToolService.shareResources(resources);
       }
     }
   }
 
   public async sharePlaylistItem(event: Event, player: FarmerStepVideoPlayerComponent) {
     event.stopPropagation();
+    if (!player.isDownloaded()) return;
     await player.shareVideo();
   }
 }
