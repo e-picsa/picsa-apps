@@ -12,6 +12,15 @@ import merge from 'deepmerge';
 const stations: IStationMeta[] = [
   // Climate system data (merged)
   {
+    id: 'chikuni_mission',
+    name: 'CHIKUNI MISSION',
+    latitude: -16.45,
+    longitude: 27.55,
+    location: ['MONZE'],
+    // Limited data, district pending upstream
+    draft: true,
+  },
+  {
     id: 'chinsali_ftc',
     name: 'CHINSALI FTC',
     latitude: -10.56,
@@ -39,6 +48,16 @@ const stations: IStationMeta[] = [
     latitude: -16.85,
     longitude: 27.06,
     location: ['CHOMA'],
+  },
+  {
+    id: 'hangumba',
+    name: 'HANGUMBA',
+    // NOTE - API returned null latitude, placeholder near Chikuni cluster to verify before undrafting
+    latitude: -16.45,
+    longitude: 27.39,
+    location: ['PEMBA'],
+    // Limited data, district pending upstream
+    draft: true,
   },
   {
     id: 'isoka_met',
@@ -120,6 +139,15 @@ const stations: IStationMeta[] = [
     location: ['KAWAMBWA'],
   },
   {
+    id: 'kasyongo',
+    name: 'KASYONGO',
+    latitude: -16.66,
+    longitude: 27.36,
+    location: ['PEMBA'],
+    // Limited data, district pending upstream
+    draft: true,
+  },
+  {
     id: 'livingstone_met',
     name: 'LIVINGSTONE MET',
     latitude: -17.81,
@@ -146,6 +174,13 @@ const stations: IStationMeta[] = [
     latitude: -15.31,
     longitude: 28.45,
     location: ['LUSAKA'],
+  },
+  {
+    id: 'maamba_collieries',
+    name: 'MAAMBA COLLIERIES',
+    latitude: -17.33,
+    longitude: 27.2,
+    location: ['SINAZONGWE'],
   },
   {
     id: 'magoye_agromet',
@@ -204,6 +239,13 @@ const stations: IStationMeta[] = [
     location: ['MONGU'],
   },
   {
+    id: 'moorings',
+    name: 'MOORINGS',
+    latitude: -16.12,
+    longitude: 27.33,
+    location: ['MONZE'],
+  },
+  {
     id: 'mpika_met',
     name: 'MPIKA MET',
     latitude: -11.75,
@@ -244,6 +286,13 @@ const stations: IStationMeta[] = [
     latitude: -11.75,
     longitude: 24.43,
     location: ['MWINILUNGA'],
+  },
+  {
+    id: 'nabuya',
+    name: 'NABUYA',
+    latitude: -16.58,
+    longitude: 27.34,
+    location: ['lavushimanda'],
   },
   {
     id: 'ndola_met',

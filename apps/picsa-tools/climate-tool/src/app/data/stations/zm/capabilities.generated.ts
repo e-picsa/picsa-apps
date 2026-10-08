@@ -6,6 +6,15 @@ import type { IStationCapabilities } from '@picsa/models';
  * Do NOT edit manually.
  */
 export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
+  chikuni_mission: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: '1fb79b8c0a3cb649012e1864373a8c93a2278390056b28f73acb949dcae151af',
+    years: [2010, 2024],
+    totalYears: 15,
+    completeRainYears: 2,
+    annual: ['rainfall', 'start', 'end', 'length'],
+  },
   chinsali_ftc: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
@@ -49,6 +58,15 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 67,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+  },
+  hangumba: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: '498d87c7af5272573f3d5e211d13d688a2b6d478070923347da273a9bc67d510',
+    years: [2017, 2025],
+    totalYears: 9,
+    completeRainYears: 1,
+    annual: ['rainfall', 'start', 'end', 'length'],
   },
   isoka_met: {
     schemaVersion: 1,
@@ -160,6 +178,15 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
   },
+  kasyongo: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: 'f5552cc015b5e5135562c47c765e9802096a6f568a87b37e7f5f5a1cb6a80690',
+    years: [2015, 2025],
+    totalYears: 11,
+    completeRainYears: 0,
+    annual: ['end'],
+  },
   kawambwa_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
@@ -214,6 +241,15 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 32,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+  },
+  maamba_collieries: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: 'de72e29450052e1bbe33ae08221b3b1bf934fdee903f7511d86c0bdf13c5970d',
+    years: [1999, 2025],
+    totalYears: 27,
+    completeRainYears: 15,
+    annual: ['rainfall', 'start', 'end', 'length'],
   },
   magoye_agromet: {
     schemaVersion: 1,
@@ -303,6 +339,15 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
   },
+  moorings: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: 'bb263cc7a89d55e2f2ab41473a43d802bbf18f0a69bb852f35b273829466ac3e',
+    years: [1921, 2025],
+    totalYears: 105,
+    completeRainYears: 93,
+    annual: ['rainfall', 'start', 'end', 'length'],
+  },
   mpika_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
@@ -367,6 +412,15 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 43,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+  },
+  nabuya: {
+    schemaVersion: 1,
+    lastUpdated: '2026-10-08',
+    contentHash: 'a67c0f366eca6ed08f80f6fc23d4e0b6866685c4b1c42ceba92b261c087523a8',
+    years: [2016, 2025],
+    totalYears: 10,
+    completeRainYears: 6,
+    annual: ['rainfall', 'start', 'end', 'length'],
   },
   ndola_met: {
     schemaVersion: 1,
