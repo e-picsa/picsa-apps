@@ -2,15 +2,33 @@
 
 See docs at: https://docs.picsa.app/server/setup
 
-## Seed data export (`seed-export`)
+## Database Seeding & Remote Mirroring
 
-Pulls seed tables from the remote database into local CSVs (`supabase/data/*_rows.csv`).
+### 1. Base Local Seed (`db:seed`)
+
+Resets the local database to a clean migration baseline and seeds baseline records from local CSVs (`supabase/data/*_rows.csv`):
 
 ```bash
-yarn nx run picsa-server:seed-export
+yarn nx run picsa-server:db:seed
 ```
 
-### Prerequisites
+### 2. Extended Remote Mirror (`db:seed:extended`)
+
+Resets the local database and seeds directly with complete, unfiltered data from the remote Supabase database (without writing CSV files):
+
+```bash
+yarn nx run picsa-server:db:seed:extended
+```
+
+### 3. Seed data export (`db:seed:export`)
+
+Pulls filtered seed tables from the remote database into local CSVs (`supabase/data/*_rows.csv`).
+
+```bash
+yarn nx run picsa-server:db:seed:export
+```
+
+### Prerequisites for Remote Operations
 
 1. **Credentials** — copy the template and fill in real values (file is gitignored):
 
@@ -20,8 +38,7 @@ yarn nx run picsa-server:seed-export
 
    Use the **secret key** (`sb_secret_...`). The publishable key is RLS-blocked on
    most seed tables, and `budget.budgets` plus `geo.countries`/`geo.locales` are
-   secret-only. The script is one-way pull only (SELECT queries + local CSV
-   writes, no remote writes), so the privileged key is safe to use here.
+   secret-only. The script is one-way pull only (SELECT queries + local writes, no remote writes), so the privileged key is safe to use here.
 
 2. **Exposed schemas on remote** — PostgREST only serves schemas listed in the
    project's Data API settings. Ensure the remote exposes the same schemas as
@@ -32,18 +49,8 @@ yarn nx run picsa-server:seed-export
 
 ### Behaviour notes
 
-- Only tables listed in `scripts/db-seed/db-seed.config.ts` are exported.
-  Local-first tables (`deployments`, `user_profiles`, `user_roles`) are
-  intentionally omitted from config, so export never overwrites them.
-- Shared `SEED_COUNTRIES` / `SEED_STATION_IDS` consts keep station-linked
-  tables (`climate_stations`, `climate_station_data`, `crop_data_downscaled`)
-  scoped to the same representative locations.
-- `created_at` / `updated_at` are stripped from every export (DB defaults
-  repopulate on import). Tables sort by `id` for stable diffs — override via
-  `orderBy` in config where no `id` column exists (e.g. geo tables).
-- `climate_station_data` exports a filtered subset only (see `filter` in config).
-- A `0 rows` export with the secret key means the remote table is genuinely
-  empty (the secret key bypasses RLS, so this is never an access issue).
-- TypeScript types (`gen-types`) are generated from the local docker DB, not
-  the remote — run `yarn nx run picsa-server:gen-types` after a local
-  migration or reset/seed instead.
+- Base seed config (`scripts/db-seed/db-seed.config.ts`) defines table priorities, orderings, and column mappings.
+- `SEED_DATA_CONFIG` applies representative filters (e.g. `SEED_STATION_IDS`) for committing minimal CSVs.
+- `SEED_DATA_EXTENDED_CONFIG` does not filter, pulling complete datasets for detailed local development.
+- `created_at` / `updated_at` are stripped from every export (DB defaults repopulate on import). Tables sort by `id` for stable diffs — override via `orderBy` in config where no `id` column exists (e.g. geo tables).
+- TypeScript types (`gen-types`) are generated from the local docker DB, not the remote — run `yarn nx run picsa-server:gen-types` after a local migration or reset/seed instead.

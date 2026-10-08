@@ -114,6 +114,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Database Seeding & Foreign Key Deletion Ordering**: Supabase preloads the PostgreSQL `safeupdate` extension, which blocks any `DELETE` lacking a `WHERE` clause (`ERROR 21000: DELETE requires a WHERE clause`). In `db-seed.ts`, reading the first column from each table's seed CSV header and querying `.not(firstCol, 'is', null)` satisfies `safeupdate` dynamically without manual per-table column mappings. Additionally, tables must be emptied in reverse dependency order (children before parents, e.g. `locales` before `countries`, `user_roles` before `deployments`) and seeded in forward order (parents before children) to avoid foreign key violations.
 - **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
 
+### Remote DB Mirroring & Extended Seed Architecture (`db:seed:extended` / `remote:pull`)
+
+- **Unified Seed Architecture in `db-seed-export.ts`**:
+  Instead of fragile external dump scripts, `db-seed-export.ts` handles both CSV export and direct database seeding.
+  - `SEED_DATA_BASE` (`scripts/db-seed/db-seed.config.ts`): Base schema, sort orders, priorities, column mappings, and metadata omissions.
+  - `SEED_DATA_CONFIG`: Extends base with subset filters (e.g. `SEED_STATION_IDS`) for committing minimal baseline CSVs to `supabase/data`.
+  - `SEED_DATA_EXTENDED_CONFIG`: Extends base _without_ filters to clone complete datasets directly into the local database without writing CSVs (`yarn nx run picsa-server:db:seed:extended`).
+- **Admin Permissions on Deployments**:
+  The seeded admin user (`00000000-0000-0000-0000-000000000000` / `admin@picsa.app`) requires rows in `public.user_roles` for every active deployment in `public.deployments` with roles `['admin', 'deployments.admin']`. This populates the `picsa_roles` JWT claim via the `custom_access_token_hook`, unlocking dashboard routes and permissions. This is automatically ensured by `seedDevUsersAndPermissions()` in both `db:seed` and `db:seed:extended`.
+- **Per-Table Extended Seed Cache**:
+  In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
+- **Dev Users & Storage Seeding**:
+  `supabase/seed.sql` creates local dev users (`admin@picsa.app`, `user@picsa.app`) automatically on `supabase db reset`. In extended mode, `db-seed-export.ts` directly seeds local storage objects and baseline configurations post-import so local logins work out of the box.
+
 ### User Role Authorization Architecture
 
 - **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
@@ -253,6 +267,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Unified Y-Value Formatting Across Chart Tools
 
 - Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
+
+### html2canvas Table Rowspan Occlusion Bug & Transparency Fix
+
+- **Problem**: When `html2canvas` renders an HTML table into an image, it draws rows (`<tr>`) sequentially from top to bottom.
+  1. **Background Occlusion**: If `table`, `thead`, `tbody`, `tfoot`, or `tr` has any non-transparent background color (such as Angular Material MDC table's default `background-color: inherit`), subsequent `<tr>` elements draw solid background rectangles across the entire table width. This paints directly over earlier cells spanning down across multiple rows (`rowspan`), causing vertically merged cells (such as the merged top-left table header and crop names) to appear blank white in the exported image.
+  2. **Row Border Slicing**: If `tr` has CSS borders (e.g. `border-top`, `border-bottom`), `html2canvas` paints row borders across the full width of each `<tr>` bounding box, cutting horizontal dividing lines directly through any multi-row merged cells (`rowspan`), visually unmerging them into sliced boxes.
+  3. **Angular CDK Table Sticky with Rowspan**: CDK Table's sticky styler assigns sticky offsets (`left: 0px`, `z-index: 1`) based on cell index in `row.children`. When `rowspan` causes subsequent rows to omit column 0, cell 0 of subsequent rows receives sticky styles, conflicting with print resets and stacking contexts.
+- **Solution**:
+  1. Set `background-color: transparent !important; background: transparent !important; border: none !important;` on `table, thead, tbody, tfoot, tr, tr.mat-mdc-header-row, tr.mat-mdc-row, tr.mat-mdc-footer-row`. Only individual `th, td` cells should have borders.
+  2. Apply background colors solely to individual table cells (`th, td`) and the outer print container.
+  3. Table cells with `rowspan` must have `position: relative !important; z-index: 2 !important;` so their stacking context sits above unpositioned row elements and overrides any `position: static !important` applied to CDK sticky cells.
+  4. Wrap inner text in spanning cells with a child element (`<span>`) styled with `position: relative; z-index: 3;`.
+  5. In `PrintProvider.shareHtmlDom`, use `html2canvas(clone, { onclone: (_doc, el) => { ... } })` to defensively set transparent backgrounds and `border: none !important` on all `tr, thead, tbody, tfoot` elements, and ensure `td[rowspan], th[rowspan]` are elevated with `position: relative !important; z-index: 2 !important`.
 
 ### JSDOM C3 Layout Crash with Arbitrary Tailwind Classes in Unit Tests
 
@@ -416,5 +443,33 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - **Bold Visual Weight**: Match companion icons (Cotton, Cowpeas, Groundnuts) with heavier line weights (`stroke-width: 3.2–3.6px` in a 100x100 canvas). Avoid intricate leaf venation or fine rootlet hatching that clutters or disappears at small sizes; use clean outer contours and single central midribs.
   - **Occlusion Handling without Opaque Fills**: In UI components like `crop-select.scss`, selected items use dynamic theme backgrounds (e.g. `background: wheat`). Using opaque white fills (`fill="#fff"`) causes unsightly white boxes on colored backgrounds. To maintain transparency without background lines cutting through foreground objects, overlapping background paths must be trimmed precisely to the boundary of the foreground shapes.
 - **Botanical Identifiers**:
-  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (*Pennisetum glaucum*) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
-  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (*Vigna subterranea* / "roundnuts" / *nyimo*), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (_Pennisetum glaucum_) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
+  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (_Vigna subterranea_ / "roundnuts" / _nyimo_), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+
+### DOM Element Resizing for Image Sharing (`PrintProvider.shareHtmlDom`)
+
+- **Print Mode Width Expansion**: When exporting scrollable UI components (such as wide data tables in budget tools or crop probability tables) as images on small/mobile screens, `html2canvas` captures only the visible viewport width unless the element is explicitly expanded.
+- **`.print-mode` SCSS Contract**: `PrintProvider.shareHtmlDom(selector, filename)` clones the target element, appends `.print-mode` to its class list, and attaches it to `document.body` for rasterization.
+- Ensure the component defines a `#elementId.print-mode` rule with:
+
+  ```scss
+  #cropProbabilityTable.print-mode {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px !important;
+    min-width: 1000px !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    padding: 16px !important;
+
+    // Reset sticky positioning on headers/cells to avoid misaligned canvas capture
+    th.mat-mdc-table-sticky,
+    td.mat-mdc-table-sticky {
+      position: static !important;
+    }
+  }
+  ```
+
+- **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
+- **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
