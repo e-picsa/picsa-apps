@@ -14,7 +14,6 @@ import {
 } from '@picsa/shared/features/data-table/data-table.component';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
-import { geoJSON, Map } from 'leaflet';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 
@@ -83,10 +82,10 @@ export class SiteSelectPage {
 
   constructor() {
     effect(async () => {
-      const map = this.picsaMap()?.map();
+      const picsaMap = this.picsaMap();
       const country_code = this.userCountryCode();
-      if (map && country_code) {
-        await this.loadCountryAdminBoundaries(map, country_code);
+      if (picsaMap && picsaMap.mapReady() && country_code) {
+        await this.loadCountryAdminBoundaries(picsaMap, country_code);
       }
     });
     effect(async () => {
@@ -173,15 +172,17 @@ export class SiteSelectPage {
   }
 
   /** Load country boundaries from geojson */
-  private async loadCountryAdminBoundaries(map: Map, country_code: string) {
+  private async loadCountryAdminBoundaries(picsaMap: PicsaMapComponent, country_code: string) {
     const metadata = getGeoLocationData(country_code as ICountryCode);
     const topojson = await metadata.topoJson();
     // TODO - hardcoded level 4 could be configured to either
     // show a mix of levels or different levels depending on country config
     const feature = topoJsonToGeoJson(topojson, 4);
-    geoJSON(feature as any)
-      .setStyle({ fill: false, color: 'brown', opacity: 0.5 })
-      .addTo(map);
+    picsaMap.addGeoJsonLayer('country-boundaries', feature, {
+      lineColor: 'brown',
+      lineOpacity: 0.5,
+      lineWidth: 1.5,
+    });
   }
 
   private addUserLocationToMap(picsaMap: PicsaMapComponent) {

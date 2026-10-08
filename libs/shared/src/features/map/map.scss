@@ -1,8 +1,10 @@
-// import "./node_modules/leaflet/dist/leaflet.css" to add leaflet styles
-// this has to be done in angular.json
+// PicsaMapComponent renders on pure MapLibre GL JS.
+// Base map styles (maplibre-gl.css) are loaded via the consuming app's global
+// styles (see project.json); component styles below cover markers and overlays.
 
 .map-container {
   height: 100%;
+  min-height: 200px;
 }
 
 .countryLabel {
@@ -21,21 +23,22 @@
   padding: 10px;
   color: white;
 }
-.leaflet-popup-content {
-  margin: 0;
-  padding: 5px;
-}
 button {
   background-color: transparent;
   padding: 0;
 }
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-  background-color: var(--color-primary);
-}
-.leaflet-popup-close-button {
-  pointer-events: none;
-  display: none;
+
+// User location marker rendered as a maplibre html marker element
+.location-icon {
+  width: 38px;
+  height: 38px;
+  color: white;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
 }
 
 .number-circle {
@@ -54,8 +57,10 @@ button {
     line-height: 24px;
   }
 }
-// Marker selected styles set on parent
-.leaflet-marker-icon.selected > .number-circle {
+// Marker selected styles set on marker element
+// (.picsa-map-marker is the custom element, .maplibregl-marker its maplibre wrapper)
+.picsa-map-marker.selected > .number-circle,
+.maplibregl-marker.selected > .number-circle {
   transform: scale(1.4);
   .number {
     background: var(--color-primary);
