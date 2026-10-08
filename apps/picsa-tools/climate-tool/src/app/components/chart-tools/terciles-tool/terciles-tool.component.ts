@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { calcPercentile } from '../../../services/climate-tool.service';
 import { BaseChartToolComponent, IOverlayLine } from '../base-tool.component';
@@ -15,16 +15,23 @@ export class TercilesToolComponent extends BaseChartToolComponent {
   /** Value of current series data displayed */
   readonly values = input<number[]>([]);
 
-  public lowerTercile = signal<number>(0);
-  public upperTercile = signal<number>(0);
+  readonly sortedValues = computed<number[]>(() => {
+    const vals = this.values();
+    if (!vals || vals.length === 0) return [];
+    return [...vals].filter((v) => typeof v === 'number' && !isNaN(v)).sort((a, b) => a - b);
+  });
 
-  constructor() {
-    super();
-    effect(() => {
-      const vals = this.values();
-      this.generateTerciles(vals);
-    });
-  }
+  readonly lowerTercile = computed<number>(() => {
+    const arr = this.sortedValues();
+    if (arr.length === 0) return 0;
+    return Math.round(calcPercentile(arr, 1 / 3));
+  });
+
+  readonly upperTercile = computed<number>(() => {
+    const arr = this.sortedValues();
+    if (arr.length === 0) return 0;
+    return Math.round(calcPercentile(arr, 2 / 3));
+  });
 
   public override getOverlayLines(): IOverlayLine[] | undefined {
     const lower = this.lowerTercile();
@@ -63,24 +70,5 @@ export class TercilesToolComponent extends BaseChartToolComponent {
       });
     }
     return lines;
-  }
-
-  protected override onToolDestroy() {
-    this.upperTercile.set(0);
-    this.lowerTercile.set(0);
-  }
-
-  private generateTerciles(values: number[]) {
-    if (!values || values.length === 0) {
-      this.lowerTercile.set(0);
-      this.upperTercile.set(0);
-      return;
-    }
-
-    const arr = [...values].filter((v) => typeof v === 'number' && !isNaN(v)).sort((a, b) => a - b);
-    const [lower, upper] = [Math.round(calcPercentile(arr, 1 / 3)), Math.round(calcPercentile(arr, 2 / 3))];
-
-    this.lowerTercile.set(lower);
-    this.upperTercile.set(upper);
   }
 }

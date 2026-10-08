@@ -1,55 +1,57 @@
-<div class="page-content resources-farmer-videos-page">
+<div class="page-content p-6 max-w-full box-border">
   <!-- Page Header -->
-  <div class="header-container">
-    <div class="title-row">
-      <h2>Farmer Videos & Translations</h2>
-      <span class="country-badge" [attr.data-country]="activeCountry()">
+  <div class="mb-4">
+    <div class="flex items-center gap-3">
+      <h2 class="m-0 text-2xl font-semibold text-slate-800">Farmer Videos & Translations</h2>
+      <span
+        class="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full border uppercase tracking-wider bg-slate-100 text-slate-700 border-slate-200"
+      >
         {{ countryLabel() }}
       </span>
     </div>
   </div>
 
   <!-- Controls & Stats Row -->
-  <div class="controls-row">
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon-wrapper text-primary">
-          <mat-icon>ondemand_video</mat-icon>
+  <div class="flex items-center gap-3 mb-5 flex-wrap">
+    <mat-card class="!w-40 !min-w-[160px] !max-w-[160px] !flex-none border !border-slate-200 !rounded-xl !shadow-none bg-white">
+      <mat-card-content class="!flex items-center gap-2.5 !p-2.5 !px-3">
+        <div class="flex items-center justify-center w-[38px] h-[38px] min-w-[38px] rounded-lg bg-indigo-50 text-indigo-600">
+          <mat-icon class="!w-5 !h-5 !text-[20px]">ondemand_video</mat-icon>
         </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats().totalVideos }}</span>
-          <span class="stat-label">Videos</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon-wrapper text-success">
-          <mat-icon>translate</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats().languageCount }}</span>
-          <span class="stat-label">Languages</span>
+        <div class="flex flex-col min-w-0">
+          <span class="text-xl font-bold text-slate-800 leading-tight">{{ stats().totalVideos }}</span>
+          <span class="text-xs text-slate-500 font-medium truncate">Videos</span>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon-wrapper text-warning">
-          <mat-icon>pie_chart</mat-icon>
+    <mat-card class="!w-40 !min-w-[160px] !max-w-[160px] !flex-none border !border-slate-200 !rounded-xl !shadow-none bg-white">
+      <mat-card-content class="!flex items-center gap-2.5 !p-2.5 !px-3">
+        <div class="flex items-center justify-center w-[38px] h-[38px] min-w-[38px] rounded-lg bg-emerald-50 text-emerald-600">
+          <mat-icon class="!w-5 !h-5 !text-[20px]">translate</mat-icon>
         </div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats().coveragePercent }}%</span>
-          <span class="stat-label">Translated</span>
+        <div class="flex flex-col min-w-0">
+          <span class="text-xl font-bold text-slate-800 leading-tight">{{ stats().languageCount }}</span>
+          <span class="text-xs text-slate-500 font-medium truncate">Languages</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="!w-40 !min-w-[160px] !max-w-[160px] !flex-none border !border-slate-200 !rounded-xl !shadow-none bg-white">
+      <mat-card-content class="!flex items-center gap-2.5 !p-2.5 !px-3">
+        <div class="flex items-center justify-center w-[38px] h-[38px] min-w-[38px] rounded-lg bg-amber-50 text-amber-600">
+          <mat-icon class="!w-5 !h-5 !text-[20px]">pie_chart</mat-icon>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-xl font-bold text-slate-800 leading-tight">{{ stats().coveragePercent }}%</span>
+          <span class="text-xs text-slate-500 font-medium truncate">Translated</span>
         </div>
       </mat-card-content>
     </mat-card>
 
     <!-- Search Filter Alongside Cards -->
-    <div class="search-wrapper">
-      <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+    <div class="ml-auto min-w-[240px] max-w-[340px] flex-1">
+      <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
         <mat-label>Search videos...</mat-label>
         <input
           matInput
@@ -81,64 +83,67 @@
         Translation Matrix
       </ng-template>
 
-      <div class="tab-body-container">
+      <div class="pt-1">
         @if (matrixRows().length === 0) {
-          <div class="empty-state">
-            <mat-icon>search_off</mat-icon>
-            <p>No videos match "{{ searchTerm() }}".</p>
+          <div class="flex flex-col items-center justify-center py-16 px-4 text-center text-slate-400">
+            <mat-icon class="!w-12 !h-12 !text-[48px] mb-3">search_off</mat-icon>
+            <p class="text-base m-0">No videos match "{{ searchTerm() }}".</p>
           </div>
         } @else {
-          <div class="matrix-table-wrapper mat-elevation-z1">
-            <table class="matrix-table">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white mat-elevation-z1">
+            <table class="matrix-table w-full text-sm">
               <thead>
                 <tr>
-                  <th class="sticky-step-col">Category</th>
-                  <th class="sticky-video-col">Farmer Video</th>
+                  <th class="sticky-step-col text-left pl-4 p-3 bg-slate-50 text-slate-700 font-semibold border-b-2 border-slate-200 border-r border-slate-100 whitespace-nowrap">Category</th>
+                  <th class="sticky-video-col text-left p-3 bg-slate-50 text-slate-700 font-semibold border-b-2 border-slate-200 border-r-2 border-slate-200 whitespace-nowrap">Farmer Video</th>
                   @for (locale of countryLocales(); track locale.id) {
-                    <th class="locale-header-col">
-                      <div class="locale-header-cell">
-                        <span class="country-pill" [attr.data-country]="locale.country_code">
+                    <th class="min-w-[100px] p-3 text-center bg-slate-50 text-slate-700 font-semibold border-b-2 border-slate-200 whitespace-nowrap">
+                      <div class="flex flex-col items-center gap-1">
+                        <span class="inline-flex items-center text-[11px] font-bold px-1.5 py-0.5 rounded tracking-wide uppercase bg-slate-100 text-slate-600 border border-slate-200">
                           {{ locale.country_code | uppercase }}
                         </span>
-                        <span class="locale-lang">{{ locale.language_label }}</span>
-                        <span class="locale-code">{{ locale.id }}</span>
+                        <span class="font-semibold text-xs text-slate-800">{{ locale.language_label }}</span>
+                        <span class="text-[11px] text-slate-500 font-mono">{{ locale.id }}</span>
                       </div>
                     </th>
                   }
-                  <th class="coverage-col">Total</th>
+                  <th class="min-w-[90px] text-center border-l-2 border-slate-200 bg-slate-100 p-3 text-slate-700 font-semibold border-b-2 whitespace-nowrap">Total</th>
                 </tr>
               </thead>
               <tbody>
                 @for (row of matrixRows(); track row.id) {
-                  <tr>
+                  <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0">
                     <!-- Step / Category column -->
-                    <td class="sticky-step-col">
+                    <td class="sticky-step-col p-2.5 px-2 pl-4 text-left align-middle border-r border-slate-100">
                       <span
-                        class="category-badge"
-                        [class.badge-intro]="row.category === 'intro'"
-                        [class.badge-step]="row.category === 'step'"
-                        [class.badge-testimonial]="row.category === 'testimonial'"
+                        class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md whitespace-nowrap"
+                        [class.bg-indigo-50]="row.category === 'intro'"
+                        [class.text-indigo-700]="row.category === 'intro'"
+                        [class.bg-emerald-50]="row.category === 'step'"
+                        [class.text-emerald-700]="row.category === 'step'"
+                        [class.bg-fuchsia-50]="row.category === 'testimonial'"
+                        [class.text-fuchsia-700]="row.category === 'testimonial'"
                       >
                         {{ row.categoryLabel }}
                       </span>
                     </td>
 
                     <!-- Video Title and ID -->
-                    <td class="sticky-video-col">
-                      <div class="video-cell-title">
-                        <strong>{{ row.title }}</strong>
-                        <span class="video-id-tag">{{ row.id }}</span>
+                    <td class="sticky-video-col p-2.5 px-2 text-left align-middle border-r-2 border-slate-200">
+                      <div class="flex flex-col gap-1">
+                        <strong class="text-sm text-slate-900 leading-snug">{{ row.title }}</strong>
+                        <span class="font-mono text-[11px] text-slate-500">{{ row.id }}</span>
                       </div>
                     </td>
 
                     <!-- Translation Cells -->
                     @for (locale of countryLocales(); track locale.id) {
                       @let cell = row.cells[locale.id];
-                      <td class="locale-cell">
+                      <td class="min-w-[100px] p-2 text-center align-middle">
                         @if (cell.status === 'audio') {
                           <button
                             type="button"
-                            class="cell-btn status-audio"
+                            class="border-0 bg-transparent cursor-pointer p-1.5 px-2.5 rounded-lg inline-flex items-center justify-center gap-1 hover:bg-slate-100 hover:scale-105 transition"
                             [matTooltip]="
                               locale.language_label +
                               ' • Audio Available • ' +
@@ -147,12 +152,12 @@
                             "
                             (click)="openPreview(row, cell.variant!, locale, false)"
                           >
-                            <mat-icon class="status-icon success-icon">check_circle</mat-icon>
+                            <mat-icon class="!w-[22px] !h-[22px] !text-[22px] text-emerald-600">check_circle</mat-icon>
                           </button>
                         } @else if (cell.status === 'subtitled') {
                           <button
                             type="button"
-                            class="cell-btn status-subtitled"
+                            class="border-0 bg-transparent cursor-pointer p-1.5 px-2.5 rounded-lg inline-flex items-center justify-center gap-1 hover:bg-slate-100 hover:scale-105 transition"
                             [matTooltip]="
                               locale.language_label +
                               ' • English Subtitles Available • ' +
@@ -161,12 +166,12 @@
                             "
                             (click)="openPreview(row, cell.variant!, locale, true)"
                           >
-                            <mat-icon class="status-icon subtitle-icon">closed_caption</mat-icon>
-                            <span class="cc-pill">CC</span>
+                            <mat-icon class="!w-[22px] !h-[22px] !text-[22px] text-sky-600">closed_caption</mat-icon>
+                            <span class="text-[10px] font-bold px-1 py-0.5 rounded bg-sky-100 text-sky-700 border border-sky-200 tracking-wider">CC</span>
                           </button>
                         } @else if (cell.status === 'not_applicable') {
                           <span
-                            class="na-indicator"
+                            class="inline-block text-xs font-medium text-slate-400 px-1.5 py-0.5 rounded bg-slate-100"
                             [matTooltip]="
                               locale.id === 'global_en'
                                 ? 'Global English not used for this video (localized version expected)'
@@ -177,7 +182,7 @@
                           </span>
                         } @else {
                           <span
-                            class="missing-indicator"
+                            class="text-slate-300 text-base font-medium"
                             [matTooltip]="'No ' + locale.language_label + ' translation available'"
                           >
                             —
@@ -187,10 +192,13 @@
                     }
 
                     <!-- Row Coverage Badge -->
-                    <td class="coverage-col">
+                    <td class="min-w-[90px] text-center border-l-2 border-slate-200 bg-slate-50/50 p-2 align-middle">
                       <span
-                        class="coverage-badge"
-                        [class.full-coverage]="row.availableCount === row.applicableCount"
+                        class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full"
+                        [class.bg-emerald-100]="row.availableCount === row.applicableCount"
+                        [class.text-emerald-800]="row.availableCount === row.applicableCount"
+                        [class.bg-slate-100]="row.availableCount !== row.applicableCount"
+                        [class.text-slate-600]="row.availableCount !== row.applicableCount"
                       >
                         {{ row.availableCount }} / {{ row.applicableCount }}
                       </span>
@@ -201,27 +209,35 @@
 
               <!-- Footer Row -->
               <tfoot>
-                <tr class="footer-row">
-                  <td class="sticky-step-col footer-label" colspan="2">
-                    <strong>Total Available per Language:</strong>
+                <tr class="bg-slate-50 border-t-2 border-slate-200">
+                  <td class="sticky-step-col pl-4 p-3 text-sm text-slate-800 font-semibold" colspan="2">
+                    Total Available per Language:
                   </td>
                   @for (locale of countryLocales(); track locale.id) {
                     @let coverage = getColumnCoverage(locale.id);
-                    <td class="locale-cell footer-stat">
-                      <div class="footer-stat-cell">
-                        <strong [class.full-coverage]="coverage.available === coverage.applicable">
+                    <td class="min-w-[100px] p-3 text-center align-middle">
+                      <div class="flex flex-col items-center gap-0.5">
+                        <strong
+                          class="text-sm"
+                          [class.text-emerald-600]="coverage.available === coverage.applicable"
+                          [class.text-slate-700]="coverage.available !== coverage.applicable"
+                        >
                           {{ coverage.available }} / {{ coverage.applicable }}
                         </strong>
-                        <span class="percent-label">{{ coverage.percent }}%</span>
+                        <span class="text-[11px] text-slate-500 font-medium">{{ coverage.percent }}%</span>
                       </div>
                     </td>
                   }
-                  <td class="coverage-col footer-stat">
-                    <div class="footer-stat-cell">
-                      <strong [class.full-coverage]="stats().availableVideos === stats().targetVideos">
+                  <td class="min-w-[90px] text-center border-l-2 border-slate-200 bg-slate-100 p-3 align-middle">
+                    <div class="flex flex-col items-center gap-0.5">
+                      <strong
+                        class="text-sm"
+                        [class.text-emerald-600]="stats().availableVideos === stats().targetVideos"
+                        [class.text-slate-700]="stats().availableVideos !== stats().targetVideos"
+                      >
                         {{ stats().availableVideos }} / {{ stats().targetVideos }}
                       </strong>
-                      <span class="percent-label">{{ stats().coveragePercent }}%</span>
+                      <span class="text-[11px] text-slate-500 font-medium">{{ stats().coveragePercent }}%</span>
                     </div>
                   </td>
                 </tr>
@@ -239,82 +255,85 @@
         Video Files Catalog ({{ stats().totalVideos }} Videos)
       </ng-template>
 
-      <div class="tab-body-container">
+      <div class="pt-1">
         @if (matrixRows().length === 0) {
-          <div class="empty-state">
-            <mat-icon>search_off</mat-icon>
-            <p>No videos match "{{ searchTerm() }}".</p>
+          <div class="flex flex-col items-center justify-center py-16 px-4 text-center text-slate-400">
+            <mat-icon class="!w-12 !h-12 !text-[48px] mb-3">search_off</mat-icon>
+            <p class="text-base m-0">No videos match "{{ searchTerm() }}".</p>
           </div>
         } @else {
-          <mat-accordion multi class="catalog-accordion">
+          <mat-accordion multi>
             @for (row of matrixRows(); track row.id) {
-              <mat-expansion-panel class="video-panel" [expanded]="true">
+              <mat-expansion-panel class="!border !border-slate-200 !rounded-xl mb-3 !shadow-none" [expanded]="true">
                 <mat-expansion-panel-header>
-                  <mat-panel-title class="panel-title">
+                  <mat-panel-title class="flex items-center flex-wrap gap-2">
                     <span
-                      class="category-badge mr-2"
-                      [class.badge-intro]="row.category === 'intro'"
-                      [class.badge-step]="row.category === 'step'"
-                      [class.badge-testimonial]="row.category === 'testimonial'"
+                      class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md mr-2"
+                      [class.bg-indigo-50]="row.category === 'intro'"
+                      [class.text-indigo-700]="row.category === 'intro'"
+                      [class.bg-emerald-50]="row.category === 'step'"
+                      [class.text-emerald-700]="row.category === 'step'"
+                      [class.bg-fuchsia-50]="row.category === 'testimonial'"
+                      [class.text-fuchsia-700]="row.category === 'testimonial'"
                     >
                       {{ row.categoryLabel }}
                     </span>
-                    <strong class="title-text">{{ row.title }}</strong>
-                    <span class="id-tag ml-2">{{ row.id }}</span>
+                    <strong class="text-sm text-slate-900">{{ row.title }}</strong>
+                    <span class="font-mono text-xs text-slate-500 font-normal ml-2">{{ row.id }}</span>
                   </mat-panel-title>
-                  <mat-panel-description class="panel-desc">
+                  <mat-panel-description class="flex items-center gap-1.5 text-slate-500 text-xs justify-end">
                     <span>{{ row.children.length }} files</span>
-                    <span class="dot-separator">•</span>
+                    <span class="text-slate-300">•</span>
                     <span>{{ row.totalSizeKb | sizeMB }} MB total</span>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                <div class="catalog-variants-table-wrapper">
-                  <table class="catalog-variants-table">
+                <div class="py-2 overflow-x-auto">
+                  <table class="w-full border-collapse text-sm">
                     <thead>
-                      <tr>
-                        <th>Locale</th>
-                        <th>Language(s)</th>
-                        <th>Country</th>
-                        <th>Resolution</th>
-                        <th>Size</th>
-                        <th class="actions-header">Actions</th>
+                      <tr class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 text-left">
+                        <th class="p-2 px-3">Locale</th>
+                        <th class="p-2 px-3">Language(s)</th>
+                        <th class="p-2 px-3">Country</th>
+                        <th class="p-2 px-3">Resolution</th>
+                        <th class="p-2 px-3">Size</th>
+                        <th class="p-2 px-3 text-right pr-4">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       @for (child of row.children; track child.id || $index) {
                         @let variantCountry = formatVariantCountry(child);
-                        <tr>
-                          <td>
-                            <div class="locales-list">
+                        <tr class="border-b border-slate-100 last:border-b-0 align-middle">
+                          <td class="p-2 px-3">
+                            <div class="flex flex-wrap gap-1">
                               @for (code of child.locale_codes; track code) {
-                                <span class="locale-code-badge">{{ code }}</span>
+                                <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{{ code }}</span>
                               }
                             </div>
                           </td>
-                          <td>
+                          <td class="p-2 px-3">
                             <strong>{{ formatVariantLanguages(child) }}</strong>
                           </td>
-                          <td>
-                            <span class="country-pill" [attr.data-country]="variantCountry.code">
+                          <td class="p-2 px-3">
+                            <span class="inline-flex items-center text-[11px] font-bold px-1.5 py-0.5 rounded tracking-wide bg-slate-100 text-slate-600 border border-slate-200">
                               {{ variantCountry.label }}
                             </span>
                           </td>
-                          <td>
-                            <span class="resolution-badge">{{ child.resolution }}</span>
+                          <td class="p-2 px-3">
+                            <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">{{ child.resolution }}</span>
                           </td>
-                          <td>
+                          <td class="p-2 px-3">
                             <span>{{ child.size_kb | sizeMB }} MB</span>
                           </td>
-                          <td class="actions-cell">
+                          <td class="p-2 px-3 text-right whitespace-nowrap pr-4">
                             <!-- Play / Preview Button -->
                             <button
                               matButton="outlined"
                               color="primary"
-                              class="action-btn"
+                              class="mr-1 h-8 !leading-8 text-xs"
                               (click)="openVariantPreview(row, child)"
                             >
-                              <mat-icon>play_circle</mat-icon>
+                              <mat-icon class="mr-1 !w-[18px] !h-[18px] !text-[18px]">play_circle</mat-icon>
                               Preview
                             </button>
 
@@ -322,10 +341,10 @@
                             <button
                               matIconButton
                               matTooltip="Copy Video Storage URL"
-                              class="action-icon-btn"
+                              class="!w-8 !h-8 !leading-8"
                               (click)="copyUrl(child.supabase_url, $event)"
                             >
-                              <mat-icon>content_copy</mat-icon>
+                              <mat-icon class="!w-[18px] !h-[18px] !text-[18px]">content_copy</mat-icon>
                             </button>
 
                             <!-- Open Link Button -->
@@ -335,10 +354,10 @@
                               rel="noopener noreferrer"
                               matIconButton
                               matTooltip="Open video in new tab"
-                              class="action-icon-btn"
+                              class="!w-8 !h-8 !leading-8"
                               (click)="$event.stopPropagation()"
                             >
-                              <mat-icon>open_in_new</mat-icon>
+                              <mat-icon class="!w-[18px] !h-[18px] !text-[18px]">open_in_new</mat-icon>
                             </a>
                           </td>
                         </tr>
@@ -357,18 +376,18 @@
 
 <!-- Video Preview Dialog Template -->
 <ng-template #videoPreviewDialog let-data>
-  <div class="video-dialog">
-    <div class="dialog-header">
+  <div class="flex flex-col bg-white">
+    <div class="flex justify-between items-start p-5 pb-4 border-b border-slate-200">
       <div>
-        <h3 class="dialog-title">{{ data.videoTitle }}</h3>
-        <div class="dialog-meta">
-          <span class="dialog-pill">{{ data.localeLabel }} ({{ data.countryName }})</span>
-          <span class="dialog-pill">{{ data.localeCode }}</span>
+        <h3 class="m-0 mb-2 text-lg font-semibold text-slate-900">{{ data.videoTitle }}</h3>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ data.localeLabel }} ({{ data.countryName }})</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ data.localeCode }}</span>
           @if (data.isSubtitled) {
-            <span class="dialog-pill subtitle-pill">English Subtitles</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-sky-100 text-sky-700">English Subtitles</span>
           }
-          <span class="dialog-pill">{{ data.resolution }}</span>
-          <span class="dialog-pill">{{ data.sizeKb | sizeMB }} MB</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ data.resolution }}</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ data.sizeKb | sizeMB }} MB</span>
         </div>
       </div>
       <button matIconButton mat-dialog-close aria-label="Close dialog">
@@ -376,13 +395,13 @@
       </button>
     </div>
 
-    <div class="dialog-body">
-      <video controls autoplay playsinline class="video-element" [src]="data.url">
+    <div class="bg-black flex items-center justify-center min-h-[360px] max-h-[65vh]">
+      <video controls autoplay playsinline class="w-full max-h-[65vh] outline-none" [src]="data.url">
         Your browser does not support video playback.
       </video>
     </div>
 
-    <div class="dialog-footer">
+    <div class="flex justify-between items-center px-6 py-4 border-t border-slate-200 bg-slate-50">
       <a
         matButton="outlined"
         [href]="data.url"

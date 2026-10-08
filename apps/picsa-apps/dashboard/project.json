@@ -59,6 +59,11 @@
             "output": "assets/mapTiles"
           },
           {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/climate-tool/src/assets/summaries",
+            "output": "assets/summaries"
+          },
+          {
             "glob": "*.json",
             "input": "libs/i18n/assets",
             "output": "assets/i18n"

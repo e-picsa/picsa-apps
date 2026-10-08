@@ -255,10 +255,6 @@ export class LaNinaToolComponent extends BaseEnsoTool {
   public override readonly symbol = '■';
   public override readonly shape: PointShape = 'square';
   public override readonly category: EnsoCategory = 'la_nina';
-  public override readonly availableGrades = [
-    LA_NINA_GRADES[1],
-    LA_NINA_GRADES[2],
-    LA_NINA_GRADES[3],
-  ] as const;
+  public override readonly availableGrades = [LA_NINA_GRADES[1], LA_NINA_GRADES[2], LA_NINA_GRADES[3]] as const;
   public override readonly selectedGrades = signal<Set<EnsoGrade>>(new Set([2, 3]));
 }

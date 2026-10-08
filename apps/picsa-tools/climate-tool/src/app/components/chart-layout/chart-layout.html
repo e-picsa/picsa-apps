@@ -2,6 +2,7 @@
 @if (chartService.timespanMode() !== 'annual') {
   <climate-period-navigator></climate-period-navigator>
 }
+
 <!-- line tool -->
 @if (toolService.activeTool() === 'line') {
 <climate-line-tool #lineTool></climate-line-tool>

@@ -1,67 +1,25 @@
 {
   "name": "picsa-server",
-  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/picsa-server/docker",
+  "sourceRoot": "apps/picsa-server/src",
   "prefix": "picsa",
-  "tags": [],
   "targets": {
     "start": {
       "executor": "nx:run-commands",
+      "dependsOn": [],
       "outputs": [],
       "options": {
         "commands": ["npx supabase start"],
         "cwd": "apps/picsa-server"
       }
     },
-    "start-functions": {
+    "status": {
       "executor": "nx:run-commands",
       "dependsOn": [],
       "outputs": [],
       "options": {
-        "commands": ["npx supabase functions serve --import-map supabase/functions/import_map.json"],
-        "cwd": "apps/picsa-server"
-      }
-    },
-    "deploy-functions": {
-      "executor": "nx:run-commands",
-      "dependsOn": [],
-      "outputs": [],
-      "options": {
-        "commands": ["npx supabase functions deploy"],
-        "cwd": "apps/picsa-server"
-      }
-    },
-    "test-functions": {
-      "executor": "nx:run-commands",
-      "dependsOn": [],
-      "outputs": [],
-      "options": {
-        "command": "deno test --allow-all {args.file}",
-        "cwd": "apps/picsa-server/supabase/functions"
-      }
-    },
-    "gen-types": {
-      "executor": "nx:run-commands",
-      "dependsOn": [],
-      "outputs": [],
-      "options": {
-        "command": "npx supabase gen types typescript --local > supabase/types/db.types.ts && yarn tsx scripts/gen-types.ts",
-        "cwd": "apps/picsa-server"
-      }
-    },
-    "reset": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn nx run picsa-server:supabase db reset && yarn nx run picsa-server:seed",
-        "cwd": "apps/picsa-server"
-      }
-    },
-    "seed": {
-      "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/supabase/data"],
-      "options": {
-        "command": "yarn tsx scripts/db-seed/db-seed.ts",
+        "commands": ["npx supabase status"],
         "cwd": "apps/picsa-server"
       }
     },
@@ -80,6 +38,65 @@
       "outputs": [],
       "options": {
         "commands": ["npx supabase"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "functions:serve": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase functions serve --env-file ./supabase/.env.local"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "functions:test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "deno test --allow-all {args.file}",
+        "cwd": "apps/picsa-server/supabase/functions"
+      }
+    },
+    "functions:deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase functions deploy"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "gen-types": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "npx supabase gen types typescript --local > supabase/types/db.types.ts && yarn tsx scripts/gen-types.ts",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "db:seed": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/supabase/data"],
+      "options": {
+        "command": "yarn nx run picsa-server:supabase db reset && yarn tsx scripts/db-seed/db-seed.ts",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "db:seed:extended": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn tsx scripts/db-seed/db-seed-export.ts --extended",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "db:seed:export": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/supabase/data", "{projectRoot}/.env.server"],
+      "options": {
+        "command": "yarn tsx scripts/db-seed/db-seed-export.ts",
         "cwd": "apps/picsa-server"
       }
     },
@@ -112,4 +129,3 @@
     }
   }
 }
-

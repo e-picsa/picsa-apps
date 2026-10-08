@@ -2,6 +2,24 @@ export interface IGeolocationAdmin5Location {
   id: string;
   label: string;
   admin_4: string;
+  /** Optional OSM boundary name when it differs from the display label */
+  topoName?: string;
+}
+
+export interface IGeolocationAdmin6Location {
+  id: string;
+  label: string;
+  admin_4: string;
+  /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
+  topoName?: string;
+}
+
+export interface IGeolocationAdmin6Location {
+  id: string;
+  label: string;
+  admin_4: string;
+  /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
+  topoName?: string;
 }
 
 export interface IGeolocationData {
@@ -12,11 +30,20 @@ export interface IGeolocationData {
    **/
   admin_4: {
     label: string;
-    locations: { id: string; label: string }[];
+    locations: { id: string; label: string; topoName?: string }[];
   };
   admin_5?: {
     label: string;
     locations: IGeolocationAdmin5Location[];
+  };
+  /**
+   * Optional third tier (e.g. Zimbabwe districts, OSM admin level 6).
+   * Slots are relative hierarchy positions, not OSM numbers - each country
+   * defines which slots it uses (mw: 4, zm: 4+5, zw: 4+6).
+   **/
+  admin_6?: {
+    label: string;
+    locations: IGeolocationAdmin6Location[];
   };
 }
 

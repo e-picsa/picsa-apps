@@ -25,7 +25,7 @@ export class PdfViewerComponent implements AfterViewInit {
   locale = 'en-GB';
   public isNative = Capacitor.isNativePlatform();
   @Input() page?: number;
-  @Input() src: string;
+  @Input() src: string | Blob | Uint8Array;
 
   public serviceReady = toSignal(this.service.ready$, { initialValue: false });
   public isCompatible = signal(false);

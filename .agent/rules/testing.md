@@ -15,19 +15,18 @@
 > [!IMPORTANT]
 > **Agents MUST ONLY execute tests directly covering files they have created or modified (or newly created/modified spec files).**
 > Do **NOT** run tests against entire projects or the general codebase, as this wastes tokens, executes hundreds of unrelated specs, and consumes minutes.
-
-Use the `--testFile` parameter to target only the specific spec file covering your changes:
+> **ALWAYS use `yarn ai:test` — never run `yarn nx test` directly.**
 
 ```bash
-# General pattern:
-yarn nx test <project-or-lib> --testFile=<filename.spec.ts>
+# Auto-detect changed files, map to colocated specs, run owning Nx projects:
+yarn ai:test
 
-# Example for a specific tool:
-yarn nx test picsa-tools-crop-probability-tool --testFile=crop-probability-tool.component.spec.ts
-
-# Example for a specific library:
-yarn nx test utils --testFile=climate.utils.spec.ts
+# Or target specific files (source or spec paths both work):
+yarn ai:test libs/utils/climate.utils.ts
 ```
+
+`yarn ai:test` resolves each file to its colocated `*.spec.ts` and runs
+`yarn nx test <project> --testFile=<spec>` for you.
 
 ### E2E Tests
 

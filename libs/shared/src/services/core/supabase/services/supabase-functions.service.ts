@@ -64,11 +64,21 @@ export class SupabaseFunctionsService extends SupabaseDeferredClient {
       errorMessage?.toLowerCase()?.includes('failed to send a request to the edge function');
 
     if (!ENVIRONMENT.production && isOffline) {
-      throw new Error(
+      const normalized = new Error(
         `Supabase Edge Functions endpoint is not running locally.\nPlease start it using: yarn nx run picsa-server:supabase functions serve`,
       );
+      if (isOffline) {
+        Object.assign(normalized, { __picsaNetworkError: true });
+      }
+      throw normalized;
     }
 
-    throw new Error(errorMessage || error.message || 'An unknown error occurred');
+    const normalized = new Error(errorMessage || error.message || 'An unknown error occurred');
+    if (isOffline) {
+      // Preserve the offline signal so callers can queue work for retry instead of
+      // treating the failure as a server-side error.
+      Object.assign(normalized, { __picsaNetworkError: true });
+    }
+    throw normalized;
   }
 }

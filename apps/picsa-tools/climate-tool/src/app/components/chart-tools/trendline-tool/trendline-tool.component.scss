@@ -1,0 +1,101 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Compact toggle group matching timespan selector */
+.compact-toggle-group {
+  @apply box-border w-full flex rounded-md overflow-hidden border border-slate-300;
+  --mat-button-toggle-height: 32px;
+  --mat-standard-button-toggle-height: 32px;
+}
+mat-button-toggle {
+  @apply flex-1 border-0 bg-white text-slate-600 font-medium;
+  font-size: 0.85rem;
+
+  &.mat-button-toggle-checked {
+    background-color: var(--color-primary, #005b85) !important;
+    color: #ffffff !important;
+
+    ::ng-deep .mat-button-toggle-label-content {
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Trend outcome badges - neutral highlighting without red/green judgment */
+.trend-badge {
+  @apply inline-flex items-center gap-1 py-0.5 px-2 rounded-full text-[11.5px] font-semibold whitespace-nowrap;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.trend-active {
+    @apply bg-violet-200 text-violet-800 border border-violet-300;
+  }
+
+  &.trend-muted {
+    @apply bg-gray-50 text-slate-500 border border-slate-200;
+  }
+}
+
+.stats-toggle-btn {
+  @apply inline-flex items-center gap-1 px-1 h-6 text-[11px] font-medium text-slate-500 bg-transparent border-0 cursor-pointer hover:text-slate-700;
+}
+
+/* Statistical indicators table */
+.stats-table-container {
+  @apply mt-2 rounded-md bg-slate-50 overflow-hidden;
+}
+
+.stats-table {
+  @apply w-full border-collapse table-fixed border border-solid border-slate-200;
+
+  th {
+    @apply p-1 text-[11px] font-semibold text-slate-600 border-b border-slate-200 text-center w-1/4;
+  }
+
+  td {
+    @apply p-1 text-center align-middle w-1/4;
+  }
+}
+
+.stat-info-btn {
+  @apply p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer text-slate-600;
+}
+
+.stat-info-icon {
+  @apply text-lg leading-none;
+}
+
+.stat-menu-content {
+  @apply p-3 max-w-[250px] text-[11px] leading-snug text-slate-700;
+}
+
+.stat-ci-cell {
+  @apply flex flex-col leading-tight;
+}
+
+.stat-ci-unit {
+  @apply text-[9px] font-medium text-slate-500 whitespace-nowrap mt-0.5;
+}
+
+.stat-cell-value {
+  @apply text-xs font-semibold whitespace-nowrap;
+}
+.stat-var-name {
+  @apply text-xs text-black font-bold mr-2;
+}
+
+.methodology-btn {
+  @apply inline-flex items-center gap-1.5 self-center mt-1 text-xs font-medium text-slate-600 hover:text-slate-800 bg-transparent border-0 cursor-pointer;
+
+  mat-icon {
+    @apply h-4 w-4 text-slate-500;
+    font-size: 16px;
+  }
+}

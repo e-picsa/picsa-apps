@@ -6,6 +6,8 @@ import { PicsaBackButtonComponent } from './components/back-button.component';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
 import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
+import { PicsaVersionDebugComponent } from './components/version-debug/version-debug.component';
+import { PicsaVersionDebugDialogComponent } from './components/version-debug/version-debug-dialog.component';
 
 const standalone = [
   AlertBoxComponent,
@@ -15,6 +17,8 @@ const standalone = [
   PicsaConfigurationSelectComponent,
   PicsaConfigurationSummaryComponent,
   PicsaSidenavComponent,
+  PicsaVersionDebugComponent,
+  PicsaVersionDebugDialogComponent,
 ];
 
 @NgModule({

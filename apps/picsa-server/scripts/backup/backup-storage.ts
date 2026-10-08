@@ -224,7 +224,7 @@ async function listFiles(bucketName: string, prefix = '') {
   let query = supabase
     .schema('storage' as any)
     .from('objects')
-    .select('id, name, created_at, updated_at, metadata')
+    .select('id, name, created_at, updated_at, metadata, last_accessed_at')
     .eq('bucket_id', bucketName);
 
   if (prefix) {
@@ -252,6 +252,7 @@ async function listFiles(bucketName: string, prefix = '') {
       created_at: obj.created_at,
       updated_at: obj.updated_at,
       metadata: obj.metadata || {},
+      last_accessed_at: obj.last_accessed_at,
       filePath: obj.name,
       bucketName,
     }));

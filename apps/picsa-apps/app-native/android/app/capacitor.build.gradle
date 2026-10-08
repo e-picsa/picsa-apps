@@ -11,6 +11,7 @@ apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
     implementation project(':capacitor-app')
     implementation project(':capacitor-browser')
+    implementation project(':capawesome-capacitor-screenshot')
     implementation project(':capacitor-device')
     implementation project(':capacitor-filesystem')
     implementation project(':capacitor-network')
@@ -23,6 +24,7 @@ dependencies {
     implementation project(':capacitor-camera')
     implementation project(':capacitor-share')
     implementation project(':capacitor-push-notifications')
+    implementation project(':capawesome-capacitor-app-update')
     implementation "androidx.webkit:webkit:1.4.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 }

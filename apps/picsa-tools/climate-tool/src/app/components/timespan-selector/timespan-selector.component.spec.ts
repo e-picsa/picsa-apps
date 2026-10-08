@@ -89,4 +89,46 @@ describe('TimespanSelectorComponent', () => {
     const chips = compiled.querySelectorAll('.month-grid .selector-chip');
     expect(chips.length).toBe(9);
   });
+
+  it('should expose all 12 months and render 12 chips in monthly mode for temperature charts', async () => {
+    chartService.station.set({
+      id: 'test',
+      name: 'Test',
+      countryCode: 'zm',
+      capabilities: { schemaVersion: 1, monthly: ['temp_min'] },
+    } as any);
+    chartService.chartDefinition.set({ _id: 'temp_min', timespanRange: 'full' } as any);
+
+    await chartService.setTimespanMode('monthly');
+    fixture.detectChanges();
+
+    expect(component.months()).toHaveLength(12);
+    const compiled = fixture.nativeElement as HTMLElement;
+    const chips = compiled.querySelectorAll('.month-grid .selector-chip');
+    expect(chips).toHaveLength(12);
+  });
+
+  it('should render 12 period chips for temperature charts and 5 period chips for rainfall in three_month mode', async () => {
+    chartService.station.set({
+      id: 'test',
+      name: 'Test',
+      countryCode: 'zm',
+      capabilities: { schemaVersion: 1, monthly: ['rainfall', 'temp_min'] },
+    } as any);
+
+    // 1. Rainfall chart in 3-month mode
+    chartService.chartDefinition.set({ _id: 'rainfall' } as any);
+    await chartService.setTimespanMode('three_month');
+    fixture.detectChanges();
+
+    let chips = (fixture.nativeElement as HTMLElement).querySelectorAll('.period-grid .selector-chip');
+    expect(chips).toHaveLength(5);
+
+    // 2. Temperature chart in 3-month mode
+    chartService.chartDefinition.set({ _id: 'temp_min', timespanRange: 'full' } as any);
+    fixture.detectChanges();
+
+    chips = (fixture.nativeElement as HTMLElement).querySelectorAll('.period-grid .selector-chip');
+    expect(chips).toHaveLength(12);
+  });
 });

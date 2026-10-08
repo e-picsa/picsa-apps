@@ -2,6 +2,7 @@ import { effect, inject, Injectable, signal, WritableSignal } from '@angular/cor
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import { ENVIRONMENT } from '@picsa/environments';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
@@ -35,6 +36,10 @@ export class ForecastService extends PicsaAsyncService {
 
   public enabled = signal(false);
 
+  /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
+  public bypassStubs =
+    ENVIRONMENT.production && new URLSearchParams(window?.location?.search).get('bypassStubs') === 'true';
+
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
@@ -52,7 +57,7 @@ export class ForecastService extends PicsaAsyncService {
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
     //        Should try move to time-based filter/query instead, or better table replication
-    { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2 },
+    { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2, includeStorage: true },
     { type: 'downscaled', signal: this.downscaledForecastDocs, limit: 2 },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
@@ -156,14 +161,16 @@ export class ForecastService extends PicsaAsyncService {
       // 1. Load cached data first (extremely fast local queries)
       const cachedData = await Promise.all(
         countryConfigs.map(async (config) => {
-          if (config.type === 'seasonal') {
-            const seasonalForecasts = FORECASTS_DB.filter(
+          let cached = await this.loadCachedForecasts(country_code, config.type, config.limit || 1);
+          // If seasonal has no cached data (e.g. fresh install / offline), seed from bundled FORECASTS_DB
+          if (config.type === 'seasonal' && cached.length === 0) {
+            const hardcoded = FORECASTS_DB.filter(
               (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
             );
-            const dbDocs = await this.storeHardcodedData(seasonalForecasts);
-            return { config, data: dbDocs };
+            if (hardcoded.length > 0) {
+              cached = await this.storeHardcodedData(hardcoded);
+            }
           }
-          const cached = await this.loadCachedForecasts(country_code, config.type, config.limit || 1);
           return { config, data: cached };
         }),
       );
@@ -183,8 +190,16 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            const serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
+            // Only pass latest for daily/weekly where IDs are chronological date-based strings
+            const latestDoc = config.type === 'daily' || config.type === 'weekly' ? cached[0] : undefined;
+            let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, config.limit);
             if (currentLoad.cancelled) return;
+
+            // When testing locally / offline, if server returns no records and no cached records exist,
+            // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
+            if (serverForecasts.length === 0 && cached.length === 0 && !this.bypassStubs) {
+              serverForecasts = this.getStubForecasts(country_code, config.type);
+            }
 
             if (serverForecasts.length > 0) {
               const { success, error } = await this.saveForecasts(serverForecasts);
@@ -248,15 +263,7 @@ export class ForecastService extends PicsaAsyncService {
     return (data || []).map((el) => SERVER_DB_MAPPING(el));
   }
 
-  private async loadSeasonalForecasts(country_code: ICountryCode) {
-    const seasonalForecasts = FORECASTS_DB.filter(
-      (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
-    );
-    const dbDocs = await this.storeHardcodedData(seasonalForecasts);
-    this.seasonalForecastDocs.set(dbDocs);
-  }
-
-  private async loadDownscaledForecasts(country_code: string, admin_4: string, admin_5?: string) {
+  private async loadDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
     const locationKey = `${country_code}||${admin_4}||${admin_5 || ''}`;
     if (this.activeDownscaledLoad) {
       this.activeDownscaledLoad.cancelled = true;
@@ -267,16 +274,36 @@ export class ForecastService extends PicsaAsyncService {
     this.loadingDownscaled.set(true);
 
     try {
-      const filters: ((v: IForecastRow) => boolean)[] = [
-        (v) => v.forecast_type === 'downscaled',
-        (v) => v.country_code === country_code,
-        (v) => (admin_5 && v.downscaled_location === admin_5) || v.downscaled_location === admin_4,
-      ];
+      // 1. Load cached downscaled forecasts first (offline-first)
+      let cached = await this.loadCachedDownscaledForecasts(country_code, admin_4, admin_5);
 
-      const forecasts = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
-      const dbDocs = await this.storeHardcodedData(forecasts);
+      // If empty (fresh install / offline), seed from bundled FORECASTS_DB
+      if (cached.length === 0) {
+        const filters: ((v: IForecastRow) => boolean)[] = [
+          (v) => v.forecast_type === 'downscaled',
+          (v) => v.country_code === country_code,
+          (v) => (admin_5 && v.downscaled_location === admin_5) || v.downscaled_location === admin_4,
+        ];
+        const hardcoded = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
+        if (hardcoded.length > 0) {
+          cached = await this.storeHardcodedData(hardcoded);
+        }
+      }
+
       if (currentLoad.cancelled) return;
-      this.downscaledForecastDocs.set(dbDocs);
+      this.downscaledForecastDocs.set(cached);
+
+      // 2. Fetch latest from server if online
+      const serverForecasts = await this.loadServerDownscaledForecasts(country_code, admin_4, admin_5);
+      if (currentLoad.cancelled) return;
+
+      if (serverForecasts.length > 0) {
+        const { success } = await this.saveForecasts(serverForecasts);
+        if (currentLoad.cancelled) return;
+        if (success.length > 0) {
+          this.downscaledForecastDocs.set(success);
+        }
+      }
     } catch (err) {
       console.error('[ForecastService] Error loading downscaled forecasts', err);
     } finally {
@@ -284,6 +311,41 @@ export class ForecastService extends PicsaAsyncService {
         this.loadingDownscaled.set(false);
       }
     }
+  }
+
+  private async loadCachedDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
+    const selector: MangoQuerySelector<IForecast> = {
+      forecast_type: 'downscaled',
+      country_code,
+      downscaled_location: admin_5 ? { $in: [admin_4, admin_5] } : admin_4,
+    };
+    return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }] }).exec();
+  }
+
+  private async loadServerDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
+    await this.supabaseService.ready();
+    if (!this.supabaseService.isAvailable()) {
+      return [];
+    }
+    const table = this.supabaseService.db.table('forecasts');
+    const query = table
+      .select<'*', IForecastRow>('*')
+      .neq('storage_file', null)
+      .eq('forecast_type', 'downscaled')
+      .eq('country_code', country_code);
+
+    if (admin_5) {
+      query.in('downscaled_location', [admin_4, admin_5]);
+    } else {
+      query.eq('downscaled_location', admin_4);
+    }
+
+    const { data, error } = await query.order('id', { ascending: false });
+    if (error) {
+      console.error('[Forecast] Error loading server downscaled forecasts', error);
+      return [];
+    }
+    return (data || []).map((el) => SERVER_DB_MAPPING(el));
   }
 
   private async storeHardcodedData(forecasts: IForecastRow[] = []) {
@@ -311,5 +373,38 @@ export class ForecastService extends PicsaAsyncService {
 
   private async saveForecasts(forecasts: IForecast[]) {
     return await this.dbCollection.bulkUpsert(forecasts);
+  }
+
+  private getStubForecasts(country_code: CountryCodeLegacy, forecast_type: ForecastType): IForecast[] {
+    const today = new Date().toISOString().slice(0, 10);
+    if (forecast_type === 'daily') {
+      return [
+        {
+          id: `stub/daily/${country_code}`,
+          country_code,
+          forecast_type: 'daily',
+          label: `Daily Weather Forecast (${today})`,
+          language_code: 'en',
+          storage_file: 'global/forecasts/sample_daily.pdf',
+          mimetype: 'application/pdf',
+          downscaled_location: null,
+        },
+      ];
+    }
+    if (forecast_type === 'weekly') {
+      return [
+        {
+          id: `stub/weekly/${country_code}`,
+          country_code,
+          forecast_type: 'weekly',
+          label: `7-Day Weather Outlook (${today})`,
+          language_code: 'en',
+          storage_file: 'global/forecasts/sample_weekly.html',
+          mimetype: 'text/html',
+          downscaled_location: null,
+        },
+      ];
+    }
+    return [];
   }
 }

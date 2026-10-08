@@ -5,15 +5,12 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export async function checkBackendAvailability(url: string): Promise<boolean> {
   try {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 500); // short timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s for cold mobile starts
 
-    await fetch(`${url}/auth/v1/health`, { signal: controller.signal }).catch(async () => {
-      // Fallback: try checking just the root if specific health check fails/not standard
-      return fetch(url, { signal: controller.signal });
-    });
-
-    clearTimeout(id);
-    return true; // If we got a response (even 404), the server is running.
+    await fetch(`${url}/auth/v1/health`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    // ANY response (even 404/4xx) means the server is reachable
+    return true;
   } catch (err) {
     console.warn('[Supabase] Backend unavailable - switching to offline/stub mode');
     return false;

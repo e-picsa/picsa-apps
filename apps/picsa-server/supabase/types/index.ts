@@ -4,8 +4,9 @@ export type { Database };
 import type { CountryCode, CountryCodeLegacy, LocaleCode, LocaleCodeLegacy } from './db-derived.types.ts';
 export type { CountryCode, CountryCodeLegacy, LocaleCode, LocaleCodeLegacy };
 
-// Utility type
+// Utility types
 export type AppRole = Database['public']['Enums']['app_role'];
+export type IAppUser = Database['public']['Tables']['app_users'];
 
 import type { FunctionResponses } from './functions.types.ts';
 export type { FunctionResponses };

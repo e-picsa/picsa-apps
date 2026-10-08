@@ -23,7 +23,11 @@ header,
   @apply fixed left-0 w-screen h-screen z-10 overflow-auto flex flex-col;
 }
 .tool-header {
-  @apply flex items-center gap-1 sm:gap-2 md:gap-4 h-12;
+  @apply grid items-center gap-1 sm:gap-2 md:gap-4 h-12;
+  // Start/end size to content, center truncates instead of overlapping.
+  // Previously minmax(0, 1fr) auto minmax(0, 1fr) allowed injected
+  // climate station-select content to overflow on narrow screens.
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 mat-icon.tool-icon {
   @apply h-16 w-16;

@@ -50,7 +50,7 @@ describe('EnsoToolComponents', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ElNinoToolComponent, LaNinaToolComponent, PicsaTranslateModule.forRoot()],
-      providers: [{ provide: SocialSharing, useValue: {} }],
+      providers: [ClimateChartService, { provide: SocialSharing, useValue: {} }],
     }).compileComponents();
 
     chartService = TestBed.inject(ClimateChartService);
