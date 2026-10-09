@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmapArray } from '@picsa/utils';
 
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../services';
@@ -17,9 +25,15 @@ interface IStationCropStatus {
   status: string;
 }
 
+const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
+  OK: { icon: 'check_circle', color: 'text-green-600' },
+  'Missing Downscaled Record': { icon: 'cancel', color: 'text-red-600' },
+  'Empty Water Requirements': { icon: 'warning', color: 'text-orange-600' },
+};
+
 @Component({
   selector: 'dashboard-crop-missing-station-info',
-  imports: [MatButtonModule, MatIconModule, PicsaDataTableComponent],
+  imports: [MatIconModule, MatTooltipModule, PicsaDataTableComponent],
   templateUrl: './missing-station-info.component.html',
   styleUrl: './missing-station-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,9 +47,21 @@ interface IStationCropStatus {
  * downscaled rows sharing the station_id are aggregated: a station counts as
  * covered when at least one linked row defines non-empty water_requirements.
  */
-export class CropMissingStationInfoComponent {
+export class CropMissingStationInfoComponent implements AfterViewInit {
   private service = inject(CropInformationService);
-  private notificationService = inject(PicsaNotificationService);
+  private cdr = inject(ChangeDetectorRef);
+
+  @ViewChild('statusTemplate') private statusTemplate!: TemplateRef<{ $implicit: unknown; row: IStationCropStatus }>;
+
+  /** Column templates bound once after view init (avoids recreating the map on every change detection cycle) */
+  public valueTemplates: Record<string, TemplateRef<{ $implicit: unknown; row: IStationCropStatus }>> = {};
+
+  public ngAfterViewInit() {
+    this.valueTemplates = { status: this.statusTemplate };
+    this.cdr.markForCheck();
+  }
+
+  public statusDisplay = STATUS_DISPLAY;
 
   /** Stations with crop probability data in climate_station_data */
   private stationsWithProbability = computed(() =>
@@ -119,23 +145,10 @@ export class CropMissingStationInfoComponent {
         probability_count: 'Probability Records',
         locations_with_water_requirements: 'Locations Covered',
         locations: 'Covered Location IDs',
-        status: 'Downscaled Record Status',
+        status: 'Status',
       };
       return headerMap[v] || formatHeaderDefault(v);
     },
     exportFilename: 'stations-missing-crop-info.csv',
   };
-
-  /** Copy problematic station IDs to clipboard */
-  public async copyStationIds() {
-    const ids = this.problemStations().map((s) => s.station_id);
-    if (ids.length === 0) return;
-    try {
-      await navigator.clipboard.writeText(ids.join(', '));
-      this.notificationService.showSuccessNotification(`${ids.length} station IDs copied to clipboard`);
-    } catch (error) {
-      console.error('Failed to copy station IDs', error);
-      this.notificationService.showErrorNotification('Failed to copy station IDs');
-    }
-  }
 }

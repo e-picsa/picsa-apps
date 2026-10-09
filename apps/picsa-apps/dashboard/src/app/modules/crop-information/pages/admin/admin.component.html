@@ -2,8 +2,62 @@
   <h2>Crop Admin</h2>
 
   <mat-tab-group class="mt-2" animationDuration="0ms">
-    <!-- Tab 1: Upload Water Requirements -->
-    <mat-tab label="Upload Water Requirements">
+    <!-- App vs Database -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
+        <span>App Diff</span>
+        @if (appDiff.stats().differs > 0) {
+          <span
+            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
+            >{{ appDiff.stats().differs }}</span
+          >
+        }
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-app-diff #appDiff></dashboard-crop-app-diff>
+      </div>
+    </mat-tab>
+
+    <!-- Location Coverage (districts, pairing and gaps) -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">location_on</mat-icon>
+        <span>Locations</span>
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-location-coverage></dashboard-crop-location-coverage>
+      </div>
+    </mat-tab>
+
+    <!-- Stations Missing Crop Info -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cell_tower</mat-icon>
+        <span>Stations</span>
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-missing-station-info></dashboard-crop-missing-station-info>
+      </div>
+    </mat-tab>
+
+    <!-- Duplicate Crop & Variety Inspector -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">content_copy</mat-icon>
+        <span>Duplicates</span>
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-duplicate-crops></dashboard-crop-duplicate-crops>
+      </div>
+    </mat-tab>
+
+    <!-- Upload Water Requirements -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">upload</mat-icon>
+        <span>Upload</span>
+      </ng-template>
       <div class="p-4 space-y-4">
         <div class="flex items-center">
           <p class="flex-1">Upload crop water requirement definitions from CSV</p>
@@ -61,34 +115,6 @@
             </mat-expansion-panel>
           }
         </mat-accordion>
-      </div>
-    </mat-tab>
-
-    <!-- Tab 2: Location Data Coverage -->
-    <mat-tab label="Location Data Coverage">
-      <div class="p-4">
-        <dashboard-crop-missing-locations></dashboard-crop-missing-locations>
-      </div>
-    </mat-tab>
-
-    <!-- Tab 3: Stations Missing Crop Info -->
-    <mat-tab label="Stations Missing Crop Info">
-      <div class="p-4">
-        <dashboard-crop-missing-station-info></dashboard-crop-missing-station-info>
-      </div>
-    </mat-tab>
-
-    <!-- Tab 4: Duplicate Crop & Variety Inspector -->
-    <mat-tab label="Duplicate Crop & Variety Inspector">
-      <div class="p-4">
-        <dashboard-crop-duplicate-crops></dashboard-crop-duplicate-crops>
-      </div>
-    </mat-tab>
-
-    <!-- Tab 5: App vs Database -->
-    <mat-tab label="App vs Database">
-      <div class="p-4">
-        <dashboard-crop-app-diff></dashboard-crop-app-diff>
       </div>
     </mat-tab>
   </mat-tab-group>

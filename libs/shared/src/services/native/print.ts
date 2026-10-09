@@ -7,7 +7,13 @@ import html2canvas from 'html2canvas';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
-  private socialSharing = inject(SocialSharing);
+  /**
+   * Optional because SocialSharing is only registered by PicsaNativeModule.forRoot(),
+   * which web-only contexts (dashboard app, tools served standalone in a browser)
+   * never import. A hard dependency crashed those pages with NG0201 as soon as any
+   * component injected PrintProvider, even though web sharing never touches the plugin.
+   */
+  private socialSharing = inject(SocialSharing, { optional: true });
 
   /**
    * Convert HTML content to an image and share
@@ -130,6 +136,11 @@ export class PrintProvider {
 
   private async shareDataImage(base64Img: string, title: string) {
     if (Capacitor.isNativePlatform()) {
+      // Native share has no web fallback, so a missing provider must fail loudly
+      // here rather than silently degrading (it indicates a misconfigured app module).
+      if (!this.socialSharing) {
+        throw new Error('SocialSharing provider is not available (PicsaNativeModule not loaded)');
+      }
       return this.socialSharing.share('', title, base64Img);
     } else {
       return download(base64Img, title + '.png', 'image/png');

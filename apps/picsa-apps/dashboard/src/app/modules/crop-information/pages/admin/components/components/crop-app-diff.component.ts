@@ -1,6 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import MW_CROP_DATA from '@picsa/crop-probability/src/app/data/mw/index';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import ZM_CROP_DATA from '@picsa/crop-probability/src/app/data/zm/index';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import ZW_CROP_DATA from '@picsa/crop-probability/src/app/data/zw/index';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IProbabilityTable, IStationCropData } from '@picsa/crop-probability/src/app/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -42,9 +59,28 @@ const STATUS_SEVERITY: Record<string, number> = {
   'In Sync': 4,
 };
 
+const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
+  'In Sync': { icon: 'check_circle', color: 'text-green-600' },
+  Differs: { icon: 'error', color: 'text-red-600' },
+  'Missing in App': { icon: 'sync', color: 'text-orange-600' },
+  'Orphaned in App': { icon: 'link_off', color: 'text-purple-600' },
+  'No Source Data': { icon: 'cloud_off', color: 'text-gray-600' },
+};
+
+/**
+ * Statically imported country indexes (dynamic import cannot resolve through
+ * the tsconfig path alias at runtime). Location JSONs stay lazy-loaded via
+ * each entry's `data()` loader. Add new countries here when app data exists.
+ */
+const APP_INDEX_BY_COUNTRY: Record<string, IProbabilityTable[]> = {
+  mw: MW_CROP_DATA,
+  zm: ZM_CROP_DATA,
+  zw: ZW_CROP_DATA,
+};
+
 @Component({
   selector: 'dashboard-crop-app-diff',
-  imports: [MatButtonModule, MatIconModule, PicsaDataTableComponent],
+  imports: [MatIconModule, MatTooltipModule, PicsaDataTableComponent],
   templateUrl: './crop-app-diff.component.html',
   styleUrl: './crop-app-diff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,9 +93,22 @@ const STATUS_SEVERITY: Record<string, number> = {
  * data index plus each location JSON and diffs them against the shared
  * generation pipeline fed by current database rows.
  */
-export class CropAppDiffComponent {
+export class CropAppDiffComponent implements AfterViewInit {
   private service = inject(CropInformationService);
   private deploymentService = inject(DeploymentDashboardService);
+  private cdr = inject(ChangeDetectorRef);
+
+  @ViewChild('statusTemplate') private statusTemplate!: TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>;
+
+  /** Column templates bound once after view init (avoids recreating the map on every change detection cycle) */
+  public valueTemplates: Record<string, TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>> = {};
+
+  public ngAfterViewInit() {
+    this.valueTemplates = { status: this.statusTemplate };
+    this.cdr.markForCheck();
+  }
+
+  public statusDisplay = STATUS_DISPLAY;
 
   public loading = signal(true);
   public loadError = signal<string | null>(null);
@@ -83,10 +132,14 @@ export class CropAppDiffComponent {
     this.loading.set(true);
     this.loadError.set(null);
     try {
-      // eslint-disable-next-line @nx/enforce-module-boundaries
-      const mod = await import(`@picsa/crop-probability/src/app/data/${countryCode.toLowerCase()}/index`);
+      const tables = APP_INDEX_BY_COUNTRY[countryCode.toLowerCase()] ?? [];
       if (run !== this.loadRun) return;
-      const tables = (mod.default ?? []) as IProbabilityTable[];
+      if (tables.length === 0) {
+        this.appIndex.set([]);
+        this.appTables.set({});
+        this.loadError.set(`No app probability tables found for country ${countryCode}`);
+        return;
+      }
       this.appIndex.set(tables);
       const loaded = await Promise.all(
         tables.map(async (entry) => {
@@ -265,11 +318,6 @@ export class CropAppDiffComponent {
     },
     exportFilename: 'crop-app-vs-db.csv',
   };
-
-  public reload() {
-    const countryCode = this.deploymentService.activeDeploymentCountry();
-    if (countryCode) this.loadAppTables(countryCode);
-  }
 
   /**
    * Regenerate the app table a location should currently have, or null when

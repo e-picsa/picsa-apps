@@ -35,16 +35,16 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (425 files scanned)
+## Codebase Symbol Index (459 files scanned)
 
 ### `apps/picsa-apps`
 
 - **[app.component.ts](../apps/picsa-apps/app/src/app/app.component.ts)** (`apps/picsa-apps/app/src/app/app.component.ts`)
-  - `Component` **AppComponent** (methods: [ngOnInit, showDebugInfo])
+  - `Component` **AppComponent** (methods: [ngOnInit])
 - **[app.config.ts](../apps/picsa-apps/app/src/app/app.config.ts)** (`apps/picsa-apps/app/src/app/app.config.ts`)
   - `Function` **HttpLoaderFactory**
 - **[layout.ts](../apps/picsa-apps/app/src/app/components/layout.ts)** (`apps/picsa-apps/app/src/app/components/layout.ts`)
-  - `Component` **AppLayoutComponent** (methods: [toggleUserType])
+  - `Component` **AppLayoutComponent** (methods: [toggleUserType, openFeedback])
 - **[home.page.ts](../apps/picsa-apps/app/src/app/pages/home/home.page.ts)** (`apps/picsa-apps/app/src/app/pages/home/home.page.ts`)
   - `Component` **HomePageComponent**
 - **[privacy-routing.module.ts](../apps/picsa-apps/app/src/app/pages/privacy/privacy-routing.module.ts)** (`apps/picsa-apps/app/src/app/pages/privacy/privacy-routing.module.ts`)
@@ -105,10 +105,20 @@
   - `Type` **IApiMappingName**
   - `Type` **ApiParams**
   - `Type` **ApiRequest**
+- **[climate-diff.types.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate-diff.types.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate-diff.types.ts`)
+  - `Interface` **IClimateProductDefinition**
+  - `Interface` **IValueDiff**
+  - `Interface` **IProductDiffSummary**
+  - `Interface` **IStationDiffSummary**
+  - `Type` **DiffChangeType**
+  - `Type` **StationDiffStatus**
+- **[climate-diff.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate-diff.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate-diff.utils.ts`)
+  - `Function` **compareStationDatasets**
+  - `Function` **generateDiffChartConfig**
 - **[climate.module.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.module.ts`)
   - `Class` **ClimateModule**
 - **[climate.service.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.service.ts`)
-  - `Service` **ClimateService** (methods: [init, getStationData, getAllStationData, updateStationData, updateStationDataFromApi])
+  - `Service` **ClimateService** (methods: [init, getStationData, getAllStationData, updateStationData, getStationAppData])
   - `Interface` **IDataRefreshStatus**
 - **[climate.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts`)
   - `Function` **hackConvertStationDataForDisplay**
@@ -116,7 +126,16 @@
   - `Component` **ApiStatusComponent** (methods: [runApi])
   - `Type` **ApiStatusState**
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts`)
-  - `Component` **ClimateAdminPageComponent** (methods: [downloadAllStationsCSV, downloadStationCSV, refreshStation, refreshAllStations, handleSummaryClick])
+  - `Component` **ClimateAdminPageComponent** (methods: [downloadAllStationsCSV, downloadStationCSV, downloadAllAppStationsCSV, downloadAppStationCSV, refreshStation])
+  - `Interface` **IProductSummary**
+  - `Interface` **IStationAdminSummary**
+  - `Interface` **IStationAppSummary**
+  - `Interface` **IProductDiffLine**
+  - `Interface` **IGroupDiffSummary**
+  - `Interface` **IStationDiffRow**
+- **[station-diff-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-diff-dialog/station-diff-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-diff-dialog/station-diff-dialog.component.ts`)
+  - `Component` **StationDiffDialogComponent** (methods: [ngAfterViewInit, resizeChart, selectProduct, close])
+  - `Interface` **IStationDiffDialogData**
 - **[forecast-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts`)
   - `Component` **ForecastFormComponent** (methods: [save, handleFileDropped])
   - `Type` **IForecastDialogData**
@@ -160,7 +179,7 @@
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts`)
   - `Component` **DashboardCropAdminComponent** (methods: [handleDataLoad, downloadTemplate, processImport, exportCropProbabilityTables])
 - **[crop-app-diff.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts`)
-  - `Component` **CropAppDiffComponent** (methods: [reload])
+  - `Component` **CropAppDiffComponent** (methods: [ngAfterViewInit])
   - `Interface` **IAppDbDiffRow**
 - **[crop-app-diff.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts`)
   - `Interface` **IProbabilityTableSummary**
@@ -175,10 +194,20 @@
   - `Interface` **IDuplicateGroup**
   - `Function` **normalizeName**
   - `Function` **groupDuplicateVarieties**
-- **[missing-locations.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-locations.component.ts`)
-  - `Component` **CropMissingLocationsComponent** (methods: [addPlaceholderLocations])
+- **[location-coverage.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts`)
+  - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, addPlaceholderEntries])
+- **[location-coverage.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts`)
+  - `Interface` **ICoverageRow**
+  - `Type` **LocationCoverageStatus**
+  - `Function` **buildLocationCoverageRows**
 - **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
-  - `Component` **CropMissingStationInfoComponent** (methods: [copyStationIds])
+  - `Component` **CropMissingStationInfoComponent** (methods: [ngAfterViewInit])
+- **[station-pairing.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/station-pairing.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/station-pairing.utils.ts`)
+  - `Interface` **IPairingRow**
+  - `Interface` **IWaterRequirementGroup**
+  - `Function` **stableStringify**
+  - `Function` **groupRowsByRequirements**
+  - `Function` **groupIdenticalWaterRequirements**
 - **[language-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts`)
   - `Component` **CropProbabilityLanguageSelectComponent**
 - **[linked-station-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts`)
@@ -343,28 +372,36 @@
 ### `apps/picsa-server/scripts/backup`
 
 - **[backup-db.ts](../apps/picsa-server/scripts/backup/backup-db.ts)** (`apps/picsa-server/scripts/backup/backup-db.ts`)
-  - `Interface` **ILinkStatus**
-  - `Function` **checkSupabaseLinkStatus**
-  - `Function` **getAppSchemas**
-  - `Function` **getExcludedTables**
   - `Function` **backupDatabase**
 - **[backup-storage.ts](../apps/picsa-server/scripts/backup/backup-storage.ts)** (`apps/picsa-server/scripts/backup/backup-storage.ts`)
   - `Function` **backupStorage**
 
 ### `apps/picsa-server/scripts/db-seed`
 
+- **[db-seed-export.ts](../apps/picsa-server/scripts/db-seed/db-seed-export.ts)** (`apps/picsa-server/scripts/db-seed/db-seed-export.ts`)
+  - `Class` **SupabaseSeedExport** (methods: [run])
+  - `Interface` **SeedExportCliOptions**
+  - `Function` **parseExportCliArgs**
 - **[db-seed.config.ts](../apps/picsa-server/scripts/db-seed/db-seed.config.ts)** (`apps/picsa-server/scripts/db-seed/db-seed.config.ts`)
   - `Interface` **ISeedDataConfiguration**
+- **[db-seed.ts](../apps/picsa-server/scripts/db-seed/db-seed.ts)** (`apps/picsa-server/scripts/db-seed/db-seed.ts`)
+  - `Class` **SupabaseSeed** (methods: [initClient, getClient, setClient, run, seedDevUsersAndPermissions])
 
 ### `apps/picsa-server/scripts/utils`
 
 - **[file.utils.ts](../apps/picsa-server/scripts/utils/file.utils.ts)** (`apps/picsa-server/scripts/utils/file.utils.ts`)
   - `Function` **zipFolderContents**
 - **[supabase.utils.ts](../apps/picsa-server/scripts/utils/supabase.utils.ts)** (`apps/picsa-server/scripts/utils/supabase.utils.ts`)
+  - `Interface` **ILinkStatus**
   - `Function` **getSupabaseClient**
+  - `Function` **loadEnvServer**
   - `Function` **loadEnvLocal**
   - `Function` **getLinkedProjectRef**
   - `Function` **getRemoteSupabaseClient**
+  - `Function` **getExportSupabaseClient**
+  - `Function` **checkSupabaseLinkStatus**
+  - `Function` **getAppSchemas**
+  - `Function` **getExcludedTables**
 
 ### `apps/picsa-server/supabase/functions`
 
@@ -378,6 +415,8 @@
   - `Function` **sendEmail**
 - **[fetch.ts](../apps/picsa-server/supabase/functions/_shared/fetch.ts)** (`apps/picsa-server/supabase/functions/_shared/fetch.ts`)
   - `Function` **fetchWithRetry**
+- **[request.ts](../apps/picsa-server/supabase/functions/_shared/request.ts)** (`apps/picsa-server/supabase/functions/_shared/request.ts`)
+  - `Interface` **FormDataResult**
 - **[response.ts](../apps/picsa-server/supabase/functions/_shared/response.ts)** (`apps/picsa-server/supabase/functions/_shared/response.ts`)
   - `Function` **ErrorResponse**
   - `Function` **JSONResponse**
@@ -395,6 +434,17 @@
 - **[types.ts](../apps/picsa-server/supabase/functions/dashboard/admin/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/admin/types.ts`)
   - `Type` **IAdminListUsersResponse**
   - `Type` **IAdminListUserRolesResponse**
+- **[config.ts](../apps/picsa-server/supabase/functions/dashboard/climate/config.ts)** (`apps/picsa-server/supabase/functions/dashboard/climate/config.ts`)
+  - `Interface` **StationSummaryConfig**
+  - `Type` **ClimateStationData**
+  - `Type` **ClimatePostPath**
+  - `Type` **StationSummaryAction**
+  - `Type` **ClimateAction**
+- **[types.ts](../apps/picsa-server/supabase/functions/dashboard/feedback/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/feedback/types.ts`)
+  - `Interface` **FeedbackReportRow**
+  - `Type` **ListFeedbackInput**
+  - `Type` **UpdateFeedbackInput**
+  - `Type` **SignedUrlInput**
 - **[types.ts](../apps/picsa-server/supabase/functions/dashboard/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/types.ts`)
   - `Type` **climateApiPaths**
   - `Type` **climateApiComponents**
@@ -402,6 +452,21 @@
   - `Type` **IDBClimateForecastInsert**
   - `Type` **IApiClimateForecast**
   - `Type` **IForecastDBAPIResponse**
+- **[helpers.ts](../apps/picsa-server/supabase/functions/feedback/helpers.ts)** (`apps/picsa-server/supabase/functions/feedback/helpers.ts`)
+  - `Function` **uploadScreenshot**
+  - `Function` **insertFeedbackReport**
+- **[index.ts](../apps/picsa-server/supabase/functions/feedback/index.ts)** (`apps/picsa-server/supabase/functions/feedback/index.ts`)
+  - `Function` **handleFeedback**
+- **[types.ts](../apps/picsa-server/supabase/functions/feedback/types.ts)** (`apps/picsa-server/supabase/functions/feedback/types.ts`)
+  - `Interface` **FeedbackPayload**
+  - `Interface` **DeviceInfo**
+  - `Interface` **ScreenshotFile**
+  - `Type` **FeedbackFieldInput**
+  - `Type` **FlattenedError**
+  - `Function` **validateFeedbackFields**
+  - `Function` **validateScreenshot**
+  - `Function` **extensionFor**
+  - `Function` **mergeScreenPath**
 - **[admin-boundaries.ts](../apps/picsa-server/supabase/functions/geo/admin-boundaries.ts)** (`apps/picsa-server/supabase/functions/geo/admin-boundaries.ts`)
   - `Type` **AdminBoundariesSchema**
 - **[kobo-utils.ts](../apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts)** (`apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts`)
@@ -442,6 +507,7 @@
   - `Type` **FunctionResponses**
 - **[index.ts](../apps/picsa-server/supabase/types/index.ts)** (`apps/picsa-server/supabase/types/index.ts`)
   - `Type` **AppRole**
+  - `Type` **IAppUser**
 
 ### `apps/picsa-server/supabase/utils`
 
@@ -545,12 +611,14 @@
 - **[chart-layout.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-layout/chart-layout.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-layout/chart-layout.ts`)
   - `Component` **ClimateChartLayoutComponent** (methods: [ngAfterViewInit])
 - **[base-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/base-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/base-tool.component.ts`)
-  - `Component` **BaseChartToolComponent** (methods: [getPointStyle, getLegendItems, getOverlayLines, formatTooltipRow, formatYValue])
+  - `Component` **BaseChartToolComponent** (methods: [getPointStyle, getLegendItems, getOverlayLines, getTrendlines, getChartMessage])
   - `Interface` **ITooltipExtraRow**
   - `Interface` **IPointStyle**
   - `Interface` **ILegendItem**
   - `Interface` **IOverlayLineLabel**
   - `Interface` **IOverlayLine**
+  - `Interface` **ITrendlineOverlay**
+  - `Interface` **IChartOverlayMessage**
   - `Type` **PointShape**
 - **[el-nino-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/el-nino-tool/el-nino-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/el-nino-tool/el-nino-tool.component.ts`)
   - `Class` **BaseEnsoTool** (methods: [toggleGrade, selectAllGrades, clearAllGrades, isGradeSelected, getLegendItems])
@@ -569,6 +637,13 @@
   - `Component` **TercilesToolComponent** (methods: [getOverlayLines])
 - **[tool-select.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/tool-select/tool-select.component.ts`)
   - `Component` **ToolSelectComponent**
+- **[trendline-methodology-dialog.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/trendline-tool/trendline-methodology-dialog.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/trendline-tool/trendline-methodology-dialog.component.ts`)
+  - `Component` **TrendlineMethodologyDialogComponent**
+- **[trendline-tool.component.ts](../apps/picsa-tools/climate-tool/src/app/components/chart-tools/trendline-tool/trendline-tool.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/chart-tools/trendline-tool/trendline-tool.component.ts`)
+  - `Component` **TrendlineToolComponent** (methods: [toggleStats, setPeriod, openMethodologyDialog, getTrendlines])
+  - `Interface` **ISeriesTrendAnalysis**
+  - `Interface` **IStatIndicatorDef**
+  - `Type` **StatIndicatorKey**
 - **[climate-chart-options.component.ts](../apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts)** (`apps/picsa-tools/climate-tool/src/app/components/climate-chart-options/climate-chart-options.component.ts`)
   - `Component` **ClimateChartOptionsComponent** (methods: [closeToolCustomisation, showShareDialog])
 - **[material.module.ts](../apps/picsa-tools/climate-tool/src/app/components/material.module.ts)** (`apps/picsa-tools/climate-tool/src/app/components/material.module.ts`)
@@ -598,7 +673,11 @@
   - `Service` **ClimateDataService** (methods: [getPreferredStation, setPreferredStation, getStationMeta, getStationData, getMonthlyStationData])
 - **[climate-tool.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-tool.service.ts`)
   - `Service` **ClimateToolService** (methods: [disableAll, toggleEnabled, setValue])
+  - `Interface` **IClimateTool**
+  - `Type` **IToolName**
   - `Function` **calcPercentile**
+- **[trendline-config.service.ts](../apps/picsa-tools/climate-tool/src/app/services/trendline-config.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/trendline-config.service.ts`)
+  - `Service` **TrendlineConfigService** (methods: [setPeriod, reset])
 - **[chart-point-overlay.ts](../apps/picsa-tools/climate-tool/src/app/utils/chart-point-overlay.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/chart-point-overlay.ts`)
   - `Interface` **IOverlayPoint**
   - `Function` **getShapePath**
@@ -607,16 +686,30 @@
   - `Function` **clearSvgLegend**
   - `Function` **renderLineOverlay**
   - `Function` **clearLineOverlay**
+  - `Function` **renderTrendlineOverlay**
+  - `Function` **clearTrendlineOverlay**
   - `Function` **clearPointOverlay**
 - **[chart.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/chart.utils.ts`)
   - `Function` **isTemperatureChart**
   - `Function` **generateChartConfig**
   - `Function` **calculateDataRanges**
   - `Function` **formatYValue**
+- **[statistics.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts`)
+  - `Interface` **ITrendlineFit**
+  - `Interface` **ISignificanceResult**
+  - `Interface` **IConfidenceIntervalResult**
+  - `Interface` **ITrendlineStats**
+  - `Type` **TrendlinePeriod**
+  - `Type` **TrendStatus**
+  - `Function` **checkConsecutiveYears**
+  - `Function` **fitLinearRegression**
+  - `Function` **calculateSignificance**
+  - `Function` **calculateCriticalT**
 - **[app.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/app.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/app.component.ts`)
   - `Component` **PicsaCropProbabilityTool**
 - **[crop-probability-table.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts`)
-  - `Component` **CropProbabilityTableComponent** (methods: [ngOnInit, formatProbability])
+  - `Component` **CropProbabilityTableComponent** (methods: [formatProbability, sharePicture])
+  - `Type` **IProbabilityTableRow**
 - **[index.ts](../apps/picsa-tools/crop-probability-tool/src/app/models/index.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/models/index.ts`)
   - `Interface` **IProbabilityTableMeta**
   - `Interface` **IStationCropInformation**
@@ -624,7 +717,7 @@
   - `Interface` **IStationCropDataItem**
   - `Type` **IProbabilityTable**
 - **[home.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts`)
-  - `Component` **HomeComponent** (methods: [ngOnInit, locationModifier, handleLocationChange])
+  - `Component` **HomeComponent** (methods: [ngOnInit, ngAfterViewInit, ngOnDestroy, shareTable, handleLocationConfirmed])
 - **[probability-table.utils.ts](../apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts`)
   - `Function` **getDaysBounds**
   - `Function` **groupAndSortCropDataItems**
@@ -814,6 +907,10 @@
   - `Component` **PicsaSidenavComponent** (methods: [ngOnInit, ngOnDestroy, toggle, close, handleSidenavChange])
 - **[refresh-spinner.component.ts](../libs/components/src/components/refresh-spinner/refresh-spinner.component.ts)** (`libs/components/src/components/refresh-spinner/refresh-spinner.component.ts`)
   - `Component` **RefreshSpinnerComponent**
+- **[version-debug-dialog.component.ts](../libs/components/src/components/version-debug/version-debug-dialog.component.ts)** (`libs/components/src/components/version-debug/version-debug-dialog.component.ts`)
+  - `Component` **PicsaVersionDebugDialogComponent** (methods: [ngOnInit, refreshDiagnostics, onToggleTester, copyDebugJson, copyNotificationToken])
+- **[version-debug.component.ts](../libs/components/src/components/version-debug/version-debug.component.ts)** (`libs/components/src/components/version-debug/version-debug.component.ts`)
+  - `Component` **PicsaVersionDebugComponent** (methods: [openDialog])
 - **[module.ts](../libs/components/src/module.ts)** (`libs/components/src/module.ts`)
   - `Class` **PicsaCommonComponentsModule**
 - **[components.service.ts](../libs/components/src/services/components.service.ts)** (`libs/components/src/services/components.service.ts`)
@@ -841,7 +938,7 @@
   - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
   - `Function` **HttpLoaderFactory**
 - **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
-  - `Service` **PicsaTranslateService** (methods: [setLanguage, translateText, translateArray])
+  - `Service` **PicsaTranslateService** (methods: [setLanguage, translateText, translateArray, instant])
 
 ### `libs/i18n-gen`
 
@@ -889,6 +986,14 @@
   - `Service` **PicsaDialogService** (methods: [open, closeAll])
 - **[drawing.component.ts](../libs/shared/src/features/drawing/drawing.component.ts)** (`libs/shared/src/features/drawing/drawing.component.ts`)
   - `Component` **PicsaDrawingComponent** (methods: [handlePointerDown, handlePointerMove, handlePointerUp, clearDraw, undoSvgStroke])
+- **[feedback-dialog.component.ts](../libs/shared/src/features/feedback/components/feedback-dialog.component.ts)** (`libs/shared/src/features/feedback/components/feedback-dialog.component.ts`)
+  - `Component` **FeedbackDialogComponent** (methods: [setType, toggleShowFab, captureScreenshot, attachFromGallery, removeScreenshot])
+  - `Interface` **IFeedbackDialogState**
+  - `Type` **FeedbackDialogStatus**
+- **[feedback-fab.component.ts](../libs/shared/src/features/feedback/components/feedback-fab.component.ts)** (`libs/shared/src/features/feedback/components/feedback-fab.component.ts`)
+  - `Component` **FeedbackFabComponent** (methods: [openFeedback])
+- **[feedback-preference.service.ts](../libs/shared/src/features/feedback/services/feedback-preference.service.ts)** (`libs/shared/src/features/feedback/services/feedback-preference.service.ts`)
+  - `Service` **FeedbackPreferenceService** (methods: [setShowFloatingFab, enableOnFirstMenuOpen])
 - **[loading.ts](../libs/shared/src/features/loading/loading.ts)** (`libs/shared/src/features/loading/loading.ts`)
   - `Component` **PicsaLoadingComponent** (methods: [ngOnInit])
   - `Type` **IPicsaLoaders**
@@ -959,7 +1064,7 @@
 - **[analytics.service.ts](../libs/shared/src/services/core/analytics.service.ts)** (`libs/shared/src/services/core/analytics.service.ts`)
   - `Service` **AnalyticsService** (methods: [init, trackVideoPlay, trackResourceOpen])
 - **[appUser.service.ts](../libs/shared/src/services/core/appUser.service.ts)** (`libs/shared/src/services/core/appUser.service.ts`)
-  - `Service` **AppUserService**
+  - `Service` **AppUserService** (methods: [setFcmToken, toggleInternalTester, setInternalTester])
 - **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
   - `Service` **CrashlyticsService** (methods: [init])
 - **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
@@ -975,7 +1080,7 @@
 - **[sync.service.ts](../libs/shared/src/services/core/db/sync.service.ts)** (`libs/shared/src/services/core/db/sync.service.ts`)
   - `Service` **DBSyncService** (methods: [addWrites, getPendingWrites])
 - **[db-attachment.service.ts](../libs/shared/src/services/core/db_v2/db-attachment.service.ts)** (`libs/shared/src/services/core/db_v2/db-attachment.service.ts`)
-  - `Service` **PicsaDatabaseAttachmentService** (methods: [init, getAttachmentDoc, getFileAttachmentURI, revokeFileAttachmentURIs, putAttachment])
+  - `Service` **PicsaDatabaseAttachmentService** (methods: [init, getAttachmentDoc, getFileAttachmentURI, getFileAttachmentBlob, revokeFileAttachmentURIs])
 - **[db-sync.service.ts](../libs/shared/src/services/core/db_v2/db-sync.service.ts)** (`libs/shared/src/services/core/db_v2/db-sync.service.ts`)
   - `Service` **PicsaDatabaseSyncService** (methods: [registerDB, registerCollection, syncPendingDocs])
   - `Interface` **ISyncPushEntry**
@@ -994,12 +1099,32 @@
   - `Type` **IAttachment**
 - **[schema_v0.ts](../libs/shared/src/services/core/db_v2/schemas/attachments/schema_v0.ts)** (`libs/shared/src/services/core/db_v2/schemas/attachments/schema_v0.ts`)
   - `Interface` **IAttachment_V0**
+- **[index.ts](../libs/shared/src/services/core/db_v2/schemas/feedback_queue/index.ts)** (`libs/shared/src/services/core/db_v2/schemas/feedback_queue/index.ts`)
+  - `Type` **IFeedbackQueueEntry**
+- **[schema_V0.ts](../libs/shared/src/services/core/db_v2/schemas/feedback_queue/schema_V0.ts)** (`libs/shared/src/services/core/db_v2/schemas/feedback_queue/schema_V0.ts`)
+  - `Interface` **IFeedbackQueueEntry**
 - **[index.ts](../libs/shared/src/services/core/db_v2/schemas/sync_delete/index.ts)** (`libs/shared/src/services/core/db_v2/schemas/sync_delete/index.ts`)
   - `Type` **ISyncDeleteEntry**
 - **[schema_V0.ts](../libs/shared/src/services/core/db_v2/schemas/sync_delete/schema_V0.ts)** (`libs/shared/src/services/core/db_v2/schemas/sync_delete/schema_V0.ts`)
   - `Interface` **ISyncDelete_V0**
 - **[error-handler.service.ts](../libs/shared/src/services/core/error-handler.service.ts)** (`libs/shared/src/services/core/error-handler.service.ts`)
   - `Service` **ErrorHandlerService** (methods: [handleError])
+- **[device-info.service.ts](../libs/shared/src/services/core/feedback/device-info.service.ts)** (`libs/shared/src/services/core/feedback/device-info.service.ts`)
+  - `Service` **DeviceInfoService** (methods: [collect])
+- **[feedback.service.ts](../libs/shared/src/services/core/feedback/feedback.service.ts)** (`libs/shared/src/services/core/feedback/feedback.service.ts`)
+  - `Service` **FeedbackService** (methods: [init, ngOnDestroy, submit, drain])
+- **[image.utils.ts](../libs/shared/src/services/core/feedback/image.utils.ts)** (`libs/shared/src/services/core/feedback/image.utils.ts`)
+  - `Interface` **ICapturedScreenshot**
+  - `Function` **detectImageMimeType**
+  - `Function` **parseDataUri**
+  - `Function` **base64ToBlob**
+  - `Function` **loadImage**
+  - `Function` **downscaleDataUri**
+  - `Function` **downscaleBase64**
+- **[screenshot.service.ts](../libs/shared/src/services/core/feedback/screenshot.service.ts)** (`libs/shared/src/services/core/feedback/screenshot.service.ts`)
+  - `Service` **ScreenshotService** (methods: [capture, attachFromGallery, downscaleBase64])
+  - `Type` **AttachFromGalleryResult**
+  - `Function` **renderPageToPng**
 - **[file.service.ts](../libs/shared/src/services/core/file.service.ts)** (`libs/shared/src/services/core/file.service.ts`)
   - `Service` **FileService** (methods: [readAssetFile, readAssetContents, downloadFile])
   - `Interface` **IStorageFileEntry**
@@ -1014,7 +1139,10 @@
 - **[performance.service.ts](../libs/shared/src/services/core/performance.service.ts)** (`libs/shared/src/services/core/performance.service.ts`)
   - `Service` **PerformanceService** (methods: [init])
 - **[push-notifications.service.ts](../libs/shared/src/services/core/push-notifications.service.ts)** (`libs/shared/src/services/core/push-notifications.service.ts`)
-  - `Service` **PicsaPushNotificationService** (methods: [initializePushNotifications])
+  - `Service` **PicsaPushNotificationService** (methods: [initializePushNotifications, requestNotificationPermissions])
+- **[sentry.service.ts](../libs/shared/src/services/core/sentry.service.ts)** (`libs/shared/src/services/core/sentry.service.ts`)
+  - `Service` **SentryService** (methods: [captureException, captureMessage, setUser, setTag, setExtra])
+  - `Function` **initSentry**
 - **[share.service.ts](../libs/shared/src/services/core/share.service.ts)** (`libs/shared/src/services/core/share.service.ts`)
   - `Service` **ShareService** (methods: [shareFromAttachments])
 - **[supabase-storage-download.component.ts](../libs/shared/src/services/core/supabase/components/storage-download/supabase-storage-download.component.ts)** (`libs/shared/src/services/core/supabase/components/storage-download/supabase-storage-download.component.ts`)
@@ -1059,7 +1187,8 @@
 - **[youtube-service.ts](../libs/shared/src/services/core/youtube-service.ts)** (`libs/shared/src/services/core/youtube-service.ts`)
   - `Service` **YoutubeService** (methods: [createPlayer, onPlayerReady, onPlayerStateChange, loadPlayer, setupPlayer])
 - **[app-update.ts](../libs/shared/src/services/native/app-update.ts)** (`libs/shared/src/services/native/app-update.ts`)
-  - `Service` **AppUpdateService** (methods: [checkForUpdates])
+  - `Service` **AppUpdateService** (methods: [checkForUpdates, startFlexibleUpdate, completeUpdate, openStore, checkUpdateStatus])
+  - `Interface` **IAppUpdateDiagnostics**
 - **[print.ts](../libs/shared/src/services/native/print.ts)** (`libs/shared/src/services/native/print.ts`)
   - `Service` **PrintProvider** (methods: [shareHtmlDom, sharePNGImage, svgToPngBlob])
 - **[safe-area.ts](../libs/shared/src/services/native/safe-area.ts)** (`libs/shared/src/services/native/safe-area.ts`)
@@ -1140,4 +1269,14 @@
   - `Migration` **20260808091500_allow_null_maturity_period.sql**
 - **[20260910000000_drop_crop_override_data.sql](../apps/picsa-server/supabase/migrations/20260910000000_drop_crop_override_data.sql)** (`apps/picsa-server/supabase/migrations/20260910000000_drop_crop_override_data.sql`)
   - `Migration` **20260910000000_drop_crop_override_data.sql**
+- **[20260913160000_add_met_station_id_to_climate_stations.sql](../apps/picsa-server/supabase/migrations/20260913160000_add_met_station_id_to_climate_stations.sql)** (`apps/picsa-server/supabase/migrations/20260913160000_add_met_station_id_to_climate_stations.sql`)
+  - `Migration` **20260913160000_add_met_station_id_to_climate_stations.sql**
+- **[20260914120000_feedback_reports.sql](../apps/picsa-server/supabase/migrations/20260914120000_feedback_reports.sql)** (`apps/picsa-server/supabase/migrations/20260914120000_feedback_reports.sql`)
+  - `Tables` **1 table(s)** ([public.feedback_reports])
+- **[20260915120000_app_users_push_and_tester.sql](../apps/picsa-server/supabase/migrations/20260915120000_app_users_push_and_tester.sql)** (`apps/picsa-server/supabase/migrations/20260915120000_app_users_push_and_tester.sql`)
+  - `Migration` **20260915120000_app_users_push_and_tester.sql**
+- **[20261001220000_cleanup_climate_stations.sql](../apps/picsa-server/supabase/migrations/20261001220000_cleanup_climate_stations.sql)** (`apps/picsa-server/supabase/migrations/20261001220000_cleanup_climate_stations.sql`)
+  - `Migration` **20261001220000_cleanup_climate_stations.sql**
+- **[20261007120000_zw_crop_downscaled_backfill.sql](../apps/picsa-server/supabase/migrations/20261007120000_zw_crop_downscaled_backfill.sql)** (`apps/picsa-server/supabase/migrations/20261007120000_zw_crop_downscaled_backfill.sql`)
+  - `Migration` **20261007120000_zw_crop_downscaled_backfill.sql**
 

@@ -102,6 +102,28 @@ export class CropInformationService extends PicsaAsyncService {
     this.notificationService.showSuccessNotification(`Import successful`);
   }
 
+  /** Reload all crop data for the active deployment */
+  public async reload() {
+    await this.loadCropData();
+  }
+
+  /** Create empty placeholder records so locations missing entries appear in quality control */
+  public async addPlaceholderLocations(locationIds: string[]) {
+    const { country_code } = this.dashboardService.activeDeployment();
+    const entries: ICropDataDownscaled['Insert'][] = locationIds.map((location_id) => ({
+      country_code,
+      location_id,
+      water_requirements: {},
+    }));
+    const { error } = await this.cropDataDownscaledTable.upsert(entries);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    await this.loadCropData();
+    this.notificationService.showSuccessNotification(`Placeholder entries added`);
+  }
+
   public async update(data: ICropData['Update']) {
     const { id, ...update } = data;
     // ensure id included to avoid updating all rows

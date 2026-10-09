@@ -5,9 +5,6 @@
   </p>
 
   <div class="flex items-center gap-4">
-    <button matButton="outlined" (click)="reload()" [disabled]="loading()">
-      <mat-icon>refresh</mat-icon>Reload App Tables
-    </button>
     @if (loading()) {
       <span class="text-sm text-gray-500">Loading app tables…</span>
     }
@@ -47,7 +44,16 @@
 
     <!-- Data Table -->
     @if (diffRows().length > 0) {
-      <picsa-data-table [data]="diffRows()" [options]="tableOptions"></picsa-data-table>
+      <picsa-data-table
+        [data]="diffRows()"
+        [options]="tableOptions"
+        [valueTemplates]="valueTemplates"
+      ></picsa-data-table>
+      <ng-template #statusTemplate let-row="row">
+        <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">
+          {{ statusDisplay[row.status].icon }}
+        </mat-icon>
+      </ng-template>
     } @else {
       <div class="flex items-center justify-center py-8">
         <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>

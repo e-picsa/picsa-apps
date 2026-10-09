@@ -11,7 +11,7 @@
     </div>
     <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
       <mat-icon class="text-red-600">error</mat-icon>
-      <span>{{ stats().missing }} Missing Downscaled Record</span>
+      <span>{{ stats().missing }} Missing Downscaled</span>
     </div>
     <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
       <mat-icon class="text-orange-600">warning</mat-icon>
@@ -19,18 +19,18 @@
     </div>
   </div>
 
-  <!-- Action Bar -->
-  <div class="flex items-center gap-4">
-    <button matButton="filled" color="primary" (click)="copyStationIds()" [disabled]="stats().problems === 0">
-      <mat-icon>content_copy</mat-icon>
-      Copy {{ stats().problems }} Station IDs
-    </button>
-    <span class="text-sm text-gray-500">Copies comma-separated station IDs for stations missing crop info</span>
-  </div>
-
   <!-- Data Table -->
   @if (problemStations().length > 0) {
-    <picsa-data-table [data]="problemStations()" [options]="tableOptions"></picsa-data-table>
+    <picsa-data-table
+      [data]="problemStations()"
+      [options]="tableOptions"
+      [valueTemplates]="valueTemplates"
+    ></picsa-data-table>
+    <ng-template #statusTemplate let-row="row">
+      <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">
+        {{ statusDisplay[row.status].icon }}
+      </mat-icon>
+    </ng-template>
   } @else {
     <div class="flex items-center justify-center py-8">
       <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>

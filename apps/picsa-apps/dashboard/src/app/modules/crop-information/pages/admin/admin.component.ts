@@ -19,7 +19,7 @@ import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRe
 import { computeExpectedProbabilityTable, roundToNearest } from '../../utils/probability.utils';
 import { CropAppDiffComponent } from './components/components/crop-app-diff.component';
 import { CropDuplicateCropsComponent } from './components/components/duplicate-crops.component';
-import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
+import { CropLocationCoverageComponent } from './components/components/location-coverage.component';
 import { CropMissingStationInfoComponent } from './components/components/missing-station-info.component';
 
 interface ICropDataImport {
@@ -53,7 +53,7 @@ interface ICropDataImport {
     DataImportComponent,
     PicsaDataTableComponent,
     DashboardMaterialModule,
-    CropMissingLocationsComponent,
+    CropLocationCoverageComponent,
     CropMissingStationInfoComponent,
     CropDuplicateCropsComponent,
     CropAppDiffComponent,
