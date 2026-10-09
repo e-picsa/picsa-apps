@@ -114,6 +114,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   /**
    * Add a single location pin to the map (e.g. user GPS location).
    */
+  public setLocationMarker(lat: number, lng: number) {
+    this.setLocation(lat, lng);
+  }
+
   public setLocation(lat: number, lng: number) {
     const map = this.map();
     if (!map) return;
@@ -222,58 +226,48 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     map.scrollZoom?.disable();
 
     let isZooming = false;
-    let accumulatedDelta = 0;
-    let resetTimer: ReturnType<typeof setTimeout> | null = null;
-    const WHEEL_THRESHOLD = 30;
-    const COOLDOWN_MS = 160;
+    const COOLDOWN_MS = 200;
 
     this.wheelListener = (e: WheelEvent) => {
       e.preventDefault();
-      accumulatedDelta += e.deltaY;
-      if (resetTimer) {
-        clearTimeout(resetTimer);
+
+      // Ignore tiny jitter
+      if (Math.abs(e.deltaY) < 4) {
+        return;
       }
 
       if (isZooming) {
         return;
       }
 
-      if (Math.abs(accumulatedDelta) >= WHEEL_THRESHOLD) {
-        const direction = accumulatedDelta > 0 ? -1 : 1;
-        accumulatedDelta = 0;
-        isZooming = true;
+      isZooming = true;
+      const direction = e.deltaY < 0 ? 1 : -1;
+      const currentZoom = map.getZoom();
+      const minZoom = map.getMinZoom?.() ?? 0;
+      const maxZoom = map.getMaxZoom?.() ?? 22;
 
-        const currentZoom = map.getZoom();
-        const minZoom = map.getMinZoom?.() ?? 0;
-        const maxZoom = map.getMaxZoom?.() ?? 22;
-
-        let targetZoom: number;
-        if (direction > 0) {
-          targetZoom = Math.min(maxZoom, Math.floor(currentZoom + 1e-4) + 1);
-        } else {
-          targetZoom = Math.max(minZoom, Math.ceil(currentZoom - 1e-4) - 1);
-        }
-
-        if (targetZoom !== currentZoom) {
-          const rect = container.getBoundingClientRect();
-          const mousePoint: [number, number] = [e.clientX - rect.left, e.clientY - rect.top];
-          const mouseLngLat = map.unproject(mousePoint);
-
-          map.easeTo({
-            zoom: targetZoom,
-            around: mouseLngLat,
-            duration: 120,
-          });
-        }
-
-        setTimeout(() => {
-          isZooming = false;
-        }, COOLDOWN_MS);
+      let targetZoom: number;
+      if (direction > 0) {
+        targetZoom = Math.min(maxZoom, Math.floor(currentZoom + 1e-4) + 1);
+      } else {
+        targetZoom = Math.max(minZoom, Math.ceil(currentZoom - 1e-4) - 1);
       }
 
-      resetTimer = setTimeout(() => {
-        accumulatedDelta = 0;
-      }, 100);
+      if (targetZoom !== currentZoom) {
+        const rect = container.getBoundingClientRect();
+        const mousePoint: [number, number] = [e.clientX - rect.left, e.clientY - rect.top];
+        const mouseLngLat = map.unproject(mousePoint);
+
+        map.easeTo({
+          zoom: targetZoom,
+          around: mouseLngLat,
+          duration: 120,
+        });
+      }
+
+      setTimeout(() => {
+        isZooming = false;
+      }, COOLDOWN_MS);
     };
 
     container.addEventListener('wheel', this.wheelListener, { passive: false });
@@ -504,7 +498,7 @@ export interface IGeoJsonLayerOptions {
   fitBounds?: boolean;
 }
 
-export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry;
+export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry | Record<string, any>;
 
 interface IRenderedMarker {
   marker: IMapMarker;
