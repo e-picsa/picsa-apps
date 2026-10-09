@@ -235,8 +235,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     } else {
       map.addSource(id, { type: 'geojson', data: geojson as any });
     }
-    const fillColor = options.fillColor ?? options.lineColor ?? GEOJSON_DEFAULT_COLOR;
-    const lineColor = options.lineColor ?? options.fillColor ?? GEOJSON_DEFAULT_COLOR;
+    const fillColor = options.fillColor || '';
+    const lineColor = options.lineColor || GEOJSON_DEFAULT_COLOR;
     const fillLayerId = `${id}-fill`;
     const lineLayerId = `${id}-line`;
     if (!map.getLayer(fillLayerId)) {
@@ -258,13 +258,13 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         paint: {
           'line-color': lineColor,
           'line-opacity': options.lineOpacity ?? 0.8,
-          'line-width': options.lineWidth ?? 2,
+          'line-width': options.lineWidth ?? 28,
         },
       });
     } else {
       map.setPaintProperty(lineLayerId, 'line-color', lineColor);
       map.setPaintProperty(lineLayerId, 'line-opacity', options.lineOpacity ?? 0.8);
-      map.setPaintProperty(lineLayerId, 'line-width', options.lineWidth ?? 2);
+      map.setPaintProperty(lineLayerId, 'line-width', options.lineWidth ?? 28);
     }
     if (options.fitBounds) {
       const bounds = boundsFromGeoJson(geojson);

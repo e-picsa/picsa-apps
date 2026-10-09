@@ -181,7 +181,7 @@ export class SiteSelectPage {
     picsaMap.addGeoJsonLayer('country-boundaries', feature, {
       lineColor: 'brown',
       lineOpacity: 0.5,
-      lineWidth: 1.5,
+      lineWidth: 3,
     });
   }
 
