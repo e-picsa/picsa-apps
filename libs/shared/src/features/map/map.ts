@@ -49,6 +49,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   private geoJsonConfigs = new Map<string, { geojson: GeoJsonData; options: IGeoJsonLayerOptions }>();
   private currentStyleKind: 'offline' | 'online' | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private wheelListener?: (e: WheelEvent) => void;
 
   constructor() {
     // Render input markers whenever markers change and the map is ready
@@ -88,6 +89,11 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
+    const container = this.mapContainer()?.nativeElement;
+    if (this.wheelListener && container) {
+      container.removeEventListener('wheel', this.wheelListener);
+      this.wheelListener = undefined;
+    }
     for (const { mlMarker } of this.renderedMarkers) {
       mlMarker.remove();
     }
@@ -98,15 +104,21 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     this.mapReady.set(false);
   }
 
-  /** Programatically set the active map marker and trigger click callback */
+  /**
+   * Set the active (selected) marker, highlighting it and centering the view.
+   */
   public setActiveMarker(marker: IMapMarker) {
-    if (marker) {
-      this._onMarkerClick(marker);
-    }
+    this._onMarkerClick(marker);
   }
 
-  /** Render a marker for current user location */
+  /**
+   * Add a single location pin to the map (e.g. user GPS location).
+   */
   public setLocationMarker(lat: number, lng: number) {
+    this.setLocation(lat, lng);
+  }
+
+  public setLocation(lat: number, lng: number) {
     const map = this.map();
     if (!map) return;
     this.locationMarker?.remove();
@@ -148,7 +160,15 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   private initMap() {
     const container = this.mapContainer()?.nativeElement;
     if (!container || this.map()) return;
-    const { center, zoom, minZoom, maxZoom } = { ...MAP_DEFAULTS, ...this.mapOptions() };
+    const {
+      center,
+      zoom,
+      minZoom,
+      maxZoom,
+      zoomSnap = 1,
+      discreteZoom = true,
+      dragRotate = false,
+    } = { ...MAP_DEFAULTS, ...this.mapOptions() };
     const map = new maplibregl.Map({
       container,
       style: this.buildOfflineStyle(),
@@ -156,9 +176,30 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       zoom,
       minZoom,
       maxZoom,
+      zoomSnap,
+      fadeDuration: 0,
+      dragRotate,
     });
     this.currentStyleKind = 'offline';
     this.map.set(map);
+
+    if (!dragRotate) {
+      map.touchZoomRotate?.disableRotation();
+    }
+
+    if (discreteZoom) {
+      this.setupDiscreteWheelZoom(map, container);
+    }
+
+    // Ensure touch pinch-zooming and other gestures settle cleanly on integer zoom
+    map.on('moveend', () => {
+      if (!discreteZoom) return;
+      const currentZoom = map.getZoom();
+      const nearest = Math.round(currentZoom);
+      if (Math.abs(currentZoom - nearest) > 0.02 && !map.isMoving()) {
+        map.easeTo({ zoom: nearest, duration: 150 });
+      }
+    });
 
     map.on('load', () => {
       this.mapReady.set(true);
@@ -175,6 +216,61 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       if (!this.map()) return;
       this.reapplyGeoJsonLayers();
     });
+  }
+
+  /**
+   * Discrete wheel zooming that cleanly snaps to integer zoom intervals and
+   * anchors (pans) around the mouse cursor coordinates instead of continuous smooth scrolling.
+   */
+  private setupDiscreteWheelZoom(map: maplibregl.Map, container: HTMLElement) {
+    map.scrollZoom?.disable();
+
+    let isZooming = false;
+    const COOLDOWN_MS = 200;
+
+    this.wheelListener = (e: WheelEvent) => {
+      e.preventDefault();
+
+      // Ignore tiny jitter
+      if (Math.abs(e.deltaY) < 4) {
+        return;
+      }
+
+      if (isZooming) {
+        return;
+      }
+
+      isZooming = true;
+      const direction = e.deltaY < 0 ? 1 : -1;
+      const currentZoom = map.getZoom();
+      const minZoom = map.getMinZoom?.() ?? 0;
+      const maxZoom = map.getMaxZoom?.() ?? 22;
+
+      let targetZoom: number;
+      if (direction > 0) {
+        targetZoom = Math.min(maxZoom, Math.floor(currentZoom + 1e-4) + 1);
+      } else {
+        targetZoom = Math.max(minZoom, Math.ceil(currentZoom - 1e-4) - 1);
+      }
+
+      if (targetZoom !== currentZoom) {
+        const rect = container.getBoundingClientRect();
+        const mousePoint: [number, number] = [e.clientX - rect.left, e.clientY - rect.top];
+        const mouseLngLat = map.unproject(mousePoint);
+
+        map.easeTo({
+          zoom: targetZoom,
+          around: mouseLngLat,
+          duration: 120,
+        });
+      }
+
+      setTimeout(() => {
+        isZooming = false;
+      }, COOLDOWN_MS);
+    };
+
+    container.addEventListener('wheel', this.wheelListener, { passive: false });
   }
 
   /**
@@ -215,7 +311,16 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
           attribution: 'Map data © OpenStreetMap contributors',
         },
       },
-      layers: [{ id: LOCAL_LAYER_ID, type: 'raster', source: LOCAL_SOURCE_ID }],
+      layers: [
+        {
+          id: LOCAL_LAYER_ID,
+          type: 'raster',
+          source: LOCAL_SOURCE_ID,
+          paint: {
+            'raster-fade-duration': 0,
+          },
+        },
+      ],
     };
   }
 
@@ -335,6 +440,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     this.onMarkerClick.emit(marker);
   }
 }
+
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
@@ -375,29 +481,24 @@ export interface IMapOptions {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
+  /** Interval to snap zoom levels to (default: 1 for crisp integer rendering) */
+  zoomSnap?: number;
+  /** Whether to use discrete wheel zooming anchored to mouse cursor (default: true) */
+  discreteZoom?: boolean;
+  /** Whether to allow drag-rotation (default: false for crisp 2D maps) */
+  dragRotate?: boolean;
 }
 export interface IGeoJsonLayerOptions {
   lineColor?: string;
-  lineOpacity?: number;
-  lineWidth?: number;
   fillColor?: string;
+  lineOpacity?: number;
   fillOpacity?: number;
-  /** Fit the map view to the layer bounds when added */
-  fitBounds?: boolean;
+  lineWidth?: number;
   padding?: number;
+  fitBounds?: boolean;
 }
 
-/** Minimal GeoJSON shapes (loosely typed to accept domain converters, cast internally for maplibre) */
-export interface GeoJsonFeature {
-  type: string;
-  properties?: Record<string, unknown>;
-  geometry: { type: string; coordinates: unknown };
-}
-export interface GeoJsonFeatureCollection {
-  type: string;
-  features: GeoJsonFeature[];
-}
-export type GeoJsonData = GeoJsonFeature | GeoJsonFeatureCollection;
+export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry | Record<string, any>;
 
 interface IRenderedMarker {
   marker: IMapMarker;
@@ -405,51 +506,38 @@ interface IRenderedMarker {
   element: HTMLElement;
 }
 
-/** Convert a [lat, lng] tuple to maplibre [lng, lat] order */
-function toLngLat(latlng: [number, number]): [number, number] {
-  return [latlng[1], latlng[0]];
-}
+const toLngLat = (latlng: [number, number]): [number, number] => [latlng[1], latlng[0]];
 
-/** Extract all [lng, lat] positions from GeoJSON features and geometries */
-function extractLngLats(data: unknown, bucket: [number, number][] = []): [number, number][] {
-  if (Array.isArray(data)) {
-    if (typeof data[0] === 'number' && typeof data[1] === 'number') {
-      bucket.push([data[0], data[1]]);
-      return bucket;
+const boundsFromGeoJson = (geojson: GeoJsonData): maplibregl.LngLatBounds | null => {
+  const bounds = new maplibregl.LngLatBounds();
+  let hasCoordinates = false;
+  const extendCoords = (coords: any) => {
+    if (!Array.isArray(coords)) return;
+    if (coords.length >= 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+      bounds.extend([coords[0], coords[1]]);
+      hasCoordinates = true;
+      return;
     }
-    for (const child of data) {
-      extractLngLats(child, bucket);
+    for (const c of coords) {
+      extendCoords(c);
     }
-    return bucket;
-  }
-  if (data && typeof data === 'object') {
-    const record = data as Record<string, unknown>;
-    // walk known GeoJSON containers only, skipping properties and other metadata
-    if (Array.isArray(record.features)) {
-      for (const feature of record.features) {
-        extractLngLats(feature, bucket);
-      }
-    } else if (record.geometry) {
-      extractLngLats(record.geometry, bucket);
-    } else if (Array.isArray(record.coordinates)) {
-      extractLngLats(record.coordinates, bucket);
+  };
+  const extract = (data: any) => {
+    if (!data) return;
+    if (data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+      for (const f of data.features) extract(f);
+    } else if (data.type === 'Feature' && data.geometry) {
+      extract(data.geometry);
+    } else if (data.coordinates) {
+      extendCoords(data.coordinates);
+    } else if (Array.isArray(data.geometries)) {
+      for (const g of data.geometries) extract(g);
     }
-  }
-  return bucket;
-}
+  };
+  extract(geojson);
+  return hasCoordinates ? bounds : null;
+};
 
-function boundsFromGeoJson(geojson: GeoJsonData): maplibregl.LngLatBounds | null {
-  const coords = extractLngLats(geojson).filter(([lng, lat]) => Number.isFinite(lng) && Number.isFinite(lat));
-  if (coords.length === 0) return null;
-  const bounds = new maplibregl.LngLatBounds(coords[0], coords[0]);
-  for (const coord of coords) {
-    bounds.extend(coord);
-  }
-  return bounds;
-}
-
-const LOCATION_ICON_BLACK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-  <circle cx="12" cy="12" r="4"/>
-  <path d="M13 4.069V2h-2v2.069A8.01 8.01 0 0 0 4.069 11H2v2h2.069A8.008 8.008 0 0 0 11 19.931V22h2v-2.069A8.007 8.007 0 0 0 19.931 13H22v-2h-2.069A8.008 8.008 0 0 0 13 4.069zM12 18c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
-</svg>
-`;
+const LOCATION_ICON_BLACK = `<svg height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+</svg>`;
