@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -6,6 +6,8 @@ import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { IPicsaVideoData, RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
 
 /**
@@ -26,8 +28,15 @@ import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
   imports: [ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule, PicsaVideoPlayerComponent],
 })
 export class FarmerStepVideoPlayerComponent {
+  private readonly resourcesToolService = inject(ResourcesToolService);
+
   public video = input.required<IPicsaVideoData>();
   public videoUri = signal<string | undefined>(undefined);
+  public downloadStatus = signal<string | undefined>(undefined);
+
+  public isDownloaded = computed(
+    () => this.downloadStatus() === 'complete' || this.downloaderComponent()?.downloadStatus() === 'complete',
+  );
 
   public videoLanguageOptions = computed(() =>
     this.video()
@@ -53,10 +62,16 @@ export class FarmerStepVideoPlayerComponent {
       const [languageDefaultOption] = this.videoLanguageOptions();
       this.videoLanguageSelected.set(languageDefaultOption);
     });
+    effect(() => {
+      this.videoResource();
+      this.downloadStatus.set(undefined);
+    });
   }
 
   public async handleDlStatusChange(downloader: ResourceDownloadComponent) {
-    if (downloader.downloadStatus() === 'complete') {
+    const status = downloader.downloadStatus();
+    this.downloadStatus.set(status);
+    if (status === 'complete') {
       const uri = await downloader.uri(false);
       if (uri) {
         this.videoUri.set(uri);
@@ -71,6 +86,9 @@ export class FarmerStepVideoPlayerComponent {
 
   // Expose public click handler to allow programattic click from playlist
   public async handleItemClick(e: Event) {
+    if ((e?.target as HTMLElement)?.closest('button')) {
+      return;
+    }
     const dlComponent = this.downloaderComponent();
     const videoPlayer = this.playerComponent();
     if (dlComponent?.downloadStatus() === 'ready') {
@@ -80,5 +98,12 @@ export class FarmerStepVideoPlayerComponent {
     if (videoPlayer?.source()) {
       videoPlayer.playVideo();
     }
+  }
+
+  public async shareVideo() {
+    if (!this.isDownloaded()) return;
+    const resource = this.videoResource();
+    if (!resource) return;
+    await this.resourcesToolService.shareResource(resource);
   }
 }

@@ -1,6 +1,31 @@
+:host {
+  @apply flex flex-col flex-1;
+}
+
+.step-title {
+  @apply m-0 p-2 text-white bg-[var(--color-secondary)] flex items-center justify-between min-h-12;
+}
+
+.share-btn {
+  @apply text-white;
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+.share-item-btn {
+  @apply text-[var(--color-secondary)];
+
+  &:disabled {
+    @apply opacity-40 cursor-not-allowed;
+  }
+}
+
 .playlist-container {
   @apply p-0;
 }
+
 .playlist-item {
   @apply flex cursor-pointer items-center relative;
   transition: background-color 0.2s ease-in-out;
