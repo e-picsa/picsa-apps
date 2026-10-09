@@ -1,4 +1,4 @@
-import { computed, Directive, input } from '@angular/core';
+import { computed, Directive, input, signal } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
 // Import the super-powered CVA base class
@@ -16,23 +16,39 @@ export abstract class PicsaFormBaseSelectMultipleComponent<
 
   public readonly filterFn = input<(option: T) => boolean>();
 
-  public selectOptions: T[] = [];
-  public selectOptionsHashmap: Record<string, T> = {} as any;
+  // signal-backed so `filteredOptions`/`selectedOptions` recompute when options change after init
+  private readonly selectOptionsSignal = signal<T[]>([]);
+  private readonly selectOptionsHashmapSignal = signal<Record<string, T>>({});
+
+  public get selectOptions() {
+    return this.selectOptionsSignal();
+  }
+
+  public get selectOptionsHashmap() {
+    return this.selectOptionsHashmapSignal();
+  }
 
   protected initBase(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
-    this.selectOptions = selectOptions;
-    this.selectOptionsHashmap = selectOptionsHashmap || arrayToHashmap(this.selectOptions, 'id');
+    this.setSelectOptions(selectOptions, selectOptionsHashmap);
+  }
+
+  /** Replace the available options, e.g. to merge in live custom entries alongside a hardcoded base list */
+  protected setSelectOptions(selectOptions: T[], selectOptionsHashmap: Record<string, T> = null as any) {
+    this.selectOptionsSignal.set(selectOptions);
+    this.selectOptionsHashmapSignal.set(selectOptionsHashmap || arrayToHashmap(selectOptions, 'id'));
   }
 
   protected readonly filteredOptions = computed(() => {
+    const options = this.selectOptionsSignal();
     const fn = this.filterFn();
-    return fn ? this.selectOptions.filter(fn) : this.selectOptions;
+    return fn ? options.filter(fn) : options;
   });
 
   protected readonly selectedOptions = computed(() => {
     // The base class might initialize value as `null`, so the fallback to `[]` here is perfect
     const vals = this.value() || [];
-    return vals.map((val) => this.selectOptionsHashmap[val]).filter(Boolean);
+    const hashmap = this.selectOptionsHashmapSignal();
+    return vals.map((val) => hashmap[val]).filter(Boolean);
   });
 
   public toggleSelected(id: string) {

@@ -48,3 +48,9 @@ $icon-size: 48px;
   // HACK - ensure image doesn't get cut off
   font-size: calc($icon-size - 4px);
 }
+
+.option-img {
+  height: $icon-size;
+  width: $icon-size;
+  object-fit: contain;
+}
