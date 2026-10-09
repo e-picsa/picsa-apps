@@ -152,7 +152,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   /**
    * Check if a resource file attachment has been downloaded to local database
    */
-  public async getResourceAttachmentDoc(resource: schemas.IResourceFile | string) {
+  public async getResourceAttachmentDoc(resource: { id: string } | string) {
     await this.ready();
     const id = typeof resource === 'string' ? resource : resource.id;
     const doc = await this.dbFiles.findOne(id).exec();
@@ -168,7 +168,7 @@ export class ResourcesToolService extends PicsaAsyncService {
    * If downloaded, opens the share sheet.
    * If not downloaded, returns false.
    */
-  public async shareResource(resource: schemas.IResourceFile | string): Promise<boolean> {
+  public async shareResource(resource: { id: string } | string): Promise<boolean> {
     await this.ready();
     const id = typeof resource === 'string' ? resource : resource.id;
     const doc = await this.dbFiles.findOne(id).exec();
@@ -200,20 +200,22 @@ export class ResourcesToolService extends PicsaAsyncService {
    * Gathers all downloaded attachment docs and shares them together.
    * Returns true if at least one file was shared, false if none downloaded.
    */
-  public async shareResources(resources: (schemas.IResourceFile | string)[]): Promise<boolean> {
+  public async shareResources(resources: ({ id: string } | string)[]): Promise<boolean> {
     await this.ready();
-    const attachmentDocs: RxDocument<IAttachment>[] = [];
-    for (const resource of resources) {
-      const id = typeof resource === 'string' ? resource : resource.id;
-      const doc = await this.dbFiles.findOne(id).exec();
-      if (doc) {
-        const filename = doc.filename || doc.id;
-        const attachmentDoc = await this.dbAttachmentService.getAttachmentDoc(doc, filename);
-        if (attachmentDoc) {
-          attachmentDocs.push(attachmentDoc);
-        }
-      }
-    }
+    const attachmentDocs = (
+      await Promise.all(
+        resources.map(async (resource) => {
+          const id = typeof resource === 'string' ? resource : resource.id;
+          const doc = await this.dbFiles.findOne(id).exec();
+          if (doc) {
+            const filename = doc.filename || doc.id;
+            return await this.dbAttachmentService.getAttachmentDoc(doc, filename);
+          }
+          return null;
+        }),
+      )
+    ).filter((doc): doc is RxDocument<IAttachment> => Boolean(doc));
+
     if (attachmentDocs.length > 0) {
       await this.shareService.shareFromAttachments(attachmentDocs, {
         dialogTitle: 'Share Videos',

@@ -28,7 +28,7 @@ import { PicsaVideoPlayerComponent } from '@picsa/shared/features/video-player';
   imports: [ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule, PicsaVideoPlayerComponent],
 })
 export class FarmerStepVideoPlayerComponent {
-  private resourcesToolService = inject(ResourcesToolService);
+  private readonly resourcesToolService = inject(ResourcesToolService);
 
   public video = input.required<IPicsaVideoData>();
   public videoUri = signal<string | undefined>(undefined);
@@ -86,6 +86,9 @@ export class FarmerStepVideoPlayerComponent {
 
   // Expose public click handler to allow programattic click from playlist
   public async handleItemClick(e: Event) {
+    if ((e?.target as HTMLElement)?.closest('button')) {
+      return;
+    }
     const dlComponent = this.downloaderComponent();
     const videoPlayer = this.playerComponent();
     if (dlComponent?.downloadStatus() === 'ready') {

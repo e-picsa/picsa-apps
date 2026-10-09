@@ -78,7 +78,7 @@ describe('FarmerStepVideoComponent', () => {
     expect(headerShareBtn).toBeNull();
 
     const itemShareBtns = fixture.nativeElement.querySelectorAll('.playlist-item button.share-item-btn');
-    expect(itemShareBtns.length).toBe(2);
+    expect(itemShareBtns).toHaveLength(2);
     expect((itemShareBtns[0] as HTMLButtonElement).disabled).toBe(true);
     expect((itemShareBtns[1] as HTMLButtonElement).disabled).toBe(true);
 

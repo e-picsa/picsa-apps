@@ -23,17 +23,15 @@
         <div class="playlist-item" (click)="player.handleItemClick($event)">
           <farmer-step-video-player class="w-48" [video]="video" #player></farmer-step-video-player>
           <h3 class="flex-1 ml-4">{{ video.title }}</h3>
-          <div (click)="$event.stopPropagation()">
-            <button
-              matIconButton
-              class="share-item-btn mr-2"
-              [disabled]="!player.isDownloaded()"
-              (click)="sharePlaylistItem($event, player)"
-              [attr.aria-label]="'Share video' | translate"
-            >
-              <mat-icon>share</mat-icon>
-            </button>
-          </div>
+          <button
+            matIconButton
+            class="share-item-btn mr-2"
+            [disabled]="!player.isDownloaded()"
+            (click)="sharePlaylistItem($event, player)"
+            [attr.aria-label]="'Share video' | translate"
+          >
+            <mat-icon>share</mat-icon>
+          </button>
         </div>
         @if (!$last) {
           <mat-divider></mat-divider>
