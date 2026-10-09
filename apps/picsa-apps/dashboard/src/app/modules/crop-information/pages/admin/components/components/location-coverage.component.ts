@@ -92,8 +92,9 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public tableOptions: IDataTableOptions = {
     displayColumns: ['location_label', 'location_id', 'status', 'paired_with', 'station', 'crops'],
-    paginatorSizes: [10, 25, 50, 100],
+    paginatorSizes: [50, 100],
     search: true,
+    sort: { id: 'location_label', start: 'asc' },
     formatHeader: (v) => {
       const headerMap: Record<string, string> = {
         location_label: 'Location',

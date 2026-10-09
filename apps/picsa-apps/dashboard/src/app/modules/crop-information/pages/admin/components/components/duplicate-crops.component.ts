@@ -92,7 +92,7 @@ export class CropDuplicateCropsComponent implements AfterViewInit {
 
   public tableOptions: IDataTableOptions = {
     displayColumns: ['crop', 'normalized_variety', 'variant_count', 'variants', 'sources', 'locations', 'actions'],
-    paginatorSizes: [10, 25, 50, 100],
+    paginatorSizes: [50, 100],
     search: true,
     sort: { id: 'crop', start: 'asc' },
     formatHeader: (v) => {

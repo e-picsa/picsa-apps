@@ -49,6 +49,7 @@ export class CropInformationService extends PicsaAsyncService {
   public cropData = signal<ICropData['Row'][]>([]);
   public downscaledData = signal<ICropDataDownscaled['Row'][]>([]);
   public stationData = signal<IStationDataWithMeta[]>([]);
+  public stations = signal<IClimateStations['Row'][]>([]);
   public cropDataMerged = computed(() => {
     const data = this.cropData();
     const downscaledData = this.downscaledData();
@@ -165,6 +166,7 @@ export class CropInformationService extends PicsaAsyncService {
       if (data && downscaledData && stationData && stations) {
         this.cropData.set(data as ICropData['Row'][]);
         this.downscaledData.set(downscaledData as ICropDataDownscaled['Row'][]);
+        this.stations.set(stations as IClimateStations['Row'][]);
         // Merge station metadata client-side (climate_station_data.station_id references climate_stations.id)
         const stationsHashmap = arrayToHashmap(stations as IClimateStations['Row'][], 'id');
         const mergedStationData = (stationData as IClimateStationData['Row'][]).map((row) => ({

@@ -75,7 +75,7 @@ export class DashboardCropAdminComponent {
   public errors = signal<ICropDataImport[]>([]);
   public errorTableOptions: IDataTableOptions = {
     displayColumns: ['_row_number', 'location_id', 'crop', 'variety', 'water_requirement', '_error'],
-    paginatorSizes: [5, 20, 50],
+    paginatorSizes: [50, 100],
     search: false,
     formatHeader: (v) => {
       if (v === '_row_number') return '#';
@@ -88,7 +88,7 @@ export class DashboardCropAdminComponent {
   public updates = signal<ICropDataImport[]>([]);
   public updateTableOptions: IDataTableOptions = {
     displayColumns: ['location_id', 'crop', 'variety', '_water_requirement_server', 'water_requirement'],
-    paginatorSizes: [5, 20, 50],
+    paginatorSizes: [50, 100],
     search: false,
     formatHeader: (v) => {
       if (v === '_water_requirement_server') return 'Water Requirement (before)';

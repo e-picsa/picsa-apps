@@ -59,14 +59,6 @@ const STATUS_SEVERITY: Record<string, number> = {
   'In Sync': 4,
 };
 
-const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
-  'In Sync': { icon: 'check_circle', color: 'text-green-600' },
-  Differs: { icon: 'error', color: 'text-red-600' },
-  'Missing in App': { icon: 'sync', color: 'text-orange-600' },
-  'Orphaned in App': { icon: 'link_off', color: 'text-purple-600' },
-  'No Source Data': { icon: 'cloud_off', color: 'text-gray-600' },
-};
-
 /**
  * Statically imported country indexes (dynamic import cannot resolve through
  * the tsconfig path alias at runtime). Location JSONs stay lazy-loaded via
@@ -107,8 +99,6 @@ export class CropAppDiffComponent implements AfterViewInit {
     this.valueTemplates = { status: this.statusTemplate };
     this.cdr.markForCheck();
   }
-
-  public statusDisplay = STATUS_DISPLAY;
 
   public loading = signal(true);
   public loadError = signal<string | null>(null);
@@ -301,7 +291,7 @@ export class CropAppDiffComponent implements AfterViewInit {
       'db_station',
       'detail',
     ],
-    paginatorSizes: [10, 25, 50, 100],
+    paginatorSizes: [50, 100],
     search: true,
     formatHeader: (v) => {
       const headerMap: Record<string, string> = {

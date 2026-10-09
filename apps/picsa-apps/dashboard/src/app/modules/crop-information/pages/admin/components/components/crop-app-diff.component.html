@@ -50,9 +50,48 @@
         [valueTemplates]="valueTemplates"
       ></picsa-data-table>
       <ng-template #statusTemplate let-row="row">
-        <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">
-          {{ statusDisplay[row.status].icon }}
-        </mat-icon>
+        @switch (row.status) {
+          @case ('In Sync') {
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+              [matTooltip]="row.detail || row.status"
+            >
+              <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
+            </span>
+          }
+          @case ('Differs') {
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fff3e0] text-[#e65100]"
+              [matTooltip]="row.detail"
+            >
+              <mat-icon class="!w-3.5 !h-3.5 !text-sm">difference</mat-icon>Differs
+            </span>
+          }
+          @case ('Missing in App') {
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e3f2fd] text-[#1565c0]"
+              [matTooltip]="row.detail"
+            >
+              <mat-icon class="!w-3.5 !h-3.5 !text-sm">cloud</mat-icon>Missing in App
+            </span>
+          }
+          @case ('Orphaned in App') {
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3e5f5] text-[#6a1b9a]"
+              [matTooltip]="row.detail"
+            >
+              <mat-icon class="!w-3.5 !h-3.5 !text-sm">smartphone</mat-icon>Orphaned in App
+            </span>
+          }
+          @default {
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f5f5f5] text-[#616161]"
+              [matTooltip]="row.detail || row.status"
+            >
+              <mat-icon class="!w-3.5 !h-3.5 !text-sm">cloud_off</mat-icon>{{ row.status }}
+            </span>
+          }
+        }
       </ng-template>
     } @else {
       <div class="flex items-center justify-center py-8">

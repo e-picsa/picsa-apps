@@ -11,25 +11,17 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { arrayToHashmapArray } from '@picsa/utils';
+import { arrayToHashmap } from '@picsa/utils';
 
-import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../services';
+import { CropInformationService } from '../../../../services';
 
-interface IStationCropStatus {
-  station_id: string;
+interface IStationProbabilityStatus {
   station_name: string;
   district: string;
-  probability_count: number;
-  locations_with_water_requirements: number;
-  locations: string;
-  status: string;
+  has_probabilities: boolean;
+  probabilities_detail: string;
+  data_updated: string;
 }
-
-const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
-  OK: { icon: 'check_circle', color: 'text-green-600' },
-  'Missing Downscaled Record': { icon: 'cancel', color: 'text-red-600' },
-  'Empty Water Requirements': { icon: 'warning', color: 'text-orange-600' },
-};
 
 @Component({
   selector: 'dashboard-crop-missing-station-info',
@@ -39,116 +31,80 @@ const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**
- * Lists climate stations that have crop probability data in climate_station_data
- * but lack corresponding water requirement definitions in crop_data_downscaled.
- *
- * A station is linked to downscaled rows via station_id (which references
- * climate_stations.id). As one station can serve multiple locations, all
- * downscaled rows sharing the station_id are aggregated: a station counts as
- * covered when at least one linked row defines non-empty water_requirements.
+ * Tracks which deployment stations have crop probability data available.
+ * A station is in good order when its climate_station_data record holds
+ * probability data; linkage to locations is covered by the Locations tab.
  */
 export class CropMissingStationInfoComponent implements AfterViewInit {
   private service = inject(CropInformationService);
   private cdr = inject(ChangeDetectorRef);
 
-  @ViewChild('statusTemplate') private statusTemplate!: TemplateRef<{ $implicit: unknown; row: IStationCropStatus }>;
+  @ViewChild('probabilitiesTemplate')
+  private probabilitiesTemplate!: TemplateRef<{ $implicit: unknown; row: IStationProbabilityStatus }>;
 
   /** Column templates bound once after view init (avoids recreating the map on every change detection cycle) */
-  public valueTemplates: Record<string, TemplateRef<{ $implicit: unknown; row: IStationCropStatus }>> = {};
+  public valueTemplates: Record<string, TemplateRef<{ $implicit: unknown; row: IStationProbabilityStatus }>> = {};
 
   public ngAfterViewInit() {
-    this.valueTemplates = { status: this.statusTemplate };
+    this.valueTemplates = { has_probabilities: this.probabilitiesTemplate };
     this.cdr.markForCheck();
   }
 
-  public statusDisplay = STATUS_DISPLAY;
+  /** One row per deployment station with probability data availability */
+  public stationStatuses = computed<IStationProbabilityStatus[]>(() => {
+    const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
 
-  /** Stations with crop probability data in climate_station_data */
-  private stationsWithProbability = computed(() =>
-    this.service
-      .stationData()
-      .filter(
-        (s) => s.crop_probability_data && Array.isArray(s.crop_probability_data) && s.crop_probability_data.length > 0,
-      ),
-  );
-
-  /** Downscaled rows grouped by station_id (one station can serve multiple locations) */
-  private downscaledByStation = computed(() => arrayToHashmapArray(this.service.downscaledData(), 'station_id'));
-
-  /** Combined status for each station with probability data */
-  public stationStatuses = computed<IStationCropStatus[]>(() => {
-    const stations = this.stationsWithProbability();
-    const downscaledGroups = this.downscaledByStation();
-
-    return stations
+    return this.service
+      .stations()
       .map((station) => {
-        const stationId = station.station_id;
-        const rows = downscaledGroups[stationId] ?? [];
-        const rowsWithRequirements = rows.filter(
-          (row) => Object.keys((row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {}).length > 0,
-        );
-        const locations = [...new Set(rowsWithRequirements.map((row) => row.location_id))].sort((a, b) =>
-          a.localeCompare(b),
-        );
+        const stationId = station.id || station.station_id;
+        const stationData = stationId ? stationDataHashmap[stationId] : undefined;
+        const probabilities =
+          stationData?.crop_probability_data && Array.isArray(stationData.crop_probability_data)
+            ? stationData.crop_probability_data
+            : [];
+        const has_probabilities = probabilities.length > 0;
+        const updated = (stationData?.updated_at || '').slice(0, 10);
 
         return {
-          station_id: stationId,
-          station_name: station.station?.station_name || stationId,
-          district: station.station?.district || 'Unknown',
-          probability_count: station.crop_probability_data?.length ?? 0,
-          locations_with_water_requirements: locations.length,
-          locations: locations.join(', '),
-          status:
-            rows.length === 0
-              ? 'Missing Downscaled Record'
-              : locations.length === 0
-                ? 'Empty Water Requirements'
-                : 'OK',
+          station_name: station.station_name || station.station_id,
+          district: station.district || 'Unknown',
+          has_probabilities,
+          probabilities_detail: has_probabilities
+            ? `Crop probability data available (updated ${updated || 'unknown date'})`
+            : stationData
+              ? 'Station record exists but holds no probability data'
+              : 'No station data record available',
+          data_updated: has_probabilities ? updated : '',
         };
       })
       .sort((a, b) => a.station_name.localeCompare(b.station_name));
   });
-
-  /** Stations needing attention (no downscaled record or only empty water requirements) */
-  public problemStations = computed(() => this.stationStatuses().filter((s) => s.status !== 'OK'));
 
   /** Summary stats */
   public stats = computed(() => {
     const all = this.stationStatuses();
     return {
       total: all.length,
-      ok: all.filter((s) => s.status === 'OK').length,
-      missing: all.filter((s) => s.status === 'Missing Downscaled Record').length,
-      empty: all.filter((s) => s.status === 'Empty Water Requirements').length,
-      problems: all.filter((s) => s.status !== 'OK').length,
+      withData: all.filter((s) => s.has_probabilities).length,
+      withoutData: all.filter((s) => !s.has_probabilities).length,
     };
   });
 
   public tableOptions: IDataTableOptions = {
-    displayColumns: [
-      'station_name',
-      'district',
-      'probability_count',
-      'status',
-      'locations_with_water_requirements',
-      'locations',
-      'station_id',
-    ],
-    paginatorSizes: [10, 25, 50, 100],
+    displayColumns: ['station_name', 'district', 'has_probabilities', 'data_updated'],
+    paginatorSizes: [50, 100],
     search: true,
-    sort: { id: 'status', start: 'asc' },
+    sort: { id: 'station_name', start: 'asc' },
     formatHeader: (v) => {
       const headerMap: Record<string, string> = {
-        station_id: 'Station ID',
         station_name: 'Station Name',
         district: 'District',
-        probability_count: 'Probability Records',
-        locations_with_water_requirements: 'Locations Covered',
-        locations: 'Covered Location IDs',
-        status: 'Status',
+        has_probabilities: 'Probabilities',
+        data_updated: 'Data Updated',
       };
       return headerMap[v] || formatHeaderDefault(v);
     },
-    exportFilename: 'stations-missing-crop-info.csv',
+    exportFilename: 'stations-crop-probability-data.csv',
   };
 }
