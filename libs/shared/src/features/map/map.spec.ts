@@ -44,6 +44,14 @@ jest.mock('maplibre-gl', () => {
     public layers: Record<string, any> = {};
     public handlers: Record<string, ((...args: any[]) => void)[]> = {};
     public zoom = 2;
+    public scrollZoom = { disable: jest.fn(), enable: jest.fn() };
+    public touchZoomRotate = { disableRotation: jest.fn(), enableRotation: jest.fn() };
+    public isMoving = jest.fn(() => false);
+    public easeTo = jest.fn();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public unproject = jest.fn((_pt?: any) => ({ lng: 28, lat: -15 }));
+    public getMinZoom = jest.fn(() => 0);
+    public getMaxZoom = jest.fn(() => 22);
     public setStyle = jest.fn();
     public setPaintProperty = jest.fn();
     public fitBounds = jest.fn();
@@ -155,13 +163,19 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     fixture.detectChanges();
   });
 
-  it('creates the component with an offline raster base style', () => {
+  it('creates the component with an offline raster base style and snappy rendering options', () => {
     expect(component).toBeTruthy();
     expect(mockMapInstances().length).toBe(1);
     expect(component.map()).toBe(mockMapInstances()[0]);
     expect(component.mapReady()).toBe(false);
-    const style = mockMapInstances()[0].options.style;
+    const map = mockMapInstances()[0];
+    expect(map.options.zoomSnap).toBe(1);
+    expect(map.options.fadeDuration).toBe(0);
+    const style = map.options.style;
     expect(style.sources['picsa-local-tiles'].tiles).toEqual(['assets/mapTiles/raw/{z}/{x}/{y}.webp']);
+    // raster-fade-duration is set to 0 to prevent lingering stretched tiles on zoom transitions
+    const rasterLayer = style.layers.find((l: any) => l.id === 'picsa-local-layer');
+    expect(rasterLayer?.paint?.['raster-fade-duration']).toBe(0);
   });
 
   it('marks the map ready and emits onMapReady on load', () => {
@@ -170,6 +184,75 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     emitLoad();
     expect(component.mapReady()).toBe(true);
     expect(onReady).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables default scrollZoom and uses discrete wheel zoom anchored to mouse position', () => {
+    const map = mockMap();
+    expect(map.scrollZoom.disable).toHaveBeenCalled();
+
+    const container = component.mapContainer()?.nativeElement;
+    expect(container).toBeDefined();
+    if (!container) return;
+    setZoom(3);
+
+    // Wheel forward (zoom in)
+    const zoomInEvent = new WheelEvent('wheel', {
+      deltaY: -100,
+      clientX: 200,
+      clientY: 150,
+      bubbles: true,
+      cancelable: true,
+    });
+    container.dispatchEvent(zoomInEvent);
+
+    expect(map.unproject).toHaveBeenCalled();
+    expect(map.easeTo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        zoom: 4,
+        duration: 120,
+        around: expect.anything(),
+      }),
+    );
+  });
+
+  it('disables touch rotation when dragRotate is false and snaps fractional touch zoom on moveend', () => {
+    const map = mockMap();
+    expect(map.touchZoomRotate.disableRotation).toHaveBeenCalled();
+
+    // Simulate map settling on a fractional zoom after mobile pinch zoom
+    setZoom(3.4);
+    map.handlers['moveend']?.forEach((fn) => fn());
+
+    expect(map.easeTo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        zoom: 3,
+        duration: 150,
+      }),
+    );
+  });
+
+  it('steps zoom down discretely on wheel backward', () => {
+    const map = mockMap();
+    const container = component.mapContainer()?.nativeElement;
+    expect(container).toBeDefined();
+    if (!container) return;
+    setZoom(5);
+
+    const zoomOutEvent = new WheelEvent('wheel', {
+      deltaY: 100,
+      clientX: 200,
+      clientY: 150,
+      bubbles: true,
+      cancelable: true,
+    });
+    container.dispatchEvent(zoomOutEvent);
+
+    expect(map.easeTo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        zoom: 4,
+        duration: 120,
+      }),
+    );
   });
 
   it('keeps the offline raster below zoom 9 when online (no metered fetches)', () => {
