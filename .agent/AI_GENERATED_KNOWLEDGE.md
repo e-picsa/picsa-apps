@@ -228,6 +228,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ---
 
+### Jest ESM Transformation & Native Mocks in Tool Specs
+
+- **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
+- **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
+
+---
+
 ## 5. Charts & SVG Visualizations (C3 / D3)
 
 ### C3 Inline Style Precedence & Point Customization
