@@ -8,8 +8,6 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { PicsaTranslateModule } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { IResourceFile } from '@picsa/resources/schemas';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 
 import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
@@ -59,26 +57,12 @@ export class FarmerStepVideoComponent {
 
   public viewMode = computed<'single' | 'playlist'>(() => (this.videos().length > 1 ? 'playlist' : 'single'));
 
-  public isShareDisabled = computed(() => {
-    if (this.viewMode() === 'single') {
-      return !this.singlePlayer()?.isDownloaded();
-    }
-    const players = this.playlistPlayers();
-    return players.length === 0 || !players.some((p) => p.isDownloaded());
-  });
+  public isShareDisabled = computed(() => !this.singlePlayer()?.isDownloaded());
 
   public async shareActiveVideo(event?: Event) {
     event?.stopPropagation();
     if (this.isShareDisabled()) return;
-    if (this.viewMode() === 'single') {
-      await this.singlePlayer()?.shareVideo();
-    } else {
-      const players = this.playlistPlayers().filter((p) => p.isDownloaded());
-      const resources = players.map((p) => p.videoResource()).filter(Boolean) as IResourceFile[];
-      if (resources.length > 0) {
-        await this.resourcesToolService.shareResources(resources);
-      }
-    }
+    await this.singlePlayer()?.shareVideo();
   }
 
   public async sharePlaylistItem(event: Event, player: FarmerStepVideoPlayerComponent) {

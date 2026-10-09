@@ -34,7 +34,7 @@ describe('FarmerStepVideoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render stepTitle and share button when stepTitle is provided, disabled when not downloaded', () => {
+  it('should render stepTitle and share button when stepTitle is provided in single view, disabled when not downloaded', () => {
     fixture.componentRef.setInput('stepTitle', '1. Introduction');
     fixture.detectChanges();
 
@@ -47,7 +47,7 @@ describe('FarmerStepVideoComponent', () => {
     expect(shareButton.disabled).toBe(true);
   });
 
-  it('should enable share button and call shareVideo when video is downloaded', async () => {
+  it('should enable share button and call shareVideo when video is downloaded in single view', async () => {
     fixture.componentRef.setInput('stepTitle', '1. Introduction');
     fixture.detectChanges();
 
@@ -67,15 +67,15 @@ describe('FarmerStepVideoComponent', () => {
     }
   });
 
-  it('should handle playlist view share buttons disabled state based on download status', () => {
+  it('should not render header share button in playlist view', () => {
     fixture.componentRef.setInput('videos', [PICSA_FARMER_VIDEOS_DATA[0], PICSA_FARMER_VIDEOS_DATA[1]]);
-    fixture.componentRef.setInput('stepTitle', 'Playlist');
+    fixture.componentRef.setInput('stepTitle', 'Testimonials');
     fixture.detectChanges();
 
     expect(component.viewMode()).toBe('playlist');
 
-    const headerShareBtn = fixture.nativeElement.querySelector('.step-title button.share-btn') as HTMLButtonElement;
-    expect(headerShareBtn.disabled).toBe(true);
+    const headerShareBtn = fixture.nativeElement.querySelector('.step-title button.share-btn');
+    expect(headerShareBtn).toBeNull();
 
     const itemShareBtns = fixture.nativeElement.querySelectorAll('.playlist-item button.share-item-btn');
     expect(itemShareBtns.length).toBe(2);
@@ -86,7 +86,6 @@ describe('FarmerStepVideoComponent', () => {
     players[0].downloadStatus.set('complete');
     fixture.detectChanges();
 
-    expect(headerShareBtn.disabled).toBe(false);
     expect((itemShareBtns[0] as HTMLButtonElement).disabled).toBe(false);
     expect((itemShareBtns[1] as HTMLButtonElement).disabled).toBe(true);
   });

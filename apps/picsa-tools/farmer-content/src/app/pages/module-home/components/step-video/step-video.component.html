@@ -1,15 +1,17 @@
 @if (stepTitle(); as title) {
   <mat-card-title class="step-title">
     <span class="flex-1">{{ title }}</span>
-    <button
-      matIconButton
-      class="share-btn text-white"
-      [disabled]="isShareDisabled()"
-      (click)="shareActiveVideo($event)"
-      [attr.aria-label]="'Share video' | translate"
-    >
-      <mat-icon>share</mat-icon>
-    </button>
+    @if (viewMode() === 'single') {
+      <button
+        matIconButton
+        class="share-btn text-white"
+        [disabled]="isShareDisabled()"
+        (click)="shareActiveVideo($event)"
+        [attr.aria-label]="'Share video' | translate"
+      >
+        <mat-icon>share</mat-icon>
+      </button>
+    }
   </mat-card-title>
 }
 
