@@ -1,6 +1,7 @@
 import { ClimateFeature } from '../modules/climate/climate.routes';
 import { CropFeature } from '../modules/crop-information/crop.routes';
 import { DeploymentFeature } from '../modules/deployment/deployment.routes';
+import { FeedbackFeature } from '../modules/feedback/feedback.routes';
 import { HomeFeature } from '../modules/home/home.routes';
 import { MapFeature } from '../modules/map/map.routes';
 import { ResourcesFeature } from '../modules/resources/resources.routes';
@@ -20,6 +21,7 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
   ...StatsFeature.NAV_LINKS,
   ...DeploymentFeature.NAV_LINKS,
   ...MapFeature.NAV_LINKS,
+  ...FeedbackFeature.NAV_LINKS,
 ];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service', 'profile/password-reset'];
