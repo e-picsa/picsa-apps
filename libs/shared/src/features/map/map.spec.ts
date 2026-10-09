@@ -250,7 +250,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     component.addGeoJsonLayer('district-boundary', TEST_GEOJSON, {
       lineColor: 'brown',
       lineOpacity: 0.5,
-      lineWidth: 1.5,
+      lineWidth: 3,
       fitBounds: true,
     });
     expect(map.addSource).toHaveBeenCalledWith('district-boundary', expect.objectContaining({ type: 'geojson' }));
