@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
@@ -15,14 +16,11 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import type { IAnnualRainfallSummariesData, ICropSuccessEntry } from '../../../climate/types';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
-import {
-  cumulativeDistribution,
-  generateProbabilityHashmap,
-  generateTable,
-  plantDayToDateLabel,
-  roundToNearest,
-} from '../../utils/probability.utils';
-import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
+import { computeExpectedProbabilityTable, roundToNearest } from '../../utils/probability.utils';
+import { CropAppDiffComponent } from './components/components/crop-app-diff.component';
+import { CropDuplicateCropsComponent } from './components/components/duplicate-crops.component';
+import { CropLocationCoverageComponent } from './components/components/location-coverage.component';
+import { CropMissingStationInfoComponent } from './components/components/missing-station-info.component';
 
 interface ICropDataImport {
   location_id: string;
@@ -55,8 +53,12 @@ interface ICropDataImport {
     DataImportComponent,
     PicsaDataTableComponent,
     DashboardMaterialModule,
-    CropMissingLocationsComponent,
+    CropLocationCoverageComponent,
+    CropMissingStationInfoComponent,
+    CropDuplicateCropsComponent,
+    CropAppDiffComponent,
     PicsaFormsModule,
+    MatTabsModule,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
@@ -73,7 +75,7 @@ export class DashboardCropAdminComponent {
   public errors = signal<ICropDataImport[]>([]);
   public errorTableOptions: IDataTableOptions = {
     displayColumns: ['_row_number', 'location_id', 'crop', 'variety', 'water_requirement', '_error'],
-    paginatorSizes: [5, 20, 50],
+    paginatorSizes: [50, 100],
     search: false,
     formatHeader: (v) => {
       if (v === '_row_number') return '#';
@@ -86,7 +88,7 @@ export class DashboardCropAdminComponent {
   public updates = signal<ICropDataImport[]>([]);
   public updateTableOptions: IDataTableOptions = {
     displayColumns: ['location_id', 'crop', 'variety', '_water_requirement_server', 'water_requirement'],
-    paginatorSizes: [5, 20, 50],
+    paginatorSizes: [50, 100],
     search: false,
     formatHeader: (v) => {
       if (v === '_water_requirement_server') return 'Water Requirement (before)';
@@ -190,33 +192,15 @@ export class DashboardCropAdminComponent {
         const rainfallData = stationData.annual_rainfall_data as IAnnualRainfallSummariesData[];
         if (!cropProbabilityData || !rainfallData) continue;
 
-        // Calculate season start probabilities
-        const allStartDates = rainfallData.map((d) => d.start_rains_doy).filter((v) => typeof v === 'number');
-        if (allStartDates.length === 0) continue;
-        const uniquePlantDates = [...new Set(cropProbabilityData.map((v) => v.plant_day))];
-        const cdf = cumulativeDistribution(allStartDates);
-        const total = allStartDates.length;
-
-        const startProbabilities = uniquePlantDates
-          .map((plantDate) => ({
-            plantDate,
-            probability: cdf[plantDate + 1] / total,
-            label: plantDayToDateLabel(plantDate),
-          }))
-          .filter(({ probability }) => probability >= 0.05);
-
-        if (startProbabilities.length === 0) continue;
-
-        // Generate probability hashmap
-        const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
-
-        // Generate table data
-        const tableData = generateTable({
+        // Generate table data (shared pipeline, also used by the app-vs-database diff)
+        const expected = computeExpectedProbabilityTable({
           cropDataHashmap,
           waterRequirements: row.water_requirements as ICropDataDownscaledWaterRequirements,
-          startProbabilities,
-          probabilityHashmap,
+          rainfallData,
+          cropProbabilityData,
         });
+        if (!expected) continue;
+        const { table: tableData, startProbabilities } = expected;
 
         // Skip locations with no usable probability data (e.g. no upstream
         // probability rows, or no overlap with local water requirements)

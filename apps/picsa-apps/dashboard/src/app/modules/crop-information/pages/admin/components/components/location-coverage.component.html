@@ -1,0 +1,63 @@
+<div class="space-y-4">
+  <p class="text-sm text-gray-600">
+    Coverage of downscaled water requirements per district, including locations sharing
+    byte-identical definitions. Use the station action to view or change a linked climate station.
+  </p>
+
+  <!-- Summary Stats -->
+  <div class="flex flex-wrap gap-4">
+    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">info</mat-icon>
+      <span>{{ stats().total }} districts</span>
+    </div>
+    <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
+      <mat-icon class="text-red-600">error</mat-icon>
+      <span>{{ stats().missing }} Missing</span>
+    </div>
+    <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
+      <mat-icon class="text-orange-600">warning</mat-icon>
+      <span>{{ stats().empty }} Empty</span>
+    </div>
+    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">group</mat-icon>
+      <span>{{ stats().paired }} Paired</span>
+    </div>
+    <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
+      <mat-icon class="text-green-600">check_circle</mat-icon>
+      <span>{{ stats().unique }} Unique</span>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="flex items-center gap-4">
+    <button
+      matButton="outlined"
+      (click)="addPlaceholderEntries()"
+      [disabled]="stats().missing === 0 || addingPlaceholders()"
+    >
+      <mat-icon>add</mat-icon>
+      Add Placeholder Entries ({{ stats().missing }})
+    </button>
+    <span class="text-sm text-gray-500">Creates empty records for districts missing entries</span>
+  </div>
+
+  <!-- Data Table -->
+  @if (rows().length > 0) {
+    <picsa-data-table
+      [data]="rows()"
+      [options]="tableOptions"
+      [valueTemplates]="valueTemplates"
+      (rowClick)="openSetStationDialog($event)"
+    ></picsa-data-table>
+    <ng-template #statusTemplate let-row="row">
+      <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">
+        {{ statusDisplay[row.status].icon }}
+      </mat-icon>
+    </ng-template>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
+      <p class="text-gray-600">No districts found for the active deployment</p>
+    </div>
+  }
+</div>
