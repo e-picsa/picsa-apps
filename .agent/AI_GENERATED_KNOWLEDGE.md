@@ -17,6 +17,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Admin Testing**: `admin@picsa.app` / `admin@picsa.app`
 - **Non-Admin Testing**: `user@picsa.app` / `user@picsa.app`
 - **Local Supabase Inbucket (Mailpit)**: Web interface runs at `http://localhost:54324/`. Internal Docker SMTP runs on port `1025` (`host: 'inbucket'`).
+- **Parallel Dev Server Ports & Worktree Concurrency**:
+  - The frontend app (`picsa-apps-app`) defaults to `4200` (range `4200..4229`), while the dashboard (`picsa-apps-dashboard`) defaults to `3000` (range `3000..3029`).
+  - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
+  - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
+  - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
 
 ---
 
@@ -72,7 +77,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
-- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
@@ -172,7 +177,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
 - **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
-- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined`.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined``.
 
 ### Sample Forecast Data & Local Development Fixtures
 
@@ -353,7 +358,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
 - **Card Header & Rate Alignment in Sidenav Panel**:
   - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
-  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]="!showRate"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
