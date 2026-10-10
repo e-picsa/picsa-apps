@@ -1,7 +1,8 @@
 <div class="space-y-4">
   <p class="text-sm text-gray-600">
     Compares committed app probability tables against tables regenerated from live data-system
-    records. Reload after syncing or importing to confirm the app is up to date.
+    records. Only locations with an app table or generatable data appear here — districts
+    without any records are covered under Locations.
   </p>
 
   <div class="flex items-center gap-4">
@@ -18,7 +19,7 @@
     <div class="flex flex-wrap gap-4">
       <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
         <mat-icon class="text-blue-600">info</mat-icon>
-        <span>{{ stats().total }} locations compared</span>
+        <span>{{ stats().noData }} locations with no data</span>
       </div>
       <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
         <mat-icon class="text-green-600">check_circle</mat-icon>
@@ -42,10 +43,10 @@
       </div>
     </div>
 
-    <!-- Data Table -->
-    @if (diffRows().length > 0) {
+    <!-- Data Table (fully in-sync rows omitted) -->
+    @if (displayedRows().length > 0) {
       <picsa-data-table
-        [data]="diffRows()"
+        [data]="displayedRows()"
         [options]="tableOptions"
         [valueTemplates]="valueTemplates"
       ></picsa-data-table>
@@ -93,6 +94,11 @@
           }
         }
       </ng-template>
+    } @else if (diffRows().length > 0) {
+      <div class="flex items-center justify-center py-8">
+        <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>
+        <p class="text-gray-600">All app tables are in sync with data-system records</p>
+      </div>
     } @else {
       <div class="flex items-center justify-center py-8">
         <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>

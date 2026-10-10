@@ -2,23 +2,6 @@
   <h2>Crop Admin</h2>
 
   <mat-tab-group class="mt-2" animationDuration="0ms">
-    <!-- App vs Database -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
-        <span>App Diff</span>
-        @if (appDiff.stats().differs > 0) {
-          <span
-            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
-            >{{ appDiff.stats().differs }}</span
-          >
-        }
-      </ng-template>
-      <div class="p-4">
-        <dashboard-crop-app-diff #appDiff></dashboard-crop-app-diff>
-      </div>
-    </mat-tab>
-
     <!-- Location Coverage (districts, pairing and gaps) -->
     <mat-tab>
       <ng-template mat-tab-label>
@@ -38,6 +21,23 @@
       </ng-template>
       <div class="p-4">
         <dashboard-crop-missing-station-info></dashboard-crop-missing-station-info>
+      </div>
+    </mat-tab>
+
+    <!-- App vs Database -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
+        <span>App Diff</span>
+        @if (appDiff.stats().differs > 0) {
+          <span
+            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
+            >{{ appDiff.stats().differs }}</span
+          >
+        }
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-app-diff #appDiff></dashboard-crop-app-diff>
       </div>
     </mat-tab>
 

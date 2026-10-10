@@ -10,15 +10,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../services';
 import { buildLocationCoverageRows, ICoverageRow } from './location-coverage.utils';
+import { CropSetStationDialogComponent } from './set-station-dialog.component';
 import { IPairingRow } from './station-pairing.utils';
 
 const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
@@ -43,6 +45,8 @@ const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
 export class CropLocationCoverageComponent implements AfterViewInit {
   private service = inject(CropInformationService);
   private deploymentService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+  private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('statusTemplate') private statusTemplate!: TemplateRef<{ $implicit: unknown; row: ICoverageRow }>;
@@ -60,7 +64,15 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public rows = computed<ICoverageRow[]>(() => {
     const locationData = this.deploymentService.activeDeploymentLocationData();
-    const geoLocations = getDeepestLocations(locationData).map(({ id, label }) => ({ id, label }));
+    const parentLabels: Record<string, string> = {};
+    for (const parent of locationData.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
+    const deepest =
+      locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
+    const geoLocations = deepest.map((location: { id: string; label: string; admin_4?: string }) => ({
+      id: location.id,
+      label: location.label,
+      parent: location.admin_4 ? (parentLabels[location.admin_4] ?? '') : '',
+    }));
     const stationHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const dbRows: IPairingRow[] = this.service.downscaledData().map((row) => ({
       location_id: row.location_id,
@@ -91,14 +103,14 @@ export class CropLocationCoverageComponent implements AfterViewInit {
   });
 
   public tableOptions: IDataTableOptions = {
-    displayColumns: ['location_label', 'location_id', 'status', 'paired_with', 'station', 'crops'],
+    displayColumns: ['location_label', 'parent_location', 'status', 'paired_with', 'station', 'crops'],
     paginatorSizes: [50, 100],
     search: true,
     sort: { id: 'location_label', start: 'asc' },
     formatHeader: (v) => {
       const headerMap: Record<string, string> = {
         location_label: 'Location',
-        location_id: 'Location ID',
+        parent_location: 'Parent',
         status: 'Status',
         paired_with: 'Paired With',
         station: 'Linked Station',
@@ -108,6 +120,22 @@ export class CropLocationCoverageComponent implements AfterViewInit {
     },
     exportFilename: 'crop-location-coverage.csv',
   };
+
+  /** Open the station picker for a location with a data-system record */
+  public openSetStationDialog(row: ICoverageRow) {
+    const downscaledRow = arrayToHashmap(this.service.downscaledData(), 'location_id')[row.location_id];
+    if (!downscaledRow) {
+      this.notificationService.showErrorNotification(
+        'No data-system record for this location yet — add a placeholder entry first',
+      );
+      return;
+    }
+    this.dialog.open(CropSetStationDialogComponent, {
+      data: { locationId: row.location_id, downscaledRow },
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+  }
 
   public async addPlaceholderEntries() {
     const locationIds = this.missingIds();

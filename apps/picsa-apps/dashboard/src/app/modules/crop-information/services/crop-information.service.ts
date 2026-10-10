@@ -108,6 +108,17 @@ export class CropInformationService extends PicsaAsyncService {
     await this.loadCropData();
   }
 
+  /** Update the climate station linked to a downscaled location record */
+  public async setDownscaledStation(id: string, station_id: string) {
+    const { error } = await this.cropDataDownscaledTable.update({ station_id }).eq('id', id);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    await this.loadCropData();
+    this.notificationService.showSuccessNotification(`Linked station updated`);
+  }
+
   /** Create empty placeholder records so locations missing entries appear in quality control */
   public async addPlaceholderLocations(locationIds: string[]) {
     const { country_code } = this.dashboardService.activeDeployment();

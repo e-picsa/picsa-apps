@@ -267,6 +267,9 @@ export class CropAppDiffComponent implements AfterViewInit {
     return rows.sort((a, b) => (STATUS_SEVERITY[a.status] ?? 99) - (STATUS_SEVERITY[b.status] ?? 99));
   });
 
+  /** Rows with actionable differences (fully in-sync rows add no value to the table) */
+  public displayedRows = computed(() => this.diffRows().filter((row) => row.status !== 'In Sync'));
+
   public stats = computed(() => {
     const rows = this.diffRows();
     const count = (status: string) => rows.filter((row) => row.status === status).length;
@@ -277,8 +280,29 @@ export class CropAppDiffComponent implements AfterViewInit {
       missing: count('Missing in App'),
       orphaned: count('Orphaned in App'),
       noSource: count('No Source Data'),
+      noData: this.countDistrictsWithoutData(new Set(rows.map((row) => row.location_id))),
     };
   });
+
+  /**
+   * Deployment districts with neither an app table nor a usable data-system
+   * record (no record at all, or requirements still empty).
+   */
+  private countDistrictsWithoutData(coveredLocationIds: Set<string>): number {
+    const locationData = this.deploymentService.activeDeploymentLocationData();
+    const districts =
+      locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
+    const downscaledByLocation = arrayToHashmap(this.service.downscaledData(), 'location_id');
+    let count = 0;
+    for (const district of districts) {
+      if (coveredLocationIds.has(district.id)) continue;
+      const row = downscaledByLocation[district.id];
+      if (!row || Object.keys((row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {}).length === 0) {
+        count++;
+      }
+    }
+    return count;
+  }
 
   public tableOptions: IDataTableOptions = {
     displayColumns: [

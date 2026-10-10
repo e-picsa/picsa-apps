@@ -51,6 +51,20 @@ describe('buildLocationCoverageRows', () => {
     expect(orphan?.location_label).toBe('retired-district (unknown district)');
   });
 
+  it('should propagate parent locations and leave orphans blank', () => {
+    const rows = buildLocationCoverageRows({
+      geoLocations: [
+        { id: 'chipata', label: 'Chipata', parent: 'Eastern' },
+        { id: 'chadiza', label: 'Chadiza' },
+      ],
+      dbRows: [dbRow('chipata', { maize: { 'PHB-30D79': 450 } }), dbRow('retired', { maize: { X: 1 } })],
+    });
+    const byId = new Map(rows.map((row) => [row.location_id, row]));
+    expect(byId.get('chipata')?.parent_location).toBe('Eastern');
+    expect(byId.get('chadiza')?.parent_location).toBe('');
+    expect(byId.get('retired')?.parent_location).toBe('');
+  });
+
   it('should order missing rows before paired and unique rows', () => {
     const shared = { maize: { 'PHB-30D79': 450 } };
     const rows = buildLocationCoverageRows({

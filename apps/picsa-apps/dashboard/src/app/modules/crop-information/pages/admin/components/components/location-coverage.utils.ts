@@ -2,9 +2,17 @@ import { groupRowsByRequirements, IPairingRow } from './station-pairing.utils';
 
 export type LocationCoverageStatus = 'Missing' | 'Empty' | 'Paired' | 'Unique';
 
+export interface ICoverageGeoLocation {
+  id: string;
+  label: string;
+  /** Parent tier label (e.g. province), empty when the tier has no parent */
+  parent?: string;
+}
+
 export interface ICoverageRow {
   location_id: string;
   location_label: string;
+  parent_location: string;
   status: LocationCoverageStatus;
   paired_with: string;
   station: string;
@@ -33,7 +41,7 @@ function cropList(waterRequirements: IPairingRow['water_requirements']): string 
  * are Unique. Data-system rows for unknown districts are appended as orphans.
  */
 export function buildLocationCoverageRows(params: {
-  geoLocations: { id: string; label: string }[];
+  geoLocations: ICoverageGeoLocation[];
   dbRows: IPairingRow[];
 }): ICoverageRow[] {
   const { geoLocations, dbRows } = params;
@@ -54,6 +62,7 @@ export function buildLocationCoverageRows(params: {
       rows.push({
         location_id: location.id,
         location_label: location.label,
+        parent_location: location.parent ?? '',
         status: 'Missing',
         paired_with: '',
         station: '',
@@ -65,6 +74,7 @@ export function buildLocationCoverageRows(params: {
       rows.push({
         location_id: location.id,
         location_label: location.label,
+        parent_location: location.parent ?? '',
         status: 'Empty',
         paired_with: '',
         station: dbRow.station_name,
@@ -78,6 +88,7 @@ export function buildLocationCoverageRows(params: {
       rows.push({
         location_id: location.id,
         location_label: location.label,
+        parent_location: location.parent ?? '',
         status: 'Paired',
         paired_with: sortedJoin(others.map((member) => member.location_id)),
         station: dbRow.station_name,
@@ -87,6 +98,7 @@ export function buildLocationCoverageRows(params: {
       rows.push({
         location_id: location.id,
         location_label: location.label,
+        parent_location: location.parent ?? '',
         status: 'Unique',
         paired_with: '',
         station: dbRow.station_name,
@@ -103,6 +115,7 @@ export function buildLocationCoverageRows(params: {
     rows.push({
       location_id: dbRow.location_id,
       location_label: `${dbRow.location_id} (unknown district)`,
+      parent_location: '',
       status: isEmpty ? 'Empty' : group ? 'Paired' : 'Unique',
       paired_with: group
         ? sortedJoin(

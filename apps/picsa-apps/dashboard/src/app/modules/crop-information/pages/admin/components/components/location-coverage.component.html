@@ -1,7 +1,7 @@
 <div class="space-y-4">
   <p class="text-sm text-gray-600">
     Coverage of downscaled water requirements per district, including locations sharing
-    byte-identical definitions. Readonly except for placeholder creation.
+    byte-identical definitions. Use the station action to view or change a linked climate station.
   </p>
 
   <!-- Summary Stats -->
@@ -47,6 +47,7 @@
       [data]="rows()"
       [options]="tableOptions"
       [valueTemplates]="valueTemplates"
+      (rowClick)="openSetStationDialog($event)"
     ></picsa-data-table>
     <ng-template #statusTemplate let-row="row">
       <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">

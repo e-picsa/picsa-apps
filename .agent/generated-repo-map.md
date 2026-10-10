@@ -35,7 +35,7 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (459 files scanned)
+## Codebase Symbol Index (460 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -195,13 +195,17 @@
   - `Function` **normalizeName**
   - `Function` **groupDuplicateVarieties**
 - **[location-coverage.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts`)
-  - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, addPlaceholderEntries])
+  - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, openSetStationDialog, addPlaceholderEntries])
 - **[location-coverage.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts`)
+  - `Interface` **ICoverageGeoLocation**
   - `Interface` **ICoverageRow**
   - `Type` **LocationCoverageStatus**
   - `Function` **buildLocationCoverageRows**
 - **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
   - `Component` **CropMissingStationInfoComponent** (methods: [ngAfterViewInit])
+- **[set-station-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts`)
+  - `Component` **CropSetStationDialogComponent** (methods: [handleStationSelected, close])
+  - `Interface` **ISetStationDialogData**
 - **[station-pairing.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/station-pairing.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/station-pairing.utils.ts`)
   - `Interface` **IPairingRow**
   - `Interface` **IWaterRequirementGroup**
