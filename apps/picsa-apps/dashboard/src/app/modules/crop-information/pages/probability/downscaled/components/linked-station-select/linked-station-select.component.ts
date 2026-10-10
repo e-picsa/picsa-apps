@@ -90,49 +90,34 @@ export class CropLinkedStationSelectComponent {
       this.selectedStationId.set(this.downscaledData()?.station_id || undefined);
     });
 
-    // Reactive effect to draw/highlight the district polygon on the Leaflet map
+    // Reactive effect to draw/highlight the district polygon on the map
     effect((cleanup) => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const districtGeo = this.locationGeoJson();
+      if (!mapComponent || !mapComponent.mapReady() || !districtGeo) return;
 
-      if (!mapComponent || !map || !districtGeo) return;
-
-      const L = mapComponent.L;
-
-      const geoJsonLayer = L.geoJSON(districtGeo, {
-        style: {
-          color: '#3388ff',
-          fillColor: '#3388ff',
-          weight: 3,
-          opacity: 0.8,
-          fillOpacity: 0.25,
-        },
+      mapComponent.addGeoJsonLayer('district-boundary', districtGeo, {
+        fillColor: '#3388ff',
+        fillOpacity: 0.25,
+        lineColor: '#3388ff',
+        lineWidth: 3,
+        lineOpacity: 0.8,
+        fitBounds: true,
+        padding: 30,
       });
 
-      geoJsonLayer.addTo(map);
-
-      // Fit map bounds to the district boundary
-      const bounds = geoJsonLayer.getBounds();
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [30, 30] });
-      }
-
       cleanup(() => {
-        if (map.hasLayer(geoJsonLayer)) {
-          map.removeLayer(geoJsonLayer);
-        }
+        mapComponent.removeGeoJsonLayer('district-boundary');
       });
     });
 
     // Reactive effect to highlight the selected station's marker on the map when ready
     effect(() => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const selectedId = this.selectedStationId();
       const markers = this.mapMarkers();
 
-      if (!mapComponent || !map || !selectedId || markers.length === 0) return;
+      if (!mapComponent || !mapComponent.mapReady() || !selectedId || markers.length === 0) return;
 
       const selectedMarkerIndex = this.stationsWithCoords().findIndex((s) => s.id === selectedId);
 
@@ -140,11 +125,7 @@ export class CropLinkedStationSelectComponent {
         const marker = markers.find((m) => m._index === selectedMarkerIndex);
         if (marker) {
           setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const currentSelected = (mapComponent as any).selected?.marker;
-            if (!currentSelected || currentSelected._index !== marker._index) {
-              mapComponent.setActiveMarker(marker);
-            }
+            mapComponent.setActiveMarker(marker);
           }, 200);
         }
       }

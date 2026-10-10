@@ -17,6 +17,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Admin Testing**: `admin@picsa.app` / `admin@picsa.app`
 - **Non-Admin Testing**: `user@picsa.app` / `user@picsa.app`
 - **Local Supabase Inbucket (Mailpit)**: Web interface runs at `http://localhost:54324/`. Internal Docker SMTP runs on port `1025` (`host: 'inbucket'`).
+- **Parallel Dev Server Ports & Worktree Concurrency**:
+  - The frontend app (`picsa-apps-app`) defaults to `4200` (range `4200..4229`), while the dashboard (`picsa-apps-dashboard`) defaults to `3000` (range `3000..3029`).
+  - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
+  - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
+  - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
 
 ---
 
@@ -33,10 +38,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Deno edge functions and standalone Node scripts fail if `@picsa/utils` re-exports heavy root dependencies (e.g. Angular router/core, rxdb, xlsx, xml).
 - Keep platform-agnostic, dependency-free utilities (`climate.utils.ts`, `object.utils.ts`, `async.utils.ts`) isolated so they rely only on native JavaScript/Web APIs (`Math`, `Array`, `Map`, `crypto.subtle`) and can be safely imported anywhere.
 
-### Leaflet Plugins and ES Module Namespace Wrapper in Production
+### MapLibre GL JS Discrete Zoom & Raster Tile Performance
 
-- **Problem**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object in production esbuild chunks. Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) dynamically attach methods to Leaflet's runtime export object via CommonJS/UMD, causing runtime crashes (`typeError: Ai.maplibreGL is not a function`).
-- **Solution**: Import Leaflet as a default export: `import L from 'leaflet'` with `esModuleInterop: true`. This resolves directly to the mutable Leaflet exports object shared by plugins.
+- **Continuous Trackpad Zoom Stretches Raster Tiles**: MapLibre's built-in `ScrollZoomHandler` treats trackpad/wheel gestures on macOS as continuous fractional zooms, bypassing `zoomSnap` even when configured (`zoomSnap > 0`). Fractional zoom levels (e.g. 4.35) cause 256×256 raster tiles to be continuously stretched by up to `\sqrt{2}\times` via GPU texture scaling, rather than displayed 1:1 pixel-crisp at integer zoom levels.
+- **Discrete Wheel Zoom & Mouse-Anchor Pan**: To achieve discrete interval zooming with pan-to-mouse centering, disable default scroll-zoom (`map.scrollZoom.disable()`) and attach a custom wheel listener (`{ passive: false }`) on the map container. Calculate target integer zoom levels with debounced/throttled deltas, unproject mouse screen coordinates (`map.unproject(mousePoint)`), and call `map.easeTo({ zoom: targetZoom, around: mouseLngLat, duration: 120 })`.
+- **Eliminating Stretched Cross-Fade Artifacts (`raster-fade-duration`)**: By default, MapLibre uses `raster-fade-duration: 300` ms on raster layers. During zoom changes, lower-zoom stretched textures linger visibly while fading in newly loaded tiles. Setting `paint: { 'raster-fade-duration': 0 }` on the raster layer specification makes tile replacement instantaneous and removes blurry fade lag.
+- **Snapping FitBounds**: Specify `zoomSnap: 1` in `new maplibregl.Map(...)` so that initial `fitBounds(bounds)` calculations snap camera results to discrete integers instead of settling on fractional zooms.
+- **Mobile Touch Gestures (Pinch & Double-Tap)**: MapLibre's `TapZoomHandler` handles 1-finger double-tap (zooms in by 1) and 2-finger single-tap (zooms out by 1), automatically honoring `zoomSnap: 1` centered around the tap coordinates. For two-finger pinch-zoom, `TwoFingersTouchZoomHandler` allows fluid continuous zooming under fingers; when the gesture ends, listening to `moveend` and easing to `Math.round(currentZoom)` snaps any fractional zoom to the nearest integer so raster tiles render sharply. Calling `map.touchZoomRotate.disableRotation()` prevents accidental rotation during mobile pinch gestures.
+
+### Leaflet Removal (Pure MapLibre GL JS)
+
+- `PicsaMapComponent` (`libs/shared/src/features/map/`) and the dashboard map-admin preview run on pure MapLibre GL JS. The `leaflet`, `@types/leaflet`, `@asymmetrik/ngx-leaflet`, and `@maplibre/maplibre-gl-leaflet` dependencies have been fully removed — do not reintroduce them. If a Leaflet plugin is ever required again, import Leaflet as a default export (`import L from 'leaflet'` with `esModuleInterop: true`); namespace imports (`import * as L`) resolve to a sealed ES module wrapper in production esbuild chunks that CommonJS/UMD plugins cannot mutate.
 
 ### Edge Function Resource Bundling (`static_files`)
 
@@ -65,7 +77,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
-- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
@@ -165,7 +177,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
 - **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
-- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined`.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined``.
 
 ### Sample Forecast Data & Local Development Fixtures
 
@@ -198,6 +210,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
 - **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
 
+### Signal Effects in Unit Tests (`flushEffects` vs `detectChanges`)
+
+- **Problem**: In zoned Jest tests, calling `TestBed.flushEffects()` after a component synchronously emits an `EventEmitter` (e.g. a mocked third-party `load` callback that sets signals and emits `onMapReady`) nests an `ApplicationRef.tick` inside the already-running tick. Angular's recursion guard throws `NG0101: ApplicationRef.tick is called recursively`, which surfaces as `console.error` noise on every affected test.
+- **Solution**: Drive effect flushing with `fixture.detectChanges()` instead of `TestBed.flushEffects()` in such specs. Change detection flushes pending signal effects within the same tick, eliminating the nesting while keeping all assertions deterministic.
+
 ### Internationalization (i18n) Module Import in Standalone Components
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
@@ -213,6 +230,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
 - **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
 - **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
+
+---
+
+### Jest ESM Transformation & Native Mocks in Tool Specs
+
+- **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
+- **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
 
 ---
 
@@ -334,7 +358,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
 - **Card Header & Rate Alignment in Sidenav Panel**:
   - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
-  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]="!showRate"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
