@@ -35,9 +35,8 @@
  *   which remains visible even after logs scroll or terminals are switched.
  * - Clickable Startup Banner: Prints an eye-catching terminal card with an
  *   OSC 8 clickable hyperlink directly to the server.
- * - Ephemeral State File (`.serve-info.json`): Saves active port and metadata
- *   in the worktree root for external scripts and AI agents, automatically
- *   cleaned up on server exit.
+ * - Ephemeral State File (`.serve-info.json`): Tracks active ports and metadata
+ *   keyed by project in the worktree root, cleanly pruned on server termination.
  * - Helper Utilities: Supports `yarn open` / `--open` to immediately launch or
  *   inspect the active running server in the default browser.
  * - Zero Dependencies: Built entirely on Node.js standard modules (`net`,
@@ -54,7 +53,7 @@
  * ============================================================================
  */
 
-import { execSync, spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
@@ -93,7 +92,13 @@ function probeInterface(port, host) {
     const server = net.createServer();
     server.unref();
 
-    server.once('error', () => {
+    server.once('error', (err) => {
+      // If IPv6 is unsupported or disabled on host, ::1 returns EADDRNOTAVAIL or EAFNOSUPPORT.
+      // Do not treat this as port occupied.
+      if (host === '::1' && (err.code === 'EADDRNOTAVAIL' || err.code === 'EAFNOSUPPORT')) {
+        resolve(true);
+        return;
+      }
       resolve(false);
     });
 
@@ -103,7 +108,11 @@ function probeInterface(port, host) {
 
     try {
       server.listen({ port, host, exclusive: true });
-    } catch {
+    } catch (err) {
+      if (host === '::1' && (err.code === 'EADDRNOTAVAIL' || err.code === 'EAFNOSUPPORT')) {
+        resolve(true);
+        return;
+      }
       resolve(false);
     }
   });
@@ -152,14 +161,14 @@ export async function findNextAvailablePort(basePort, maxAttempts = 30) {
 function getGitContext() {
   let branch = '';
   try {
-    branch = execSync('git branch --show-current', {
+    branch = execFileSync('git', ['branch', '--show-current'], {
       cwd: REPO_ROOT,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim();
     if (!branch) {
       // In detached HEAD or bare worktree, retrieve short commit hash
-      const commit = execSync('git rev-parse --short HEAD', {
+      const commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
         cwd: REPO_ROOT,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
@@ -188,32 +197,59 @@ function formatClickableLink(url) {
 
 /** Open a URL in the user's default system browser across platforms */
 function openInBrowser(url) {
-  const openCmd = IS_WINDOWS
-    ? `start "" "${url}"`
-    : process.platform === 'darwin'
-      ? `open "${url}"`
-      : `xdg-open "${url}"`;
   try {
-    execSync(openCmd, { stdio: 'ignore' });
+    if (IS_WINDOWS) {
+      spawn('cmd.exe', ['/c', 'start', '""', url], { stdio: 'ignore', detached: true }).unref();
+    } else if (process.platform === 'darwin') {
+      spawn('open', [url], { stdio: 'ignore', detached: true }).unref();
+    } else {
+      spawn('xdg-open', [url], { stdio: 'ignore', detached: true }).unref();
+    }
   } catch {
     console.warn(`Could not automatically open browser. Please navigate to: ${url}`);
   }
 }
 
-/** Synchronously write ephemeral state file */
-function writeStateFile(data) {
+/** Read active state file from disk */
+export function readStateFile() {
+  if (!existsSync(STATE_FILE_PATH)) {
+    return {};
+  }
   try {
-    writeFileSync(STATE_FILE_PATH, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+    const parsed = JSON.parse(readFileSync(STATE_FILE_PATH, 'utf8'));
+    // Normalize single-server legacy format to project-keyed dictionary
+    if (parsed.project && parsed.port) {
+      return { [parsed.project]: parsed };
+    }
+    return parsed;
+  } catch {
+    return {};
+  }
+}
+
+/** Synchronously write ephemeral state file */
+export function writeStateFile(project, data) {
+  try {
+    const state = readStateFile();
+    state[project] = data;
+    writeFileSync(STATE_FILE_PATH, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
   } catch (err) {
     console.warn('Warning: Could not write .serve-info.json:', err.message);
   }
 }
 
 /** Synchronously clean up ephemeral state file */
-export function cleanupStateFile() {
+export function cleanupStateFile(project) {
   try {
-    if (existsSync(STATE_FILE_PATH)) {
+    if (!existsSync(STATE_FILE_PATH)) return;
+    const state = readStateFile();
+    if (project && state[project]) {
+      delete state[project];
+    }
+    if (!project || Object.keys(state).length === 0) {
       unlinkSync(STATE_FILE_PATH);
+    } else {
+      writeFileSync(STATE_FILE_PATH, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
     }
   } catch {
     // Ignore cleanup errors on process termination
@@ -221,49 +257,35 @@ export function cleanupStateFile() {
 }
 
 /** Standalone action: Read status from .serve-info.json and print/open */
-function handleStatusOrOpenAction({ openBrowser }) {
-  if (!existsSync(STATE_FILE_PATH)) {
+function handleStatusOrOpenAction({ projectFilter, openBrowser }) {
+  const state = readStateFile();
+  const projectKeys = Object.keys(state);
+
+  if (projectKeys.length === 0) {
     console.log('\nNo active dev server detected (.serve-info.json not found).');
     console.log('Start the server using `yarn start` or `yarn start:dashboard`.\n');
     return 1;
   }
 
-  try {
-    const info = JSON.parse(readFileSync(STATE_FILE_PATH, 'utf8'));
-    console.log(`\nActive Dev Server:`);
+  console.log('\nActive Dev Server(s):');
+  for (const key of projectKeys) {
+    const info = state[key];
     console.log(`  Project:  ${info.project}`);
     console.log(`  URL:      ${formatClickableLink(info.url)}`);
     console.log(`  Branch:   ${info.branch} (${info.worktree})`);
     console.log(`  PID:      ${info.pid}`);
     console.log(`  Started:  ${info.startedAt}\n`);
-
-    if (openBrowser) {
-      openInBrowser(info.url);
-    }
-    return 0;
-  } catch (err) {
-    console.error('Failed to read .serve-info.json:', err.message);
-    return 1;
   }
+
+  if (openBrowser) {
+    const targetKey = projectFilter && state[projectFilter] ? projectFilter : projectKeys[0];
+    openInBrowser(state[targetKey].url);
+  }
+  return 0;
 }
 
-/** Parse arguments and execute */
-export async function main() {
-  const rawArgs = process.argv.slice(2);
-
-  if (rawArgs.includes('-h') || rawArgs.includes('--help')) {
-    printHelp();
-    return 0;
-  }
-
-  // Handle standalone `yarn open` or `--status`
-  const isStatusOnly = rawArgs.includes('--status');
-  const isOpenStandalone = rawArgs.length === 1 && rawArgs[0] === '--open';
-  if (isStatusOnly || isOpenStandalone) {
-    return handleStatusOrOpenAction({ openBrowser: isOpenStandalone });
-  }
-
-  // Extract project name, base port, and passthrough flags
+/** Parse CLI arguments into structured configuration */
+function parseCliArgs(rawArgs) {
   let project = 'picsa-apps-app';
   let defaultPort = 4200;
   let explicitPort = null;
@@ -289,17 +311,70 @@ export async function main() {
     }
   }
 
-  // Resolve target port
-  let allocatedPort;
-  let portWasOccupied = false;
+  return { project, defaultPort, explicitPort, passthroughArgs };
+}
 
+/** Resolve target port using explicit flag or sequential search */
+async function resolvePort(defaultPort, explicitPort) {
   if (explicitPort !== null && !Number.isNaN(explicitPort)) {
-    allocatedPort = explicitPort;
-  } else {
-    allocatedPort = await findNextAvailablePort(defaultPort);
-    if (allocatedPort !== defaultPort) {
-      portWasOccupied = true;
+    return { allocatedPort: explicitPort, portWasOccupied: false };
+  }
+  const allocatedPort = await findNextAvailablePort(defaultPort);
+  return { allocatedPort, portWasOccupied: allocatedPort !== defaultPort };
+}
+
+/** Print the startup box banner */
+function printStartupBanner({ project, branch, worktree, url, defaultPort, allocatedPort, portWasOccupied }) {
+  console.log('\n┌────────────────────────────────────────────────────────────────────────┐');
+  console.log(`│  PICSA Dev Server: \x1b[1m${project}\x1b[0m`);
+  console.log(`│  Branch / Worktree: \x1b[36m${branch}\x1b[0m (\x1b[33m${worktree}\x1b[0m)`);
+  console.log(`│  Local URL:        \x1b[32m\x1b[1m${formatClickableLink(url)}\x1b[0m`);
+  if (portWasOccupied) {
+    console.log(
+      `│  Port Status:      \x1b[33mDefault port ${defaultPort} was busy -> selected ${allocatedPort}\x1b[0m`,
+    );
+  }
+  console.log('└────────────────────────────────────────────────────────────────────────┘\n');
+}
+
+/** Attach clean exit listeners and forward termination signals to child process */
+function setupProcessTermination(child, project) {
+  const handleSignal = (signal) => {
+    cleanupStateFile(project);
+    if (child && child.pid && !child.killed) {
+      child.kill(signal);
     }
+    process.exit(0);
+  };
+
+  process.on('exit', () => cleanupStateFile(project));
+  process.on('SIGINT', () => handleSignal('SIGINT'));
+  process.on('SIGTERM', () => handleSignal('SIGTERM'));
+  if (!IS_WINDOWS) {
+    process.on('SIGHUP', () => handleSignal('SIGHUP'));
+  }
+}
+
+/** Parse arguments and execute */
+export async function main() {
+  const rawArgs = process.argv.slice(2);
+
+  if (rawArgs.includes('-h') || rawArgs.includes('--help')) {
+    printHelp();
+    return 0;
+  }
+
+  const isStatusOnly = rawArgs.includes('--status');
+  const isOpenStandalone = rawArgs.includes('--open');
+  if (isStatusOnly || isOpenStandalone) {
+    const projectFilter = rawArgs.find((a) => !a.startsWith('-'));
+    return handleStatusOrOpenAction({ projectFilter, openBrowser: isOpenStandalone });
+  }
+
+  const { project, defaultPort, explicitPort, passthroughArgs } = parseCliArgs(rawArgs);
+  const { allocatedPort, portWasOccupied } = await resolvePort(defaultPort, explicitPort);
+
+  if (explicitPort === null) {
     passthroughArgs.push(`--port=${allocatedPort}`);
   }
 
@@ -312,19 +387,10 @@ export async function main() {
   setTerminalTitle(`${appShortName} [${cleanBranch} :${allocatedPort}]`);
 
   // 2. Clickable Banner
-  console.log('\n┌────────────────────────────────────────────────────────────────────────┐');
-  console.log(`│  PICSA Dev Server: \x1b[1m${project}\x1b[0m`);
-  console.log(`│  Branch / Worktree: \x1b[36m${branch}\x1b[0m (\x1b[33m${worktree}\x1b[0m)`);
-  console.log(`│  Local URL:        \x1b[32m\x1b[1m${formatClickableLink(url)}\x1b[0m`);
-  if (portWasOccupied) {
-    console.log(
-      `│  Port Status:      \x1b[33mDefault port ${defaultPort} was busy -> selected ${allocatedPort}\x1b[0m`,
-    );
-  }
-  console.log('└────────────────────────────────────────────────────────────────────────┘\n');
+  printStartupBanner({ project, branch, worktree, url, defaultPort, allocatedPort, portWasOccupied });
 
-  // 3. Write ephemeral state file
-  writeStateFile({
+  // 3. Write ephemeral state file keyed by project
+  writeStateFile(project, {
     project,
     port: allocatedPort,
     url,
@@ -333,24 +399,6 @@ export async function main() {
     pid: process.pid,
     startedAt: new Date().toISOString(),
   });
-
-  // Register cleanups for graceful shutdown
-  const cleanup = () => cleanupStateFile();
-  process.on('exit', cleanup);
-  process.on('SIGINT', () => {
-    cleanup();
-    process.exit(0);
-  });
-  process.on('SIGTERM', () => {
-    cleanup();
-    process.exit(0);
-  });
-  if (!IS_WINDOWS) {
-    process.on('SIGHUP', () => {
-      cleanup();
-      process.exit(0);
-    });
-  }
 
   // 4. Cross-platform execution: spawn `yarn nx serve <project> --port=<allocatedPort> ...args`
   const yarnCmd = IS_WINDOWS ? 'yarn.cmd' : 'yarn';
@@ -362,8 +410,10 @@ export async function main() {
     shell: IS_WINDOWS,
   });
 
+  setupProcessTermination(child, project);
+
   child.on('exit', (code, signal) => {
-    cleanup();
+    cleanupStateFile(project);
     if (signal) {
       process.kill(process.pid, signal);
     } else {
@@ -372,7 +422,7 @@ export async function main() {
   });
 
   child.on('error', (err) => {
-    cleanup();
+    cleanupStateFile(project);
     console.error(`Failed to launch nx serve: ${err.message}`);
     process.exit(1);
   });
@@ -382,9 +432,11 @@ export async function main() {
 
 // Only invoke main when script is executed directly from CLI
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  main().catch((err) => {
+  try {
+    await main();
+  } catch (err) {
     cleanupStateFile();
     console.error(`Dev server runner error: ${err.message}`);
     process.exit(1);
-  });
+  }
 }
