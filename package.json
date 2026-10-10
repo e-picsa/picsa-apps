@@ -5,10 +5,11 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && jetifier && husky install",
-    "start": "nx serve",
+    "start": "node tools/scripts/dev-serve.mjs picsa-apps-app --default-port=4200",
     "start:server": "nx run picsa-server:supabase start",
     "start:server:functions": "nx run picsa-server:supabase functions serve",
-    "start:dashboard": "nx run picsa-apps-dashboard:serve",
+    "start:dashboard": "node tools/scripts/dev-serve.mjs picsa-apps-dashboard --default-port=3000",
+    "open": "node tools/scripts/dev-serve.mjs --open",
     "build": "nx run picsa-apps-app-native:build",
     "build:stats": "nx run picsa-apps-app-native:build:stats",
     "analyse": "yarn build:stats && echo \"\nUse https://esbuild.github.io/analyze/ to analyze output \ndist/apps/picsa-apps/app/stats.json\"",
