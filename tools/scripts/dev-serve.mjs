@@ -53,8 +53,8 @@
  * ============================================================================
  */
 
-import { execFileSync, spawn } from 'node:child_process';
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { existsSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -157,23 +157,35 @@ export async function findNextAvailablePort(basePort, maxAttempts = 30) {
   throw new Error(`Could not find an available port in range ${basePort}..${basePort + maxAttempts - 1}.`);
 }
 
-/** Retrieve current git branch name and worktree directory name */
-function getGitContext() {
-  let branch = '';
+/**
+ * Retrieve current git branch name and worktree directory name directly
+ * from the filesystem without spawning child processes or relying on PATH resolution.
+ */
+export function getGitContext() {
+  let branch = 'unknown';
   try {
-    branch = execFileSync('git', ['branch', '--show-current'], {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    if (!branch) {
-      // In detached HEAD or bare worktree, retrieve short commit hash
-      const commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
-        cwd: REPO_ROOT,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore'],
-      }).trim();
-      branch = commit ? `detached@${commit}` : 'unknown';
+    const gitPath = path.join(REPO_ROOT, '.git');
+    if (existsSync(gitPath)) {
+      let headContent = '';
+      const stat = statSync(gitPath);
+      if (stat.isDirectory()) {
+        headContent = readFileSync(path.join(gitPath, 'HEAD'), 'utf8');
+      } else {
+        // Git worktrees contain a pointer file formatted as: `gitdir: <path>`
+        const ptr = readFileSync(gitPath, 'utf8').trim();
+        const match = ptr.match(/^gitdir:\s*(.+)$/m);
+        if (match) {
+          const targetDir = path.isAbsolute(match[1]) ? match[1] : path.resolve(REPO_ROOT, match[1]);
+          headContent = readFileSync(path.join(targetDir, 'HEAD'), 'utf8');
+        }
+      }
+
+      const refMatch = headContent.trim().match(/^ref:\s*refs\/heads\/(.+)$/);
+      if (refMatch) {
+        branch = refMatch[1].trim();
+      } else if (headContent.trim()) {
+        branch = `detached@${headContent.trim().slice(0, 7)}`;
+      }
     }
   } catch {
     branch = 'unknown';
@@ -195,15 +207,20 @@ function formatClickableLink(url) {
   return `\x1b]8;;${url}\x1b\\${url}\x1b]8;;\x1b\\`;
 }
 
-/** Open a URL in the user's default system browser across platforms */
+/** Open a URL in the user's default system browser across platforms using absolute binary paths */
 function openInBrowser(url) {
   try {
     if (IS_WINDOWS) {
-      spawn('cmd.exe', ['/c', 'start', '""', url], { stdio: 'ignore', detached: true }).unref();
+      const comSpec =
+        process.env.ComSpec ||
+        (process.env.SystemRoot ? path.join(process.env.SystemRoot, 'System32', 'cmd.exe') : 'cmd.exe');
+      spawn(comSpec, ['/c', 'start', '""', url], { stdio: 'ignore', detached: true }).unref();
     } else if (process.platform === 'darwin') {
-      spawn('open', [url], { stdio: 'ignore', detached: true }).unref();
+      const openBin = existsSync('/usr/bin/open') ? '/usr/bin/open' : 'open';
+      spawn(openBin, [url], { stdio: 'ignore', detached: true }).unref();
     } else {
-      spawn('xdg-open', [url], { stdio: 'ignore', detached: true }).unref();
+      const xdgBin = existsSync('/usr/bin/xdg-open') ? '/usr/bin/xdg-open' : 'xdg-open';
+      spawn(xdgBin, [url], { stdio: 'ignore', detached: true }).unref();
     }
   } catch {
     console.warn(`Could not automatically open browser. Please navigate to: ${url}`);

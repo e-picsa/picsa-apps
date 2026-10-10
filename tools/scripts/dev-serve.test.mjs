@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   cleanupStateFile,
   findNextAvailablePort,
+  getGitContext,
   isPortAvailable,
   readStateFile,
   writeStateFile,
@@ -38,6 +39,12 @@ test('isPortAvailable detects an occupied port and findNextAvailablePort steps o
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
+});
+
+test('getGitContext extracts current git branch and worktree directly from fs', () => {
+  const { branch, worktree } = getGitContext();
+  assert.ok(typeof branch === 'string' && branch.length > 0, 'branch should be a non-empty string');
+  assert.ok(typeof worktree === 'string' && worktree.length > 0, 'worktree should be a non-empty string');
 });
 
 test('state file supports multiple concurrent servers without collisions', () => {
