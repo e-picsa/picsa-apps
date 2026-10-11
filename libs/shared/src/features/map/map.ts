@@ -14,6 +14,7 @@ import {
   viewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import type { IStationMeta } from '@picsa/models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
 import * as maplibregl from 'maplibre-gl';
@@ -179,6 +180,13 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       zoomSnap,
       fadeDuration: 0,
       dragRotate,
+      // Web feedback screenshots rasterize the canvas directly (html2canvas), which
+      // requires the WebGL drawing buffer to be readable; the native build captures
+      // the compositor instead, so the buffer can stay discardable there.
+      // maplibre-gl v5 exposes this via `canvasContextAttributes` (deep-merged with defaults).
+      canvasContextAttributes: {
+        preserveDrawingBuffer: !Capacitor.isNativePlatform(),
+      },
     });
     this.currentStyleKind = 'offline';
     this.map.set(map);
