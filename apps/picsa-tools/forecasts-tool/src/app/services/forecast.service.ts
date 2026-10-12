@@ -39,10 +39,16 @@ export class ForecastService extends PicsaAsyncService {
   /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
   public bypassStubs =
     ENVIRONMENT.production ||
-    ['bypassstubs', 'bypassStubs'].some((param) => {
-      const val = new URLSearchParams(window?.location?.search).get(param)?.toLowerCase();
-      return val === 'true' || val === '';
-    });
+    (() => {
+      const search = window?.location?.search;
+      if (!search) return false;
+      for (const [key, val] of new URLSearchParams(search).entries()) {
+        if (key.toLowerCase() === 'bypassstubs') {
+          return val.toLowerCase() === 'true' || val === '';
+        }
+      }
+      return false;
+    })();
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
