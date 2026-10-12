@@ -55,8 +55,11 @@ export class ForecastService extends PicsaAsyncService {
 
   public enabled = signal(false);
 
-  /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
-  public bypassStubs = shouldUseBypassStubs();
+  /** True in production or via ?bypassStubs flag. Evaluated live (not cached at
+   * construction) so client-side navigations pick up flag changes without a reload */
+  public get bypassStubs(): boolean {
+    return shouldUseBypassStubs();
+  }
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
