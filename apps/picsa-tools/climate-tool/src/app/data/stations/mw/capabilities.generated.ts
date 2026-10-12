@@ -11,7 +11,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '1838a3072db6a7f190d5f12db405afaed972bba951e9cae751b9b418efe09325',
     years: [1961, 2024],
-    totalMissingYears: 2,
+    totalYears: 64,
+    completeRainYears: 50,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   bunda: {
@@ -19,7 +20,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'b150708b878238f56c047876a4ef190a2e022371e17a045ba7563f573de16bc1',
     years: [1966, 2016],
-    totalMissingYears: 0,
+    totalYears: 51,
+    completeRainYears: 40,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   bvumbwe: {
@@ -27,7 +29,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '91d12a1f656978adcd9f3e3ccfb0658c43aac2e628fcfe3464a63d2c141e0028',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 62,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chapananga: {
@@ -35,7 +38,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '0bcf384804117f0d9803d7f2b566439ee4aee0405fc1ef5f9a1f41135c52ccf6',
     years: [1952, 2019],
-    totalMissingYears: 0,
+    totalYears: 68,
+    completeRainYears: 65,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chichiri: {
@@ -43,7 +47,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'f476e429adb4d8fd79369c942a269a283e1590b2c3e0dea915477920373e9700',
     years: [1964, 2024],
-    totalMissingYears: 2,
+    totalYears: 61,
+    completeRainYears: 58,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chikwawa: {
@@ -51,7 +56,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '8ac47dbb79b0c8cc09e06d857f9a89b9bc291252160265cd4eb66aa1c5263cf7',
     years: [1966, 2022],
-    totalMissingYears: 0,
+    totalYears: 57,
+    completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chileka: {
@@ -59,7 +65,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '7295d9fad042162e4b10ade399d5303b0bfd4cc3537e886265bf9f2bac645c26',
     years: [1948, 2018],
-    totalMissingYears: 0,
+    totalYears: 71,
+    completeRainYears: 67,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chileka_airport: {
@@ -67,7 +74,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '77f03df7d01a0539c358c417035b25a1b2e3fb05e1ce84e767d505b0261d1c8c',
     years: [1948, 2024],
-    totalMissingYears: 1,
+    totalYears: 77,
+    completeRainYears: 69,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chipoka: {
@@ -75,7 +83,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'e8946051d820e0a8523a42ffe8f00b0e5ae8c5468062951dd273a49d73b50979',
     years: [1982, 2019],
-    totalMissingYears: 0,
+    totalYears: 38,
+    completeRainYears: 21,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chiradzulu: {
@@ -83,7 +92,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'a421de690ccd5609de23e24c8567b3ac0180f10f2a8834b7738afe6782e93bda',
     years: [1949, 2020],
-    totalMissingYears: 0,
+    totalYears: 72,
+    completeRainYears: 70,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chitala: {
@@ -91,7 +101,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'f982bb5ae3bfa739f91971bc28da1dc20b60b7b32364c21466b73a49683089f8',
     years: [1945, 2019],
-    totalMissingYears: 0,
+    totalYears: 75,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chitedze: {
@@ -99,7 +110,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '224a379fa942e161ca7cc31781e9f089c91f022eee245b35b0e297c16b674707',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   chitipa: {
@@ -107,7 +119,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '978b65a4fe228bf33ba3db373ec81df2d23d8a3d09a5050dd0327697f8c5e389',
     years: [1959, 2024],
-    totalMissingYears: 4,
+    totalYears: 66,
+    completeRainYears: 58,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   dedza: {
@@ -115,7 +128,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '409917fbb0a3a2f505b6a2f1291126b773c7cfc535d9084b8e13f507bc7d54dc',
     years: [1960, 2024],
-    totalMissingYears: 3,
+    totalYears: 65,
+    completeRainYears: 57,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   dowa_agr: {
@@ -123,7 +137,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '123206aabf9c6e30b46e9ef0d5988ea1c31b9156fcb896aa86ef7a43ba726dbb',
     years: [1960, 2022],
-    totalMissingYears: 0,
+    totalYears: 63,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   golomoti: {
@@ -131,7 +146,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '1d39935032a1d241c932e7495c8e67e4879d7867e66cd74898fe44e1e1c47836',
     years: [1926, 2019],
-    totalMissingYears: 0,
+    totalYears: 94,
+    completeRainYears: 40,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   kamuona: {
@@ -139,7 +155,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'f11ca2638e1b626b86652640ace1220c0654f566b03b36333efde40b8e3b3a60',
     years: [1980, 2019],
-    totalMissingYears: 0,
+    totalYears: 40,
+    completeRainYears: 29,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   karonga: {
@@ -147,7 +164,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '23adc1c88e6bd0d4f0dff67b0f24f9b4584d76c6137f8f9c899a05498530ac5c',
     years: [1960, 2024],
-    totalMissingYears: 1,
+    totalYears: 65,
+    completeRainYears: 56,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   kasinthula: {
@@ -155,7 +173,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '5358610f877cee3dd9947c3683a83f3f881e4ff9e202f75ce92693e79c924f5a',
     years: [1952, 2020],
-    totalMissingYears: 0,
+    totalYears: 69,
+    completeRainYears: 65,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   kasiya: {
@@ -163,7 +182,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '179b9dcb817c199b76b1118facbd0142afb2231b3734e9ae83c01ce0742fbd66',
     years: [1982, 2020],
-    totalMissingYears: 0,
+    totalYears: 39,
+    completeRainYears: 38,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   kasungu: {
@@ -171,7 +191,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '642d9726defedc9db5c7d2cd4154a1ef4ef5ead0dec2271af9e58dc7e5dea45d',
     years: [1960, 2024],
-    totalMissingYears: 1,
+    totalYears: 65,
+    completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   kia: {
@@ -179,7 +200,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'e71ab7c868729475535c3e4436c3382e4601716cb491193ceb31edd367885355',
     years: [1960, 2024],
-    totalMissingYears: 3,
+    totalYears: 65,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   luwazi: {
@@ -187,7 +209,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '091f000ab144671311c5d753f3b2a9f292f6922ca02707371b6179f3d1294c5f',
     years: [1949, 2019],
-    totalMissingYears: 0,
+    totalYears: 71,
+    completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   makanjira: {
@@ -195,7 +218,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '3646dc226670ebbba4c3b4c1f967dfbff2d6d9500f2c9afaf935dda658b121ee',
     years: [1957, 2017],
-    totalMissingYears: 0,
+    totalYears: 61,
+    completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   makoka: {
@@ -203,7 +227,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '320b1be6c2465d3590d9842cb0226a60b22d7cdf86b4de3d5c471146a23a87f4',
     years: [1963, 2024],
-    totalMissingYears: 3,
+    totalYears: 62,
+    completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mangochi: {
@@ -211,7 +236,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '97bc219be392360ba3899d07ae17e80de7ccdba87e6c47e4a83f5776123b16c0',
     years: [1960, 2024],
-    totalMissingYears: 1,
+    totalYears: 65,
+    completeRainYears: 48,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mimosa: {
@@ -219,15 +245,21 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '56b7663031d8abc0299058b49c0bd71350adf53f5bdf446b7fc21dc055e37134',
     years: [1957, 2024],
-    totalMissingYears: 1,
+    totalYears: 68,
+    completeRainYears: 64,
     annual: ['rainfall', 'start', 'end', 'length'],
+  },
+  monkey_bay: {
+    schemaVersion: 1,
+    years: [],
   },
   monkeybay: {
     schemaVersion: 1,
     lastUpdated: '2024-10-11',
     contentHash: 'fa4c78589f05ecdb921e2caaf08f30dedc2930fe58b85e0d03ebf7903a175306',
     years: [1978, 2017],
-    totalMissingYears: 1,
+    totalYears: 40,
+    completeRainYears: 39,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mponela: {
@@ -235,7 +267,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'cb0ea67443fae04ace8b70737e70ac6298bac55dfd22b4d83399ca65837c58d1',
     years: [1959, 2022],
-    totalMissingYears: 0,
+    totalYears: 64,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mtakataka: {
@@ -243,7 +276,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '853a1f84f12c1fad71f9d49aaecd6a63bb79187ca201f5351f5c41272f50ae3e',
     years: [1926, 2019],
-    totalMissingYears: 0,
+    totalYears: 94,
+    completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mzandu: {
@@ -251,7 +285,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '2cb6d03f442f369a35e11ab86f02865d396408e24173f6ee81dd720ebb291270',
     years: [1980, 2019],
-    totalMissingYears: 0,
+    totalYears: 40,
+    completeRainYears: 25,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mzimba: {
@@ -259,7 +294,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'ed11ee9cff51835c29e8b3cd77c4be9d73dd10534e30fcda132e706f11563a9c',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 62,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   mzuzu: {
@@ -267,7 +303,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '902eab14a88a550bf133bc626fc7804ef915cb6d8e242ee80369eb16e60adf26',
     years: [1960, 2024],
-    totalMissingYears: 1,
+    totalYears: 65,
+    completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   nalunga: {
@@ -275,7 +312,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '05a3652cf235eee6126ffb044ac560ff31a9882332ec18a7270b85b08599820f',
     years: [1980, 2020],
-    totalMissingYears: 0,
+    totalYears: 41,
+    completeRainYears: 39,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   namwera: {
@@ -283,7 +321,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '71cad341ae95188736b460dee5977a8a084bdf8e097de9ea0eae358cdafa024f',
     years: [1926, 2017],
-    totalMissingYears: 5,
+    totalYears: 92,
+    completeRainYears: 66,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   ndakwera: {
@@ -291,7 +330,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '82f4140f053ed575759f5862640adc8cb52b3cbace13869a79cd8858a774fc1a',
     years: [1967, 2019],
-    totalMissingYears: 0,
+    totalYears: 53,
+    completeRainYears: 52,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   ngabu: {
@@ -299,7 +339,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'd3ca32c32b62b10a8464273deed99b9f59fdfc1ed7eb71f84cb4b777df03fab6',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 55,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   nkhata_bay: {
@@ -307,7 +348,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'f9639242406b25063b17f485f25ee5cfe9e000343779513b79a259eeaa0a48fe',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   nkhatabay: {
@@ -315,7 +357,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '17243263a7af1e1bf6f7cbc1b749fbd109c20f32f9c15bfec188f84aa0c99d0c',
     years: [1959, 2022],
-    totalMissingYears: 1,
+    totalYears: 64,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   nkhotakota: {
@@ -323,7 +366,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: '6b9f261229780efdf1647d164da6a95a111cbe47dfda34751378cd3c96eeaafb',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   ntaja: {
@@ -331,7 +375,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'edcbd61d4ae57954ff55c5355f5251c25de6b035abb0d8a00d8ed3c5343eef97',
     years: [1969, 2024],
-    totalMissingYears: 4,
+    totalYears: 56,
+    completeRainYears: 41,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
   salima: {
@@ -339,7 +384,8 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     lastUpdated: '2024-10-11',
     contentHash: 'b0929782442af10aa5816dfaf1d4294bf632bfc211a55b6f0c3300c2e846df65',
     years: [1959, 2024],
-    totalMissingYears: 1,
+    totalYears: 66,
+    completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
   },
 };

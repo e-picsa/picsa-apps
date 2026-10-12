@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
-import { topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { getDeepestAdminLevel, getDeepestLocations, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -90,49 +90,34 @@ export class CropLinkedStationSelectComponent {
       this.selectedStationId.set(this.downscaledData()?.station_id || undefined);
     });
 
-    // Reactive effect to draw/highlight the district polygon on the Leaflet map
+    // Reactive effect to draw/highlight the district polygon on the map
     effect((cleanup) => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const districtGeo = this.locationGeoJson();
+      if (!mapComponent || !mapComponent.mapReady() || !districtGeo) return;
 
-      if (!mapComponent || !map || !districtGeo) return;
-
-      const L = mapComponent.L;
-
-      const geoJsonLayer = L.geoJSON(districtGeo, {
-        style: {
-          color: '#3388ff',
-          fillColor: '#3388ff',
-          weight: 3,
-          opacity: 0.8,
-          fillOpacity: 0.25,
-        },
+      mapComponent.addGeoJsonLayer('district-boundary', districtGeo, {
+        fillColor: '#3388ff',
+        fillOpacity: 0.25,
+        lineColor: '#3388ff',
+        lineWidth: 3,
+        lineOpacity: 0.8,
+        fitBounds: true,
+        padding: 30,
       });
 
-      geoJsonLayer.addTo(map);
-
-      // Fit map bounds to the district boundary
-      const bounds = geoJsonLayer.getBounds();
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [30, 30] });
-      }
-
       cleanup(() => {
-        if (map.hasLayer(geoJsonLayer)) {
-          map.removeLayer(geoJsonLayer);
-        }
+        mapComponent.removeGeoJsonLayer('district-boundary');
       });
     });
 
     // Reactive effect to highlight the selected station's marker on the map when ready
     effect(() => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const selectedId = this.selectedStationId();
       const markers = this.mapMarkers();
 
-      if (!mapComponent || !map || !selectedId || markers.length === 0) return;
+      if (!mapComponent || !mapComponent.mapReady() || !selectedId || markers.length === 0) return;
 
       const selectedMarkerIndex = this.stationsWithCoords().findIndex((s) => s.id === selectedId);
 
@@ -140,11 +125,7 @@ export class CropLinkedStationSelectComponent {
         const marker = markers.find((m) => m._index === selectedMarkerIndex);
         if (marker) {
           setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const currentSelected = (mapComponent as any).selected?.marker;
-            if (!currentSelected || currentSelected._index !== marker._index) {
-              mapComponent.setActiveMarker(marker);
-            }
+            mapComponent.setActiveMarker(marker);
           }, 200);
         }
       }
@@ -175,15 +156,18 @@ export class CropLinkedStationSelectComponent {
     if (!locationData) return undefined;
 
     const topojsonObj = await locationData.topoJson();
-    const adminLevel = locationData.admin_5 ? 5 : 4;
+    // filter to deepest tier with data - district geometries appear once level 6 topo exists
+    const adminLevel = getDeepestAdminLevel(locationData);
     const geojson = topoJsonToGeoJson(topojsonObj, adminLevel);
 
-    const locations = locationData.admin_5?.locations || locationData.admin_4.locations;
+    const locations = getDeepestLocations(locationData);
     const location = locations.find((v) => v.id === locationId);
 
     if (location) {
-      const normalizedTarget = this.normalizeName(location.label);
-      return geojson.features.find((f) => this.normalizeName(f.properties.name) === normalizedTarget);
+      const candidates = [location.label, (location as { topoName?: string }).topoName].filter((v): v is string => !!v);
+      return geojson.features.find((f) =>
+        candidates.some((name) => this.normalizeName(f.properties.name) === this.normalizeName(name)),
+      );
     }
     return undefined;
   }

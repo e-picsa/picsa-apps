@@ -15,6 +15,35 @@
     </div>
   </ng-template>
 
+  <!-- Header End Slot (Share Button: text on larger screens, icon-only on smaller) -->
+  <ng-template #headerEndPortal>
+    @if (tableComponent(); as table) {
+      <!-- Desktop: text + icon button -->
+      <button
+        matButton
+        class="!text-white !hidden sm:!inline-flex"
+        (click)="table.sharePicture()"
+        [disabled]="table.shareDisabled()"
+        [attr.aria-label]="'Share' | translate"
+        [attr.title]="table.shareStatus() | translate"
+      >
+        <mat-icon class="!text-white">share</mat-icon>
+        <span>{{ table.shareStatus() | translate }}</span>
+      </button>
+      <!-- Mobile: icon-only button -->
+      <button
+        matIconButton
+        class="!text-white sm:!hidden"
+        (click)="table.sharePicture()"
+        [disabled]="table.shareDisabled()"
+        [attr.aria-label]="'Share' | translate"
+        [attr.title]="table.shareStatus() | translate"
+      >
+        <mat-icon class="!text-white">share</mat-icon>
+      </button>
+    }
+  </ng-template>
+
   <picsa-form-location-overlay
     [(open)]="locationOverlayOpen"
     [countryCode]="countryCode()"

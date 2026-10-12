@@ -17,6 +17,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Admin Testing**: `admin@picsa.app` / `admin@picsa.app`
 - **Non-Admin Testing**: `user@picsa.app` / `user@picsa.app`
 - **Local Supabase Inbucket (Mailpit)**: Web interface runs at `http://localhost:54324/`. Internal Docker SMTP runs on port `1025` (`host: 'inbucket'`).
+- **Parallel Dev Server Ports & Worktree Concurrency**:
+  - The frontend app (`picsa-apps-app`) defaults to `4200` (range `4200..4229`), while the dashboard (`picsa-apps-dashboard`) defaults to `3000` (range `3000..3029`).
+  - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
+  - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
+  - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
 
 ---
 
@@ -33,10 +38,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Deno edge functions and standalone Node scripts fail if `@picsa/utils` re-exports heavy root dependencies (e.g. Angular router/core, rxdb, xlsx, xml).
 - Keep platform-agnostic, dependency-free utilities (`climate.utils.ts`, `object.utils.ts`, `async.utils.ts`) isolated so they rely only on native JavaScript/Web APIs (`Math`, `Array`, `Map`, `crypto.subtle`) and can be safely imported anywhere.
 
-### Leaflet Plugins and ES Module Namespace Wrapper in Production
+### MapLibre GL JS Discrete Zoom & Raster Tile Performance
 
-- **Problem**: Importing Leaflet using a namespace import (`import * as L from 'leaflet'`) results in a sealed ES module namespace wrapper object in production esbuild chunks. Leaflet plugins (like `@maplibre/maplibre-gl-leaflet`) dynamically attach methods to Leaflet's runtime export object via CommonJS/UMD, causing runtime crashes (`typeError: Ai.maplibreGL is not a function`).
-- **Solution**: Import Leaflet as a default export: `import L from 'leaflet'` with `esModuleInterop: true`. This resolves directly to the mutable Leaflet exports object shared by plugins.
+- **Continuous Trackpad Zoom Stretches Raster Tiles**: MapLibre's built-in `ScrollZoomHandler` treats trackpad/wheel gestures on macOS as continuous fractional zooms, bypassing `zoomSnap` even when configured (`zoomSnap > 0`). Fractional zoom levels (e.g. 4.35) cause 256×256 raster tiles to be continuously stretched by up to `\sqrt{2}\times` via GPU texture scaling, rather than displayed 1:1 pixel-crisp at integer zoom levels.
+- **Discrete Wheel Zoom & Mouse-Anchor Pan**: To achieve discrete interval zooming with pan-to-mouse centering, disable default scroll-zoom (`map.scrollZoom.disable()`) and attach a custom wheel listener (`{ passive: false }`) on the map container. Calculate target integer zoom levels with debounced/throttled deltas, unproject mouse screen coordinates (`map.unproject(mousePoint)`), and call `map.easeTo({ zoom: targetZoom, around: mouseLngLat, duration: 120 })`.
+- **Eliminating Stretched Cross-Fade Artifacts (`raster-fade-duration`)**: By default, MapLibre uses `raster-fade-duration: 300` ms on raster layers. During zoom changes, lower-zoom stretched textures linger visibly while fading in newly loaded tiles. Setting `paint: { 'raster-fade-duration': 0 }` on the raster layer specification makes tile replacement instantaneous and removes blurry fade lag.
+- **Snapping FitBounds**: Specify `zoomSnap: 1` in `new maplibregl.Map(...)` so that initial `fitBounds(bounds)` calculations snap camera results to discrete integers instead of settling on fractional zooms.
+- **Mobile Touch Gestures (Pinch & Double-Tap)**: MapLibre's `TapZoomHandler` handles 1-finger double-tap (zooms in by 1) and 2-finger single-tap (zooms out by 1), automatically honoring `zoomSnap: 1` centered around the tap coordinates. For two-finger pinch-zoom, `TwoFingersTouchZoomHandler` allows fluid continuous zooming under fingers; when the gesture ends, listening to `moveend` and easing to `Math.round(currentZoom)` snaps any fractional zoom to the nearest integer so raster tiles render sharply. Calling `map.touchZoomRotate.disableRotation()` prevents accidental rotation during mobile pinch gestures.
+
+### Leaflet Removal (Pure MapLibre GL JS)
+
+- `PicsaMapComponent` (`libs/shared/src/features/map/`) and the dashboard map-admin preview run on pure MapLibre GL JS. The `leaflet`, `@types/leaflet`, `@asymmetrik/ngx-leaflet`, and `@maplibre/maplibre-gl-leaflet` dependencies have been fully removed — do not reintroduce them. If a Leaflet plugin is ever required again, import Leaflet as a default export (`import L from 'leaflet'` with `esModuleInterop: true`); namespace imports (`import * as L`) resolve to a sealed ES module wrapper in production esbuild chunks that CommonJS/UMD plugins cannot mutate.
 
 ### Edge Function Resource Bundling (`static_files`)
 
@@ -65,7 +77,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
-- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
@@ -112,7 +124,22 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Station Slug as Canonical Primary Key**: In `climate_stations`, the primary key is `(country_code, station_id)` where `station_id` is always a clean, human-readable slug (e.g. `masvingo`, `buhera`, `chipata_met`), not an opaque numeric ID. Downstream foreign keys (`crop_data_downscaled.station_id`, `climate_station_data.station_id`), routing, and generated CSV filenames (`<station_id>.csv`) depend on this slug.
 - **National Met IDs**: Official national meteorological service or WMO station IDs (e.g. Zimbabwe MSD `67875010`) are stored in `met_station_id` (database column on `climate_stations` and `metStationId` on `IStationMeta`) for reference and linking. Avoid hardcoding station ID maps in code.
 - **Seed CSV Line Endings (CRLF Trap)**: Database seed CSVs in `apps/picsa-server/supabase/data/` may have Windows-style CRLF (`\r\n`) line endings. When programmatically modifying or appending columns to these CSVs, always strip `\r` (split on `/\r?\n/`) and write with clean Unix LF (`\n`) endings; otherwise appending values to lines with unstripped `\r` results in the added token or comma rendering on a separate line.
+- **Database Seeding & Foreign Key Deletion Ordering**: Supabase preloads the PostgreSQL `safeupdate` extension, which blocks any `DELETE` lacking a `WHERE` clause (`ERROR 21000: DELETE requires a WHERE clause`). In `db-seed.ts`, reading the first column from each table's seed CSV header and querying `.not(firstCol, 'is', null)` satisfies `safeupdate` dynamically without manual per-table column mappings. Additionally, tables must be emptied in reverse dependency order (children before parents, e.g. `locales` before `countries`, `user_roles` before `deployments`) and seeded in forward order (parents before children) to avoid foreign key violations.
 - **Station Climate Data Availability & Filtering**: In `capabilities.generated.ts`, stations without data files have `years: []` (empty array) rather than omitting entries or adding redundant boolean flags. `hasStationClimateData(station)` checks `Boolean(station?.capabilities?.years?.length)` (along with chart types). In `ClimateDataService`, `allStations` provides all registered country stations while `stations` filters by `!station.draft && hasStationClimateData(station)` so frontend tools only present stations with local CSV summaries.
+
+### Remote DB Mirroring & Extended Seed Architecture (`db:seed:extended` / `remote:pull`)
+
+- **Unified Seed Architecture in `db-seed-export.ts`**:
+  Instead of fragile external dump scripts, `db-seed-export.ts` handles both CSV export and direct database seeding.
+  - `SEED_DATA_BASE` (`scripts/db-seed/db-seed.config.ts`): Base schema, sort orders, priorities, column mappings, and metadata omissions.
+  - `SEED_DATA_CONFIG`: Extends base with subset filters (e.g. `SEED_STATION_IDS`) for committing minimal baseline CSVs to `supabase/data`.
+  - `SEED_DATA_EXTENDED_CONFIG`: Extends base _without_ filters to clone complete datasets directly into the local database without writing CSVs (`yarn nx run picsa-server:db:seed:extended`).
+- **Admin Permissions on Deployments**:
+  The seeded admin user (`00000000-0000-0000-0000-000000000000` / `admin@picsa.app`) requires rows in `public.user_roles` for every active deployment in `public.deployments` with roles `['admin', 'deployments.admin']`. This populates the `picsa_roles` JWT claim via the `custom_access_token_hook`, unlocking dashboard routes and permissions. This is automatically ensured by `seedDevUsersAndPermissions()` in both `db:seed` and `db:seed:extended`.
+- **Per-Table Extended Seed Cache**:
+  In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
+- **Dev Users & Storage Seeding**:
+  `supabase/seed.sql` creates local dev users (`admin@picsa.app`, `user@picsa.app`) automatically on `supabase db reset`. In extended mode, `db-seed-export.ts` directly seeds local storage objects and baseline configurations post-import so local logins work out of the box.
 
 ### User Role Authorization Architecture
 
@@ -134,7 +161,34 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Edge Functions Deployment in Release Pipelines
 
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
-- **CLI Diff Behavior**: The Supabase CLI does not perform remote checksum diffing and re-bundles all local functions. For small function sets (~5 functions in this repo), this deployment completes in under 30 seconds and guarantees that all shared utilities (`_shared/`) and configurations stay synchronized with the release tag.
+
+### Edge Runtime Phantom CORS Masking on Uncaught Exceptions
+
+- **Uncaught Exception Behavior**: When an Edge Function throws an uncaught exception, times out, or crashes, Supabase's Edge Runtime gateway emits a plain-text `HTTP 500 Internal Server Error` with `sb-error-code: EDGE_FUNCTION_ERROR`. Because this gateway-level error page contains no `Access-Control-Allow-Origin` header, the browser's `fetch()` rejects with a misleading CORS policy error (`No 'Access-Control-Allow-Origin' header is present`).
+- **Required Top-Level Exception Isolation**: Function entrypoints must use `Deno.serve(async (req) => { ... })` and wrap router execution in an outer `try/catch` block returning `ErrorResponse(error.message, 500)`.
+- **CORS on All Status Codes**: All failure branches (including method rejections `400`, unhandled routes `501`, and upstream errors `502`/`504`) must include `corsHeaders` (with `'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT'`) so browser clients receive actionable HTTP status codes and structured JSON errors rather than false CORS blocks.
+
+### Deno Edge Functions Boundary & Type Isolation
+
+- **Pure Types Boundary**: Edge functions in `apps/picsa-server/supabase/functions/` run in Deno. `tsconfig.base.json` and `apps/picsa-server/tsconfig.json` explicitly exclude `apps/picsa-server/supabase/functions`.
+- **Never Import Executable Function Files in Shared Types**: Types consumed by Angular frontend apps (`@picsa/server-types`, `apps/picsa-server/supabase/types/functions.types.ts`, `../functions/*/types.ts`) must contain only pure TypeScript type definitions and interfaces. They must **never** import or re-export from executable function files (`index.ts`). Even a `export type { ... } from './climate/index.ts'` forces TypeScript's module resolution during Angular compilation (`ng serve` / `nx serve dashboard`) to traverse and typecheck the Deno file, causing build failures (`TS2304: Cannot find name 'Deno'`, `TS2307: Cannot find module 'https://...'`, `TS5097`).
+
+### openapi-fetch Discriminated Union Destructuring
+
+- `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
+- **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined``.
+
+### Sample Forecast Data & Local Development Fixtures
+
+- **Avoid Backend Mock Over-Engineering**: Do not create complex programmatic PDF compilers or mock router branches in Supabase Edge Functions.
+- **Static Storage Fixtures**: Fixed sample assets (such as `sample_daily.pdf`, `sample_seasonal.pdf`, `sample_weekly.html`) reside in `supabase/data/storage/global/forecasts/` and are seeded into the local Supabase `global` bucket via `yarn nx run picsa-server:seed`.
+- **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
+- **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
+
+### Climate Data Sync & Upstream API Fault Tolerance
+
+- **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
 
 ---
 
@@ -156,6 +210,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Trigger service initialization in the constructor and react synchronously to `this.readySignal()` in effects, delegating async tasks to methods with cancellation tokens.
 - **Catch Promise Rejections in Effects**: Any async promise triggered from an `effect()` (such as calling translation services or data fetches) must have explicit `.catch(...)` error handling. Uncaught rejections in effects bubble outside Angular's error handling into the Node process, causing `ERR_UNHANDLED_REJECTION` crashes during Jest test runs.
 
+### Signal Effects in Unit Tests (`flushEffects` vs `detectChanges`)
+
+- **Problem**: In zoned Jest tests, calling `TestBed.flushEffects()` after a component synchronously emits an `EventEmitter` (e.g. a mocked third-party `load` callback that sets signals and emits `onMapReady`) nests an `ApplicationRef.tick` inside the already-running tick. Angular's recursion guard throws `NG0101: ApplicationRef.tick is called recursively`, which surfaces as `console.error` noise on every affected test.
+- **Solution**: Drive effect flushing with `fixture.detectChanges()` instead of `TestBed.flushEffects()` in such specs. Change detection flushes pending signal effects within the same tick, eliminating the nesting while keeping all assertions deterministic.
+
 ### Internationalization (i18n) Module Import in Standalone Components
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
@@ -171,6 +230,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
 - **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
 - **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
+
+---
+
+### Jest ESM Transformation & Native Mocks in Tool Specs
+
+- **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
+- **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
 
 ---
 
@@ -222,6 +288,31 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Expose a central `formatYValue(value: number, meta?: IChartMeta, isAxisLabel?: boolean)` in `chart.utils.ts` and delegate through `ClimateChartService.formatYValue` and `BaseChartToolComponent.formatYValue`. This ensures date thresholds (e.g. `'date-from-July'`) and numeric values format consistently across all chart tools.
 
+### html2canvas Table Rowspan Occlusion Bug & Transparency Fix
+
+- **Problem**: When `html2canvas` renders an HTML table into an image, it draws rows (`<tr>`) sequentially from top to bottom.
+  1. **Background Occlusion**: If `table`, `thead`, `tbody`, `tfoot`, or `tr` has any non-transparent background color (such as Angular Material MDC table's default `background-color: inherit`), subsequent `<tr>` elements draw solid background rectangles across the entire table width. This paints directly over earlier cells spanning down across multiple rows (`rowspan`), causing vertically merged cells (such as the merged top-left table header and crop names) to appear blank white in the exported image.
+  2. **Row Border Slicing**: If `tr` has CSS borders (e.g. `border-top`, `border-bottom`), `html2canvas` paints row borders across the full width of each `<tr>` bounding box, cutting horizontal dividing lines directly through any multi-row merged cells (`rowspan`), visually unmerging them into sliced boxes.
+  3. **Angular CDK Table Sticky with Rowspan**: CDK Table's sticky styler assigns sticky offsets (`left: 0px`, `z-index: 1`) based on cell index in `row.children`. When `rowspan` causes subsequent rows to omit column 0, cell 0 of subsequent rows receives sticky styles, conflicting with print resets and stacking contexts.
+- **Solution**:
+  1. Set `background-color: transparent !important; background: transparent !important; border: none !important;` on `table, thead, tbody, tfoot, tr, tr.mat-mdc-header-row, tr.mat-mdc-row, tr.mat-mdc-footer-row`. Only individual `th, td` cells should have borders.
+  2. Apply background colors solely to individual table cells (`th, td`) and the outer print container.
+  3. Table cells with `rowspan` must have `position: relative !important; z-index: 2 !important;` so their stacking context sits above unpositioned row elements and overrides any `position: static !important` applied to CDK sticky cells.
+  4. Wrap inner text in spanning cells with a child element (`<span>`) styled with `position: relative; z-index: 3;`.
+  5. In `PrintProvider.shareHtmlDom`, use `html2canvas(clone, { onclone: (_doc, el) => { ... } })` to defensively set transparent backgrounds and `border: none !important` on all `tr, thead, tbody, tfoot` elements, and ensure `td[rowspan], th[rowspan]` are elevated with `position: relative !important; z-index: 2 !important`.
+
+### JSDOM C3 Layout Crash with Arbitrary Tailwind Classes in Unit Tests
+
+- **Problem**: When a component importing `PicsaChartComponent` is tested in Jest/JSDOM, C3 initialization (`c3.generate`) queries `d3.style(el, 'font-size')`, triggering JSDOM's `window.getComputedStyle()`. JSDOM's CSS selector engine (`nwsapi`) fails with syntax errors when evaluating stylesheet rules that contain Tailwind arbitrary value class selectors (e.g. `min-h-[280px]`).
+- **Solution**: In unit tests for parent dialogs/components containing charts, mock or override `PicsaChartComponent` in `TestBed`:
+  ```typescript
+  TestBed.configureTestingModule({...})
+    .overrideComponent(StationDiffDialogComponent, {
+      remove: { imports: [PicsaChartComponent] },
+      add: { imports: [MockPicsaChartComponent] },
+    });
+  ```
+
 ---
 
 ## 6. Domain Logic & Agronomy Data Rules
@@ -244,6 +335,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Missing Years Normalization**: In legacy data files (e.g. Zimbabwe Climsoft exports), `0` placeholders in season columns (`Start=0, End=0, Length=0, Rainfall=0`) must be normalized to `null` to accurately count missing years in $[Y_{\min}, Y_{\max}]$.
 - **Within-Batch Duplicate Observation Handling**: Upstream sync feeds can emit multiple records for the same station, month, and metric (e.g. overlapping time slices or correction batches). `pivotLongToWideMonthly` tracks duplicates via `IPivotOptions.onDuplicate`. Identical duplicates are de-duplicated cleanly, while conflicting values (`existing !== incoming`) log warnings and are captured as `DUPLICATE_OBSERVATION_CONFLICT` violations in the audit report.
 - **Git Commit Date Retrieval & Timestamp Idempotency**: Station `lastUpdated` uses a clean `YYYY-MM-DD` date derived from `git log -1 --format="%as"` over the station's CSV files. When `contentHash` is unchanged across subsequent runs, the existing `lastUpdated` is strictly preserved, guaranteeing 100% idempotency (zero git diffs).
+- **Upstream Climate API Exclusively on `/v2` (No `/v1` Fallback)**: Upstream `/v1` is legacy and deprecated for planned shutdown. All edge functions, scripts, and endpoints must strictly route to `/v2` (`https://api.epicsa.idems.international/v2/...`). Do NOT introduce fallbacks to `/v1`. Upstream database connection pooling has been enabled to resolve concurrency bottlenecks; handle transient query timeouts (`QUERY_TIMEOUT` / 504) gracefully by forwarding structured, retryable errors to the client rather than failing over to `/v1`.
+- **WMO Numeric Identifiers vs Named Station Collisions**: Upstream `/v2/station/zw` returns two entries per physical station: a named station (e.g. `BUFFALO RANGE (MET)`) and a numeric WMO index number (e.g. `67977040`). Numeric IDs return empty summaries on `/v2/annual_rainfall_summaries/`. Replacing non-alphabet characters (`/[^a-z]/gi`) collapses all numeric IDs into a single corrupted collision slug (`zw/________`). The sync pipeline must filter out numeric station rows, map the WMO numbers to `met_station_id`, and slugify named stations with clean single underscores (`buffalo_range_met`).
+- **Zambia Climsoft & AWS Duplicate Station Filtering**: `/v2/station/zm` emits duplicate 8-character Climsoft legacy codes (`CHIPAT01`) alongside canonical names (`CHIPATA MET`), as well as empty AWS stations (`CHIPATA MET AWS`). The sync edge function must filter these out when the base station exists to prevent duplicate cards in the app and dashboard.
+- **District Preservation & Non-Destructive Sync**: Upstream feeds return `district: null` for ZW and MW. Rather than maintaining fragile hardcoded dictionary mappings in the application or edge functions, missing districts are populated one-time via database migrations. The sync edge function preserves existing non-null database values (`existingDistrict || d.district || null`), ensuring subsequent sync runs never overwrite existing districts with `null`.
+
+### Multi-Column Climate Product Diffing & Overlaid C3 Preview
+
+- **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
+- **Overlaid C3 Preview & SVG Stacking**: When previewing differences between DB data and bundled App data, overlay both series on identical axes using suffixed keys (`_app` first, `_db` second, with `data.order = null` to maintain series insertion order in C3/D3). App data lines are styled wider (`3.5px` stroke, `r: 4px` points) underneath the DB line (`2px` stroke, `r: 2.5px` points), and both use semi-transparent `rgba(...)` fills/strokes so identical values and overlapping points remain clearly visible.
+- **Empty Dataset vs Error State**: In database queries, empty product responses serialize as empty arrays (`[]`). Simple truthiness checks (`Boolean(data)`) evaluate to `true` for empty arrays. Code verifying data availability must check `Array.isArray(data) ? data.length > 0 : Boolean(data)` to treat empty responses as missing/error rather than available.
 
 ### RONI ENSO Season Classification & Grade Definitions
 
@@ -257,7 +358,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
 - **Card Header & Rate Alignment in Sidenav Panel**:
   - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
-  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]="!showRate"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
@@ -304,9 +405,91 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## 8. CI / CD & Nx Remote Caching Strategy
 
-### Hybrid Local + Remote Caching Architecture
+### Local-Only + CI Remote Caching Architecture
 
-- **Nx Cache Resolution Order**: Nx evaluates the local disk cache (`.nx/cache`) first. If an artifact matches locally, it replays immediately without downloading from Nx Cloud (avoiding network latency and bandwidth quota). Only on local cache misses does Nx query Nx Cloud remote cache.
+- **Nx Cloud Disabled Locally by Default**: `nx.json` contains no `nxCloudAccessToken`, so local runs use only the on-disk cache (`.nx/cache`) and consume zero Nx Cloud quota. All developers share nothing remotely by default.
+- **CI-Only Remote Cache**: `.github/workflows/build-test.yml` enables Nx Cloud by setting `NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}` (read-write secret) at the job level. No token in `nx.json` means no cloud connection outside CI unless explicitly opted in.
+- **Personal Opt-In**: Individual developers wanting remote cache can set their own `NX_CLOUD_ACCESS_TOKEN=<personal-or-workspace-token>` environment variable locally. Never commit personal tokens to `nx.json`.
 - **Authoritative Main Caching vs Read-Only PRs**: In `.github/workflows/build-test.yml`, PR runs restore `.nx/cache` read-only from `main`. Only merges/pushes to `main` prune and save the cache archive via `actions/cache/save@v5`. This eliminates PR cache thrashing and stays within GitHub's 10 GB repository cache limit.
-- **Zero Configuration Overrides Needed**: Because Nx natively prioritizes local `.nx/cache`, no custom toggle variables (like `NX_CLOUD_DISABLE_CACHE`) are required in the workflow. Hybrid caching functions out of the box with just `NX_CLOUD_ACCESS_TOKEN`. If a full cloud bypass is ever desired in ad-hoc contexts, standard Nx variables like `NX_NO_CLOUD=true` can be provided externally without workflow changes.
 - **Self-Repairing Cache Pruning**: `tools/workflows/prune-nx-cache.mjs` runs before saving cache on `main`. It removes entries older than 7 days and applies LRU eviction when total cache size exceeds 1.5 GB down to 800 MB, alongside weekly calendar epoch key rotation (`$(date +%Y-W%V)`).
+
+### Pull Request Template & PR-Agent Auto-Generation Workflow
+
+- **Mandatory Template (`.github/pull_request_template.md`)**: Whenever opening or editing a PR, always format the description matching `.github/pull_request_template.md`:
+  - `## Developer Summary`: Concise architectural highlights and context for reviewers.
+  - `## Related Issues`: Clear issue links using keywords (`Closes #123`, `Relates to #456`, `Part of Epic #789`).
+  - `## Screenshots / Videos`: UI / visual change evidence.
+  - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
+
+### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
+
+- **CRITICAL MAPPING GOTCHA**: In the Supabase table `climate_station_data`, the column is named `station_id`, but its foreign key constraint is:
+  `constraint climate_station_data_station_id_fkey foreign key (station_id) references climate_stations (id)`
+- Therefore, in `climate_station_data` rows, the field `station_id` stores `station.id` (the database primary key of `climate_stations`), **NOT** `station.station_id` (the slug).
+- When indexing `allStationData` rows via `arrayToHashmap(allStationData, "station_id")`, the dictionary keys are `station.id`. Lookups MUST use `allStationDataHashmap[station.id as string]`.
+- Conversely, bundled app CSV data (`allStationAppData`) is loaded from `assets/summaries/<country>/<station_id>.csv` and is keyed by `station.station_id` (the slug).
+- **PR-Agent Push-Back**: Automated review bots frequently flag `allStationDataHashmap[station.id]` as a suspected bug assuming `station_id` must match `station.station_id`. This is a false positive and must be firmly pushed back on.
+
+### Station Location & Coordinate Preservation During Climate Sync
+
+- **Upstream Location Traps**: Upstream climate data feeds frequently contain missing coordinates (`null`), `(0, 0)` coordinates placing stations in the Atlantic Ocean, swapped lat/long values, or incorrect legacy entries (e.g. `chipepo_met` placed in Lake Kariba at `-16.79, 27.88` instead of Gwembe at `-15.79, 28.14`).
+- **Preservation & Non-Destructive Sync Strategy**: In `dashboard/climate/index.ts`, `update-stations` preserves existing valid database coordinates (similar to `district`) so verified database locations are never overwritten by upstream syncs. Upstream coordinates are only ingested for new stations if they pass validation (`!(lat === 0 && lon === 0)` and valid hemispheric bounds).
+- **Database-Level Guard**: Table `climate_stations` enforces `climate_stations_valid_coords` (`CHECK ((latitude IS NULL AND longitude IS NULL) OR (NOT (latitude = 0 AND longitude = 0) AND latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180))`), physically preventing invalid `(0, 0)` coordinates from entering the database.
+
+### Selective Climate Product Sync & Monthly Lockstep (`--only`)
+
+- **Non-Destructive Partial Syncs**: Meteorological station CSV summaries contain multiple annual and monthly metrics (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). When executing targeted syncs (e.g. `--only=temperature` or `--only=seasonal`), existing CSV columns for unselected metrics must be strictly preserved on disk (`mergeStationAnnualData` / `mergeStationMonthlyData`).
+- **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report.
+
+### macOS AF_UNIX Socket Length in Nx Daemon
+
+- When running in long path environments on macOS, the Nx daemon socket creation may fail with `Attempted to open socket that exceeds the maximum socket length`. Setting `NX_SOCKET_DIR=/tmp/nx-tmp` (or passing it inline to test runs) prevents this failure.
+
+### Climate Data Sync Pipeline & Automated Upstream Ingestion
+
+- **2-Step Sync Pipeline (Upstream Climate API -> Supabase DB -> App CSV Assets)**:
+  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
+  - Step 2: `yarn scripts:climate:sync` pulls from `climate_station_data`, merges selectively (honoring `--only`), formats wide CSVs, recalculates capabilities in `capabilities.generated.ts`, and produces an audit report (`dist/climate-sync-report.md`).
+- **GitHub Actions Isolated Country Workflow**:
+  - The CI workflow (`.github/workflows/climate-sync.yml`) runs weekly on schedule or on demand via `workflow_dispatch`. It executes per country with `max-parallel: 1` to protect upstream API throughput.
+  - Full git history (`fetch-depth: 0`) is strictly required in checkout so `getStationGitLastUpdatedDate()` can query `git log` without incorrectly overwriting station commit timestamps with the run date.
+  - PRs are created conditionally per country (`content/climate-sync-<country>`) only if files within `summaries/<country>` or `data/stations/<country>` change, formatting the markdown audit report directly into the PR body.
+
+### Crop SVG Vector Iconography & Botanical Design Conventions
+
+- **Vector Line Art Style (`libs/data/crops/svgs/`)**:
+  - Icons are monochrome outline vector illustrations (`stroke="#000000"`, `fill="none"` or compound cutouts), with no multi-color fills and transparent backgrounds.
+  - **Square Canvas Utilization (~1:1 Aspect Ratio)**: In the card selector UI (`crop-select`, etc.), icons are placed inside square button cards (~48x48 to 80x80px). Drawings with wide horizontal aspect ratios (e.g. sprawling foliage) scale down dramatically, producing tiny icons with severe letterboxing. Always arrange elements to fill ~85–90% of both width and height within the standard `0 0 100 100` (or `0 0 64 64`) viewBox.
+  - **Bold Visual Weight**: Match companion icons (Cotton, Cowpeas, Groundnuts) with heavier line weights (`stroke-width: 3.2–3.6px` in a 100x100 canvas). Avoid intricate leaf venation or fine rootlet hatching that clutters or disappears at small sizes; use clean outer contours and single central midribs.
+  - **Occlusion Handling without Opaque Fills**: In UI components like `crop-select.scss`, selected items use dynamic theme backgrounds (e.g. `background: wheat`). Using opaque white fills (`fill="#fff"`) causes unsightly white boxes on colored backgrounds. To maintain transparency without background lines cutting through foreground objects, overlapping background paths must be trimmed precisely to the boundary of the foreground shapes.
+- **Botanical Identifiers**:
+  - **Millet (`millet.svg`)**: Distinguishable by the clean, dense cylindrical spike head of pearl millet (_Pennisetum glaucum_) without radiating awn bristles, curving upright blade leaves with natural venation, and central stalk.
+  - **Bambaranuts (`bambaranuts.svg`)**: Distinguishable by the rounded subterranean pods of Bambara groundnut (_Vigna subterranea_ / "roundnuts" / _nyimo_), exactly two attached hanging pods with minimal contour marks, a single prominent loose nut on the right displaying the diagnostic oval hilum/eye, and compact upright leaves meeting at the root crown.
+
+### DOM Element Resizing for Image Sharing (`PrintProvider.shareHtmlDom`)
+
+- **Print Mode Width Expansion**: When exporting scrollable UI components (such as wide data tables in budget tools or crop probability tables) as images on small/mobile screens, `html2canvas` captures only the visible viewport width unless the element is explicitly expanded.
+- **`.print-mode` SCSS Contract**: `PrintProvider.shareHtmlDom(selector, filename)` clones the target element, appends `.print-mode` to its class list, and attaches it to `document.body` for rasterization.
+- Ensure the component defines a `#elementId.print-mode` rule with:
+
+  ```scss
+  #cropProbabilityTable.print-mode {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px !important;
+    min-width: 1000px !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    padding: 16px !important;
+
+    // Reset sticky positioning on headers/cells to avoid misaligned canvas capture
+    th.mat-mdc-table-sticky,
+    td.mat-mdc-table-sticky {
+      position: static !important;
+    }
+  }
+  ```
+
+- **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
+- **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.

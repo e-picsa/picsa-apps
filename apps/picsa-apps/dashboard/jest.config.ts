@@ -13,7 +13,7 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|ky|@uppy|nanoid|p-queue|p-timeout)'],
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|ky|@uppy|nanoid|p-queue|p-timeout|@awesome-cordova-plugins)'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

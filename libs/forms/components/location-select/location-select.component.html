@@ -11,8 +11,8 @@
     </mat-form-field>
   }
 
-  <!-- Location Select (Admin 5) -->
-  @if (locationData().admin_5; as data) {
+  <!-- Location Select (sublocation tier, e.g. Admin 5 or 6) -->
+  @if (sublocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>
       <mat-select

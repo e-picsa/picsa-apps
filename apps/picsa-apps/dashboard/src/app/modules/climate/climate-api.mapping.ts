@@ -21,7 +21,7 @@ export type ApiRequest<T extends IApiMappingName = IApiMappingName> = {
 export const ApiMapping = (service: ClimateService, supabaseService: SupabaseService) => {
   return {
     /**
-     * /v1/annual_rainfall_summaries/
+     * /v2/annual_rainfall_summaries/
      * stored to columns in `climate_station_data` table
      */
     rainfallSummaries: async (station: IStationRow) => {
@@ -32,7 +32,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/annual_temperature_summaries/
+     * /v2/annual_temperature_summaries/
      * stored to columns in `climate_station_data` table
      */
     annualTemperature: async (station: IStationRow) => {
@@ -43,7 +43,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/crop_success_probabilities/
+     * /v2/crop_success_probabilities/
      * stored to columns in `climate_station_data` table
      */
     cropProbabilities: async (station: IStationRow) => {
@@ -54,7 +54,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/monthly_temperature_summaries/
+     * /v2/monthly_temperature_summaries/
      * stored to columns in `climate_station_data` table
      */
     monthlyTemperatures: async (station: IStationRow) => {
@@ -65,7 +65,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/season_start_probabilities/
+     * /v2/season_start_probabilities/
      * stored to columns in `climate_station_data` table
      */
     seasonStart: async (station: IStationRow) => {
@@ -76,7 +76,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/extremes_summaries/
+     * /v2/extremes_summaries/
      * stored to columns in `climate_station_data` table
      */
     extremes: async (station: IStationRow) => {
@@ -87,7 +87,7 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v1/station/{country}
+     * /v2/station/{country}
      */
     station: async (country_code: string) => {
       const dbData = await supabaseService.invokeFunction<IStationRow[]>(`dashboard/climate/update-stations`, {

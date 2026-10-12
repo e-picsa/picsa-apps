@@ -7,7 +7,7 @@ import { fetchWithRetry } from '../_shared/fetch.ts';
 
 /**
  * Code to generate topojson is deployed to Google Cloud Run (better memory management),
- * deployed from https://github.com/e-picsa/geo-boundaries-topojson
+ * deployed from https://github.com/e-picsa/geo-data
  */
 const GEO_BOUNDARY_API_URL = Deno.env.get('GEO_BOUNDARY_API_URL') || 'https://geo-data-api.picsa.app';
 
@@ -17,7 +17,8 @@ const boundaryRequestSchema = z.object({
     .length(2)
     .regex(/^[a-zA-Z]{2}$/, 'Must be a valid 2-letter country code')
     .transform((v) => v.toUpperCase()),
-  admin_level: z.coerce.number().int().min(2).max(5),
+  // e.g. level 6 districts required for Zimbabwe data
+  admin_level: z.coerce.number().int().min(2).max(6),
 });
 
 export type AdminBoundariesSchema = z.infer<typeof boundaryRequestSchema>;

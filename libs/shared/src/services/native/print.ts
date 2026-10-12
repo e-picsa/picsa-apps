@@ -7,7 +7,13 @@ import html2canvas from 'html2canvas';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
-  private socialSharing = inject(SocialSharing);
+  /**
+   * Optional because SocialSharing is only registered by PicsaNativeModule.forRoot(),
+   * which web-only contexts (dashboard app, tools served standalone in a browser)
+   * never import. A hard dependency crashed those pages with NG0201 as soon as any
+   * component injected PrintProvider, even though web sharing never touches the plugin.
+   */
+  private socialSharing = inject(SocialSharing, { optional: true });
 
   /**
    * Convert HTML content to an image and share
@@ -30,7 +36,30 @@ export class PrintProvider {
     const body = document.querySelector('body') as HTMLBodyElement;
     body.append(clone);
     // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
-    const canvasElm = await html2canvas(clone, { allowTaint: true });
+    const canvasElm = await html2canvas(clone, {
+      allowTaint: true,
+      onclone: (_clonedDoc, element) => {
+        // html2canvas renders <tr> backgrounds and borders sequentially from top to bottom, which paints
+        // over cells spanning down from earlier rows (rowspan). Ensure table row and group backgrounds
+        // and borders are transparent/none in the cloned DOM so spanned cells are visible.
+        const rowContainers = element.querySelectorAll('tr, thead, tbody, tfoot');
+        rowContainers.forEach((container) => {
+          const el = container as HTMLElement;
+          el.style.setProperty('background-color', 'transparent', 'important');
+          el.style.setProperty('background', 'transparent', 'important');
+          el.style.setProperty('border', 'none', 'important');
+          el.style.setProperty('border-top', 'none', 'important');
+          el.style.setProperty('border-bottom', 'none', 'important');
+        });
+        // Ensure cells with rowspan have a positive stacking context so they render above row boxes
+        const spannedCells = element.querySelectorAll('td[rowspan], th[rowspan]');
+        spannedCells.forEach((cell) => {
+          const el = cell as HTMLElement;
+          el.style.setProperty('position', 'relative', 'important');
+          el.style.setProperty('z-index', '2', 'important');
+        });
+      },
+    });
     // use set timeout to ensure resizing complete
     // TODO - check if required or if better solution could exist
     await _wait(200);
@@ -107,6 +136,11 @@ export class PrintProvider {
 
   private async shareDataImage(base64Img: string, title: string) {
     if (Capacitor.isNativePlatform()) {
+      // Native share has no web fallback, so a missing provider must fail loudly
+      // here rather than silently degrading (it indicates a misconfigured app module).
+      if (!this.socialSharing) {
+        throw new Error('SocialSharing provider is not available (PicsaNativeModule not loaded)');
+      }
       return this.socialSharing.share('', title, base64Img);
     } else {
       return download(base64Img, title + '.png', 'image/png');

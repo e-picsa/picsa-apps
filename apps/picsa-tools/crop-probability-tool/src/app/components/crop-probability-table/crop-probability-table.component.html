@@ -1,13 +1,14 @@
-@if (cropFilterFn(); as filterFn) {
-  <picsa-form-crop-select
-    [filterFn]="filterFn"
-    [(ngModel)]="selectedCropName"
-    style="margin: 1rem"
-    [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
-  ></picsa-form-crop-select>
-}
+<div class="table-actions flex items-center justify-between flex-wrap gap-2 m-4 no-print">
+  @if (cropFilterFn(); as filterFn) {
+    <picsa-form-crop-select
+      [filterFn]="filterFn"
+      [(ngModel)]="selectedCropName"
+      [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
+    ></picsa-form-crop-select>
+  }
+</div>
 
-<section class="table-container mat-mdc-table">
+<section id="cropProbabilityTable" class="table-container mat-mdc-table">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!---------------------------- HEADER SECTION --------------------------->
 
@@ -58,12 +59,15 @@
     <!-- Column Templates -->
 
     <ng-container matColumnDef="crop" sticky>
-      <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Crop' | translate }}</th>
+      <!-- Rowspan to merge multiple rows of same crop together -->
+      <!-- HACK - mat-cell directive uses element comment placeholder to detect rows,
+      so cannot use *ngIf else cell detection fails. Must bind multiple individual elements
+      inside normal td instead -->
       <ng-container *matCellDef="let element">
-        <!-- merge crop name across multiple rows as defined in data -->
         @if (element.cropNameRowspan > 0) {
           <td mat-cell class="crop-title" [attr.rowspan]="element.cropNameRowspan">
-            {{ cropDataHashmap[element.crop]?.label || element.crop | translate }}
+            <span class="crop-label">{{ cropDataHashmap[element.crop]?.label || element.crop | translate }}</span>
           </td>
         }
       </ng-container>

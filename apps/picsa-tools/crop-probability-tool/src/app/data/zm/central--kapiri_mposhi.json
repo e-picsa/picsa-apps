@@ -1,0 +1,279 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "DK777",
+        "days": "115 - 120",
+        "days_lower": 115,
+        "days_upper": 120,
+        "water": [485],
+        "probabilities": [0.9, 0.8, 0.4, 0.2, 0.1]
+      },
+      {
+        "variety": "PHB30G19",
+        "days": "110 - 130",
+        "days_lower": 110,
+        "days_upper": 130,
+        "water": [525],
+        "probabilities": [0.8, 0.7, 0.4, 0.2, 0.1]
+      },
+      {
+        "variety": "LAKE-401",
+        "days": "120 - 125",
+        "days_lower": 120,
+        "days_upper": 125,
+        "water": [510],
+        "probabilities": [0.9, 0.7, 0.4, 0.1, 0]
+      },
+      {
+        "variety": "AF635, AF638, MRI514, SC-419",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [530],
+        "probabilities": [0.8, 0.6, 0.3, 0.1, 0]
+      },
+      {
+        "variety": "PAN-53, ZMS-606, DKC90-89",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [525],
+        "probabilities": [0.8, 0.6, 0.3, 0.1, 0]
+      },
+      {
+        "variety": "PAN7M-83",
+        "days": "125 - 135",
+        "days_lower": 125,
+        "days_upper": 135,
+        "water": [550],
+        "probabilities": [0.8, 0.5, 0.2, 0.1, 0]
+      },
+      {
+        "variety": "SC-633",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [550],
+        "probabilities": [0.7, 0.4, 0.2, 0.1, 0]
+      },
+      {
+        "variety": "SY6444, SY-6250",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [555],
+        "probabilities": [0.7, 0.4, 0.2, 0.1, 0]
+      },
+      {
+        "variety": "P3812W, SC-733",
+        "days": "135 - 145",
+        "days_lower": 135,
+        "days_upper": 145,
+        "water": [570],
+        "probabilities": [0.6, 0.3, 0.1, 0, 0]
+      },
+      {
+        "variety": "ZMS-721",
+        "days": "140 - 150",
+        "days_lower": 140,
+        "days_upper": 150,
+        "water": [600],
+        "probabilities": [0.5, 0.2, 0.1, 0, 0]
+      },
+      {
+        "variety": "SC-719",
+        "days": "145 - 150",
+        "days_lower": 145,
+        "days_upper": 150,
+        "water": [600],
+        "probabilities": [0.4, 0.2, 0.1, 0, 0]
+      },
+      {
+        "variety": "SC-727",
+        "days": "150 - 155",
+        "days_lower": 150,
+        "days_upper": 155,
+        "water": [615],
+        "probabilities": [0.4, 0.1, 0, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "SHAKU",
+        "days": "110 - 120",
+        "days_lower": 110,
+        "days_upper": 120,
+        "water": [430],
+        "probabilities": [0.9, 0.8, 0.5, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "beans",
+    "data": [
+      {
+        "variety": "KABULANGETI",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [345],
+        "probabilities": [0.8, 0.9, 0.9, 0.9, 0.6]
+      },
+      {
+        "variety": "MBERESHI",
+        "days": "80 - 85",
+        "days_lower": 80,
+        "days_upper": 85,
+        "water": [370],
+        "probabilities": [0.8, 0.9, 0.9, 0.8, 0.5]
+      },
+      {
+        "variety": "LUANGENI",
+        "days": "95 - 100",
+        "days_lower": 95,
+        "days_upper": 100,
+        "water": [410],
+        "probabilities": [0.9, 0.9, 0.8, 0.5, 0.3]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "NATAL-COMMON",
+        "days": "90 - 100",
+        "days_lower": 90,
+        "days_upper": 100,
+        "water": [435],
+        "probabilities": [0.8, 0.9, 0.9, 0.6, 0.3]
+      },
+      {
+        "variety": "MAKULU-RED",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [435],
+        "probabilities": [0.8, 0.6, 0.3, 0.1, 0]
+      },
+      {
+        "variety": "MGV4, CHALIMBANA",
+        "days": "130 - 140",
+        "days_lower": 130,
+        "days_upper": 140,
+        "water": [610],
+        "probabilities": [0.6, 0.4, 0.2, 0.1, 0]
+      }
+    ]
+  },
+  {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "variety": "KAFUE",
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [505],
+        "probabilities": [0.8, 0.7, 0.6, 0.4, 0.2]
+      },
+      {
+        "variety": "SPIKE",
+        "days": "120 - 125",
+        "days_lower": 120,
+        "days_upper": 125,
+        "water": [525],
+        "probabilities": [0.9, 0.7, 0.4, 0.1, 0]
+      },
+      {
+        "variety": "LUKANGA",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [575],
+        "probabilities": [0.7, 0.4, 0.2, 0.1, 0]
+      },
+      {
+        "variety": "DINA",
+        "days": "135 - 140",
+        "days_lower": 135,
+        "days_upper": 140,
+        "water": [590],
+        "probabilities": [0.6, 0.3, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "MILIKA",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [445],
+        "probabilities": [0.9, 0.9, 0.7, 0.4, 0.2]
+      },
+      {
+        "variety": "RECORD",
+        "days": "110 - 120",
+        "days_lower": 110,
+        "days_upper": 120,
+        "water": [490],
+        "probabilities": [0.9, 0.8, 0.5, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "BUBEBE",
+        "days": "63 - 70",
+        "days_lower": 63,
+        "days_upper": 70,
+        "water": [315],
+        "probabilities": [0.6, 0.8, 0.9, 0.9, 0.8]
+      },
+      {
+        "variety": "LUTEMBWE",
+        "days": "110 - 115",
+        "days_lower": 110,
+        "days_upper": 115,
+        "water": [410],
+        "probabilities": [1, 0.8, 0.6, 0.3, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "variety": "CHINGOVWA",
+        "days": "85 - 120",
+        "days_lower": 85,
+        "days_upper": 120,
+        "water": [525],
+        "probabilities": [0.7, 0.7, 0.5, 0.4, 0.2]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "LUBASI",
+        "days": "110 - 125",
+        "days_lower": 110,
+        "days_upper": 125,
+        "water": [310],
+        "probabilities": [0.9, 0.8, 0.5, 0.2, 0.1]
+      }
+    ]
+  }
+]

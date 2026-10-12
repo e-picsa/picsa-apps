@@ -8,7 +8,7 @@ import { globSync } from 'glob';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
 
-import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+import { SEED_DATA_CONFIGURATION, SEED_METADATA_COLUMNS, ISeedDataConfiguration } from './db-seed.config';
 import { writeFile } from 'fs/promises';
 
 const ROOT_DIR = resolve(__dirname, '../../../../');
@@ -39,15 +39,29 @@ interface ISupabaseStatus {
  *
  * Called from command
  * ```sh
- * yarn nx run picsa-server:seed
+ * yarn nx run picsa-server:db:seed
  * ```
  *
  * @remarks
  * Whilst supabase does include a `seed.sql` file, the data can't be dynamically imported
  * from csv files https://github.com/orgs/supabase/discussions/9314
  */
-class SupabaseSeed {
+export class SupabaseSeed {
   private client: SupabaseClient<any, 'public', any>;
+
+  public initClient() {
+    const { SERVICE_ROLE_KEY, API_URL } = this.getCredentials();
+    this.client = createClient(API_URL, SERVICE_ROLE_KEY, {});
+    return this.client;
+  }
+
+  public getClient() {
+    return this.client;
+  }
+
+  public setClient(client: SupabaseClient<any, 'public', any>) {
+    this.client = client;
+  }
 
   public async run() {
     // log into supabase using service role to allow storage bucket manipulation
@@ -58,18 +72,60 @@ class SupabaseSeed {
     // import storage objects first as some db rows depend on storage db entry ref
     await this.importStorageObjects();
     await this.importDBRows();
+    await this.seedDevUsersAndPermissions();
     await this.storeFrontendCredentials(API_URL, ANON_KEY);
   }
 
+  /**
+   * Ensure local dev users and deployment admin permissions are configured
+   */
+  public async seedDevUsersAndPermissions() {
+    console.log('\n👤 Ensuring dev users and admin permissions on all deployments...');
+
+    // 1. Ensure dev user profiles exist
+    await this.client
+      .schema('public')
+      .from('user_profiles')
+      .upsert([
+        { id: '00000000-0000-0000-0000-000000000000', email: 'admin@picsa.app', name: 'Admin User' },
+        { id: '10000000-0000-0000-0000-000000000000', email: 'user@picsa.app', name: 'Standard User' },
+      ]);
+
+    // 2. Query all deployments and ensure admin user has full admin roles on every deployment
+    const { data: allDeployments, error: depError } = await this.client
+      .schema('public')
+      .from('deployments')
+      .select('id');
+
+    if (depError) {
+      console.warn('⚠️ Could not query deployments for user permissions:', depError);
+      return;
+    }
+
+    if (allDeployments && allDeployments.length > 0) {
+      const adminRoles = allDeployments.map((d: any) => ({
+        deployment_id: d.id,
+        user_id: '00000000-0000-0000-0000-000000000000',
+        roles: ['admin', 'deployments.admin'],
+      }));
+      const { error: rolesError } = await this.client.schema('public').from('user_roles').upsert(adminRoles);
+      if (rolesError) {
+        console.warn('⚠️ Could not upsert admin user_roles:', rolesError);
+      } else {
+        console.log(`   Granted admin permissions for admin@picsa.app across ${allDeployments.length} deployments.`);
+      }
+    }
+  }
+
   /** Populate credentials to frontend app to allow anon access */
-  private async storeFrontendCredentials(apiUrl: string, anonKey: string) {
+  public async storeFrontendCredentials(apiUrl: string, anonKey: string) {
     // Store credentials to frontend env config
     const frontendConfig = { apiUrl, anonKey };
     await writeFile(SUPABASE_ENV_ASSET, JSON.stringify(frontendConfig, null, 2));
   }
 
   /** Use the supabase cli to automatically detect credentials of server running locally */
-  private getCredentials() {
+  public getCredentials() {
     const supabaseCLIPath = resolve(ROOT_DIR, 'node_modules', '.bin', 'supabase');
     const res = execSync(`${supabaseCLIPath} status --output json`, { cwd: SUPABASE_DIR });
     try {
@@ -85,7 +141,7 @@ class SupabaseSeed {
    * If calling seed operation immediately after reset the container may not be started
    * Attempt to access storage bucket list method, retrying in 5s intervals if not available
    */
-  private async ensureClientReady(retryCount = 0) {
+  public async ensureClientReady(retryCount = 0) {
     const { error } = await this.client.storage.listBuckets();
     if (error) {
       console.log('wait error', error.name, error.message);
@@ -105,7 +161,7 @@ class SupabaseSeed {
    * Import all files in local supabase/data/storage folder into supabase storage
    * Creates new buckets as required and populates files to nested paths
    */
-  private async importStorageObjects() {
+  public async importStorageObjects() {
     console.log('\n', '\n', 'Storage');
     const { storage } = this.client;
     // list all storage files to upload
@@ -168,16 +224,25 @@ class SupabaseSeed {
         if (aPriority === bPriority) return a.length > b.length ? 1 : -1;
         return aPriority < bPriority ? 1 : -1;
       });
+
+    // Empty tables in reverse dependency order before seeding to satisfy foreign key constraints
+    await this.emptyDBTables(tableNames);
+
     const results: any[] = [];
-    console.log('Import Order: ', tableNames);
+    console.log('\nImport Order: ', tableNames);
     for (const tableName of tableNames) {
       const csvFileName = `${tableName}_rows.csv`;
       const csvPath = resolve(SEED_DIR, csvFileName);
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
-      const seedConfig = SEED_DATA_CONFIGURATION[tableName];
+      const seedConfig = SEED_DATA_CONFIGURATION[tableName] || {};
       const parsedRows = parseCSVRows(csvRows, seedConfig);
-      const { error, data, status, statusText } = await this.client.from(tableName).upsert(parsedRows).select('*');
+      const { schema = 'public' } = seedConfig;
+      const { error, data, status, statusText } = await this.client
+        .schema(schema)
+        .from(tableName)
+        .upsert(parsedRows)
+        .select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
         console.error({ status, statusText, error });
@@ -187,6 +252,52 @@ class SupabaseSeed {
     }
     console.table(results);
   }
+
+  /**
+   * Empty all seed tables in reverse dependency order before seeding
+   * (child tables before parent tables to avoid foreign key constraint violations)
+   */
+  private async emptyDBTables(tableNames: string[]) {
+    console.log('\nEmptying DB tables...');
+    const reverseOrder = [...tableNames].reverse();
+    for (const tableName of reverseOrder) {
+      const count = await this.emptyTable(tableName);
+      console.log(`[${tableName}] emptied (${count} rows removed)`);
+    }
+  }
+
+  /**
+   * Empty all rows from a table before seeding.
+   * PostgREST requires a WHERE clause due to Postgres safeupdate. We dynamically read
+   * the first column from the seed CSV to build a non-null filter without manual mapping.
+   */
+  private async emptyTable(tableName: string): Promise<number> {
+    const seedConfig = SEED_DATA_CONFIGURATION[tableName] || {};
+    const { schema = 'public' } = seedConfig;
+    const firstCol = this.getFirstCsvColumn(tableName);
+
+    const { error, count } = await this.client
+      .schema(schema)
+      .from(tableName)
+      .delete({ count: 'exact' })
+      .not(firstCol, 'is', null);
+
+    if (error) {
+      console.error(`[${tableName}] failed to empty table`, error);
+      process.exit(1);
+    }
+    return count ?? 0;
+  }
+
+  /**
+   * Extract the first column from a seed CSV to use as a non-null filter column
+   */
+  private getFirstCsvColumn(tableName: string): string {
+    const csvFileName = `${tableName}_rows.csv`;
+    const csvPath = resolve(SEED_DIR, csvFileName);
+    const firstLine = readFileSync(csvPath, { encoding: 'utf8' }).split(/\r?\n/)[0];
+    return firstLine.split(',')[0].trim().replace(/^"|"$/g, '') || 'id';
+  }
 }
 
 if (require.main === module) {
@@ -195,7 +306,8 @@ if (require.main === module) {
 
 /** Iterate over parsed csv rows and convert parse any stringified json content */
 function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
-  const { omitColumns = [] } = config;
+  // Metadata columns are always stripped (DB defaults repopulate on upsert)
+  const omitColumns = new Set([...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])]);
   return rows.map((row) => {
     for (const column of omitColumns) {
       delete row[column];
@@ -203,6 +315,12 @@ function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
     for (const [key, value] of Object.entries<any>(row)) {
       if (typeof value === 'string' && ['{', '['].includes(value[0])) {
         row[key] = JSON.parse(value);
+      }
+    }
+    // Apply column mappings / overrides if configured
+    if (config.columnMappings) {
+      for (const [column, mapping] of Object.entries(config.columnMappings)) {
+        row[column] = typeof mapping === 'function' ? mapping(row[column], row) : mapping;
       }
     }
     return row;

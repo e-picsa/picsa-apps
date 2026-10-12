@@ -13,19 +13,25 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
         @for (step of content.steps; track $index) {
           <mat-card class="flex flex-col">
-            <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
-            <div class="flex-1 flex flex-col">
-              @switch (step.type) {
-                <!-- Video -->
-                @case ('video') {
-                  <farmer-step-video [videos]="[step.video]"></farmer-step-video>
-                }
-                <!-- Video Playlist-->
-                @case ('videoPlaylist') {
-                  <farmer-step-video [videos]="step.videos"></farmer-step-video>
-                }
-                <!-- Review -->
-                @case ('review') {
+            @switch (step.type) {
+              <!-- Video -->
+              @case ('video') {
+                <farmer-step-video
+                  [videos]="[step.video]"
+                  [stepTitle]="$index + 1 + '. ' + (step.title | translate)"
+                ></farmer-step-video>
+              }
+              <!-- Video Playlist-->
+              @case ('videoPlaylist') {
+                <farmer-step-video
+                  [videos]="step.videos"
+                  [stepTitle]="$index + 1 + '. ' + (step.title | translate)"
+                ></farmer-step-video>
+              }
+              <!-- Review -->
+              @case ('review') {
+                <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+                <div class="flex-1 flex flex-col">
                   @if (photoAlbum(); as album) {
                     <div class="p-2">
                       <p>{{ 'If you recorded anything on paper you can capture photos here' | translate }}</p>
@@ -48,18 +54,21 @@
                       </div>
                     </div>
                   }
-                }
-                <!-- Tool -->
-                @case ('tool') {
+                </div>
+              }
+              <!-- Tool -->
+              @case ('tool') {
+                <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+                <div class="flex-1 flex flex-col">
                   @if (toolStep()?.tool; as tool) {
                     <div class="tool-step-container" (click)="showTool()">
                       <h3 class="mt-0">{{ tool.label | translate }}</h3>
                       <mat-icon class="tool-icon mb-2" [svgIcon]="'picsa_tools:' + tool.svgIcon"></mat-icon>
                     </div>
                   }
-                }
+                </div>
               }
-            </div>
+            }
           </mat-card>
         }
       </div>
@@ -115,5 +124,3 @@
     <router-outlet #toolRouter></router-outlet>
   </div>
 }
-
-<!-- TODO - track video viewed state from step videos (e.g. checkmark) -->

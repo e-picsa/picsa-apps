@@ -7,7 +7,7 @@ header,
 }
 
 .step-title {
-  @apply m-0 p-2 text-white bg-[var(--color-secondary)];
+  @apply m-0 p-2 text-white bg-[var(--color-secondary)] min-h-12 flex items-center;
 }
 
 .tool-step-container {
