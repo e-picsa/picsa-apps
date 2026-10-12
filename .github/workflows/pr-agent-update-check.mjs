@@ -98,8 +98,8 @@ async function getLiteLlmCatalog() {
 function isLiteLlmModel(modelKey, catalog) {
   const lowerKey = modelKey.toLowerCase();
   const withoutProvider = lowerKey.replace(/^(openrouter|gemini)\//, '');
-  const bareModel = withoutProvider.split('/').filter(Boolean).pop();
-  const dotModel = withoutProvider.replace(/\//g, '.');
+  const bareModel = withoutProvider.split('/').findLast(Boolean);
+  const dotModel = withoutProvider.replaceAll('/', '.');
 
   if (
     catalog[lowerKey] ||
@@ -112,7 +112,10 @@ function isLiteLlmModel(modelKey, catalog) {
   }
 
   if (bareModel) {
-    return Object.keys(catalog).some((key) => key.endsWith(`/${bareModel}`) || key.endsWith(`.${bareModel}`));
+    return Object.keys(catalog).some((key) => {
+      const lower = key.toLowerCase();
+      return lower.endsWith(`/${bareModel}`) || lower.endsWith(`.${bareModel}`);
+    });
   }
 
   return false;
