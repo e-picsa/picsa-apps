@@ -10,7 +10,8 @@
   </mat-form-field>
 
   <!-- Headline filter chips -->
-  <mat-chip-listbox (change)="tableFilter.set($event.value)" class="mb-4">
+  <!-- Default to 'all' as single-select listbox allows deselecting the active chip (emits undefined) -->
+  <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
     <mat-chip-option value="all" [selected]="tableFilter() === 'all'">
       <mat-icon matChipAvatar>list</mat-icon>
       Total: {{ countTotal }}
