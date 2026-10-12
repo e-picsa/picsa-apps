@@ -22,10 +22,11 @@ interface IDownscaledLocation {
 type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
 
 /**
- * Max seasonal forecasts shown per country.
- * Malawi publishes a summary and full outlook (2), Zambia and Zimbabwe a single outlook (1).
+ * Display rule for synced forecasts: a doc is shown only while it has a downloadable file.
+ * Retired (tombstoned) rows carry storage_file null and are excluded here, never by count
+ * limits - row counts multiply by translated versions so caps would silently drop languages.
  */
-const SEASONAL_FORECAST_LIMIT: Record<string, number> = { mw: 2, zm: 1, zw: 1 };
+const isLiveForecast = (doc: Pick<IForecast, 'storage_file'>) => !!doc.storage_file;
 
 interface LoaderConfig {
   type: ForecastType;
@@ -63,9 +64,10 @@ export class ForecastService extends PicsaAsyncService {
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
     //        Should try move to time-based filter/query instead, or better table replication
-    // Seasonal limit resolved per-country via getSeasonalLimit (no static limit here)
+    // Seasonal and downscaled sync the full set for the scope; tombstoned rows are
+    // excluded client-side via isLiveForecast (no count limits so translations are never dropped)
     { type: 'seasonal', signal: this.seasonalForecastDocs, includeStorage: true },
-    { type: 'downscaled', signal: this.downscaledForecastDocs, limit: 2 },
+    { type: 'downscaled', signal: this.downscaledForecastDocs },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
   ];
@@ -168,8 +170,7 @@ export class ForecastService extends PicsaAsyncService {
       // 1. Load cached data first (extremely fast local queries)
       const cachedData = await Promise.all(
         countryConfigs.map(async (config) => {
-          const limit = this.resolveConfigLimit(config, country_code);
-          let cached = await this.loadCachedForecasts(country_code, config.type, limit);
+          let cached = await this.loadCachedForecasts(country_code, config.type, config.limit);
           // If seasonal has no cached data (e.g. fresh install / offline), seed from bundled FORECASTS_DB
           if (config.type === 'seasonal' && cached.length === 0) {
             const hardcoded = FORECASTS_DB.filter(
@@ -185,9 +186,9 @@ export class ForecastService extends PicsaAsyncService {
 
       if (currentLoad.cancelled) return;
 
-      // 2. Set the cached data to signals immediately
+      // 2. Set the cached data to signals immediately (tombstoned rows excluded)
       for (const { config, data } of cachedData) {
-        config.signal.set(data);
+        config.signal.set(data.filter(isLiveForecast));
       }
 
       // 3. Now start loading from server (which might take time)
@@ -198,7 +199,7 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            const limit = this.resolveConfigLimit(config, country_code);
+            const { limit } = config;
             // Only pass latest for daily/weekly where IDs are chronological date-based strings
             const latestDoc = config.type === 'daily' || config.type === 'weekly' ? cached[0] : undefined;
             let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, limit);
@@ -219,13 +220,13 @@ export class ForecastService extends PicsaAsyncService {
               }
               config.signal.update((v) => {
                 const seen = new Set<string>();
-                return [...success, ...v]
-                  .filter((doc) => {
-                    if (seen.has(doc.id)) return false;
-                    seen.add(doc.id);
-                    return true;
-                  })
-                  .slice(0, limit);
+                const merged = [...success, ...v].filter((doc) => {
+                  if (seen.has(doc.id)) return false;
+                  seen.add(doc.id);
+                  return true;
+                });
+                const live = merged.filter(isLiveForecast);
+                return limit !== undefined ? live.slice(0, limit) : live;
               });
             }
           }),
@@ -236,7 +237,9 @@ export class ForecastService extends PicsaAsyncService {
           const removedIds = await this.reconcileForecastTombstones({ country_code, forecast_type: 'seasonal' });
           if (!currentLoad.cancelled && removedIds.length > 0) {
             const removed = new Set(removedIds);
-            this.seasonalForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id)));
+            this.seasonalForecastDocs.update((docs) =>
+              docs.filter((doc) => !removed.has(doc.id) && isLiveForecast(doc)),
+            );
           }
         }
       }
@@ -253,7 +256,7 @@ export class ForecastService extends PicsaAsyncService {
     country_code: CountryCodeLegacy,
     forecast_type: ForecastType,
     latest?: IForecast,
-    limit = 3,
+    limit?: number,
   ): Promise<IForecast[]> {
     await this.supabaseService.ready();
     if (!this.supabaseService.isAvailable()) {
@@ -271,7 +274,13 @@ export class ForecastService extends PicsaAsyncService {
       query.gt('id', latest.id);
     }
 
-    const { data, error } = await query.order('id', { ascending: false }).limit(limit);
+    const orderedQuery = query.order('id', { ascending: false });
+    // No limit syncs the full set (seasonal/downscaled span translated versions that caps would drop)
+    if (limit !== undefined) {
+      orderedQuery.limit(limit);
+    }
+
+    const { data, error } = await orderedQuery;
 
     if (error) {
       console.error(error);
@@ -309,7 +318,7 @@ export class ForecastService extends PicsaAsyncService {
       }
 
       if (currentLoad.cancelled) return;
-      this.downscaledForecastDocs.set(cached);
+      this.downscaledForecastDocs.set(cached.filter(isLiveForecast));
 
       // 2. Fetch latest from server if online
       const serverForecasts = await this.loadServerDownscaledForecasts(country_code, admin_4, admin_5);
@@ -332,7 +341,7 @@ export class ForecastService extends PicsaAsyncService {
       if (currentLoad.cancelled) return;
       if (removedIds.length > 0) {
         const removed = new Set(removedIds);
-        this.downscaledForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id)));
+        this.downscaledForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id) && isLiveForecast(doc)));
       }
     } catch (err) {
       console.error('[ForecastService] Error loading downscaled forecasts', err);
@@ -341,15 +350,6 @@ export class ForecastService extends PicsaAsyncService {
         this.loadingDownscaled.set(false);
       }
     }
-  }
-
-  private getSeasonalLimit(country_code: string): number {
-    return SEASONAL_FORECAST_LIMIT[country_code] ?? 1;
-  }
-
-  private resolveConfigLimit(config: LoaderConfig, country_code: ICountryCode): number {
-    if (config.type === 'seasonal') return this.getSeasonalLimit(country_code);
-    return config.limit ?? 1;
   }
 
   /**
@@ -454,14 +454,16 @@ export class ForecastService extends PicsaAsyncService {
     return success;
   }
 
-  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type'], limit: number) {
+  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type'], limit?: number) {
     const selector: MangoQuerySelector<IForecast> = { forecast_type };
 
     if (country_code !== 'global') {
       selector.country_code = country_code;
     }
 
-    return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit }).exec();
+    return await this.dbCollection
+      .find({ selector, sort: [{ id: 'desc' }], ...(limit !== undefined ? { limit } : {}) })
+      .exec();
   }
 
   private async saveForecasts(forecasts: IForecast[]) {
