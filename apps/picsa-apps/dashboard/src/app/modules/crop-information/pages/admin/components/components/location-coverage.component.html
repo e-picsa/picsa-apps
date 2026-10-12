@@ -1,7 +1,7 @@
 <div class="space-y-4">
   <p class="text-sm text-gray-600">
     Coverage of downscaled water requirements per district, including locations sharing
-    byte-identical definitions. Use the station action to view or change a linked climate station.
+    byte-identical definitions. Select a row to view or change its linked climate station.
   </p>
 
   <!-- Summary Stats -->
@@ -12,11 +12,7 @@
     </div>
     <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
       <mat-icon class="text-red-600">error</mat-icon>
-      <span>{{ stats().missing }} Missing</span>
-    </div>
-    <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
-      <mat-icon class="text-orange-600">warning</mat-icon>
-      <span>{{ stats().empty }} Empty</span>
+      <span>{{ stats().noRequirements }} No Requirements</span>
     </div>
     <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
       <mat-icon class="text-blue-600">group</mat-icon>
@@ -26,19 +22,6 @@
       <mat-icon class="text-green-600">check_circle</mat-icon>
       <span>{{ stats().unique }} Unique</span>
     </div>
-  </div>
-
-  <!-- Action Bar -->
-  <div class="flex items-center gap-4">
-    <button
-      matButton="outlined"
-      (click)="addPlaceholderEntries()"
-      [disabled]="stats().missing === 0 || addingPlaceholders()"
-    >
-      <mat-icon>add</mat-icon>
-      Add Placeholder Entries ({{ stats().missing }})
-    </button>
-    <span class="text-sm text-gray-500">Creates empty records for districts missing entries</span>
   </div>
 
   <!-- Data Table -->

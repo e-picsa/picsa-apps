@@ -307,6 +307,9 @@ export function computeExpectedProbabilityTable(params: {
 }): IExpectedProbabilityTable | null {
   const { cropDataHashmap, waterRequirements, rainfallData, cropProbabilityData } = params;
   if (Object.keys(waterRequirements ?? {}).length === 0) return null;
+  // Station data columns are nullable in the database
+  if (!Array.isArray(rainfallData) || rainfallData.length === 0) return null;
+  if (!Array.isArray(cropProbabilityData) || cropProbabilityData.length === 0) return null;
   const startProbabilities = calcSeasonStartProbabilities(rainfallData, cropProbabilityData);
   if (startProbabilities.length === 0) return null;
   const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
@@ -318,6 +321,7 @@ export function calcSeasonStartProbabilities(
   rainfallData: IAnnualRainfallSummariesData[],
   probabilityData: ICropSuccessEntry[],
 ): ISeasonStartProbability[] {
+  if (!Array.isArray(rainfallData) || !Array.isArray(probabilityData)) return [];
   const allStartDates = rainfallData.map((d) => d.start_rains_doy).filter((v) => typeof v === 'number') as number[];
   if (allStartDates.length === 0) return [];
   const uniquePlantDates = [...new Set(probabilityData.map((v) => v.plant_day))];

@@ -1,6 +1,6 @@
 import { groupRowsByRequirements, IPairingRow } from './station-pairing.utils';
 
-export type LocationCoverageStatus = 'Missing' | 'Empty' | 'Paired' | 'Unique';
+export type LocationCoverageStatus = 'No Requirements' | 'Paired' | 'Unique';
 
 export interface ICoverageGeoLocation {
   id: string;
@@ -20,10 +20,9 @@ export interface ICoverageRow {
 }
 
 const STATUS_ORDER: Record<LocationCoverageStatus, number> = {
-  Missing: 0,
-  Empty: 1,
-  Paired: 2,
-  Unique: 3,
+  'No Requirements': 0,
+  Paired: 1,
+  Unique: 2,
 };
 
 function sortedJoin(values: Iterable<string>): string {
@@ -35,10 +34,10 @@ function cropList(waterRequirements: IPairingRow['water_requirements']): string 
 }
 
 /**
- * Build one row per deployment district, merged with data-system records:
- * districts without a record are Missing, records without requirements are
- * Empty, records sharing byte-identical requirements are Paired, and the rest
- * are Unique. Data-system rows for unknown districts are appended as orphans.
+ * Build one row per deployment district: districts without usable requirements
+ * (no record, or a record still empty) share the No Requirements status, records
+ * sharing byte-identical requirements are Paired, and the rest are Unique.
+ * Data-system rows for unknown districts are appended as orphans.
  */
 export function buildLocationCoverageRows(params: {
   geoLocations: ICoverageGeoLocation[];
@@ -58,26 +57,14 @@ export function buildLocationCoverageRows(params: {
   const rows: ICoverageRow[] = [];
   for (const location of geoLocations) {
     const dbRow = dbById.get(location.id);
-    if (!dbRow) {
+    if (!dbRow || Object.keys(dbRow.water_requirements ?? {}).length === 0) {
       rows.push({
         location_id: location.id,
         location_label: location.label,
         parent_location: location.parent ?? '',
-        status: 'Missing',
+        status: 'No Requirements',
         paired_with: '',
-        station: '',
-        crops: '',
-      });
-      continue;
-    }
-    if (Object.keys(dbRow.water_requirements ?? {}).length === 0) {
-      rows.push({
-        location_id: location.id,
-        location_label: location.label,
-        parent_location: location.parent ?? '',
-        status: 'Empty',
-        paired_with: '',
-        station: dbRow.station_name,
+        station: dbRow?.station_name ?? '',
         crops: '',
       });
       continue;
@@ -116,7 +103,7 @@ export function buildLocationCoverageRows(params: {
       location_id: dbRow.location_id,
       location_label: `${dbRow.location_id} (unknown district)`,
       parent_location: '',
-      status: isEmpty ? 'Empty' : group ? 'Paired' : 'Unique',
+      status: isEmpty ? 'No Requirements' : group ? 'Paired' : 'Unique',
       paired_with: group
         ? sortedJoin(
             group.filter((member) => member.location_id !== dbRow.location_id).map((member) => member.location_id),

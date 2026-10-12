@@ -195,7 +195,7 @@
   - `Function` **normalizeName**
   - `Function` **groupDuplicateVarieties**
 - **[location-coverage.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts`)
-  - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, openSetStationDialog, addPlaceholderEntries])
+  - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, openSetStationDialog])
 - **[location-coverage.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.utils.ts`)
   - `Interface` **ICoverageGeoLocation**
   - `Interface` **ICoverageRow**
@@ -286,7 +286,7 @@
   - `Service` **DashboardMapService** (methods: [fetchBoundaries, generateBoundaries, updateAdminLevelLabel])
   - `Interface` **AdminBoundariesPayload**
 - **[map-home.component.ts](../apps/picsa-apps/dashboard/src/app/modules/map/pages/map-home/map-home.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/map/pages/map-home/map-home.component.ts`)
-  - `Component` **MapHomeComponent** (methods: [ngAfterViewInit, ngOnDestroy, getBoundaryForLevel, getLabelForLevel, selectLevel])
+  - `Component` **MapHomeComponent** (methods: [ngOnInit, getBoundaryForLevel, getLabelForLevel, selectLevel, startEditLabel])
 - **[edit-profile-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/components/edit-profile-dialog/edit-profile-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/components/edit-profile-dialog/edit-profile-dialog.component.ts`)
   - `Component` **AdminEditProfileDialogComponent** (methods: [ngOnInit, loadProfile, saveProfile])
   - `Interface` **EditProfileDialogData**
@@ -738,9 +738,9 @@
 - **[farmer-home.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/home/farmer-home.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/home/farmer-home.component.ts`)
   - `Component` **FarmerContentHomeComponent**
 - **[step-video-player.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/player/step-video-player.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/player/step-video-player.ts`)
-  - `Component` **FarmerStepVideoPlayerComponent** (methods: [handleDlStatusChange, handleItemClick])
+  - `Component` **FarmerStepVideoPlayerComponent** (methods: [handleDlStatusChange, handleItemClick, shareVideo])
 - **[step-video.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts`)
-  - `Component` **FarmerStepVideoComponent**
+  - `Component` **FarmerStepVideoComponent** (methods: [shareActiveVideo, sharePlaylistItem])
 - **[module-home.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts`)
   - `Component` **FarmerContentModuleHomeComponent** (methods: [ngOnDestroy, showTool, hideTool, goToModule, handlePhotoShareClick])
 - **[farmer-tool.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts`)
@@ -1002,9 +1002,11 @@
   - `Component` **PicsaLoadingComponent** (methods: [ngOnInit])
   - `Type` **IPicsaLoaders**
 - **[map.ts](../libs/shared/src/features/map/map.ts)** (`libs/shared/src/features/map/map.ts`)
-  - `Component` **PicsaMapComponent** (methods: [ngOnInit, setActiveMarker, setLocationMarker, _onMapReady])
+  - `Component` **PicsaMapComponent** (methods: [ngAfterViewInit, ngOnDestroy, setActiveMarker, setLocationMarker, setLocation])
   - `Interface` **IMapMarker**
-  - `Type` **IMapOptions**
+  - `Interface` **IMapOptions**
+  - `Interface` **IGeoJsonLayerOptions**
+  - `Type` **GeoJsonData**
 - **[pdf-viewer.component.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts`)
   - `Component` **PdfViewerComponent** (methods: [ngAfterViewInit, restartApp])
 - **[pdf-viewer.service.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts`)

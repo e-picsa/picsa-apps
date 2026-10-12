@@ -14,16 +14,16 @@ describe('buildLocationCoverageRows', () => {
     water_requirements,
   });
 
-  it('should mark districts without records as missing', () => {
+  it('should mark districts without records as having no requirements', () => {
     const rows = buildLocationCoverageRows({ geoLocations, dbRows: [] });
     expect(rows.length).toBe(4);
-    expect(rows.every((row) => row.status === 'Missing')).toBe(true);
+    expect(rows.every((row) => row.status === 'No Requirements')).toBe(true);
   });
 
-  it('should mark records without requirements as empty', () => {
+  it('should treat records without requirements the same as missing records', () => {
     const rows = buildLocationCoverageRows({ geoLocations, dbRows: [dbRow('chipata', {})] });
     const chipata = rows.find((row) => row.location_id === 'chipata');
-    expect(chipata?.status).toBe('Empty');
+    expect(chipata?.status).toBe('No Requirements');
     expect(chipata?.station).toBe('Station chipata');
   });
 
@@ -38,7 +38,7 @@ describe('buildLocationCoverageRows', () => {
     expect(byId.get('chipata')?.paired_with).toBe('chadiza');
     expect(byId.get('chipata')?.crops).toBe('maize');
     expect(byId.get('katete')?.status).toBe('Unique');
-    expect(byId.get('petauke')?.status).toBe('Missing');
+    expect(byId.get('petauke')?.status).toBe('No Requirements');
   });
 
   it('should append data-system rows for unknown districts as orphans', () => {
@@ -65,12 +65,12 @@ describe('buildLocationCoverageRows', () => {
     expect(byId.get('retired')?.parent_location).toBe('');
   });
 
-  it('should order missing rows before paired and unique rows', () => {
+  it('should order rows without requirements before paired and unique rows', () => {
     const shared = { maize: { 'PHB-30D79': 450 } };
     const rows = buildLocationCoverageRows({
       geoLocations,
       dbRows: [dbRow('chipata', shared), dbRow('chadiza', shared)],
     });
-    expect(rows.map((row) => row.status)).toEqual(['Missing', 'Missing', 'Paired', 'Paired']);
+    expect(rows.map((row) => row.status)).toEqual(['No Requirements', 'No Requirements', 'Paired', 'Paired']);
   });
 });

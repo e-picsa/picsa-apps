@@ -24,8 +24,7 @@ import { CropSetStationDialogComponent } from './set-station-dialog.component';
 import { IPairingRow } from './station-pairing.utils';
 
 const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
-  Missing: { icon: 'error', color: 'text-red-600' },
-  Empty: { icon: 'warning', color: 'text-orange-600' },
+  'No Requirements': { icon: 'error', color: 'text-red-600' },
   Paired: { icon: 'group', color: 'text-blue-600' },
   Unique: { icon: 'check_circle', color: 'text-green-600' },
 };
@@ -60,7 +59,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
   }
 
   public statusDisplay = STATUS_DISPLAY;
-  public addingPlaceholders = signal(false);
+  public creatingRecord = signal(false);
 
   public rows = computed<ICoverageRow[]>(() => {
     const locationData = this.deploymentService.activeDeploymentLocationData();
@@ -84,19 +83,12 @@ export class CropLocationCoverageComponent implements AfterViewInit {
     return buildLocationCoverageRows({ geoLocations, dbRows });
   });
 
-  public missingIds = computed(() =>
-    this.rows()
-      .filter((row) => row.status === 'Missing')
-      .map((row) => row.location_id),
-  );
-
   public stats = computed(() => {
     const rows = this.rows();
     const count = (status: ICoverageRow['status']) => rows.filter((row) => row.status === status).length;
     return {
       total: rows.length,
-      missing: count('Missing'),
-      empty: count('Empty'),
+      noRequirements: count('No Requirements'),
       paired: count('Paired'),
       unique: count('Unique'),
     };
@@ -121,30 +113,30 @@ export class CropLocationCoverageComponent implements AfterViewInit {
     exportFilename: 'crop-location-coverage.csv',
   };
 
-  /** Open the station picker for a location with a data-system record */
-  public openSetStationDialog(row: ICoverageRow) {
-    const downscaledRow = arrayToHashmap(this.service.downscaledData(), 'location_id')[row.location_id];
-    if (!downscaledRow) {
-      this.notificationService.showErrorNotification(
-        'No data-system record for this location yet — add a placeholder entry first',
-      );
-      return;
-    }
-    this.dialog.open(CropSetStationDialogComponent, {
-      data: { locationId: row.location_id, downscaledRow },
-      width: '1100px',
-      maxWidth: '95vw',
-    });
-  }
-
-  public async addPlaceholderEntries() {
-    const locationIds = this.missingIds();
-    if (locationIds.length === 0) return;
-    this.addingPlaceholders.set(true);
+  /**
+   * Open the station picker for a location, creating an empty record first
+   * when none exists so a station can be linked straight away.
+   */
+  public async openSetStationDialog(row: ICoverageRow) {
+    if (this.creatingRecord()) return;
+    this.creatingRecord.set(true);
     try {
-      await this.service.addPlaceholderLocations(locationIds);
+      let downscaledRow = arrayToHashmap(this.service.downscaledData(), 'location_id')[row.location_id];
+      if (!downscaledRow) {
+        await this.service.addPlaceholderLocations([row.location_id]);
+        downscaledRow = arrayToHashmap(this.service.downscaledData(), 'location_id')[row.location_id];
+        if (!downscaledRow) {
+          this.notificationService.showErrorNotification('Failed to create record for this location');
+          return;
+        }
+      }
+      this.dialog.open(CropSetStationDialogComponent, {
+        data: { locationId: row.location_id, downscaledRow },
+        width: '1100px',
+        maxWidth: '95vw',
+      });
     } finally {
-      this.addingPlaceholders.set(false);
+      this.creatingRecord.set(false);
     }
   }
 }
