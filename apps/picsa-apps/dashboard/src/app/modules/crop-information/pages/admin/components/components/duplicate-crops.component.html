@@ -1,0 +1,46 @@
+<div class="space-y-4">
+  <p class="text-sm text-gray-600">
+    Varieties are grouped when names normalize to identical alphanumeric strings (lowercase, special
+    characters removed), e.g. PHB-30-D79 and PHB-30D79. Only groups with more than one distinct
+    spelling are listed.
+  </p>
+
+  <!-- Summary Stats -->
+  <div class="flex flex-wrap gap-4">
+    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">agriculture</mat-icon>
+      <span>{{ stats().total_pairs }} crop/variety pairs analyzed</span>
+    </div>
+    <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
+      <mat-icon class="text-red-600">content_copy</mat-icon>
+      <span>{{ stats().duplicate_groups }} duplicate groups found</span>
+    </div>
+    <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
+      <mat-icon class="text-orange-600">warning</mat-icon>
+      <span>{{ stats().total_variants }} distinct spellings in duplicates</span>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  @if (duplicateGroups().length > 0) {
+    <picsa-data-table
+      [data]="duplicateGroups()"
+      [options]="tableOptions"
+      [valueTemplates]="valueTemplates"
+    ></picsa-data-table>
+    <ng-template #actionsTemplate let-row="row">
+      <button
+        matButton="outlined"
+        (click)="copyVariants(row); $event.stopPropagation()"
+        [attr.aria-label]="'Copy variants ' + row.normalized_variety"
+      >
+        <mat-icon>content_copy</mat-icon> Copy
+      </button>
+    </ng-template>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>
+      <p class="text-gray-600">No duplicate crop/variety names found</p>
+    </div>
+  }
+</div>

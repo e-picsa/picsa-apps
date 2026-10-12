@@ -22,6 +22,16 @@ export interface IGeolocationAdmin6Location {
   topoName?: string;
 }
 
+/** District-level location with resolved parent tier references */
+export interface IDeepestLocation {
+  id: string;
+  label: string;
+  /** Parent tier id (admin_4 slot) where the tier defines one, else empty */
+  parentId: string;
+  /** Parent tier label, empty when no parent */
+  parentLabel: string;
+}
+
 export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
   /**

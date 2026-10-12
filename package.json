@@ -24,6 +24,7 @@
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
     "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup",
+    "scripts:crop:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/crop/sync-crop-data.ts",
     "scripts:climate:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/climate/sync-climate-data.ts",
     "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
     "ai:lint": "node tools/ai/ai-lint.mjs",
