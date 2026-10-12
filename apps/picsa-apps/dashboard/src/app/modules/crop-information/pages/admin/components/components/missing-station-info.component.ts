@@ -65,16 +65,18 @@ export class CropMissingStationInfoComponent implements AfterViewInit {
             : [];
         const has_probabilities = probabilities.length > 0;
         const updated = (stationData?.updated_at || '').slice(0, 10);
+        let probabilities_detail = 'No station data record available';
+        if (has_probabilities) {
+          probabilities_detail = `Crop probability data available (updated ${updated || 'unknown date'})`;
+        } else if (stationData) {
+          probabilities_detail = 'Station record exists but holds no probability data';
+        }
 
         return {
           station_name: station.station_name || station.station_id,
           district: station.district || 'Unknown',
           has_probabilities,
-          probabilities_detail: has_probabilities
-            ? `Crop probability data available (updated ${updated || 'unknown date'})`
-            : stationData
-              ? 'Station record exists but holds no probability data'
-              : 'No station data record available',
+          probabilities_detail,
           data_updated: has_probabilities ? updated : '',
         };
       })

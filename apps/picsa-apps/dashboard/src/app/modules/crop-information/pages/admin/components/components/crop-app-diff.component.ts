@@ -59,6 +59,15 @@ const STATUS_SEVERITY: Record<string, number> = {
   'In Sync': 4,
 };
 
+/** Lookup maps shared by the diff row builders */
+interface IDiffRowContext {
+  cropDataHashmap: Record<string, ICropData['Row']>;
+  stationHashmap: Record<string, IStationDataWithMeta>;
+  downscaledByLocation: Record<string, ICropDataDownscaled['Row']>;
+  loadedTables: Record<string, IStationCropData[] | null>;
+  labels: Record<string, string>;
+}
+
 /**
  * Statically imported country indexes (dynamic import cannot resolve through
  * the tsconfig path alias at runtime). Location JSONs stay lazy-loaded via
@@ -111,7 +120,7 @@ export class CropAppDiffComponent implements AfterViewInit {
   constructor() {
     effect(() => {
       const countryCode = this.deploymentService.activeDeploymentCountry();
-      if (countryCode) this.loadAppTables(countryCode);
+      if (countryCode) void this.loadAppTables(countryCode);
     });
   }
 
@@ -155,117 +164,118 @@ export class CropAppDiffComponent implements AfterViewInit {
   }
 
   public diffRows = computed<IAppDbDiffRow[]>(() => {
-    const cropDataHashmap = arrayToHashmap(this.service.cropData(), 'id', (v) => `${v.crop}/${v.variety}`);
-    const stationHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
-    const downscaledByLocation = arrayToHashmap(this.service.downscaledData(), 'location_id');
-    const tables = this.appIndex();
-    const loadedTables = this.appTables();
-    const labels = this.locationLabels();
+    const ctx: IDiffRowContext = {
+      cropDataHashmap: arrayToHashmap(this.service.cropData(), 'id', (v) => `${v.crop}/${v.variety}`),
+      stationHashmap: arrayToHashmap(this.service.stationData(), 'station_id'),
+      downscaledByLocation: arrayToHashmap(this.service.downscaledData(), 'location_id'),
+      loadedTables: this.appTables(),
+      labels: this.locationLabels(),
+    };
     const rows: IAppDbDiffRow[] = [];
     const seen = new Set<string>();
 
     // App entries: in sync / differs / orphaned in app
-    for (const entry of tables) {
-      const locationId = locationIdFromAppId(entry.id);
-      seen.add(locationId);
-      const appTable = loadedTables[entry.id] ?? null;
-      const appSummary = summarizeProbabilityTable(appTable);
-      const expected = this.expectedTableForLocation(locationId, downscaledByLocation, stationHashmap, cropDataHashmap);
-
-      if (!expected) {
-        const dbRow = downscaledByLocation[locationId];
-        rows.push({
-          location_id: locationId,
-          location_label: entry.label,
-          app_station_label: entry.station_label,
-          db_station: dbRow?.station_id ? this.stationDisplayName(dbRow.station_id, stationHashmap) : '',
-          app_varieties: appSummary.varieties,
-          db_varieties: 0,
-          status: 'Orphaned in App',
-          detail: this.describeMissingSource(dbRow ?? null, stationHashmap),
-        });
-        continue;
-      }
-      const dbSummary = summarizeProbabilityTable(expected.table);
-      const dbStation = this.stationDisplayName(expected.station.station_id, stationHashmap);
-      if (!appTable) {
-        rows.push({
-          location_id: locationId,
-          location_label: entry.label,
-          app_station_label: entry.station_label,
-          db_station: dbStation,
-          app_varieties: 0,
-          db_varieties: dbSummary.varieties,
-          status: 'Differs',
-          detail: 'App table failed to load, cannot compare',
-        });
-        continue;
-      }
-      if (deepEqualJson(appTable, expected.table)) {
-        rows.push({
-          location_id: locationId,
-          location_label: entry.label,
-          app_station_label: entry.station_label,
-          db_station: dbStation,
-          app_varieties: appSummary.varieties,
-          db_varieties: dbSummary.varieties,
-          status: 'In Sync',
-          detail: '',
-        });
-      } else {
-        const differing = findDifferingCrops(appTable, expected.table);
-        rows.push({
-          location_id: locationId,
-          location_label: entry.label,
-          app_station_label: entry.station_label,
-          db_station: dbStation,
-          app_varieties: appSummary.varieties,
-          db_varieties: dbSummary.varieties,
-          status: 'Differs',
-          detail: `Crops differ: ${differing.join(', ')}`,
-        });
-      }
+    for (const entry of this.appIndex()) {
+      seen.add(locationIdFromAppId(entry.id));
+      rows.push(this.buildAppEntryRow(entry, ctx));
     }
 
     // Db rows with no app entry: missing in app, or no usable source data
     for (const row of this.service.downscaledData()) {
       if (seen.has(row.location_id)) continue;
       seen.add(row.location_id);
-      const waterRequirements = row.water_requirements as ICropDataDownscaledWaterRequirements;
-      if (Object.keys(waterRequirements ?? {}).length === 0) continue;
-      const expected = this.expectedTableForLocation(
-        row.location_id,
-        downscaledByLocation,
-        stationHashmap,
-        cropDataHashmap,
-      );
-      if (expected) {
-        rows.push({
-          location_id: row.location_id,
-          location_label: labels[row.location_id] ?? row.location_id,
-          app_station_label: '',
-          db_station: this.stationDisplayName(expected.station.station_id, stationHashmap),
-          app_varieties: 0,
-          db_varieties: summarizeProbabilityTable(expected.table).varieties,
-          status: 'Missing in App',
-          detail: `Usable data-system record has no app table (station ${expected.station.station_id})`,
-        });
-      } else {
-        rows.push({
-          location_id: row.location_id,
-          location_label: labels[row.location_id] ?? row.location_id,
-          app_station_label: '',
-          db_station: row.station_id ?? '',
-          app_varieties: 0,
-          db_varieties: 0,
-          status: 'No Source Data',
-          detail: this.describeMissingSource(row, stationHashmap),
-        });
-      }
+      const dbRow = this.buildDbOnlyRow(row, ctx);
+      if (dbRow) rows.push(dbRow);
     }
 
     return rows.sort((a, b) => (STATUS_SEVERITY[a.status] ?? 99) - (STATUS_SEVERITY[b.status] ?? 99));
   });
+
+  /** Diff row for a single committed app table entry */
+  private buildAppEntryRow(entry: IProbabilityTable, ctx: IDiffRowContext): IAppDbDiffRow {
+    const locationId = locationIdFromAppId(entry.id);
+    const appTable = ctx.loadedTables[entry.id] ?? null;
+    const appSummary = summarizeProbabilityTable(appTable);
+    const expected = this.expectedTableForLocation(
+      locationId,
+      ctx.downscaledByLocation,
+      ctx.stationHashmap,
+      ctx.cropDataHashmap,
+    );
+    const base = {
+      location_id: locationId,
+      location_label: entry.label,
+      app_station_label: entry.station_label,
+      app_varieties: appSummary.varieties,
+    };
+
+    if (!expected) {
+      const dbRow = ctx.downscaledByLocation[locationId];
+      return {
+        ...base,
+        db_station: dbRow?.station_id ? this.stationDisplayName(dbRow.station_id, ctx.stationHashmap) : '',
+        db_varieties: 0,
+        status: 'Orphaned in App',
+        detail: this.describeMissingSource(dbRow ?? null, ctx.stationHashmap),
+      };
+    }
+    const dbSummary = summarizeProbabilityTable(expected.table);
+    const dbStation = this.stationDisplayName(expected.station.station_id, ctx.stationHashmap);
+    if (!appTable) {
+      return {
+        ...base,
+        db_station: dbStation,
+        db_varieties: dbSummary.varieties,
+        status: 'Differs',
+        detail: 'App table failed to load, cannot compare',
+      };
+    }
+    if (deepEqualJson(appTable, expected.table)) {
+      return { ...base, db_station: dbStation, db_varieties: dbSummary.varieties, status: 'In Sync', detail: '' };
+    }
+    const differing = findDifferingCrops(appTable, expected.table);
+    return {
+      ...base,
+      db_station: dbStation,
+      db_varieties: dbSummary.varieties,
+      status: 'Differs',
+      detail: `Crops differ: ${differing.join(', ')}`,
+    };
+  }
+
+  /** Diff row for a data-system record with no app entry (null when nothing to compare) */
+  private buildDbOnlyRow(row: ICropDataDownscaled['Row'], ctx: IDiffRowContext): IAppDbDiffRow | null {
+    const waterRequirements = row.water_requirements as ICropDataDownscaledWaterRequirements;
+    if (Object.keys(waterRequirements ?? {}).length === 0) return null;
+    const base = {
+      location_id: row.location_id,
+      location_label: ctx.labels[row.location_id] ?? row.location_id,
+      app_station_label: '',
+      app_varieties: 0,
+    };
+    const expected = this.expectedTableForLocation(
+      row.location_id,
+      ctx.downscaledByLocation,
+      ctx.stationHashmap,
+      ctx.cropDataHashmap,
+    );
+    if (expected) {
+      return {
+        ...base,
+        db_station: this.stationDisplayName(expected.station.station_id, ctx.stationHashmap),
+        db_varieties: summarizeProbabilityTable(expected.table).varieties,
+        status: 'Missing in App',
+        detail: `Usable data-system record has no app table (station ${expected.station.station_id})`,
+      };
+    }
+    return {
+      ...base,
+      db_station: row.station_id ?? '',
+      db_varieties: 0,
+      status: 'No Source Data',
+      detail: this.describeMissingSource(row, ctx.stationHashmap),
+    };
+  }
 
   /** Rows with actionable differences (fully in-sync rows add no value to the table) */
   public displayedRows = computed(() => this.diffRows().filter((row) => row.status !== 'In Sync'));

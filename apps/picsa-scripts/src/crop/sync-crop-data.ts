@@ -1,16 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import * as crypto from 'node:crypto';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { getGeoLocationData } from '../../../../libs/data/geoLocation';
 import type { ICountryCode } from '../../../../libs/data/deployments/countries';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  cumulativeDistribution,
-  generateProbabilityHashmap,
-  generateTable,
-  plantDayToDateLabel,
+  computeExpectedProbabilityTable,
   roundToNearest,
 } from '../../../../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -135,6 +132,157 @@ interface IExportEntry {
   fileName: string;
 }
 
+/** Lookup maps shared by the per-row sync processor */
+interface ISyncRowContext {
+  stationDataHashmap: Map<string, IStationDataRow>;
+  cropDataHashmap: Record<string, ICropData['Row']>;
+  stationNameHashmap: Map<string, string>;
+  locations: { id: string; label: string; admin_4?: string }[];
+  countryDir: string;
+  auditOnly: boolean;
+}
+
+/** Report counter keyed by row status */
+const COUNTER_BY_STATUS = {
+  SYNCED: 'stationsSynced',
+  UNCHANGED: 'stationsUnchanged',
+  NEW: 'stationsNew',
+  SKIPPED: 'stationsSkipped',
+  ERROR: 'stationsErrors',
+} as const;
+
+interface ISyncContext extends ISyncRowContext {
+  downscaledRows: IDownscaledRow[];
+}
+
+/** Load all required tables for the country, throwing on any fetch failure */
+async function fetchSyncContext(supabase: SupabaseClient, country: string, options: CliArgs): Promise<ISyncContext> {
+  const [downscaledRes, stationDataRes, cropRes, stationsRes] = await Promise.all([
+    supabase
+      .from('crop_data_downscaled')
+      .select('location_id,station_id,water_requirements')
+      .eq('country_code', country),
+    supabase
+      .from('climate_station_data')
+      .select('station_id,annual_rainfall_data,crop_probability_data')
+      .eq('country_code', country),
+    supabase.from('crop_data').select('*').eq('country_code', country),
+    supabase.from('climate_stations').select('id,station_name').eq('country_code', country),
+  ]);
+  const responses = [
+    ['crop_data_downscaled', downscaledRes],
+    ['climate_station_data', stationDataRes],
+    ['crop_data', cropRes],
+    ['climate_stations', stationsRes],
+  ] as const;
+  for (const [label, res] of responses) {
+    if (res.error) throw new Error(`Failed to fetch ${label}: ${res.error.message}`);
+  }
+
+  let downscaledRows = (downscaledRes.data ?? []) as IDownscaledRow[];
+  if (options.station) {
+    downscaledRows = downscaledRows.filter((row) => row.station_id?.toLowerCase() === options.station);
+  }
+
+  const stationDataHashmap = new Map<string, IStationDataRow>();
+  for (const row of (stationDataRes.data ?? []) as IStationDataRow[]) {
+    stationDataHashmap.set(row.station_id, row);
+  }
+  const cropDataHashmap: Record<string, ICropData['Row']> = {};
+  for (const row of (cropRes.data ?? []) as ICropData['Row'][]) {
+    cropDataHashmap[`${row.crop}/${row.variety}`] = row;
+  }
+  const stationNameHashmap = new Map<string, string>();
+  for (const row of (stationsRes.data ?? []) as { id: string | null; station_name: string | null }[]) {
+    if (row.id) stationNameHashmap.set(row.id, row.station_name ?? row.id);
+  }
+
+  const locationData = getGeoLocationData(country as ICountryCode);
+  const locations = locationData.admin_5?.locations ?? locationData.admin_4?.locations ?? [];
+
+  const countryDir = getCountryDir(country);
+  if (!options.auditOnly && !fs.existsSync(countryDir)) {
+    fs.mkdirSync(countryDir, { recursive: true });
+  }
+  const auditOnly = options.auditOnly ?? false;
+  return { downscaledRows, stationDataHashmap, cropDataHashmap, stationNameHashmap, locations, countryDir, auditOnly };
+}
+
+/** Record a skipped row with the given reason */
+function skippedRow(row: IDownscaledRow, message: string): ICropSyncStationDetail {
+  return { location_id: row.location_id, station_id: row.station_id ?? '', status: 'SKIPPED', message };
+}
+
+/**
+ * Generate the app table for a single downscaled row, writing the JSON file
+ * unless running in audit-only mode. Returns the audit detail plus the index
+ * entry (omitted when the file content is unchanged).
+ */
+function processDownscaledRow(
+  row: IDownscaledRow,
+  ctx: ISyncRowContext,
+): { detail: ICropSyncStationDetail; exportEntry: IExportEntry | null } {
+  const skipped = (message: string) => ({ detail: skippedRow(row, message), exportEntry: null });
+  if (!row.station_id) return skipped('No linked station_id');
+
+  const waterRequirements = row.water_requirements ?? {};
+  if (Object.keys(waterRequirements).length === 0) return skipped('Empty water_requirements');
+
+  const stationData = ctx.stationDataHashmap.get(row.station_id);
+  // Shared pipeline with the dashboard export; null when station data is insufficient
+  const expected = computeExpectedProbabilityTable({
+    cropDataHashmap: ctx.cropDataHashmap,
+    waterRequirements,
+    rainfallData: stationData?.annual_rainfall_data ?? [],
+    cropProbabilityData: stationData?.crop_probability_data ?? [],
+  });
+  if (!expected) return skipped('Insufficient station data to generate table');
+  const { table: tableData, startProbabilities } = expected;
+
+  // Location-based file naming matches existing app assets (<parent>--<location>.json)
+  const match = ctx.locations.find((v) => v.id === row.location_id);
+  const parentId = match?.admin_4 ?? '';
+  const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
+  const label = match?.label ?? row.location_id;
+  const station_label = ctx.stationNameHashmap.get(row.station_id) ?? row.station_id;
+  const fileName = parentId ? `${parentId}--${row.location_id}` : row.location_id;
+
+  const jsonContent = JSON.stringify(tableData, null, 2);
+  const contentHash = computeSha256(jsonContent);
+  const filePath = path.join(ctx.countryDir, `${fileName}.json`);
+  const existedBefore = fs.existsSync(filePath);
+  const isUnchanged = existedBefore && computeSha256(fs.readFileSync(filePath, 'utf-8').trim()) === contentHash;
+
+  if (isUnchanged) {
+    return {
+      detail: { location_id: row.location_id, station_id: row.station_id, status: 'UNCHANGED' },
+      exportEntry: null,
+    };
+  }
+  if (!ctx.auditOnly) fs.writeFileSync(filePath, jsonContent, 'utf-8');
+  let verb: string;
+  if (ctx.auditOnly) verb = 'Would write';
+  else if (existedBefore) verb = 'Updated';
+  else verb = 'Created';
+  console.log(`  ${verb}: ${fileName}.json`);
+
+  return {
+    detail: {
+      location_id: row.location_id,
+      station_id: row.station_id,
+      status: existedBefore ? 'SYNCED' : 'NEW',
+    },
+    exportEntry: {
+      id,
+      label,
+      station_label,
+      dateHeadings: startProbabilities.map((v) => v.label),
+      seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
+      fileName,
+    },
+  };
+}
+
 export async function runSync(options: CliArgs = {}): Promise<ICropSyncReport> {
   const today = new Date().toISOString().slice(0, 10);
   const country = (options.country || 'zm').toLowerCase();
@@ -164,161 +312,30 @@ export async function runSync(options: CliArgs = {}): Promise<ICropSyncReport> {
   console.log(`  Mode: ${options.auditOnly ? 'AUDIT ONLY' : 'SYNC & WRITE'}`);
   if (options.station) console.log(`  Station Filter: ${options.station}`);
 
-  // Load all required tables for the country in parallel
-  const [downscaledRes, stationDataRes, cropRes, stationsRes] = await Promise.all([
-    supabase
-      .from('crop_data_downscaled')
-      .select('location_id,station_id,water_requirements')
-      .eq('country_code', country),
-    supabase
-      .from('climate_station_data')
-      .select('station_id,annual_rainfall_data,crop_probability_data')
-      .eq('country_code', country),
-    supabase.from('crop_data').select('*').eq('country_code', country),
-    supabase.from('climate_stations').select('id,station_name').eq('country_code', country),
-  ]);
-  for (const [label, res] of [
-    ['crop_data_downscaled', downscaledRes],
-    ['climate_station_data', stationDataRes],
-    ['crop_data', cropRes],
-    ['climate_stations', stationsRes],
-  ] as const) {
-    if (res.error) throw new Error(`Failed to fetch ${label}: ${res.error.message}`);
-  }
+  const ctx = await fetchSyncContext(supabase, country, options);
 
-  let downscaledRows = (downscaledRes.data ?? []) as IDownscaledRow[];
-  const stationDataHashmap = new Map<string, IStationDataRow>();
-  for (const row of (stationDataRes.data ?? []) as IStationDataRow[]) {
-    stationDataHashmap.set(row.station_id, row);
-  }
-  const cropData = (cropRes.data ?? []) as ICropData['Row'][];
-  const cropDataHashmap: Record<string, ICropData['Row']> = {};
-  for (const row of cropData) cropDataHashmap[`${row.crop}/${row.variety}`] = row;
-  const stationNameHashmap = new Map<string, string>();
-  for (const row of (stationsRes.data ?? []) as { id: string | null; station_name: string | null }[]) {
-    if (row.id) stationNameHashmap.set(row.id, row.station_name ?? row.id);
-  }
-
-  if (options.station) {
-    downscaledRows = downscaledRows.filter((row) => row.station_id?.toLowerCase() === options.station);
-  }
-  console.log(`  Identified ${downscaledRows.length} downscaled row(s) to process.`);
-  auditReport.totalRowsProcessed = downscaledRows.length;
-
-  const locationData = getGeoLocationData(country as ICountryCode);
-  const locations = locationData.admin_5?.locations ?? locationData.admin_4?.locations ?? [];
-
-  const countryDir = getCountryDir(country);
-  if (!options.auditOnly && !fs.existsSync(countryDir)) {
-    fs.mkdirSync(countryDir, { recursive: true });
-  }
+  console.log(`  Identified ${ctx.downscaledRows.length} downscaled row(s) to process.`);
+  auditReport.totalRowsProcessed = ctx.downscaledRows.length;
 
   const exportEntries: IExportEntry[] = [];
 
-  for (const row of downscaledRows) {
-    const detail: ICropSyncStationDetail = {
-      location_id: row.location_id,
-      station_id: row.station_id ?? '',
-      status: 'SKIPPED',
-    };
+  for (const row of ctx.downscaledRows) {
+    let detail: ICropSyncStationDetail;
     try {
-      if (!row.station_id) {
-        detail.status = 'SKIPPED';
-        detail.message = 'No linked station_id';
-        auditReport.stationsSkipped++;
-        auditReport.details.push(detail);
-        continue;
-      }
-      const waterRequirements = row.water_requirements ?? {};
-      if (Object.keys(waterRequirements).length === 0) {
-        detail.status = 'SKIPPED';
-        detail.message = 'Empty water_requirements';
-        auditReport.stationsSkipped++;
-        auditReport.details.push(detail);
-        continue;
-      }
-      const stationData = stationDataHashmap.get(row.station_id);
-      const rainfallData = stationData?.annual_rainfall_data;
-      const cropProbabilityData = stationData?.crop_probability_data;
-      if (!rainfallData || !cropProbabilityData) {
-        detail.status = 'SKIPPED';
-        detail.message = 'No rainfall or crop probability data for linked station';
-        auditReport.stationsSkipped++;
-        auditReport.details.push(detail);
-        continue;
-      }
-
-      // Season start probabilities (mirrors dashboard export: >= 0.05 filter)
-      const allStartDates = rainfallData.map((d) => d.start_rains_doy).filter((v) => typeof v === 'number');
-      if (allStartDates.length === 0) {
-        detail.status = 'SKIPPED';
-        detail.message = 'No valid season start dates';
-        auditReport.stationsSkipped++;
-        auditReport.details.push(detail);
-        continue;
-      }
-      const uniquePlantDates = [...new Set(cropProbabilityData.map((v) => v.plant_day))];
-      const cdf = cumulativeDistribution(allStartDates);
-      const total = allStartDates.length;
-      const startProbabilities = uniquePlantDates
-        .map((plantDate) => ({
-          plantDate,
-          probability: cdf[plantDate + 1] / total,
-          label: plantDayToDateLabel(plantDate),
-        }))
-        .filter(({ probability }) => probability >= 0.05);
-      if (startProbabilities.length === 0) {
-        detail.status = 'SKIPPED';
-        detail.message = 'No plant dates meet 0.05 probability threshold';
-        auditReport.stationsSkipped++;
-        auditReport.details.push(detail);
-        continue;
-      }
-
-      const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
-      const tableData = generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
-
-      // Location-based file naming matches existing app assets (<parent>--<location>.json)
-      const match = locations.find((v) => v.id === row.location_id) as { admin_4?: string; label?: string } | undefined;
-      const parentId = match?.admin_4 ?? '';
-      const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
-      const label = match?.label ?? row.location_id;
-      const station_label = stationNameHashmap.get(row.station_id) ?? row.station_id;
-      const fileName = parentId ? `${parentId}--${row.location_id}` : row.location_id;
-
-      const jsonContent = JSON.stringify(tableData, null, 2);
-      const contentHash = computeSha256(jsonContent);
-      const filePath = path.join(countryDir, `${fileName}.json`);
-      const existedBefore = fs.existsSync(filePath);
-      const isUnchanged = existedBefore && computeSha256(fs.readFileSync(filePath, 'utf-8').trim()) === contentHash;
-
-      if (isUnchanged) {
-        detail.status = 'UNCHANGED';
-        auditReport.stationsUnchanged++;
-      } else {
-        if (!options.auditOnly) fs.writeFileSync(filePath, jsonContent, 'utf-8');
-        detail.status = existedBefore ? 'SYNCED' : 'NEW';
-        if (existedBefore) auditReport.stationsSynced++;
-        else auditReport.stationsNew++;
-        console.log(`  ${options.auditOnly ? 'Would write' : existedBefore ? 'Updated' : 'Created'}: ${fileName}.json`);
-      }
-      auditReport.details.push(detail);
-
-      exportEntries.push({
-        id,
-        label,
-        station_label,
-        dateHeadings: startProbabilities.map((v) => v.label),
-        seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
-        fileName,
-      });
+      const result = processDownscaledRow(row, ctx);
+      detail = result.detail;
+      if (result.exportEntry) exportEntries.push(result.exportEntry);
     } catch (err) {
-      detail.status = 'ERROR';
-      detail.message = (err as Error).message;
-      auditReport.stationsErrors++;
-      auditReport.details.push(detail);
+      detail = {
+        location_id: row.location_id,
+        station_id: row.station_id ?? '',
+        status: 'ERROR',
+        message: (err as Error).message,
+      };
       console.error(`  Error processing ${row.location_id}:`, (err as Error).message);
     }
+    auditReport.details.push(detail);
+    auditReport[COUNTER_BY_STATUS[detail.status]] += 1;
   }
 
   // Regenerate index.ts for full-country syncs (station-filtered runs skip to avoid dropping entries)
