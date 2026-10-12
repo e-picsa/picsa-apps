@@ -36,6 +36,18 @@ interface ILoadOptions {
 
 export const FORECAST_STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
+function shouldUseBypassStubs(): boolean {
+  if (ENVIRONMENT.production) return true;
+  const search = window?.location?.search;
+  if (!search) return false;
+  for (const [key, val] of new URLSearchParams(search).entries()) {
+    if (key.toLowerCase() === 'bypassstubs') {
+      return val.toLowerCase() === 'true' || val === '';
+    }
+  }
+  return false;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
@@ -45,8 +57,7 @@ export class ForecastService extends PicsaAsyncService {
   public enabled = signal(false);
 
   /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
-  public bypassStubs =
-    ENVIRONMENT.production && new URLSearchParams(window?.location?.search).get('bypassStubs') === 'true';
+  public bypassStubs = shouldUseBypassStubs();
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
@@ -194,6 +205,14 @@ export class ForecastService extends PicsaAsyncService {
     return doc;
   }
 
+  private getStubId(country_code: string, forecast_type: IForecast['forecast_type']): string {
+    return `stub/${forecast_type}/${country_code}`;
+  }
+
+  private isStubForecast(doc?: IForecast | RxDocument<IForecast>): boolean {
+    return !!doc?.id?.startsWith('stub/');
+  }
+
   private async loadForecastsForCountry(country_code: ICountryCode, options: ILoadOptions = {}) {
     const { force = false } = options;
 
@@ -263,21 +282,35 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            // Only pass latest for daily/weekly where IDs are chronological date-based strings.
+            // Only pass latest for daily/weekly where IDs are chronological date-based strings (excluding stubs).
             // On force refresh bypass the incremental bound so recent records are re-validated.
-            const latestDoc = !force && (config.type === 'daily' || config.type === 'weekly') ? cached[0] : undefined;
+            const latestDoc =
+              !force &&
+              (config.type === 'daily' || config.type === 'weekly') &&
+              cached[0] &&
+              !this.isStubForecast(cached[0])
+                ? cached[0]
+                : undefined;
             let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, config.limit, {
               force,
             });
             if (currentLoad.cancelled) return;
 
+            const hasRealCache = cached.some((doc) => !this.isStubForecast(doc));
             // When testing locally / offline, if server returns no records and no cached records exist,
             // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
-            if (serverForecasts.length === 0 && cached.length === 0 && !this.bypassStubs) {
+            if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs) {
               serverForecasts = this.getStubForecasts(country_code, config.type);
             }
 
             if (serverForecasts.length > 0) {
+              const isStub = this.isStubForecast(serverForecasts[0]);
+              // If real server forecasts arrived, purge any stubs from RxDB
+              if (!isStub) {
+                const stubId = this.getStubId(country_code, config.type);
+                await this.dbCollection.bulkRemove([stubId]);
+              }
+
               const { success, error } = await this.saveForecasts(serverForecasts);
               if (currentLoad.cancelled) return;
               if (error.length > 0) {
@@ -285,8 +318,9 @@ export class ForecastService extends PicsaAsyncService {
                 throw new Error(`[Forecast] failed to load ${config.type} forecasts`);
               }
               config.signal.update((v) => {
+                const filtered = !isStub ? v.filter((doc) => !this.isStubForecast(doc)) : v;
                 const seen = new Set<string>();
-                return [...success, ...v]
+                return [...success, ...filtered]
                   .filter((doc) => {
                     if (seen.has(doc.id)) return false;
                     seen.add(doc.id);
@@ -461,7 +495,23 @@ export class ForecastService extends PicsaAsyncService {
       selector.country_code = country_code;
     }
 
-    return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit }).exec();
+    // Query with a small buffer (limit + 1) to account for potential stub document while keeping read bounded
+    const docs = await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit: limit + 1 }).exec();
+    const realDocs = docs.filter((d) => !this.isStubForecast(d));
+    const stubDocs = docs.filter((d) => this.isStubForecast(d));
+
+    // If bypassing stubs or real cached forecasts exist, purge any stubs from RxDB
+    if (this.bypassStubs || realDocs.length > 0) {
+      if (stubDocs.length > 0) {
+        await this.dbCollection.bulkRemove(stubDocs.map((d) => d.id));
+      } else {
+        const stubId = this.getStubId(country_code, forecast_type);
+        await this.dbCollection.bulkRemove([stubId]);
+      }
+      return realDocs.slice(0, limit);
+    }
+
+    return docs.slice(0, limit);
   }
 
   private async saveForecasts(forecasts: IForecast[]) {
@@ -524,7 +574,7 @@ export class ForecastService extends PicsaAsyncService {
     if (forecast_type === 'daily') {
       return [
         {
-          id: `stub/daily/${country_code}`,
+          id: this.getStubId(country_code, 'daily'),
           country_code,
           forecast_type: 'daily',
           label: `Daily Weather Forecast (${today})`,
@@ -538,7 +588,7 @@ export class ForecastService extends PicsaAsyncService {
     if (forecast_type === 'weekly') {
       return [
         {
-          id: `stub/weekly/${country_code}`,
+          id: this.getStubId(country_code, 'weekly'),
           country_code,
           forecast_type: 'weekly',
           label: `7-Day Weather Outlook (${today})`,
