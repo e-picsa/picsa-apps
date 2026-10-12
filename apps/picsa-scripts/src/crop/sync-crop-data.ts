@@ -1,5 +1,4 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import * as crypto from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -10,6 +9,8 @@ import {
   computeExpectedProbabilityTable,
   roundToNearest,
 } from '../../../../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { deepEqualJson } from '../../../../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type {
   IAnnualRainfallSummariesData,
@@ -86,10 +87,6 @@ Environment:
 
 export function getCountryDir(country: string): string {
   return path.join(CROP_TOOL_DATA, country.toLowerCase());
-}
-
-export function computeSha256(content: string): string {
-  return crypto.createHash('sha256').update(content, 'utf8').digest('hex');
 }
 
 export interface ICropSyncStationDetail {
@@ -198,7 +195,9 @@ async function fetchSyncContext(supabase: SupabaseClient, country: string, optio
   }
 
   const locationData = getGeoLocationData(country as ICountryCode);
-  const locations = locationData.admin_5?.locations ?? locationData.admin_4?.locations ?? [];
+  // Deepest tier holds districts (zm: admin_5, zw: admin_6); entries carry their admin_4 parent id
+  const locations =
+    locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
 
   const countryDir = getCountryDir(country);
   if (!options.auditOnly && !fs.existsSync(countryDir)) {
@@ -246,17 +245,34 @@ function processDownscaledRow(
   const label = match?.label ?? row.location_id;
   const station_label = ctx.stationNameHashmap.get(row.station_id) ?? row.station_id;
   const fileName = parentId ? `${parentId}--${row.location_id}` : row.location_id;
-
   const jsonContent = JSON.stringify(tableData, null, 2);
-  const contentHash = computeSha256(jsonContent);
   const filePath = path.join(ctx.countryDir, `${fileName}.json`);
   const existedBefore = fs.existsSync(filePath);
-  const isUnchanged = existedBefore && computeSha256(fs.readFileSync(filePath, 'utf-8').trim()) === contentHash;
+  // Compare semantically: committed files use a different JSON formatting,
+  // so a raw hash comparison would flag whitespace-only differences
+  let isUnchanged = false;
+  if (existedBefore) {
+    try {
+      isUnchanged = deepEqualJson(JSON.parse(fs.readFileSync(filePath, 'utf-8')), tableData);
+    } catch {
+      isUnchanged = false;
+    }
+  }
+
+  // The index must list every processed location, including unchanged files
+  const exportEntry: IExportEntry = {
+    id,
+    label,
+    station_label,
+    dateHeadings: startProbabilities.map((v) => v.label),
+    seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
+    fileName,
+  };
 
   if (isUnchanged) {
     return {
       detail: { location_id: row.location_id, station_id: row.station_id, status: 'UNCHANGED' },
-      exportEntry: null,
+      exportEntry,
     };
   }
   if (!ctx.auditOnly) fs.writeFileSync(filePath, jsonContent, 'utf-8');
@@ -272,14 +288,7 @@ function processDownscaledRow(
       station_id: row.station_id,
       status: existedBefore ? 'SYNCED' : 'NEW',
     },
-    exportEntry: {
-      id,
-      label,
-      station_label,
-      dateHeadings: startProbabilities.map((v) => v.label),
-      seasonProbabilities: startProbabilities.map((v) => roundToNearest(v.probability, 0.1)),
-      fileName,
-    },
+    exportEntry,
   };
 }
 
@@ -388,6 +397,11 @@ function writeCountryIndex(country: string, exportEntries: IExportEntry[]): void
   indexContent += `];\n\nexport default ${variableName};\n`;
 
   const indexPath = path.join(getCountryDir(country), 'index.ts');
+  const existingIndex = fs.existsSync(indexPath) ? fs.readFileSync(indexPath, 'utf-8') : null;
+  if (existingIndex === indexContent) {
+    console.log(`  Index unchanged: ${indexPath}`);
+    return;
+  }
   fs.writeFileSync(indexPath, indexContent, 'utf-8');
   console.log(`  Updated index: ${indexPath} (${sorted.length} locations)`);
 }
