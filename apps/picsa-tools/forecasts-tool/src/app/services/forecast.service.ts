@@ -22,11 +22,22 @@ interface IDownscaledLocation {
 type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
 
 /**
+ * Stub fallback forecasts carry ids prefixed with `stub/` - they are generated
+ * locally, never synced from the server, and must never render while bypassing.
+ * Exported so the display layer can enforce the bypass guarantee regardless of
+ * what the local cache holds.
+ */
+export function isStubForecast(doc?: IForecast | RxDocument<IForecast>): boolean {
+  return !!doc?.id?.startsWith('stub/');
+}
+
+/**
  * Display rule for synced forecasts: a doc is shown only while it has a downloadable file.
  * Retired (tombstoned) rows carry storage_file null and are excluded here, never by count
  * limits - row counts multiply by translated versions so caps would silently drop languages.
+ * Exported for unit testing alongside isStubForecast.
  */
-const isLiveForecast = (doc: Pick<IForecast, 'storage_file'>) => !!doc.storage_file;
+export const isLiveForecast = (doc: Pick<IForecast, 'storage_file'>) => !!doc.storage_file;
 
 interface LoaderConfig {
   type: ForecastType;
@@ -35,7 +46,8 @@ interface LoaderConfig {
   includeStorage?: boolean;
 }
 
-function shouldUseBypassStubs(): boolean {
+/** Exported for unit testing the bypass matrix without booting the service */
+export function shouldUseBypassStubs(): boolean {
   if (ENVIRONMENT.production) return true;
   const search = window?.location?.search;
   if (!search) return false;
@@ -174,10 +186,6 @@ export class ForecastService extends PicsaAsyncService {
     return `stub/${forecast_type}/${country_code}`;
   }
 
-  private isStubForecast(doc?: IForecast | RxDocument<IForecast>): boolean {
-    return !!doc?.id?.startsWith('stub/');
-  }
-
   private async loadForecastsForCountry(country_code: ICountryCode) {
     if (this.activeCountryLoad) {
       this.activeCountryLoad.cancelled = true;
@@ -224,13 +232,13 @@ export class ForecastService extends PicsaAsyncService {
             const { limit } = config;
             // Only pass latest for daily/weekly where IDs are chronological date-based strings (excluding stubs)
             const latestDoc =
-              (config.type === 'daily' || config.type === 'weekly') && cached[0] && !this.isStubForecast(cached[0])
+              (config.type === 'daily' || config.type === 'weekly') && cached[0] && !isStubForecast(cached[0])
                 ? cached[0]
                 : undefined;
             let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, limit);
             if (currentLoad.cancelled) return;
 
-            const hasRealCache = cached.some((doc) => !this.isStubForecast(doc));
+            const hasRealCache = cached.some((doc) => !isStubForecast(doc));
             // When testing locally / offline, if server returns no records and no cached records exist,
             // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
             if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs) {
@@ -238,7 +246,7 @@ export class ForecastService extends PicsaAsyncService {
             }
 
             if (serverForecasts.length > 0) {
-              const isStub = this.isStubForecast(serverForecasts[0]);
+              const isStub = isStubForecast(serverForecasts[0]);
               // If real server forecasts arrived, purge any stubs from RxDB
               if (!isStub) {
                 const stubId = this.getStubId(country_code, config.type);
@@ -252,7 +260,7 @@ export class ForecastService extends PicsaAsyncService {
                 throw new Error(`[Forecast] failed to load ${config.type} forecasts`);
               }
               config.signal.update((v) => {
-                const filtered = !isStub ? v.filter((doc) => !this.isStubForecast(doc)) : v;
+                const filtered = !isStub ? v.filter((doc) => !isStubForecast(doc)) : v;
                 const seen = new Set<string>();
                 const merged = [...success, ...filtered].filter((doc) => {
                   if (seen.has(doc.id)) return false;
@@ -501,8 +509,8 @@ export class ForecastService extends PicsaAsyncService {
     const docs = await this.dbCollection
       .find({ selector, sort: [{ id: 'desc' }], ...(queryLimit !== undefined ? { limit: queryLimit } : {}) })
       .exec();
-    const realDocs = docs.filter((d) => !this.isStubForecast(d));
-    const stubDocs = docs.filter((d) => this.isStubForecast(d));
+    const realDocs = docs.filter((d) => !isStubForecast(d));
+    const stubDocs = docs.filter((d) => isStubForecast(d));
 
     // If bypassing stubs or real cached forecasts exist, purge any stubs from RxDB
     if (this.bypassStubs || realDocs.length > 0) {
