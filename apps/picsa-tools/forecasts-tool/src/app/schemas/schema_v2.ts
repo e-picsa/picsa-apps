@@ -28,17 +28,24 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
   isUserCollection: false,
   migrationStrategies: {
     ...COLLECTION_V1.migrationStrategies,
-    // v1 `location` was never populated (always []/null) and is unread by any code,
-    // so drop it and default `downscaled_location` - existing docs (and their
-    // downloaded attachments) survive the upgrade and repopulate from server
-    2: (oldDoc: IForecast_V1): IForecast_V2 => {
-      const { location, ...rest } = oldDoc;
-      return { ...rest, downscaled_location: null };
-    },
+    // schema change - clear all local docs and repopulate from server
+    2: () => null,
   },
 };
 
-export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
+export const SERVER_DB_MAPPING_V2 = (
+  row: Pick<
+    IForecastRow,
+    | 'country_code'
+    | 'downscaled_location'
+    | 'forecast_type'
+    | 'id'
+    | 'label'
+    | 'language_code'
+    | 'mimetype'
+    | 'storage_file'
+  >,
+): IForecast_V2 => {
   const { country_code, downscaled_location, forecast_type, id, label, language_code, mimetype } = row;
   const mapped = {
     country_code,

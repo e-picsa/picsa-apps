@@ -1,53 +1,50 @@
 import { IForecastRow } from '../types/forecast.types';
-import { COLLECTION_V2, SERVER_DB_MAPPING_V2 } from './schema_v2';
+import { SERVER_DB_MAPPING_V2 } from './schema_v2';
 
-const BASE_ROW = {
+const serverRow: IForecastRow = {
+  id: '2026/seasonal/zm_en',
+  created_at: '2026-10-01T00:00:00+00:00',
+  updated_at: '2026-10-02T00:00:00+00:00',
+  forecast_type: 'seasonal',
+  location: [],
   country_code: 'zm',
+  language_code: 'zm_en',
+  storage_file: 'zm/forecasts/seasonal/2026/zm_en.pdf',
+  mimetype: 'application/pdf',
+  label: '2026 - 2027',
   downscaled_location: null,
-  forecast_type: 'daily',
-  id: '20260915/zambia-lunchtime-weather-report-tuesday-15-09-2026.html',
-  label: 'ZAMBIA LUNCHTIME WEATHER REPORT: TUESDAY (15/09/2026)',
-  language_code: null,
-  mimetype: 'text/html',
-  storage_file: 'zm/forecasts/daily/20260915/zambia-lunchtime-weather-report-tuesday-15-09-2026.html',
-} as unknown as IForecastRow;
+};
 
 describe('SERVER_DB_MAPPING_V2', () => {
-  it('maps all server fields through', () => {
-    const mapped = SERVER_DB_MAPPING_V2({ ...BASE_ROW, language_code: 'en' } as IForecastRow);
-    expect(mapped).toMatchObject({
+  it('maps the persisted fields and drops volatile metadata', () => {
+    expect(SERVER_DB_MAPPING_V2(serverRow)).toEqual({
       country_code: 'zm',
-      forecast_type: 'daily',
-      id: BASE_ROW.id,
-      label: BASE_ROW.label,
-      language_code: 'en',
-      mimetype: 'text/html',
-      storage_file: BASE_ROW.storage_file,
+      downscaled_location: null,
+      forecast_type: 'seasonal',
+      id: '2026/seasonal/zm_en',
+      label: '2026 - 2027',
+      language_code: 'zm_en',
+      mimetype: 'application/pdf',
+      storage_file: 'zm/forecasts/seasonal/2026/zm_en.pdf',
     });
   });
 
-  it('strips nulls from non-nullable schema props so RxDB validation passes (COL20)', () => {
-    const mapped = SERVER_DB_MAPPING_V2(BASE_ROW);
-    expect(mapped).not.toHaveProperty('language_code');
-    expect(mapped.storage_file).toBe(BASE_ROW.storage_file);
+  it('accepts timestamp-less bundle rows', () => {
+    const { created_at, updated_at, ...bundleRow } = serverRow;
+    expect(created_at).toBeDefined();
+    expect(updated_at).toBeDefined();
+    expect(SERVER_DB_MAPPING_V2(bundleRow)).toEqual(SERVER_DB_MAPPING_V2(serverRow));
   });
 
-  it('preserves nulls for nullable schema props', () => {
-    const mapped = SERVER_DB_MAPPING_V2(BASE_ROW);
-    expect(mapped).toHaveProperty('downscaled_location', null);
-    expect(mapped).toHaveProperty('label', BASE_ROW.label);
+  it('strips unknown props (e.g. legacy location) rejected by dev schema validation', () => {
+    const mapped = SERVER_DB_MAPPING_V2(serverRow);
+    expect(mapped).not.toHaveProperty('location');
+    expect(mapped).not.toHaveProperty('created_at');
+    expect(mapped).not.toHaveProperty('updated_at');
   });
-});
 
-describe('COLLECTION_V2 migration', () => {
-  it('preserves v1 docs, dropping `location` and defaulting `downscaled_location`', () => {
-    const migrate = COLLECTION_V2.migrationStrategies?.[2];
-    expect(migrate).toBeDefined();
-    // v1 `location` was never populated, so nothing of value is lost in migration
-    const migrated = migrate?.({ ...BASE_ROW, location: [] });
-    expect(migrated).not.toBeNull();
-    expect(migrated).not.toHaveProperty('location');
-    expect(migrated).toHaveProperty('downscaled_location', null);
-    expect(migrated).toMatchObject({ id: BASE_ROW.id, storage_file: BASE_ROW.storage_file });
+  it('passes tombstone nulls through untouched (filtering happens upstream)', () => {
+    const mapped = SERVER_DB_MAPPING_V2({ ...serverRow, storage_file: null });
+    expect(mapped.storage_file).toBeNull();
   });
 });

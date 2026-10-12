@@ -1,3 +1,16 @@
+/**
+ * Crop Probability Legacy Data Migration (one-off)
+ *
+ * Migrates legacy crop-probability-tool data files (fraction strings, old shapes)
+ * in place to the current JSON format, regenerating per-country index files.
+ *
+ * Usage:
+ *   yarn scripts picsa/crop-probability/migrate-legacy-data
+ *
+ * Args: none (country list and data folder are hardcoded below)
+ *
+ * NOTE: one-off migration - verify output carefully before committing changes.
+ */
 import { resolve } from 'path';
 import { readdir, readFile, writeFile } from 'fs/promises';
 

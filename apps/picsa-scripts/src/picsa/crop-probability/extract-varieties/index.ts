@@ -1,3 +1,17 @@
+/**
+ * Crop Variety Extractor (one-off)
+ *
+ * Scans crop-probability-tool data files to extract variety occurrences and writes
+ * per-country crop_data_rows / crop_data_downscaled_rows CSVs plus a sublocation
+ * audit report. Currently targets Malawi and Zimbabwe only (see TARGET_COUNTRIES).
+ *
+ * Usage:
+ *   yarn scripts picsa/crop-probability/extract-varieties/index
+ *
+ * Args: none (inputs, outputs and target countries are hardcoded below)
+ *
+ * NOTE: one-off data preparation - verify output carefully before committing changes.
+ */
 import { readdir, readFile, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 import { parseDaysRange, parseVarietyString, roundToNearest, IParsedVarietyOccurrence } from './parser';
