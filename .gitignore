@@ -28,6 +28,7 @@ node_modules
 # misc
 /.sass-cache
 /.ai-worktree-setup.json
+/.serve-info.json
 /connect.lock
 /coverage
 /libpeerconnection.log
