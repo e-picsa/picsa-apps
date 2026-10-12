@@ -226,6 +226,137 @@ export class ForecastService extends PicsaAsyncService {
     return `stub/${forecast_type}/${country_code}`;
   }
 
+  /** Load cached forecasts for all country configs, seeding seasonal from the bundle when empty */
+  private async loadCachedCountryForecasts(country_code: ICountryCode, countryConfigs: LoaderConfig[]) {
+    return Promise.all(
+      countryConfigs.map(async (config) => {
+        let cached = await this.loadCachedForecasts(country_code, config.type, config.limit);
+        // If seasonal has no cached data (e.g. fresh install / offline), seed from bundled FORECASTS_DB
+        if (config.type === 'seasonal' && cached.length === 0) {
+          const hardcoded = FORECASTS_DB.filter(
+            (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
+          );
+          if (hardcoded.length > 0) {
+            cached = await this.storeHardcodedData(hardcoded);
+          }
+        }
+        return { config, data: cached };
+      }),
+    );
+  }
+
+  /** Incremental sync bound: only daily/weekly ids are chronological date-based strings
+   * (excluding locally-generated stubs); force refresh re-validates all recent records */
+  private getIncrementalBound(config: LoaderConfig, cached: RxDocument<IForecast>[], force: boolean) {
+    if (force) return undefined;
+    if (config.type !== 'daily' && config.type !== 'weekly') return undefined;
+    const latest = cached[0];
+    if (!latest || isStubForecast(latest)) return undefined;
+    return latest;
+  }
+
+  /** Sync country forecasts from the server after cached data has rendered.
+   * Early returns preserve the already-displayed cache when offline or unreachable. */
+  private async syncCountryForecastsFromServer(
+    country_code: ICountryCode,
+    countryConfigs: LoaderConfig[],
+    currentLoad: { country_code: ICountryCode; cancelled: boolean },
+    force: boolean,
+  ) {
+    const serverConfigs = countryConfigs.filter((c) => c.includeStorage);
+    if (serverConfigs.length === 0) {
+      this.syncState.set('idle');
+      return;
+    }
+    this.loadingForecasts.set(true);
+    this.syncState.set('updating');
+    this.syncError.set(undefined);
+
+    await this.supabaseService.ready();
+    if (!this.isOnline()) {
+      if (!currentLoad.cancelled) {
+        this.syncState.set('offline');
+        this.syncError.set('No internet connection. Showing previously downloaded forecasts.');
+      }
+      return;
+    }
+
+    if (!this.supabaseService.isAvailable()) {
+      if (!currentLoad.cancelled) {
+        this.syncState.set('error');
+        this.syncError.set('Could not reach server. Showing previously downloaded forecasts.');
+      }
+      return;
+    }
+
+    await Promise.all(
+      serverConfigs.map((config) => this.refreshForecastConfig(country_code, config, currentLoad, force)),
+    );
+
+    // Purge seasonal docs retired server-side (tombstoned) and drop them from view.
+    // Reconcile runs pull-only as bulkUpsert never deletes; offline devices clear on next online sync.
+    if (!currentLoad.cancelled) {
+      const removedIds = await this.reconcileForecastTombstones({ country_code, forecast_type: 'seasonal' });
+      if (!currentLoad.cancelled && removedIds.length > 0) {
+        const removed = new Set(removedIds);
+        this.seasonalForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id) && isLiveForecast(doc)));
+      }
+    }
+
+    // Location switch occurred while refresh was in flight - discard result
+    if (currentLoad.cancelled) return;
+
+    this.markSyncSuccess();
+  }
+
+  /** Refresh a single forecast config from the server, merging results into its signal */
+  private async refreshForecastConfig(
+    country_code: ICountryCode,
+    config: LoaderConfig,
+    currentLoad: { country_code: ICountryCode; cancelled: boolean },
+    force: boolean,
+  ) {
+    const cached = config.signal();
+    const { limit } = config;
+    const latestDoc = this.getIncrementalBound(config, cached, force);
+    let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, limit, { force });
+    if (currentLoad.cancelled) return;
+
+    const hasRealCache = cached.some((doc) => !isStubForecast(doc));
+    // When testing locally / offline, if server returns no records and no cached records exist,
+    // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
+    if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs) {
+      serverForecasts = this.getStubForecasts(country_code, config.type);
+    }
+
+    if (serverForecasts.length > 0) {
+      const isStub = isStubForecast(serverForecasts[0]);
+      // If real server forecasts arrived, purge any stubs from RxDB
+      if (!isStub) {
+        const stubId = this.getStubId(country_code, config.type);
+        await this.dbCollection.bulkRemove([stubId]);
+      }
+
+      const { success, error } = await this.saveForecasts(serverForecasts);
+      if (currentLoad.cancelled) return;
+      if (error.length > 0) {
+        console.error(error);
+        throw new Error(`[Forecast] failed to load ${config.type} forecasts`);
+      }
+      config.signal.update((v) => {
+        const filtered = !isStub ? v.filter((doc) => !isStubForecast(doc)) : v;
+        const seen = new Set<string>();
+        const merged = [...success, ...filtered].filter((doc) => {
+          if (seen.has(doc.id)) return false;
+          seen.add(doc.id);
+          return true;
+        });
+        const live = merged.filter(isLiveForecast);
+        return limit !== undefined ? live.slice(0, limit) : live;
+      });
+    }
+  }
+
   private async loadForecastsForCountry(country_code: ICountryCode, options: ILoadOptions = {}) {
     const { force = false } = options;
 
@@ -245,21 +376,7 @@ export class ForecastService extends PicsaAsyncService {
 
     try {
       // 1. Load cached data first (extremely fast local queries)
-      const cachedData = await Promise.all(
-        countryConfigs.map(async (config) => {
-          let cached = await this.loadCachedForecasts(country_code, config.type, config.limit);
-          // If seasonal has no cached data (e.g. fresh install / offline), seed from bundled FORECASTS_DB
-          if (config.type === 'seasonal' && cached.length === 0) {
-            const hardcoded = FORECASTS_DB.filter(
-              (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
-            );
-            if (hardcoded.length > 0) {
-              cached = await this.storeHardcodedData(hardcoded);
-            }
-          }
-          return { config, data: cached };
-        }),
-      );
+      const cachedData = await this.loadCachedCountryForecasts(country_code, countryConfigs);
 
       if (currentLoad.cancelled) return;
 
@@ -269,98 +386,7 @@ export class ForecastService extends PicsaAsyncService {
       }
 
       // 3. Now start loading from server (which might take time)
-      const serverConfigs = countryConfigs.filter((c) => c.includeStorage);
-      if (serverConfigs.length > 0) {
-        this.loadingForecasts.set(true);
-        this.syncState.set('updating');
-        this.syncError.set(undefined);
-
-        await this.supabaseService.ready();
-        if (!this.isOnline()) {
-          if (!currentLoad.cancelled) {
-            this.syncState.set('offline');
-            this.syncError.set('No internet connection. Showing previously downloaded forecasts.');
-          }
-          return;
-        }
-
-        if (!this.supabaseService.isAvailable()) {
-          if (!currentLoad.cancelled) {
-            this.syncState.set('error');
-            this.syncError.set('Could not reach server. Showing previously downloaded forecasts.');
-          }
-          return;
-        }
-
-        await Promise.all(
-          serverConfigs.map(async (config) => {
-            const cached = config.signal();
-            const { limit } = config;
-            // Only pass latest for daily/weekly where IDs are chronological date-based strings (excluding stubs).
-            // On force refresh bypass the incremental bound so recent records are re-validated.
-            const latestDoc =
-              !force && (config.type === 'daily' || config.type === 'weekly') && cached[0] && !isStubForecast(cached[0])
-                ? cached[0]
-                : undefined;
-            let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, limit, {
-              force,
-            });
-            if (currentLoad.cancelled) return;
-
-            const hasRealCache = cached.some((doc) => !isStubForecast(doc));
-            // When testing locally / offline, if server returns no records and no cached records exist,
-            // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
-            if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs) {
-              serverForecasts = this.getStubForecasts(country_code, config.type);
-            }
-
-            if (serverForecasts.length > 0) {
-              const isStub = isStubForecast(serverForecasts[0]);
-              // If real server forecasts arrived, purge any stubs from RxDB
-              if (!isStub) {
-                const stubId = this.getStubId(country_code, config.type);
-                await this.dbCollection.bulkRemove([stubId]);
-              }
-
-              const { success, error } = await this.saveForecasts(serverForecasts);
-              if (currentLoad.cancelled) return;
-              if (error.length > 0) {
-                console.error(error);
-                throw new Error(`[Forecast] failed to load ${config.type} forecasts`);
-              }
-              config.signal.update((v) => {
-                const filtered = !isStub ? v.filter((doc) => !isStubForecast(doc)) : v;
-                const seen = new Set<string>();
-                const merged = [...success, ...filtered].filter((doc) => {
-                  if (seen.has(doc.id)) return false;
-                  seen.add(doc.id);
-                  return true;
-                });
-                const live = merged.filter(isLiveForecast);
-                return limit !== undefined ? live.slice(0, limit) : live;
-              });
-            }
-          }),
-        );
-        // Purge seasonal docs retired server-side (tombstoned) and drop them from view.
-        // Reconcile runs pull-only as bulkUpsert never deletes; offline devices clear on next online sync.
-        if (!currentLoad.cancelled) {
-          const removedIds = await this.reconcileForecastTombstones({ country_code, forecast_type: 'seasonal' });
-          if (!currentLoad.cancelled && removedIds.length > 0) {
-            const removed = new Set(removedIds);
-            this.seasonalForecastDocs.update((docs) =>
-              docs.filter((doc) => !removed.has(doc.id) && isLiveForecast(doc)),
-            );
-          }
-        }
-
-        // Location switch occurred while refresh was in flight - discard result
-        if (currentLoad.cancelled) return;
-
-        this.markSyncSuccess();
-      } else {
-        this.syncState.set('idle');
-      }
+      await this.syncCountryForecastsFromServer(country_code, countryConfigs, currentLoad, force);
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
       if (!currentLoad.cancelled) {

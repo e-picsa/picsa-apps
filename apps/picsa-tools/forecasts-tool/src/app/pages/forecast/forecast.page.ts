@@ -218,11 +218,13 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     // Subtly check for updates when entering the page if not checked within 12 hours
     if (this.locationReady() && !this.isCheckedWithin12Hours()) {
-      this.executeRefreshWithMinTime().then((success) => {
-        if (success) {
-          this.hasRefreshedSuccessfully.set(true);
-        }
-      });
+      this.executeRefreshWithMinTime()
+        .then((success) => {
+          if (success) {
+            this.hasRefreshedSuccessfully.set(true);
+          }
+        })
+        .catch((err) => console.error('[Forecast] refresh error', err));
     }
   }
 
