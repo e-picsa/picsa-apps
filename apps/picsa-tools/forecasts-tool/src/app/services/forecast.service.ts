@@ -28,6 +28,18 @@ interface LoaderConfig {
   includeStorage?: boolean;
 }
 
+function shouldUseBypassStubs(): boolean {
+  if (ENVIRONMENT.production) return true;
+  const search = window?.location?.search;
+  if (!search) return false;
+  for (const [key, val] of new URLSearchParams(search).entries()) {
+    if (key.toLowerCase() === 'bypassstubs') {
+      return val.toLowerCase() === 'true' || val === '';
+    }
+  }
+  return false;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
@@ -37,18 +49,7 @@ export class ForecastService extends PicsaAsyncService {
   public enabled = signal(false);
 
   /** Set to true in production or via ?bypassStubs=true to bypass local stubs */
-  public bypassStubs =
-    ENVIRONMENT.production ||
-    (() => {
-      const search = window?.location?.search;
-      if (!search) return false;
-      for (const [key, val] of new URLSearchParams(search).entries()) {
-        if (key.toLowerCase() === 'bypassstubs') {
-          return val.toLowerCase() === 'true' || val === '';
-        }
-      }
-      return false;
-    })();
+  public bypassStubs = shouldUseBypassStubs();
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
