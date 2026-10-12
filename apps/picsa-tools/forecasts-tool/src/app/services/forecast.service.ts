@@ -259,11 +259,10 @@ export class ForecastService extends PicsaAsyncService {
                 const live = merged.filter(isLiveForecast);
                 return limit !== undefined ? live.slice(0, limit) : live;
               });
-              });
             }
           }),
         );
-        // Purge seasonal docs retired server-side (tombstoned or deleted) and drop them from view.
+        // Purge seasonal docs retired server-side (tombstoned) and drop them from view.
         // Reconcile runs pull-only as bulkUpsert never deletes; offline devices clear on next online sync.
         if (!currentLoad.cancelled) {
           const removedIds = await this.reconcileForecastTombstones({ country_code, forecast_type: 'seasonal' });
@@ -363,7 +362,7 @@ export class ForecastService extends PicsaAsyncService {
           this.downscaledForecastDocs.set(success);
         }
       }
-      // Purge docs retired server-side (tombstoned or deleted) and drop them from view.
+      // Purge docs retired server-side (tombstoned) and drop them from view.
       // Locations without a current-season forecast correctly show nothing instead of stale rows.
       const removedIds = await this.reconcileForecastTombstones({
         country_code,
@@ -385,10 +384,12 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   /**
-   * Remove local forecast docs retired on the server (storage_file nulled as tombstone,
-   * or rows deleted outright). Forecasts sync pull-only via bulkUpsert which never deletes,
-   * so without this cached docs and downloaded attachments would survive server-side
-   * retirement indefinitely. The server is treated as source of truth within the queried scope.
+   * Remove local forecast docs retired on the server via storage_file tombstones.
+   * Forecasts sync pull-only via bulkUpsert which never deletes, so tombstoned rows
+   * (including downloaded attachments) must be removed explicitly.
+   * Only ids positively present server-side with a null file are removed: mere absence
+   * from a server response never deletes, as empty dev databases would otherwise
+   * cannibalise valid bundle-seeded docs on every load.
    * Only runs after a successful server response - never wipes on offline/error.
    * @returns ids removed from the local collection
    */
@@ -416,7 +417,6 @@ export class ForecastService extends PicsaAsyncService {
       return [];
     }
     const serverRows = data || [];
-    const serverIds = new Set(serverRows.map((row) => row.id));
     const selector: MangoQuerySelector<IForecast> = { forecast_type };
     if (country_code !== 'global') {
       selector.country_code = country_code;
@@ -427,11 +427,11 @@ export class ForecastService extends PicsaAsyncService {
     }
     const cached = await this.dbCollection.find({ selector }).exec();
     const cachedIds = new Set(cached.map((doc) => doc.id));
-    const tombstonedIds = serverRows
+    // Tombstone-only: absence from the server response never deletes (empty dev
+    // databases and scoped queries would otherwise purge valid bundle-seeded docs)
+    const removeIds = serverRows
       .filter((row) => row.storage_file === null && cachedIds.has(row.id))
       .map((row) => row.id);
-    const orphanedIds = [...cachedIds].filter((id) => !serverIds.has(id));
-    const removeIds = [...new Set([...tombstonedIds, ...orphanedIds])];
     if (removeIds.length > 0) {
       await this.dbCollection.bulkRemove(removeIds);
     }
@@ -486,11 +486,7 @@ export class ForecastService extends PicsaAsyncService {
     return success;
   }
 
-  private async loadCachedForecasts(
-    country_code: string,
-    forecast_type: IForecast['forecast_type'],
-    limit?: number,
-  ) {
+  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type'], limit?: number) {
     const selector: MangoQuerySelector<IForecast> = { forecast_type };
 
     if (country_code !== 'global') {
