@@ -1,4 +1,27 @@
 import { type SupabaseClient } from '@supabase/supabase-js';
+/**
+ * Crop Data Sync (db-to-app)
+ *
+ * Generates crop probability app tables from Supabase data, mirroring the dashboard
+ * "Export App Data" action. Writes per-location JSON files plus an index.ts for the
+ * requested country into the crop-probability-tool data folder.
+ *
+ * Usage:
+ *   yarn scripts:crop:sync [--country=zm] [--station=<station_id>] [--audit-only]
+ *
+ * Args:
+ *   --country=<code>   Country code to sync (default: zm)
+ *   --station=<id>     Only sync downscaled rows linked to this station_id.
+ *                      Skips index.ts regeneration (full-country sync required)
+ *   --direction=<dir>  Only 'db-to-app' is supported (app tables are computed outputs)
+ *   --audit-only       Compute and report without writing files
+ *   --report=<path>    Audit report output path (default: dist/crop-sync-report.md)
+ *   --help, -h         Print usage and exit
+ *
+ * Env:
+ *   SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY) must be set.
+ */
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
