@@ -24,6 +24,7 @@
     "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup",
     "scripts:climate:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/climate/sync-climate-data.ts",
+    "scripts:forecasts:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/forecasts/sync-forecasts-bundle.ts",
     "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
     "ai:lint": "node tools/ai/ai-lint.mjs",
     "ai:test": "node tools/ai/ai-test.mjs"

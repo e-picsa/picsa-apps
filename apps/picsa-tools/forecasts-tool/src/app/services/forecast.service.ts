@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import { FORECASTS_DB, type IForecastBundleRow } from '@picsa/data/climate/forecasts';
 import { ENVIRONMENT } from '@picsa/environments';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -306,7 +306,7 @@ export class ForecastService extends PicsaAsyncService {
 
       // If empty (fresh install / offline), seed from bundled FORECASTS_DB
       if (cached.length === 0) {
-        const filters: ((v: IForecastRow) => boolean)[] = [
+        const filters: ((v: IForecastBundleRow) => boolean)[] = [
           (v) => v.forecast_type === 'downscaled',
           (v) => v.country_code === country_code,
           (v) => (admin_5 && v.downscaled_location === admin_5) || v.downscaled_location === admin_4,
@@ -441,7 +441,7 @@ export class ForecastService extends PicsaAsyncService {
     return (data || []).map((el) => SERVER_DB_MAPPING(el));
   }
 
-  private async storeHardcodedData(forecasts: IForecastRow[] = []) {
+  private async storeHardcodedData(forecasts: IForecastBundleRow[] = []) {
     const { error, success } = await this.dbCollection.bulkUpsert(
       forecasts.map((forecast) => SERVER_DB_MAPPING(forecast)),
     );
