@@ -21,6 +21,12 @@ interface IDownscaledLocation {
 
 type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
 
+/**
+ * Max seasonal forecasts shown per country.
+ * Malawi publishes a summary and full outlook (2), Zambia and Zimbabwe a single outlook (1).
+ */
+const SEASONAL_FORECAST_LIMIT: Record<string, number> = { mw: 2, zm: 1, zw: 1 };
+
 interface LoaderConfig {
   type: ForecastType;
   signal: WritableSignal<RxDocument<IForecast>[]>;
@@ -57,7 +63,8 @@ export class ForecastService extends PicsaAsyncService {
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
     //        Should try move to time-based filter/query instead, or better table replication
-    { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2, includeStorage: true },
+    // Seasonal limit resolved per-country via getSeasonalLimit (no static limit here)
+    { type: 'seasonal', signal: this.seasonalForecastDocs, includeStorage: true },
     { type: 'downscaled', signal: this.downscaledForecastDocs, limit: 2 },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
@@ -161,7 +168,8 @@ export class ForecastService extends PicsaAsyncService {
       // 1. Load cached data first (extremely fast local queries)
       const cachedData = await Promise.all(
         countryConfigs.map(async (config) => {
-          let cached = await this.loadCachedForecasts(country_code, config.type, config.limit || 1);
+          const limit = this.resolveConfigLimit(config, country_code);
+          let cached = await this.loadCachedForecasts(country_code, config.type, limit);
           // If seasonal has no cached data (e.g. fresh install / offline), seed from bundled FORECASTS_DB
           if (config.type === 'seasonal' && cached.length === 0) {
             const hardcoded = FORECASTS_DB.filter(
@@ -190,9 +198,10 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
+            const limit = this.resolveConfigLimit(config, country_code);
             // Only pass latest for daily/weekly where IDs are chronological date-based strings
             const latestDoc = config.type === 'daily' || config.type === 'weekly' ? cached[0] : undefined;
-            let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, config.limit);
+            let serverForecasts = await this.loadServerForecasts(country_code, config.type, latestDoc, limit);
             if (currentLoad.cancelled) return;
 
             // When testing locally / offline, if server returns no records and no cached records exist,
@@ -216,11 +225,20 @@ export class ForecastService extends PicsaAsyncService {
                     seen.add(doc.id);
                     return true;
                   })
-                  .slice(0, config.limit);
+                  .slice(0, limit);
               });
             }
           }),
         );
+        // Purge seasonal docs retired server-side (tombstoned or deleted) and drop them from view.
+        // Reconcile runs pull-only as bulkUpsert never deletes; offline devices clear on next online sync.
+        if (!currentLoad.cancelled) {
+          const removedIds = await this.reconcileForecastTombstones({ country_code, forecast_type: 'seasonal' });
+          if (!currentLoad.cancelled && removedIds.length > 0) {
+            const removed = new Set(removedIds);
+            this.seasonalForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id)));
+          }
+        }
       }
     } catch (err) {
       console.error('[ForecastService] Error loading forecasts', err);
@@ -304,6 +322,18 @@ export class ForecastService extends PicsaAsyncService {
           this.downscaledForecastDocs.set(success);
         }
       }
+      // Purge docs retired server-side (tombstoned or deleted) and drop them from view.
+      // Locations without a current-season forecast correctly show nothing instead of stale rows.
+      const removedIds = await this.reconcileForecastTombstones({
+        country_code,
+        forecast_type: 'downscaled',
+        downscaled_location: admin_5 ? [admin_4, admin_5] : [admin_4],
+      });
+      if (currentLoad.cancelled) return;
+      if (removedIds.length > 0) {
+        const removed = new Set(removedIds);
+        this.downscaledForecastDocs.update((docs) => docs.filter((doc) => !removed.has(doc.id)));
+      }
     } catch (err) {
       console.error('[ForecastService] Error loading downscaled forecasts', err);
     } finally {
@@ -311,6 +341,69 @@ export class ForecastService extends PicsaAsyncService {
         this.loadingDownscaled.set(false);
       }
     }
+  }
+
+  private getSeasonalLimit(country_code: string): number {
+    return SEASONAL_FORECAST_LIMIT[country_code] ?? 1;
+  }
+
+  private resolveConfigLimit(config: LoaderConfig, country_code: ICountryCode): number {
+    if (config.type === 'seasonal') return this.getSeasonalLimit(country_code);
+    return config.limit ?? 1;
+  }
+
+  /**
+   * Remove local forecast docs retired on the server (storage_file nulled as tombstone,
+   * or rows deleted outright). Forecasts sync pull-only via bulkUpsert which never deletes,
+   * so without this cached docs and downloaded attachments would survive server-side
+   * retirement indefinitely. The server is treated as source of truth within the queried scope.
+   * Only runs after a successful server response - never wipes on offline/error.
+   * @returns ids removed from the local collection
+   */
+  private async reconcileForecastTombstones(scope: {
+    country_code: ICountryCode;
+    forecast_type: ForecastType;
+    downscaled_location?: string[];
+  }): Promise<string[]> {
+    await this.supabaseService.ready();
+    if (!this.supabaseService.isAvailable()) return [];
+    const { country_code, forecast_type, downscaled_location } = scope;
+    const table = this.supabaseService.db.table('forecasts');
+    const query = table
+      .select<'id,storage_file', Pick<IForecastRow, 'id' | 'storage_file'>>('id,storage_file')
+      .eq('forecast_type', forecast_type);
+    if (country_code !== 'global') {
+      query.eq('country_code', country_code);
+    }
+    if (downscaled_location) {
+      query.in('downscaled_location', downscaled_location);
+    }
+    const { data, error } = await query;
+    if (error) {
+      console.error('[Forecast] tombstone reconcile failed, keeping local docs', error);
+      return [];
+    }
+    const serverRows = data || [];
+    const serverIds = new Set(serverRows.map((row) => row.id));
+    const selector: MangoQuerySelector<IForecast> = { forecast_type };
+    if (country_code !== 'global') {
+      selector.country_code = country_code;
+    }
+    if (downscaled_location) {
+      selector.downscaled_location =
+        downscaled_location.length > 1 ? { $in: downscaled_location } : downscaled_location[0];
+    }
+    const cached = await this.dbCollection.find({ selector }).exec();
+    const cachedIds = new Set(cached.map((doc) => doc.id));
+    const tombstonedIds = serverRows
+      .filter((row) => row.storage_file === null && cachedIds.has(row.id))
+      .map((row) => row.id);
+    const orphanedIds = [...cachedIds].filter((id) => !serverIds.has(id));
+    const removeIds = [...new Set([...tombstonedIds, ...orphanedIds])];
+    if (removeIds.length > 0) {
+      await this.dbCollection.bulkRemove(removeIds);
+    }
+    return removeIds;
   }
 
   private async loadCachedDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
