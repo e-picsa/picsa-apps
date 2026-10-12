@@ -88,6 +88,7 @@ apps/picsa-server/.env.server
 .nx
 .temp
 .github/issues
+.opencode
 
 # Database backups and local sync dumps
 apps/picsa-server/.cache
