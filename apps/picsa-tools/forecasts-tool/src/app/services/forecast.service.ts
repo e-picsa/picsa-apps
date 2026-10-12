@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB, type IForecastBundleRow } from '@picsa/data/climate/forecasts';
@@ -52,8 +52,6 @@ interface ILoadOptions {
   force?: boolean;
 }
 
-export const FORECAST_STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
-
 /** Exported for unit testing the bypass matrix without booting the service */
 export function shouldUseBypassStubs(): boolean {
   if (ENVIRONMENT.production) return true;
@@ -101,11 +99,6 @@ export class ForecastService extends PicsaAsyncService {
   private readonly LAST_SYNC_STORAGE_KEY = 'picsa_forecast_last_sync';
   public lastSyncedAt = signal<string | undefined>(this.readPersistedSyncTime());
   public isForceRefreshing = signal(false);
-  public isStale = computed(() => {
-    const last = this.lastSyncedAt();
-    if (!last) return true;
-    return Date.now() - new Date(last).getTime() > FORECAST_STALE_THRESHOLD_MS;
-  });
 
   private loaderConfigs: LoaderConfig[] = [
     // TODO - limit not very useful, can have multiple translated versions
@@ -302,7 +295,6 @@ export class ForecastService extends PicsaAsyncService {
         await Promise.all(
           serverConfigs.map(async (config) => {
             const cached = config.signal();
-            const cached = config.signal();
             const { limit } = config;
             // Only pass latest for daily/weekly where IDs are chronological date-based strings (excluding stubs).
             // On force refresh bypass the incremental bound so recent records are re-validated.
@@ -390,7 +382,6 @@ export class ForecastService extends PicsaAsyncService {
   private async loadServerForecasts(
     country_code: CountryCodeLegacy,
     forecast_type: ForecastType,
-    latest?: IForecast,
     latest?: IForecast,
     limit?: number,
     options: ILoadOptions = {},
