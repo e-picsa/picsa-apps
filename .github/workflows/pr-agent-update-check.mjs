@@ -98,8 +98,24 @@ async function getLiteLlmCatalog() {
 function isLiteLlmModel(modelKey, catalog) {
   const lowerKey = modelKey.toLowerCase();
   const withoutProvider = lowerKey.replace(/^(openrouter|gemini)\//, '');
+  const bareModel = withoutProvider.split('/').filter(Boolean).pop();
+  const dotModel = withoutProvider.replace(/\//g, '.');
 
-  return Boolean(catalog[lowerKey] || catalog[withoutProvider] || catalog[modelKey]);
+  if (
+    catalog[lowerKey] ||
+    catalog[withoutProvider] ||
+    (bareModel && catalog[bareModel]) ||
+    catalog[dotModel] ||
+    catalog[modelKey]
+  ) {
+    return true;
+  }
+
+  if (bareModel) {
+    return Object.keys(catalog).some((key) => key.endsWith(`/${bareModel}`) || key.endsWith(`.${bareModel}`));
+  }
+
+  return false;
 }
 
 function findLatestGeminiFlash(models, catalog) {

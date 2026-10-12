@@ -421,6 +421,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `## Screenshots / Videos`: UI / visual change evidence.
   - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
 
+### LiteLLM Model Catalog Matching in PR-Agent Check (`pr-agent-update-check.mjs`)
+
+- **OpenRouter Catalog Removal in Upstream LiteLLM**: LiteLLM upstream removed all `openrouter/` rows from its static cost catalog (`model_prices_and_context_window.json`), because OpenRouter serves dynamic models as an OpenAI-compatible gateway.
+- **Provider Prefix vs Bare Model Names**: OpenRouter model IDs include vendor prefixes (e.g. `openai/gpt-6-luna`), whereas LiteLLM catalogs OpenAI and base models using bare identifiers (`gpt-6-luna`) or dot-notation (`openai.gpt-6-luna`).
+- **Compatibility Verification (`isLiteLlmModel`)**: In `.github/workflows/pr-agent-update-check.mjs`, stripping only `^(openrouter|gemini)\/` previously left `openai/gpt-6-luna`, causing catalog checks to fail with `Could not find a LiteLLM-compatible Luna model`. The helper must evaluate the bare model name (`withoutProvider.split('/').pop()`), dot-separated format, and suffix matches (`endsWith`) to verify LiteLLM support for the underlying model.
+
 ### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
 
 - **CRITICAL MAPPING GOTCHA**: In the Supabase table `climate_station_data`, the column is named `station_id`, but its foreign key constraint is:
