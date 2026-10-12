@@ -20,6 +20,7 @@ import ZM_CROP_DATA from '@picsa/crop-probability/src/app/data/zm/index';
 import ZW_CROP_DATA from '@picsa/crop-probability/src/app/data/zw/index';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IProbabilityTable, IStationCropData } from '@picsa/crop-probability/src/app/models';
+import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -300,8 +301,7 @@ export class CropAppDiffComponent implements AfterViewInit {
    */
   private countDistrictsWithoutData(coveredLocationIds: Set<string>): number {
     const locationData = this.deploymentService.activeDeploymentLocationData();
-    const districts =
-      locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
+    const districts = getDeepestLocations(locationData);
     const downscaledByLocation = arrayToHashmap(this.service.downscaledData(), 'location_id');
     let count = 0;
     for (const district of districts) {
@@ -371,9 +371,8 @@ export class CropAppDiffComponent implements AfterViewInit {
 
   private locationLabels = computed(() => {
     const locationData = this.deploymentService.activeDeploymentLocationData();
-    const locations = locationData.admin_5?.locations ?? locationData.admin_4?.locations ?? [];
     const labels: Record<string, string> = {};
-    for (const location of locations) labels[location.id] = location.label;
+    for (const location of getDeepestLocations(locationData)) labels[location.id] = location.label;
     return labels;
   });
 

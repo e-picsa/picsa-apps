@@ -2,8 +2,9 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { getGeoLocationData } from '../../../../libs/data/geoLocation';
+import { getDeepestLocations, getGeoLocationData } from '../../../../libs/data/geoLocation';
 import type { ICountryCode } from '../../../../libs/data/deployments/countries';
+import type { IDeepestLocation } from '../../../../libs/data/geoLocation/types';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   computeExpectedProbabilityTable,
@@ -134,7 +135,7 @@ interface ISyncRowContext {
   stationDataHashmap: Map<string, IStationDataRow>;
   cropDataHashmap: Record<string, ICropData['Row']>;
   stationNameHashmap: Map<string, string>;
-  locations: { id: string; label: string; admin_4?: string }[];
+  locations: IDeepestLocation[];
   countryDir: string;
   auditOnly: boolean;
 }
@@ -195,9 +196,7 @@ async function fetchSyncContext(supabase: SupabaseClient, country: string, optio
   }
 
   const locationData = getGeoLocationData(country as ICountryCode);
-  // Deepest tier holds districts (zm: admin_5, zw: admin_6); entries carry their admin_4 parent id
-  const locations =
-    locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
+  const locations = getDeepestLocations(locationData);
 
   const countryDir = getCountryDir(country);
   if (!options.auditOnly && !fs.existsSync(countryDir)) {
@@ -240,7 +239,7 @@ function processDownscaledRow(
 
   // Location-based file naming matches existing app assets (<parent>--<location>.json)
   const match = ctx.locations.find((v) => v.id === row.location_id);
-  const parentId = match?.admin_4 ?? '';
+  const parentId = match?.parentId ?? '';
   const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
   const label = match?.label ?? row.location_id;
   const station_label = ctx.stationNameHashmap.get(row.station_id) ?? row.station_id;

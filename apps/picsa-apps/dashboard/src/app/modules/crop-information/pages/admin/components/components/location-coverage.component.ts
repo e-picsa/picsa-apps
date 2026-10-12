@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
@@ -63,14 +64,10 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public rows = computed<ICoverageRow[]>(() => {
     const locationData = this.deploymentService.activeDeploymentLocationData();
-    const parentLabels: Record<string, string> = {};
-    for (const parent of locationData.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
-    const deepest =
-      locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
-    const geoLocations = deepest.map((location: { id: string; label: string; admin_4?: string }) => ({
-      id: location.id,
-      label: location.label,
-      parent: location.admin_4 ? (parentLabels[location.admin_4] ?? '') : '',
+    const geoLocations = getDeepestLocations(locationData).map(({ id, label, parentLabel }) => ({
+      id,
+      label,
+      parent: parentLabel,
     }));
     const stationHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const dbRows: IPairingRow[] = this.service.downscaledData().map((row) => ({

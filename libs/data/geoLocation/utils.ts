@@ -1,4 +1,4 @@
-import { IBoundaryData, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
+import { IBoundaryData, IDeepestLocation, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
 
 import * as topojson from 'topojson-client';
 
@@ -12,10 +12,21 @@ export function getLocationSlots(data: IGeolocationData): GeoLocationSlot[] {
   return ALL_SLOTS.filter((slot) => data[slot] !== undefined);
 }
 
-/** Locations at the deepest defined tier (e.g. districts) */
-export function getDeepestLocations(data: IGeolocationData): { id: string; label: string }[] {
+/** Locations at the deepest defined tier (e.g. districts), with parent tier references resolved */
+export function getDeepestLocations(data: IGeolocationData): IDeepestLocation[] {
   const slots = getLocationSlots(data);
-  return data[slots[slots.length - 1]]?.locations ?? [];
+  const locations: { id: string; label: string; admin_4?: string }[] = data[slots[slots.length - 1]]?.locations ?? [];
+  const parentLabels: Record<string, string> = {};
+  for (const parent of data.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
+  return locations.map((location) => {
+    const parentId = location.admin_4 ?? '';
+    return {
+      id: location.id,
+      label: location.label,
+      parentId,
+      parentLabel: parentId ? (parentLabels[parentId] ?? '') : '',
+    };
+  });
 }
 
 /** OSM-style level number of the deepest tier, for topojson geometry filtering */

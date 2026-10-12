@@ -177,10 +177,7 @@ export class DashboardCropAdminComponent {
       let skippedEmpty = 0;
 
       const locationData = this.deploymentService.activeDeploymentLocationData();
-      // Deepest tier holds districts (zm: admin_5, zw: admin_6); entries carry their admin_4 parent id.
-      // NOTE - getDeepestLocations strips parent ids, so read the raw tier instead.
-      const locations =
-        locationData.admin_6?.locations ?? locationData.admin_5?.locations ?? locationData.admin_4.locations;
+      const locations = getDeepestLocations(locationData);
 
       for (const row of downscaledRows || []) {
         if (!row.station_id || !row.water_requirements) continue;
@@ -216,10 +213,8 @@ export class DashboardCropAdminComponent {
         }
 
         // Find parent region ID and name
-        const match = locations.find((v) => v.id === row.location_id) as
-          | { id: string; label: string; admin_4?: string }
-          | undefined;
-        const parentId = match?.admin_4 || '';
+        const match = locations.find((v) => v.id === row.location_id);
+        const parentId = match?.parentId || '';
         const id = parentId ? `${parentId}/${row.location_id}` : row.location_id;
         const label = match?.label || row.location_id;
         const station_label = station.station_name as string;
