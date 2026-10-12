@@ -35,6 +35,8 @@ node_modules
 npm-debug.log
 yarn-error.log
 testem.log
+# agent harness tooling (own deps, never commit)
+/.opencode/
 /typings
 
 # System Files

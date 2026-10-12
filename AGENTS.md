@@ -75,6 +75,10 @@ To conserve context tokens and runtime, agents **MUST NOT** execute full applica
    - Do NOT run `yarn nx test` directly — `yarn ai:test` resolves the project and `--testFile` for you.
 3. **When Builds Are Permitted**:
    - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
+4. **Background Dev Servers (STRICT: Never Orphan, Always Spin Down)**:
+   - Do NOT start long-running dev servers (`yarn start`, `nx serve`, `supabase start/functions serve`) in the background as a matter of course. Prefer verifying via `yarn ai:lint` / `yarn ai:test`, and reuse a server the user already has running (check ports via `lsof` before assuming none exists).
+   - If a temporary server is genuinely required for verification: record its PID(s) immediately, and **kill the entire process tree before finishing** (killing only a parent `yarn`/`nx` wrapper orphans the child server — always verify the port is free with `lsof` afterwards, then kill any lingering listener PIDs too).
+   - Never leave a restarted user server behind silently: if you had to restart a user's dev server, tell them explicitly so they can manage it.
 
 ### Tool Usage Requirements (Crucial for Context Preservation)
 
