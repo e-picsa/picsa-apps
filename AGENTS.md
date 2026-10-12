@@ -36,7 +36,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
   - **Avoid deeply nested code** (such as nested `if`/`else` branches, nested ternaries, or sprawling callback trees) when handling edge cases or complex conditions.
   - Use **early returns**, **guard clauses**, and **isolated helper functions** to handle validations, degenerate inputs, and edge cases before executing core logic.
   - Prefer declarative dictionaries/lookup maps over sprawling `switch`/`if-else` blocks where applicable.
-  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility.
+  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility, however be sparing with this to avoid large css build (view encapsulation will repeat tailwind rules in built output).
 - **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 
 ## Agent Meta-Instructions

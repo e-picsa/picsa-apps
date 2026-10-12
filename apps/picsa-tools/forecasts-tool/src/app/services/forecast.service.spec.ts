@@ -293,3 +293,69 @@ describe('ForecastService cached stub handling', () => {
     expect(mockCollection.bulkRemove).not.toHaveBeenCalled();
   });
 });
+
+describe('ForecastService offline download guard', () => {
+  let service: ForecastService;
+  let mockSupabase: any;
+  let mockAttachment: any;
+  let downloader: any;
+
+  const doc = { id: '2026/weekly/zm_en' } as any;
+
+  beforeEach(async () => {
+    mockSupabase = {
+      ready: jest.fn().mockResolvedValue(undefined),
+      isAvailable: jest.fn().mockReturnValue(true),
+      storage: { getPublicLink: jest.fn() },
+    };
+    mockAttachment = {
+      ready: jest.fn().mockResolvedValue(undefined),
+      putAttachment: jest.fn().mockResolvedValue(doc),
+    };
+    downloader = {
+      start: jest.fn().mockResolvedValue(undefined),
+      completed: jest.fn(),
+      storage_path: jest.fn().mockReturnValue('zm/forecasts/weekly/2026/zm_en.pdf'),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        ForecastService,
+        { provide: SupabaseService, useValue: mockSupabase },
+        {
+          provide: PicsaDatabase_V2_Service,
+          useValue: {
+            ensureCollections: jest.fn().mockResolvedValue(undefined),
+            db: { collections: { forecasts: {} } },
+          },
+        },
+        { provide: PicsaDatabaseAttachmentService, useValue: mockAttachment },
+      ],
+    });
+    service = TestBed.inject(ForecastService);
+    await service.ready();
+  });
+
+  it('rejects download while server unavailable without touching storage', async () => {
+    mockSupabase.isAvailable.mockReturnValue(false);
+
+    await expect(service.downloadForecastFile(doc, downloader)).rejects.toThrow('offline');
+    expect(downloader.start).not.toHaveBeenCalled();
+    expect(mockSupabase.storage.getPublicLink).not.toHaveBeenCalled();
+  });
+
+  it('surfaces downloader errors as download failures', async () => {
+    downloader.completed.mockResolvedValue({ error: new Error('network reset'), data: undefined });
+
+    await expect(service.downloadForecastFile(doc, downloader)).rejects.toThrow('Download failed');
+    expect(mockAttachment.putAttachment).not.toHaveBeenCalled();
+  });
+
+  it('stores downloaded blobs as attachments', async () => {
+    const blob = new Blob(['pdf-bytes'], { type: 'application/pdf' });
+    downloader.completed.mockResolvedValue({ error: null, data: blob });
+
+    await service.downloadForecastFile(doc, downloader);
+
+    expect(mockAttachment.putAttachment).toHaveBeenCalledWith(doc, 'zm/forecasts/weekly/2026/zm_en.pdf', blob);
+  });
+});
