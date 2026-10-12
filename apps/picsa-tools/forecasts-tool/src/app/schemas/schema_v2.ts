@@ -33,7 +33,19 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
   },
 };
 
-export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
+export const SERVER_DB_MAPPING_V2 = (
+  row: Pick<
+    IForecastRow,
+    | 'country_code'
+    | 'downscaled_location'
+    | 'forecast_type'
+    | 'id'
+    | 'label'
+    | 'language_code'
+    | 'mimetype'
+    | 'storage_file'
+  >,
+): IForecast_V2 => {
   const { country_code, downscaled_location, forecast_type, id, label, language_code, mimetype } = row;
   return {
     country_code,

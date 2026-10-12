@@ -27,7 +27,7 @@ import { RxDocument } from 'rxdb';
 
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
 import { IForecast } from '../../schemas';
-import { ForecastService } from '../../services/forecast.service';
+import { ForecastService, isStubForecast } from '../../services/forecast.service';
 
 const STRINGS = { National: translateMarker('National') };
 
@@ -127,7 +127,10 @@ export class ForecastComponent implements OnDestroy {
   }
 
   private generateForecastSummary(docs: RxDocument<IForecast>[]): IForecastSummary[] {
-    const summaries = docs.map((doc) => {
+    // Display-layer bypass guarantee: stubs never render while bypassing, regardless
+    // of what the local cache holds (failed purges, races, legacy rows)
+    const visibleDocs = this.service.bypassStubs ? docs.filter((doc) => !isStubForecast(doc)) : docs;
+    const summaries = visibleDocs.map((doc) => {
       const { id, storage_file, forecast_type, language_code } = doc;
       // rename seasonal forecast title to say 'national' instead
       const title = forecast_type === 'seasonal' ? STRINGS.National : (forecast_type as string);

@@ -1,3 +1,15 @@
+/**
+ * Release Version Bumper
+ *
+ * Interactively prompts for the next release version (validates it increases the
+ * version code) and writes it to the root package.json plus the Android
+ * app/build.gradle versionName/versionCode.
+ *
+ * Usage:
+ *   yarn scripts:version
+ *
+ * Args: none (interactive prompts)
+ */
 import { readFileSync, readJSONSync, writeFileSync, writeJSONSync } from 'fs-extra';
 import prompts from 'prompts';
 import { resolve } from 'path';
