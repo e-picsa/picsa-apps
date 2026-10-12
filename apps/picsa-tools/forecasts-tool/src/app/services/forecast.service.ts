@@ -151,6 +151,10 @@ export class ForecastService extends PicsaAsyncService {
     return doc;
   }
 
+  private getStubId(country_code: string, forecast_type: IForecast['forecast_type']): string {
+    return `stub/${forecast_type}/${country_code}`;
+  }
+
   private isStubForecast(doc?: IForecast | RxDocument<IForecast>): boolean {
     return !!doc?.id?.startsWith('stub/');
   }
@@ -209,7 +213,7 @@ export class ForecastService extends PicsaAsyncService {
             const hasRealCache = cached.some((doc) => !this.isStubForecast(doc));
             // When testing locally / offline, if server returns no records and no cached records exist,
             // provide stub daily/weekly forecasts unless explicitly bypassed via ?bypassStubs=true (or in production)
-            if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs && cached.length === 0) {
+            if (serverForecasts.length === 0 && !hasRealCache && !this.bypassStubs) {
               serverForecasts = this.getStubForecasts(country_code, config.type);
             }
 
@@ -217,10 +221,8 @@ export class ForecastService extends PicsaAsyncService {
               const isStub = this.isStubForecast(serverForecasts[0]);
               // If real server forecasts arrived, purge any stubs from RxDB
               if (!isStub) {
-                const existingStubs = config.signal().filter((doc) => this.isStubForecast(doc));
-                if (existingStubs.length > 0) {
-                  await this.dbCollection.bulkRemove(existingStubs);
-                }
+                const stubId = this.getStubId(country_code, config.type);
+                await this.dbCollection.bulkRemove([stubId]);
               }
 
               const { success, error } = await this.saveForecasts(serverForecasts);
@@ -390,14 +392,18 @@ export class ForecastService extends PicsaAsyncService {
       selector.country_code = country_code;
     }
 
-    const docs = await this.dbCollection.find({ selector, sort: [{ id: 'desc' }] }).exec();
+    // Query with a small buffer (limit + 1) to account for potential stub document while keeping read bounded
+    const docs = await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit: limit + 1 }).exec();
     const realDocs = docs.filter((d) => !this.isStubForecast(d));
     const stubDocs = docs.filter((d) => this.isStubForecast(d));
 
     // If bypassing stubs or real cached forecasts exist, purge any stubs from RxDB
     if (this.bypassStubs || realDocs.length > 0) {
       if (stubDocs.length > 0) {
-        await this.dbCollection.bulkRemove(stubDocs);
+        await this.dbCollection.bulkRemove(stubDocs.map((d) => d.id));
+      } else {
+        const stubId = this.getStubId(country_code, forecast_type);
+        await this.dbCollection.bulkRemove([stubId]);
       }
       return realDocs.slice(0, limit);
     }
@@ -414,7 +420,7 @@ export class ForecastService extends PicsaAsyncService {
     if (forecast_type === 'daily') {
       return [
         {
-          id: `stub/daily/${country_code}`,
+          id: this.getStubId(country_code, 'daily'),
           country_code,
           forecast_type: 'daily',
           label: `Daily Weather Forecast (${today})`,
@@ -428,7 +434,7 @@ export class ForecastService extends PicsaAsyncService {
     if (forecast_type === 'weekly') {
       return [
         {
-          id: `stub/weekly/${country_code}`,
+          id: this.getStubId(country_code, 'weekly'),
           country_code,
           forecast_type: 'weekly',
           label: `7-Day Weather Outlook (${today})`,
