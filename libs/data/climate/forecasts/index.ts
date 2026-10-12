@@ -14,7 +14,7 @@ interface IForecastBundle {
   downscaled: IForecastBundleRow[];
 }
 
-// JSON imports are untyped at compile time; shape is enforced by sync-forecasts-bundle.ts
+// JSON imports are untyped at compile time; shape is enforced by sync-forecasts.ts
 const bundles = [mw, zm, zw] as unknown as IForecastBundle[];
 
 export const FORECASTS_DB: IForecastBundleRow[] = bundles.flatMap((bundle) => [

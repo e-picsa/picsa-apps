@@ -1,3 +1,19 @@
+/**
+ * Forecast Bundle Sync
+ *
+ * Pulls live seasonal and downscaled forecasts from Supabase and writes them as
+ * per-country JSON bundles ({ seasonal, downscaled }) consumed as the app's offline
+ * fallback via libs/data/climate/forecasts. Only rows with a storage_file are exported
+ * (tombstoned rows excluded); volatile timestamps are stripped for diff-stable output.
+ *
+ * Usage:
+ *   yarn scripts:forecasts:sync [--country=mw] [--local]
+ *
+ * Args:
+ *   --country=<code>  Only sync one country (mw, zm, zw). Default: all countries
+ *   --local           Pull from the local Supabase container instead of remote.
+ *                     Default pulls remote via apps/picsa-server/.env.server
+ */
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Database } from '@picsa/server-types';

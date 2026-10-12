@@ -1,3 +1,16 @@
+/**
+ * Crop DOCX Parser (one-off)
+ *
+ * Extracts and parses crop information tables from .docx files in input/ into
+ * structured output/ files (via a tmp/ working folder, see ./paths).
+ *
+ * Usage:
+ *   yarn scripts picsa/crop-probability/docx-parser/src/index
+ *
+ * Args: none (input/output/tmp folders are configured in ./paths)
+ *
+ * NOTE: one-off data preparation - verify output carefully before committing changes.
+ */
 import { emptyDirSync, ensureDirSync } from 'fs-extra';
 import { resolve } from 'path';
 

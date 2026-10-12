@@ -1,3 +1,27 @@
+/**
+ * Climate Data Sync
+ *
+ * Pulls upstream Climate API data into Supabase (climate_station_data), then exports
+ * per-station annual/monthly CSV summaries, station capabilities and a markdown audit
+ * report for the climate-tool assets.
+ *
+ * Usage:
+ *   yarn scripts:climate:sync [--country=mw] [--station=<station_id>] [--local]
+ *
+ * Args:
+ *   --country=<code>    Only sync one country (mw, zm, zw). Default: all countries
+ *   --station=<id>      Only sync a single station_id within the country
+ *   --only=<products>   Limit sync to specific climate products
+ *   --local             Use the local Supabase container instead of remote.
+ *                       Default uses apps/picsa-server/.env.server credentials
+ *   --env=<path>        Load environment variables from a custom env file
+ *   --input=<path>      Process a local fixture file instead of pulling live data
+ *   --audit-only        Compute and report changes without writing files
+ *   --compute-existing  Recompute capabilities from existing files, skipping pull
+ *   --no-pull           Skip the pull phase (use existing data only)
+ *   --refresh-api       Force refresh of upstream Climate API data into Supabase
+ *   --report=<path>     Audit report output path (default: dist/climate-sync-report.md)
+ */
 import { execSync } from 'child_process';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
