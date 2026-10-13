@@ -37,7 +37,9 @@
 }
 
 .map-floating-location {
-  @apply absolute left-3 right-3 top-14 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-slate-200/90 px-3 py-1.5 md:hidden;
+  @apply absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1.5 md:hidden;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
 
   ::ng-deep {
     .flex.gap-4.my-4 {
@@ -65,5 +67,7 @@
 }
 
 .floating-mobile-card {
-  @apply absolute left-3 right-3 bottom-4 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/90 p-3 md:hidden;
+  @apply absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl p-3 md:hidden;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
 }
