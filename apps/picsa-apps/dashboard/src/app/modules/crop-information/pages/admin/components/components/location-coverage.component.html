@@ -1,0 +1,78 @@
+<div class="space-y-4">
+  <p class="text-sm text-gray-600">
+    Coverage of downscaled water requirements per district, including locations sharing byte-identical definitions and
+    climate station probability availability. Select a row to view or change its linked climate station.
+  </p>
+
+  <!-- Summary Stats -->
+  <div class="flex flex-wrap gap-3">
+    <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">location_on</mat-icon>
+      <span class="text-sm font-medium">{{ stats().total }} districts</span>
+    </div>
+    <div class="flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-2 rounded">
+      <mat-icon class="text-red-600">error</mat-icon>
+      <span class="text-sm font-medium">{{ stats().noRequirements }} No Requirements</span>
+    </div>
+    <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2 rounded">
+      <mat-icon class="text-blue-600">group</mat-icon>
+      <span class="text-sm font-medium">{{ stats().paired }} Paired</span>
+    </div>
+    <div class="flex items-center gap-2 bg-green-50 border border-green-200 px-3 py-2 rounded">
+      <mat-icon class="text-green-600">check_circle</mat-icon>
+      <span class="text-sm font-medium">{{ stats().unique }} Unique</span>
+    </div>
+    <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded">
+      <mat-icon class="text-emerald-600">check_circle</mat-icon>
+      <span class="text-sm font-medium">{{ stats().probAvailable }} Probabilities Available</span>
+    </div>
+    @if (stats().probMissing > 0) {
+      <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-2 rounded">
+        <mat-icon class="text-amber-600">warning</mat-icon>
+        <span class="text-sm font-medium">{{ stats().probMissing }} Missing Probabilities</span>
+      </div>
+    }
+  </div>
+
+  <!-- Data Table -->
+  @if (rows().length > 0) {
+    <picsa-data-table
+      [data]="rows()"
+      [options]="tableOptions"
+      [valueTemplates]="valueTemplates"
+      (rowClick)="openSetStationDialog($event)"
+    ></picsa-data-table>
+
+    <!-- Status Template -->
+    <ng-template #statusTemplate let-row="row">
+      <mat-icon [class]="statusDisplay[row.status].color" [matTooltip]="row.status" [attr.aria-label]="row.status">
+        {{ statusDisplay[row.status].icon }}
+      </mat-icon>
+    </ng-template>
+
+    <!-- Station Template -->
+    <ng-template #stationTemplate let-row="row">
+      @if (row.station && row.station !== 'No linked station') {
+        <span class="font-medium text-gray-800">{{ row.station }}</span>
+      } @else {
+        <span class="text-gray-400 italic">No linked station</span>
+      }
+    </ng-template>
+
+    <!-- Probabilities Template -->
+    <ng-template #probabilitiesTemplate let-row="row">
+      <mat-icon
+        [class]="probabilityDisplay[row.probabilities].color"
+        [matTooltip]="probabilityDisplay[row.probabilities].label"
+        [attr.aria-label]="probabilityDisplay[row.probabilities].label"
+      >
+        {{ probabilityDisplay[row.probabilities].icon }}
+      </mat-icon>
+    </ng-template>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
+      <p class="text-gray-600">No districts found for the active deployment</p>
+    </div>
+  }
+</div>

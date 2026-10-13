@@ -11,12 +11,21 @@ export type ICropData = Database['public']['Tables']['crop_data'];
 
 export type ICropDataDownscaled = Database['public']['Tables']['crop_data_downscaled'];
 
+export type IClimateStationData = Database['public']['Tables']['climate_station_data'];
+
+export type IClimateStations = Database['public']['Tables']['climate_stations'];
+
 // Specify more accurate type for downscaled water requirement (db type is just JSON)
 export type ICropDataDownscaledWaterRequirements = { [crop: string]: { [variety: string]: number } };
 
 export type ICropDataMergedWaterRequirement = { location_id: string; water_requirement: number };
 
 export type ICropDataMerged = ICropData['Row'] & { downscaled: ICropDataMergedWaterRequirement[] };
+
+// Station data with joined station metadata
+export type IStationDataWithMeta = IClimateStationData['Row'] & {
+  station: IClimateStations['Row'] | null;
+};
 
 @Injectable({ providedIn: 'root' })
 export class CropInformationService extends PicsaAsyncService {
@@ -33,9 +42,14 @@ export class CropInformationService extends PicsaAsyncService {
   public get stationDataTable() {
     return this.supabaseService.db.table('climate_station_data');
   }
+  public get stationsTable() {
+    return this.supabaseService.db.table('climate_stations');
+  }
 
   public cropData = signal<ICropData['Row'][]>([]);
   public downscaledData = signal<ICropDataDownscaled['Row'][]>([]);
+  public stationData = signal<IStationDataWithMeta[]>([]);
+  public stations = signal<IClimateStations['Row'][]>([]);
   public cropDataMerged = computed(() => {
     const data = this.cropData();
     const downscaledData = this.downscaledData();
@@ -89,6 +103,39 @@ export class CropInformationService extends PicsaAsyncService {
     this.notificationService.showSuccessNotification(`Import successful`);
   }
 
+  /** Reload all crop data for the active deployment */
+  public async reload() {
+    await this.loadCropData();
+  }
+
+  /** Update the climate station linked to a downscaled location record */
+  public async setDownscaledStation(id: string, station_id: string) {
+    const { error } = await this.cropDataDownscaledTable.update({ station_id }).eq('id', id);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    await this.loadCropData();
+    this.notificationService.showSuccessNotification(`Linked station updated`);
+  }
+
+  /** Create empty placeholder records so locations missing entries appear in quality control */
+  public async addPlaceholderLocations(locationIds: string[]) {
+    const { country_code } = this.dashboardService.activeDeployment();
+    const entries: ICropDataDownscaled['Insert'][] = locationIds.map((location_id) => ({
+      country_code,
+      location_id,
+      water_requirements: {},
+    }));
+    const { error } = await this.cropDataDownscaledTable.upsert(entries);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    await this.loadCropData();
+    this.notificationService.showSuccessNotification(`Placeholder entries added`);
+  }
+
   public async update(data: ICropData['Update']) {
     const { id, ...update } = data;
     // ensure id included to avoid updating all rows
@@ -105,26 +152,44 @@ export class CropInformationService extends PicsaAsyncService {
    * Core Methods
    ****************************************************************************************/
 
-  /** Load data from crop_data and crop_data_downscaled tables */
+  /** Load data from crop_data, crop_data_downscaled, climate_station_data and climate_stations tables */
   private async loadCropData() {
     const { country_code } = this.dashboardService.activeDeployment();
     const promises = [
       this.cropDataTable.select<'*', ICropData['Row']>('*').eq('country_code', country_code).order('id'),
       this.cropDataDownscaledTable.select<'*', ICropDataDownscaled['Row']>('*').eq('country_code', country_code),
+      // climate_station_data uses the newer country_code enum, cast to match deployment value
+      this.stationDataTable.select<'*', IClimateStationData['Row']>('*').eq('country_code', country_code as never),
+      this.stationsTable.select<'*', IClimateStations['Row']>('*').eq('country_code', country_code),
     ];
-    // wait for both requests to resolve successfully with data before updating signals
-    const [dataRes, downscaledDataRes] = await Promise.allSettled(promises);
-    if (dataRes.status === 'fulfilled' && downscaledDataRes.status === 'fulfilled') {
+    // wait for all requests to resolve successfully with data before updating signals
+    const [dataRes, downscaledDataRes, stationDataRes, stationsRes] = await Promise.allSettled(promises);
+    if (
+      dataRes.status === 'fulfilled' &&
+      downscaledDataRes.status === 'fulfilled' &&
+      stationDataRes.status === 'fulfilled' &&
+      stationsRes.status === 'fulfilled'
+    ) {
       const data = dataRes.value.data;
       const downscaledData = downscaledDataRes.value.data;
-      if (data && downscaledData) {
+      const stationData = stationDataRes.value.data;
+      const stations = stationsRes.value.data;
+      if (data && downscaledData && stationData && stations) {
         this.cropData.set(data as ICropData['Row'][]);
         this.downscaledData.set(downscaledData as ICropDataDownscaled['Row'][]);
+        this.stations.set(stations as IClimateStations['Row'][]);
+        // Merge station metadata client-side (climate_station_data.station_id references climate_stations.id)
+        const stationsHashmap = arrayToHashmap(stations as IClimateStations['Row'][], 'id');
+        const mergedStationData = (stationData as IClimateStationData['Row'][]).map((row) => ({
+          ...row,
+          station: stationsHashmap[row.station_id] ?? null,
+        }));
+        this.stationData.set(mergedStationData);
         return;
       }
     }
     // handle errors
-    console.error(dataRes, downscaledDataRes);
+    console.error(dataRes, downscaledDataRes, stationDataRes, stationsRes);
     throw new Error(`Data fetching failed, see console logs for details`);
   }
 

@@ -1,3 +1,17 @@
+/**
+ * Media Batch Processor
+ *
+ * Transcodes videos found in ./input (loudness-normalised to a target LUFS level)
+ * and writes the results to ./output (emptied first). Input/output folders are
+ * configured in code (VideoProcessor options), not via CLI args.
+ *
+ * Usage:
+ *   yarn scripts media/process
+ *
+ * Args: none (configure folders and codecs in the VideoProcessor options below)
+ *
+ * Requires: ffmpeg installed and available in PATH
+ */
 import { promises as fs } from 'fs';
 import path, { resolve } from 'path';
 import { spawn } from 'child_process';

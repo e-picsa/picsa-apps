@@ -17,6 +17,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Admin Testing**: `admin@picsa.app` / `admin@picsa.app`
 - **Non-Admin Testing**: `user@picsa.app` / `user@picsa.app`
 - **Local Supabase Inbucket (Mailpit)**: Web interface runs at `http://localhost:54324/`. Internal Docker SMTP runs on port `1025` (`host: 'inbucket'`).
+- **Parallel Dev Server Ports & Worktree Concurrency**:
+  - The frontend app (`picsa-apps-app`) defaults to `4200` (range `4200..4229`), while the dashboard (`picsa-apps-dashboard`) defaults to `3000` (range `3000..3029`).
+  - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
+  - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
+  - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
 
 ---
 
@@ -32,6 +37,14 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Deno edge functions and standalone Node scripts fail if `@picsa/utils` re-exports heavy root dependencies (e.g. Angular router/core, rxdb, xlsx, xml).
 - Keep platform-agnostic, dependency-free utilities (`climate.utils.ts`, `object.utils.ts`, `async.utils.ts`) isolated so they rely only on native JavaScript/Web APIs (`Math`, `Array`, `Map`, `crypto.subtle`) and can be safely imported anywhere.
+
+### MapLibre GL JS Discrete Zoom & Raster Tile Performance
+
+- **Continuous Trackpad Zoom Stretches Raster Tiles**: MapLibre's built-in `ScrollZoomHandler` treats trackpad/wheel gestures on macOS as continuous fractional zooms, bypassing `zoomSnap` even when configured (`zoomSnap > 0`). Fractional zoom levels (e.g. 4.35) cause 256×256 raster tiles to be continuously stretched by up to `\sqrt{2}\times` via GPU texture scaling, rather than displayed 1:1 pixel-crisp at integer zoom levels.
+- **Discrete Wheel Zoom & Mouse-Anchor Pan**: To achieve discrete interval zooming with pan-to-mouse centering, disable default scroll-zoom (`map.scrollZoom.disable()`) and attach a custom wheel listener (`{ passive: false }`) on the map container. Calculate target integer zoom levels with debounced/throttled deltas, unproject mouse screen coordinates (`map.unproject(mousePoint)`), and call `map.easeTo({ zoom: targetZoom, around: mouseLngLat, duration: 120 })`.
+- **Eliminating Stretched Cross-Fade Artifacts (`raster-fade-duration`)**: By default, MapLibre uses `raster-fade-duration: 300` ms on raster layers. During zoom changes, lower-zoom stretched textures linger visibly while fading in newly loaded tiles. Setting `paint: { 'raster-fade-duration': 0 }` on the raster layer specification makes tile replacement instantaneous and removes blurry fade lag.
+- **Snapping FitBounds**: Specify `zoomSnap: 1` in `new maplibregl.Map(...)` so that initial `fitBounds(bounds)` calculations snap camera results to discrete integers instead of settling on fractional zooms.
+- **Mobile Touch Gestures (Pinch & Double-Tap)**: MapLibre's `TapZoomHandler` handles 1-finger double-tap (zooms in by 1) and 2-finger single-tap (zooms out by 1), automatically honoring `zoomSnap: 1` centered around the tap coordinates. For two-finger pinch-zoom, `TwoFingersTouchZoomHandler` allows fluid continuous zooming under fingers; when the gesture ends, listening to `moveend` and easing to `Math.round(currentZoom)` snaps any fractional zoom to the nearest integer so raster tiles render sharply. Calling `map.touchZoomRotate.disableRotation()` prevents accidental rotation during mobile pinch gestures.
 
 ### Leaflet Removal (Pure MapLibre GL JS)
 
@@ -64,7 +77,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
-- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android`.
+- Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
@@ -129,6 +142,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   The seeded admin user (`00000000-0000-0000-0000-000000000000` / `admin@picsa.app`) requires rows in `public.user_roles` for every active deployment in `public.deployments` with roles `['admin', 'deployments.admin']`. This populates the `picsa_roles` JWT claim via the `custom_access_token_hook`, unlocking dashboard routes and permissions. This is automatically ensured by `seedDevUsersAndPermissions()` in both `db:seed` and `db:seed:extended`.
 - **Per-Table Extended Seed Cache**:
   In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
+- **Extended Storage Mirroring (`mirrorStorage`)**:
+  Tables declaring `mirrorStorage: ['<path-column>']` in `db-seed.config.ts` (currently `forecasts.storage_file`) have their referenced files downloaded from remote into local buckets ahead of row upserts, giving 1:1 local fidelity with working downloads. This ordering is load-bearing: `forecasts_storage_file_fkey` rejects rows whose paths are absent from `storage_objects` (verified live), so files must land before rows. Never use `columnMappings` to rewrite storage paths on import — it silently corrupts references (all short-term forecasts once mislabelled as samples this way); unmirrorable files warn and null the column instead. Tombstoned rows (`storage_file` null) are preserved as nulls, never revived.
 - **Dev Users & Storage Seeding**:
   `supabase/seed.sql` creates local dev users (`admin@picsa.app`, `user@picsa.app`) automatically on `supabase db reset`. In extended mode, `db-seed-export.ts` directly seeds local storage objects and baseline configurations post-import so local logins work out of the box.
 
@@ -168,7 +183,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - `openapi-fetch` returns a discriminated union: `{ data: T; error?: never; response: Response } | { data?: never; error: unknown; response: Response }`.
 - **Always Destructure**: Always destructure `{ data: apiData, error: apiError, response } = await apiClient.POST(...)` and handle `if (apiError)` upfront.
-- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined`.
+- **Avoid Direct `apiResult.data?.data` Checks**: Inspecting `apiResult.data?.data && apiResult.data.data.length` without destructuring causes TypeScript and Deno typecheckers to narrow `apiResult.data` to `never` across the error branch, throwing `TS2339: Property 'data' does not exist on type 'never'`. Destructuring converts `data?: never` to a clean `T | undefined``.
 
 ### Sample Forecast Data & Local Development Fixtures
 
@@ -176,6 +191,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Static Storage Fixtures**: Fixed sample assets (such as `sample_daily.pdf`, `sample_seasonal.pdf`, `sample_weekly.html`) reside in `supabase/data/storage/global/forecasts/` and are seeded into the local Supabase `global` bucket via `yarn nx run picsa-server:seed`.
 - **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
 - **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
+- **Seasonal/Downscaled Retirement via `storage_file` Tombstone**: Retire forecasts by nulling `storage_file`, never by client-only filtering. All forecast queries already exclude null files, `ForecastService.reconcileForecastTombstones` purges matching RxDB docs (plus attachments) on next online sync, and the dashboard keeps listing tombstoned rows as an admin record. `bulkUpsert` never deletes, so server-side deletes/tombstones are otherwise invisible to cached clients forever. The reconcile is tombstone-only by design: mere absence from a server response must never delete, as empty dev databases would otherwise cannibalise valid bundle-seeded docs on every load (verified live: orphan-deletion wiped the `2026/seasonal/zm_en` fallback against an empty local `forecasts` table).
+- **Seed Import Overwrites `storage_file` (Tombstone Resurrection Trap)**: `db-seed.ts` applies `columnMappings` on import (`forecasts.storage_file` forced to the sample PDF) and empties tables before upserting. Retired rows must therefore be *removed* from `supabase/data/forecasts_rows.csv`, not nulled in place — nulled CSV values are overwritten back to live paths on every seed. Header-only CSVs are supported via an empty-skip guard in `importDBRows` (PostgREST rejects empty upsert payloads).
+- **ZM Seasonal UUID Ordering Trap**: Legacy ZM seasonal rows use bare uuid ids while dashboard uploads use `{YEAR}/seasonal/{lang}`. Under `order('id', desc)` the stale uuid (`'c…'`) sorts ahead of current-season ids (`'2…'`), so per-country limits surface the wrong row unless old rows are tombstoned first. Match retirement predicates on `storage_file`/`label` as well as `id` — the season is absent from uuid ids.
+- **Forecast Bundle Sync (`yarn scripts:forecasts:sync`)**: Offline fallback rows live in `libs/data/climate/forecasts/{mw,zm,zw}.json` (shape `{ seasonal, downscaled }`) re-exported via `index.ts` as `FORECASTS_DB: IForecastBundleRow[]`. Never hand-edit the JSON — regenerate with the script (remote by default via `.env.server`, `--local` for docker, `--country=` to scope). The script exports live rows only (`storage_file NOT NULL`), strips `created_at`/`updated_at` for diff-stable output, and sorts byte-wise by id. `resolveJsonModule` is enabled, but JSON imports are untyped so `index.ts` uses a single documented `as unknown as` cast. Forecasts display must never use count limits — rows multiply by language, so caps silently drop translations; tombstone status (`isLiveForecast`) is the only exclusion.
+- **Inspecting RxDB/Dexie State From the Browser**: Dexie stores `_deleted` as the strings `'1'`/`'0'` (booleans are not indexable), so a raw-row check like `!!row._deleted` reports live `'0'` rows as deleted — always compare against `'1'` or read via the RxDB API. Related: `bulkUpsert` short-circuits byte-identical re-seeds without advancing `_meta.lwt`, so a frozen `lwt` across reloads means "nothing changed", not "writes are broken". In dev only, `wrappedValidateAjvStorage` rejects docs carrying props absent from the schema (e.g. legacy `location`), so server/bundle rows must pass through field-picking mappers like `SERVER_DB_MAPPING_V2` — raw rows go to the error bucket.
 
 ### Climate Data Sync & Upstream API Fault Tolerance
 
@@ -221,6 +241,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
 - **Custom Dialog Components**: Custom dialog components that define their own internal `.dialog-header`, `.dialog-body`, and `.dialog-actions` MUST pass `panelClass: 'no-padding'` in `dialog.open()` configuration. Without this, the global 24px surface padding wraps the internal padding, producing severe double-padding (>120px wasted width on mobile), squeezing text columns to 3–4 words per line, and pushing bottom action buttons offscreen.
 - **Auto-Focus Suppression**: Pass `autoFocus: false` in `dialog.open()` when opening informational dialogs whose first element is a close icon button. This prevents Angular Material from immediately focusing the close button and drawing an MDC circular focus/state ring over header titles.
+
+---
+
+### Jest ESM Transformation & Native Mocks in Tool Specs
+
+- **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
+- **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
 
 ---
 
@@ -353,7 +380,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - When $p \ge 0.05$ (inconclusive / no clear trend) or data is insufficient, **no line is plotted** to avoid visually asserting an unconfirmed directional trajectory. Grey dashed lines are strictly prohibited on public graphs.
 - **Card Header & Rate Alignment in Sidenav Panel**:
   - Always render the series/chart heading (`item.label | translate` with series color dot) across both single-series and multi-series charts. Never suppress the heading based on series count (`@if (analyses.length > 1)`).
-  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]=\"!showRate\"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
+  - In the outcome badge row, use flexbox `justify-between` and toggle `invisible` (`visibility: hidden`) with `[attr.aria-hidden]="!showRate"` on the rate label when $p \ge 0.05$ or rate is absent. This hides the numeric rate while maintaining consistent badge alignment to the right and preventing card height collapse.
 - **4 Explicit Outcome Categories**:
   1. `upward_trend`: $p < 0.05$ and slope $> 0$.
   2. `downward_trend`: $p < 0.05$ and slope $< 0$.
@@ -367,6 +394,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - $R^2$ is provided purely as a descriptive measure of variance explained in the collapsible statistics panel.
   - In highly variable climate series (e.g. rainfall), low $R^2$ is common even when an important trend exists. $R^2$ is never used as an arbitrary gating threshold or styled as "failing".
 - **Monthly Timespan Exclusion**: Trendline tools are strictly scoped to annual and seasonal indicators, hiding on monthly views where unadjusted seasonality would distort linear fits.
+
+### Crop Admin Locations & Station Selection Probability Availability
+
+- **Linked Station Probability Status**:
+  - In `CropLocationCoverageComponent`, each district/location displays a dedicated **Probabilities** column using concise icon-only indicators (avoiding redundant text/counts since "No station" is already covered by the Linked Station column and summary totals appear in the header legend):
+    - **Check mark** (`check_circle`, green): station is linked and has crop probability records in `climate_station_data.crop_probability_data`.
+    - **Warning** (`warning`, amber): station is linked but has no probability records in `climate_station_data` (downscaled tables cannot be calculated).
+    - **No Station** (`link_off`, gray): no climate station is linked to this location.
+  - The Locations tab header includes summary badges tracking `Probabilities Available` and `Missing Probabilities` counts across all locations.
+  - In the station picker modal (`CropLinkedStationSelectComponent`), dropdown options display clean status icons (`check_circle` vs `warning`) alongside district tags, and a contextual status card is displayed beneath the dropdown explaining whether probability records exist for the selected station before committing the change.
+- **Multiple Valid Stations in Same District (e.g. Salima vs Salima Airport)**: National meteorological services may operate multiple valid stations within the same district (such as `mw/salima` town/boma and `mw/salima_airport`). In production Supabase, `crop_data_downscaled` for district `salima` is linked to `mw/salima_airport`, where `crop_probability_data` has 1,750 records computed upstream. Both stations are valid, and no schema or data alteration is needed.
 
 ### Angular Material Component Conventions
 
@@ -415,6 +453,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `## Related Issues`: Clear issue links using keywords (`Closes #123`, `Relates to #456`, `Part of Epic #789`).
   - `## Screenshots / Videos`: UI / visual change evidence.
   - **Preserve AI Summary Placeholders**: The trailing section below `---` containing `## AI Summary` with `pr_agent:summary`, `pr_agent:walkthrough`, and `pr_agent:diagram` must never be removed. The repository GitHub Actions workflow triggers PR-Agent via `/describe` which replaces these exact tokens with auto-generated walkthroughs and Mermaid architecture diagrams.
+
+### LiteLLM Model Catalog Matching in PR-Agent Check (`pr-agent-update-check.mjs`)
+
+- **OpenRouter Catalog Removal in Upstream LiteLLM**: LiteLLM upstream removed all `openrouter/` rows from its static cost catalog (`model_prices_and_context_window.json`), because OpenRouter serves dynamic models as an OpenAI-compatible gateway.
+- **Provider Prefix vs Bare Model Names**: OpenRouter model IDs include vendor prefixes (e.g. `openai/gpt-6-luna`), whereas LiteLLM catalogs OpenAI and base models using bare identifiers (`gpt-6-luna`) or dot-notation (`openai.gpt-6-luna`).
+- **Compatibility Verification (`isLiteLlmModel`)**: In `.github/workflows/pr-agent-update-check.mjs`, stripping only `^(openrouter|gemini)\/` previously left `openai/gpt-6-luna`, causing catalog checks to fail with `Could not find a LiteLLM-compatible Luna model`. The helper must evaluate the bare model name (`withoutProvider.split('/').pop()`), dot-separated format, and suffix matches (`endsWith`) to verify LiteLLM support for the underlying model.
 
 ### Supabase `climate_station_data` Foreign Key Architecture (`station_id` vs `climate_stations.id`)
 

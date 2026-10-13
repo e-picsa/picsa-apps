@@ -28,6 +28,14 @@ export interface ISeedDataConfiguration {
    * or transform functions `(value: any, row: any) => any`.
    */
   columnMappings?: Record<string, any | ((value: any, row: any) => any)>;
+  /**
+   * Columns holding `<bucket>/<path>` storage references whose files should be
+   * mirrored from remote into local buckets during extended seed, ahead of row
+   * upserts (satisfies storage foreign keys and keeps files downloadable offline).
+   * Prefer over columnMappings rewrites, which silently corrupt file references.
+   * Unmirrorable files warn and null the column so the import still succeeds.
+   */
+  mirrorStorage?: string[];
 }
 
 /** Metadata columns stripped from every export (DB defaults repopulate on import) */
@@ -77,10 +85,12 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
   deployments: {
     priority: 1,
   },
+  // NOTE: no columnMappings here by design. A previous storage_file override
+  // (sample PDF) silently rewrote every mirrored row's file path on import,
+  // mislabelling all short-term forecasts as samples. Real paths are preserved
+  // and missing files mirrored via mirrorStorage below.
   forecasts: {
-    columnMappings: {
-      storage_file: 'global/forecasts/sample_seasonal.pdf',
-    },
+    mirrorStorage: ['storage_file'],
   },
   resource_collections: {
     columnMappings: {

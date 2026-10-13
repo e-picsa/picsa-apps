@@ -118,6 +118,9 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 3000
+      },
       "configurations": {
         "production": {
           "buildTarget": "picsa-apps-dashboard:build:production"

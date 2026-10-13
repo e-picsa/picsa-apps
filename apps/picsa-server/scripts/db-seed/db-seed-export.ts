@@ -263,6 +263,12 @@ export class SupabaseSeedExport {
           continue;
         }
 
+        // Mirror referenced storage files first so rows satisfy storage foreign
+        // keys and remain downloadable offline (see mirrorStorage in db-seed.config)
+        if (config.mirrorStorage?.length) {
+          await this.mirrorStorageFiles(rows, config.mirrorStorage, validStoragePaths);
+        }
+
         const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
         await this.upsertLocalRows(table, schema, rows, config, omitColumns, validStoragePaths);
         console.log(`✅ Seeded ${schema}.${table}: ${rows.length} rows upserted to local DB`);
@@ -377,6 +383,62 @@ export class SupabaseSeedExport {
     }
 
     return allRows;
+  }
+
+  /**
+   * Download storage files referenced by staged rows from remote into local buckets.
+   * Runs ahead of row upserts so storage foreign keys resolve and files stay
+   * downloadable offline. Null values are preserved (e.g. tombstoned rows).
+   * Files that cannot be mirrored null the referencing column (with warning) so
+   * the import still succeeds - the row stays live remotely and reappears later.
+   */
+  private async mirrorStorageFiles(rows: any[], columns: string[], validStoragePaths: Set<string>): Promise<void> {
+    if (!this.remoteClient || !this.localClient) return;
+    const missing = new Map<string, { row: any; column: string }[]>();
+    for (const row of rows) {
+      for (const column of columns) {
+        const file = row?.[column] as string | null;
+        if (file && !validStoragePaths.has(file)) {
+          const list = missing.get(file) ?? [];
+          list.push({ row, column });
+          missing.set(file, list);
+        }
+      }
+    }
+    if (missing.size === 0) return;
+
+    console.log(`   Mirroring ${missing.size} storage files from remote...`);
+    const buckets = new Set([...missing.keys()].map((file) => file.split('/')[0]));
+    const { data: existingBuckets } = await this.localClient.storage.listBuckets();
+    const existing = new Set((existingBuckets || []).map((b: any) => b.name));
+    for (const bucket of buckets) {
+      if (!existing.has(bucket)) {
+        console.log(`   Creating local bucket: ${bucket}`);
+        await this.localClient.storage.createBucket(bucket, { public: true });
+      }
+    }
+
+    let mirrored = 0;
+    for (const [file, refs] of missing) {
+      const [bucket, ...segments] = file.split('/');
+      try {
+        const { data: blob, error: downloadError } = await this.remoteClient.storage
+          .from(bucket)
+          .download(segments.join('/'));
+        if (downloadError || !blob) throw downloadError ?? new Error('empty download');
+        const { error: uploadError } = await this.localClient.storage.from(bucket).upload(segments.join('/'), blob, {
+          upsert: true,
+          contentType: (refs[0] as any)?.row?.mimetype || blob.type || 'application/octet-stream',
+        });
+        if (uploadError) throw uploadError;
+        validStoragePaths.add(file);
+        mirrored++;
+      } catch (err) {
+        console.warn(`   ⚠️  Could not mirror ${file} - nulling ${refs.length} reference(s)`);
+        for (const { row, column } of refs) row[column] = null;
+      }
+    }
+    console.log(`   Mirrored ${mirrored}/${missing.size} storage files`);
   }
 
   /** Upsert fetched rows directly into local Supabase database */
