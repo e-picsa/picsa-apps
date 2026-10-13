@@ -1,122 +1,181 @@
-<div class="page-content">
+<div class="forecast-page page-content p-4 sm:p-6 md:p-8">
   <div class="viewer-container slide-in" [class.active]="viewerOpen() ? true : false">
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
-  <!-- Location Select  -->
-  <picsa-form-location-select
+  <!-- Header Center Slot (Location Button) -->
+  <ng-template #headerCenterPortal>
+    <div class="flex items-center justify-center gap-2 text-white max-w-full leading-none">
+      <span class="text-lg sm:text-xl font-semibold text-white"> {{ 'Forecasts' | translate }} </span>
+      <button
+        matButton="outlined"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30 [&_.mdc-button__label]:!text-white"
+        (click)="locationOverlayOpen.set(true)"
+        [attr.aria-label]="'Change location' | translate"
+      >
+        <mat-icon class="!text-[20px] !w-5 !h-5 !text-white shrink-0">map</mat-icon>
+        <span class="truncate text-white"> {{ selectedLocationLabel() || ('Select Location' | translate) }} </span>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Header End Slot (Freshness + Refresh / Up-to-date Chip) -->
+  <ng-template #headerEndPortal>
+    <div class="flex items-center gap-2 text-white mr-2 sm:mr-3">
+      <!-- Freshness / Offline Badge: only shown if not checked in 12h AND offline -->
+      @if (showOfflineBadge()) {
+      <div
+        class="inline-flex items-center gap-1 text-xs bg-white/20 text-white px-2 py-1 rounded-full"
+        [attr.title]="'Offline' | translate"
+      >
+        <mat-icon class="!text-base !w-4 !h-4">cloud_off</mat-icon>
+        <span class="hidden md:inline">{{ 'Offline' | translate }}</span>
+      </div>
+      }
+
+      <!-- Refresh / Up to date Action Indicator -->
+      <button
+        type="button"
+        class="header-sync-chip"
+        [class.is-refreshing]="isRefreshing()"
+        [class.is-uptodate]="hasRefreshedSuccessfully()"
+        [disabled]="isRefreshing() || hasRefreshedSuccessfully() || !locationReady()"
+        (click)="handleForceRefresh()"
+        [attr.aria-label]="(hasRefreshedSuccessfully() ? 'Up to date' : 'Refresh forecasts') | translate"
+        [attr.title]="(hasRefreshedSuccessfully() ? 'Forecasts are up to date' : 'Refresh forecasts') | translate"
+      >
+        <div class="header-sync-chip__icon-container">
+          <mat-icon class="header-sync-chip__icon sync-icon">refresh</mat-icon>
+          <mat-icon class="header-sync-chip__icon check-icon">check</mat-icon>
+        </div>
+        <span class="header-sync-chip__label hidden sm:inline">
+          {{ (hasRefreshedSuccessfully() ? 'Up to date' : 'Refresh') | translate }}
+        </span>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Location Selection Modal Overlay -->
+  <picsa-form-location-overlay
+    [(open)]="locationOverlayOpen"
     [countryCode]="countryCode()"
     [value]="locationSelected()"
-    (valueChanged)="handleLocationUpdate($event)"
-  ></picsa-form-location-select>
+    [allowCancel]="locationReady()"
+    (confirmed)="handleLocationConfirmed($event)"
+    (cancelled)="locationOverlayOpen.set(false)"
+  ></picsa-form-location-overlay>
 
-  <!-- Short Term (Weekly + Daily) -->
-  <h2>{{'Short Term' | translate}}</h2>
-  <div class="w-full">
-    @if (loading() && dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
-      <div class="mx-auto w-24 mt-4 mb-2">
-        <mat-progress-bar mode="query"></mat-progress-bar>
+  <section class="mb-6 w-full">
+    @if (locationReady()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Short Term Column (Daily + Weekly) -->
+      <div class="forecast-column">
+        <h3 class="mt-4 mb-1">{{ 'Short Term' | translate }}</h3>
+        @for (category of shortTermCategories(); track category.id) {
+        <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
+        }
       </div>
-    } @else if (loading()) {
-      <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
-    } @else {
-      <div class="h-1 mb-2"></div>
-    }
 
-    <div class="flex flex-wrap items-center gap-4 w-full">
-      @if (!countryCode()) {
-        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-          {{ 'Please select a location to view forecasts' | translate }}
-        </div>
-      } @else if (dailyForecasts().length === 0 && weeklyForecasts().length === 0) {
-        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-          {{ 'No short term forecasts found' | translate }}
-        </div>
-      } @else {
-        @for(forecast of weeklyForecasts(); track forecast.id){
-          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+      <!-- Seasonal Column (Downscaled + National) -->
+      <div class="forecast-column">
+        <h3 class="mt-4 mb-1">{{ 'Seasonal' | translate }}</h3>
+        @for (category of seasonalCategories(); track category.id) {
+        <ng-container *ngTemplateOutlet="categorySection; context: { $implicit: category }"></ng-container>
         }
-        @for(forecast of dailyForecasts(); track forecast.id){
-          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-        }
-      }
-    </div>
-  </div>
-
-  <!-- Seasonal Forecasts -->
-  <h2>{{'Seasonal' | translate}}</h2>
-  <div class="w-full">
-    @if ((loading() || loadingDownscaled()) && downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
-      <div class="mx-auto w-24 mt-4 mb-2">
-        <mat-progress-bar mode="query"></mat-progress-bar>
       </div>
-    } @else if (loading() || loadingDownscaled()) {
-      <mat-progress-bar mode="indeterminate" class="h-1 mb-2"></mat-progress-bar>
-    } @else {
-      <div class="h-1 mb-2"></div>
-    }
-
-    <div class="mt-2 flex flex-wrap items-center gap-4 w-full">
-      @if (!countryCode()) {
-        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-          {{ 'Please select a location to view forecasts' | translate }}
-        </div>
-      } @else if (downscaledForecasts().length === 0 && seasonalForecasts().length === 0) {
-        <div class="p-4 text-[var(--color-secondary-600)] italic w-full text-center">
-          {{ 'No seasonal forecasts found' | translate }}
-        </div>
-      } @else {
-        <!-- Downscaled -->
-        @for(forecast of downscaledForecasts(); track forecast.id){
-          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-        }
-        <!-- National -->
-        @for(forecast of seasonalForecasts(); track forecast.id){
-          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
-        }
-      }
     </div>
-  </div>
+    }
+  </section>
 
   <!-- Resources -->
-  <h2>{{'Resources' | translate}}</h2>
-  <div class="flex flex-wrap gap-4 mb-4">
-    @for(resource of resourceLinks(); track resource.id){
-    <resource-item-link [resource]="resource" class="max-w-80"> </resource-item-link>
-    }
+  <div class="my-6">
+    <h3 class="mt-4 mb-1 capitalize">{{'Resources' | translate}}</h3>
+    <div class="flex flex-wrap gap-4 mb-4">
+      @if (resourceLinks().length === 0) {
+      <div
+        class="flex items-center justify-center gap-2 p-4 italic text-[var(--color-secondary-600)] border border-dashed border-[var(--color-secondary-300,#ccc)] rounded-md min-h-44 w-full"
+      >
+        {{ 'No resources available' | translate }}
+      </div>
+      } @else { @for(resource of resourceLinks(); track resource.id){
+      <resource-item-link [resource]="resource" class="max-w-80"> </resource-item-link>} }
+    </div>
   </div>
+
+  <!-- Category section template: always rendered, empty-state when no data -->
+  <ng-template #categorySection let-value>
+    @if (toCategory(value); as category) {
+    <div class="mb-4">
+      <div class="flex items-center gap-2">
+        <h4 class="my-1 capitalize">{{ category.title | translate }}</h4>
+        @if (category.loading) {
+        <mat-spinner [diameter]="16"></mat-spinner>
+        }
+      </div>
+
+      @if (category.loading && category.forecasts.length === 0) {
+      <div
+        class="flex items-center justify-center gap-2 p-4 italic text-[var(--color-secondary-600)] border border-dashed border-[var(--color-secondary-300,#ccc)] rounded-md min-h-44 flex-col"
+      >
+        <mat-spinner [diameter]="28"></mat-spinner>
+        <span class="text-sm text-slate-500">{{ 'Loading forecasts...' | translate }}</span>
+      </div>
+      } @else if (category.forecasts.length === 0) {
+      <div
+        class="flex items-center justify-center gap-2 p-4 italic text-[var(--color-secondary-600)] border border-dashed border-[var(--color-secondary-300,#ccc)] rounded-md min-h-44 capitalize"
+      >
+        {{ 'No forecasts available' | translate }}
+      </div>
+      } @else {
+      <div class="flex flex-wrap items-stretch gap-4 w-full">
+        @for (forecast of category.forecasts; track forecast.id) {
+        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+        }
+      </div>
+      }
+    </div>
+    }
+  </ng-template>
 </div>
 
-<!-- Forecast item tempalte -->
+<!-- Forecast item template -->
 <ng-template #forecastItem let-value>
   <!-- use function to make template type-safe -->
-  @if(toForecastType(value); as forecast){
+  @if (toForecastType(value); as forecast) {
   <div
-    class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
+    class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-slate-400 bg-white"
+    role="button"
+    tabindex="0"
+    [attr.aria-label]="forecast.title | translate"
     (click)="handleForecastClick(forecast)"
+    (keydown.enter)="handleForecastClick(forecast)"
+    (keydown.space)="handleForecastClick(forecast)"
   >
-    <h3 class="forecast-heading">{{forecast.title | translate}}</h3>
+    <h3 class="border-solid border-0 border-b border-[var(--color-light)] text-center p-2 m-0 capitalize">
+      {{ forecast.title | translate }}
+    </h3>
     <!-- seasonal/downscaled: image + label -->
-    @if(forecast.image){
+    @if (forecast.image) {
     <div class="flex-1 min-h-0">
-      <img class="forecast-image" [src]="forecast.image" />
+      <img class="h-full w-full object-contain" [src]="forecast.image" alt="{{ forecast.title | translate }}" />
     </div>
-    @if(forecast.label){
-    <div class="p-1 text-center">{{forecast.label}}</div>
+    @if (forecast.label) {
+    <div class="p-1 text-center">{{ forecast.label }}</div>
     } }
     <!-- daily/weekly: label only -->
     @else {
-    <div class="flex-1 p-2 overflow-auto capitalize">{{forecast.label}}</div>
+    <div class="flex-1 p-2 overflow-auto capitalize">{{ forecast.label }}</div>
     }
 
     <div class="forecast-bottom-bar" [attr.data-forecast-type]="forecast.type">
-      <div class="language-label">{{forecast.languageLabel}}</div>
+      <div class="text-sm flex-1 text-left">{{ forecast.languageLabel }}</div>
+      <span class="text-[0.625rem] font-semibold tracking-wider px-1 rounded bg-black/10">PDF</span>
       <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
       </picsa-supabase-storage-download>
 
-      <mat-icon>{{forecast.downloaded || downloader.progress()===100 ? 'task_alt' : 'download'}}</mat-icon>
+      <mat-icon>{{ forecast.downloaded || downloader.progress() === 100 ? 'task_alt' : 'download' }}</mat-icon>
 
-      @if(downloader.progress()){
+      @if (downloader.progress()) {
       <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
       }
     </div>

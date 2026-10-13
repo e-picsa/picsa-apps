@@ -1,14 +1,74 @@
-.page-content {
+.forecast-page.page-content {
   max-width: 1280px;
-  margin: auto;
+  margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
-.forecast-container {
-  @apply border-solid capitalize p-2;
+.header-sync-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 32px;
+  padding: 0 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+  white-space: nowrap;
 }
-
-.forecast-heading {
-  @apply border-solid border-0 border-b border-[var(--color-light)]  text-center p-2 m-0 capitalize;
+.header-sync-chip:hover:not([disabled]) {
+  background: rgba(255, 255, 255, 0.25);
+}
+.header-sync-chip__icon-container {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-sync-chip__icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  transition:
+    transform 0.4s ease,
+    opacity 0.3s ease;
+}
+.header-sync-chip .check-icon {
+  opacity: 0;
+  color: #16a34a;
+}
+.header-sync-chip.is-refreshing .sync-icon {
+  animation: header-sync-spin 0.75s linear infinite;
+}
+.header-sync-chip.is-uptodate {
+  background-color: #fff;
+  color: #15803d;
+  border-color: #fff;
+  border-radius: 9999px;
+}
+.header-sync-chip.is-uptodate .sync-icon {
+  opacity: 0;
+}
+.header-sync-chip.is-uptodate .check-icon {
+  opacity: 1;
+}
+@keyframes header-sync-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .forecast-bottom-bar {
   @apply flex items-center bg-[var(--color-secondary-50)] h-8 px-2 relative;
@@ -25,11 +85,6 @@
 .forecast-bottom-bar > mat-progress-bar {
   @apply absolute bottom-0 left-0 w-full;
 }
-
-h2 {
-  @apply md:text-left;
-}
-
 .viewer-container {
   position: fixed;
   z-index: 2;
@@ -38,22 +93,10 @@ h2 {
   top: 0;
   left: 0;
 }
-
 .viewer-container.slide-in {
   transition: transform 0.3s ease-in-out;
   transform: translateY(100vh);
 }
-
 .viewer-container.slide-in.active {
   transform: translateY(0);
-}
-
-.language-label {
-  @apply text-sm flex-1 text-left;
-}
-.image-container {
-  @apply flex-1 p-2;
-}
-.forecast-image {
-  @apply h-full w-full object-contain;
 }
