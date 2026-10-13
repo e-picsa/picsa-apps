@@ -18,80 +18,25 @@
 
       <div class="py-4">
         <!-- KPI Summary / Filter Chips -->
-        <div class="flex items-center gap-2.5 mb-4 flex-wrap">
-          <button
-            type="button"
-            (click)="setDbQcFilter('all')"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
-            [class]="
-              dbQcFilter() === 'all'
-                ? 'bg-blue-50 text-blue-800 border-blue-300 ring-2 ring-blue-100 font-semibold'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-            "
-          >
-            <span>Total Stations:</span>
-            <span class="font-bold">{{ dbStats().total }}</span>
-          </button>
-
-          <button
-            type="button"
-            (click)="setDbQcFilter('passed')"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
-            [class]="
-              dbQcFilter() === 'passed'
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 ring-2 ring-emerald-100 font-semibold'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-            "
-          >
-            <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>
-            <span>QC Passed:</span>
-            <span class="font-bold text-emerald-700">{{ dbStats().passed }}</span>
-          </button>
-
-          <button
-            type="button"
-            (click)="setDbQcFilter('failed')"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
-            [class]="
-              dbQcFilter() === 'failed'
-                ? 'bg-slate-100 text-slate-900 border-slate-400 ring-2 ring-slate-200 font-semibold'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-            "
-          >
-            <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>
-            <span>QC Failed:</span>
-            <span class="font-bold text-slate-800">{{ dbStats().failed }}</span>
-          </button>
-
+        <mat-chip-listbox (change)="dbQcFilter.set($event.value ?? 'all')" class="mb-4">
+          <mat-chip-option value="all" [selected]="dbQcFilter() === 'all'">
+            Total Stations: {{ dbStats().total }}
+          </mat-chip-option>
+          <mat-chip-option value="passed" [selected]="dbQcFilter() === 'passed'">
+            <mat-icon matChipAvatar class="!text-emerald-600">check_circle</mat-icon>
+            QC Passed: {{ dbStats().passed }}
+          </mat-chip-option>
+          <mat-chip-option value="failed" [selected]="dbQcFilter() === 'failed'">
+            <mat-icon matChipAvatar class="!text-rose-600">cancel</mat-icon>
+            QC Failed: {{ dbStats().failed }}
+          </mat-chip-option>
           @if (dbStats().warnings > 0) {
-            <button
-              type="button"
-              (click)="setDbQcFilter('warnings')"
-              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
-              [class]="
-                dbQcFilter() === 'warnings'
-                  ? 'bg-amber-50 text-amber-900 border-amber-300 ring-2 ring-amber-100 font-semibold'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              "
-            >
-              <mat-icon class="!w-4 !h-4 !text-base text-amber-600">warning</mat-icon>
-              <span>With Season Warnings:</span>
-              <span class="font-bold text-amber-800">{{ dbStats().warnings }}</span>
-            </button>
+            <mat-chip-option value="warnings" [selected]="dbQcFilter() === 'warnings'">
+              <mat-icon matChipAvatar class="!text-amber-600">warning</mat-icon>
+              With Season Warnings: {{ dbStats().warnings }}
+            </mat-chip-option>
           }
-
-          @if (dbQcFilter() !== 'all') {
-            <button
-              type="button"
-              matButton
-              color="primary"
-              class="!text-xs !py-1 !px-2"
-              (click)="dbQcFilter.set('all')"
-            >
-              Reset filter
-            </button>
-          }
-        </div>
+        </mat-chip-listbox>
 
         <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
           <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
@@ -134,17 +79,9 @@
 
           <ng-template #qcStatusTemplate let-passed>
             @if (passed) {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>Passed
-              </span>
+              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600" matTooltip="QC Passed">check_circle</mat-icon>
             } @else {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>Failed
-              </span>
+              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600" matTooltip="QC Failed">cancel</mat-icon>
             }
           </ng-template>
 
@@ -414,18 +351,11 @@
 
           <ng-template #diffQcPassedTemplate let-passed let-row="row">
             @if (passed) {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>QC Passed
-              </span>
+              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600" matTooltip="QC Passed">check_circle</mat-icon>
             } @else {
-              <span
-                [matTooltip]="row.qc_details"
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 cursor-help"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>QC Failed
-              </span>
+              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600" [matTooltip]="'QC Failed\n' + (row.qc_details || '')">
+                cancel
+              </mat-icon>
             }
           </ng-template>
 

@@ -2,6 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -206,6 +207,7 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
     CommonModule,
     DatePipe,
     MatButtonModule,
+    MatChipsModule,
     MatDialogModule,
     MatIconModule,
     MatTabsModule,

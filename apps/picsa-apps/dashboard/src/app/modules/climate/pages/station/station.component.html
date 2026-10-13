@@ -24,10 +24,10 @@
             </mat-icon>
           } @else {
             <mat-icon
-              class="!w-5 !h-5 !text-lg text-slate-400 flex items-center justify-center"
+              class="!w-5 !h-5 !text-lg text-rose-500 flex items-center justify-center"
               [matTooltip]="'Quality Control: Failed\n' + (row.qc_reasons || []).join('\n')"
             >
-              rule
+              cancel
             </mat-icon>
           }
         </ng-template>
