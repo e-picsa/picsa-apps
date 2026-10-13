@@ -24,7 +24,7 @@
 }
 
 .map-panel {
-  @apply flex-1 relative h-full w-full bg-slate-100;
+  @apply flex-1 relative h-full w-full bg-slate-100 overflow-hidden;
 
   &[data-view='recommendation'] {
     @apply hidden md:block;
@@ -32,6 +32,38 @@
 }
 
 .view-toggle {
-  @apply absolute right-3 top-3 z-20 md:!hidden shadow-lg;
+  @apply absolute right-3 top-3 z-30 md:!hidden shadow-lg;
   margin-top: var(--status-bar-height);
+}
+
+.map-floating-location {
+  @apply absolute left-3 right-3 top-14 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-slate-200/90 px-3 py-1.5 md:hidden;
+
+  ::ng-deep {
+    .flex.gap-4.my-4 {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      gap: 0.5rem !important;
+      width: 100%;
+    }
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+    .mat-mdc-text-field-wrapper {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    .mat-mdc-form-field-infix {
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+      min-height: 38px !important;
+    }
+    .mat-mdc-select-trigger {
+      font-size: 13px;
+    }
+  }
+}
+
+.floating-mobile-card {
+  @apply absolute left-3 right-3 bottom-4 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/90 p-3 md:hidden;
 }

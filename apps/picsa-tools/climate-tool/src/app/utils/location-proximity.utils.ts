@@ -47,7 +47,7 @@ export function calculateHaversineDistanceKm(lat1: number, lon1: number, lat2: n
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c * 10) / 10;
+  return Math.round(R * c);
 }
 
 /**
@@ -165,6 +165,19 @@ export async function getDistrictCenterAndBoundary(
 }
 
 /**
+ * Check whether a station is mapped to a specific district
+ */
+export function isStationInDistrict(station: IStationMeta, districtLabel?: string, districtId?: string): boolean {
+  if (!districtLabel || !station.location || station.location.length === 0) return false;
+  const normDistrictLabel = normalizeLocationName(districtLabel);
+  const normDistrictId = districtId ? normalizeLocationName(districtId) : '';
+  return station.location.some((loc) => {
+    const norm = normalizeLocationName(loc);
+    return norm === normDistrictLabel || (normDistrictId !== '' && norm === normDistrictId);
+  });
+}
+
+/**
  * Rank stations for a district based on proximity and data viability
  */
 export function getStationRecommendations(
@@ -173,16 +186,10 @@ export function getStationRecommendations(
   districtLabel: string,
   districtId: string,
 ): IStationRecommendation[] {
-  const normDistrictLabel = normalizeLocationName(districtLabel);
-  const normDistrictId = normalizeLocationName(districtId);
-
   const scored = stations
     .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft)
     .map((station) => {
-      const isInsideDistrict = (station.location || []).some((loc) => {
-        const norm = normalizeLocationName(loc);
-        return norm === normDistrictLabel || norm === normDistrictId;
-      });
+      const isInsideDistrict = isStationInDistrict(station, districtLabel, districtId);
 
       const distanceKm = calculateHaversineDistanceKm(
         districtCoords.lat,

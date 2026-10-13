@@ -30,9 +30,11 @@ import { _wait } from '@picsa/utils/browser.utils';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
+  calculateHaversineDistanceKm,
   getDistrictCenterAndBoundary,
   getStationRecommendations,
   IDistrictCenterResult,
+  isStationInDistrict,
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
 
@@ -41,10 +43,11 @@ const STRINGS = {
   showLocation: translateMarker('Show Location'),
   selectLocation: translateMarker('Select Location'),
   chooseLocationDesc: translateMarker('Choose your province and district to see the nearest climate station.'),
-  findingStations: translateMarker('Finding closest stations for {{district}}...'),
-  recommendedStation: translateMarker('Recommended Station for {{district}}'),
-  insideDistrict: translateMarker('Inside {{district}}'),
-  distanceFromCenter: translateMarker('{{distance}} km from district center'),
+  findingStations: translateMarker('Finding closest stations for'),
+  recommendedStationFor: translateMarker('Recommended Station for'),
+  selectedStationFor: translateMarker('Selected Station for'),
+  inside: translateMarker('Inside'),
+  fromCenter: translateMarker('from center'),
   viewClimateData: translateMarker('View Climate Data'),
   otherNearbyStations: translateMarker('Other nearby stations:'),
   years: translateMarker('years'),
@@ -123,6 +126,33 @@ export class SiteSelectPage {
   /** Alternative nearby stations (next 3 recommendations) */
   public readonly alternativeRecommendations = computed(() => this.stationRecommendations().slice(1, 4));
 
+  /** Currently displayed station (either explicitly selected or primary recommendation) */
+  public readonly displayedStation = computed(() => {
+    const selected = this.selectedStation();
+    if (selected) {
+      const rec = this.stationRecommendations().find((r) => r.station.id === selected.id);
+      return {
+        station: selected,
+        distanceKm: rec ? rec.distanceKm : this.getStationDistance(selected),
+        isInsideDistrict: rec ? rec.isInsideDistrict : this.isStationInDistrict(selected),
+        isPrimary: rec ? rec.station.id === this.primaryRecommendation()?.station.id : false,
+      };
+    }
+    const primary = this.primaryRecommendation();
+    if (primary) {
+      return {
+        station: primary.station,
+        distanceKm: primary.distanceKm,
+        isInsideDistrict: primary.isInsideDistrict,
+        isPrimary: true,
+      };
+    }
+    return undefined;
+  });
+
+  /** Station currently active on mobile or map card */
+  public readonly activeStation = computed(() => this.displayedStation()?.station);
+
   public readonly mapReady = signal(false);
 
   public readonly mapMarkers = computed(() => {
@@ -133,6 +163,7 @@ export class SiteSelectPage {
         latlng: [station.latitude, station.longitude] as [number, number],
         data: station,
         number: _index + 1,
+        label: station.name,
         _index,
       }));
     return markers;
@@ -308,6 +339,23 @@ export class SiteSelectPage {
         this.selectedStation.set(station);
       }
     }
+  }
+
+  public isStationInDistrict(station?: IStationMeta): boolean {
+    if (!station) return false;
+    const district = this.selectedDistrict();
+    return isStationInDistrict(station, district?.label, district?.id);
+  }
+
+  public getStationDistance(station?: IStationMeta): number | undefined {
+    if (!station) return undefined;
+    const rec = this.stationRecommendations().find((r) => r.station.id === station.id);
+    if (rec) return rec.distanceKm;
+    const center = this.districtCenterResult()?.center;
+    if (center && station.latitude && station.longitude) {
+      return calculateHaversineDistanceKm(center.lat, center.lng, station.latitude, station.longitude);
+    }
+    return undefined;
   }
 
   public handleMarkerClick(e: IMapMarker) {

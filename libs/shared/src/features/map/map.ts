@@ -469,6 +469,8 @@ export interface IMapMarker<T = IStationMeta> {
   latlng: [number, number];
   /** Display number with icon */
   number?: number;
+  /** Text label displayed next to or below the marker */
+  label?: string;
   data?: T;
   /** Index of station when rendered */
   _index: number;
