@@ -12,6 +12,9 @@ export function stableStringify(value: unknown): string {
 export interface IPairingRow {
   location_id: string;
   station_name: string;
+  station_id?: string | null;
+  has_probabilities?: boolean;
+  probability_count?: number;
   water_requirements: Record<string, Record<string, number>>;
 }
 
@@ -39,8 +42,7 @@ export function groupRowsByRequirements(rows: IPairingRow[]): Map<string, IPairi
 
 /**
  * Group rows sharing byte-identical water requirement definitions, returning
- * only groups with more than one member. Rows with empty requirements are skipped.
- */
+ * only groups with more than one member. Rows with empty requirements are skipped.\n */
 export function groupIdenticalWaterRequirements(rows: IPairingRow[]): IWaterRequirementGroup[] {
   const members = groupRowsByRequirements(rows);
 

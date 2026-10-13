@@ -11,7 +11,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { getDeepestAdminLevel, getDeepestLocations, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
@@ -23,7 +25,7 @@ import { ICropDataDownscaled } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-linked-station-select',
-  imports: [MatSelectModule, MatFormField, MatButtonModule, PicsaMapComponent],
+  imports: [MatSelectModule, MatFormField, MatButtonModule, MatIconModule, MatTooltipModule, PicsaMapComponent],
   templateUrl: './linked-station-select.component.html',
   styleUrl: './linked-station-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,7 @@ export class CropLinkedStationSelectComponent {
   private deploymentService = inject(DeploymentDashboardService);
 
   public allStations = signal<IStationRow[]>([]);
+  public stationProbabilitiesMap = signal<Map<string, number>>(new Map());
   public locationId = input.required<string>();
   public downscaledData = input.required<ICropDataDownscaled['Row']>();
 
@@ -71,10 +74,21 @@ export class CropLinkedStationSelectComponent {
     }));
   });
 
+  public readonly selectedStation = computed(() => {
+    const id = this.selectedStationId();
+    if (!id) return undefined;
+    return this.allStations().find((s) => s.id === id);
+  });
+
   public getSelectedStationName(id: string | undefined): string {
     if (!id) return '';
     const station = this.allStations().find((s) => s.id === id);
     return station?.station_name || '';
+  }
+
+  public getStationProbabilityCount(stationId: string | null | undefined): number {
+    if (!stationId) return 0;
+    return this.stationProbabilitiesMap().get(stationId) ?? 0;
   }
 
   constructor() {
@@ -137,6 +151,7 @@ export class CropLinkedStationSelectComponent {
     this.allStations.set(stations);
     const geoJsonFeature = await this.fetchMapData(countryCode, locationId);
     this.locationGeoJson.set(geoJsonFeature);
+    await this.fetchStationProbabilities(countryCode);
   }
 
   /** Retrieve list of climate stations from db */
@@ -148,6 +163,23 @@ export class CropLinkedStationSelectComponent {
       .eq('country_code', countryCode);
     if (error) throw error;
     return data || [];
+  }
+
+  /** Retrieve station crop probabilities availability */
+  private async fetchStationProbabilities(countryCode: CountryCodeLegacy) {
+    await this.supabaseService.ready();
+    const { data } = await this.supabaseService.db
+      .table('climate_station_data')
+      .select('station_id, crop_probability_data')
+      .eq('country_code', countryCode);
+    const map = new Map<string, number>();
+    if (data) {
+      for (const row of data) {
+        const count = Array.isArray(row.crop_probability_data) ? row.crop_probability_data.length : 0;
+        map.set(row.station_id, count);
+      }
+    }
+    this.stationProbabilitiesMap.set(map);
   }
 
   /** Retrieve TopoJSON, convert to GeoJSON and match the current location's geometry */

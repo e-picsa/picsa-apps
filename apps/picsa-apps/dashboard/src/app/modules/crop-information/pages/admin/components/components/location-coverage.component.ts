@@ -30,6 +30,12 @@ const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
   Unique: { icon: 'check_circle', color: 'text-green-600' },
 };
 
+const PROBABILITY_DISPLAY: Record<string, { icon: string; color: string; label: string }> = {
+  Available: { icon: 'check_circle', color: 'text-green-600', label: 'Probabilities available' },
+  'No Probabilities': { icon: 'warning', color: 'text-amber-500', label: 'No probabilities available' },
+  'No Station': { icon: 'link_off', color: 'text-gray-400', label: 'No linked station' },
+};
+
 @Component({
   selector: 'dashboard-crop-location-coverage',
   imports: [MatButtonModule, MatIconModule, MatTooltipModule, PicsaDataTableComponent],
@@ -40,7 +46,8 @@ const STATUS_DISPLAY: Record<string, { icon: string; color: string }> = {
 /**
  * Per-district coverage of downscaled water requirements: districts without
  * records, records without requirements, and records sharing byte-identical
- * definitions with other locations.
+ * definitions with other locations. Tracks whether linked climate stations have
+ * crop probability data available in the data system.
  */
 export class CropLocationCoverageComponent implements AfterViewInit {
   private service = inject(CropInformationService);
@@ -50,16 +57,26 @@ export class CropLocationCoverageComponent implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('statusTemplate') private statusTemplate!: TemplateRef<{ $implicit: unknown; row: ICoverageRow }>;
+  @ViewChild('stationTemplate') private stationTemplate!: TemplateRef<{ $implicit: unknown; row: ICoverageRow }>;
+  @ViewChild('probabilitiesTemplate') private probabilitiesTemplate!: TemplateRef<{
+    $implicit: unknown;
+    row: ICoverageRow;
+  }>;
 
   /** Column templates bound once after view init (avoids recreating the map on every change detection cycle) */
   public valueTemplates: Record<string, TemplateRef<{ $implicit: unknown; row: ICoverageRow }>> = {};
 
   public ngAfterViewInit() {
-    this.valueTemplates = { status: this.statusTemplate };
+    this.valueTemplates = {
+      status: this.statusTemplate,
+      station: this.stationTemplate,
+      probabilities: this.probabilitiesTemplate,
+    };
     this.cdr.markForCheck();
   }
 
   public statusDisplay = STATUS_DISPLAY;
+  public probabilityDisplay = PROBABILITY_DISPLAY;
   public creatingRecord = signal(false);
 
   public rows = computed<ICoverageRow[]>(() => {
@@ -69,30 +86,46 @@ export class CropLocationCoverageComponent implements AfterViewInit {
       label,
       parent: parentLabel,
     }));
-    const stationHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
-    const dbRows: IPairingRow[] = this.service.downscaledData().map((row) => ({
-      location_id: row.location_id,
-      station_name: row.station_id
-        ? stationHashmap[row.station_id]?.station?.station_name || row.station_id
-        : 'No linked station',
-      water_requirements: (row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {},
-    }));
+    const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
+    const stationsHashmap = arrayToHashmap(this.service.stations(), 'id');
+
+    const dbRows: IPairingRow[] = this.service.downscaledData().map((row) => {
+      const stationRecord = row.station_id ? stationDataHashmap[row.station_id] : null;
+      const stationMeta = row.station_id ? stationRecord?.station || stationsHashmap[row.station_id] : null;
+      const station_name = row.station_id ? stationMeta?.station_name || row.station_id : 'No linked station';
+      const probData = stationRecord?.crop_probability_data;
+      const probability_count = Array.isArray(probData) ? probData.length : 0;
+      const has_probabilities = probability_count > 0;
+
+      return {
+        location_id: row.location_id,
+        station_id: row.station_id,
+        station_name,
+        has_probabilities,
+        probability_count,
+        water_requirements: (row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {},
+      };
+    });
     return buildLocationCoverageRows({ geoLocations, dbRows });
   });
 
   public stats = computed(() => {
     const rows = this.rows();
     const count = (status: ICoverageRow['status']) => rows.filter((row) => row.status === status).length;
+    const probCount = (p: ICoverageRow['probabilities']) => rows.filter((row) => row.probabilities === p).length;
     return {
       total: rows.length,
       noRequirements: count('No Requirements'),
       paired: count('Paired'),
       unique: count('Unique'),
+      probAvailable: probCount('Available'),
+      probMissing: probCount('No Probabilities'),
+      probNoStation: probCount('No Station'),
     };
   });
 
   public tableOptions: IDataTableOptions = {
-    displayColumns: ['location_label', 'parent_location', 'status', 'paired_with', 'station', 'crops'],
+    displayColumns: ['location_label', 'parent_location', 'status', 'paired_with', 'station', 'probabilities', 'crops'],
     paginatorSizes: [50, 100],
     search: true,
     sort: { id: 'location_label', start: 'asc' },
@@ -103,6 +136,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
         status: 'Status',
         paired_with: 'Paired With',
         station: 'Linked Station',
+        probabilities: 'Probabilities',
         crops: 'Crops Covered',
       };
       return headerMap[v] || formatHeaderDefault(v);
