@@ -1,48 +1,47 @@
 :host {
   display: contents;
-}
 
-.map-floating-location {
   ::ng-deep {
     picsa-form-location-select {
       display: block;
       width: 100%;
-    }
-    .flex.gap-4.my-4 {
-      display: flex !important;
-      width: 100% !important;
-      margin: 0 !important;
-      gap: 0.5rem !important;
-    }
-    mat-form-field {
-      flex: 1 1 0px !important;
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-    .mat-mdc-form-field-subscript-wrapper {
-      display: none !important;
-    }
-    .mat-mdc-text-field-wrapper {
-      background-color: transparent !important;
-      padding: 0 !important;
-    }
-    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-      background-color: transparent !important;
-    }
-    .mat-mdc-form-field-focus-overlay,
-    .mdc-line-ripple,
-    .mdc-text-field--filled::before,
-    .mdc-text-field--filled::after {
-      display: none !important;
-    }
-    .mat-mdc-form-field-infix {
-      padding: 4px 0 !important;
-      min-height: 42px !important;
-      width: 100% !important;
-    }
-    .mat-mdc-select-trigger {
-      font-size: 14px;
-      font-weight: 500;
+
+      .flex.gap-4.my-4 {
+        display: flex !important;
+        width: 100% !important;
+        margin: 0 !important;
+        gap: 0.5rem !important;
+      }
+      mat-form-field {
+        flex: 1 1 0px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+      }
+      .mat-mdc-text-field-wrapper {
+        background-color: transparent !important;
+        padding: 0 !important;
+      }
+      .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: transparent !important;
+      }
+      .mat-mdc-form-field-focus-overlay,
+      .mdc-line-ripple,
+      .mdc-text-field--filled::before,
+      .mdc-text-field--filled::after {
+        display: none !important;
+      }
+      .mat-mdc-form-field-infix {
+        padding: 4px 0 !important;
+        min-height: 42px !important;
+        width: 100% !important;
+      }
+      .mat-mdc-select-trigger {
+        font-size: 14px;
+        font-weight: 500;
+      }
     }
   }
 }

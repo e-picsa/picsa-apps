@@ -1,10 +1,24 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  signal,
+  TemplateRef,
+  viewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration';
 import { ICountryCode } from '@picsa/data';
 import { getDeepestLocations, getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
@@ -59,15 +73,18 @@ const STRINGS = {
     FormLocationSelectComponent,
   ],
 })
-export class SiteSelectPage {
+export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public dataService = inject(ClimateDataService);
   private configurationService = inject(ConfigurationService);
+  private componentsService = inject(PicsaCommonComponentsService);
+  private viewContainer = inject(ViewContainerRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   public readonly strings = STRINGS;
 
   public readonly picsaMap = viewChild<PicsaMapComponent>('picsaMap');
+  public readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
 
   public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
@@ -290,6 +307,21 @@ export class SiteSelectPage {
       if (selectedStation && picsaMap && mapReady) {
         this.handleStationSelected(selectedStation, picsaMap);
       }
+    });
+  }
+
+  ngAfterViewInit() {
+    const endPortal = this.headerEndPortal();
+    if (endPortal) {
+      this.componentsService.patchHeader({
+        cdkPortalEnd: new TemplatePortal(endPortal, this.viewContainer),
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.componentsService.patchHeader({
+      cdkPortalEnd: undefined,
     });
   }
 

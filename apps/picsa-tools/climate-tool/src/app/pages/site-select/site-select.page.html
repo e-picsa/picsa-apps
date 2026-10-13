@@ -1,14 +1,17 @@
-<!-- Mobile View Toggle (hidden on md+ screen size) -->
-@let toggleIcon = view() === 'map' ? 'list' : 'map'; @let toggleText = view() === 'map' ? strings.list : strings.map;
-<button
-  matButton="filled"
-  color="primary"
-  (click)="toggleView()"
-  class="absolute right-3 top-3 z-30 md:!hidden shadow-lg mt-[var(--status-bar-height)]"
->
-  <mat-icon>{{ toggleIcon }}</mat-icon>
-  <span>{{ toggleText | translate }}</span>
-</button>
+<!-- Header End Portal: Mobile View Toggle (hidden on md+ screens) -->
+<ng-template #headerEndPortal>
+  @let toggleIcon = view() === 'map' ? 'list' : 'map';
+  @let toggleText = view() === 'map' ? strings.list : strings.map;
+  <button
+    matButton
+    (click)="toggleView()"
+    class="!text-white md:!hidden mr-1 flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 border border-white/30 transition-colors"
+    [attr.aria-label]="toggleText | translate"
+  >
+    <mat-icon class="!text-white !w-5 !h-5 !text-[20px]">{{ toggleIcon }}</mat-icon>
+    <span class="!text-white text-sm font-semibold tracking-wide">{{ toggleText | translate }}</span>
+  </button>
+</ng-template>
 
 <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative z-0 h-full w-full">
   <!-- Left panel: Location selection & Recommendations -->
@@ -102,7 +105,7 @@
       <div class="all-stations-section mt-4 pt-2">
         <button matButton="text" class="!text-xs text-gray-600 !p-0" (click)="toggleAllStations()">
           <mat-icon class="!text-base !h-4 !w-4">{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
-          <span>{{ (showAllStations() ? 'Hide all stations table' : 'Browse all country stations') | translate }}</span>
+          <span>{{ (showAllStations() ? strings.hide : strings.show) | translate }} {{ strings.allAvailableStations | translate }}</span>
         </button>
 
         @if (showAllStations()) {
@@ -137,14 +140,6 @@
       }
     </div>
 
-    <picsa-map
-      (onMarkerClick)="handleMarkerClick($event)"
-      [markers]="mapMarkers()"
-      (onMapReady)="mapReady.set(true)"
-      #picsaMap
-      class="flex-1 w-full h-full"
-    ></picsa-map>
-
     <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
     @if (activeStation(); as station) {
     <div
@@ -154,17 +149,20 @@
         <div class="min-w-0 flex-1">
           <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>
         </div>
-        <button
-          matButton="filled"
-          color="primary"
-          class="!h-9 !px-4 !text-sm whitespace-nowrap"
-          (click)="confirmAndNavigate(station)"
-        >
+        <button matButton="filled" color="primary" class="!h-9 !px-4 shrink-0" (click)="confirmAndNavigate(station)">
           <span>{{ strings.view | translate }}</span>
-          <mat-icon iconPositionEnd class="!text-sm !h-4 !w-4">arrow_forward</mat-icon>
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
         </button>
       </div>
     </div>
     }
+
+    <picsa-map
+      (onMarkerClick)="handleMarkerClick($event)"
+      [markers]="mapMarkers()"
+      (onMapReady)="mapReady.set(true)"
+      #picsaMap
+      class="flex-1 w-full h-full"
+    ></picsa-map>
   </div>
 </div>
