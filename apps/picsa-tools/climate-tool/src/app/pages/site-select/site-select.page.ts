@@ -1,14 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  untracked,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -30,11 +21,9 @@ import { _wait } from '@picsa/utils/browser.utils';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
-  calculateHaversineDistanceKm,
   getDistrictCenterAndBoundary,
   getStationRecommendations,
   IDistrictCenterResult,
-  isStationInDistrict,
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
 
@@ -48,6 +37,7 @@ const STRINGS = {
   selectedStationFor: translateMarker('Selected Station for'),
   inside: translateMarker('Inside'),
   fromCenter: translateMarker('from center'),
+  view: translateMarker('View'),
   viewClimateData: translateMarker('View Climate Data'),
   otherNearbyStations: translateMarker('Other nearby stations:'),
   years: translateMarker('years'),
@@ -130,20 +120,15 @@ export class SiteSelectPage {
   public readonly displayedStation = computed(() => {
     const selected = this.selectedStation();
     if (selected) {
-      const rec = this.stationRecommendations().find((r) => r.station.id === selected.id);
       return {
         station: selected,
-        distanceKm: rec ? rec.distanceKm : this.getStationDistance(selected),
-        isInsideDistrict: rec ? rec.isInsideDistrict : this.isStationInDistrict(selected),
-        isPrimary: rec ? rec.station.id === this.primaryRecommendation()?.station.id : false,
+        isPrimary: selected.id === this.primaryRecommendation()?.station.id,
       };
     }
     const primary = this.primaryRecommendation();
     if (primary) {
       return {
         station: primary.station,
-        distanceKm: primary.distanceKm,
-        isInsideDistrict: primary.isInsideDistrict,
         isPrimary: true,
       };
     }
@@ -246,10 +231,9 @@ export class SiteSelectPage {
             const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
             this.stationRecommendations.set(recommendations);
 
-            // Default selected station to primary recommendation if none currently selected
-            const currentSelected = untracked(() => this.selectedStation());
-            if (!currentSelected || !recommendations.some((r) => r.station.id === currentSelected.id)) {
-              this.selectedStation.set(recommendations[0]?.station);
+            // Automatically select the recommended station
+            if (recommendations.length > 0) {
+              this.selectedStation.set(recommendations[0].station);
             }
           }
         })
@@ -339,23 +323,6 @@ export class SiteSelectPage {
         this.selectedStation.set(station);
       }
     }
-  }
-
-  public isStationInDistrict(station?: IStationMeta): boolean {
-    if (!station) return false;
-    const district = this.selectedDistrict();
-    return isStationInDistrict(station, district?.label, district?.id);
-  }
-
-  public getStationDistance(station?: IStationMeta): number | undefined {
-    if (!station) return undefined;
-    const rec = this.stationRecommendations().find((r) => r.station.id === station.id);
-    if (rec) return rec.distanceKm;
-    const center = this.districtCenterResult()?.center;
-    if (center && station.latitude && station.longitude) {
-      return calculateHaversineDistanceKm(center.lat, center.lng, station.latitude, station.longitude);
-    }
-    return undefined;
   }
 
   public handleMarkerClick(e: IMapMarker) {

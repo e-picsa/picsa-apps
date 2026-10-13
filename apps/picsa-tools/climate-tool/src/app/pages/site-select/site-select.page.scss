@@ -37,37 +37,64 @@
 }
 
 .map-floating-location {
-  @apply absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1.5 md:hidden;
+  @apply absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1 md:hidden;
   background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(226, 232, 240, 0.9);
 
   ::ng-deep {
-    .flex.gap-4.my-4 {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-      gap: 0.5rem !important;
+    picsa-form-location-select {
+      display: block;
       width: 100%;
+    }
+    .flex.gap-4.my-4 {
+      display: flex !important;
+      width: 100% !important;
+      margin: 0 !important;
+      gap: 0.5rem !important;
+    }
+    mat-form-field {
+      flex: 1 1 0px !important;
+      width: 100% !important;
+      min-width: 0 !important;
     }
     .mat-mdc-form-field-subscript-wrapper {
       display: none !important;
     }
     .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
       padding-top: 0 !important;
       padding-bottom: 0 !important;
+    }
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: transparent !important;
+    }
+    .mat-mdc-form-field-focus-overlay {
+      display: none !important;
+    }
+    .mdc-line-ripple {
+      display: none !important;
+    }
+    .mdc-text-field--filled::before,
+    .mdc-text-field--filled::after {
+      display: none !important;
     }
     .mat-mdc-form-field-infix {
       padding-top: 4px !important;
       padding-bottom: 4px !important;
-      min-height: 38px !important;
+      min-height: 42px !important;
+      width: 100% !important;
     }
     .mat-mdc-select-trigger {
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
     }
   }
 }
 
 .floating-mobile-card {
-  @apply absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl p-3 md:hidden;
+  @apply absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl px-4 py-3 md:hidden;
   background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(226, 232, 240, 0.9);
 }

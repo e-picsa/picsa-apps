@@ -28,6 +28,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
 - **OnPush Change Detection**: Strictly enforced.
 - **Tailwind CSS**: Preferred over custom SCSS.
 - **Internationalization (i18n)**: assume 20+ languages. NEVER hardcode user-facing text. Always use the `translate` pipe or appropriate service.
+- **Minimalist, Farmer-First UI (Avoid Over-Engineering & Visual Clutter)**: Avoid unprompted visual noise, superfluous chips, extra metadata badges (e.g. "Inside District", "X km from center", "Y years of data"), or verbose button text. Target interfaces for farmers and extension workers with simple, clear, low-cognitive-load designs (e.g. "View" instead of verbose multi-line descriptions). Do NOT add extra UI elements, metrics, or badges unless specifically requested.
 
 ## Coding Style & Long-Term Maintainability
 

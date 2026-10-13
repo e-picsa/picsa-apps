@@ -46,28 +46,6 @@ strings.showMap;
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="text-xl font-bold text-gray-900">{{ displayed.station.name }}</div>
-            <div class="flex flex-wrap items-center gap-2 mt-1">
-              @if (displayed.isInsideDistrict) {
-              <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"
-              >
-                <mat-icon class="!text-xs !h-3.5 !w-3.5">check_circle</mat-icon>
-                <span>{{ strings.inside | translate }} {{ district.label }}</span>
-              </span>
-              } @else if (displayed.distanceKm !== undefined) {
-              <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-              >
-                <mat-icon class="!text-xs !h-3.5 !w-3.5">near_me</mat-icon>
-                <span>{{ displayed.distanceKm }} km {{ strings.fromCenter | translate }}</span>
-              </span>
-              } @if (displayed.station.capabilities?.totalYears; as totalYears) {
-              <span class="text-xs text-gray-500">
-                {{ totalYears }} {{ strings.years | translate }} ({{ displayed.station.capabilities?.years?.[0] }}–{{
-                displayed.station.capabilities?.years?.[1] }})
-              </span>
-              }
-            </div>
           </div>
 
           <button
@@ -76,7 +54,7 @@ strings.showMap;
             class="!h-10 !px-5 whitespace-nowrap"
             (click)="confirmAndNavigate(displayed.station)"
           >
-            <span>{{ strings.viewClimateData | translate }}</span>
+            <span>{{ strings.view | translate }}</span>
             <mat-icon iconPositionEnd>arrow_forward</mat-icon>
           </button>
         </div>
@@ -95,9 +73,6 @@ strings.showMap;
                 }"
               (click)="selectAlternateStation(alt)"
             >
-              @if (alt.isInsideDistrict) {
-              <mat-icon class="!text-xs !h-3.5 !w-3.5 text-emerald-600 mr-0.5">check_circle</mat-icon>
-              }
               <span>{{ alt.station.name }} ({{ alt.distanceKm }} km)</span>
             </button>
             }
@@ -160,34 +135,17 @@ strings.showMap;
     <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
     @if (activeStation(); as station) {
     <div class="floating-mobile-card md:hidden">
-      <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="font-bold text-sm text-gray-900 truncate">{{ station.name }}</span>
-            @if (isStationInDistrict(station)) {
-            <span
-              class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800"
-            >
-              <mat-icon class="!text-[11px] !h-3 !w-3">check_circle</mat-icon>
-              <span>{{ strings.inside | translate }} {{ selectedDistrict()?.label }}</span>
-            </span>
-            }
-          </div>
-          <div class="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
-            @if (getStationDistance(station); as dist) {
-            <span>{{ dist }} km {{ strings.fromCenter | translate }}</span>
-            } @if (station.capabilities?.totalYears; as totalYears) {
-            <span>• {{ totalYears }} {{ strings.years | translate }}</span>
-            }
-          </div>
+          <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>
         </div>
         <button
           matButton="filled"
           color="primary"
-          class="!h-8 !px-3 !text-xs whitespace-nowrap"
+          class="!h-9 !px-4 !text-sm whitespace-nowrap"
           (click)="confirmAndNavigate(station)"
         >
-          <span>{{ strings.viewClimateData | translate }}</span>
+          <span>{{ strings.view | translate }}</span>
           <mat-icon iconPositionEnd class="!text-sm !h-4 !w-4">arrow_forward</mat-icon>
         </button>
       </div>
