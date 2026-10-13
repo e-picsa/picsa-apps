@@ -13,16 +13,18 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components';
-import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
+import { ConfigurationService } from '@picsa/configuration';
+import { ICountryCode } from '@picsa/data';
+import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models';
+import { PicsaCommonComponentsService, PicsaSidenavComponent } from '@picsa/shared';
 import { map } from 'rxjs/operators';
 
-import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';
+import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout.component';
 import { ClimateChartOptionsComponent } from '../../components/climate-chart-options/climate-chart-options.component';
-import { PicsaClimateMaterialModule } from '../../components/material.module';
 import { ClimatePrintLayoutComponent } from '../../components/print-layout/print-layout.component';
+import { PicsaClimateMaterialModule } from '../../material.module';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
 
@@ -50,6 +52,7 @@ interface ISiteViewParams {
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   chartService = inject(ClimateChartService);
   private dataService = inject(ClimateDataService);
+  private configurationService = inject(ConfigurationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private componentsService = inject(PicsaCommonComponentsService);
@@ -60,6 +63,17 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     return stations
       .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
       .sort((a, b) => (a.label > b.label ? 1 : -1));
+  });
+
+  readonly districtLabel = computed(() => {
+    const country = this.configurationService.userSettings().country_code;
+    const location = this.configurationService.userSettings().location;
+    if (!country || !location) return undefined;
+    const districtId = location[5] ?? location[4];
+    if (!districtId) return undefined;
+    const geoData = getGeoLocationData(country as ICountryCode);
+    const deepest = getDeepestLocations(geoData);
+    return deepest.find((l) => l.id === districtId)?.label;
   });
 
   private viewId = toSignal(this.route.queryParams.pipe(map(({ view }: ISiteViewQueryParams) => view)));

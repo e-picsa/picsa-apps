@@ -1,42 +1,145 @@
-<!-- View Toggle (hidden on md+ screen size) -->
-@let toggleIcon = view()==='map' ? 'list' : 'map'; @let toggleText = view()==='map' ? strings.showList :
+<!-- Mobile View Toggle (hidden on md+ screen size) -->
+@let toggleIcon = view() === 'map' ? 'location_on' : 'map'; @let toggleText = view() === 'map' ? strings.showLocation :
 strings.showMap;
-<button matButton (click)="toggleView()" class="view-toggle">
-  <mat-icon>{{toggleIcon}}</mat-icon>
-  {{toggleText}}
+<button matButton="filled" color="primary" (click)="toggleView()" class="view-toggle">
+  <mat-icon>{{ toggleIcon }}</mat-icon>
+  <span>{{ toggleText | translate }}</span>
 </button>
 
-<div class="flex flex-col flex-1 overflow-hidden relative z-0">
-  <!-- Split screen display -->
-  <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
-    <div class="table-container" [attr.data-view]="view()">
-      <picsa-data-table
-        [options]="tableOptions()"
-        [data]="tableData()"
-        class="flex-1"
-        (rowClick)="handleRowClick($event)"
-      ></picsa-data-table>
-    </div>
+<div class="site-select-layout">
+  <!-- Left panel: Location selection & Recommendations -->
+  <div class="selection-panel" [attr.data-view]="view()">
+    <div class="panel-content">
+      <!-- Section 1: Standard Location Select -->
+      <div class="location-card">
+        <div class="flex items-center gap-2 mb-1">
+          <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
+          <h2 class="text-base font-bold text-gray-800">{{ 'Select Location' | translate }}</h2>
+        </div>
+        <p class="text-xs text-gray-500 mb-2">
+          {{ 'Choose your province and district to see the nearest climate station.' | translate }}
+        </p>
 
-    <div class="map-container" [attr.data-view]="view()">
-      <picsa-map
-        (onMarkerClick)="handleMarkerClick($event)"
-        [markers]="mapMarkers()"
-        (onMapReady)="mapReady.set(true)"
-        #picsaMap
-        class="flex-1"
-      >
-      </picsa-map>
+        @if (userCountryCode(); as countryCode) {
+        <picsa-form-location-select
+          [countryCode]="countryCode"
+          [value]="selectedLocation()"
+          (valueChanged)="handleLocationChanged($event)"
+        ></picsa-form-location-select>
+        }
+      </div>
+
+      <!-- Section 2: Recommended Station & Confirmation -->
+      @if (selectedDistrict(); as district) { @if (isCalculatingProximity()) {
+      <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
+        <mat-icon class="!text-2xl !h-6 !w-6 animate-spin text-primary mb-2">sync</mat-icon>
+        <div class="text-sm font-medium">{{ 'Finding closest stations for' | translate }} {{ district.label }}...</div>
+      </div>
+      } @else if (primaryRecommendation(); as primary) {
+      <div class="recommendation-card border-2 border-primary/30 bg-primary/5 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
+          <mat-icon class="!text-sm !h-4 !w-4">star</mat-icon>
+          <span>{{ 'Recommended Station for' | translate }} {{ district.label }}</span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="text-xl font-bold text-gray-900">{{ primary.station.name }}</div>
+            <div class="flex flex-wrap items-center gap-2 mt-1">
+              @if (primary.isInsideDistrict) {
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"
+              >
+                <mat-icon class="!text-xs !h-3.5 !w-3.5">check_circle</mat-icon>
+                {{ 'Inside' | translate }} {{ district.label }}
+              </span>
+              } @else {
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              >
+                <mat-icon class="!text-xs !h-3.5 !w-3.5">near_me</mat-icon>
+                {{ primary.distanceKm }} km {{ 'from district center' | translate }}
+              </span>
+              } @if (primary.station.capabilities?.totalYears; as totalYears) {
+              <span class="text-xs text-gray-500">
+                {{ totalYears }} {{ 'years' | translate }} ({{ primary.station.capabilities?.years?.[0] }}–{{
+                primary.station.capabilities?.years?.[1] }})
+              </span>
+              }
+            </div>
+          </div>
+
+          <button
+            matButton="filled"
+            color="primary"
+            class="!h-10 !px-5 whitespace-nowrap"
+            (click)="confirmAndNavigate(primary.station)"
+          >
+            <span>{{ 'View Climate Data' | translate }}</span>
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+        <!-- Alternative Nearby Stations -->
+        @if (alternativeRecommendations().length > 0) {
+        <div class="mt-4 pt-3 border-t border-gray-200">
+          <div class="text-xs font-medium text-gray-500 mb-1.5">{{ 'Other nearby stations:' | translate }}</div>
+          <div class="flex flex-wrap gap-2">
+            @for (alt of alternativeRecommendations(); track alt.station.id) {
+            <button
+              matButton="outlined"
+              class="!text-xs !h-7 !px-2.5"
+              [ngClass]="{
+                        '!border-primary bg-primary/10': selectedStation()?.id === alt.station.id
+                      }"
+              (click)="confirmAndNavigate(alt.station)"
+            >
+              <span>{{ alt.station.name }} ({{ alt.distanceKm }} km)</span>
+            </button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      } } @else {
+      <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+        <mat-icon class="!text-3xl !h-8 !w-8 text-gray-400 mb-1">travel_explore</mat-icon>
+        <div class="font-medium text-gray-700 text-sm">{{ 'Select a Province & District above' | translate }}</div>
+        <div class="text-xs text-gray-500 mt-1">
+          {{ 'We will automatically find and recommend the nearest weather station for your area.' | translate }}
+        </div>
+      </div>
+      }
+
+      <!-- Section 3: Optional Browse All Stations Expander -->
+      <div class="all-stations-section mt-4 pt-2">
+        <button matButton="text" class="!text-xs text-gray-600 !p-0" (click)="toggleAllStations()">
+          <mat-icon class="!text-base !h-4 !w-4">{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span>{{ (showAllStations() ? 'Hide all stations table' : 'Browse all country stations') | translate }}</span>
+        </button>
+
+        @if (showAllStations()) {
+        <div class="mt-2 border rounded-lg overflow-hidden max-h-80 flex flex-col">
+          <picsa-data-table
+            [options]="tableOptions()"
+            [data]="tableData()"
+            class="flex-1"
+            (rowClick)="handleRowClick($event)"
+          ></picsa-data-table>
+        </div>
+        }
+      </div>
     </div>
   </div>
-</div>
 
-@if(selectedStation(); as station){
-<div class="site-select-container">
-  <button (click)="goToSite(station)" matButton="elevated" color="primary">
-    <span>{{ station.name }}</span>
-    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-  </button>
+  <!-- Right panel: Interactive Map -->
+  <div class="map-panel" [attr.data-view]="view()">
+    <picsa-map
+      (onMarkerClick)="handleMarkerClick($event)"
+      [markers]="mapMarkers()"
+      (onMapReady)="mapReady.set(true)"
+      #picsaMap
+      class="flex-1 w-full h-full"
+    ></picsa-map>
+  </div>
 </div>
-
-}
