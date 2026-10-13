@@ -67,46 +67,74 @@
           [valueTemplates]="{
             name: nameTemplate,
             qc_passed: qcStatusTemplate,
-            qc_details: qcDetailsTemplate,
+            rainfall_total_years: totalYearsTemplate,
+            rainfall_last_thirty_years: lastThirtyYearsTemplate,
+            rainfall_last_ten_years: lastTenYearsTemplate,
+            qc_warnings: qcWarningsTemplate,
             updated_at: updatedAtTemplate,
             products: productsTemplate,
-            rainfall_export_data: downloadDbTemplate,
           }"
         >
           <ng-template #nameTemplate let-name>
             <span class="font-medium text-slate-900">{{ name }}</span>
           </ng-template>
 
-          <ng-template #qcStatusTemplate let-passed>
+          <ng-template #qcStatusTemplate let-passed let-row="row">
             @if (passed) {
-              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600" matTooltip="QC Passed">check_circle</mat-icon>
+              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
+                check_circle
+              </mat-icon>
             } @else {
-              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600" matTooltip="QC Failed">cancel</mat-icon>
+              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
+                cancel
+              </mat-icon>
             }
           </ng-template>
 
-          <ng-template #qcDetailsTemplate let-row="row">
-            <div class="flex flex-col gap-1 text-xs">
-              @if (!row.qc_passed && row.qc_failures?.length) {
-                <div class="flex flex-wrap gap-1">
-                  @for (f of row.qc_failures; track f) {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-[0.72rem] font-medium bg-slate-100 text-slate-700 border border-slate-200"
-                    >
-                      {{ getQcFailureLabel(f) }}
-                    </span>
-                  }
-                </div>
-              }
-              @if (row.qc_season_warning) {
-                <span class="text-slate-500 font-normal">
-                  {{ row.qc_season_warning }}
-                </span>
-              }
-              @if (row.qc_passed && !row.qc_season_warning) {
-                <span class="text-slate-400">—</span>
-              }
-            </div>
+          <ng-template #totalYearsTemplate let-val>
+            @if (val !== undefined && val !== null) {
+              <span [class]="val >= 30 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+                {{ val }}
+              </span>
+            } @else {
+              <span class="text-slate-400">—</span>
+            }
+          </ng-template>
+
+          <ng-template #lastThirtyYearsTemplate let-val>
+            @if (val !== undefined && val !== null) {
+              <span [class]="val >= 10 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+                {{ val }}
+              </span>
+            } @else {
+              <span class="text-slate-400">—</span>
+            }
+          </ng-template>
+
+          <ng-template #lastTenYearsTemplate let-val>
+            @if (val !== undefined && val !== null) {
+              <span [class]="val >= 1 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+                {{ val }}
+              </span>
+            } @else {
+              <span class="text-slate-400">—</span>
+            }
+          </ng-template>
+
+          <ng-template #qcWarningsTemplate let-row="row">
+            @let warnings = getWarningLines(row);
+            @if (warnings.length > 0) {
+              <div class="flex flex-col gap-0.5 text-xs text-amber-800">
+                @for (w of warnings; track w) {
+                  <div class="flex items-start gap-1.5">
+                    <span class="text-amber-600 font-bold leading-none mt-0.5">•</span>
+                    <span>{{ w }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <span class="text-slate-400">—</span>
+            }
           </ng-template>
 
           <ng-template #updatedAtTemplate let-value>
@@ -159,17 +187,6 @@
                 }
               }
             </div>
-          </ng-template>
-
-          <ng-template #downloadDbTemplate let-data let-row="row">
-            <button
-              matIconButton
-              (click)="downloadStationCSV(row, $event)"
-              [disabled]="!data || data.length === 0"
-              matTooltip="Download CSV"
-            >
-              <mat-icon>download</mat-icon>
-            </button>
           </ng-template>
         </picsa-data-table>
       </div>

@@ -25,6 +25,7 @@ import { hackConvertStationDataForDisplay } from '../../climate.utils';
 import { IStationDiffSummary } from '../../climate-diff.types';
 import { compareStationDatasets } from '../../climate-diff.utils';
 import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
+import { StationDetailsDialogComponent } from './components/station-details-dialog/station-details-dialog.component';
 import { StationDiffDialogComponent } from './components/station-diff-dialog/station-diff-dialog.component';
 
 export type StationDiffStatus = 'in_sync' | 'divergent' | 'app_only' | 'db_only' | 'no_data';
@@ -170,15 +171,15 @@ interface IStatusUpdate {
   statuses?: { id: string; status: string }[];
 }
 
-const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary | 'qc_details')[] = [
+const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'name',
-  'rainfall_total_years',
-  'rainfall_last_ten_years',
   'qc_passed',
-  'qc_details',
+  'rainfall_total_years',
+  'rainfall_last_thirty_years',
+  'rainfall_last_ten_years',
+  'qc_warnings',
   'products',
   'updated_at',
-  'rainfall_export_data',
 ];
 
 const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
@@ -296,19 +297,27 @@ export class ClimateAdminPageComponent {
     }
   }
 
+  public openStationDetailsDialog(station: IStationRow): void {
+    this.dialog.open(StationDetailsDialogComponent, {
+      data: { station },
+      width: '92vw',
+      maxWidth: '1280px',
+      maxHeight: '90vh',
+    });
+  }
+
   public dbTableOptions: IDataTableOptions = {
     displayColumns: DB_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationAdminSummary) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    handleRowClick: ({ station }: IStationAdminSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
       if (v === 'name' || v === 'station') return 'Station';
-      if (v === 'rainfall_total_years') return 'Total Years';
-      if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
       if (v === 'qc_passed') return 'QC Status';
-      if (v === 'qc_details') return 'QC Details';
+      if (v === 'rainfall_total_years') return 'Total Years';
+      if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
+      if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
+      if (v === 'qc_warnings') return 'Warnings';
       if (v === 'products') return 'Available Products';
       if (v === 'updated_at') return 'Last Sync';
-      if (v === 'rainfall_export_data') return 'Action';
       return formatHeaderDefault(v);
     },
   };
@@ -344,8 +353,7 @@ export class ClimateAdminPageComponent {
 
   public appTableOptions: IDataTableOptions = {
     displayColumns: APP_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationAppSummary) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    handleRowClick: ({ station }: IStationAppSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
       if (v === 'name') return 'Station';
       if (v === 'has_bundled_data') return 'Bundled Status';
@@ -489,6 +497,27 @@ export class ClimateAdminPageComponent {
       isDbOnly,
       productLines: lines,
     };
+  }
+
+  public getQcStatusTooltip(row: IStationAdminSummary): string {
+    if (row.qc_passed) {
+      return [
+        'Quality Control: Passed',
+        '✓ Total rainfall record ≥ 30 years',
+        '✓ Past 30 years record ≥ 10 years',
+        '✓ Recent data in past 10 years present',
+      ].join('\n');
+    }
+    const reasons = row.qc_reasons && row.qc_reasons.length > 0 ? row.qc_reasons : ['Quality control criteria not met'];
+    return ['Quality Control: Failed', ...reasons.map((r) => `✕ ${r}`)].join('\n');
+  }
+
+  public getWarningLines(row: IStationAdminSummary): string[] {
+    const lines: string[] = [];
+    if (row.qc_season_warning) {
+      lines.push(row.qc_season_warning);
+    }
+    return lines;
   }
 
   public getQcFailureLabel(failure: ClimateQcFailure): string {

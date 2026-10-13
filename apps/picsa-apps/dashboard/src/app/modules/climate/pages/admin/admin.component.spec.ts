@@ -48,24 +48,56 @@ describe('ClimateAdminPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should configure DB table options with consolidated QC status and details', () => {
-    expect(component.dbTableOptions.displayColumns).toContain('name');
-    expect(component.dbTableOptions.displayColumns).toContain('rainfall_total_years');
-    expect(component.dbTableOptions.displayColumns).toContain('rainfall_last_ten_years');
-    expect(component.dbTableOptions.displayColumns).toContain('qc_passed');
-    expect(component.dbTableOptions.displayColumns).toContain('qc_details');
-    expect(component.dbTableOptions.displayColumns).toContain('products');
-    expect(component.dbTableOptions.displayColumns).toContain('updated_at');
-    expect(component.dbTableOptions.displayColumns).toContain('rainfall_export_data');
+  it('should configure DB table options with consolidated QC status, year counters and warnings', () => {
+    expect(component.dbTableOptions.displayColumns).toEqual([
+      'name',
+      'qc_passed',
+      'rainfall_total_years',
+      'rainfall_last_thirty_years',
+      'rainfall_last_ten_years',
+      'qc_warnings',
+      'products',
+      'updated_at',
+    ]);
 
     expect(component.dbTableOptions.formatHeader('name')).toBe('Station');
-    expect(component.dbTableOptions.formatHeader('rainfall_total_years')).toBe('Total Years');
-    expect(component.dbTableOptions.formatHeader('rainfall_last_ten_years')).toBe('Past 10 Years');
     expect(component.dbTableOptions.formatHeader('qc_passed')).toBe('QC Status');
-    expect(component.dbTableOptions.formatHeader('qc_details')).toBe('QC Details');
+    expect(component.dbTableOptions.formatHeader('rainfall_total_years')).toBe('Total Years');
+    expect(component.dbTableOptions.formatHeader('rainfall_last_thirty_years')).toBe('Past 30 Years');
+    expect(component.dbTableOptions.formatHeader('rainfall_last_ten_years')).toBe('Past 10 Years');
+    expect(component.dbTableOptions.formatHeader('qc_warnings')).toBe('Warnings');
     expect(component.dbTableOptions.formatHeader('products')).toBe('Available Products');
     expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
-    expect(component.dbTableOptions.formatHeader('rainfall_export_data')).toBe('Action');
+  });
+
+  it('should open station details dialog on row click', () => {
+    const dialogSpy = jest.spyOn((component as any).dialog, 'open').mockReturnValue({} as any);
+    const mockStation = { id: 's1', station_id: 's1', station_name: 'Test' };
+    component.openStationDetailsDialog(mockStation as any);
+    expect(dialogSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        data: { station: mockStation },
+      }),
+    );
+  });
+
+  it('should format QC status tooltip and warning lines correctly', () => {
+    const passedRow: any = { qc_passed: true };
+    const passedTooltip = component.getQcStatusTooltip(passedRow);
+    expect(passedTooltip).toContain('Quality Control: Passed');
+    expect(passedTooltip).toContain('Total rainfall record ≥ 30 years');
+
+    const failedRow: any = {
+      qc_passed: false,
+      qc_reasons: ['Insufficient rainfall record (< 30 years)'],
+    };
+    const failedTooltip = component.getQcStatusTooltip(failedRow);
+    expect(failedTooltip).toContain('Quality Control: Failed');
+    expect(failedTooltip).toContain('Insufficient rainfall record (< 30 years)');
+
+    const warningRow: any = { qc_season_warning: '2 years with start but no end' };
+    expect(component.getWarningLines(warningRow)).toEqual(['2 years with start but no end']);
   });
 
   it('should support filtering DB table by QC status and warnings', () => {

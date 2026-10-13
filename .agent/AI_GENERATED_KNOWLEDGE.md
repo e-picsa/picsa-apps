@@ -573,3 +573,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **PicsaDataTable Context Binding**:
   - In `picsa-data-table`, value templates receive context `[ngTemplateOutletContext]="$any({ $implicit: row[column], row: row, column: column })"`.
   - The first implicit parameter receives `row[column]`. When defining custom templates that need object fields, use `let-row="row"`. For station names, provide a string column (e.g. `name`) rather than an object to avoid rendering `[object Object]`.
+
+- **Data System Table Layout & QC Breakdown**:
+  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `updated_at` (Last Sync). Action columns are omitted.
+  - Counters are color-coded: green (`text-emerald-700 font-semibold`) when meeting the check threshold, amber (`text-amber-700 font-semibold`) when failing.
+  - Warnings are displayed on separate lines prefixed with a bullet point (`•`) in the table column.
+  - Hovering the QC status icon displays a multi-line tooltip listing all verified quality control gates or specific failure reasons.
+  - Clicking a station row opens `StationDetailsDialogComponent` as a modal dialog, allowing full inspection of Location, Data, Charts, and Crop Probabilities tabs without page navigation.
+  - Material icon buttons in Angular 21 templates must use MDC directive syntax (`<button matIconButton>`), not legacy hyphenated attributes (`<button mat-icon-button>`).
