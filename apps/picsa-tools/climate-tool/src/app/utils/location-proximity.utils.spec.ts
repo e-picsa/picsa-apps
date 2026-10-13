@@ -3,6 +3,7 @@ import { IStationMeta } from '@picsa/models';
 import {
   calculateHaversineDistanceKm,
   computeFeatureBboxCenter,
+  getDistrictCenterAndBoundary,
   getStationRecommendations,
   normalizeLocationName,
 } from './location-proximity.utils';
@@ -25,7 +26,7 @@ describe('Location Proximity Utils', () => {
     it('removes stopwords, spaces, and punctuation', () => {
       expect(normalizeLocationName('Choma District')).toBe('choma');
       expect(normalizeLocationName('Chipepo Met')).toBe('chipepo');
-      expect(normalizeLocationName('Makoholi Exp. Station (Met)')).toBe('makoholiexp');
+      expect(normalizeLocationName('Makoholi Exp. Station (Met)')).toBe('makoholiexpstation');
       expect(normalizeLocationName(null)).toBe('');
     });
   });
@@ -33,6 +34,7 @@ describe('Location Proximity Utils', () => {
   describe('computeFeatureBboxCenter', () => {
     it('calculates center from Polygon coordinates', () => {
       const feature = {
+        type: 'Feature',
         geometry: {
           type: 'Polygon',
           coordinates: [
@@ -51,8 +53,36 @@ describe('Location Proximity Utils', () => {
     });
 
     it('returns undefined for invalid features', () => {
-      expect(computeFeatureBboxCenter(null)).toBeUndefined();
-      expect(computeFeatureBboxCenter({ geometry: {} })).toBeUndefined();
+      expect(computeFeatureBboxCenter(null as unknown as { type: string })).toBeUndefined();
+      expect(
+        computeFeatureBboxCenter({
+          type: 'Feature',
+          geometry: {} as unknown as { type: string; coordinates: unknown },
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('getDistrictCenterAndBoundary', () => {
+    it('resolves district center for Malawi district from bundled TopoJSON', async () => {
+      const result = await getDistrictCenterAndBoundary('mw', 'salima');
+      expect(result).toBeDefined();
+      expect(result?.center.lat).toBeCloseTo(-13.78, 1);
+      expect(result?.center.lng).toBeCloseTo(34.38, 1);
+      expect(result?.feature).toBeDefined();
+    });
+
+    it('resolves district center for Zambia district from bundled TopoJSON', async () => {
+      const result = await getDistrictCenterAndBoundary('zm', 'choma');
+      expect(result).toBeDefined();
+      expect(result?.center.lat).toBeLessThan(-16.0);
+      expect(result?.center.lng).toBeGreaterThan(26.0);
+      expect(result?.feature).toBeDefined();
+    });
+
+    it('returns undefined for non-existent district', async () => {
+      const result = await getDistrictCenterAndBoundary('zm', 'non_existent_district_12345');
+      expect(result).toBeUndefined();
     });
   });
 

@@ -1,28 +1,12 @@
-import { ICountryCode } from '@picsa/data';
+import type { ICountryCode } from '@picsa/data';
+import type { IGeoJsonData } from '@picsa/data/geoLocation';
 import {
   getDeepestAdminLevel,
   getDeepestLocations,
   getGeoLocationData,
-  IGeoJsonData,
   topoJsonToGeoJson,
 } from '@picsa/data/geoLocation';
-import { IStationMeta } from '@picsa/models';
-
-export interface IFeatureGeometry {
-  type: string;
-  coordinates: unknown;
-}
-
-export interface IProximityFeature {
-  type?: string;
-  properties?: Record<string, unknown> & { name?: string };
-  geometry?: IFeatureGeometry;
-}
-
-export interface IDistrictCenterResult {
-  center: { lat: number; lng: number };
-  feature?: IProximityFeature;
-}
+import type { IStationMeta } from '@picsa/models';
 
 export interface IStationRecommendation {
   station: IStationMeta;
@@ -32,72 +16,93 @@ export interface IStationRecommendation {
   score: number;
 }
 
+export interface IProximityFeature {
+  type: string;
+  properties?: {
+    id?: number | string;
+    name?: string;
+    center?: [number, number];
+    center_source?: 'admin_centre' | 'label' | 'centroid' | 'point_on_surface' | string;
+    [key: string]: unknown;
+  };
+  geometry?: {
+    type: string;
+    coordinates: unknown;
+  };
+}
+
+export interface IDistrictCenterResult {
+  center: { lat: number; lng: number };
+  feature?: IProximityFeature;
+}
+
 /**
- * Calculate the great-circle distance between two points in kilometers
- * using the Haversine formula.
+ * Calculate Great-Circle distance between two coordinates in kilometers using Haversine formula
  */
 export function calculateHaversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const earthRadiusKm = 6371;
+  const R = 6371; // Earth radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(earthRadiusKm * c);
+  return Math.round(R * c * 10) / 10;
 }
 
 /**
- * Normalize names for fuzzy district/station matching
+ * Normalize location names for fuzzy comparison
  */
 export function normalizeLocationName(name?: string | null): string {
-  return (name || '')
+  if (!name) return '';
+  return name
     .toLowerCase()
-    .replace(/\b(district|province|city|met|station)\b/g, '')
-    .replace(/[^a-z0-9]/g, '');
+    .replace(/\b(district|province|city|met)\b/gi, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
 }
 
 /**
- * Extract [lng, lat] coordinate pairs from GeoJSON geometry
- */
-function extractCoordinates(coords: unknown): [number, number][] {
-  if (!Array.isArray(coords)) return [];
-  if (coords.length >= 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
-    return [[coords[0], coords[1]]];
-  }
-  return coords.flatMap((inner) => extractCoordinates(inner));
-}
-
-/**
- * Calculate the bounding box center of a GeoJSON feature
+ * Compute bounding-box centroid of a GeoJSON Feature (Polygon or MultiPolygon)
  */
 export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { lat: number; lng: number } | undefined {
-  if (!feature?.geometry?.coordinates) return undefined;
-  const points = extractCoordinates(feature.geometry.coordinates);
-  if (points.length === 0) return undefined;
+  if (!feature || !feature.geometry || !feature.geometry.coordinates) return undefined;
 
   let minLng = Infinity;
   let maxLng = -Infinity;
   let minLat = Infinity;
   let maxLat = -Infinity;
 
-  for (const [lng, lat] of points) {
-    if (lng < minLng) minLng = lng;
-    if (lng > maxLng) maxLng = lng;
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-  }
+  const extractCoords = (coords: unknown) => {
+    if (!Array.isArray(coords)) return;
+    if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+      const [lng, lat] = coords as [number, number];
+      if (lng < minLng) minLng = lng;
+      if (lng > maxLng) maxLng = lng;
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+    } else {
+      for (const child of coords) {
+        extractCoords(child);
+      }
+    }
+  };
+
+  extractCoords(feature.geometry.coordinates);
+
+  if (minLng === Infinity || minLat === Infinity) return undefined;
 
   return {
-    lat: Number(((minLat + maxLat) / 2).toFixed(4)),
-    lng: Number(((minLng + maxLng) / 2).toFixed(4)),
+    lat: Math.round(((minLat + maxLat) / 2) * 100000) / 100000,
+    lng: Math.round(((minLng + maxLng) / 2) * 100000) / 100000,
   };
 }
 
 /**
  * Retrieve district reference coordinates and GeoJSON boundary.
- * Checks for direct coordinates first (upstream issue #28 forward compatibility),
- * and falls back to calculating the centroid from the bundled TopoJSON feature.
+ * 1. Checks precomputed `center: [lng, lat]` property in the TopoJSON feature.
+ * 2. Falls back to calculating the centroid from the polygon bounding box.
+ * 3. Falls back to precomputed district coordinates if available.
  */
 export async function getDistrictCenterAndBoundary(
   countryCode: ICountryCode,
@@ -108,18 +113,6 @@ export async function getDistrictCenterAndBoundary(
   const district = deepest.find((d) => d.id === districtId);
   if (!district) return undefined;
 
-  // 1. Forward-compatibility: Check if district item has precomputed coordinates
-  const districtCoords = (district as { coordinates?: { latitude: number; longitude: number } }).coordinates;
-  if (districtCoords?.latitude && districtCoords?.longitude) {
-    return {
-      center: {
-        lat: districtCoords.latitude,
-        lng: districtCoords.longitude,
-      },
-    };
-  }
-
-  // 2. Fallback: Parse TopoJSON boundary and calculate bbox center
   try {
     const topojson = await geoData.topoJson();
     const adminLevel = getDeepestAdminLevel(geoData);
@@ -135,13 +128,37 @@ export async function getDistrictCenterAndBoundary(
     }) as IProximityFeature | undefined;
 
     if (feature) {
-      const center = computeFeatureBboxCenter(feature);
-      if (center) {
-        return { center, feature };
+      // 1. Direct precomputed center from TopoJSON properties: [lng, lat]
+      const centerCoords = feature.properties?.center;
+      if (Array.isArray(centerCoords) && centerCoords.length >= 2) {
+        const [lng, lat] = centerCoords;
+        if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+          return {
+            center: { lat, lng },
+            feature,
+          };
+        }
+      }
+
+      // 2. Fallback: compute bounding box center from geometry
+      const bboxCenter = computeFeatureBboxCenter(feature);
+      if (bboxCenter) {
+        return { center: bboxCenter, feature };
       }
     }
   } catch (err) {
-    console.warn(`[LocationProximity] Could not compute district center for ${districtId}:`, err);
+    console.warn(`[LocationProximity] Could not compute district center from TopoJSON for ${districtId}:`, err);
+  }
+
+  // 3. Fallback: Check if district item itself has precomputed coordinates
+  const districtCoords = (district as { coordinates?: { latitude: number; longitude: number } }).coordinates;
+  if (districtCoords?.latitude && districtCoords?.longitude) {
+    return {
+      center: {
+        lat: districtCoords.latitude,
+        lng: districtCoords.longitude,
+      },
+    };
   }
 
   return undefined;

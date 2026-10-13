@@ -39,6 +39,19 @@ import {
 const STRINGS = {
   showMap: translateMarker('Show Map'),
   showLocation: translateMarker('Show Location'),
+  selectLocation: translateMarker('Select Location'),
+  chooseLocationDesc: translateMarker('Choose your province and district to see the nearest climate station.'),
+  findingStations: translateMarker('Finding closest stations for {{district}}...'),
+  recommendedStation: translateMarker('Recommended Station for {{district}}'),
+  insideDistrict: translateMarker('Inside {{district}}'),
+  distanceFromCenter: translateMarker('{{distance}} km from district center'),
+  viewClimateData: translateMarker('View Climate Data'),
+  otherNearbyStations: translateMarker('Other nearby stations:'),
+  years: translateMarker('years'),
+  allAvailableStations: translateMarker('All Available Stations'),
+  hide: translateMarker('Hide'),
+  show: translateMarker('Show'),
+  selectStationNotice: translateMarker('Select a station to view its climate summary.'),
 };
 
 @Component({
@@ -51,72 +64,76 @@ const STRINGS = {
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    PicsaMapComponent,
     PicsaDataTableComponent,
-    FormLocationSelectComponent,
+    PicsaMapComponent,
     PicsaTranslateModule,
+    FormLocationSelectComponent,
   ],
 })
 export class SiteSelectPage {
+  public dataService = inject(ClimateDataService);
+  private configurationService = inject(ConfigurationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private dataService = inject(ClimateDataService);
-  private configurationService = inject(ConfigurationService);
 
   public readonly strings = STRINGS;
 
-  // Selected station & state
-  public readonly selectedStation = signal<IStationMeta | undefined>(undefined, {
-    equal: (a, b) => a?.id === b?.id,
-  });
-
-  // Current selected location array [country, admin4, admin5/6]
-  public readonly selectedLocation = signal<(string | undefined)[]>([]);
-
-  // Proximity & recommendation state
-  public readonly isCalculatingProximity = signal(false);
-  public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
-  public readonly stationRecommendations = signal<IStationRecommendation[]>([]);
-
-  public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
-  public readonly alternativeRecommendations = computed(() => this.stationRecommendations().slice(1, 4));
-
-  // View state
-  public readonly showAllStations = signal(false);
-  public readonly view = signal<'recommendation' | 'map'>('recommendation');
-  public readonly mapReady = signal(false);
-
-  // Map reference
-  public readonly picsaMap = viewChild<PicsaMapComponent>('picsaMap');
+  public picsaMap = viewChild(PicsaMapComponent);
 
   public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
-  /**
-   * Resolved deepest district label and id from currently selected location array
-   */
-  public readonly selectedDistrict = computed(() => {
-    const country = this.userCountryCode();
-    const loc = this.selectedLocation();
-    if (!country || !loc || loc.length === 0) return undefined;
+  /** Active location hierarchy selected by the user: [country, admin_4, admin_5, ...] */
+  public readonly selectedLocation = signal<(string | undefined)[]>([]);
 
-    // In multi-tier countries (ZM: slot 5, ZW: slot 5/6), take the deepest selected slot
+  /** Selected district derived from location hierarchy */
+  public readonly selectedDistrict = computed(() => {
+    const loc = this.selectedLocation();
+    const country = this.userCountryCode();
+    if (!loc || loc.length === 0 || !country) return undefined;
+
     const districtId = loc[5] ?? loc[4];
     if (!districtId) return undefined;
 
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
-    const match = deepest.find((d) => d.id === districtId);
-    return match ? { id: districtId, label: match.label } : { id: districtId, label: districtId };
+    return deepest.find((l) => l.id === districtId);
   });
+
+  /** Selected station on map/table/card */
+  public readonly selectedStation = signal<IStationMeta | undefined>(undefined);
+
+  /** Whether the user is viewing the location recommendation panel or map on mobile */
+  public readonly view = signal<'recommendation' | 'map'>('recommendation');
+
+  /** Whether all stations table is expanded */
+  public readonly showAllStations = signal<boolean>(false);
+
+  /** Flag while computing district center / station proximity */
+  public readonly isCalculatingProximity = signal<boolean>(false);
+
+  /** Station recommendations ranked by proximity to active district */
+  public readonly stationRecommendations = signal<IStationRecommendation[]>([]);
+
+  /** Centroid and boundary of currently selected district */
+  public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
+
+  /** Primary recommended station */
+  public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
+
+  /** Alternative nearby stations (next 3 recommendations) */
+  public readonly alternativeRecommendations = computed(() => this.stationRecommendations().slice(1, 4));
+
+  public readonly mapReady = computed(() => this.picsaMap()?.mapReady() ?? false);
 
   public readonly mapMarkers = computed(() => {
     const stations = this.dataService.stations();
     const markers: IMapMarker[] = stations
-      .filter((s) => s.latitude !== null && s.longitude !== null)
+      .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft)
       .map((station, _index) => ({
-        latlng: [station.latitude, station.longitude],
         data: station,
-        number: _index + 1,
+        latitude: station.latitude as number,
+        longitude: station.longitude as number,
+        popupHTML: station.name,
         _index,
       }));
     return markers;
@@ -150,24 +167,32 @@ export class SiteSelectPage {
     }
 
     // Effect: Load country admin boundaries when map and country are ready
-    effect(async () => {
+    effect(() => {
       const picsaMap = this.picsaMap();
       const country_code = this.userCountryCode();
-      if (picsaMap && picsaMap.mapReady() && country_code) {
-        await this.loadCountryAdminBoundaries(picsaMap, country_code);
+      const mapReady = this.mapReady();
+      if (picsaMap && mapReady && country_code) {
+        this.loadCountryAdminBoundaries(picsaMap, country_code).catch((err) => {
+          console.warn('[SiteSelect] Could not load country admin boundaries:', err);
+        });
       }
     });
 
     // Effect: Check for temporary preferred station when returning from chart view
-    effect(async () => {
+    effect(() => {
       const picsaMap = this.picsaMap();
-      if (picsaMap && this.mapReady() && this.mapMarkers()?.length > 0) {
-        await this.checkTmpPreferredStation();
+      const mapReady = this.mapReady();
+      const markers = this.mapMarkers();
+      if (picsaMap && mapReady && markers && markers.length > 0) {
+        this.checkTmpPreferredStation().catch((err) => {
+          console.warn('[SiteSelect] Could not check preferred station:', err);
+        });
       }
     });
 
     // Effect: Calculate district centroid and station proximity whenever selectedDistrict changes
-    effect(async () => {
+    let latestDistrictReqId = 0;
+    effect(() => {
       const district = this.selectedDistrict();
       const countryCode = this.userCountryCode();
       const allStations = this.dataService.stations();
@@ -175,38 +200,52 @@ export class SiteSelectPage {
       if (!district || !countryCode) {
         this.stationRecommendations.set([]);
         this.districtCenterResult.set(undefined);
+        this.isCalculatingProximity.set(false);
         return;
       }
 
+      const reqId = ++latestDistrictReqId;
       this.isCalculatingProximity.set(true);
-      try {
-        const result = await getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id);
-        this.districtCenterResult.set(result);
 
-        if (result?.center) {
-          const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
-          this.stationRecommendations.set(recommendations);
+      getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
+        .then((result) => {
+          if (reqId !== latestDistrictReqId) return; // Stale request, ignore
+          this.districtCenterResult.set(result);
 
-          // Default selected station to the primary recommended station if not already chosen
-          const currentSelected = untracked(() => this.selectedStation());
-          if (!currentSelected || !recommendations.some((r) => r.station.id === currentSelected.id)) {
-            this.selectedStation.set(recommendations[0]?.station);
+          if (result?.center) {
+            const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
+            this.stationRecommendations.set(recommendations);
+
+            // Default selected station to primary recommendation if none currently selected
+            const currentSelected = untracked(() => this.selectedStation());
+            if (!currentSelected || !recommendations.some((r) => r.station.id === currentSelected.id)) {
+              this.selectedStation.set(recommendations[0]?.station);
+            }
           }
-        }
+        })
+        .catch((err) => {
+          console.error('[SiteSelect] Error computing district proximity:', err);
+        })
+        .finally(() => {
+          if (reqId === latestDistrictReqId) {
+            this.isCalculatingProximity.set(false);
+          }
+        });
+    });
 
-        // Highlight district boundary on map if feature is present
-        const picsaMap = this.picsaMap();
-        if (picsaMap && this.mapReady() && result?.feature) {
-          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-            lineColor: '#16a34a',
-            lineWidth: 3,
-            lineOpacity: 0.9,
-            fitBounds: true,
-            padding: 40,
-          });
-        }
-      } finally {
-        this.isCalculatingProximity.set(false);
+    // Effect: Highlight district boundary on map when map is ready and boundary feature exists
+    effect(() => {
+      const picsaMap = this.picsaMap();
+      const mapReady = this.mapReady();
+      const result = this.districtCenterResult();
+      if (picsaMap && mapReady && result?.feature) {
+        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+          lineColor: '#16a34a',
+          lineWidth: 3,
+          lineOpacity: 0.9,
+          fitBounds: true,
+          padding: 40,
+        });
       }
     });
 
@@ -298,17 +337,16 @@ export class SiteSelectPage {
   }
 
   private async loadCountryAdminBoundaries(picsaMap: PicsaMapComponent, country_code: string) {
-    try {
-      const metadata = getGeoLocationData(country_code as ICountryCode);
-      const topojson = await metadata.topoJson();
-      const feature = topoJsonToGeoJson(topojson, 4);
-      picsaMap.addGeoJsonLayer('country-boundaries', feature, {
-        lineColor: '#94a3b8',
-        lineOpacity: 0.4,
-        lineWidth: 1.5,
-      });
-    } catch (err) {
-      console.warn('[SiteSelectPage] Could not load country admin boundaries:', err);
-    }
+    const geoData = getGeoLocationData(country_code as ICountryCode);
+    const topojson = await geoData.topoJson();
+    // In our TopoJSON files, admin level 4/5/6 is available depending on the country
+    // Level 4 (provinces / Malawi districts) gives the clean overview boundary layer
+    const geojson = topoJsonToGeoJson(topojson, '4');
+    picsaMap.addGeoJsonLayer('admin-boundaries', geojson, {
+      lineColor: '#64748b',
+      lineWidth: 1,
+      lineOpacity: 0.5,
+      fitBounds: true,
+    });
   }
 }

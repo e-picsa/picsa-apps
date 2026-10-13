@@ -67,12 +67,27 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
 
   readonly districtLabel = computed(() => {
     const country = this.configurationService.userSettings().country_code;
-    const location = this.configurationService.userSettings().location;
-    if (!country || !location) return undefined;
-    const districtId = location[5] ?? location[4];
-    if (!districtId) return undefined;
+    if (!country) return undefined;
+
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
+
+    // 1. If active station specifies a matching district location tag, use it
+    const station = this.chartService.station();
+    if (station?.location && station.location.length > 0) {
+      const match = deepest.find((d) =>
+        station.location.some(
+          (loc) => loc.toLowerCase() === d.label.toLowerCase() || loc.toLowerCase() === d.id.toLowerCase(),
+        ),
+      );
+      if (match) return match.label;
+    }
+
+    // 2. Fall back to user profile location
+    const location = this.configurationService.userSettings().location;
+    if (!location) return undefined;
+    const districtId = location[5] ?? location[4];
+    if (!districtId) return undefined;
     return deepest.find((l) => l.id === districtId)?.label;
   });
 
@@ -99,12 +114,11 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.chartService.clearChartData();
     this.componentsService.patchHeader({ cdkPortalCenter: undefined });
   }
 
-  public async handleStationSelect(id: string) {
-    await this.router.navigate(['../', id], {
+  handleStationSelect(stationId: string) {
+    this.router.navigate(['../', stationId], {
       relativeTo: this.route,
       queryParamsHandling: 'preserve',
       replaceUrl: true,
@@ -112,6 +126,8 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   }
 
   goToSiteSelect() {
-    this.chartService.goToSiteSelect(this.siteId() as string);
+    this.router.navigate(['../'], {
+      relativeTo: this.route,
+    });
   }
 }
