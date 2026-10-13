@@ -1,4 +1,3 @@
-import { type SupabaseClient } from '@supabase/supabase-js';
 /**
  * Crop Data Sync (db-to-app)
  *
@@ -21,7 +20,7 @@ import { type SupabaseClient } from '@supabase/supabase-js';
  * Env:
  *   SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY) must be set.
  */
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { type SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
