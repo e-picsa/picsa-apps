@@ -2,45 +2,7 @@
   display: contents;
 }
 
-.site-select-layout {
-  @apply flex flex-col md:flex-row flex-1 overflow-hidden relative z-0 h-full w-full;
-}
-
-.selection-panel {
-  @apply flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-white border-r border-gray-200 z-10;
-  max-width: 600px;
-
-  &[data-view='map'] {
-    @apply hidden md:flex;
-  }
-}
-
-.panel-content {
-  @apply flex flex-col gap-4;
-}
-
-.location-card {
-  @apply bg-slate-50/80 p-3 md:p-4 rounded-xl border border-slate-200/80;
-}
-
-.map-panel {
-  @apply flex-1 relative h-full w-full bg-slate-100 overflow-hidden;
-
-  &[data-view='recommendation'] {
-    @apply hidden md:block;
-  }
-}
-
-.view-toggle {
-  @apply absolute right-3 top-3 z-30 md:!hidden shadow-lg;
-  margin-top: var(--status-bar-height);
-}
-
 .map-floating-location {
-  @apply absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1 md:hidden;
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-
   ::ng-deep {
     picsa-form-location-select {
       display: block;
@@ -62,27 +24,19 @@
     }
     .mat-mdc-text-field-wrapper {
       background-color: transparent !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
+      padding: 0 !important;
     }
     .mdc-text-field--filled:not(.mdc-text-field--disabled) {
       background-color: transparent !important;
     }
-    .mat-mdc-form-field-focus-overlay {
-      display: none !important;
-    }
-    .mdc-line-ripple {
-      display: none !important;
-    }
+    .mat-mdc-form-field-focus-overlay,
+    .mdc-line-ripple,
     .mdc-text-field--filled::before,
     .mdc-text-field--filled::after {
       display: none !important;
     }
     .mat-mdc-form-field-infix {
-      padding-top: 4px !important;
-      padding-bottom: 4px !important;
+      padding: 4px 0 !important;
       min-height: 42px !important;
       width: 100% !important;
     }
@@ -91,10 +45,4 @@
       font-weight: 500;
     }
   }
-}
-
-.floating-mobile-card {
-  @apply absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl px-4 py-3 md:hidden;
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(226, 232, 240, 0.9);
 }

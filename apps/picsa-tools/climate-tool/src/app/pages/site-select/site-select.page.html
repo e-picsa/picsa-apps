@@ -1,16 +1,25 @@
 <!-- Mobile View Toggle (hidden on md+ screen size) -->
 @let toggleIcon = view() === 'map' ? 'list' : 'map'; @let toggleText = view() === 'map' ? strings.list : strings.map;
-<button matButton="filled" color="primary" (click)="toggleView()" class="view-toggle">
+<button
+  matButton="filled"
+  color="primary"
+  (click)="toggleView()"
+  class="absolute right-3 top-3 z-30 md:!hidden shadow-lg mt-[var(--status-bar-height)]"
+>
   <mat-icon>{{ toggleIcon }}</mat-icon>
   <span>{{ toggleText | translate }}</span>
 </button>
 
-<div class="site-select-layout">
+<div class="flex flex-col md:flex-row flex-1 overflow-hidden relative z-0 h-full w-full">
   <!-- Left panel: Location selection & Recommendations -->
-  <div class="selection-panel" [attr.data-view]="view()">
-    <div class="panel-content">
+  <div
+    class="flex-1 flex-col overflow-y-auto p-4 md:p-6 bg-white border-r border-gray-200 z-10 max-w-[600px] md:flex"
+    [class.hidden]="view() === 'map'"
+    [class.flex]="view() !== 'map'"
+  >
+    <div class="flex flex-col gap-4">
       <!-- Section 1: Standard Location Select -->
-      <div class="location-card">
+      <div class="bg-slate-50/80 p-3 md:p-4 rounded-xl border border-slate-200/80">
         <div class="flex items-center gap-2 mb-1">
           <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
           <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
@@ -111,9 +120,14 @@
   </div>
 
   <!-- Right panel: Interactive Station & Boundary Map -->
-  <div class="map-panel" [attr.data-view]="view()">
+  <div
+    class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden md:block"
+    [class.hidden]="view() === 'recommendation'"
+  >
     <!-- Floating Location Selector (Mobile) -->
-    <div class="map-floating-location md:hidden">
+    <div
+      class="map-floating-location absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1 md:hidden bg-white/95 border border-slate-200/90"
+    >
       @if (userCountryCode(); as countryCode) {
       <picsa-form-location-select
         [countryCode]="countryCode"
@@ -133,7 +147,9 @@
 
     <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
     @if (activeStation(); as station) {
-    <div class="floating-mobile-card md:hidden">
+    <div
+      class="absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl px-4 py-3 md:hidden bg-white/95 border border-slate-200/90"
+    >
       <div class="flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
           <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>

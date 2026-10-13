@@ -522,6 +522,7 @@ export interface IGeoJsonLayerOptions {
 }
 
 export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry | Record<string, any>;
+export type IGeoJsonData = GeoJsonData;
 
 interface IRenderedMarker {
   marker: IMapMarker;
