@@ -70,7 +70,7 @@ describe('ClimateStationPageComponent', () => {
 
   it('should compute tableData with qc_passed and qc_reasons mapped from stationQcMap', () => {
     const data = component.tableData();
-    expect(data.length).toBe(1);
+    expect(data).toHaveLength(1);
     expect(data[0].station_id).toBe('salima');
     expect(data[0].qc_passed).toBe(true);
     expect(data[0].qc_reasons).toEqual([]);

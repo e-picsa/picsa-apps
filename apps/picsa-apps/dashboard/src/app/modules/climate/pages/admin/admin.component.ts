@@ -9,7 +9,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClimateQcFailure, IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { arrayToHashmap, evaluateStationQualityGates, QC_FAILURE_LABELS } from '@picsa/utils';
+import {
+  arrayToHashmap,
+  evaluateStationQualityGates,
+  hasValidRainfallObservation,
+  QC_FAILURE_LABELS,
+} from '@picsa/utils';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 import { filter, lastValueFrom, map, switchMap } from 'rxjs';
@@ -28,6 +33,13 @@ function exportCsv(filename: string, data: any[]) {
   const columns = Object.keys(data[0]);
   const csv = unparse(data, { columns });
   download(csv, filename, 'text/csv');
+}
+
+function determineDiffStatus(hasApp: boolean, hasDb: boolean, isDiff: boolean): StationDiffStatus {
+  if (!hasApp && !hasDb) return 'no_data';
+  if (!hasApp) return 'db_only';
+  if (!hasDb) return 'app_only';
+  return isDiff ? 'divergent' : 'in_sync';
 }
 
 export interface IProductSummary {
@@ -86,6 +98,55 @@ export interface IGroupDiffSummary {
   isAppOnly: boolean;
   isDbOnly: boolean;
   productLines: IProductDiffLine[];
+}
+
+const PRODUCT_LABELS: Record<string, string> = {
+  start: 'Season Start',
+  end: 'Season End',
+  length: 'Season Length',
+  rainfall: 'Rainfall',
+};
+
+function resolveProductLabel(key: string, pDiff: any): string {
+  if (pDiff?.label) return pDiff.label;
+  const lookupKey = pDiff?.productKey || key;
+  return PRODUCT_LABELS[lookupKey] ?? key;
+}
+
+interface IProductDiffItem {
+  line: IProductDiffLine | null;
+  total: number;
+  diffCount: number;
+}
+
+function summarizeProductDiff(key: string, pDiff: any): IProductDiffItem {
+  const label = resolveProductLabel(key, pDiff);
+  const changes: string[] = [];
+
+  const prodTotal =
+    pDiff.totalAppValues !== undefined && pDiff.totalDbValues !== undefined
+      ? pDiff.totalAppValues + pDiff.totalDbValues
+      : (pDiff.totalValuesCount ?? 0);
+
+  const added = pDiff.addedInDb ?? pDiff.yearsAdded ?? [];
+  const missing = pDiff.missingInDb ?? pDiff.yearsRemoved ?? [];
+  const changed = pDiff.changedValues ?? pDiff.changes ?? [];
+  const changedLen = Array.isArray(changed) ? changed.length : (pDiff.changedCount ?? 0);
+  const diffCount = added.length + missing.length + changedLen;
+
+  if (added.length > 0) changes.push(`+${added.length} new`);
+  if (missing.length > 0) changes.push(`-${missing.length} missing`);
+  if (changedLen > 0) changes.push(`${changedLen} modified`);
+
+  const line: IProductDiffLine | null =
+    changes.length > 0
+      ? {
+          label,
+          summary: changes.join(', '),
+        }
+      : null;
+
+  return { line, total: prodTotal, diffCount };
 }
 
 export interface IStationDiffRow {
@@ -321,7 +382,7 @@ export class ClimateAdminPageComponent {
     const allStationAppData = this.allStationAppData();
     return stations.map((station) => {
       const appData = allStationAppData[station.station_id] || [];
-      const years = appData.map((d) => d.Year).filter((y) => typeof y === 'number' && !isNaN(y));
+      const years = appData.map((d) => d.Year).filter((y) => typeof y === 'number' && !Number.isNaN(y));
       const startYear = years.length > 0 ? Math.min(...years) : '-';
       const endYear = years.length > 0 ? Math.max(...years) : '-';
       const year_range = years.length > 0 ? `${startYear} - ${endYear}` : '-';
@@ -372,24 +433,11 @@ export class ClimateAdminPageComponent {
       const qc = evaluateStationQualityGates(dbData);
 
       const diff = compareStationDatasets(station.station_id, appData, dbData);
-      const diff_status: StationDiffStatus =
-        appData.length === 0 && dbData.length === 0
-          ? 'no_data'
-          : appData.length === 0
-            ? 'db_only'
-            : dbData.length === 0
-              ? 'app_only'
-              : diff.status === 'diff'
-                ? 'divergent'
-                : 'in_sync';
+      const diff_status = determineDiffStatus(appData.length > 0, dbData.length > 0, diff.status === 'diff');
 
       // Count only rainfall chart years
-      const appRainfallYears = appData.filter(
-        (r) => typeof r.Rainfall === 'number' && !isNaN(r.Rainfall) && isFinite(r.Rainfall),
-      ).length;
-      const dbRainfallYears = dbData.filter(
-        (r) => typeof r.Rainfall === 'number' && !isNaN(r.Rainfall) && isFinite(r.Rainfall),
-      ).length;
+      const appRainfallYears = appData.filter(hasValidRainfallObservation).length;
+      const dbRainfallYears = dbData.filter(hasValidRainfallObservation).length;
 
       return {
         name: station.station_name as string,
@@ -413,13 +461,18 @@ export class ClimateAdminPageComponent {
     let appOnly = 0;
     let dbOnly = 0;
     let noData = 0;
+    let qcPassed = 0;
+    let qcFailed = 0;
 
     for (const r of rows) {
       if (r.diff_status === 'in_sync') inSync++;
       else if (r.diff_status === 'divergent') divergent++;
       else if (r.diff_status === 'app_only') appOnly++;
       else if (r.diff_status === 'db_only') dbOnly++;
-      else noData++;
+      else if (r.diff_status === 'no_data') noData++;
+
+      if (r.qc_passed) qcPassed++;
+      else qcFailed++;
     }
 
     return {
@@ -429,16 +482,17 @@ export class ClimateAdminPageComponent {
       appOnly,
       dbOnly,
       noData,
-      hasDiscrepancies: divergent + appOnly + dbOnly > 0,
+      qcPassed,
+      qcFailed,
     };
   });
 
   public diffTableData = computed<IStationDiffRow[]>(() => {
     const rows = this.allDiffRows();
-    if (this.showOnlyDiffs()) {
-      return rows.filter((r) => r.diff_status === 'divergent' || r.diff_status === 'db_only');
+    if (!this.showOnlyDiffs()) {
+      return rows;
     }
-    return rows;
+    return rows.filter((r) => r.diff_status !== 'in_sync');
   });
 
   public diffTableOptions: IDataTableOptions = {
@@ -479,49 +533,10 @@ export class ClimateAdminPageComponent {
 
     for (const [key, pDiff] of Object.entries<any>(diff?.products || {})) {
       if (!pDiff) continue;
-      const label =
-        pDiff.label ||
-        (key === 'start' || pDiff.productKey === 'start'
-          ? 'Season Start'
-          : key === 'end' || pDiff.productKey === 'end'
-            ? 'Season End'
-            : key === 'length' || pDiff.productKey === 'length'
-              ? 'Season Length'
-              : key === 'rainfall' || pDiff.productKey === 'rainfall'
-                ? 'Rainfall'
-                : key);
-      const changes: string[] = [];
-
-      const prodTotal =
-        pDiff.totalAppValues !== undefined && pDiff.totalDbValues !== undefined
-          ? pDiff.totalAppValues + pDiff.totalDbValues
-          : (pDiff.totalValuesCount ?? 0);
-
-      totalValuesCount += prodTotal;
-
-      const added = pDiff.addedInDb ?? pDiff.yearsAdded ?? [];
-      const missing = pDiff.missingInDb ?? pDiff.yearsRemoved ?? [];
-      const changed = pDiff.changedValues ?? pDiff.changes ?? [];
-      const changedLen = Array.isArray(changed) ? changed.length : (pDiff.changedCount ?? 0);
-      const count = added.length + missing.length + changedLen;
-      diffValuesCount += count;
-
-      if (added.length > 0) {
-        changes.push(`+${added.length} new`);
-      }
-      if (missing.length > 0) {
-        changes.push(`-${missing.length} missing`);
-      }
-      if (changedLen > 0) {
-        changes.push(`${changedLen} modified`);
-      }
-
-      if (changes.length > 0) {
-        lines.push({
-          label,
-          summary: changes.join(', '),
-        });
-      }
+      const { line, total, diffCount } = summarizeProductDiff(key, pDiff);
+      totalValuesCount += total;
+      diffValuesCount += diffCount;
+      if (line) lines.push(line);
     }
 
     const isDbOnly = diffStatus === 'db_only';
@@ -574,7 +589,7 @@ export class ClimateAdminPageComponent {
   public handleSummaryClick(e: Event, row: IStationAdminSummary, updateStatus: any): void {
     e.stopImmediatePropagation();
     if (updateStatus.status === 'rejected') {
-      this.refreshStation(row);
+      void this.refreshStation(row);
     }
   }
 
@@ -621,17 +636,23 @@ export class ClimateAdminPageComponent {
 
   public async refreshAllStations() {
     this.refreshCount.set(0);
-    for (const station of this.service.stations()) {
+    const stations = this.service.stations();
+    await stations.reduce(async (prevPromise, station) => {
+      await prevPromise;
       await lastValueFrom(this.service.updateStationDataFromApi(station));
       this.refreshCount.update((count) => count + 1);
-    }
+    }, Promise.resolve());
     this.refreshCount.set(-1);
   }
 
   public downloadStationCSV(row: IStationAdminSummary | IStationAppSummary | IStationQcRow, event?: MouseEvent) {
     if (event) event.stopPropagation();
-    const data =
-      'rainfall_export_data' in row ? row.rainfall_export_data : 'app_data' in row ? row.app_data : undefined;
+    let data;
+    if ('rainfall_export_data' in row) {
+      data = row.rainfall_export_data;
+    } else if ('app_data' in row) {
+      data = row.app_data;
+    }
 
     if (!data || data.length === 0) return;
     const filename = `${row.station.station_id}.csv`;

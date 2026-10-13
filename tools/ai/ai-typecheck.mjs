@@ -17,7 +17,6 @@
  *
  * Exit code is non-zero if any project fails type checking.
  */
-import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { detectChangedFiles, hasHelpFlag, REPO_ROOT, runCommand } from './_shared.mjs';
@@ -104,24 +103,21 @@ function loadProjects() {
 
 function findOwningProjectForFile(filePath) {
   const projects = loadProjects();
-  const rel = (path.isAbsolute(filePath) ? path.relative(REPO_ROOT, filePath) : filePath)
-    .split(path.sep)
-    .join('/');
+  const rel = (path.isAbsolute(filePath) ? path.relative(REPO_ROOT, filePath) : filePath).split(path.sep).join('/');
   return projects.find((p) => rel === p.root || rel.startsWith(`${p.root}/`)) ?? null;
 }
 
-function getAffectedProjectNames() {
-  try {
-    const raw = execSync('yarn -s nx show projects --affected', {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-      env: { ...process.env, NX_SOCKET_DIR: '/tmp/nx-tmp', NX_DAEMON: 'false' },
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    return raw ? raw.split('\n').map((l) => l.trim()).filter(Boolean) : [];
-  } catch {
-    return [];
+function resolveExplicitProjects(explicitArgs, projectMapByName) {
+  const matched = new Set();
+  for (const arg of explicitArgs) {
+    if (projectMapByName.has(arg)) {
+      matched.add(projectMapByName.get(arg));
+    } else {
+      const owning = findOwningProjectForFile(arg);
+      if (owning) matched.add(owning);
+    }
   }
+  return [...matched];
 }
 
 function resolveProjectsToCheck(explicitArgs) {
@@ -129,16 +125,7 @@ function resolveProjectsToCheck(explicitArgs) {
   const projectMapByName = new Map(allProjects.map((p) => [p.name, p]));
 
   if (explicitArgs.length > 0) {
-    const matched = new Set();
-    for (const arg of explicitArgs) {
-      if (projectMapByName.has(arg)) {
-        matched.add(projectMapByName.get(arg));
-      } else {
-        const owning = findOwningProjectForFile(arg);
-        if (owning) matched.add(owning);
-      }
-    }
-    return [...matched];
+    return resolveExplicitProjects(explicitArgs, projectMapByName);
   }
 
   const changedFiles = detectChangedFiles();
@@ -148,21 +135,17 @@ function resolveProjectsToCheck(explicitArgs) {
   const relevantFiles = changedFiles.filter((f) => /\.(ts|html)$/i.test(f));
   if (relevantFiles.length === 0) return [];
 
-  // Check if any change touched shared libs
+  // When shared libs are modified, check all projects with tsConfig to ensure no broken contracts
   const hasLibChanges = relevantFiles.some((f) => f.startsWith('libs/'));
-
   if (hasLibChanges) {
-    // If libraries were modified, use Nx affected to catch all downstream dependents
-    const affectedNames = new Set(getAffectedProjectNames());
-    const matched = allProjects.filter((p) => affectedNames.has(p.name) && p.tsConfig);
-    if (matched.length > 0) return matched;
+    return allProjects.filter((p) => Boolean(p.tsConfig));
   }
 
   // Otherwise, only check the directly owning projects
   const directProjects = new Set();
   for (const f of relevantFiles) {
     const owning = findOwningProjectForFile(f);
-    if (owning && owning.tsConfig) {
+    if (owning?.tsConfig) {
       directProjects.add(owning);
     }
   }
