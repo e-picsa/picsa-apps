@@ -25,7 +25,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
-import { getGeoLocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, getLocationLabel, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -114,32 +114,15 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
   public locationReady = computed(() => {
-    const location = this.locationSelected();
     const country = this.countryCode();
-    if (!country || !location) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    if (geoData.admin_5) {
-      return !!location[4] && !!location[5];
-    }
-    return !!location[4];
+    if (!country) return false;
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
 
   public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
-    const location = this.locationSelected();
-    if (!country || !location) return undefined;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    const admin4Id = location[4];
-    const admin5Id = location[5];
-    if (geoData.admin_5 && admin5Id) {
-      const match = geoData.admin_5.locations.find((l) => l.id === admin5Id);
-      if (match) return match.label;
-    }
-    if (admin4Id) {
-      const match = geoData.admin_4.locations.find((l) => l.id === admin4Id);
-      if (match) return match.label;
-    }
-    return undefined;
+    if (!country) return undefined;
+    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
 
   public locationOverlayOpen = signal(false);

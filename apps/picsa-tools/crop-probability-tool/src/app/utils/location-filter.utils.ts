@@ -53,6 +53,18 @@ export function filterLocationsToProbabilityTables(data: IGeolocationData, table
       }
     }
   } else {
+    // Single-tier geo data: only synthesise a sublocation tier when a district
+    // has multiple tables (e.g. legacy `district/station` ids). With max one
+    // table per district the district dropdown alone determines the table.
+    const tablesByParent = new Map<string, ITableRef[]>();
+    for (const entry of tables) {
+      const [parent] = entry.id.split('/');
+      const group = tablesByParent.get(parent) ?? [];
+      group.push(entry);
+      tablesByParent.set(parent, group);
+    }
+    const hasMultipleTables = [...tablesByParent.values()].some((group) => group.length > 1);
+    if (!hasMultipleTables) return filtered;
     // HACK - single-tier geo data but crop probability tables include multiple per
     // location so create entries to use in filter
     const additionalLocations = tables.map(({ id, label }) => {

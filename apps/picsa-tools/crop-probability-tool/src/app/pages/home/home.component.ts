@@ -20,7 +20,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, getLocationLabel, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { TourService } from '@picsa/shared/services/core/tour';
@@ -66,16 +66,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
 
-  public locationReady = computed(() => {
-    const location = this.locationSelected();
+  /** Display label for the selected district, used when no probability table matches */
+  public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
-    if (!country || !location) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    // multi-tier countries require both top and sublocation segments (stored at indexes 4 and 5)
-    if (getLocationSlots(geoData).length > 1) {
-      return !!location[4] && !!location[5];
-    }
-    return !!location[4];
+    if (!country) return undefined;
+    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+  });
+
+  public locationReady = computed(() => {
+    const country = this.countryCode();
+    if (!country) return false;
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
 
   /** Deepest selected location segment, used to match probability tables */
@@ -108,9 +109,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Auto-open location overlay if location is not set when entering tool
+    // Auto-open location overlay if no location set, or if the shared location
+    // (e.g. carried over from the forecasts tool) has no probability table
     effect(() => {
-      if (!this.locationReady()) {
+      if (!this.locationReady() || !this.tableStationMeta()) {
         this.locationOverlayOpen.set(true);
       }
     });

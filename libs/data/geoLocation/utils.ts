@@ -46,6 +46,38 @@ export function findLocationById(data: IGeolocationData, id: string) {
   return undefined;
 }
 
+/**
+ * Check all required hierarchy segments are selected for the country's tier structure.
+ * Multi-tier countries (e.g. zm: admin_4+admin_5, zw: admin_4+admin_6) require both
+ * segments (stored at indexes 4 and 5), single-tier countries (e.g. mw) only the first.
+ */
+export function isLocationComplete(data: IGeolocationData, location: (string | undefined)[] | undefined): boolean {
+  if (!location) return false;
+  if (getLocationSlots(data).length > 1) {
+    return !!location[4] && !!location[5];
+  }
+  return !!location[4];
+}
+
+/** Display label for a stored location array, resolving the deepest selected tier first */
+export function getLocationLabel(
+  data: IGeolocationData,
+  location: (string | undefined)[] | undefined,
+): string | undefined {
+  const admin4Id = location?.[4];
+  const deepId = location?.[5];
+  const slots = getLocationSlots(data);
+  if (slots.length > 1 && deepId) {
+    const deepSlot = slots[slots.length - 1];
+    const match = data[deepSlot]?.locations.find((l) => l.id === deepId);
+    if (match) return match.label;
+  }
+  if (admin4Id) {
+    return data.admin_4.locations.find((l) => l.id === admin4Id)?.label;
+  }
+  return undefined;
+}
+
 /** Convert a raw location id (e.g. `mt_darwin`) to a display label (`Mt Darwin`) */
 export function formatLocationIdAsLabel(location_id: string) {
   return location_id
