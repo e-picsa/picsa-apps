@@ -85,6 +85,13 @@
 .forecast-bottom-bar > mat-progress-bar {
   @apply absolute bottom-0 left-0 w-full;
 }
+// Horizontal scroller for daily/weekly forecasts on smaller devices
+// Layout (flex-nowrap, overflow, snap) is handled via Tailwind in the template;
+// this adds touch momentum and a subtle scrollbar
+.forecast-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
 .viewer-container {
   position: fixed;
   z-index: 2;

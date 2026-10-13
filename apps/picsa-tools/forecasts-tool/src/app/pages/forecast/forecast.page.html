@@ -127,7 +127,14 @@
         {{ 'No forecasts available' | translate }}
       </div>
       } @else {
-      <div class="flex flex-wrap items-stretch gap-4 w-full">
+      <div
+        class="flex items-stretch gap-4 w-full"
+        [ngClass]="
+          category.id === 'daily' || category.id === 'weekly'
+            ? 'flex-nowrap overflow-x-auto pb-2 snap-x snap-mandatory md:flex-wrap md:overflow-visible md:snap-none md:pb-0 forecast-scroll'
+            : 'flex-wrap'
+        "
+      >
         @for (forecast of category.forecasts; track forecast.id) {
         <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
         }
@@ -143,7 +150,7 @@
   <!-- use function to make template type-safe -->
   @if (toForecastType(value); as forecast) {
   <div
-    class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-slate-400 bg-white"
+    class="min-w-40 w-40 h-44 flex flex-col shrink-0 snap-start cursor-pointer border border-solid border-slate-400 bg-white"
     role="button"
     tabindex="0"
     [attr.aria-label]="forecast.title | translate"
