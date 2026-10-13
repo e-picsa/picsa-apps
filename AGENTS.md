@@ -36,7 +36,7 @@ Please refer to the following files in `.agent/rules/` for deep context:
   - **Avoid deeply nested code** (such as nested `if`/`else` branches, nested ternaries, or sprawling callback trees) when handling edge cases or complex conditions.
   - Use **early returns**, **guard clauses**, and **isolated helper functions** to handle validations, degenerate inputs, and edge cases before executing core logic.
   - Prefer declarative dictionaries/lookup maps over sprawling `switch`/`if-else` blocks where applicable.
-  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility.
+  - Use **tailwind** for styling, avoid complicated and nested scss. To avoid style repetition you may still use classes with tailwind `@apply` utility, however be sparing with this to avoid large css build (view encapsulation will repeat tailwind rules in built output).
 - **Comments**: Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`). Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 
 ## Agent Meta-Instructions
@@ -75,6 +75,10 @@ To conserve context tokens and runtime, agents **MUST NOT** execute full applica
    - Do NOT run `yarn nx test` directly — `yarn ai:test` resolves the project and `--testFile` for you.
 3. **When Builds Are Permitted**:
    - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
+4. **Background Dev Servers (STRICT: Never Orphan, Always Spin Down)**:
+   - Do NOT start long-running dev servers (`yarn start`, `nx serve`, `supabase start/functions serve`) in the background as a matter of course. Prefer verifying via `yarn ai:lint` / `yarn ai:test`, and reuse a server the user already has running (check ports via `lsof` before assuming none exists).
+   - If a temporary server is genuinely required for verification: record its PID(s) immediately, and **kill the entire process tree before finishing** (killing only a parent `yarn`/`nx` wrapper orphans the child server — always verify the port is free with `lsof` afterwards, then kill any lingering listener PIDs too).
+   - Never leave a restarted user server behind silently: if you had to restart a user's dev server, tell them explicitly so they can manage it.
 
 ### Tool Usage Requirements (Crucial for Context Preservation)
 
