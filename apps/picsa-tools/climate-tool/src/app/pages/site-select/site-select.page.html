@@ -1,6 +1,5 @@
 <!-- Mobile View Toggle (hidden on md+ screen size) -->
-@let toggleIcon = view() === 'map' ? 'location_on' : 'map'; @let toggleText = view() === 'map' ? strings.showLocation :
-strings.showMap;
+@let toggleIcon = view() === 'map' ? 'list' : 'map'; @let toggleText = view() === 'map' ? strings.list : strings.map;
 <button matButton="filled" color="primary" (click)="toggleView()" class="view-toggle">
   <mat-icon>{{ toggleIcon }}</mat-icon>
   <span>{{ toggleText | translate }}</span>
@@ -14,7 +13,7 @@ strings.showMap;
       <div class="location-card">
         <div class="flex items-center gap-2 mb-1">
           <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
-          <h2 class="text-base font-bold text-gray-800">{{ strings.selectLocation | translate }}</h2>
+          <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
         </div>
         <p class="text-xs text-gray-500 mb-2">{{ strings.chooseLocationDesc | translate }}</p>
 
@@ -98,7 +97,7 @@ strings.showMap;
         </button>
 
         @if (showAllStations()) {
-        <div class="mt-2 border rounded-lg overflow-hidden max-h-80 flex flex-col">
+        <div class="mt-2 border rounded-lg overflow-hidden max-h-96 flex flex-col">
           <picsa-data-table
             [options]="tableOptions()"
             [data]="tableData()"

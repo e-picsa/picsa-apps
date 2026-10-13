@@ -106,9 +106,30 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Set the active (selected) marker, highlighting it and centering the view.
+   * @param forceZoom If true, forces zooming and centering even if already selected.
    */
-  public setActiveMarker(marker: IMapMarker) {
+  public setActiveMarker(marker: IMapMarker, forceZoom = false) {
+    if (forceZoom) {
+      this.selected = {};
+    }
     this._onMarkerClick(marker);
+    if (forceZoom) {
+      this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
+    }
+  }
+
+  /**
+   * Zoom and center map to a specific marker at given zoom level (default 8, offline-safe)
+   */
+  public zoomToMarker(marker: IMapMarker, zoom = MARKER_FOCUS_ZOOM) {
+    this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom });
+  }
+
+  /**
+   * Trigger a map resize calculation (e.g. after container visibility changes)
+   */
+  public resize() {
+    this.map()?.resize();
   }
 
   /**

@@ -225,3 +225,17 @@ export function getStationRecommendations(
 
   return scored;
 }
+
+/**
+ * Format raw station names (or IDs) to a human-readable display label,
+ * replacing underscores and technical suffixes (e.g. `_agr`, `_agric`, `_airport`).
+ */
+export function formatStationLabel(name?: string): string {
+  if (!name) return '';
+  return name
+    .replace(/_agr\b/gi, ' Agriculture')
+    .replace(/_agric\b/gi, ' Agriculture')
+    .replace(/_airport\b/gi, ' Airport')
+    .replace(/_/g, ' ')
+    .trim();
+}

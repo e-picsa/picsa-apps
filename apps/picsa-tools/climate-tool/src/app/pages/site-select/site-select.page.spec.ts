@@ -61,6 +61,7 @@ class MockPicsaMapComponent {
   mapReady = signal(true);
   addGeoJsonLayer = jest.fn();
   setActiveMarker = jest.fn();
+  resize = jest.fn();
 }
 
 describe('SiteSelectPage', () => {
@@ -122,6 +123,7 @@ describe('SiteSelectPage', () => {
 
     dataService = TestBed.inject(ClimateDataService);
     jest.spyOn(dataService, 'stations').mockReturnValue(mockStations);
+    jest.spyOn(dataService, 'allStations').mockReturnValue(mockStations);
     jest.spyOn(dataService, 'setPreferredStation').mockImplementation();
 
     configService = TestBed.inject(ConfigurationService);
