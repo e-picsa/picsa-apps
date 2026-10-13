@@ -14,6 +14,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 64,
     completeRainYears: 50,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   bunda: {
     schemaVersion: 1,
@@ -23,6 +24,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 51,
     completeRainYears: 40,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   bvumbwe: {
     schemaVersion: 1,
@@ -32,6 +34,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 62,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chapananga: {
     schemaVersion: 1,
@@ -41,6 +44,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 68,
     completeRainYears: 65,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chichiri: {
     schemaVersion: 1,
@@ -50,6 +54,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 61,
     completeRainYears: 58,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chikwawa: {
     schemaVersion: 1,
@@ -59,15 +64,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 57,
     completeRainYears: 51,
     annual: ['rainfall', 'start', 'end', 'length'],
-  },
-  chileka: {
-    schemaVersion: 1,
-    lastUpdated: '2024-10-11',
-    contentHash: '7295d9fad042162e4b10ade399d5303b0bfd4cc3537e886265bf9f2bac645c26',
-    years: [1948, 2018],
-    totalYears: 71,
-    completeRainYears: 67,
-    annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chileka_airport: {
     schemaVersion: 1,
@@ -77,6 +74,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 77,
     completeRainYears: 69,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chipoka: {
     schemaVersion: 1,
@@ -86,6 +84,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 38,
     completeRainYears: 21,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chiradzulu: {
     schemaVersion: 1,
@@ -95,6 +94,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 72,
     completeRainYears: 70,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chitala: {
     schemaVersion: 1,
@@ -104,6 +104,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 75,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chitedze: {
     schemaVersion: 1,
@@ -113,6 +114,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   chitipa: {
     schemaVersion: 1,
@@ -122,6 +124,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 58,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   dedza: {
     schemaVersion: 1,
@@ -131,6 +134,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 57,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   dowa_agr: {
     schemaVersion: 1,
@@ -140,6 +144,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 63,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: [],
   },
   golomoti: {
     schemaVersion: 1,
@@ -149,6 +154,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 94,
     completeRainYears: 40,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   kamuona: {
     schemaVersion: 1,
@@ -158,6 +164,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 40,
     completeRainYears: 29,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   karonga: {
     schemaVersion: 1,
@@ -167,6 +174,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 56,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   kasinthula: {
     schemaVersion: 1,
@@ -176,6 +184,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 69,
     completeRainYears: 65,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   kasiya: {
     schemaVersion: 1,
@@ -185,6 +194,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 39,
     completeRainYears: 38,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   kasungu: {
     schemaVersion: 1,
@@ -194,6 +204,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   kia: {
     schemaVersion: 1,
@@ -203,6 +214,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   luwazi: {
     schemaVersion: 1,
@@ -212,6 +224,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 71,
     completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   makanjira: {
     schemaVersion: 1,
@@ -221,6 +234,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 61,
     completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   makoka: {
     schemaVersion: 1,
@@ -230,6 +244,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 62,
     completeRainYears: 54,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mangochi: {
     schemaVersion: 1,
@@ -239,6 +254,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 48,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mimosa: {
     schemaVersion: 1,
@@ -248,19 +264,11 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 68,
     completeRainYears: 64,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   monkey_bay: {
     schemaVersion: 1,
     years: [],
-  },
-  monkeybay: {
-    schemaVersion: 1,
-    lastUpdated: '2024-10-11',
-    contentHash: 'fa4c78589f05ecdb921e2caaf08f30dedc2930fe58b85e0d03ebf7903a175306',
-    years: [1978, 2017],
-    totalYears: 40,
-    completeRainYears: 39,
-    annual: ['rainfall', 'start', 'end', 'length'],
   },
   mponela: {
     schemaVersion: 1,
@@ -270,6 +278,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 64,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mtakataka: {
     schemaVersion: 1,
@@ -279,6 +288,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 94,
     completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mzandu: {
     schemaVersion: 1,
@@ -288,6 +298,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 40,
     completeRainYears: 25,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mzimba: {
     schemaVersion: 1,
@@ -297,6 +308,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 62,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   mzuzu: {
     schemaVersion: 1,
@@ -306,6 +318,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 65,
     completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   nalunga: {
     schemaVersion: 1,
@@ -315,6 +328,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 41,
     completeRainYears: 39,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   namwera: {
     schemaVersion: 1,
@@ -324,6 +338,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 92,
     completeRainYears: 66,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   ndakwera: {
     schemaVersion: 1,
@@ -333,6 +348,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 53,
     completeRainYears: 52,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   ngabu: {
     schemaVersion: 1,
@@ -342,6 +358,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 55,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   nkhata_bay: {
     schemaVersion: 1,
@@ -351,15 +368,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 60,
     annual: ['rainfall', 'start', 'end', 'length'],
-  },
-  nkhatabay: {
-    schemaVersion: 1,
-    lastUpdated: '2024-10-11',
-    contentHash: '17243263a7af1e1bf6f7cbc1b749fbd109c20f32f9c15bfec188f84aa0c99d0c',
-    years: [1959, 2022],
-    totalYears: 64,
-    completeRainYears: 59,
-    annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   nkhotakota: {
     schemaVersion: 1,
@@ -369,6 +378,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 61,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   ntaja: {
     schemaVersion: 1,
@@ -378,6 +388,7 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 56,
     completeRainYears: 41,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
   salima: {
     schemaVersion: 1,
@@ -387,5 +398,6 @@ export const MW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 66,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: ['season_discrepancies'],
   },
 };

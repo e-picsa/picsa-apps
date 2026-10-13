@@ -7,7 +7,31 @@
   ></dashboard-api-status>
   <div style="display: flex; gap: 1rem; flex-wrap: wrap">
     <div style="flex: 1; min-width: 400px; max-width: 600px">
-      <picsa-data-table [options]="tableOptions" [data]="tableData()"> </picsa-data-table>
+      <picsa-data-table
+        [options]="tableOptions"
+        [data]="tableData()"
+        [valueTemplates]="{
+          qc_status: qcTemplate,
+        }"
+      >
+        <ng-template #qcTemplate let-row="row">
+          @if (row.qc_passed) {
+            <mat-icon
+              class="!w-5 !h-5 !text-lg text-emerald-500 flex items-center justify-center"
+              matTooltip="Quality Control: Passed"
+            >
+              check_circle
+            </mat-icon>
+          } @else {
+            <mat-icon
+              class="!w-5 !h-5 !text-lg text-slate-400 flex items-center justify-center"
+              [matTooltip]="'Quality Control: Failed\n' + (row.qc_reasons || []).join('\n')"
+            >
+              rule
+            </mat-icon>
+          }
+        </ng-template>
+      </picsa-data-table>
     </div>
     <div style="flex: 1; min-width: 400px; height: calc(100vh - 96px); position: sticky; top: 0; right: 0">
       <picsa-map

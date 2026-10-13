@@ -70,6 +70,13 @@ export interface IMonthlyStationData {
   max_tmin?: number | null;
 }
 
+/** Automated quality control failure codes */
+export type ClimateQcFailure =
+  | 'insufficient_total_years'
+  | 'no_recent_data'
+  | 'sparse_recent_data'
+  | 'season_discrepancies';
+
 /**
  * Station capability and data availability descriptor.
  * Enables synchronous chart filtering and UI badge generation without parsing data files.
@@ -93,6 +100,8 @@ export interface IStationCapabilities {
   annual?: IChartId[];
   /** Available monthly chart types (e.g. ['rainfall', 'temp_min', 'temp_max']) */
   monthly?: IChartId[];
+  /** Automated quality control failure codes. Empty array indicates station passed QC. */
+  qcFailures?: ClimateQcFailure[];
 }
 
 /**

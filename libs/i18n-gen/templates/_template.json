@@ -36,6 +36,10 @@
     "tool": "budget"
   },
   {
+    "text": "Day",
+    "tool": "budget"
+  },
+  {
     "text": "Days",
     "tool": "budget"
   },
@@ -208,7 +212,15 @@
     "tool": "budget"
   },
   {
+    "text": "Week",
+    "tool": "budget"
+  },
+  {
     "text": "What is your type of enterprise?",
+    "tool": "budget"
+  },
+  {
+    "text": "Year",
     "tool": "budget"
   },
   {
@@ -470,6 +482,10 @@
     "context": "inputs"
   },
   {
+    "text": "months",
+    "tool": "budget"
+  },
+  {
     "text": "mulching",
     "tool": "budget",
     "context": "activities"
@@ -488,6 +504,11 @@
     "text": "paw-paw",
     "tool": "budget",
     "context": "enterprise"
+  },
+  {
+    "text": "pest scouting",
+    "tool": "budget",
+    "context": "activities"
   },
   {
     "text": "pigeon peas",
@@ -673,9 +694,17 @@
     "context": "activities"
   },
   {
+    "text": "weeks",
+    "tool": "budget"
+  },
+  {
     "text": "wood",
     "tool": "budget",
     "context": "inputs"
+  },
+  {
+    "text": "years",
+    "tool": "budget"
   },
   {
     "id": "mw:climate.chart.end.definition",
@@ -720,11 +749,59 @@
     "country_code": "mw"
   },
   {
+    "text": "1-Month",
+    "tool": "climate"
+  },
+  {
+    "text": "3-Month",
+    "tool": "climate"
+  },
+  {
+    "text": "30-Year",
+    "tool": "climate"
+  },
+  {
+    "text": "30-Year View:",
+    "tool": "climate"
+  },
+  {
+    "text": "95% Confidence Interval",
+    "tool": "climate"
+  },
+  {
+    "text": "A solid, coloured trendline is displayed only when the estimated trend is statistically clear (p < 0.05) and passes data quality checks. When historical records are inconclusive (p ≥ 0.05) or data is insufficient, no trendline is drawn to avoid visually asserting an unconfirmed direction.",
+    "tool": "climate"
+  },
+  {
+    "text": "A trendline summarizes the general multidecadal direction of historical change over time (e.g. warming temperatures, shift in seasonal rainfall). It fits an ordinary least squares regression line to historical records.",
+    "tool": "climate"
+  },
+  {
     "text": "Above",
     "tool": "climate"
   },
   {
     "text": "After",
+    "tool": "climate"
+  },
+  {
+    "text": "All Tools",
+    "tool": "climate"
+  },
+  {
+    "text": "Analysis Period",
+    "tool": "climate"
+  },
+  {
+    "text": "Annual",
+    "tool": "climate"
+  },
+  {
+    "text": "At least 20 usable years and at least 70% data completeness across the full record.",
+    "tool": "climate"
+  },
+  {
+    "text": "At least 20 usable years within the most recent 30-year window.",
     "tool": "climate"
   },
   {
@@ -740,11 +817,39 @@
     "tool": "climate"
   },
   {
+    "text": "Close dialog",
+    "tool": "climate"
+  },
+  {
+    "text": "Data Completeness Rules",
+    "tool": "climate"
+  },
+  {
+    "text": "Data Source",
+    "tool": "climate"
+  },
+  {
+    "text": "Downward trend",
+    "tool": "climate"
+  },
+  {
+    "text": "Downward trend (solid coloured line):",
+    "tool": "climate"
+  },
+  {
+    "text": "El Niño",
+    "tool": "climate"
+  },
+  {
     "text": "End",
     "tool": "climate"
   },
   {
     "text": "End of Season",
+    "tool": "climate"
+  },
+  {
+    "text": "Evaluates whether the historical change is statistically distinguishable from random year-to-year fluctuations.",
     "tool": "climate"
   },
   {
@@ -760,7 +865,51 @@
     "tool": "climate"
   },
   {
+    "text": "Full",
+    "tool": "climate"
+  },
+  {
+    "text": "Full Record:",
+    "tool": "climate"
+  },
+  {
+    "text": "Goodness of Fit (R²)",
+    "tool": "climate"
+  },
+  {
     "text": "Highest maximum daily temp",
+    "tool": "climate"
+  },
+  {
+    "text": "How is the trendline calculated?",
+    "tool": "climate"
+  },
+  {
+    "text": "Info on coefficient of determination R²",
+    "tool": "climate"
+  },
+  {
+    "text": "Info on confidence interval",
+    "tool": "climate"
+  },
+  {
+    "text": "Info on p-value",
+    "tool": "climate"
+  },
+  {
+    "text": "Info on sample size",
+    "tool": "climate"
+  },
+  {
+    "text": "Insufficient data",
+    "tool": "climate"
+  },
+  {
+    "text": "Insufficient data (no line):",
+    "tool": "climate"
+  },
+  {
+    "text": "La Niña",
     "tool": "climate"
   },
   {
@@ -769,6 +918,10 @@
   },
   {
     "text": "Line",
+    "tool": "climate"
+  },
+  {
+    "text": "Linear regression fits a straight line minimizing the sum of squared differences between historical observations and fitted values. Slopes, intercepts, and R² are computed using standard OLS methods on verified calendar years.",
     "tool": "climate"
   },
   {
@@ -796,6 +949,10 @@
     "tool": "climate"
   },
   {
+    "text": "Measures the proportion of year-to-year variation accounted for by the linear trend (from 0.00 to 1.00). In variable climate series, low R² values are common even when an important trend exists.",
+    "tool": "climate"
+  },
+  {
     "text": "Min Temps",
     "tool": "climate"
   },
@@ -804,11 +961,39 @@
     "tool": "climate"
   },
   {
+    "text": "No clear trend",
+    "tool": "climate"
+  },
+  {
+    "text": "No clear trend (no line):",
+    "tool": "climate"
+  },
+  {
+    "text": "No clear trend (trendline omitted)",
+    "tool": "climate"
+  },
+  {
+    "text": "Ordinary Least Squares (OLS) Regression",
+    "tool": "climate"
+  },
+  {
+    "text": "Previous",
+    "tool": "climate"
+  },
+  {
     "text": "Print Version",
     "tool": "climate"
   },
   {
     "text": "Rain",
+    "tool": "climate"
+  },
+  {
+    "text": "Record has too many missing years to calculate a reliable trend.",
+    "tool": "climate"
+  },
+  {
+    "text": "R² measures the proportion of variance explained by the trend. In highly variable climate series (such as rainfall), low R² values are common even when a statistically clear and practically important trend exists. R² is therefore provided for supplementary context, not used to accept or reject trendline display.",
     "tool": "climate"
   },
   {
@@ -828,11 +1013,19 @@
     "tool": "climate"
   },
   {
+    "text": "Share Image",
+    "tool": "climate"
+  },
+  {
     "text": "Show List",
     "tool": "climate"
   },
   {
     "text": "Show Map",
+    "tool": "climate"
+  },
+  {
+    "text": "Significance is evaluated using a two-sided Student t-test on the regression slope with df = n - 2 degrees of freedom. Two-tailed 95% confidence intervals are computed to indicate the precision of the estimated decadal rate of change.",
     "tool": "climate"
   },
   {
@@ -844,6 +1037,34 @@
     "tool": "climate"
   },
   {
+    "text": "Statistical Indicators",
+    "tool": "climate"
+  },
+  {
+    "text": "Statistical Inference & 95% Confidence Intervals",
+    "tool": "climate"
+  },
+  {
+    "text": "Statistical Significance (p)",
+    "tool": "climate"
+  },
+  {
+    "text": "Statistically clear decrease (p < 0.05) with negative slope.",
+    "tool": "climate"
+  },
+  {
+    "text": "Statistically clear increase (p < 0.05) with positive slope.",
+    "tool": "climate"
+  },
+  {
+    "text": "Statistically clear trend (trendline displayed)",
+    "tool": "climate"
+  },
+  {
+    "text": "Technical Details",
+    "tool": "climate"
+  },
+  {
     "text": "Temperature (°C)",
     "tool": "climate"
   },
@@ -852,7 +1073,91 @@
     "tool": "climate"
   },
   {
+    "text": "The estimated range within which the true historical rate of change per decade is 95% likely to lie.",
+    "tool": "climate"
+  },
+  {
+    "text": "The line describes past recorded history, not what will happen next season. Passing a statistical test does not tell us whether the historical change is large enough to matter for a particular farm. Always consider trends alongside seasonal forecasts, soil context, and local agricultural advice.",
+    "tool": "climate"
+  },
+  {
+    "text": "The lowest daily minimum and mean daily minimum temperatures for the selected month in each year",
+    "tool": "climate"
+  },
+  {
+    "text": "The lowest daily minimum and mean daily minimum temperatures recorded across the selected 3-month period in each year",
+    "tool": "climate"
+  },
+  {
+    "text": "The mean daily maximum and highest daily maximum temperatures for the selected month in each year",
+    "tool": "climate"
+  },
+  {
+    "text": "The mean daily maximum and highest daily maximum temperatures recorded across the selected 3-month period in each year",
+    "tool": "climate"
+  },
+  {
+    "text": "The number of verified complete annual or seasonal records included in the calculation.",
+    "tool": "climate"
+  },
+  {
+    "text": "To prevent misleading fits, trendline estimation requires minimum inclusion thresholds based on usable years (verified complete annual or seasonal records, where missing values are never treated as zero):",
+    "tool": "climate"
+  },
+  {
+    "text": "Total rainfall recorded across the selected 3-month period in each year (requires complete data across all 3 months)",
+    "tool": "climate"
+  },
+  {
+    "text": "Total rainfall recorded for the selected month in each year",
+    "tool": "climate"
+  },
+  {
+    "text": "Trend Classification Criteria",
+    "tool": "climate"
+  },
+  {
+    "text": "Trendline",
+    "tool": "climate"
+  },
+  {
+    "text": "Unavailable",
+    "tool": "climate"
+  },
+  {
+    "text": "Understanding Climate Trendlines",
+    "tool": "climate"
+  },
+  {
+    "text": "Upward trend",
+    "tool": "climate"
+  },
+  {
+    "text": "Upward trend (solid coloured line):",
+    "tool": "climate"
+  },
+  {
+    "text": "Usable Years (n)",
+    "tool": "climate"
+  },
+  {
+    "text": "Use it as historical context — not a forecast",
+    "tool": "climate"
+  },
+  {
+    "text": "What does the trendline show?",
+    "tool": "climate"
+  },
+  {
+    "text": "When is a trendline displayed?",
+    "tool": "climate"
+  },
+  {
     "text": "out of",
+    "tool": "climate"
+  },
+  {
+    "text": "p ≥ 0.05. Natural year-to-year variation is too large relative to sample size to establish a directional trend.",
     "tool": "climate"
   },
   {
@@ -902,7 +1207,15 @@
     "country_code": "zw"
   },
   {
+    "text": "Active",
+    "tool": "common"
+  },
+  {
     "text": "Add Photo",
+    "tool": "common"
+  },
+  {
+    "text": "App Version",
     "tool": "common"
   },
   {
@@ -910,9 +1223,21 @@
     "tool": "common"
   },
   {
+    "text": "Attach image",
+    "tool": "common"
+  },
+  {
     "text": "Back",
     "tool": "common",
     "context": "buttons"
+  },
+  {
+    "text": "Bug report",
+    "tool": "common"
+  },
+  {
+    "text": "Build Code",
+    "tool": "common"
   },
   {
     "text": "By continuing, you agree to our",
@@ -922,6 +1247,10 @@
     "text": "Cancel",
     "tool": "common",
     "context": "buttons"
+  },
+  {
+    "text": "Capture screen",
+    "tool": "common"
   },
   {
     "text": "Choose country",
@@ -945,6 +1274,22 @@
     "context": "buttons"
   },
   {
+    "text": "Confirm",
+    "tool": "common"
+  },
+  {
+    "text": "Copy Debug Info",
+    "tool": "common"
+  },
+  {
+    "text": "Copy notification token",
+    "tool": "common"
+  },
+  {
+    "text": "Debug Info",
+    "tool": "common"
+  },
+  {
     "text": "Delete",
     "tool": "common",
     "context": "buttons"
@@ -955,6 +1300,14 @@
   },
   {
     "text": "District",
+    "tool": "common"
+  },
+  {
+    "text": "Download",
+    "tool": "common"
+  },
+  {
+    "text": "Downloading update in background...",
     "tool": "common"
   },
   {
@@ -971,6 +1324,14 @@
     "tool": "common"
   },
   {
+    "text": "Feedback",
+    "tool": "common"
+  },
+  {
+    "text": "Google Play Update",
+    "tool": "common"
+  },
+  {
     "text": "I'm a farmer",
     "tool": "common"
   },
@@ -979,11 +1340,23 @@
     "tool": "common"
   },
   {
+    "text": "Identifies this device as a testing user in Supabase",
+    "tool": "common"
+  },
+  {
+    "text": "Internal Tester Mode",
+    "tool": "common"
+  },
+  {
     "text": "Loading",
     "tool": "common"
   },
   {
     "text": "Manual",
+    "tool": "common"
+  },
+  {
+    "text": "New version available:",
     "tool": "common"
   },
   {
@@ -996,11 +1369,31 @@
     "tool": "common"
   },
   {
+    "text": "Not registered",
+    "tool": "common"
+  },
+  {
+    "text": "Notification Token",
+    "tool": "common"
+  },
+  {
     "text": "PDF Viewer not supported on this device",
     "tool": "common"
   },
   {
+    "text": "Platform",
+    "tool": "common"
+  },
+  {
+    "text": "Play Store",
+    "tool": "common"
+  },
+  {
     "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
+    "text": "Please select a location to view local forecasts",
     "tool": "common"
   },
   {
@@ -1016,6 +1409,14 @@
     "tool": "common"
   },
   {
+    "text": "Refresh",
+    "tool": "common"
+  },
+  {
+    "text": "Remove screenshot",
+    "tool": "common"
+  },
+  {
     "text": "Restart App",
     "tool": "common"
   },
@@ -1025,7 +1426,39 @@
     "context": "buttons"
   },
   {
+    "text": "Screenshot preview",
+    "tool": "common"
+  },
+  {
+    "text": "Select Location",
+    "tool": "common"
+  },
+  {
+    "text": "Send Feedback",
+    "tool": "common"
+  },
+  {
+    "text": "Show feedback button on all pages",
+    "tool": "common"
+  },
+  {
+    "text": "Submit",
+    "tool": "common"
+  },
+  {
+    "text": "Submit feedback",
+    "tool": "common"
+  },
+  {
+    "text": "Taking screenshot…",
+    "tool": "common"
+  },
+  {
     "text": "Terms of Use",
+    "tool": "common"
+  },
+  {
+    "text": "Thank you! Your feedback has been submitted.",
     "tool": "common"
   },
   {
@@ -1037,7 +1470,27 @@
     "tool": "common"
   },
   {
+    "text": "Update is downloaded and ready to apply!",
+    "tool": "common"
+  },
+  {
+    "text": "View Full System JSON",
+    "tool": "common"
+  },
+  {
     "text": "What best describes you?",
+    "tool": "common"
+  },
+  {
+    "text": "You're offline. Your feedback is saved and will be sent automatically when you're back online.",
+    "tool": "common"
+  },
+  {
+    "text": "Your feedback is saved. It will be retried automatically.",
+    "tool": "common"
+  },
+  {
+    "text": "Your message",
     "tool": "common"
   },
   {
@@ -1062,6 +1515,10 @@
   },
   {
     "text": "Avocado",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Bambara nuts",
     "tool": "common_crops"
   },
   {
@@ -1090,6 +1547,10 @@
   },
   {
     "text": "Mangoes",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Millet",
     "tool": "common_crops"
   },
   {
@@ -1366,11 +1827,19 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Change location",
+    "tool": "crop-probability"
+  },
+  {
     "text": "Crop",
     "tool": "crop-probability"
   },
   {
     "text": "Crop Information",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop Probability",
     "tool": "crop-probability"
   },
   {
@@ -1382,7 +1851,23 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Loading...",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Please select a location to view crop information",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Preparing image....",
+    "tool": "crop-probability"
+  },
+  {
     "text": "Probability of season start on or before date",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Unable to share",
     "tool": "crop-probability"
   },
   {
@@ -1415,6 +1900,10 @@
   },
   {
     "text": "Privacy Policy",
+    "tool": "extension"
+  },
+  {
+    "text": "Share Feedback",
     "tool": "extension"
   },
   {

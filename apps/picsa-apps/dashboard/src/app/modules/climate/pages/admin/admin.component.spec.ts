@@ -1,22 +1,43 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 
+import { ClimateService } from '../../climate.service';
 import { ClimateAdminPageComponent } from './admin.component';
 import { StationDiffDialogComponent } from './components/station-diff-dialog/station-diff-dialog.component';
 
 describe('ClimateAdminPageComponent', () => {
   let component: ClimateAdminPageComponent;
   let fixture: ComponentFixture<ClimateAdminPageComponent>;
-  let mockDialog: { open: jest.Mock };
+  let mockClimateService: any;
+  let mockRouter: any;
+  let mockActivatedRoute: any;
 
   beforeEach(async () => {
-    mockDialog = { open: jest.fn() };
+    mockClimateService = {
+      stations: jest.fn().mockReturnValue([]),
+      apiCountryCode: 'mw',
+      getAllStationData: jest.fn().mockReturnValue(Promise.resolve({ data: [] })),
+      getAllStationsAppData: jest.fn().mockReturnValue(Promise.resolve({})),
+      getStationData: jest.fn().mockReturnValue(Promise.resolve({ data: null })),
+      updateStationDataFromApi: jest.fn().mockReturnValue(of({ status: 'fulfilled' })),
+    };
+
+    mockRouter = {
+      navigate: jest.fn(),
+    };
+
+    mockActivatedRoute = {
+      snapshot: { params: {} },
+    };
 
     await TestBed.configureTestingModule({
       imports: [ClimateAdminPageComponent],
-      providers: [provideRouter([]), provideNoopAnimations(), { provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: ClimateService, useValue: mockClimateService },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ClimateAdminPageComponent);
@@ -28,113 +49,127 @@ describe('ClimateAdminPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should configure DB table options without diff column', () => {
+  it('should configure DB table options with season discrepancies instead of noisy rainfall issues', () => {
+    expect(component.dbTableOptions.displayColumns).toContain('station');
     expect(component.dbTableOptions.displayColumns).toContain('updated_at');
+    expect(component.dbTableOptions.displayColumns).toContain('season_discrepancies');
     expect(component.dbTableOptions.displayColumns).toContain('rainfall_export_data');
+    expect(component.dbTableOptions.displayColumns).not.toContain('rainfall_issues');
     expect(component.dbTableOptions.displayColumns).not.toContain('app_data_diff');
+    expect(component.dbTableOptions.formatHeader('station')).toBe('Station');
+    expect(component.dbTableOptions.formatHeader('season_discrepancies')).toBe('Season Discrepancies');
+  });
+
+  it('should configure Quality Control table options and headers', () => {
+    expect(component.qcTableOptions.displayColumns).toEqual([
+      'name',
+      'passed',
+      'rainfall_total_years',
+      'rainfall_last_ten_years',
+      'rainfall_last_thirty_years',
+      'season_discrepancies',
+      'failures',
+      'actions',
+    ]);
+    expect(component.qcTableOptions.formatHeader('name')).toBe('Station');
+    expect(component.qcTableOptions.formatHeader('passed')).toBe('Status');
+    expect(component.qcTableOptions.formatHeader('rainfall_total_years')).toBe('Total Rainfall Years');
+    expect(component.qcTableOptions.formatHeader('rainfall_last_ten_years')).toBe('Past 10 Years');
+    expect(component.qcTableOptions.formatHeader('rainfall_last_thirty_years')).toBe('Past 30 Years');
+    expect(component.qcTableOptions.formatHeader('season_discrepancies')).toBe('Season Discrepancies');
+    expect(component.qcTableOptions.formatHeader('failures')).toBe('Quality Control Issues');
+    expect(component.qcTableOptions.formatHeader('actions')).toBe('Action');
   });
 
   it('should configure App Bundled table options', () => {
+    expect(component.appTableOptions.displayColumns).toContain('name');
     expect(component.appTableOptions.displayColumns).toContain('has_bundled_data');
     expect(component.appTableOptions.displayColumns).toContain('total_years');
     expect(component.appTableOptions.displayColumns).toContain('products');
-    expect(component.appTableOptions.formatHeader('has_bundled_data')).toBe('Bundled CSV');
+    expect(component.appTableOptions.formatHeader('name')).toBe('Station');
+    expect(component.appTableOptions.formatHeader('has_bundled_data')).toBe('Bundled Status');
   });
 
-  it('should configure Diff table options', () => {
+  it('should configure Diff table options including QC status', () => {
+    expect(component.diffTableOptions.displayColumns).toContain('name');
     expect(component.diffTableOptions.displayColumns).toContain('diff_status');
+    expect(component.diffTableOptions.displayColumns).toContain('qc_passed');
+    expect(component.diffTableOptions.displayColumns).toContain('app_years_count');
+    expect(component.diffTableOptions.displayColumns).toContain('db_years_count');
     expect(component.diffTableOptions.displayColumns).toContain('updated_at');
-    expect(component.diffTableOptions.displayColumns).toContain('season_diff_percent');
-    expect(component.diffTableOptions.displayColumns).toContain('season_diff');
-    expect(component.diffTableOptions.displayColumns).toContain('temp_diff_percent');
-    expect(component.diffTableOptions.displayColumns).toContain('temp_diff');
+    expect(component.diffTableOptions.displayColumns).toContain('diff');
     expect(component.diffTableOptions.displayColumns).toContain('actions');
-    expect(component.diffTableOptions.displayColumns).not.toContain('years_added');
+    expect(component.diffTableOptions.formatHeader('name')).toBe('Station');
     expect(component.diffTableOptions.formatHeader('diff_status')).toBe('Status');
-    expect(component.diffTableOptions.formatHeader('updated_at')).toBe('Data System Generated');
-    expect(component.diffTableOptions.formatHeader('season_diff_percent')).toBe('Season Change %');
-    expect(component.diffTableOptions.formatHeader('season_diff')).toBe('Season Change');
-    expect(component.diffTableOptions.formatHeader('temp_diff_percent')).toBe('Temp Change %');
-    expect(component.diffTableOptions.formatHeader('temp_diff')).toBe('Temp Change');
+    expect(component.diffTableOptions.formatHeader('qc_passed')).toBe('QC Status');
+    expect(component.diffTableOptions.formatHeader('app_years_count')).toBe('App Rainfall Years');
+    expect(component.diffTableOptions.formatHeader('db_years_count')).toBe('DB Rainfall Years');
+    expect(component.diffTableOptions.formatHeader('updated_at')).toBe('Last Sync');
+    expect(component.diffTableOptions.formatHeader('diff')).toBe('Product Differences');
   });
 
   it('should calculate group diff summary with % headline changes and product lines', () => {
     const mockDiff: any = {
-      status: 'diff',
+      hasDifferences: true,
       products: {
         rainfall: {
-          label: 'Rainfall',
-          hasData: true,
-          isInSync: false,
-          yearsAdded: [],
-          yearsRemoved: [1962],
-          changedCount: 54,
-          changes: new Array(55).fill({}),
-          totalValuesCount: 100,
-          appYearSpan: [1960, 2020],
-          dbYearSpan: [1960, 2020],
+          productKey: 'rainfall',
+          addedInDb: [],
+          missingInDb: [1962],
+          changedValues: new Array(54).fill({}),
+          totalAppValues: 50,
+          totalDbValues: 50,
         },
         start: {
-          label: 'Start of Season',
-          hasData: true,
-          isInSync: false,
-          yearsAdded: [],
-          yearsRemoved: [1962],
-          changedCount: 0,
-          changes: new Array(1).fill({}),
-          totalValuesCount: 100,
-          appYearSpan: [1960, 2020],
-          dbYearSpan: [1960, 2020],
+          productKey: 'start',
+          addedInDb: [],
+          missingInDb: [1962],
+          changedValues: [],
+          totalAppValues: 50,
+          totalDbValues: 50,
         },
         end: {
-          label: 'End of Season',
-          hasData: true,
-          isInSync: true,
-          yearsAdded: [],
-          yearsRemoved: [],
-          changedCount: 0,
-          changes: [],
-          totalValuesCount: 100,
-          appYearSpan: [1960, 2020],
-          dbYearSpan: [1960, 2020],
+          productKey: 'end',
+          addedInDb: [],
+          missingInDb: [],
+          changedValues: [],
+          totalAppValues: 50,
+          totalDbValues: 50,
         },
       },
     };
 
-    const groupSummary = (component as any).calculateGroupDiffSummary(mockDiff, ['rainfall', 'start', 'end']);
+    const groupSummary = component.getGroupDiffSummary(mockDiff, 'divergent');
     expect(groupSummary.diffValuesCount).toBe(56); // 55 rainfall + 1 start
     expect(groupSummary.totalValuesCount).toBe(300); // 100 * 3 products
-    expect(groupSummary.headlinePercentFormatted).toBe('18.7%'); // (56 / 300) * 100 = 18.666%
+    expect(groupSummary.headlinePercent).toBe(19); // 56 / 300 = 18.66% -> 19%
+    expect(groupSummary.headlinePercentFormatted).toBe('~19% diff');
     expect(groupSummary.hasData).toBe(true);
     expect(groupSummary.isInSync).toBe(false);
     expect(groupSummary.isAppOnly).toBe(false);
     expect(groupSummary.isDbOnly).toBe(false);
     expect(groupSummary.productLines).toEqual([
-      { label: 'Rainfall', summary: '-1, ~54' },
-      { label: 'Start of Season', summary: '-1' },
+      { label: 'Rainfall', summary: '-1 missing, 54 modified' },
+      { label: 'Season Start', summary: '-1 missing' },
     ]);
   });
 
   it('should suppress 100% headline and product breakdowns for app_only stations', () => {
     const mockAppOnlyDiff: any = {
-      status: 'app_only',
+      hasDifferences: true,
       products: {
         rainfall: {
-          label: 'Rainfall',
-          hasData: true,
-          isInSync: false,
-          yearsAdded: [],
-          yearsRemoved: [1980, 1981],
-          changedCount: 0,
-          changes: new Array(2).fill({}),
-          totalValuesCount: 2,
-          appYearSpan: [1980, 1981],
-          dbYearSpan: null,
+          productKey: 'rainfall',
+          addedInDb: [],
+          missingInDb: [1980, 1981],
+          changedValues: [],
+          totalAppValues: 2,
+          totalDbValues: 0,
         },
       },
     };
 
-    const summary = (component as any).calculateGroupDiffSummary(mockAppOnlyDiff, ['rainfall']);
+    const summary = component.getGroupDiffSummary(mockAppOnlyDiff, 'app_only');
     expect(summary.isAppOnly).toBe(true);
     expect(summary.headlinePercent).toBe(0);
     expect(summary.headlinePercentFormatted).toBe('');
@@ -143,28 +178,24 @@ describe('ClimateAdminPageComponent', () => {
 
   it('should suppress 100% headline but keep product breakdown for db_only stations', () => {
     const mockDbOnlyDiff: any = {
-      status: 'db_only',
+      hasDifferences: true,
       products: {
         rainfall: {
-          label: 'Rainfall',
-          hasData: true,
-          isInSync: false,
-          yearsAdded: [1980, 1981],
-          yearsRemoved: [],
-          changedCount: 0,
-          changes: new Array(2).fill({}),
-          totalValuesCount: 2,
-          appYearSpan: null,
-          dbYearSpan: [1980, 1981],
+          productKey: 'rainfall',
+          addedInDb: [1980, 1981],
+          missingInDb: [],
+          changedValues: [],
+          totalAppValues: 0,
+          totalDbValues: 2,
         },
       },
     };
 
-    const summary = (component as any).calculateGroupDiffSummary(mockDbOnlyDiff, ['rainfall']);
+    const summary = component.getGroupDiffSummary(mockDbOnlyDiff, 'db_only');
     expect(summary.isDbOnly).toBe(true);
     expect(summary.headlinePercent).toBe(0);
     expect(summary.headlinePercentFormatted).toBe('');
-    expect(summary.productLines).toEqual([{ label: 'Rainfall', summary: '+2' }]);
+    expect(summary.productLines).toEqual([{ label: 'Rainfall', summary: '+2 new' }]);
   });
 
   it('should assume empty product data is unavailable due to error and mark available only when non-empty', () => {
@@ -178,13 +209,18 @@ describe('ClimateAdminPageComponent', () => {
     expect(emptySummary).toEqual([
       { id: 'Annual Rainfall', available: false, generation_timestamp: undefined, generation_id: undefined },
       { id: 'Crop Probabilities', available: false, generation_timestamp: undefined, generation_id: undefined },
-      { id: 'Annual Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
-      { id: 'Monthly Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Annual Temperature', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Monthly Temperature', available: false, generation_timestamp: undefined, generation_id: undefined },
     ]);
 
     const filledSummary = (component as any).generateProductSummary({
-      annual_rainfall_data: [{ year: 2020, seasonal_rain: 500 }],
-      annual_rainfall_metadata: { generation_timestamp: '2026-10-01T12:00:00Z', generation_id: 'gen_rain_1' },
+      annual_rainfall_data: [
+        {
+          year: 2020,
+          seasonal_rain: 500,
+          _metadata: { generation_timestamp: '2026-10-01T12:00:00Z', generation_id: 'gen_rain_1' },
+        },
+      ],
       crop_probability_data: null,
       annual_temperature_data: [{ year: 2020, mean_tmax: 28 }],
       monthly_temperature_data: [],
@@ -198,8 +234,8 @@ describe('ClimateAdminPageComponent', () => {
         generation_id: 'gen_rain_1',
       },
       { id: 'Crop Probabilities', available: false, generation_timestamp: undefined, generation_id: undefined },
-      { id: 'Annual Temperatures', available: true, generation_timestamp: undefined, generation_id: undefined },
-      { id: 'Monthly Temperatures', available: false, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Annual Temperature', available: true, generation_timestamp: undefined, generation_id: undefined },
+      { id: 'Monthly Temperature', available: false, generation_timestamp: undefined, generation_id: undefined },
     ]);
 
     const absentSummary = (component as any).generateProductSummary(undefined);
@@ -208,7 +244,7 @@ describe('ClimateAdminPageComponent', () => {
 
   it('should format product tooltip with generation metadata when available', () => {
     expect(component.getProductTooltip({ id: 'Annual Rainfall', available: false })).toBe(
-      'Annual Rainfall (No data / Error - click to refresh)',
+      'Annual Rainfall\nUnavailable',
     );
 
     const withGen = component.getProductTooltip({
@@ -217,22 +253,15 @@ describe('ClimateAdminPageComponent', () => {
       generation_timestamp: '2026-10-01T12:00:00Z',
       generation_id: 'gen_123',
     });
-    expect(withGen).toContain('Annual Rainfall (Generated:');
+    expect(withGen).toContain('Annual Rainfall\nAvailable');
+    expect(withGen).toContain('Generated: 2026-10-01T12:00:00Z');
     expect(withGen).toContain('ID: gen_123');
-
-    const withoutId = component.getProductTooltip({
-      id: 'Annual Rainfall',
-      available: true,
-      generation_timestamp: '2026-10-01T12:00:00Z',
-    });
-    expect(withoutId).toContain('Annual Rainfall (Generated:');
-    expect(withoutId).not.toContain('ID:');
 
     const plain = component.getProductTooltip({
       id: 'Annual Rainfall',
       available: true,
     });
-    expect(plain).toBe('Annual Rainfall');
+    expect(plain).toBe('Annual Rainfall\nAvailable');
   });
 
   it('should filter diffTableData when showOnlyDiffs is toggled', () => {
@@ -242,68 +271,48 @@ describe('ClimateAdminPageComponent', () => {
   });
 
   it('should format getDiffTooltip accurately based on diff status', () => {
-    const inSyncTooltip = component.getDiffTooltip({
-      status: 'in_sync',
-      totalYearsAddedCount: 0,
-      totalYearsRemovedCount: 0,
-      totalChangedValuesCount: 0,
-      products: {},
-      hasAppData: true,
-      hasDbData: true,
-      stationId: 'st_1',
-    });
-    expect(inSyncTooltip).toContain('identical');
-
-    const diffTooltip = component.getDiffTooltip({
-      status: 'diff',
-      totalYearsAddedCount: 2,
-      totalYearsRemovedCount: 1,
-      totalChangedValuesCount: 3,
-      products: {
-        rainfall: {
-          productId: 'rainfall',
-          label: 'Rainfall',
-          units: 'mm',
-          yearsAdded: [2021, 2022],
-          yearsRemoved: [1980],
-          changedCount: 1,
-          changes: [],
-          appYearSpan: [1980, 2020],
-          dbYearSpan: [1981, 2022],
-          hasData: true,
-          isInSync: false,
-        },
-      },
-      hasAppData: true,
-      hasDbData: true,
-      stationId: 'st_1',
-    });
-    expect(diffTooltip).toContain('+2 added');
-    expect(diffTooltip).toContain('-1 removed');
-    expect(diffTooltip).toContain('~3 changed');
-    expect(diffTooltip).toContain('Rainfall: +2 yrs, -1 yrs, ~1 changed');
+    expect(component.getDiffTooltip('in_sync')).toContain('matches database perfectly');
+    expect(component.getDiffTooltip('divergent')).toContain('Database values differ');
+    expect(component.getDiffTooltip('db_only')).toContain('has no bundled app data');
+    expect(component.getDiffTooltip('app_only')).toContain('not present in database');
+    expect(component.getDiffTooltip('no_data')).toContain('No data available');
   });
 
   it('should open StationDiffDialogComponent when openStationDiffDialog is called', () => {
     const mockStation: any = { id: 'salima', station_id: 'salima', station_name: 'Salima' };
     const mockEvent = {
-      preventDefault: jest.fn(),
-      stopImmediatePropagation: jest.fn(),
+      stopPropagation: jest.fn(),
     } as any;
+
+    const dialogSpy = jest.spyOn((component as any).dialog, 'open').mockReturnValue({} as any);
 
     component.openStationDiffDialog(mockStation, mockEvent);
 
-    expect(mockEvent.preventDefault).toHaveBeenCalled();
-    expect(mockEvent.stopImmediatePropagation).toHaveBeenCalled();
-    expect(mockDialog.open).toHaveBeenCalledWith(
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(dialogSpy).toHaveBeenCalledWith(
       StationDiffDialogComponent,
       expect.objectContaining({
         data: expect.objectContaining({
           station: mockStation,
         }),
-        panelClass: 'no-padding',
-        autoFocus: false,
       }),
     );
+  });
+
+  it('should compute qcStats and filter qcTableData by passed and failed', () => {
+    expect(component.qcStats()).toEqual({
+      total: 0,
+      passed: 0,
+      failed: 0,
+    });
+    expect(component.qcTableData()).toEqual([]);
+
+    component.qcFilter.set('passed');
+    expect(component.qcFilter()).toBe('passed');
+    expect(component.qcTableData()).toEqual([]);
+
+    component.qcFilter.set('failed');
+    expect(component.qcFilter()).toBe('failed');
+    expect(component.qcTableData()).toEqual([]);
   });
 });

@@ -320,6 +320,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zambia Climsoft & AWS Duplicate Station Filtering**: `/v2/station/zm` emits duplicate 8-character Climsoft legacy codes (`CHIPAT01`) alongside canonical names (`CHIPATA MET`), as well as empty AWS stations (`CHIPATA MET AWS`). The sync edge function must filter these out when the base station exists to prevent duplicate cards in the app and dashboard.
 - **District Preservation & Non-Destructive Sync**: Upstream feeds return `district: null` for ZW and MW. Rather than maintaining fragile hardcoded dictionary mappings in the application or edge functions, missing districts are populated one-time via database migrations. The sync edge function preserves existing non-null database values (`existingDistrict || d.district || null`), ensuring subsequent sync runs never overwrite existing districts with `null`.
 
+### Automated Quality Control & `qcFailures` Array
+
+- **Discrete Failure Codes**: Stations are evaluated against explicit scientific quality gates (`libs/utils/climate-qc.utils.ts`):
+  1. `insufficient_total_years`: Total rainfall years < 30.
+  2. `no_recent_data`: Fewer than 1 rainfall observation year in the past 10 years.
+  3. `sparse_recent_data`: Fewer than 10 rainfall observation years in the past 30 years.
+  4. `season_discrepancies`: Unpaired start/end of season boundaries (`Start` without `End` or vice versa).
+- **Clean Model & Zero Half-Features**: Station QC status is represented cleanly by `qcFailures?: ClimateQcFailure[]` on `IStationCapabilities` (defined in `libs/models/climate.models.ts`). An empty array (`[]`) signifies that the station passed automated QC.
+- **Automated Draft Status Resolution**: `resolveStationDraftStatus(qcFailures)` automatically marks stations as `draft: true` if `qcFailures` is undefined or non-empty, and `draft: false` (published) only when `qcFailures.length === 0`.
+- **UI Non-Alarmist Neutral Grey**: In dashboard admin QC tables and difference tables, failing stations or unassessed stations are styled in neutral slate grey badges (`bg-slate-100 text-slate-700 border-slate-300`), not red/warn, because inactive or historical stations with insufficient data are expected operational states rather than system errors.
+
 ### Multi-Column Climate Product Diffing & Overlaid C3 Preview
 
 - **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
@@ -473,3 +484,33 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
+
+---
+
+## 6. Climate Quality Control (QC) & Monorepo Tooling
+
+### Nx Socket Length Trap on macOS (Worktrees)
+
+- **Problem**: When running Jest or Nx within Git worktrees whose directory paths exceed 104 characters, the Unix domain socket creation for Nx daemon crashes with "Attempted to open socket that exceeds the maximum socket length".
+- **Solution**: Always set "NX_SOCKET_DIR=/tmp/nx-tmp NX_DAEMON=false" in the environment when invoking tests via "node tools/ai/ai-test.mjs" or running "yarn nx test".
+
+### Climate Quality Control (QC) Gates & Automated Station Drafting
+
+- **Standalone Engine**: Quality control criteria are defined in libs/utils/climate-qc.utils.ts under "CLIMATE_QC_GATES".
+  - **Min 30 Total Rainfall Years**: Evaluated strictly on valid annual rainfall observations ("hasValidRainfallObservation"), avoiding false counts from rows containing only start/end of season data.
+  - **Min 1 Year in Past 10 Years**: Ensures the station has recent observations.
+  - **Min 10 Years in Past 30 Years**: Ensures temporal continuity.
+  - **Season Boundary Consistency**: "detectSeasonDiscrepancies" detects years where start of season exists without end of season, or vice versa.
+- **QC Grading**:
+  - "approved": Passes all rainfall completeness gates and has 0 season discrepancies.
+  - "pending_review": Passes rainfall completeness gates but has season bound discrepancies.
+  - "insufficient_data": Fails rainfall completeness gates. In the UI, this must be displayed in **neutral slate/grey** ("bg-slate-100 text-slate-700"), not red/warn, as it is non-actionable archival data.
+- **Automated Drafting with Manual Overrides**:
+  - In country station loaders ("stations/<country>/index.ts"), stations are mapped with "draft: resolveStationDraftStatus(station.draft, caps?.qcStatus)".
+  - If a station has an explicit manual boolean override in "metadata.ts" ("draft: true" or "draft: false"), that override is preserved. Otherwise, non-approved stations automatically default to draft status and are excluded from the end-user app.
+
+### Climate Station Quality Control & Public Tool Filtering
+
+- **Automated Draft Status**: Climate stations are automatically flagged as draft via `resolveStationDraftStatus(caps?.qcFailures)`. Stations failing any QC gate (`rainfall_total_years_below_min`, `rainfall_no_recent_data`, `rainfall_recent_years_sparse`, or `season_bound_discrepancies`) receive `draft: true`.
+- **Public Tool Exclusion**: In `ClimateDataService.stations`, stations with `draft: true` or no climate data are strictly excluded from the active `stations()` signal, even when a custom deployment `station_filter` is defined. Public chart components and dropdowns derive strictly from `ClimateDataService.stations()`.
+- **Admin Visibility**: The dashboard fetches stations directly from Supabase and shows all stations regardless of draft or QC status, using subtle non-alert styling (slate grey icons/badges, never red) for QC failures.
