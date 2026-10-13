@@ -25,12 +25,24 @@ describe('filterLocationsToProbabilityTables', () => {
       });
     const tables = [TABLE('lilongwe', 'Lilongwe'), TABLE('dowa', 'Dowa')];
 
-    it('should filter districts to those with tables and add a sublocation tier', () => {
+    it('should only filter districts when max one table per district', () => {
       const result = filterLocationsToProbabilityTables(mwData(), tables);
+      expect(result.admin_4.locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
+      expect(result.admin_5).toBeUndefined();
+    });
+
+    it('should synthesise a sublocation tier when a district has multiple tables', () => {
+      const multiTables = [
+        TABLE('lilongwe', 'Lilongwe'),
+        TABLE('dowa/boma_met_station', 'Boma'),
+        TABLE('dowa/mvera_met_station', 'Mvera'),
+      ];
+      const result = filterLocationsToProbabilityTables(mwData(), multiTables);
       expect(result.admin_4.locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
       expect(result.admin_5?.locations).toEqual([
         { id: 'lilongwe', admin_4: 'lilongwe', label: 'Lilongwe' },
-        { id: 'dowa', admin_4: 'dowa', label: 'Dowa' },
+        { id: 'boma_met_station', admin_4: 'dowa', label: 'Boma' },
+        { id: 'mvera_met_station', admin_4: 'dowa', label: 'Mvera' },
       ]);
     });
 
@@ -48,7 +60,7 @@ describe('filterLocationsToProbabilityTables', () => {
       const first = filterLocationsToProbabilityTables(input, tables);
       const second = filterLocationsToProbabilityTables(input, tables);
       expect(second).toEqual(first);
-      expect(second.admin_5?.locations.filter((v) => v.admin_4 === 'lilongwe')).toHaveLength(1);
+      expect(second.admin_4.locations).toHaveLength(2);
     });
   });
 
