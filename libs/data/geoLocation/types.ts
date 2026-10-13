@@ -49,7 +49,7 @@ export interface IGeolocationData {
   };
 }
 
-export interface IGeoJsonData<T = Record<string, unknown>> {
+export interface IGeoJsonData<T = Record<string, string>> {
   type: string;
   bbox?: number[];
   crs: { type: string; properties: { name: string } };
@@ -81,9 +81,10 @@ export interface ITopoJsonFeatureProperties {
   name: string;
   admin_level?: string | number;
   /** [longitude, latitude] reference center / centroid for the administrative boundary */
-  center?: [number, number];
+  center?: number[];
   /** Algorithm/source used for the center point */
-  center_source?: 'admin_centre' | 'label' | 'centroid' | 'point_on_surface';
+  center_source?: string;
+  [key: string]: unknown;
 }
 
 export interface ITopoJsonObject {

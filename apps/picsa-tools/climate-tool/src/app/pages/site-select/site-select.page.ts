@@ -78,7 +78,7 @@ export class SiteSelectPage {
 
   public readonly strings = STRINGS;
 
-  public picsaMap = viewChild(PicsaMapComponent);
+  public readonly picsaMap = viewChild<PicsaMapComponent>('picsaMap');
 
   public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
@@ -123,17 +123,16 @@ export class SiteSelectPage {
   /** Alternative nearby stations (next 3 recommendations) */
   public readonly alternativeRecommendations = computed(() => this.stationRecommendations().slice(1, 4));
 
-  public readonly mapReady = computed(() => this.picsaMap()?.mapReady() ?? false);
+  public readonly mapReady = signal(false);
 
   public readonly mapMarkers = computed(() => {
     const stations = this.dataService.stations();
     const markers: IMapMarker[] = stations
       .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft)
       .map((station, _index) => ({
+        latlng: [station.latitude, station.longitude] as [number, number],
         data: station,
-        latitude: station.latitude as number,
-        longitude: station.longitude as number,
-        popupHTML: station.name,
+        number: _index + 1,
         _index,
       }));
     return markers;

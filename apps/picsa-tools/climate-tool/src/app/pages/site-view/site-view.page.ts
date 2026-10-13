@@ -13,18 +13,19 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components';
+import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
 import { ConfigurationService } from '@picsa/configuration';
 import { ICountryCode } from '@picsa/data';
 import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models';
-import { PicsaCommonComponentsService, PicsaSidenavComponent } from '@picsa/shared';
 import { map } from 'rxjs/operators';
 
-import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout.component';
+import { ClimateChartLayoutComponent } from '../../components/chart-layout/chart-layout';
 import { ClimateChartOptionsComponent } from '../../components/climate-chart-options/climate-chart-options.component';
+import { PicsaClimateMaterialModule } from '../../components/material.module';
 import { ClimatePrintLayoutComponent } from '../../components/print-layout/print-layout.component';
-import { PicsaClimateMaterialModule } from '../../material.module';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
 
@@ -114,11 +115,12 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.chartService.clearChartData();
     this.componentsService.patchHeader({ cdkPortalCenter: undefined });
   }
 
-  handleStationSelect(stationId: string) {
-    this.router.navigate(['../', stationId], {
+  public async handleStationSelect(id: string) {
+    await this.router.navigate(['../', id], {
       relativeTo: this.route,
       queryParamsHandling: 'preserve',
       replaceUrl: true,
@@ -126,8 +128,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   }
 
   goToSiteSelect() {
-    this.router.navigate(['../'], {
-      relativeTo: this.route,
-    });
+    this.chartService.goToSiteSelect(this.siteId() as string);
   }
 }

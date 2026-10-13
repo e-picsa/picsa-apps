@@ -1,29 +1,41 @@
+@if(chartService.chartPngBlob(); as chartPngBlob){
+<climate-print-layout [chartPngBlob]="chartPngBlob"></climate-print-layout>
+}
+
+<!-- Header to inject into global header component -->
 <ng-template #headerPortal>
-  <div class="site-header-portal">
-    <mat-select
-      #select
-      [value]="chartService.station()?.id"
-      (selectionChange)="handleStationSelect($event.value)"
-      class="station-select-overlay"
-    >
-      @for(option of stationSelectOptions(); track option.value){
-      <mat-option [value]="option.value" [class.opacity-50]="option.draft">{{ option.label }}</mat-option>
-      }
-    </mat-select>
-    <button matButton color="primary" (click)="select.open()" class="station-select">
-      @if(chartService.station(); as station){
-      <span class="station-select-label">
-        @if(districtLabel(); as district){ {{ district }}: } {{ station.name }}
-      </span>
-      }
-      <mat-icon iconPositionEnd>expand_more</mat-icon>
-    </button>
+  <div class="flex items-center w-auto max-w-full min-w-0 gap-1">
+    <div class="relative min-w-36 md:min-w-48">
+      <button matButton color="primary" (click)="select.open()" class="station-select">
+        @if(chartService.station(); as station){
+        <span class="station-select-label">
+          @if(districtLabel(); as district){ {{ district }}: } {{ station.name }}
+        </span>
+        }
+        <mat-icon iconPositionEnd>expand_more</mat-icon>
+      </button>
+      <!-- Use a hidden select that opens from button (instead of using full select form component) -->
+      <mat-select
+        class="absolute left-0 top-0 h-full w-full z-0 opacity-0 pointer-events-none"
+        tabindex="-1"
+        #select
+        (selectionChange)="handleStationSelect(select.value)"
+        [value]="chartService.station()?.id"
+      >
+        @for(option of stationSelectOptions(); track option.value){
+        <mat-option [value]="option.value" [attr.data-draft]="option.draft" class="station-select-option"
+          >{{option.label}}</mat-option
+        >
+        }
+      </mat-select>
+    </div>
+
     <!-- Desktop: text button -->
     <button matButton color="primary" (click)="goToSiteSelect()" class="map-button !hidden sm:!inline-flex">
       <mat-icon>place</mat-icon>
       <span>{{ 'Location' | translate }}</span>
     </button>
-    <!-- Mobile: icon button -->
+    <!-- Mobile: outlined icon button with location icon -->
     <button
       matIconButton
       color="primary"
@@ -36,19 +48,13 @@
   </div>
 </ng-template>
 
-<div class="h-full w-full flex overflow-hidden">
-  <picsa-sidenav-layout
-    class="flex-1 overflow-hidden"
-    drawerPosition="end"
-    [drawerOpen]="chartService.drawerOpen()"
-    (drawerOpenChange)="chartService.drawerOpen.set($event)"
-  >
-    <!-- Left: Main Chart Area -->
-    <picsa-climate-chart-layout class="flex-1 w-full h-full" mainContent> </picsa-climate-chart-layout>
-
-    <!-- Right: Options/Tools Drawer -->
-    <picsa-climate-chart-options drawerContent></picsa-climate-chart-options>
+<div class="page-content">
+  <picsa-sidenav-layout #snav [initialOpen]="true">
+    <climate-chart-options sidenav></climate-chart-options>
+    <div content class="flex-1 flex flex-col">
+      @if (chartService.chartDefinition(); as definition){ @if(chartService.station(); as station){
+      <climate-chart-layout style="flex: 1" [definition]="definition"></climate-chart-layout>
+      }}
+    </div>
   </picsa-sidenav-layout>
-
-  <picsa-climate-print-layout></picsa-climate-print-layout>
 </div>

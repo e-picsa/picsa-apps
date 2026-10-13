@@ -117,11 +117,11 @@ strings.showMap;
         </button>
 
         @if (showAllStations()) {
-        <div class="mt-2 text-xs text-gray-500">
+        <div class="mt-2 border rounded-lg overflow-hidden max-h-80 flex flex-col">
           <picsa-data-table
-            [data]="tableData()"
             [options]="tableOptions()"
-            [selectedRow]="selectedStation()"
+            [data]="tableData()"
+            class="flex-1"
             (rowClick)="handleRowClick($event)"
           ></picsa-data-table>
         </div>
@@ -133,9 +133,11 @@ strings.showMap;
   <!-- Right panel: Interactive Station & Boundary Map -->
   <div class="map-panel" [attr.data-view]="view()">
     <picsa-map
+      (onMarkerClick)="handleMarkerClick($event)"
       [markers]="mapMarkers()"
-      [activeMarker]="selectedStation()?.id"
-      (markerClick)="handleMarkerClick($event)"
+      (onMapReady)="mapReady.set(true)"
+      #picsaMap
+      class="flex-1 w-full h-full"
     ></picsa-map>
   </div>
 </div>
