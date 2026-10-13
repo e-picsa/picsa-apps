@@ -96,7 +96,9 @@ export class CropLinkedStationSelectComponent {
       const countryCode = this.deploymentService.activeDeploymentCountry();
       const locationId = this.locationId();
       if (countryCode && locationId) {
-        this.handleLocationChange(countryCode, locationId);
+        this.handleLocationChange(countryCode, locationId).catch((error) => {
+          console.error('Failed to load linked station data:', error);
+        });
       }
     });
 
