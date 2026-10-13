@@ -30,6 +30,7 @@ import { CropProbabilityTableComponent } from '../../components/crop-probability
 import { PROBABILITY_TABLE_DATA } from '../../data';
 import { CROP_PROBABILITY_SELECT_TOUR, CROP_PROBABILITY_TABLE_TOUR } from '../../data/tour';
 import { IProbabilityTable, IStationCropData } from '../../models';
+import { filterLocationsToProbabilityTables } from '../../utils/location-filter.utils';
 
 interface IQueryParams {
   /** id of active selected station */
@@ -146,52 +147,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationOverlayOpen.set(false);
   }
 
-  /** Modify locations to only include values that have probability data */
+  /**
+   * Modify locations to only include values that have probability data.
+   * Pure delegation - the shared per-country geo data must never be mutated as the
+   * filter re-runs every time the location overlay is opened.
+   */
   public locationModifier(data: IGeolocationData, country_code: string): IGeolocationData {
     const allData: IProbabilityTable[] = PROBABILITY_TABLE_DATA[country_code] || [];
-    const slots = getLocationSlots(data);
-    // track table ids per level - ids use format parent[/child[--sublocation]]
-    const availableByLevel: string[][] = slots.map(() => []);
-    for (const entry of allData) {
-      entry.id.split('/').forEach((segment, i) => {
-        if (i < slots.length) availableByLevel[i].push(segment.split('--')[0]);
-      });
-    }
-
-    // filter each level to only include those with child probability tables available
-    slots.forEach((slot, i) => {
-      const locations = data[slot]?.locations ?? [];
-      (data[slot] as { locations: { id: string }[] }).locations = locations.filter((v) =>
-        availableByLevel[i].includes(v.id),
-      );
-    });
-
-    if (slots.length > 1) {
-      const deepSlot = slots[slots.length - 1];
-      const parentSlot = slots[slots.length - 2];
-      // HACK - data can have multiple tables in same sublocation, e.g.
-      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
-      allData.forEach((entry) => {
-        const segments = entry.id.split('/');
-        const [, sublocation] = (segments[1] || '').split('--');
-        if (sublocation) {
-          (data[deepSlot]?.locations as unknown[]).push({
-            id: entry.id,
-            label: entry.label,
-            [parentSlot]: segments[0],
-          });
-        }
-      });
-    } else {
-      // HACK - single-tier geo data but crop probability tables include multiple per
-      // location so create entries to use in filter
-      const additionalLocations = allData.map(({ id, label }) => {
-        const [parent, child] = id.split('/');
-        return { id: child ?? parent, admin_4: parent, label };
-      });
-      data.admin_5 = { label: 'Location', locations: additionalLocations };
-    }
-    return data;
+    return filterLocationsToProbabilityTables(data, allData);
   }
 
   /** One-time import of pre-overlay saved locations into user settings */
