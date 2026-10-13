@@ -12,11 +12,87 @@
     <!-- TAB 1: DATA SYSTEM (DB) -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">database</mat-icon>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cloud</mat-icon>
         <span>Data System</span>
       </ng-template>
 
       <div class="py-4">
+        <!-- KPI Summary / Filter Chips -->
+        <div class="flex items-center gap-2.5 mb-4 flex-wrap">
+          <button
+            type="button"
+            (click)="setDbQcFilter('all')"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
+            [class]="
+              dbQcFilter() === 'all'
+                ? 'bg-blue-50 text-blue-800 border-blue-300 ring-2 ring-blue-100 font-semibold'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+            "
+          >
+            <span>Total Stations:</span>
+            <span class="font-bold">{{ dbStats().total }}</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="setDbQcFilter('passed')"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
+            [class]="
+              dbQcFilter() === 'passed'
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 ring-2 ring-emerald-100 font-semibold'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+            "
+          >
+            <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>
+            <span>QC Passed:</span>
+            <span class="font-bold text-emerald-700">{{ dbStats().passed }}</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="setDbQcFilter('failed')"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
+            [class]="
+              dbQcFilter() === 'failed'
+                ? 'bg-slate-100 text-slate-900 border-slate-400 ring-2 ring-slate-200 font-semibold'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+            "
+          >
+            <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>
+            <span>QC Failed:</span>
+            <span class="font-bold text-slate-800">{{ dbStats().failed }}</span>
+          </button>
+
+          @if (dbStats().warnings > 0) {
+            <button
+              type="button"
+              (click)="setDbQcFilter('warnings')"
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer"
+              [class]="
+                dbQcFilter() === 'warnings'
+                  ? 'bg-amber-50 text-amber-900 border-amber-300 ring-2 ring-amber-100 font-semibold'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              "
+            >
+              <mat-icon class="!w-4 !h-4 !text-base text-amber-600">warning</mat-icon>
+              <span>With Season Warnings:</span>
+              <span class="font-bold text-amber-800">{{ dbStats().warnings }}</span>
+            </button>
+          }
+
+          @if (dbQcFilter() !== 'all') {
+            <button
+              type="button"
+              matButton
+              color="primary"
+              class="!text-xs !py-1 !px-2"
+              (click)="dbQcFilter.set('all')"
+            >
+              Reset filter
+            </button>
+          }
+        </div>
+
         <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
           <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
             Climate data summaries stored in Supabase (<code>climate_station_data</code>).
@@ -31,7 +107,7 @@
               <mat-icon>refresh</mat-icon>
               <span>
                 @if (refreshCount() > -1) {
-                  {{ refreshCount() }} / {{ dbTableData().length }}
+                  {{ refreshCount() }} / {{ allDbTableData().length }}
                 } @else {
                   Refresh All
                 }
@@ -44,33 +120,64 @@
           [data]="dbTableData()"
           [options]="dbTableOptions"
           [valueTemplates]="{
-            station: stationTemplate,
+            name: nameTemplate,
+            qc_passed: qcStatusTemplate,
+            qc_details: qcDetailsTemplate,
             updated_at: updatedAtTemplate,
             products: productsTemplate,
-            season_discrepancies: seasonDiscrepanciesTemplate,
             rainfall_export_data: downloadDbTemplate,
           }"
         >
-          <ng-template #stationTemplate let-station let-row="row">
-            <div class="flex items-center gap-1.5">
-              @if (row.qc_passed) {
-                <mat-icon class="!w-4 !h-4 !text-base text-emerald-500 shrink-0" matTooltip="Quality Control: Passed">
-                  check_circle
-                </mat-icon>
-              } @else {
-                <mat-icon
-                  class="!w-4 !h-4 !text-base text-slate-400 shrink-0"
-                  [matTooltip]="'Quality Control: Failed\n' + (row.qc_reasons || []).join('\n')"
-                >
-                  rule
-                </mat-icon>
+          <ng-template #nameTemplate let-name>
+            <span class="font-medium text-slate-900">{{ name }}</span>
+          </ng-template>
+
+          <ng-template #qcStatusTemplate let-passed>
+            @if (passed) {
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>Passed
+              </span>
+            } @else {
+              <span
+                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300"
+              >
+                <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>Failed
+              </span>
+            }
+          </ng-template>
+
+          <ng-template #qcDetailsTemplate let-row="row">
+            <div class="flex flex-col gap-1 text-xs">
+              @if (!row.qc_passed && row.qc_failures?.length) {
+                <div class="flex flex-wrap gap-1">
+                  @for (f of row.qc_failures; track f) {
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded text-[0.72rem] font-medium bg-slate-100 text-slate-700 border border-slate-200"
+                    >
+                      {{ getQcFailureLabel(f) }}
+                    </span>
+                  }
+                </div>
               }
-              <span class="font-medium text-slate-900">{{ station }}</span>
+              @if (row.qc_season_warning) {
+                <span class="text-slate-500 font-normal">
+                  {{ row.qc_season_warning }}
+                </span>
+              }
+              @if (row.qc_passed && !row.qc_season_warning) {
+                <span class="text-slate-400">—</span>
+              }
             </div>
           </ng-template>
 
           <ng-template #updatedAtTemplate let-value>
-            {{ value | date: 'mediumDate' }}
+            @if (value) {
+              {{ value | date: 'mediumDate' }}
+            } @else {
+              <span class="text-muted text-xs">—</span>
+            }
           </ng-template>
 
           <ng-template #productsTemplate let-products let-row="row">
@@ -117,20 +224,6 @@
             </div>
           </ng-template>
 
-          <ng-template #seasonDiscrepanciesTemplate let-count let-row="row">
-            @if (count > 0) {
-              <div
-                [matTooltip]="row.season_discrepancies_details"
-                class="flex items-center text-amber-700 font-semibold gap-1 text-xs cursor-help"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-amber-600">warning</mat-icon>
-                <span>{{ count }}</span>
-              </div>
-            } @else {
-              <span class="text-gray-400 text-xs">0</span>
-            }
-          </ng-template>
-
           <ng-template #downloadDbTemplate let-data let-row="row">
             <button
               matIconButton
@@ -145,167 +238,7 @@
       </div>
     </mat-tab>
 
-    <!-- TAB 2: QUALITY CONTROL -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">verified</mat-icon>
-        <span>Quality Control</span>
-      </ng-template>
-
-      <div class="py-4">
-        <!-- KPI Cards & Filter Controls -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-          <!-- Total Stations -->
-          <button
-            type="button"
-            (click)="qcFilter.set('all')"
-            class="text-left bg-white border rounded-xl p-4 transition-all shadow-sm hover:border-slate-400 cursor-pointer"
-            [class.border-blue-500]="qcFilter() === 'all'"
-            [class.ring-2]="qcFilter() === 'all'"
-            [class.ring-blue-100]="qcFilter() === 'all'"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Stations</span>
-              <mat-icon class="text-slate-400 !w-5 !h-5 !text-[1.25rem]">assessment</mat-icon>
-            </div>
-            <div class="mt-2 text-2xl font-bold text-slate-900">{{ qcStats().total }}</div>
-            <div class="text-xs text-slate-500 mt-1">Full network dataset</div>
-          </button>
-
-          <!-- Passed QC -->
-          <button
-            type="button"
-            (click)="qcFilter.set('passed')"
-            class="text-left bg-white border rounded-xl p-4 transition-all shadow-sm hover:border-emerald-400 cursor-pointer"
-            [class.border-emerald-500]="qcFilter() === 'passed'"
-            [class.ring-2]="qcFilter() === 'passed'"
-            [class.ring-emerald-100]="qcFilter() === 'passed'"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">QC Passed</span>
-              <mat-icon class="text-emerald-500 !w-5 !h-5 !text-[1.25rem]">check_circle</mat-icon>
-            </div>
-            <div class="mt-2 text-2xl font-bold text-emerald-700">{{ qcStats().passed }}</div>
-            <div class="text-xs text-emerald-600 mt-1">Meets all quality standards</div>
-          </button>
-
-          <!-- Failed QC -->
-          <button
-            type="button"
-            (click)="qcFilter.set('failed')"
-            class="text-left bg-white border rounded-xl p-4 transition-all shadow-sm hover:border-slate-400 cursor-pointer"
-            [class.border-slate-500]="qcFilter() === 'failed'"
-            [class.ring-2]="qcFilter() === 'failed'"
-            [class.ring-slate-200]="qcFilter() === 'failed'"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">QC Failed</span>
-              <mat-icon class="text-slate-500 !w-5 !h-5 !text-[1.25rem]">rule</mat-icon>
-            </div>
-            <div class="mt-2 text-2xl font-bold text-slate-800">{{ qcStats().failed }}</div>
-            <div class="text-xs text-slate-500 mt-1">Quality issues detected (drafted)</div>
-          </button>
-        </div>
-
-        <div class="flex items-center justify-between gap-4 mb-3">
-          <div class="text-sm text-slate-600">
-            @switch (qcFilter()) {
-              @case ('passed') {
-                Showing <strong>{{ qcTableData().length }}</strong> passed stations
-              }
-              @case ('failed') {
-                Showing <strong>{{ qcTableData().length }}</strong> stations with QC failures
-              }
-              @default {
-                Showing all <strong>{{ qcTableData().length }}</strong> stations
-              }
-            }
-          </div>
-          @if (qcFilter() !== 'all') {
-            <button matButton color="primary" (click)="qcFilter.set('all')">Reset filter</button>
-          }
-        </div>
-
-        <picsa-data-table
-          [data]="qcTableData()"
-          [options]="qcTableOptions"
-          [valueTemplates]="{
-            passed: qcPassedTemplate,
-            failures: qcFailuresTemplate,
-            season_discrepancies: qcSeasonDiscrepanciesTemplate,
-            actions: qcActionTemplate,
-          }"
-        >
-          <ng-template #qcPassedTemplate let-passed let-row="row">
-            @if (passed) {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-emerald-600">check_circle</mat-icon>Passed
-              </span>
-            } @else {
-              <span
-                [matTooltip]="(row.reasons || []).join('\n')"
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 cursor-help"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-slate-500">rule</mat-icon>Failed
-              </span>
-            }
-          </ng-template>
-
-          <ng-template #qcFailuresTemplate let-failures>
-            <div class="flex flex-wrap gap-1.5">
-              @for (f of failures; track f) {
-                <span
-                  class="inline-flex items-center px-2 py-0.5 rounded text-[0.72rem] font-medium bg-slate-100 text-slate-700 border border-slate-200"
-                >
-                  {{ getQcFailureLabel(f) }}
-                </span>
-              }
-              @if (failures.length === 0) {
-                <span class="text-emerald-600 text-xs font-medium">None</span>
-              }
-            </div>
-          </ng-template>
-
-          <ng-template #qcSeasonDiscrepanciesTemplate let-count let-row="row">
-            @if (count > 0) {
-              <div
-                [matTooltip]="row.season_discrepancies_details"
-                class="flex items-center text-amber-700 font-semibold gap-1 text-xs cursor-help"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base text-amber-600">warning</mat-icon>
-                <span>{{ count }}</span>
-              </div>
-            } @else {
-              <span class="text-gray-400 text-xs">0</span>
-            }
-          </ng-template>
-
-          <ng-template #qcActionTemplate let-row="row">
-            <div class="flex items-center gap-1">
-              <button
-                matIconButton
-                (click)="openStationDiffDialog(row.station, $event)"
-                matTooltip="Compare Data System vs App"
-              >
-                <mat-icon>difference</mat-icon>
-              </button>
-              <button
-                matIconButton
-                (click)="downloadStationCSV(row, $event)"
-                [disabled]="!row.rainfall_export_data || row.rainfall_export_data.length === 0"
-                matTooltip="Download Station CSV"
-              >
-                <mat-icon>download</mat-icon>
-              </button>
-            </div>
-          </ng-template>
-        </picsa-data-table>
-      </div>
-    </mat-tab>
-
-    <!-- TAB 3: APP DATA -->
+    <!-- TAB 2: APP DATA -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">smartphone</mat-icon>
@@ -335,22 +268,8 @@
             actions: appActionTemplate,
           }"
         >
-          <ng-template #appNameTemplate let-name let-row="row">
-            <div class="flex items-center gap-1.5">
-              @if (row.has_bundled_data && row.qc_passed) {
-                <mat-icon class="!w-4 !h-4 !text-base text-emerald-500 shrink-0" matTooltip="Quality Control: Passed">
-                  check_circle
-                </mat-icon>
-              } @else {
-                <mat-icon
-                  class="!w-4 !h-4 !text-base text-slate-400 shrink-0"
-                  [matTooltip]="'Quality Control: Failed\n' + (row.qc_reasons || []).join('\n')"
-                >
-                  rule
-                </mat-icon>
-              }
-              <span class="font-medium text-slate-900">{{ name }}</span>
-            </div>
+          <ng-template #appNameTemplate let-name>
+            <span class="font-medium text-slate-900">{{ name }}</span>
           </ng-template>
 
           <ng-template #bundledStatusTemplate let-hasBundled>
@@ -396,7 +315,7 @@
       </div>
     </mat-tab>
 
-    <!-- TAB 4: DATA COMPARISON (DIFF) -->
+    <!-- TAB 3: DATA COMPARISON (DIFF) -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>

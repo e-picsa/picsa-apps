@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClimateQcFailure, IStationData } from '@picsa/models';
+import { ClimateQcFailure, ClimateQcWarning, IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import {
   arrayToHashmap,
@@ -63,6 +63,8 @@ export interface IStationAdminSummary {
   season_discrepancies_details?: string;
   qc_passed?: boolean;
   qc_failures?: ClimateQcFailure[];
+  qc_warnings?: ClimateQcWarning[];
+  qc_season_warning?: string;
   qc_reasons?: string[];
   products: IProductSummary[];
   updateSignal: WritableSignal<IStatusUpdate>;
@@ -162,48 +164,20 @@ export interface IStationDiffRow {
   updated_at?: string;
 }
 
-export interface IStationQcRow {
-  name: string;
-  station: IStationRow;
-  passed: boolean;
-  failures: ClimateQcFailure[];
-  reasons: string[];
-  rainfall_start_year?: number;
-  rainfall_end_year?: number;
-  rainfall_total_years: number;
-  rainfall_last_ten_years: number;
-  rainfall_last_thirty_years: number;
-  season_discrepancies: number;
-  season_discrepancies_details?: string;
-  rainfall_export_data?: IStationData[];
-}
-
 interface IStatusUpdate {
   started: boolean;
   statuses?: { id: string; status: string }[];
 }
 
-const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
-  'station',
-  'updated_at',
-  'rainfall_start_year',
-  'rainfall_end_year',
-  'rainfall_total_years',
-  'rainfall_last_ten_years',
-  'season_discrepancies',
-  'products',
-  'rainfall_export_data',
-];
-
-const QC_DISPLAY_COLUMNS: (keyof IStationQcRow | 'actions')[] = [
+const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary | 'qc_details')[] = [
   'name',
-  'passed',
   'rainfall_total_years',
   'rainfall_last_ten_years',
-  'rainfall_last_thirty_years',
-  'season_discrepancies',
-  'failures',
-  'actions',
+  'qc_passed',
+  'qc_details',
+  'products',
+  'updated_at',
+  'rainfall_export_data',
 ];
 
 const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
@@ -276,107 +250,68 @@ export class ClimateAdminPageComponent {
   /** Keep reference to generated row update signals to prevent recreation on data load */
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
 
-  // 1. Database Table Data & Options
-  public dbTableData = computed(() => {
+  // 1. Database Table Data & Options (Consolidated with QC Status & Details)
+  public dbQcFilter = signal<'all' | 'passed' | 'failed' | 'warnings'>('all');
+
+  public allDbTableData = computed(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
     return this.generateDbSummaryData(stations, allStationDataHashmap);
   });
+
+  public dbStats = computed(() => {
+    const rows = this.allDbTableData();
+    let passed = 0;
+    let failed = 0;
+    let warnings = 0;
+    for (const r of rows) {
+      if (r.qc_passed) passed++;
+      else failed++;
+      if (r.qc_season_warning) warnings++;
+    }
+    return {
+      total: rows.length,
+      passed,
+      failed,
+      warnings,
+    };
+  });
+
+  public dbTableData = computed(() => {
+    const rows = this.allDbTableData();
+    const filterMode = this.dbQcFilter();
+    if (filterMode === 'passed') return rows.filter((r) => r.qc_passed);
+    if (filterMode === 'failed') return rows.filter((r) => !r.qc_passed);
+    if (filterMode === 'warnings') return rows.filter((r) => Boolean(r.qc_season_warning));
+    return rows;
+  });
+
+  public setDbQcFilter(mode: 'all' | 'passed' | 'failed' | 'warnings'): void {
+    if (this.dbQcFilter() === mode) {
+      this.dbQcFilter.set('all');
+    } else {
+      this.dbQcFilter.set(mode);
+    }
+  }
 
   public dbTableOptions: IDataTableOptions = {
     displayColumns: DB_DISPLAY_COLUMNS,
     handleRowClick: ({ station }: IStationAdminSummary) =>
       this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
     formatHeader: (v) => {
-      if (v === 'station') return 'Station';
-      if (v === 'rainfall_start_year') return 'Start Year';
-      if (v === 'rainfall_end_year') return 'End Year';
-      if (v === 'rainfall_total_years') return 'Total Rainfall Years';
+      if (v === 'name' || v === 'station') return 'Station';
+      if (v === 'rainfall_total_years') return 'Total Years';
       if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
-      if (v === 'season_discrepancies') return 'Season Discrepancies';
+      if (v === 'qc_passed') return 'QC Status';
+      if (v === 'qc_details') return 'QC Details';
       if (v === 'products') return 'Available Products';
+      if (v === 'updated_at') return 'Last Sync';
       if (v === 'rainfall_export_data') return 'Action';
       return formatHeaderDefault(v);
     },
   };
 
-  // 2. Quality Control Table Data & Options
-  public qcFilter = signal<'all' | 'passed' | 'failed'>('all');
-
-  private allQcRows = computed<IStationQcRow[]>(() => {
-    const stations = this.service.stations();
-    const allStationDataHashmap = this.allStationDataHashmap();
-    return stations.map((station) => {
-      const stationData = allStationDataHashmap[station.id as string];
-      const displayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
-      const qc = evaluateStationQualityGates(displayData);
-      const seasonDiscrepancyDetails =
-        qc.seasonDiscrepancies.length > 0
-          ? `${qc.seasonDiscrepancies.length} season bound discrepancies: ` +
-            qc.seasonDiscrepancies
-              .map((d) => `${d.year} (${d.hasStart ? 'Start without End' : 'End without Start'})`)
-              .join(', ')
-          : '';
-
-      return {
-        name: station.station_name as string,
-        station,
-        passed: qc.passed,
-        failures: qc.failures,
-        reasons: qc.reasons,
-        rainfall_start_year: qc.rainfallStartYear,
-        rainfall_end_year: qc.rainfallEndYear,
-        rainfall_total_years: qc.totalRainfallYears,
-        rainfall_last_ten_years: qc.recentTenYearsCount,
-        rainfall_last_thirty_years: qc.recentThirtyYearsCount,
-        season_discrepancies: qc.seasonDiscrepanciesCount,
-        season_discrepancies_details: seasonDiscrepancyDetails,
-        rainfall_export_data: displayData,
-      };
-    });
-  });
-
-  public qcStats = computed(() => {
-    const rows = this.allQcRows();
-    let passed = 0;
-    let failed = 0;
-    for (const r of rows) {
-      if (r.passed) passed++;
-      else failed++;
-    }
-    return {
-      total: rows.length,
-      passed,
-      failed,
-    };
-  });
-
-  public qcTableData = computed<IStationQcRow[]>(() => {
-    const rows = this.allQcRows();
-    const filterMode = this.qcFilter();
-    if (filterMode === 'passed') return rows.filter((r) => r.passed);
-    if (filterMode === 'failed') return rows.filter((r) => !r.passed);
-    return rows;
-  });
-
-  public qcTableOptions: IDataTableOptions = {
-    displayColumns: QC_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationQcRow) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
-    formatHeader: (v) => {
-      if (v === 'name') return 'Station';
-      if (v === 'passed') return 'Status';
-      if (v === 'rainfall_total_years') return 'Total Rainfall Years';
-      if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
-      if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
-      if (v === 'season_discrepancies') return 'Season Discrepancies';
-      if (v === 'failures') return 'Quality Control Issues';
-      if (v === 'actions') return 'Action';
-      return formatHeaderDefault(v);
-    },
-  };
-
-  // 3. App Bundled Table Data & Options
+  // 2. App Bundled Table Data & Options
   public appTableData = computed(() => {
     const stations = this.service.stations();
     const allStationAppData = this.allStationAppData();
@@ -420,7 +355,7 @@ export class ClimateAdminPageComponent {
     },
   };
 
-  // 4. Data Comparison (Diff) Table Data & Options
+  // 3. Data Comparison (Diff) Table Data & Options
   private allDiffRows = computed<IStationDiffRow[]>(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
@@ -458,41 +393,40 @@ export class ClimateAdminPageComponent {
     const rows = this.allDiffRows();
     let inSync = 0;
     let divergent = 0;
-    let appOnly = 0;
     let dbOnly = 0;
-    let noData = 0;
-    let qcPassed = 0;
-    let qcFailed = 0;
+    let appOnly = 0;
 
-    for (const r of rows) {
-      if (r.diff_status === 'in_sync') inSync++;
-      else if (r.diff_status === 'divergent') divergent++;
-      else if (r.diff_status === 'app_only') appOnly++;
-      else if (r.diff_status === 'db_only') dbOnly++;
-      else if (r.diff_status === 'no_data') noData++;
-
-      if (r.qc_passed) qcPassed++;
-      else qcFailed++;
+    for (const row of rows) {
+      switch (row.diff_status) {
+        case 'in_sync':
+          inSync++;
+          break;
+        case 'divergent':
+          divergent++;
+          break;
+        case 'db_only':
+          dbOnly++;
+          break;
+        case 'app_only':
+          appOnly++;
+          break;
+      }
     }
-
     return {
       total: rows.length,
       inSync,
       divergent,
-      appOnly,
       dbOnly,
-      noData,
-      qcPassed,
-      qcFailed,
+      appOnly,
     };
   });
 
   public diffTableData = computed<IStationDiffRow[]>(() => {
     const rows = this.allDiffRows();
-    if (!this.showOnlyDiffs()) {
-      return rows;
+    if (this.showOnlyDiffs()) {
+      return rows.filter((r) => r.diff_status === 'divergent');
     }
-    return rows.filter((r) => r.diff_status !== 'in_sync');
+    return rows;
   });
 
   public diffTableOptions: IDataTableOptions = {
@@ -645,7 +579,7 @@ export class ClimateAdminPageComponent {
     this.refreshCount.set(-1);
   }
 
-  public downloadStationCSV(row: IStationAdminSummary | IStationAppSummary | IStationQcRow, event?: MouseEvent) {
+  public downloadStationCSV(row: IStationAdminSummary | IStationAppSummary, event?: MouseEvent) {
     if (event) event.stopPropagation();
     let data;
     if ('rainfall_export_data' in row) {
@@ -749,14 +683,6 @@ export class ClimateAdminPageComponent {
       const rainfall_export_data = hackConvertStationDataForDisplay(stationData).sort((a, b) => a.Year - b.Year);
       const qc = evaluateStationQualityGates(rainfall_export_data);
 
-      const seasonDiscrepancyDetails =
-        qc.seasonDiscrepancies.length > 0
-          ? `${qc.seasonDiscrepancies.length} season bound discrepancies: ` +
-            qc.seasonDiscrepancies
-              .map((d) => `${d.year} (${d.hasStart ? 'Start without End' : 'End without Start'})`)
-              .join(', ')
-          : '';
-
       return {
         rainfall_data,
         rainfall_start_year: qc.rainfallStartYear,
@@ -765,9 +691,11 @@ export class ClimateAdminPageComponent {
         rainfall_last_ten_years: qc.recentTenYearsCount,
         rainfall_last_thirty_years: qc.recentThirtyYearsCount,
         season_discrepancies: qc.seasonDiscrepanciesCount,
-        season_discrepancies_details: seasonDiscrepancyDetails,
+        season_discrepancies_details: qc.seasonDiscrepancySummary,
         qc_passed: qc.passed,
         qc_failures: qc.failures,
+        qc_warnings: qc.warnings,
+        qc_season_warning: qc.seasonDiscrepancySummary,
         qc_reasons: qc.reasons,
         rainfall_export_data,
       };

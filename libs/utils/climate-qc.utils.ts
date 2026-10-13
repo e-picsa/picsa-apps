@@ -1,4 +1,4 @@
-import type { ClimateQcFailure, IStationData } from '@picsa/models';
+import type { ClimateQcFailure, ClimateQcWarning, IStationData } from '@picsa/models';
 
 /**
  * Baseline scientific Quality Gates for climate station records.
@@ -29,6 +29,9 @@ export const QC_FAILURE_LABELS: Record<ClimateQcFailure, string> = {
   insufficient_total_years: 'Insufficient total years (< 30 yrs)',
   no_recent_data: 'No recent data in past 10 years',
   sparse_recent_data: 'Sparse recent data (< 10 yrs in past 30)',
+};
+
+export const QC_WARNING_LABELS: Record<ClimateQcWarning, string> = {
   season_discrepancies: 'Season start/end discrepancies',
 };
 
@@ -46,7 +49,10 @@ export interface ISeasonDiscrepancyResult {
 export interface IStationQcEvaluation {
   passed: boolean;
   failures: ClimateQcFailure[];
+  warnings: ClimateQcWarning[];
   reasons: string[];
+  warningReasons: string[];
+  seasonDiscrepancySummary: string;
   totalRainfallYears: number;
   recentTenYearsCount: number;
   recentThirtyYearsCount: number;
@@ -100,11 +106,32 @@ export function detectSeasonDiscrepancies(rows: IStationData[]): ISeasonDiscrepa
 }
 
 /**
+ * Format human-readable summary of season boundary discrepancies.
+ * Examples:
+ * - "2 years with start but no end, 1 year with end but no start"
+ * - "1 year with start but no end"
+ */
+export function formatSeasonDiscrepancySummary(discrepancies: ISeasonDiscrepancyRecord[]): string {
+  const startWithoutEnd = discrepancies.filter((d) => d.hasStart && !d.hasEnd).length;
+  const endWithoutStart = discrepancies.filter((d) => !d.hasStart && d.hasEnd).length;
+
+  const parts: string[] = [];
+  if (startWithoutEnd > 0) {
+    parts.push(`${startWithoutEnd} year${startWithoutEnd === 1 ? '' : 's'} with start but no end`);
+  }
+  if (endWithoutStart > 0) {
+    parts.push(`${endWithoutStart} year${endWithoutStart === 1 ? '' : 's'} with end but no start`);
+  }
+  return parts.join(', ');
+}
+
+/**
  * Evaluate climate station data against standard quality control gates.
  *
  * Rules:
- * - Passed: Meets all rainfall completeness thresholds and has 0 season start/end discrepancies.
- * - Failed: Total rainfall years < 30, OR < 1 year in past 10, OR < 10 years in past 30, OR has unpaired start/end season dates.
+ * - Breaking Failures: Total rainfall years < 30, OR < 1 year in past 10, OR < 10 years in past 30.
+ * - Non-Breaking Warnings: Season discrepancies (unpaired start/end of season bounds).
+ * - Passed: 0 breaking failures (warnings do NOT cause failure).
  */
 export function evaluateStationQualityGates(
   rows: IStationData[] | null | undefined,
@@ -149,17 +176,22 @@ export function evaluateStationQualityGates(
 
   const { count: seasonDiscrepanciesCount, discrepancies: seasonDiscrepancies } = detectSeasonDiscrepancies(data);
 
+  const warnings: ClimateQcWarning[] = [];
+  const warningReasons: string[] = [];
+  const seasonDiscrepancySummary = formatSeasonDiscrepancySummary(seasonDiscrepancies);
+
   if (seasonDiscrepanciesCount > 0) {
-    failures.push('season_discrepancies');
-    reasons.push(
-      `Season discrepancies: ${seasonDiscrepanciesCount} year${seasonDiscrepanciesCount === 1 ? '' : 's'} with mismatched start/end of season`,
-    );
+    warnings.push('season_discrepancies');
+    warningReasons.push(seasonDiscrepancySummary);
   }
 
   return {
     passed: failures.length === 0,
     failures,
+    warnings,
     reasons,
+    warningReasons,
+    seasonDiscrepancySummary,
     totalRainfallYears,
     recentTenYearsCount,
     recentThirtyYearsCount,

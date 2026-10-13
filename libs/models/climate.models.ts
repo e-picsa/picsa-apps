@@ -70,12 +70,11 @@ export interface IMonthlyStationData {
   max_tmin?: number | null;
 }
 
-/** Automated quality control failure codes */
-export type ClimateQcFailure =
-  | 'insufficient_total_years'
-  | 'no_recent_data'
-  | 'sparse_recent_data'
-  | 'season_discrepancies';
+/** Automated quality control breaking failure codes */
+export type ClimateQcFailure = 'insufficient_total_years' | 'no_recent_data' | 'sparse_recent_data';
+
+/** Non-breaking quality control warning codes */
+export type ClimateQcWarning = 'season_discrepancies';
 
 /**
  * Station capability and data availability descriptor.
@@ -102,6 +101,8 @@ export interface IStationCapabilities {
   monthly?: IChartId[];
   /** Automated quality control failure codes. Empty array indicates station passed QC. */
   qcFailures?: ClimateQcFailure[];
+  /** Non-breaking quality control warning codes */
+  qcWarnings?: ClimateQcWarning[];
 }
 
 /**

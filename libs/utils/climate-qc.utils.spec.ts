@@ -4,6 +4,7 @@ import {
   CLIMATE_QC_GATES,
   detectSeasonDiscrepancies,
   evaluateStationQualityGates,
+  formatSeasonDiscrepancySummary,
   hasValidRainfallObservation,
   hasValidSeasonBound,
   resolveStationDraftStatus,
@@ -61,6 +62,21 @@ describe('climate-qc.utils', () => {
     });
   });
 
+  describe('formatSeasonDiscrepancySummary', () => {
+    it('should format counts for start without end and end without start', () => {
+      const summary = formatSeasonDiscrepancySummary([
+        { year: 2001, hasStart: true, hasEnd: false },
+        { year: 2002, hasStart: true, hasEnd: false },
+        { year: 2003, hasStart: false, hasEnd: true },
+      ]);
+      expect(summary).toBe('2 years with start but no end, 1 year with end but no start');
+    });
+
+    it('should return empty string for empty discrepancies', () => {
+      expect(formatSeasonDiscrepancySummary([])).toBe('');
+    });
+  });
+
   describe('evaluateStationQualityGates', () => {
     it('should return failures for empty datasets', () => {
       const result = evaluateStationQualityGates([], { referenceYear: REF_YEAR });
@@ -112,7 +128,7 @@ describe('climate-qc.utils', () => {
       expect(result.reasons.some((r) => r.includes('past 30 years'))).toBe(true);
     });
 
-    it('should fail when rainfall gates pass but season discrepancies exist', () => {
+    it('should pass breaking QC but flag warning when season discrepancies exist', () => {
       // 35 continuous years (1990..2024), 1 year has Start but no End
       const rows = Array.from({ length: 35 }, (_, i) => {
         const year = 1990 + i;
@@ -121,14 +137,15 @@ describe('climate-qc.utils', () => {
       });
 
       const result = evaluateStationQualityGates(rows, { referenceYear: REF_YEAR });
-      expect(result.passed).toBe(false);
-      expect(result.failures).toEqual(['season_discrepancies']);
+      expect(result.passed).toBe(true);
+      expect(result.failures).toEqual([]);
+      expect(result.warnings).toEqual(['season_discrepancies']);
       expect(result.totalRainfallYears).toBe(35);
       expect(result.recentTenYearsCount).toBeGreaterThanOrEqual(1);
       expect(result.recentThirtyYearsCount).toBeGreaterThanOrEqual(10);
       expect(result.seasonDiscrepanciesCount).toBe(1);
       expect(result.seasonDiscrepancies[0].year).toBe(2022);
-      expect(result.reasons.some((r) => r.includes('Season discrepancies'))).toBe(true);
+      expect(result.seasonDiscrepancySummary).toBe('1 year with start but no end');
     });
 
     it('should pass when all rainfall gates pass and 0 season discrepancies exist', () => {
@@ -138,6 +155,7 @@ describe('climate-qc.utils', () => {
       const result = evaluateStationQualityGates(rows, { referenceYear: REF_YEAR });
       expect(result.passed).toBe(true);
       expect(result.failures).toEqual([]);
+      expect(result.warnings).toEqual([]);
       expect(result.totalRainfallYears).toBe(35);
       expect(result.seasonDiscrepanciesCount).toBe(0);
       expect(result.reasons).toEqual([]);
@@ -161,7 +179,6 @@ describe('climate-qc.utils', () => {
   describe('resolveStationDraftStatus', () => {
     it('should mark draft true when failures exist or unassessed', () => {
       expect(resolveStationDraftStatus(['insufficient_total_years'])).toBe(true);
-      expect(resolveStationDraftStatus(['season_discrepancies'])).toBe(true);
       expect(resolveStationDraftStatus(undefined)).toBe(true);
     });
 
