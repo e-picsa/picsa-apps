@@ -15,9 +15,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { PicsaSidenavComponent } from '@picsa/components/picsa-sidenav.component';
-import { ConfigurationService } from '@picsa/configuration';
-import { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IChartId } from '@picsa/models';
 import { map } from 'rxjs/operators';
@@ -53,7 +50,6 @@ interface ISiteViewParams {
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   chartService = inject(ClimateChartService);
   private dataService = inject(ClimateDataService);
-  private configurationService = inject(ConfigurationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private componentsService = inject(PicsaCommonComponentsService);
@@ -64,32 +60,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     return stations
       .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
       .sort((a, b) => (a.label > b.label ? 1 : -1));
-  });
-
-  readonly districtLabel = computed(() => {
-    const country = this.configurationService.userSettings().country_code;
-    if (!country) return undefined;
-
-    const geoData = getGeoLocationData(country as ICountryCode);
-    const deepest = getDeepestLocations(geoData);
-
-    // 1. If active station specifies a matching district location tag, use it
-    const station = this.chartService.station();
-    if (station?.location && station.location.length > 0) {
-      const match = deepest.find((d) =>
-        station.location.some(
-          (loc) => loc.toLowerCase() === d.label.toLowerCase() || loc.toLowerCase() === d.id.toLowerCase(),
-        ),
-      );
-      if (match) return match.label;
-    }
-
-    // 2. Fall back to user profile location
-    const location = this.configurationService.userSettings().location;
-    if (!location) return undefined;
-    const districtId = location[5] ?? location[4];
-    if (!districtId) return undefined;
-    return deepest.find((l) => l.id === districtId)?.label;
   });
 
   private viewId = toSignal(this.route.queryParams.pipe(map(({ view }: ISiteViewQueryParams) => view)));

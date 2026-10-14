@@ -9,7 +9,7 @@
       <button matButton color="primary" (click)="select.open()" class="station-select">
         @if(chartService.station(); as station){
         <span class="station-select-label">
-          @if(districtLabel(); as district){ {{ district }}: } {{ station.name }}
+          {{ station.name }}
         </span>
         }
         <mat-icon iconPositionEnd>expand_more</mat-icon>
