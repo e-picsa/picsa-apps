@@ -40,6 +40,7 @@ import { RxDocument } from 'rxdb';
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
 import { IForecast } from '../../schemas';
 import { ForecastService, isStubForecast } from '../../services/forecast.service';
+import { ForecastScrollAffordanceDirective } from './forecast-scroll-affordance.directive';
 
 const STRINGS = {
   National: translateMarker('National'),
@@ -79,6 +80,7 @@ const FRESHNESS_THRESHOLD_MS = 12 * 60 * 60 * 1000;
   styleUrls: ['./forecast.page.scss'],
   imports: [
     CommonModule,
+    ForecastScrollAffordanceDirective,
     ForecastViewerComponent,
     MatButtonModule,
     MatIcon,
