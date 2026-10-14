@@ -244,6 +244,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ---
 
+### Material Icon Glyph Clipping (`mat-icon` and Line-Height Traps)
+
+- **Root Cause of Icon Clipping**: Angular Material's `mat-icon` uses font-based glyphs sized to `24px` with `line-height: 1`. Applying Tailwind classes like `!w-5 !h-5 !text-lg` causes `text-lg` to set `line-height: 1.75rem` (28px) inside a `20px` (`h-5`) bounding box. This forces the glyph outside its container bounds, causing the icon to be sliced or clipped at the edges.
+- **Rule**: Never combine arbitrary Tailwind `text-*` and `w-*/h-*` on `mat-icon` without matching line-height (`leading-none`). Preferably, let Angular Material manage the icon size naturally or use standard 24px sizing, or specify `class="!text-[16px] !w-4 !h-4 leading-none"` when creating micro badges.
+
+### Fixed-Height Dialog Containers for Tabbed Content
+
+- **Consistent Dialog Height**: When presenting tabbed content (e.g. `mat-tab-group`) inside a modal where tabs have varying lengths (e.g., compact location summary vs long scrollable tables/charts), dialogs configured only with `maxHeight: '90vh'` will dynamically expand and shrink when switching tabs, creating jarring layout shifts.
+- **Rule**: Set explicit fixed height (`height: '90vh'`, `maxHeight: '90vh'`) in `MatDialogConfig`, use `panelClass: 'no-padding'`, configure `:host { display: flex; flex-direction: column; height: 100%; width: 100%; box-sizing: border-box; }`, and set inner tab containers to `flex-1 min-h-0 overflow-y-auto`. This locks the dialog to its max dimension consistently across all tabs.
+
 ### Jest ESM Transformation & Native Mocks in Tool Specs
 
 - **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).

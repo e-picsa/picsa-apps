@@ -32,6 +32,8 @@ export const QC_FAILURE_LABELS: Record<ClimateQcFailure, string> = {
 };
 
 export const QC_WARNING_LABELS: Record<ClimateQcWarning, string> = {
+  season_start_no_end: 'Season start without end',
+  season_end_no_start: 'Season end without start',
   season_discrepancies: 'Season start/end discrepancies',
 };
 
@@ -111,7 +113,10 @@ export function detectSeasonDiscrepancies(rows: IStationData[]): ISeasonDiscrepa
  * - "2 years with start but no end, 1 year with end but no start"
  * - "1 year with start but no end"
  */
-export function formatSeasonDiscrepancySummary(discrepancies: ISeasonDiscrepancyRecord[]): string {
+/**
+ * Format separate human-readable warnings for start without end and end without start.
+ */
+export function formatSeasonDiscrepancyWarnings(discrepancies: ISeasonDiscrepancyRecord[]): string[] {
   const startWithoutEnd = discrepancies.filter((d) => d.hasStart && !d.hasEnd).length;
   const endWithoutStart = discrepancies.filter((d) => !d.hasStart && d.hasEnd).length;
 
@@ -122,7 +127,11 @@ export function formatSeasonDiscrepancySummary(discrepancies: ISeasonDiscrepancy
   if (endWithoutStart > 0) {
     parts.push(`${endWithoutStart} year${endWithoutStart === 1 ? '' : 's'} with end but no start`);
   }
-  return parts.join(', ');
+  return parts;
+}
+
+export function formatSeasonDiscrepancySummary(discrepancies: ISeasonDiscrepancyRecord[]): string {
+  return formatSeasonDiscrepancyWarnings(discrepancies).join(', ');
 }
 
 /**
@@ -175,15 +184,22 @@ export function evaluateStationQualityGates(
   }
 
   const { count: seasonDiscrepanciesCount, discrepancies: seasonDiscrepancies } = detectSeasonDiscrepancies(data);
+  const startWithoutEnd = seasonDiscrepancies.filter((d) => d.hasStart && !d.hasEnd).length;
+  const endWithoutStart = seasonDiscrepancies.filter((d) => !d.hasStart && d.hasEnd).length;
 
   const warnings: ClimateQcWarning[] = [];
   const warningReasons: string[] = [];
-  const seasonDiscrepancySummary = formatSeasonDiscrepancySummary(seasonDiscrepancies);
 
-  if (seasonDiscrepanciesCount > 0) {
-    warnings.push('season_discrepancies');
-    warningReasons.push(seasonDiscrepancySummary);
+  if (startWithoutEnd > 0) {
+    warnings.push('season_start_no_end');
+    warningReasons.push(`${startWithoutEnd} year${startWithoutEnd === 1 ? '' : 's'} with start but no end`);
   }
+  if (endWithoutStart > 0) {
+    warnings.push('season_end_no_start');
+    warningReasons.push(`${endWithoutStart} year${endWithoutStart === 1 ? '' : 's'} with end but no start`);
+  }
+
+  const seasonDiscrepancySummary = warningReasons.join(', ');
 
   return {
     passed: failures.length === 0,

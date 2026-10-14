@@ -74,7 +74,7 @@ export interface IMonthlyStationData {
 export type ClimateQcFailure = 'insufficient_total_years' | 'no_recent_data' | 'sparse_recent_data';
 
 /** Non-breaking quality control warning codes */
-export type ClimateQcWarning = 'season_discrepancies';
+export type ClimateQcWarning = 'season_start_no_end' | 'season_end_no_start' | 'season_discrepancies';
 
 /**
  * Station capability and data availability descriptor.

@@ -66,6 +66,7 @@ export interface IStationAdminSummary {
   qc_passed?: boolean;
   qc_failures?: ClimateQcFailure[];
   qc_warnings?: ClimateQcWarning[];
+  qc_warning_reasons?: string[];
   qc_season_warning?: string;
   qc_reasons?: string[];
   products: IProductSummary[];
@@ -302,7 +303,9 @@ export class ClimateAdminPageComponent {
       data: { station },
       width: '92vw',
       maxWidth: '1280px',
+      height: '90vh',
       maxHeight: '90vh',
+      panelClass: 'no-padding',
     });
   }
 
@@ -513,11 +516,13 @@ export class ClimateAdminPageComponent {
   }
 
   public getWarningLines(row: IStationAdminSummary): string[] {
-    const lines: string[] = [];
-    if (row.qc_season_warning) {
-      lines.push(row.qc_season_warning);
+    if (row.qc_warning_reasons && row.qc_warning_reasons.length > 0) {
+      return row.qc_warning_reasons;
     }
-    return lines;
+    if (row.qc_season_warning) {
+      return row.qc_season_warning.split(', ').filter(Boolean);
+    }
+    return [];
   }
 
   public getQcFailureLabel(failure: ClimateQcFailure): string {
@@ -726,6 +731,7 @@ export class ClimateAdminPageComponent {
         qc_passed: qc.passed,
         qc_failures: qc.failures,
         qc_warnings: qc.warnings,
+        qc_warning_reasons: qc.warningReasons,
         qc_season_warning: qc.seasonDiscrepancySummary,
         qc_reasons: qc.reasons,
         rainfall_export_data,

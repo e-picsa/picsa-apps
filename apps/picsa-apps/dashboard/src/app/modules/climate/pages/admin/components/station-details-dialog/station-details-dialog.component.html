@@ -1,6 +1,6 @@
-<div class="flex flex-col max-h-[90vh] w-full bg-white text-zinc-900 overflow-hidden">
+<div class="flex flex-col h-full w-full bg-white text-zinc-900 overflow-hidden">
   <!-- Dialog Header -->
-  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
     <div class="flex items-center gap-3">
       <h2 class="m-0 text-xl font-semibold text-slate-900">{{ data.station.station_name }}</h2>
       <span class="font-mono text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded">
@@ -14,17 +14,17 @@
 
   <!-- Loading Bar -->
   @if (loading()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" class="flex-shrink-0"></mat-progress-bar>
   }
 
   <!-- Dialog Body Tabs -->
-  <div class="flex-1 overflow-y-auto p-4 sm:p-6">
+  <div class="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
     <mat-tab-group preserveContent animationDuration="150ms">
       <!-- Location Summary -->
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex items-center gap-1.5">
-            <mat-icon class="!text-lg !w-4 !h-4">place</mat-icon>
+            <mat-icon>place</mat-icon>
             <span>Location</span>
           </div>
         </ng-template>
@@ -37,7 +37,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex items-center gap-1.5">
-            <mat-icon class="!text-lg !w-4 !h-4">view_list</mat-icon>
+            <mat-icon>view_list</mat-icon>
             <span>Data</span>
           </div>
         </ng-template>
@@ -53,7 +53,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex items-center gap-1.5">
-            <mat-icon class="!text-lg !w-4 !h-4">show_chart</mat-icon>
+            <mat-icon>show_chart</mat-icon>
             <span>Charts</span>
           </div>
         </ng-template>
@@ -69,7 +69,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex items-center gap-1.5">
-            <mat-icon class="!text-lg !w-4 !h-4">percent</mat-icon>
+            <mat-icon>percent</mat-icon>
             <span>Crop Probabilities</span>
           </div>
         </ng-template>

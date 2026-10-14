@@ -12,7 +12,7 @@
     <!-- TAB 1: DATA SYSTEM (DB) -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cloud</mat-icon>
+        <mat-icon class="mr-2">cloud</mat-icon>
         <span>Data System</span>
       </ng-template>
 
@@ -81,13 +81,11 @@
 
           <ng-template #qcStatusTemplate let-passed let-row="row">
             @if (passed) {
-              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
+              <mat-icon class="text-emerald-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
                 check_circle
               </mat-icon>
             } @else {
-              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
-                cancel
-              </mat-icon>
+              <mat-icon class="text-rose-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)"> cancel </mat-icon>
             }
           </ng-template>
 
@@ -124,12 +122,9 @@
           <ng-template #qcWarningsTemplate let-row="row">
             @let warnings = getWarningLines(row);
             @if (warnings.length > 0) {
-              <div class="flex flex-col gap-0.5 text-xs text-amber-800">
+              <div class="flex flex-col gap-1 text-xs text-amber-800 leading-snug">
                 @for (w of warnings; track w) {
-                  <div class="flex items-start gap-1.5">
-                    <span class="text-amber-600 font-bold leading-none mt-0.5">•</span>
-                    <span>{{ w }}</span>
-                  </div>
+                  <div>{{ w }}</div>
                 }
               </div>
             } @else {
@@ -195,7 +190,7 @@
     <!-- TAB 2: APP DATA -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">smartphone</mat-icon>
+        <mat-icon class="mr-2">smartphone</mat-icon>
         <span>App Data</span>
       </ng-template>
 
@@ -231,13 +226,13 @@
               <span
                 class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
               >
-                <mat-icon class="!w-4 !h-4 !text-base">check_circle</mat-icon>Bundled
+                <mat-icon class="!text-[16px] !w-4 !h-4 leading-none">check_circle</mat-icon>Bundled
               </span>
             } @else {
               <span
                 class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#ffebee] text-[#c62828]"
               >
-                <mat-icon class="!w-4 !h-4 !text-base">cancel</mat-icon>Missing
+                <mat-icon class="!text-[16px] !w-4 !h-4 leading-none">cancel</mat-icon>Missing
               </span>
             }
           </ng-template>
@@ -272,7 +267,7 @@
     <!-- TAB 3: DATA COMPARISON (DIFF) -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
+        <mat-icon class="mr-2">difference</mat-icon>
         <span>Data Comparison</span>
       </ng-template>
 
@@ -368,11 +363,9 @@
 
           <ng-template #diffQcPassedTemplate let-passed let-row="row">
             @if (passed) {
-              <mat-icon class="!w-5 !h-5 !text-lg text-emerald-600" matTooltip="QC Passed">check_circle</mat-icon>
+              <mat-icon class="text-emerald-600" matTooltip="QC Passed">check_circle</mat-icon>
             } @else {
-              <mat-icon class="!w-5 !h-5 !text-lg text-rose-600" [matTooltip]="'QC Failed\n' + (row.qc_details || '')">
-                cancel
-              </mat-icon>
+              <mat-icon class="text-rose-600" [matTooltip]="'QC Failed\n' + (row.qc_details || '')"> cancel </mat-icon>
             }
           </ng-template>
 
@@ -380,7 +373,7 @@
             @let summary = getGroupDiffSummary(diff, row.diff_status);
             @if (summary.isInSync) {
               <span class="text-emerald-700 text-xs font-medium flex items-center gap-1">
-                <mat-icon class="!w-4 !h-4 !text-base">check</mat-icon>All values identical
+                <mat-icon class="!text-[16px] !w-4 !h-4 leading-none">check</mat-icon>All values identical
               </span>
             } @else if (summary.isDbOnly) {
               <span class="text-indigo-700 text-xs font-medium">Ready to export to app</span>
