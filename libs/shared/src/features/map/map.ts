@@ -109,7 +109,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
    * @param forceZoom If true, forces zooming and centering even if already selected.
    * @param flyTo If false, updates active highlight without moving the camera.
    */
-  public setActiveMarker(marker: IMapMarker, _forceZoom = false, flyTo = true) {
+  public setActiveMarker(marker: IMapMarker, forceZoom = false, flyTo = true) {
+    void forceZoom;
     this.selected = { marker };
     for (const rendered of this.renderedMarkers) {
       if (rendered.marker._index !== marker._index) {

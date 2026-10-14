@@ -1,75 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectionStrategy, Component, input, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfigurationService, IUserSettings } from '@picsa/configuration';
+import { ConfigurationService } from '@picsa/configuration';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IStationMeta } from '@picsa/models';
+import { IStationMeta, IUserSettings } from '@picsa/models';
 import { PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import { SiteSelectPage } from './site-select.page';
 
-jest.mock('maplibre-gl', () => {
-  class LngLatBounds {
-    public coordinates: any[] = [];
-    extend(coord: any) {
-      this.coordinates.push(coord);
-      return this;
-    }
-  }
-  class Marker {
-    setLngLat() {
-      return this;
-    }
-    addTo() {
-      return this;
-    }
-    remove = jest.fn();
-  }
-  class Map {
-    public zoom = 2;
-    public scrollZoom = { disable: jest.fn(), enable: jest.fn() };
-    public touchZoomRotate = { disableRotation: jest.fn(), enableRotation: jest.fn() };
-    public isMoving = jest.fn(() => false);
-    public easeTo = jest.fn();
-    public fitBounds = jest.fn();
-    public flyTo = jest.fn();
-    public resize = jest.fn();
-    public remove = jest.fn();
-    public addLayer = jest.fn();
-    public addSource = jest.fn();
-    public getLayer = jest.fn();
-    public getSource = jest.fn();
-    public on = jest.fn();
-  }
-  return {
-    LngLatBounds,
-    Marker,
-    Map,
-  };
-});
-
-// eslint-disable-next-line @angular-eslint/component-selector
+/* eslint-disable @angular-eslint/component-selector, @typescript-eslint/no-explicit-any */
 @Component({
   selector: 'picsa-map',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class MockPicsaMapComponent {
-  markers = input<any[]>([]);
-  mapReady = signal(true);
-  addGeoJsonLayer = jest.fn();
-  removeGeoJsonLayer = jest.fn();
-  setActiveMarker = jest.fn();
-  clearActiveMarker = jest.fn();
-  fitBounds = jest.fn();
-  resize = jest.fn();
+  public mapReady = signal(true);
+  public mapOptions = input<any>({});
+  public markers = input<any[]>([]);
+  public setActiveMarker = jest.fn();
+  public clearActiveMarker = jest.fn();
+  public addGeoJsonLayer = jest.fn();
+  public removeGeoJsonLayer = jest.fn();
+  public fitBounds = jest.fn();
+  public zoomToMarker = jest.fn();
 }
 
 describe('SiteSelectPage', () => {
-  let fixture: ComponentFixture<SiteSelectPage>;
   let component: SiteSelectPage;
+  let fixture: ComponentFixture<SiteSelectPage>;
   let router: Router;
   let dataService: ClimateDataService;
   let configService: ConfigurationService;
@@ -172,9 +132,9 @@ describe('SiteSelectPage', () => {
   });
 
   it('should toggle view and all stations visibility', () => {
-    expect(component.view()).toBe('recommendation');
-    component.toggleView();
     expect(component.view()).toBe('map');
+    component.toggleView();
+    expect(component.view()).toBe('recommendation');
 
     expect(component.showAllStations()).toBe(false);
     component.toggleAllStations();

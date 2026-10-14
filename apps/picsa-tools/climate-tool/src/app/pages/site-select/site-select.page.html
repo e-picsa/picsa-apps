@@ -1,7 +1,6 @@
 <!-- Header End Portal: Mobile View Toggle (hidden on md+ screens) -->
 <ng-template #headerEndPortal>
-  @let toggleIcon = view() === 'map' ? 'list' : 'map';
-  @let toggleText = view() === 'map' ? strings.list : strings.map;
+  @let toggleIcon = view() === 'map' ? 'list' : 'map'; @let toggleText = view() === 'map' ? strings.list : strings.map;
   <button
     matButton
     (click)="toggleView()"
@@ -23,11 +22,10 @@
     <div class="flex flex-col gap-4">
       <!-- Section 1: Standard Location Select -->
       <div class="bg-white p-3 md:p-4 rounded-xl border border-gray-200 shadow-sm">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center gap-2 mb-2">
           <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
           <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
         </div>
-        <p class="text-xs text-gray-500 mb-2">{{ strings.chooseLocationDesc | translate }}</p>
 
         @if (userCountryCode(); as countryCode) {
         <picsa-form-location-select
@@ -42,17 +40,16 @@
       @if (selectedDistrict(); as district) { @if (isCalculatingProximity()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
         <mat-icon class="!text-2xl !h-6 !w-6 animate-spin text-primary mb-2">sync</mat-icon>
-        <div class="text-sm font-medium">{{ strings.findingStations | translate }} {{ district.label }}...</div>
+        <div class="text-sm font-medium">{{ strings.findingStations | translate }}...</div>
       </div>
       } @else if (displayedStation(); as displayed) {
       <div class="recommendation-card border border-gray-200 bg-white rounded-xl p-4 shadow-sm">
+        @if (displayed.isPrimary) {
         <div class="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
-          <mat-icon class="!text-sm !h-4 !w-4">{{ displayed.isPrimary ? 'star' : 'place' }}</mat-icon>
-          <span>
-            {{ (displayed.isPrimary ? strings.recommendedStationFor : strings.selectedStationFor) | translate }} {{
-            district.label }}
-          </span>
+          <mat-icon class="!text-sm !h-4 !w-4">star</mat-icon>
+          <span>{{ strings.recommended | translate }}</span>
         </div>
+        }
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -73,7 +70,7 @@
         <!-- Alternative Nearby Stations -->
         @if (alternativeRecommendations().length > 0) {
         <div class="mt-4 pt-3 border-t border-gray-200">
-          <div class="text-xs font-medium text-gray-500 mb-1.5">{{ strings.otherNearbyStations | translate }}</div>
+          <div class="text-xs font-medium text-gray-500 mb-1.5">{{ strings.nearby | translate }}</div>
           <div class="flex flex-wrap gap-2">
             @for (alt of alternativeRecommendations(); track alt.station.id) {
             <button
@@ -91,25 +88,17 @@
         </div>
         }
       </div>
-      } } @else {
-      <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-        <mat-icon class="!text-3xl !h-8 !w-8 text-gray-400 mb-1">travel_explore</mat-icon>
-        <div class="font-medium text-gray-700 text-sm">{{ 'Select a Province & District above' | translate }}</div>
-        <div class="text-xs text-gray-500 mt-1">
-          {{ 'We will automatically find and recommend the nearest weather station for your area.' | translate }}
-        </div>
-      </div>
-      }
+      } }
 
       <!-- Section 3: Optional Browse All Stations Expander -->
       <div class="all-stations-section mt-4 pt-2">
         <button matButton="text" class="!text-xs text-gray-600 !p-0" (click)="toggleAllStations()">
           <mat-icon class="!text-base !h-4 !w-4">{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
-          <span>{{ (showAllStations() ? strings.hide : strings.show) | translate }} {{ strings.allAvailableStations | translate }}</span>
+          <span>{{ strings.allStations | translate }}</span>
         </button>
 
         @if (showAllStations()) {
-        <div class="mt-2 border rounded-lg overflow-hidden max-h-96 flex flex-col">
+        <div class="mt-2 border rounded-lg bg-white">
           <picsa-data-table
             [options]="tableOptions()"
             [data]="tableData()"
@@ -142,9 +131,7 @@
 
     <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
     @if (activeStation(); as station) {
-    <div
-      class="absolute left-3 right-3 bottom-4 z-20 rounded-xl shadow-md px-4 py-3 md:hidden bg-white"
-    >
+    <div class="absolute left-3 right-3 bottom-4 z-20 rounded-xl shadow-md px-4 py-3 md:hidden bg-white">
       <div class="flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
           <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>

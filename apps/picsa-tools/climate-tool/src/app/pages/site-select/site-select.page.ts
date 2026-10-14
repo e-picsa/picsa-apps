@@ -21,7 +21,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration';
 import { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IStationMeta } from '@picsa/models';
@@ -30,7 +30,7 @@ import {
   IDataTableOptions,
   PicsaDataTableComponent,
 } from '@picsa/shared/features/data-table/data-table.component';
-import { IGeoJsonData, IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
@@ -46,20 +46,16 @@ const STRINGS = {
   map: translateMarker('Map'),
   list: translateMarker('List'),
   location: translateMarker('Location'),
-  chooseLocationDesc: translateMarker('Choose your province and district to see the nearest climate station.'),
-  findingStations: translateMarker('Finding closest stations for'),
-  recommendedStationFor: translateMarker('Recommended Station for'),
-  selectedStationFor: translateMarker('Selected Station for'),
   view: translateMarker('View'),
-  otherNearbyStations: translateMarker('Other nearby stations:'),
-  allAvailableStations: translateMarker('All Available Stations'),
-  hide: translateMarker('Hide'),
-  show: translateMarker('Show'),
-  selectStationNotice: translateMarker('Select a station to view its climate summary.'),
+  allStations: translateMarker('All Stations'),
+  recommended: translateMarker('Recommended'),
+  nearby: translateMarker('Nearby'),
+  findingStations: translateMarker('Finding closest stations'),
 };
 
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 @Component({
-  selector: 'picsa-site-select-page',
+  selector: 'climate-site-select',
   imports: [
     CommonModule,
     MatButtonModule,
@@ -115,20 +111,21 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Selected station on map/table/card */
   public readonly selectedStation = signal<IStationMeta | undefined>(undefined);
 
-  /** Whether the user is viewing the location recommendation panel or map on mobile */
-  public readonly view = signal<'recommendation' | 'map'>('recommendation');
+  /** Whether the user is viewing the map or list on mobile (default is map) */
+  public readonly view = signal<'recommendation' | 'map'>('map');
 
-  /** Whether the "Browse all country stations" section is expanded */
-  public readonly showAllStations = signal(false);
-
-  /** Computed recommendations for the selected district */
+  /** Ranked stations by proximity to district center */
   public readonly stationRecommendations = signal<IStationRecommendation[]>([]);
 
-  /** Centroid calculation & boundary resolution state */
-  public readonly isCalculatingProximity = signal(false);
+  /** Resolved center coordinates & feature boundary of the selected district */
   public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
 
-  /** Bounding box [[minLng, minLat], [maxLng, maxLat]] covering the district boundary and nearest station */
+  public readonly isCalculatingProximity = signal(false);
+
+  /** Whether the full stations data table is expanded */
+  public readonly showAllStations = signal(false);
+
+  /** Bounding box combining the selected district feature and the recommended station */
   public readonly districtAndStationBounds = computed(() => {
     const result = this.districtCenterResult();
     const primary = this.primaryRecommendation();
@@ -223,36 +220,12 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   constructor() {
     // Seed location from user settings if available
-    const savedLocation = this.configurationService.userSettings().location;
-    if (savedLocation && savedLocation.length > 0) {
-      this.selectedLocation.set(savedLocation);
+    const initialLocation = this.configurationService.userSettings().location;
+    if (initialLocation && initialLocation.length > 0) {
+      this.selectedLocation.set(initialLocation);
     }
 
-    // Effect: Load country admin boundaries when map and country are ready
-    effect(() => {
-      const picsaMap = this.picsaMap();
-      const country_code = this.userCountryCode();
-      const mapReady = this.mapReady();
-      if (picsaMap && mapReady && country_code) {
-        this.loadCountryAdminBoundaries(picsaMap, country_code).catch((err) => {
-          console.warn('[SiteSelect] Could not load country admin boundaries:', err);
-        });
-      }
-    });
-
-    // Effect: Check for temporary preferred station when returning from chart view
-    effect(() => {
-      const picsaMap = this.picsaMap();
-      const mapReady = this.mapReady();
-      const markers = this.mapMarkers();
-      if (picsaMap && mapReady && markers && markers.length > 0) {
-        this.checkTmpPreferredStation().catch((err) => {
-          console.warn('[SiteSelect] Could not check preferred station:', err);
-        });
-      }
-    });
-
-    // Effect: Calculate district centroid and station proximity whenever selectedDistrict changes
+    // Effect: Whenever selectedDistrict changes, asynchronously compute recommendations & boundary
     let latestDistrictReqId = 0;
     effect(() => {
       const district = this.selectedDistrict();
@@ -284,10 +257,11 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
       getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
         .then((result) => {
-          if (reqId !== latestDistrictReqId) return; // Stale request, ignore
+          if (reqId !== latestDistrictReqId) return;
+          this.isCalculatingProximity.set(false);
           this.districtCenterResult.set(result);
 
-          if (result?.center) {
+          if (result) {
             const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
             this.stationRecommendations.set(recommendations);
 
@@ -328,12 +302,11 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
           }
         })
         .catch((err) => {
-          console.error('[SiteSelect] Error computing district proximity:', err);
-        })
-        .finally(() => {
-          if (reqId === latestDistrictReqId) {
-            this.isCalculatingProximity.set(false);
-          }
+          if (reqId !== latestDistrictReqId) return;
+          this.isCalculatingProximity.set(false);
+          this.districtCenterResult.set(undefined);
+          this.stationRecommendations.set([]);
+          console.warn('[SiteSelect] Could not resolve district proximity boundary:', err);
         });
     });
 
@@ -383,48 +356,22 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const endPortal = this.headerEndPortal();
-    if (endPortal) {
-      this.componentsService.patchHeader({
-        cdkPortalEnd: new TemplatePortal(endPortal, this.viewContainer),
-      });
+    const portal = this.headerEndPortal();
+    if (portal) {
+      this.componentsService.header?.setEndPortal(new TemplatePortal(portal, this.viewContainer));
     }
   }
 
   ngOnDestroy() {
-    this.componentsService.patchHeader({
-      cdkPortalEnd: undefined,
-    });
+    this.componentsService.header?.clearEndPortal();
   }
 
   public toggleView() {
-    const nextView = this.view() === 'recommendation' ? 'map' : 'recommendation';
-    this.view.set(nextView);
-    if (nextView === 'map') {
-      setTimeout(() => {
-        const picsaMap = this.picsaMap();
-        if (picsaMap) {
-          picsaMap.resize();
-          const bounds = this.districtAndStationBounds();
-          const station = this.selectedStation();
-          if (bounds) {
-            picsaMap.fitBounds(bounds, {
-              maxZoom: 8,
-              padding: { top: 90, bottom: 90, left: 30, right: 30 },
-            });
-          } else if (station) {
-            const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
-            if (marker) {
-              picsaMap.setActiveMarker(marker, true, true);
-            }
-          }
-        }
-      }, 50);
-    }
+    this.view.update((v) => (v === 'map' ? 'recommendation' : 'map'));
   }
 
   public toggleAllStations() {
-    this.showAllStations.update((val) => !val);
+    this.showAllStations.update((v) => !v);
   }
 
   public handleLocationChanged(location: (string | undefined)[]) {
@@ -456,27 +403,14 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   }
 
   public confirmAndNavigate(station: IStationMeta) {
-    // Persist location & preferred station
-    const loc = this.selectedLocation();
-    if (loc && loc.length > 0) {
-      this.configurationService.updateUserSettings({ location: loc });
-    }
     this.dataService.setPreferredStation(station.id);
-    this.goToSite(station);
+    this.router.navigate(['./', station.id], { relativeTo: this.route });
   }
 
-  public goToSite(site: IStationMeta) {
-    this.router.navigate(['./', site.id], {
-      relativeTo: this.route,
-      replaceUrl: true,
-      queryParams: {
-        view: 'rainfall',
-      },
-    });
-  }
-
-  public handleRowClick(station: IStationMeta) {
-    if (station?.id) {
+  public handleRowClick(row: IStationMeta) {
+    if (!row) return;
+    const station = this.dataService.allStations().find((s) => s.id === row.id);
+    if (station) {
       if (station.id === this.selectedStation()?.id) {
         this.confirmAndNavigate(station);
       } else {
@@ -498,10 +432,9 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     }
   }
 
-  private async checkTmpPreferredStation() {
-    const tmpStation = localStorage.getItem('picsa_climate_station_temp');
-    if (tmpStation) {
-      localStorage.removeItem('picsa_climate_station_temp');
+  public selectStation(stationName: string) {
+    if (stationName) {
+      const tmpStation = stationName.replace(' ', '_').toLowerCase();
       const marker = this.mapMarkers().find((v) => v.data?.id === tmpStation);
       if (marker?.data) {
         this.selectedStation.set(marker.data);
@@ -510,27 +443,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
           picsaMap.setActiveMarker(marker, false, true);
         }
       }
-    }
-  }
-
-  /**
-   * Load and render country administrative boundaries onto the MapLibre map.
-   */
-  private async loadCountryAdminBoundaries(picsaMap: PicsaMapComponent, countryCode: ICountryCode): Promise<void> {
-    try {
-      const geoData = getGeoLocationData(countryCode);
-      const topoJson = await geoData.topoJson();
-      const adminGeoJson: IGeoJsonData = topoJsonToGeoJson(topoJson, 'input');
-
-      picsaMap.addGeoJsonLayer('country-admin-boundaries', adminGeoJson, {
-        lineColor: '#64748b',
-        lineWidth: 1.5,
-        lineOpacity: 0.6,
-        fillColor: '#94a3b8',
-        fillOpacity: 0.05,
-      });
-    } catch (err) {
-      console.warn(`[SiteSelect] Could not render country admin boundaries for ${countryCode}:`, err);
     }
   }
 }
