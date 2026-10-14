@@ -72,23 +72,20 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
   });
 
-  it('should assign color classes based on QC rank severity and data depth', () => {
-    // Failures
-    expect(component.getQcScoreColorClass(-3)).toBe('text-rose-900');
-    expect(component.getQcScoreColorClass(-2)).toBe('text-rose-600');
-    expect(component.getQcScoreColorClass(-1)).toBe('text-amber-600');
+  it('should assign color classes based on QC rank severity and data depth strictly by score', () => {
+    // Failures (lighter/paler shades)
+    expect(component.getQcScoreColorClass(-3)).toBe('text-rose-700');
+    expect(component.getQcScoreColorClass(-2)).toBe('text-rose-500');
+    expect(component.getQcScoreColorClass(-1)).toBe('text-amber-500');
 
-    // Passes
-    expect(component.getQcScoreColorClass(30)).toBe('text-teal-600'); // near-miss (< 35)
-    expect(component.getQcScoreColorClass(40)).toBe('text-emerald-600'); // solid pass (35..49)
-    expect(component.getQcScoreColorClass(60)).toBe('text-emerald-800'); // strong record (>= 50)
+    // Passes (strictly grouped by score without interchanging, lighter shades)
+    expect(component.getQcScoreColorClass(30)).toBe('text-teal-500'); // near-miss / baseline (< 40)
+    expect(component.getQcScoreColorClass(40)).toBe('text-emerald-500'); // solid pass (40..59)
+    expect(component.getQcScoreColorClass(60)).toBe('text-emerald-600'); // strong record (>= 60)
 
-    // Near-miss on recency
-    const borderlineRecentRow: any = {
-      qc_score: 55,
-      rainfall_last_ten_years: 1, // razor's edge recency
-    };
-    expect(component.getQcScoreColorClass(borderlineRecentRow)).toBe('text-teal-600');
+    // Accepts row object with qc_score
+    const rowObj: any = { qc_score: 45 };
+    expect(component.getQcScoreColorClass(rowObj)).toBe('text-emerald-500');
   });
 
   it('should open station details dialog on row click', () => {

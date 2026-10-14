@@ -509,23 +509,15 @@ export class ClimateAdminPageComponent {
 
   public getQcScoreColorClass(rowOrScore?: IStationAdminSummary | number): string {
     const score = typeof rowOrScore === 'number' ? rowOrScore : rowOrScore?.qc_score;
-    if (score === undefined || score <= -3) return 'text-rose-900';
-    if (score === -2) return 'text-rose-600';
-    if (score === -1) return 'text-amber-600';
+    // Failures (< 0) - ordered by failure severity with lighter/paler shades
+    if (score === undefined || score <= -3) return 'text-rose-700';
+    if (score === -2) return 'text-rose-500';
+    if (score === -1) return 'text-amber-500';
 
-    // Rank near-miss on recent observations or border total years
-    if (typeof rowOrScore === 'object' && rowOrScore !== null) {
-      const isNearMiss =
-        score < 35 ||
-        (rowOrScore.rainfall_last_ten_years !== undefined && rowOrScore.rainfall_last_ten_years <= 1) ||
-        (rowOrScore.rainfall_last_thirty_years !== undefined && rowOrScore.rainfall_last_thirty_years <= 12);
-      if (isNearMiss) return 'text-teal-600';
-    } else if (score < 35) {
-      return 'text-teal-600';
-    }
-
-    if (score < 50) return 'text-emerald-600';
-    return 'text-emerald-800';
+    // Passes (>= 30) - strictly tiered by score so rows remain cleanly grouped without alternating
+    if (score < 40) return 'text-teal-500';
+    if (score < 60) return 'text-emerald-500';
+    return 'text-emerald-600';
   }
 
   public getQcStatusTooltip(row: IStationAdminSummary): string {

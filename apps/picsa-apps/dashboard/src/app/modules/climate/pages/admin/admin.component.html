@@ -94,7 +94,7 @@
 
           <ng-template #totalYearsTemplate let-val>
             @if (val !== undefined && val !== null) {
-              <span [class]="val >= 30 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+              <span [class]="val >= 30 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
                 {{ val }}
               </span>
             } @else {
@@ -104,7 +104,7 @@
 
           <ng-template #lastThirtyYearsTemplate let-val>
             @if (val !== undefined && val !== null) {
-              <span [class]="val >= 10 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+              <span [class]="val >= 10 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
                 {{ val }}
               </span>
             } @else {
@@ -114,7 +114,7 @@
 
           <ng-template #lastTenYearsTemplate let-val>
             @if (val !== undefined && val !== null) {
-              <span [class]="val >= 1 ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'">
+              <span [class]="val >= 1 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
                 {{ val }}
               </span>
             } @else {
