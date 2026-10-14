@@ -150,13 +150,37 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.appTableOptions.formatHeader('has_bundled_data')).toBe('Bundled Status');
   });
 
-  it('should configure Diff table options including QC status', () => {
-    expect(component.diffTableOptions.displayColumns).toContain('name');
-    expect(component.diffTableOptions.displayColumns).toContain('diff_status');
-    expect(component.diffTableOptions.displayColumns).toContain('qc_passed');
-    expect(component.diffTableOptions.displayColumns).toContain('app_years_count');
-    expect(component.diffTableOptions.displayColumns).toContain('db_years_count');
-    expect(component.diffTableOptions.displayColumns).toContain('updated_at');
-    expect(component.diffTableOptions.displayColumns).toContain('diff');
+  it('should configure Diff table options with detailed product change breakdown columns', () => {
+    expect(component.diffTableOptions.displayColumns).toEqual([
+      'name',
+      'diff_status',
+      'updated_at',
+      'app_years_count',
+      'db_years_count',
+      'season_diff_percent',
+      'season_diff',
+      'temp_diff_percent',
+      'temp_diff',
+      'actions',
+    ]);
+    expect(component.diffTableOptions.formatHeader('diff_status')).toBe('Status');
+    expect(component.diffTableOptions.formatHeader('updated_at')).toBe('Data System Generated');
+    expect(component.diffTableOptions.formatHeader('app_years_count')).toBe('App Years');
+    expect(component.diffTableOptions.formatHeader('db_years_count')).toBe('Data System Years');
+    expect(component.diffTableOptions.formatHeader('season_diff_percent')).toBe('Season Change %');
+    expect(component.diffTableOptions.formatHeader('season_diff')).toBe('Season Change');
+    expect(component.diffTableOptions.formatHeader('temp_diff_percent')).toBe('Temp Change %');
+    expect(component.diffTableOptions.formatHeader('temp_diff')).toBe('Temp Change');
+    expect(component.diffTableOptions.formatHeader('actions')).toBe('Action');
+  });
+
+  it('should open station diff dialog on diff row click', () => {
+    const diffDialogSpy = jest.spyOn(component, 'openStationDiffDialog').mockImplementation();
+    const mockRow: any = {
+      station: { id: 's1', station_id: 's1', station_name: 'Test' },
+      diff_status: 'diff',
+    };
+    component.diffTableOptions.handleRowClick(mockRow);
+    expect(diffDialogSpy).toHaveBeenCalledWith(mockRow.station);
   });
 });

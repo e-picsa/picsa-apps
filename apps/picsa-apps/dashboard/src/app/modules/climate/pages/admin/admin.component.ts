@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -10,38 +10,24 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClimateQcFailure, ClimateQcWarning, IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import {
-  arrayToHashmap,
-  evaluateStationQualityGates,
-  hasValidRainfallObservation,
-  QC_FAILURE_LABELS,
-} from '@picsa/utils';
+import { arrayToHashmap, evaluateStationQualityGates, QC_FAILURE_LABELS } from '@picsa/utils';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 import { filter, lastValueFrom, map, switchMap } from 'rxjs';
 
 import { ClimateService } from '../../climate.service';
 import { hackConvertStationDataForDisplay } from '../../climate.utils';
-import { IStationDiffSummary } from '../../climate-diff.types';
-import { compareStationDatasets } from '../../climate-diff.utils';
+import { IStationDiffSummary, StationDiffStatus } from '../../climate-diff.types';
+import { CLIMATE_PRODUCTS, compareStationDatasets } from '../../climate-diff.utils';
 import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
 import { StationDetailsDialogComponent } from './components/station-details-dialog/station-details-dialog.component';
 import { StationDiffDialogComponent } from './components/station-diff-dialog/station-diff-dialog.component';
-
-export type StationDiffStatus = 'in_sync' | 'divergent' | 'app_only' | 'db_only' | 'no_data';
 
 function exportCsv(filename: string, data: any[]) {
   if (!data || data.length === 0) return;
   const columns = Object.keys(data[0]);
   const csv = unparse(data, { columns });
   download(csv, filename, 'text/csv');
-}
-
-function determineDiffStatus(hasApp: boolean, hasDb: boolean, isDiff: boolean): StationDiffStatus {
-  if (!hasApp && !hasDb) return 'no_data';
-  if (!hasApp) return 'db_only';
-  if (!hasDb) return 'app_only';
-  return isDiff ? 'divergent' : 'in_sync';
 }
 
 export interface IProductSummary {
@@ -112,73 +98,31 @@ export interface IGroupDiffSummary {
   productLines: IProductDiffLine[];
 }
 
-const PRODUCT_LABELS: Record<string, string> = {
-  start: 'Season Start',
-  end: 'Season End',
-  length: 'Season Length',
-  rainfall: 'Rainfall',
-};
-
-function resolveProductLabel(key: string, pDiff: any): string {
-  if (pDiff?.label) return pDiff.label;
-  const lookupKey = pDiff?.productKey || key;
-  return PRODUCT_LABELS[lookupKey] ?? key;
-}
-
-interface IProductDiffItem {
-  line: IProductDiffLine | null;
-  total: number;
-  diffCount: number;
-}
-
-function summarizeProductDiff(key: string, pDiff: any): IProductDiffItem {
-  const label = resolveProductLabel(key, pDiff);
-  const changes: string[] = [];
-
-  const prodTotal =
-    pDiff.totalAppValues !== undefined && pDiff.totalDbValues !== undefined
-      ? pDiff.totalAppValues + pDiff.totalDbValues
-      : (pDiff.totalValuesCount ?? 0);
-
-  const added = pDiff.addedInDb ?? pDiff.yearsAdded ?? [];
-  const missing = pDiff.missingInDb ?? pDiff.yearsRemoved ?? [];
-  const changed = pDiff.changedValues ?? pDiff.changes ?? [];
-  const changedLen = Array.isArray(changed) ? changed.length : (pDiff.changedCount ?? 0);
-  const diffCount = added.length + missing.length + changedLen;
-
-  if (added.length > 0) changes.push(`+${added.length} new`);
-  if (missing.length > 0) changes.push(`-${missing.length} missing`);
-  if (changedLen > 0) changes.push(`${changedLen} modified`);
-
-  const line: IProductDiffLine | null =
-    changes.length > 0
-      ? {
-          label,
-          summary: changes.join(', '),
-        }
-      : null;
-
-  return { line, total: prodTotal, diffCount };
-}
-
 export interface IStationDiffRow {
   name: string;
   station: IStationRow;
   diff_status: StationDiffStatus;
-  qc_score?: number;
-  qc_passed?: boolean;
-  qc_failures?: ClimateQcFailure[];
-  qc_details?: string;
   diff: IStationDiffSummary;
   app_years_count: number;
   db_years_count: number;
   updated_at?: string;
+  generation_timestamp?: string;
+  generation_id?: string;
+  season_diff_percent: number;
+  season_diff: number;
+  season_summary: IGroupDiffSummary;
+  temp_diff_percent: number;
+  temp_diff: number;
+  temp_summary: IGroupDiffSummary;
 }
 
 interface IStatusUpdate {
   started: boolean;
   statuses?: { id: string; status: string }[];
 }
+
+const SEASON_PRODUCT_IDS = ['rainfall', 'start', 'end', 'length'];
+const TEMP_PRODUCT_IDS = ['temp_min', 'temp_max'];
 
 const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'name',
@@ -205,11 +149,13 @@ const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
 const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
   'name',
   'diff_status',
-  'qc_passed',
+  'updated_at',
   'app_years_count',
   'db_years_count',
-  'updated_at',
-  'diff',
+  'season_diff_percent',
+  'season_diff',
+  'temp_diff_percent',
+  'temp_diff',
   'actions',
 ];
 
@@ -219,7 +165,7 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
     CommonModule,
     DatePipe,
     MatButtonModule,
-    MatChipsModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatIconModule,
     MatTabsModule,
@@ -320,7 +266,7 @@ export class ClimateAdminPageComponent {
     sort: { id: 'qc_score', start: 'asc' },
     handleRowClick: ({ station }: IStationAdminSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
-      if (v === 'name' || v === 'station') return 'Station';
+      if (v === 'name') return 'Station';
       if (v === 'qc_score' || v === 'qc_passed') return 'QC Status';
       if (v === 'rainfall_year_range') return 'Years Range';
       if (v === 'rainfall_total_years') return 'Total Years';
@@ -335,33 +281,10 @@ export class ClimateAdminPageComponent {
   };
 
   // 2. App Bundled Table Data & Options
-  public appTableData = computed(() => {
+  public appTableData = computed<IStationAppSummary[]>(() => {
     const stations = this.service.stations();
     const allStationAppData = this.allStationAppData();
-    return stations.map((station) => {
-      const appData = allStationAppData[station.station_id] || [];
-      const years = appData.map((d) => d.Year).filter((y) => typeof y === 'number' && !Number.isNaN(y));
-      const startYear = years.length > 0 ? Math.min(...years) : '-';
-      const endYear = years.length > 0 ? Math.max(...years) : '-';
-      const year_range = years.length > 0 ? `${startYear} - ${endYear}` : '-';
-      const total_years = years.length;
-      const products = this.detectAppProducts(appData);
-      const qc = appData.length > 0 ? evaluateStationQualityGates(appData) : evaluateStationQualityGates([]);
-
-      return {
-        name: station.station_name as string,
-        station,
-        has_bundled_data: appData.length > 0,
-        year_range,
-        total_years,
-        products,
-        app_data: appData,
-        qc_score: qc.qc_score,
-        qc_passed: qc.passed,
-        qc_failures: qc.failures,
-        qc_reasons: qc.reasons,
-      };
-    });
+    return this.generateAppSummaryData(stations, allStationAppData);
   });
 
   public appTableOptions: IDataTableOptions = {
@@ -383,134 +306,58 @@ export class ClimateAdminPageComponent {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
     const allStationAppData = this.allStationAppData();
-
-    return stations.map((station) => {
-      const stationData = allStationDataHashmap[station.id as string];
-      const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
-      const appData = allStationAppData[station.station_id] || [];
-      const qc = evaluateStationQualityGates(dbData);
-
-      const diff = compareStationDatasets(station.station_id, appData, dbData);
-      const diff_status = determineDiffStatus(appData.length > 0, dbData.length > 0, diff.status === 'diff');
-
-      // Count only rainfall chart years
-      const appRainfallYears = appData.filter(hasValidRainfallObservation).length;
-      const dbRainfallYears = dbData.filter(hasValidRainfallObservation).length;
-
-      return {
-        name: station.station_name as string,
-        station,
-        diff_status,
-        qc_passed: qc.passed,
-        qc_failures: qc.failures,
-        qc_details: qc.reasons.join('\n'),
-        diff,
-        app_years_count: appRainfallYears,
-        db_years_count: dbRainfallYears,
-        updated_at: stationData?.updated_at || undefined,
-      };
-    });
+    return this.generateDiffSummaryData(stations, allStationDataHashmap, allStationAppData);
   });
 
   public diffStats = computed(() => {
     const rows = this.allDiffRows();
     let inSync = 0;
-    let divergent = 0;
+    let diff = 0;
     let dbOnly = 0;
     let appOnly = 0;
-
-    for (const row of rows) {
-      switch (row.diff_status) {
-        case 'in_sync':
-          inSync++;
-          break;
-        case 'divergent':
-          divergent++;
-          break;
-        case 'db_only':
-          dbOnly++;
-          break;
-        case 'app_only':
-          appOnly++;
-          break;
-      }
+    let noData = 0;
+    for (const r of rows) {
+      if (r.diff_status === 'in_sync') inSync++;
+      else if (r.diff_status === 'diff') diff++;
+      else if (r.diff_status === 'db_only') dbOnly++;
+      else if (r.diff_status === 'app_only') appOnly++;
+      else noData++;
     }
     return {
       total: rows.length,
       inSync,
-      divergent,
+      diff,
       dbOnly,
       appOnly,
+      noData,
     };
   });
 
   public diffTableData = computed<IStationDiffRow[]>(() => {
     const rows = this.allDiffRows();
     if (this.showOnlyDiffs()) {
-      return rows.filter((r) => r.diff_status === 'divergent');
+      return rows.filter((r) => r.diff_status === 'diff');
     }
     return rows;
   });
 
   public diffTableOptions: IDataTableOptions = {
     displayColumns: DIFF_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationDiffRow) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    handleRowClick: (row: IStationDiffRow) => this.openStationDiffDialog(row.station),
     formatHeader: (v) => {
       if (v === 'name') return 'Station';
       if (v === 'diff_status') return 'Status';
-      if (v === 'qc_passed') return 'QC Status';
-      if (v === 'app_years_count') return 'App Rainfall Years';
-      if (v === 'db_rainfall_count' || v === 'db_years_count') return 'DB Rainfall Years';
-      if (v === 'updated_at') return 'Last Sync';
-      if (v === 'diff') return 'Product Differences';
+      if (v === 'updated_at') return 'Data System Generated';
+      if (v === 'app_years_count') return 'App Years';
+      if (v === 'db_years_count') return 'Data System Years';
+      if (v === 'season_diff_percent') return 'Season Change %';
+      if (v === 'season_diff') return 'Season Change';
+      if (v === 'temp_diff_percent') return 'Temp Change %';
+      if (v === 'temp_diff') return 'Temp Change';
       if (v === 'actions') return 'Action';
       return formatHeaderDefault(v);
     },
   };
-
-  public getGroupDiffSummary(diff: any, diffStatus: StationDiffStatus): IGroupDiffSummary {
-    if (diffStatus === 'app_only') {
-      return {
-        headlinePercent: 0,
-        headlinePercentFormatted: '',
-        diffValuesCount: 0,
-        totalValuesCount: 0,
-        hasData: false,
-        isInSync: false,
-        isAppOnly: true,
-        isDbOnly: false,
-        productLines: [],
-      };
-    }
-
-    const lines: IProductDiffLine[] = [];
-    let totalValuesCount = 0;
-    let diffValuesCount = 0;
-
-    for (const [key, pDiff] of Object.entries<any>(diff?.products || {})) {
-      if (!pDiff) continue;
-      const { line, total, diffCount } = summarizeProductDiff(key, pDiff);
-      totalValuesCount += total;
-      diffValuesCount += diffCount;
-      if (line) lines.push(line);
-    }
-
-    const isDbOnly = diffStatus === 'db_only';
-    const percent = isDbOnly || totalValuesCount === 0 ? 0 : Math.round((diffValuesCount / totalValuesCount) * 100);
-
-    return {
-      headlinePercent: percent,
-      headlinePercentFormatted: isDbOnly ? '' : `~${percent}% diff`,
-      diffValuesCount,
-      totalValuesCount,
-      hasData: totalValuesCount > 0 || isDbOnly,
-      isInSync: diffValuesCount === 0 && !isDbOnly,
-      isAppOnly: false,
-      isDbOnly,
-      productLines: lines,
-    };
-  }
 
   public getQcScoreColorClass(rowOrScore?: IStationAdminSummary | number): string {
     const score = typeof rowOrScore === 'number' ? rowOrScore : rowOrScore?.qc_score;
@@ -562,14 +409,25 @@ export class ClimateAdminPageComponent {
   }
 
   public getProductTooltip(product: IProductSummary): string {
-    const parts = [`${product.id}: ${product.available ? 'Available' : 'Missing'}`];
+    if (!product.available) {
+      return `${product.id} (No data / Error - click to refresh)`;
+    }
+    let tip = product.id;
     if (product.generation_timestamp) {
-      parts.push(`Generated: ${product.generation_timestamp}`);
+      const formattedDate = new Date(product.generation_timestamp).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      tip += ` (Generated: ${formattedDate}`;
+      if (product.generation_id) {
+        tip += ` • ID: ${product.generation_id}`;
+      }
+      tip += ')';
+    } else if (product.generation_id) {
+      tip += ` (ID: ${product.generation_id})`;
     }
-    if (product.generation_id) {
-      parts.push(`ID: ${product.generation_id}`);
-    }
-    return parts.join('\n');
+    return tip;
   }
 
   public getMonthlyTooltip(monthly?: { has_temp: boolean; has_rain: boolean }): string {
@@ -579,20 +437,38 @@ export class ClimateAdminPageComponent {
     ].join('\n');
   }
 
-  public getDiffTooltip(status: StationDiffStatus): string {
-    switch (status) {
-      case 'in_sync':
-        return 'Bundled app data matches database perfectly';
-      case 'divergent':
-        return 'Database values differ from bundled app data';
-      case 'db_only':
-        return 'Station exists in database but has no bundled app data';
-      case 'app_only':
-        return 'Station exists in app assets but is not present in database';
-      case 'no_data':
-      default:
-        return 'No data available in either database or app';
+  public getDiffTooltip(diff?: IStationDiffSummary): string {
+    if (!diff) return 'Checking app data differences...';
+    if (diff.status === 'in_sync') {
+      return 'Station data is identical to bundled app CSV across all climate products. Click to preview charts.';
     }
+    if (diff.status === 'db_only') {
+      return `Data system records exist (${diff.totalYearsAddedCount} years), but no bundled app CSV was found. Click to preview.`;
+    }
+    if (diff.status === 'app_only') {
+      return `Bundled app CSV exists (${diff.totalYearsRemovedCount} years), but no data system station records exist. Click to preview.`;
+    }
+    if (diff.status === 'no_data') {
+      return 'No data in either DB or bundled app CSV.';
+    }
+
+    const parts: string[] = [];
+    for (const product of CLIMATE_PRODUCTS) {
+      const p = diff.products[product.id];
+      if (p && !p.isInSync && p.hasData) {
+        const details: string[] = [];
+        if (p.yearsAdded.length > 0) details.push(`+${p.yearsAdded.length} yrs`);
+        if (p.yearsRemoved.length > 0) details.push(`-${p.yearsRemoved.length} yrs`);
+        if (p.changedCount > 0) details.push(`~${p.changedCount} changed`);
+        parts.push(`${product.label}: ${details.join(', ')}`);
+      }
+    }
+
+    return (
+      `Differences detected (+${diff.totalYearsAddedCount} added, -${diff.totalYearsRemovedCount} removed, ~${diff.totalChangedValuesCount} changed):\n` +
+      parts.join('\n') +
+      '\nClick to inspect & preview overlaid charts.'
+    );
   }
 
   public handleSummaryClick(e: Event, row: IStationAdminSummary, updateStatus: any): void {
@@ -602,16 +478,20 @@ export class ClimateAdminPageComponent {
     }
   }
 
-  public openStationDiffDialog(station: IStationRow, event?: MouseEvent) {
-    if (event) event.stopPropagation();
+  public openStationDiffDialog(station: IStationRow, event?: MouseEvent | Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
 
+    const stationId = station.station_id;
     const allStationDataHashmap = this.allStationDataHashmap();
     const allStationAppData = this.allStationAppData();
 
-    const stationData = allStationDataHashmap[station.id as string];
+    const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
     const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
-    const appData = allStationAppData[station.station_id] || [];
-    const diffSummary = compareStationDatasets(station.station_id, appData, dbData);
+    const appData = allStationAppData[stationId] || [];
+    const diffSummary = compareStationDatasets(stationId, appData, dbData);
 
     this.dialog.open(StationDiffDialogComponent, {
       data: {
@@ -621,9 +501,10 @@ export class ClimateAdminPageComponent {
         dbData,
         stationData,
       },
-      width: '900px',
+      panelClass: 'no-padding',
+      autoFocus: false,
+      width: '950px',
       maxWidth: '95vw',
-      maxHeight: '90vh',
     });
   }
 
@@ -679,12 +560,150 @@ export class ClimateAdminPageComponent {
     }
   }
 
+  private calculateGroupDiffSummary(diff: IStationDiffSummary, productIds: string[]): IGroupDiffSummary {
+    const productLines: IProductDiffLine[] = [];
+    let hasData = false;
+    let anyOutOfSync = false;
+    let hasAppDataInGroup = false;
+    let hasDbDataInGroup = false;
+    let groupDiffValuesCount = 0;
+    let groupTotalValuesCount = 0;
+
+    for (const pid of productIds) {
+      const prodSummary = diff.products[pid];
+      if (!prodSummary || !prodSummary.hasData) {
+        continue;
+      }
+      hasData = true;
+      if (prodSummary.appYearSpan !== null) {
+        hasAppDataInGroup = true;
+      }
+      if (prodSummary.dbYearSpan !== null) {
+        hasDbDataInGroup = true;
+      }
+
+      const totalProdValues =
+        prodSummary.totalValuesCount ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupTotalValuesCount += totalProdValues;
+
+      const prodDiffCount =
+        prodSummary.changes?.length ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupDiffValuesCount += prodDiffCount;
+
+      if (!prodSummary.isInSync) {
+        anyOutOfSync = true;
+        const parts: string[] = [];
+        if (prodSummary.yearsAdded.length > 0) parts.push(`+${prodSummary.yearsAdded.length}`);
+        if (prodSummary.yearsRemoved.length > 0) parts.push(`-${prodSummary.yearsRemoved.length}`);
+        if (prodSummary.changedCount > 0) parts.push(`~${prodSummary.changedCount}`);
+
+        productLines.push({
+          label: prodSummary.label,
+          summary: parts.join(', '),
+        });
+      }
+    }
+
+    if (groupTotalValuesCount === 0 && groupDiffValuesCount > 0) {
+      groupTotalValuesCount = groupDiffValuesCount;
+    }
+
+    const isAppOnly = (hasAppDataInGroup && !hasDbDataInGroup) || diff.status === 'app_only';
+    const isDbOnly = (!hasAppDataInGroup && hasDbDataInGroup) || diff.status === 'db_only';
+
+    // For app-only, we do not propose any changes to the app, so suppress breakdowns
+    const finalProductLines = isAppOnly ? [] : productLines;
+
+    const isInSync = hasData && !anyOutOfSync;
+
+    // Suppress 100% headline calculation for db_only and app_only
+    let headlinePercent = 0;
+    let headlinePercentFormatted = '';
+
+    if (!isAppOnly && !isDbOnly && groupTotalValuesCount > 0) {
+      headlinePercent = (groupDiffValuesCount / groupTotalValuesCount) * 100;
+      headlinePercentFormatted = this.formatHeadlinePercent(headlinePercent, groupDiffValuesCount);
+    }
+
+    return {
+      headlinePercent,
+      headlinePercentFormatted,
+      diffValuesCount: groupDiffValuesCount,
+      totalValuesCount: groupTotalValuesCount,
+      hasData,
+      isInSync,
+      isAppOnly,
+      isDbOnly,
+      productLines: finalProductLines,
+    };
+  }
+
+  private formatHeadlinePercent(percent: number, diffCount: number): string {
+    if (diffCount === 0 || percent === 0) {
+      return '0%';
+    }
+    const rounded = Number(percent.toFixed(1));
+    if (rounded === 0) {
+      return '<0.1%';
+    }
+    return `${rounded}%`;
+  }
+
+  private generateDiffSummaryData(
+    stations: IStationRow[],
+    allStationDataHashmap: Record<string, IClimateStationData['Row']>,
+    allStationAppData: Record<string, IStationData[]>,
+  ): IStationDiffRow[] {
+    return stations.map((station) => {
+      const stationId = station.station_id;
+      const appData = allStationAppData[stationId] || [];
+      const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
+      const dbDisplayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
+      const diff = compareStationDatasets(stationId, appData, dbDisplayData);
+
+      const season_summary = this.calculateGroupDiffSummary(diff, SEASON_PRODUCT_IDS);
+      const temp_summary = this.calculateGroupDiffSummary(diff, TEMP_PRODUCT_IDS);
+
+      const appYears = appData.map((d) => d.Year).filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
+      const dbYears = dbDisplayData
+        .map((d) => d.Year)
+        .filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
+
+      const rainMeta = stationData?.annual_rainfall_metadata as
+        | { generation_timestamp?: string; generation_id?: string }
+        | null
+        | undefined;
+      const genTimestamp = rainMeta?.generation_timestamp || stationData?.updated_at;
+      const genId = rainMeta?.generation_id;
+
+      return {
+        name: station.station_name as string,
+        station,
+        diff_status: diff.status,
+        diff,
+        app_years_count: appYears.length,
+        db_years_count: dbYears.length,
+        updated_at: stationData?.updated_at,
+        generation_timestamp: genTimestamp,
+        generation_id: genId,
+        season_diff_percent: season_summary.headlinePercent,
+        season_diff: season_summary.diffValuesCount,
+        season_summary,
+        temp_diff_percent: temp_summary.headlinePercent,
+        temp_diff: temp_summary.diffValuesCount,
+        temp_summary,
+      };
+    });
+  }
+
   private generateDbSummaryData(
     stations: IStationRow[],
     allStationDataHashmap: Record<string, IClimateStationData['Row']>,
   ): IStationAdminSummary[] {
     return stations.map((station) => {
-      const stationData = allStationDataHashmap[station.id as string];
+      const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
       const rainfallSummary = this.generateRainfallSummary(stationData);
       const updateSignal = this.getOrCreateRowUpdateSignal(station);
       return {
@@ -748,16 +767,56 @@ export class ClimateAdminPageComponent {
   }
 
   private detectAppProducts(appData: IStationData[]): string[] {
-    if (!appData || appData.length === 0) return [];
     const products: string[] = [];
-    const firstRow = appData[0];
-    if ('Rainfall' in firstRow) products.push('Rainfall');
-    if ('Start' in firstRow || 'End' in firstRow || 'Length' in firstRow) products.push('Season Bounds');
-    if ('mean_tmin' in firstRow || 'mean_tmax' in firstRow) products.push('Temperature');
+    if (appData.some((row) => row.Rainfall !== undefined && row.Rainfall !== null)) {
+      products.push('Rainfall');
+    }
+    if (
+      appData.some(
+        (row) =>
+          (row.mean_tmin !== undefined && row.mean_tmin !== null) ||
+          (row.mean_tmax !== undefined && row.mean_tmax !== null),
+      )
+    ) {
+      products.push('Temperature');
+    }
+    if (
+      appData.some(
+        (row) =>
+          (row.Start !== undefined && row.Start !== null) ||
+          (row.End !== undefined && row.End !== null) ||
+          (row.Length !== undefined && row.Length !== null),
+      )
+    ) {
+      products.push('Crop');
+    }
     return products;
   }
 
-  /** Generate summaries of rainfall-related products */
+  private generateAppSummaryData(
+    stations: IStationRow[],
+    allStationAppData: Record<string, IStationData[]>,
+  ): IStationAppSummary[] {
+    return stations.map((station) => {
+      const appData = allStationAppData[station.station_id] || [];
+      const has_bundled_data = appData.length > 0;
+      const years = appData.map((d) => d.Year).filter((y): y is number => typeof y === 'number' && !isNaN(y));
+      const year_range = years.length > 0 ? `${Math.min(...years)} - ${Math.max(...years)}` : '';
+      const total_years = years.length;
+      const products = this.detectAppProducts(appData);
+
+      return {
+        name: station.station_name as string,
+        station,
+        has_bundled_data,
+        year_range,
+        total_years,
+        products,
+        app_data: appData,
+      };
+    });
+  }
+
   private generateRainfallSummary(stationData: IClimateStationData['Row'] | undefined): Partial<IStationAdminSummary> {
     if (!stationData) {
       const qc = evaluateStationQualityGates([]);
@@ -819,17 +878,18 @@ export class ClimateAdminPageComponent {
     };
   }
 
+  private getOrCreateRowUpdateSignal(station: IStationRow): WritableSignal<IStatusUpdate> {
+    const existing = this.rowUpdateSignals.get(station.station_id);
+    if (existing) return existing;
+    const initialSignal = signal<IStatusUpdate>({ started: false });
+    this.rowUpdateSignals.set(station.station_id, initialSignal);
+    return initialSignal;
+  }
+
   private hasProductData(data: unknown): boolean {
     if (!data) return false;
     if (Array.isArray(data)) return data.length > 0;
+    if (typeof data === 'object') return Object.keys(data).length > 0;
     return true;
-  }
-
-  private getOrCreateRowUpdateSignal(station: IStationRow): WritableSignal<IStatusUpdate> {
-    const key = (station.id || station.station_id) as string;
-    if (!this.rowUpdateSignals.has(key)) {
-      this.rowUpdateSignals.set(key, signal<IStatusUpdate>({ started: false }));
-    }
-    return this.rowUpdateSignals.get(key)!;
   }
 }
