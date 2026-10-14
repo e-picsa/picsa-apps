@@ -127,16 +127,40 @@
         {{ 'No forecasts available' | translate }}
       </div>
       } @else {
-      <div
-        class="flex items-stretch gap-4 w-full"
-        [ngClass]="
-          category.id === 'daily' || category.id === 'weekly'
-            ? 'flex-nowrap overflow-x-auto pb-2 snap-x snap-mandatory md:flex-wrap md:overflow-visible md:snap-none md:pb-0 forecast-scroll'
-            : 'flex-wrap'
-        "
-      >
-        @for (forecast of category.forecasts; track forecast.id) {
-        <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+      <div class="forecast-scroll-wrap">
+        <div
+          class="flex items-stretch gap-4 w-full flex-nowrap overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0 forecast-scroll"
+          forecastScrollAffordance
+          #scroller="forecastScrollAffordance"
+        >
+          @for (forecast of category.forecasts; track forecast.id) {
+          <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+          }
+        </div>
+        <button
+          matButton
+          type="button"
+          class="forecast-scroll-bar is-before"
+          [class.is-visible]="scroller.canScrollBefore()"
+          (click)="scroller.scrollStep('before')"
+          [attr.aria-label]="'Show previous forecasts' | translate"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          matButton
+          type="button"
+          class="forecast-scroll-bar is-after"
+          [class.is-visible]="scroller.canScrollAfter()"
+          (click)="scroller.scrollStep('after')"
+          [attr.aria-label]="'Show next forecasts' | translate"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+      <div class="forecast-scroll-dots" [class.is-visible]="scroller.showDots()" aria-hidden="true">
+        @for (i of scroller.dotIndexes(); track i) {
+        <span [class.is-active]="scroller.activeIndex() === i"></span>
         }
       </div>
       }
@@ -176,7 +200,6 @@
 
     <div class="forecast-bottom-bar" [attr.data-forecast-type]="forecast.type">
       <div class="text-sm flex-1 text-left">{{ forecast.languageLabel }}</div>
-      <span class="text-[0.625rem] font-semibold tracking-wider px-1 rounded bg-black/10">PDF</span>
       <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
       </picsa-supabase-storage-download>
 
