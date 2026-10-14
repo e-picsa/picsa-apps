@@ -546,3 +546,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
+
+## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+- **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
+- **Root Causes**:
+  1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
+  2. Programmatic `setActiveMarker(marker)` called `this.onMarkerClick.emit(marker)`, creating an event feedback loop back into the host component.
+  3. MapLibre GL JS `TaskQueue.run()` sets `_currentlyRunning = true`. If a camera transition starts without `map.stop?.()` while another animation frame is running, it crashes and permanently disables the queue.
+  4. TopoJSON parsing on every keypress caused main thread stalls during rapid navigation.
+- **Solutions**:
+  1. Always invoke `map.stop?.()` before initiating `flyTo`, `easeTo`, or `fitBounds`.
+  2. Never emit click output events from programmatic marker selection methods (`setActiveMarker`).
+  3. Synchronize district boundary drawing, bounding box calculation, and marker highlight in a single unified resolution callback per request ID instead of fragmented competing effects.
+  4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
