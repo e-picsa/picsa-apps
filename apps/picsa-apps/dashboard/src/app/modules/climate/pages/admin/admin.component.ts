@@ -56,6 +56,7 @@ export interface IStationAdminSummary {
   station: IStationRow;
   updated_at?: string;
   rainfall_data?: IAnnualRainfallSummariesData[];
+  rainfall_year_range?: string;
   rainfall_start_year?: number;
   rainfall_end_year?: number;
   rainfall_total_years?: number;
@@ -71,6 +72,10 @@ export interface IStationAdminSummary {
   qc_season_warning?: string;
   qc_reasons?: string[];
   products: IProductSummary[];
+  monthly_data?: {
+    has_temp: boolean;
+    has_rain: boolean;
+  };
   updateSignal: WritableSignal<IStatusUpdate>;
   /** rainfall csv data for download */
   rainfall_export_data?: IStationData[];
@@ -178,11 +183,13 @@ interface IStatusUpdate {
 const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'name',
   'qc_score',
+  'rainfall_year_range',
   'rainfall_total_years',
   'rainfall_last_thirty_years',
   'rainfall_last_ten_years',
   'qc_warnings',
   'products',
+  'monthly_data',
   'updated_at',
 ];
 
@@ -258,7 +265,7 @@ export class ClimateAdminPageComponent {
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
 
   // 1. Database Table Data & Options (Consolidated with QC Status & Details)
-  public dbQcFilter = signal<'all' | 'passed' | 'failed' | 'warnings'>('all');
+  public dbQcFilter = signal<'all' | 'passed' | 'failed'>('all');
 
   public allDbTableData = computed(() => {
     const stations = this.service.stations();
@@ -270,17 +277,14 @@ export class ClimateAdminPageComponent {
     const rows = this.allDbTableData();
     let passed = 0;
     let failed = 0;
-    let warnings = 0;
     for (const r of rows) {
       if (r.qc_passed) passed++;
       else failed++;
-      if (r.qc_season_warning) warnings++;
     }
     return {
       total: rows.length,
       passed,
       failed,
-      warnings,
     };
   });
 
@@ -289,11 +293,10 @@ export class ClimateAdminPageComponent {
     const filterMode = this.dbQcFilter();
     if (filterMode === 'passed') return rows.filter((r) => r.qc_passed);
     if (filterMode === 'failed') return rows.filter((r) => !r.qc_passed);
-    if (filterMode === 'warnings') return rows.filter((r) => Boolean(r.qc_season_warning));
     return rows;
   });
 
-  public setDbQcFilter(mode: 'all' | 'passed' | 'failed' | 'warnings'): void {
+  public setDbQcFilter(mode: 'all' | 'passed' | 'failed'): void {
     if (this.dbQcFilter() === mode) {
       this.dbQcFilter.set('all');
     } else {
@@ -319,11 +322,13 @@ export class ClimateAdminPageComponent {
     formatHeader: (v) => {
       if (v === 'name' || v === 'station') return 'Station';
       if (v === 'qc_score' || v === 'qc_passed') return 'QC Status';
+      if (v === 'rainfall_year_range') return 'Years Range';
       if (v === 'rainfall_total_years') return 'Total Years';
       if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
       if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
       if (v === 'qc_warnings') return 'Warnings';
-      if (v === 'products') return 'Available Products';
+      if (v === 'products') return 'Products (🌧 🌡 🌾)';
+      if (v === 'monthly_data') return 'Monthly (🌧 🌡)';
       if (v === 'updated_at') return 'Last Sync';
       return formatHeaderDefault(v);
     },
@@ -557,7 +562,7 @@ export class ClimateAdminPageComponent {
   }
 
   public getProductTooltip(product: IProductSummary): string {
-    const parts = [product.id, product.available ? 'Available' : 'Unavailable'];
+    const parts = [`${product.id}: ${product.available ? 'Available' : 'Missing'}`];
     if (product.generation_timestamp) {
       parts.push(`Generated: ${product.generation_timestamp}`);
     }
@@ -565,6 +570,13 @@ export class ClimateAdminPageComponent {
       parts.push(`ID: ${product.generation_id}`);
     }
     return parts.join('\n');
+  }
+
+  public getMonthlyTooltip(monthly?: { has_temp: boolean; has_rain: boolean }): string {
+    return [
+      `Monthly Rainfall: ${monthly?.has_rain ? 'Available' : 'Missing (not provided by API)'}`,
+      `Monthly Temperature: ${monthly?.has_temp ? 'Available' : 'Missing'}`,
+    ].join('\n');
   }
 
   public getDiffTooltip(status: StationDiffStatus): string {
@@ -627,6 +639,7 @@ export class ClimateAdminPageComponent {
       const rainfallSummary = this.generateRainfallSummary(data);
       Object.assign(summary, rainfallSummary);
       summary.products = this.generateProductSummary(data);
+      summary.monthly_data = this.generateMonthlySummary(data);
     }
     summary.updateSignal.update((signal) => ({ ...signal, started: false }));
   }
@@ -679,6 +692,7 @@ export class ClimateAdminPageComponent {
         station,
         updated_at: stationData?.updated_at || undefined,
         products: this.generateProductSummary(stationData),
+        monthly_data: this.generateMonthlySummary(stationData),
         updateSignal,
         ...rainfallSummary,
       };
@@ -691,19 +705,27 @@ export class ClimateAdminPageComponent {
     }
     return [
       this.createProductSummary('Annual Rainfall', stationData.annual_rainfall_data),
-      this.createProductSummary('Crop Probabilities', stationData.crop_probability_data),
       this.createProductSummary('Annual Temperature', stationData.annual_temperature_data),
-      this.createProductSummary('Monthly Temperature', stationData.monthly_temperature_data),
+      this.createProductSummary('Crop Probabilities', stationData.crop_probability_data),
     ];
   }
 
   private defaultProductSummaries(): IProductSummary[] {
     return [
       { id: 'Annual Rainfall', available: false },
-      { id: 'Crop Probabilities', available: false },
       { id: 'Annual Temperature', available: false },
-      { id: 'Monthly Temperature', available: false },
+      { id: 'Crop Probabilities', available: false },
     ];
+  }
+
+  private generateMonthlySummary(stationData: IClimateStationData['Row'] | undefined): {
+    has_temp: boolean;
+    has_rain: boolean;
+  } {
+    return {
+      has_temp: this.hasProductData(stationData?.monthly_temperature_data),
+      has_rain: false,
+    };
   }
 
   private createProductSummary(id: string, data: unknown): IProductSummary {
@@ -740,6 +762,8 @@ export class ClimateAdminPageComponent {
     if (!stationData) {
       const qc = evaluateStationQualityGates([]);
       return {
+        rainfall_data: [],
+        rainfall_year_range: '—',
         rainfall_total_years: 0,
         rainfall_last_ten_years: 0,
         rainfall_last_thirty_years: 0,
@@ -755,11 +779,16 @@ export class ClimateAdminPageComponent {
       const rainfall_data = annual_rainfall_data as IAnnualRainfallSummariesData[];
       const rainfall_export_data = hackConvertStationDataForDisplay(stationData).sort((a, b) => a.Year - b.Year);
       const qc = evaluateStationQualityGates(rainfall_export_data);
+      const rainfall_start_year = qc.rainfallStartYear;
+      const rainfall_end_year = qc.rainfallEndYear;
+      const rainfall_year_range =
+        rainfall_start_year && rainfall_end_year ? `${rainfall_start_year} – ${rainfall_end_year}` : '—';
 
       return {
         rainfall_data,
-        rainfall_start_year: qc.rainfallStartYear,
-        rainfall_end_year: qc.rainfallEndYear,
+        rainfall_year_range,
+        rainfall_start_year,
+        rainfall_end_year,
         rainfall_total_years: qc.totalRainfallYears,
         rainfall_last_ten_years: qc.recentTenYearsCount,
         rainfall_last_thirty_years: qc.recentThirtyYearsCount,
@@ -777,6 +806,8 @@ export class ClimateAdminPageComponent {
     }
     const qc = evaluateStationQualityGates([]);
     return {
+      rainfall_data: [],
+      rainfall_year_range: '—',
       rainfall_total_years: 0,
       rainfall_last_ten_years: 0,
       rainfall_last_thirty_years: 0,

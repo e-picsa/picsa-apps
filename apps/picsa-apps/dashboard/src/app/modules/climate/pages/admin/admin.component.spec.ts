@@ -52,11 +52,13 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.displayColumns).toEqual([
       'name',
       'qc_score',
+      'rainfall_year_range',
       'rainfall_total_years',
       'rainfall_last_thirty_years',
       'rainfall_last_ten_years',
       'qc_warnings',
       'products',
+      'monthly_data',
       'updated_at',
     ]);
     expect(component.dbTableOptions.sort).toEqual({ id: 'qc_score', start: 'asc' });
@@ -64,11 +66,13 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.formatHeader('name')).toBe('Station');
     expect(component.dbTableOptions.formatHeader('qc_score')).toBe('QC Status');
     expect(component.dbTableOptions.formatHeader('qc_passed')).toBe('QC Status');
+    expect(component.dbTableOptions.formatHeader('rainfall_year_range')).toBe('Years Range');
     expect(component.dbTableOptions.formatHeader('rainfall_total_years')).toBe('Total Years');
     expect(component.dbTableOptions.formatHeader('rainfall_last_thirty_years')).toBe('Past 30 Years');
     expect(component.dbTableOptions.formatHeader('rainfall_last_ten_years')).toBe('Past 10 Years');
     expect(component.dbTableOptions.formatHeader('qc_warnings')).toBe('Warnings');
-    expect(component.dbTableOptions.formatHeader('products')).toBe('Available Products');
+    expect(component.dbTableOptions.formatHeader('products')).toBe('Products (🌧 🌡 🌾)');
+    expect(component.dbTableOptions.formatHeader('monthly_data')).toBe('Monthly (🌧 🌡)');
     expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
   });
 
@@ -119,7 +123,7 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.getWarningLines(warningRow)).toEqual(['2 years with start but no end']);
   });
 
-  it('should support filtering DB table by QC status and warnings', () => {
+  it('should support filtering DB table by QC status', () => {
     expect(component.dbQcFilter()).toBe('all');
     component.setDbQcFilter('passed');
     expect(component.dbQcFilter()).toBe('passed');
@@ -129,8 +133,12 @@ describe('ClimateAdminPageComponent', () => {
 
     component.setDbQcFilter('failed');
     expect(component.dbQcFilter()).toBe('failed');
-    component.setDbQcFilter('warnings');
-    expect(component.dbQcFilter()).toBe('warnings');
+  });
+
+  it('should format monthly tooltip correctly', () => {
+    const tooltip = component.getMonthlyTooltip({ has_temp: true, has_rain: false });
+    expect(tooltip).toContain('Monthly Rainfall: Missing');
+    expect(tooltip).toContain('Monthly Temperature: Available');
   });
 
   it('should configure App Bundled table options', () => {

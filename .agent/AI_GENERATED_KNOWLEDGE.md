@@ -609,3 +609,23 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Passes (`check_circle` icon): `< 40` total years uses `text-teal-500` (baseline / near-miss), `40..59` uses `text-emerald-500` (solid pass), `>= 60` uses `text-emerald-600` (deep historical pass, avoiding overly dark shades like `emerald-800`).
 - **Season Boundary Discrepancies**:
   - Season discrepancies are non-breaking warnings (not breaking failures). 106 of 109 stations in the dataset have historical boundary discrepancies; they do not turn the pass mark amber, but are listed separately in the Warnings column and tooltip.
+  - The "With Season Warnings" filter chip was removed as it matched virtually all stations, simplifying the filter options to Total, Passed, and Failed.
+
+### Database Table Columns & Product Availability Matrix
+- **Columns (`DB_DISPLAY_COLUMNS`)**:
+  - `name`: Station Name
+  - `qc_score`: QC Status (`check_circle` or `cancel`, sorted worst-to-best)
+  - `rainfall_year_range`: Rainfall Date Range (`rainfallStartYear – rainfallEndYear` or `—`)
+  - `rainfall_total_years`: Total observation years
+  - `rainfall_last_thirty_years`: Recent 30 years count
+  - `rainfall_last_ten_years`: Recent 10 years count
+  - `qc_warnings`: Warnings (distinct entries for start-no-end and end-no-start)
+  - `products`: Annual Products micro-matrix (`Products (🌧 🌡 🌾)`)
+  - `monthly_data`: Monthly Data micro-matrix (`Monthly (🌧 🌡)`)
+  - `updated_at`: Last Sync date
+- **Micro-Matrix UI Pattern**:
+  - Replaces bulky icon buttons with compact 16px indicators (`!text-[16px] !w-4 !h-4 leading-none`).
+  - Available: `check` (`text-emerald-500`), Missing: `close` (`text-rose-500`).
+  - Tooltips display individual item status, generation dates, and IDs.
+- **Monthly Data Nuances**:
+  - The Supabase `climate_station_data` schema and API currently provide `monthly_temperature_data` and metadata, but do not provide a `monthly_rainfall_data` column. Monthly rainfall observations historically exist only in bundled `.monthly.csv` files for select countries (e.g. Zambia, but 0 stations in Malawi). The UI explicitly notes this distinction in tooltips.
