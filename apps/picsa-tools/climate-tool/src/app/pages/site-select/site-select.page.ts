@@ -59,44 +59,50 @@ const STRINGS = {
 };
 
 @Component({
-  selector: 'climate-site-select',
-  templateUrl: './site-select.page.html',
-  styleUrls: ['./site-select.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'picsa-site-select-page',
   imports: [
     CommonModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    PicsaDataTableComponent,
-    PicsaMapComponent,
     PicsaTranslateModule,
     FormLocationSelectComponent,
+    PicsaDataTableComponent,
+    PicsaMapComponent,
   ],
+  templateUrl: './site-select.page.html',
+  styleUrls: ['./site-select.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteSelectPage implements AfterViewInit, OnDestroy {
-  public dataService = inject(ClimateDataService);
+  public readonly strings = STRINGS;
+
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  public readonly dataService = inject(ClimateDataService);
   private configurationService = inject(ConfigurationService);
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
-  public readonly strings = STRINGS;
-
-  public readonly picsaMap = viewChild<PicsaMapComponent>('picsaMap');
   public readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
+  public readonly picsaMap = viewChild(PicsaMapComponent);
 
-  public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
+  /** User country code from active configuration/settings */
+  public readonly userCountryCode = computed(() => {
+    return this.configurationService.userSettings().country_code;
+  });
 
-  /** Active location hierarchy selected by the user: [country, admin_4, admin_5, ...] */
+  /** Selected [country, admin_1, ..., admin_n] from form-location-select */
   public readonly selectedLocation = signal<(string | undefined)[]>([]);
 
-  /** Selected district derived from location hierarchy */
+  /** Map readiness flag bound from picsa-map */
+  public readonly mapReady = signal(false);
+
+  /** Deepest selected location entry (district) */
   public readonly selectedDistrict = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
-    if (!loc || loc.length === 0 || !country) return undefined;
+    if (!country || !loc || loc.length === 0) return undefined;
 
     const districtId = loc[5] ?? loc[4];
     if (!districtId) return undefined;
@@ -130,10 +136,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     return getCombinedDistrictAndStationBounds(result.feature, primary?.station, result.center);
   });
 
-  /** Flag indicating that current station selection originated from a district switch (to prevent overriding fitBounds) */
-  private isDistrictSwitchSelection = false;
-  private lastFittedDistrictId: string | undefined;
-
   /** Primary recommendation (first in ranked list) */
   public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
 
@@ -166,35 +168,31 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     return undefined;
   });
 
-  /** Station currently active on mobile or map card */
+  /** Active station for floating mobile card */
   public readonly activeStation = computed(() => this.displayedStation()?.station);
 
-  public readonly mapReady = signal(false);
-
-  /** All country stations sorted alphabetically by district, then by name */
+  /** All country stations sorted alphabetically by district, then by station name */
   public readonly sortedAllStations = computed(() => {
     const stations = this.dataService.allStations();
     return [...stations].sort((a, b) => {
       const distA = a.location?.[0] || '';
       const distB = b.location?.[0] || '';
-      const cmpDist = distA.localeCompare(distB);
-      if (cmpDist !== 0) return cmpDist;
+      const distCmp = distA.localeCompare(distB);
+      if (distCmp !== 0) return distCmp;
       return a.name.localeCompare(b.name);
     });
   });
 
-  public readonly mapMarkers = computed(() => {
+  /** Markers prepared for PicsaMapComponent */
+  public readonly mapMarkers = computed<IMapMarker[]>(() => {
     const stations = this.sortedAllStations();
-    const markers: IMapMarker[] = stations
-      .filter((s) => s.latitude !== null && s.longitude !== null)
-      .map((station, _index) => ({
-        latlng: [station.latitude, station.longitude] as [number, number],
-        data: station,
-        number: _index + 1,
-        label: formatStationLabel(station.name),
-        _index,
-      }));
-    return markers;
+    return stations.map((station, index) => ({
+      latlng: [station.latitude, station.longitude],
+      number: index + 1,
+      label: formatStationLabel(station.name),
+      data: station,
+      _index: index,
+    }));
   });
 
   public readonly tableData = computed(() => {
@@ -260,15 +258,15 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       const district = this.selectedDistrict();
       const countryCode = this.userCountryCode();
       const allStations = this.dataService.allStations();
+      const picsaMap = this.picsaMap();
+      const mapReady = this.mapReady();
 
       if (!district || !countryCode) {
         this.stationRecommendations.set([]);
         this.districtCenterResult.set(undefined);
         this.isCalculatingProximity.set(false);
         this.selectedStation.set(undefined);
-        this.lastFittedDistrictId = undefined;
-        const picsaMap = this.picsaMap();
-        if (picsaMap) {
+        if (picsaMap && mapReady) {
           picsaMap.clearActiveMarker();
           picsaMap.removeGeoJsonLayer('selected-district-boundary');
         }
@@ -277,10 +275,11 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
       const reqId = ++latestDistrictReqId;
       this.isCalculatingProximity.set(true);
+      this.districtCenterResult.set(undefined);
       this.selectedStation.set(undefined);
-      const picsaMap = this.picsaMap();
-      if (picsaMap) {
+      if (picsaMap && mapReady) {
         picsaMap.clearActiveMarker();
+        picsaMap.removeGeoJsonLayer('selected-district-boundary');
       }
 
       getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
@@ -292,10 +291,39 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
             const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
             this.stationRecommendations.set(recommendations);
 
-            // Automatically select the recommended station
-            if (recommendations.length > 0) {
-              this.isDistrictSwitchSelection = true;
-              this.selectedStation.set(recommendations[0].station);
+            const recStation = recommendations[0]?.station;
+            if (recStation) {
+              this.selectedStation.set(recStation);
+            }
+
+            const currentMap = this.picsaMap();
+            if (currentMap && this.mapReady()) {
+              if (result.feature) {
+                currentMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+                  lineColor: '#16a34a',
+                  lineWidth: 3,
+                  lineOpacity: 0.9,
+                  fitBounds: false,
+                });
+              }
+
+              const bounds = getCombinedDistrictAndStationBounds(result.feature, recStation, result.center);
+              if (bounds) {
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                currentMap.fitBounds(bounds, {
+                  maxZoom: 8,
+                  padding: isMobile
+                    ? { top: 90, bottom: 90, left: 30, right: 30 }
+                    : { top: 40, bottom: 40, left: 40, right: 40 },
+                });
+              }
+
+              if (recStation) {
+                const marker = this.mapMarkers().find((m) => m.data?.id === recStation.id);
+                if (marker) {
+                  currentMap.setActiveMarker(marker, false, false);
+                }
+              }
             }
           }
         })
@@ -309,56 +337,47 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         });
     });
 
-    // Effect: Highlight district boundary and pan/zoom to bounding box (district + nearest station)
+    // Effect: Synchronize boundary, bounds, and recommended marker once map becomes ready
+    let lastRenderedForMapDistrictId: string | undefined;
     effect(() => {
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
       const district = this.selectedDistrict();
       const result = this.districtCenterResult();
-      const bounds = this.districtAndStationBounds();
+      const primaryRec = this.primaryRecommendation();
 
-      if (picsaMap && mapReady) {
-        if (result?.feature) {
-          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-            lineColor: '#16a34a',
-            lineWidth: 3,
-            lineOpacity: 0.9,
-            fitBounds: false,
-          });
-        } else {
-          picsaMap.removeGeoJsonLayer('selected-district-boundary');
-        }
-
-        if (district && bounds && this.lastFittedDistrictId !== district.id) {
-          this.lastFittedDistrictId = district.id;
-          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-          picsaMap.fitBounds(bounds, {
-            maxZoom: 8,
-            padding: isMobile
-              ? { top: 90, bottom: 90, left: 30, right: 30 }
-              : { top: 40, bottom: 40, left: 40, right: 40 },
-          });
-        }
-      }
-    });
-
-    // Effect: Sync active map marker when selectedStation changes
-    effect(() => {
-      const selectedStation = this.selectedStation();
-      const picsaMap = this.picsaMap();
-      const mapReady = this.mapReady();
-      if (!picsaMap || !mapReady) return;
-
-      if (!selectedStation) {
-        picsaMap.clearActiveMarker();
+      if (!picsaMap || !mapReady || !district || !result) {
+        if (!district) lastRenderedForMapDistrictId = undefined;
         return;
       }
+      if (lastRenderedForMapDistrictId === district.id) return;
+      lastRenderedForMapDistrictId = district.id;
 
-      const marker = this.mapMarkers().find((m) => m.data?.id === selectedStation.id);
-      if (marker) {
-        const flyTo = !this.isDistrictSwitchSelection;
-        this.isDistrictSwitchSelection = false;
-        picsaMap.setActiveMarker(marker, false, flyTo);
+      if (result.feature) {
+        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+          lineColor: '#16a34a',
+          lineWidth: 3,
+          lineOpacity: 0.9,
+          fitBounds: false,
+        });
+      }
+
+      const bounds = this.districtAndStationBounds();
+      if (bounds) {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        picsaMap.fitBounds(bounds, {
+          maxZoom: 8,
+          padding: isMobile
+            ? { top: 90, bottom: 90, left: 30, right: 30 }
+            : { top: 40, bottom: 40, left: 40, right: 40 },
+        });
+      }
+
+      if (primaryRec?.station) {
+        const marker = this.mapMarkers().find((m) => m.data?.id === primaryRec.station.id);
+        if (marker) {
+          picsaMap.setActiveMarker(marker, false, false);
+        }
       }
     });
   }
@@ -410,11 +429,13 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public handleLocationChanged(location: (string | undefined)[]) {
     this.selectedLocation.set(location);
+    this.districtCenterResult.set(undefined);
     this.selectedStation.set(undefined);
-    this.lastFittedDistrictId = undefined;
+    this.stationRecommendations.set([]);
     const picsaMap = this.picsaMap();
-    if (picsaMap) {
+    if (picsaMap && this.mapReady()) {
       picsaMap.clearActiveMarker();
+      picsaMap.removeGeoJsonLayer('selected-district-boundary');
     }
     // If complete location with district is selected, persist to userSettings
     const districtId = location[5] ?? location[4];
@@ -424,8 +445,14 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   }
 
   public selectAlternateStation(recommendation: IStationRecommendation) {
-    this.isDistrictSwitchSelection = false;
     this.selectedStation.set(recommendation.station);
+    const picsaMap = this.picsaMap();
+    if (picsaMap && this.mapReady()) {
+      const marker = this.mapMarkers().find((m) => m.data?.id === recommendation.station.id);
+      if (marker) {
+        picsaMap.setActiveMarker(marker, false, true);
+      }
+    }
   }
 
   public confirmAndNavigate(station: IStationMeta) {
@@ -453,15 +480,20 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       if (station.id === this.selectedStation()?.id) {
         this.confirmAndNavigate(station);
       } else {
-        this.isDistrictSwitchSelection = false;
         this.selectedStation.set(station);
+        const picsaMap = this.picsaMap();
+        if (picsaMap && this.mapReady()) {
+          const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
+          if (marker) {
+            picsaMap.setActiveMarker(marker, false, true);
+          }
+        }
       }
     }
   }
 
   public handleMarkerClick(e: IMapMarker) {
     if (e?.data) {
-      this.isDistrictSwitchSelection = false;
       this.selectedStation.set(e.data);
     }
   }
@@ -473,6 +505,10 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       const marker = this.mapMarkers().find((v) => v.data?.id === tmpStation);
       if (marker?.data) {
         this.selectedStation.set(marker.data);
+        const picsaMap = this.picsaMap();
+        if (picsaMap && this.mapReady()) {
+          picsaMap.setActiveMarker(marker, false, true);
+        }
       }
     }
   }

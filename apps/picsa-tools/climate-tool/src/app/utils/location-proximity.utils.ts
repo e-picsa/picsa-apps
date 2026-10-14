@@ -36,6 +36,13 @@ export interface IDistrictCenterResult {
   feature?: IProximityFeature;
 }
 
+/** In-memory cache for parsed GeoJSON by country code and admin level to prevent CPU lockup on rapid navigation */
+const geoJsonCache = new Map<string, IGeoJsonData>();
+
+export function clearGeoJsonCache() {
+  geoJsonCache.clear();
+}
+
 /**
  * Calculate Great-Circle distance between two coordinates in kilometers using Haversine formula
  */
@@ -164,9 +171,14 @@ export async function getDistrictCenterAndBoundary(
   if (!district) return undefined;
 
   try {
-    const topojson = await geoData.topoJson();
     const adminLevel = getDeepestAdminLevel(geoData);
-    const geojson: IGeoJsonData = topoJsonToGeoJson(topojson, adminLevel);
+    const cacheKey = `${countryCode}:${adminLevel}`;
+    let geojson = geoJsonCache.get(cacheKey);
+    if (!geojson) {
+      const topojson = await geoData.topoJson();
+      geojson = topoJsonToGeoJson(topojson, adminLevel);
+      geoJsonCache.set(cacheKey, geojson);
+    }
 
     const candidates = [district.label, (district as { topoName?: string }).topoName, district.id].filter(
       (v): v is string => typeof v === 'string' && Boolean(v),
@@ -182,7 +194,7 @@ export async function getDistrictCenterAndBoundary(
       const centerCoords = feature.properties?.center;
       if (Array.isArray(centerCoords) && centerCoords.length >= 2) {
         const [lng, lat] = centerCoords;
-        if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+        if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
           return {
             center: { lat, lng },
             feature,

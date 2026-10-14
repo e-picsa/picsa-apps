@@ -109,7 +109,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
    * @param forceZoom If true, forces zooming and centering even if already selected.
    * @param flyTo If false, updates active highlight without moving the camera.
    */
-  public setActiveMarker(marker: IMapMarker, forceZoom = false, flyTo = true) {
+  public setActiveMarker(marker: IMapMarker, _forceZoom = false, flyTo = true) {
     this.selected = { marker };
     for (const rendered of this.renderedMarkers) {
       if (rendered.marker._index !== marker._index) {
@@ -119,9 +119,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       }
     }
     if (flyTo) {
-      this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
+      const map = this.map();
+      map?.stop?.();
+      map?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
     }
-    this.onMarkerClick.emit(marker);
   }
 
   /**
@@ -138,7 +139,9 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
    * Zoom and center map to a specific marker at given zoom level (default 8, offline-safe)
    */
   public zoomToMarker(marker: IMapMarker, zoom = MARKER_FOCUS_ZOOM) {
-    this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom });
+    const map = this.map();
+    map?.stop?.();
+    map?.flyTo({ center: toLngLat(marker.latlng), zoom });
   }
 
   /**
@@ -191,7 +194,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /** Fit the map view to the given bounds ([[lng,lat],[lng,lat]] or LngLatBounds) */
   public fitBounds(bounds: maplibregl.LngLatBoundsLike, options?: maplibregl.FitBoundsOptions) {
-    this.map()?.fitBounds(bounds, options);
+    const map = this.map();
+    if (!map) return;
+    map.stop?.();
+    map.fitBounds(bounds, options);
   }
 
   private initMap() {
@@ -295,6 +301,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         const mousePoint: [number, number] = [e.clientX - rect.left, e.clientY - rect.top];
         const mouseLngLat = map.unproject(mousePoint);
 
+        map.stop?.();
         map.easeTo({
           zoom: targetZoom,
           around: mouseLngLat,
@@ -344,6 +351,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
           type: 'raster',
           tiles: [LOCAL_TILE_URL],
           tileSize: 256,
+          minzoom: 0,
           maxzoom: LOCAL_MAX_NATIVE_ZOOM,
           attribution: 'Map data © OpenStreetMap contributors',
         },
@@ -372,48 +380,57 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     const config = this.geoJsonConfigs.get(id);
     if (!map || !config || !map.isStyleLoaded()) return;
     const { geojson, options } = config;
-    if (map.getSource(id)) {
-      (map.getSource(id) as maplibregl.GeoJSONSource).setData(geojson as any);
-    } else {
-      map.addSource(id, { type: 'geojson', data: geojson as any });
-    }
-    const fillColor = options.fillColor ?? 'rgba(0, 0, 0, 0)';
-    const fillOpacity = options.fillOpacity ?? (options.fillColor ? 0.25 : 0);
-    const lineColor = options.lineColor || GEOJSON_DEFAULT_COLOR;
-    const fillLayerId = `${id}-fill`;
-    const lineLayerId = `${id}-line`;
-    if (!map.getLayer(fillLayerId)) {
-      map.addLayer({
-        id: fillLayerId,
-        type: 'fill',
-        source: id,
-        paint: { 'fill-color': fillColor, 'fill-opacity': fillOpacity },
-      });
-    } else {
-      map.setPaintProperty(fillLayerId, 'fill-color', fillColor);
-      map.setPaintProperty(fillLayerId, 'fill-opacity', fillOpacity);
-    }
-    if (!map.getLayer(lineLayerId)) {
-      map.addLayer({
-        id: lineLayerId,
-        type: 'line',
-        source: id,
-        paint: {
-          'line-color': lineColor,
-          'line-opacity': options.lineOpacity ?? 0.8,
-          'line-width': options.lineWidth ?? 28,
-        },
-      });
-    } else {
-      map.setPaintProperty(lineLayerId, 'line-color', lineColor);
-      map.setPaintProperty(lineLayerId, 'line-opacity', options.lineOpacity ?? 0.8);
-      map.setPaintProperty(lineLayerId, 'line-width', options.lineWidth ?? 28);
-    }
-    if (options.fitBounds) {
-      const bounds = boundsFromGeoJson(geojson);
-      if (bounds) {
-        map.fitBounds(bounds, { padding: options.padding ?? 30 });
+    try {
+      const source = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
+      if (source && typeof source.setData === 'function') {
+        source.setData(geojson as any);
+      } else {
+        if (source) {
+          map.removeSource(id);
+        }
+        map.addSource(id, { type: 'geojson', data: geojson as any });
       }
+      const fillColor = options.fillColor ?? 'rgba(0, 0, 0, 0)';
+      const fillOpacity = options.fillOpacity ?? (options.fillColor ? 0.25 : 0);
+      const lineColor = options.lineColor || GEOJSON_DEFAULT_COLOR;
+      const fillLayerId = `${id}-fill`;
+      const lineLayerId = `${id}-line`;
+      if (!map.getLayer(fillLayerId)) {
+        map.addLayer({
+          id: fillLayerId,
+          type: 'fill',
+          source: id,
+          paint: { 'fill-color': fillColor, 'fill-opacity': fillOpacity },
+        });
+      } else {
+        map.setPaintProperty(fillLayerId, 'fill-color', fillColor);
+        map.setPaintProperty(fillLayerId, 'fill-opacity', fillOpacity);
+      }
+      if (!map.getLayer(lineLayerId)) {
+        map.addLayer({
+          id: lineLayerId,
+          type: 'line',
+          source: id,
+          paint: {
+            'line-color': lineColor,
+            'line-opacity': options.lineOpacity ?? 0.8,
+            'line-width': options.lineWidth ?? 3,
+          },
+        });
+      } else {
+        map.setPaintProperty(lineLayerId, 'line-color', lineColor);
+        map.setPaintProperty(lineLayerId, 'line-opacity', options.lineOpacity ?? 0.8);
+        map.setPaintProperty(lineLayerId, 'line-width', options.lineWidth ?? 3);
+      }
+      if (options.fitBounds) {
+        const bounds = boundsFromGeoJson(geojson);
+        if (bounds) {
+          map.stop?.();
+          map.fitBounds(bounds, { padding: options.padding ?? 30 });
+        }
+      }
+    } catch (err) {
+      console.warn(`[PicsaMap] Could not apply GeoJSON layer ${id}:`, err);
     }
   }
 
@@ -455,6 +472,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     for (const marker of markers) {
       bounds.extend(toLngLat(marker.latlng));
     }
+    map.stop?.();
     map.fitBounds(bounds, { maxZoom: 8, padding: 10 });
   }
 
@@ -470,7 +488,9 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     }
     this.selected = { marker };
     // Fly map to marker
-    this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
+    const map = this.map();
+    map?.stop?.();
+    map?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
     // Programatically update classnames on all markers to ensure single selection
     for (const rendered of this.renderedMarkers) {
       if (rendered.marker._index !== marker._index) {
