@@ -63,6 +63,7 @@ export interface IStationAdminSummary {
   rainfall_last_thirty_years?: number;
   season_discrepancies?: number;
   season_discrepancies_details?: string;
+  qc_score?: number;
   qc_passed?: boolean;
   qc_failures?: ClimateQcFailure[];
   qc_warnings?: ClimateQcWarning[];
@@ -83,6 +84,7 @@ export interface IStationAppSummary {
   total_years: number;
   products: string[];
   app_data: IStationData[];
+  qc_score?: number;
   qc_passed?: boolean;
   qc_failures?: ClimateQcFailure[];
   qc_reasons?: string[];
@@ -158,6 +160,7 @@ export interface IStationDiffRow {
   name: string;
   station: IStationRow;
   diff_status: StationDiffStatus;
+  qc_score?: number;
   qc_passed?: boolean;
   qc_failures?: ClimateQcFailure[];
   qc_details?: string;
@@ -174,7 +177,7 @@ interface IStatusUpdate {
 
 const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'name',
-  'qc_passed',
+  'qc_score',
   'rainfall_total_years',
   'rainfall_last_thirty_years',
   'rainfall_last_ten_years',
@@ -311,10 +314,11 @@ export class ClimateAdminPageComponent {
 
   public dbTableOptions: IDataTableOptions = {
     displayColumns: DB_DISPLAY_COLUMNS,
+    sort: { id: 'qc_score', start: 'asc' },
     handleRowClick: ({ station }: IStationAdminSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
       if (v === 'name' || v === 'station') return 'Station';
-      if (v === 'qc_passed') return 'QC Status';
+      if (v === 'qc_score' || v === 'qc_passed') return 'QC Status';
       if (v === 'rainfall_total_years') return 'Total Years';
       if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
       if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
@@ -347,6 +351,7 @@ export class ClimateAdminPageComponent {
         total_years,
         products,
         app_data: appData,
+        qc_score: qc.qc_score,
         qc_passed: qc.passed,
         qc_failures: qc.failures,
         qc_reasons: qc.reasons,
@@ -502,17 +507,47 @@ export class ClimateAdminPageComponent {
     };
   }
 
-  public getQcStatusTooltip(row: IStationAdminSummary): string {
-    if (row.qc_passed) {
-      return [
-        'Quality Control: Passed',
-        '✓ Total rainfall record ≥ 30 years',
-        '✓ Past 30 years record ≥ 10 years',
-        '✓ Recent data in past 10 years present',
-      ].join('\n');
+  public getQcScoreColorClass(rowOrScore?: IStationAdminSummary | number): string {
+    const score = typeof rowOrScore === 'number' ? rowOrScore : rowOrScore?.qc_score;
+    if (score === undefined || score <= -3) return 'text-rose-900';
+    if (score === -2) return 'text-rose-600';
+    if (score === -1) return 'text-amber-600';
+
+    // Rank near-miss on recent observations or border total years
+    if (typeof rowOrScore === 'object' && rowOrScore !== null) {
+      const isNearMiss =
+        score < 35 ||
+        (rowOrScore.rainfall_last_ten_years !== undefined && rowOrScore.rainfall_last_ten_years <= 1) ||
+        (rowOrScore.rainfall_last_thirty_years !== undefined && rowOrScore.rainfall_last_thirty_years <= 12);
+      if (isNearMiss) return 'text-teal-600';
+    } else if (score < 35) {
+      return 'text-teal-600';
     }
-    const reasons = row.qc_reasons && row.qc_reasons.length > 0 ? row.qc_reasons : ['Quality control criteria not met'];
-    return ['Quality Control: Failed', ...reasons.map((r) => `✕ ${r}`)].join('\n');
+
+    if (score < 50) return 'text-emerald-600';
+    return 'text-emerald-800';
+  }
+
+  public getQcStatusTooltip(row: IStationAdminSummary): string {
+    const score = row.qc_score ?? (row.qc_passed ? 30 : -3);
+    if (score < 0) {
+      const count = Math.abs(score);
+      const failWord = count === 1 ? 'check' : 'checks';
+      const reasons =
+        row.qc_reasons && row.qc_reasons.length > 0 ? row.qc_reasons : ['Quality control criteria not met'];
+      return [`Quality Control: Failed (${count} ${failWord} failed)`, ...reasons.map((r) => `✕ ${r}`)].join('\n');
+    }
+    const lines = [
+      `Quality Control: Passed (${score} years recorded)`,
+      '✓ Total rainfall record ≥ 30 years',
+      '✓ Past 30 years record ≥ 10 years',
+      '✓ Recent data in past 10 years present',
+    ];
+    if (row.qc_warning_reasons && row.qc_warning_reasons.length > 0) {
+      lines.push('Warnings:');
+      lines.push(...row.qc_warning_reasons.map((w) => `⚠ ${w}`));
+    }
+    return lines.join('\n');
   }
 
   public getWarningLines(row: IStationAdminSummary): string[] {
@@ -711,7 +746,17 @@ export class ClimateAdminPageComponent {
   /** Generate summaries of rainfall-related products */
   private generateRainfallSummary(stationData: IClimateStationData['Row'] | undefined): Partial<IStationAdminSummary> {
     if (!stationData) {
-      return {};
+      const qc = evaluateStationQualityGates([]);
+      return {
+        rainfall_total_years: 0,
+        rainfall_last_ten_years: 0,
+        rainfall_last_thirty_years: 0,
+        season_discrepancies: 0,
+        qc_score: qc.qc_score,
+        qc_passed: qc.passed,
+        qc_failures: qc.failures,
+        qc_reasons: qc.reasons,
+      };
     }
     const { annual_rainfall_data } = stationData;
     if (annual_rainfall_data) {
@@ -728,6 +773,7 @@ export class ClimateAdminPageComponent {
         rainfall_last_thirty_years: qc.recentThirtyYearsCount,
         season_discrepancies: qc.seasonDiscrepanciesCount,
         season_discrepancies_details: qc.seasonDiscrepancySummary,
+        qc_score: qc.qc_score,
         qc_passed: qc.passed,
         qc_failures: qc.failures,
         qc_warnings: qc.warnings,
@@ -737,7 +783,17 @@ export class ClimateAdminPageComponent {
         rainfall_export_data,
       };
     }
-    return {};
+    const qc = evaluateStationQualityGates([]);
+    return {
+      rainfall_total_years: 0,
+      rainfall_last_ten_years: 0,
+      rainfall_last_thirty_years: 0,
+      season_discrepancies: 0,
+      qc_score: qc.qc_score,
+      qc_passed: qc.passed,
+      qc_failures: qc.failures,
+      qc_reasons: qc.reasons,
+    };
   }
 
   private hasProductData(data: unknown): boolean {

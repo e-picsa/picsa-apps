@@ -591,3 +591,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Hovering the QC status icon displays a multi-line tooltip listing all verified quality control gates or specific failure reasons.
   - Clicking a station row opens `StationDetailsDialogComponent` as a modal dialog, allowing full inspection of Location, Data, Charts, and Crop Probabilities tabs without page navigation.
   - Material icon buttons in Angular 21 templates must use MDC directive syntax (`<button matIconButton>`), not legacy hyphenated attributes (`<button mat-icon-button>`).
+
+---
+
+## 5. Climate Data Quality Control & Sorting
+
+### Quality Control Ranking Score & Sort Order
+- **Formula (`calculateStationQcScore`)**:
+  - `failuresCount > 0`: Score is negative count of failed gates (`-3` = failed all 3, `-2` = failed 2, `-1` = failed 1).
+  - `failuresCount === 0`: Score is positive total rainfall observation years (e.g. `30`, `35`, `50+`).
+- **Sorting Behavior (`MatTableDataSource`)**:
+  - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
+  - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
+- **Rank Color Variations**:
+  - Failures (`cancel` icon): `-3` uses `text-rose-900` (crimson), `-2` uses `text-rose-600` (standard red), `-1` uses `text-amber-600` (warning amber).
+  - Passes (`check_circle` icon): Near-misses (< 35 total years or <= 1 year in past 10 / <= 12 in past 30) use `text-teal-600`, solid passes (35..49 years) use `text-emerald-600`, and deep historical records (>= 50 years) use `text-emerald-800`.
+- **Season Boundary Discrepancies**:
+  - Season discrepancies are non-breaking warnings (not breaking failures). 106 of 109 stations in the dataset have historical boundary discrepancies; they do not turn the pass mark amber, but are listed separately in the Warnings column and tooltip.

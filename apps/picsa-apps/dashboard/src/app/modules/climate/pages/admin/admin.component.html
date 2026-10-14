@@ -66,6 +66,7 @@
           [options]="dbTableOptions"
           [valueTemplates]="{
             name: nameTemplate,
+            qc_score: qcStatusTemplate,
             qc_passed: qcStatusTemplate,
             rainfall_total_years: totalYearsTemplate,
             rainfall_last_thirty_years: lastThirtyYearsTemplate,
@@ -79,13 +80,15 @@
             <span class="font-medium text-slate-900">{{ name }}</span>
           </ng-template>
 
-          <ng-template #qcStatusTemplate let-passed let-row="row">
-            @if (passed) {
-              <mat-icon class="text-emerald-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)">
-                check_circle
+          <ng-template #qcStatusTemplate let-score let-row="row">
+            @if (row.qc_score !== undefined ? row.qc_score < 0 : !row.qc_passed) {
+              <mat-icon [class]="getQcScoreColorClass(row) + ' cursor-help'" [matTooltip]="getQcStatusTooltip(row)">
+                cancel
               </mat-icon>
             } @else {
-              <mat-icon class="text-rose-600 cursor-help" [matTooltip]="getQcStatusTooltip(row)"> cancel </mat-icon>
+              <mat-icon [class]="getQcScoreColorClass(row) + ' cursor-help'" [matTooltip]="getQcStatusTooltip(row)">
+                check_circle
+              </mat-icon>
             }
           </ng-template>
 

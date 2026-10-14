@@ -48,10 +48,10 @@ describe('ClimateAdminPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should configure DB table options with consolidated QC status, year counters and warnings', () => {
+  it('should configure DB table options with sortable numeric QC status, year counters and warnings', () => {
     expect(component.dbTableOptions.displayColumns).toEqual([
       'name',
-      'qc_passed',
+      'qc_score',
       'rainfall_total_years',
       'rainfall_last_thirty_years',
       'rainfall_last_ten_years',
@@ -59,8 +59,10 @@ describe('ClimateAdminPageComponent', () => {
       'products',
       'updated_at',
     ]);
+    expect(component.dbTableOptions.sort).toEqual({ id: 'qc_score', start: 'asc' });
 
     expect(component.dbTableOptions.formatHeader('name')).toBe('Station');
+    expect(component.dbTableOptions.formatHeader('qc_score')).toBe('QC Status');
     expect(component.dbTableOptions.formatHeader('qc_passed')).toBe('QC Status');
     expect(component.dbTableOptions.formatHeader('rainfall_total_years')).toBe('Total Years');
     expect(component.dbTableOptions.formatHeader('rainfall_last_thirty_years')).toBe('Past 30 Years');
@@ -68,6 +70,25 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.formatHeader('qc_warnings')).toBe('Warnings');
     expect(component.dbTableOptions.formatHeader('products')).toBe('Available Products');
     expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
+  });
+
+  it('should assign color classes based on QC rank severity and data depth', () => {
+    // Failures
+    expect(component.getQcScoreColorClass(-3)).toBe('text-rose-900');
+    expect(component.getQcScoreColorClass(-2)).toBe('text-rose-600');
+    expect(component.getQcScoreColorClass(-1)).toBe('text-amber-600');
+
+    // Passes
+    expect(component.getQcScoreColorClass(30)).toBe('text-teal-600'); // near-miss (< 35)
+    expect(component.getQcScoreColorClass(40)).toBe('text-emerald-600'); // solid pass (35..49)
+    expect(component.getQcScoreColorClass(60)).toBe('text-emerald-800'); // strong record (>= 50)
+
+    // Near-miss on recency
+    const borderlineRecentRow: any = {
+      qc_score: 55,
+      rainfall_last_ten_years: 1, // razor's edge recency
+    };
+    expect(component.getQcScoreColorClass(borderlineRecentRow)).toBe('text-teal-600');
   });
 
   it('should open station details dialog on row click', () => {
@@ -83,13 +104,14 @@ describe('ClimateAdminPageComponent', () => {
   });
 
   it('should format QC status tooltip and warning lines correctly', () => {
-    const passedRow: any = { qc_passed: true };
+    const passedRow: any = { qc_passed: true, qc_score: 35 };
     const passedTooltip = component.getQcStatusTooltip(passedRow);
     expect(passedTooltip).toContain('Quality Control: Passed');
     expect(passedTooltip).toContain('Total rainfall record ≥ 30 years');
 
     const failedRow: any = {
       qc_passed: false,
+      qc_score: -1,
       qc_reasons: ['Insufficient rainfall record (< 30 years)'],
     };
     const failedTooltip = component.getQcStatusTooltip(failedRow);

@@ -49,6 +49,7 @@ export interface ISeasonDiscrepancyResult {
 }
 
 export interface IStationQcEvaluation {
+  qc_score: number;
   passed: boolean;
   failures: ClimateQcFailure[];
   warnings: ClimateQcWarning[];
@@ -108,12 +109,6 @@ export function detectSeasonDiscrepancies(rows: IStationData[]): ISeasonDiscrepa
 }
 
 /**
- * Format human-readable summary of season boundary discrepancies.
- * Examples:
- * - "2 years with start but no end, 1 year with end but no start"
- * - "1 year with start but no end"
- */
-/**
  * Format separate human-readable warnings for start without end and end without start.
  */
 export function formatSeasonDiscrepancyWarnings(discrepancies: ISeasonDiscrepancyRecord[]): string[] {
@@ -132,6 +127,18 @@ export function formatSeasonDiscrepancyWarnings(discrepancies: ISeasonDiscrepanc
 
 export function formatSeasonDiscrepancySummary(discrepancies: ISeasonDiscrepancyRecord[]): string {
   return formatSeasonDiscrepancyWarnings(discrepancies).join(', ');
+}
+
+/**
+ * Calculate numeric QC rank score for sorting from worst to best:
+ * - Failed stations receive a negative score corresponding to the number of failed checks (-3, -2, -1)
+ * - Passing stations receive a positive score reflecting the depth of historical data (>= 30 years)
+ */
+export function calculateStationQcScore(failuresCount: number, totalRainfallYears: number): number {
+  if (failuresCount > 0) {
+    return -failuresCount;
+  }
+  return totalRainfallYears;
 }
 
 /**
@@ -200,8 +207,10 @@ export function evaluateStationQualityGates(
   }
 
   const seasonDiscrepancySummary = warningReasons.join(', ');
+  const qc_score = calculateStationQcScore(failures.length, totalRainfallYears);
 
   return {
+    qc_score,
     passed: failures.length === 0,
     failures,
     warnings,
