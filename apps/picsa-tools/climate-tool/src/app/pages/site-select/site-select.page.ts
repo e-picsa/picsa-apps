@@ -358,12 +358,16 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const portal = this.headerEndPortal();
     if (portal) {
-      this.componentsService.header?.setEndPortal(new TemplatePortal(portal, this.viewContainer));
+      this.componentsService.patchHeader?.({
+        cdkPortalEnd: new TemplatePortal(portal, this.viewContainer),
+      });
     }
   }
 
   ngOnDestroy() {
-    this.componentsService.header?.clearEndPortal();
+    this.componentsService.patchHeader?.({
+      cdkPortalEnd: undefined,
+    });
   }
 
   public toggleView() {
