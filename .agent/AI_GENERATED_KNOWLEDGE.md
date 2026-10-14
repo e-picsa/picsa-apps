@@ -232,6 +232,28 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
+### Dynamic Header Actions via CDK Portals (`PicsaHeaderComponent`)
+
+- **Never Hack Standalone Overlay Buttons Over Header**: Do not float absolute-positioned action buttons over `<picsa-header>` using viewport hacks (e.g. `position: absolute`, `margin-top: var(--status-bar-height)`). Because page hosts frequently use `:host { display: contents }` and Angular Material MDC button CSS defaults to `position: relative`, floating buttons will either stretch across the screen as full-width bars below the header toolbar or misalign during route transitions.
+- **Portals Built into Header**: `PicsaHeaderComponent` natively provides three CDK portal outlets: `cdkPortalStart`, `cdkPortalCenter`, and `cdkPortalEnd`.
+- **Page Implementation Pattern**:
+  1. Wrap the action in `<ng-template #headerEndPortal>...</ng-template>` in the page template.
+  2. Inject `PicsaCommonComponentsService` and `ViewContainerRef` in the page component.
+  3. Query the template: `readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');`
+  4. In `ngAfterViewInit()`, mount it:
+     ```ts
+     const endPortal = this.headerEndPortal();
+     if (endPortal) {
+       this.componentsService.patchHeader({
+         cdkPortalEnd: new TemplatePortal(endPortal, this.viewContainer),
+       });
+     }
+     ```
+  5. In `ngOnDestroy()`, unmount:
+     ```ts
+     this.componentsService.patchHeader({ cdkPortalEnd: undefined });
+     ```
+
 ### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
 
 - **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
