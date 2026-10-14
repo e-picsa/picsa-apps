@@ -1,30 +1,27 @@
-import { ChangeDetectionStrategy, Component, input, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfigurationService } from '@picsa/configuration';
+import { ConfigurationService, IUserSettings } from '@picsa/configuration';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IStationMeta, IUserSettings } from '@picsa/models';
+import { IStationMeta } from '@picsa/models';
 import { PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import { SiteSelectPage } from './site-select.page';
 
-/* eslint-disable @angular-eslint/component-selector, @typescript-eslint/no-explicit-any */
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-map',
-  template: '',
+  template: '<div>Mock Map</div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class MockPicsaMapComponent {
-  public mapReady = signal(true);
-  public mapOptions = input<any>({});
-  public markers = input<any[]>([]);
-  public setActiveMarker = jest.fn();
-  public clearActiveMarker = jest.fn();
-  public addGeoJsonLayer = jest.fn();
-  public removeGeoJsonLayer = jest.fn();
-  public fitBounds = jest.fn();
-  public zoomToMarker = jest.fn();
+  @Input() markers: unknown;
+  fitBounds = jest.fn();
+  setActiveMarker = jest.fn();
+  clearActiveMarker = jest.fn();
+  addGeoJsonLayer = jest.fn();
+  removeGeoJsonLayer = jest.fn();
 }
 
 describe('SiteSelectPage', () => {
@@ -38,8 +35,8 @@ describe('SiteSelectPage', () => {
   const mockStations: IStationMeta[] = [
     {
       id: 'choma',
-      name: 'Choma Met',
-      latitude: -16.83,
+      name: 'Choma',
+      latitude: -16.8,
       longitude: 26.98,
       countryCode: 'zm',
       location: ['CHOMA'],
@@ -47,16 +44,16 @@ describe('SiteSelectPage', () => {
         schemaVersion: 1,
         lastUpdated: '2024-01-01',
         contentHash: 'hash1',
-        years: [1965, 2024],
-        totalYears: 60,
-        completeRainYears: 55,
+        years: [1970, 2020],
+        totalYears: 50,
+        completeRainYears: 45,
       },
     },
     {
       id: 'batoka',
       name: 'Batoka',
-      latitude: -16.78,
-      longitude: 27.2,
+      latitude: -16.85,
+      longitude: 27.1,
       countryCode: 'zm',
       location: ['CHOMA'],
       capabilities: {
@@ -94,7 +91,7 @@ describe('SiteSelectPage', () => {
       country_code: 'zm',
       location: [undefined, undefined, 'zm', undefined, 'southern', 'choma'],
     } as unknown as IUserSettings);
-    (configService as any).userSettings = userSettingsSignal;
+    (configService as unknown as { userSettings: WritableSignal<IUserSettings> }).userSettings = userSettingsSignal;
     jest.spyOn(configService, 'updateUserSettings').mockImplementation((update) => {
       userSettingsSignal.update((curr) => ({ ...curr, ...update }));
     });
@@ -139,5 +136,26 @@ describe('SiteSelectPage', () => {
     expect(component.showAllStations()).toBe(false);
     component.toggleAllStations();
     expect(component.showAllStations()).toBe(true);
+  });
+
+  it('should include closest station first in nearbyStations and update selection on click', () => {
+    component.stationRecommendations.set([
+      { station: mockStations[0], distanceKm: 5, isInsideDistrict: true, isRecommended: true, score: -45 },
+      { station: mockStations[1], distanceKm: 25, isInsideDistrict: true, isRecommended: false, score: -25 },
+    ]);
+
+    expect(component.nearbyStations().length).toBe(2);
+    expect(component.nearbyStations()[0].station.id).toBe(mockStations[0].id);
+
+    // Initial selectedStation
+    component.selectedStation.set(mockStations[0]);
+    expect(component.displayedStation()?.station.id).toBe(mockStations[0].id);
+
+    // Switch to alternate station
+    component.selectAlternateStation(component.nearbyStations()[1]);
+    expect(component.displayedStation()?.station.id).toBe(mockStations[1].id);
+
+    // First entry in nearbyStations remains the closest station for easy switching back
+    expect(component.nearbyStations()[0].station.id).toBe(mockStations[0].id);
   });
 });

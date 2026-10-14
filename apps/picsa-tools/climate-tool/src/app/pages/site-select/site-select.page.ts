@@ -14,8 +14,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components';
@@ -42,13 +43,15 @@ import {
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
 
+const STATION_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.191 0 87.619 100" fill="currentColor"><path d="M82.447,57.766c-3.112,0-5.937,1.255-7.992,3.29L55.353,47.369v-1.773c0-2.015-1.303-3.692-3.094-4.333V22.592c5.521-0.768,9.769-5.509,9.769-11.236C62.027,5.09,56.946,0,50.667,0c-6.266,0-11.348,5.091-11.348,11.355c0,5.727,4.247,10.468,9.77,11.236v18.688c-1.76,0.662-3.027,2.335-3.027,4.316v1.604L25.906,61.064c-2.071-2.262-5.049-3.678-8.355-3.678c-6.277,0-11.36,5.087-11.36,11.357c0,6.27,5.083,11.356,11.36,11.356c6.265,0,11.348-5.087,11.348-11.356c0-1.818-0.436-3.544-1.193-5.066l18.353-12.622v44.299c0,2.561,2.089,4.646,4.647,4.646c2.564,0,4.646-2.085,4.646-4.646V51.27l17.183,12.314c-0.91,1.632-1.437,3.524-1.437,5.529c0,6.283,5.087,11.357,11.351,11.357c6.273,0,11.36-5.074,11.36-11.357C93.808,62.844,88.721,57.766,82.447,57.766z"/></svg>`;
+
 const STRINGS = {
   map: translateMarker('Map'),
   list: translateMarker('List'),
   location: translateMarker('Location'),
   view: translateMarker('View'),
   allStations: translateMarker('All Stations'),
-  recommended: translateMarker('Recommended'),
+  climateStation: translateMarker('Climate Station'),
   nearby: translateMarker('Nearby'),
   findingStations: translateMarker('Finding closest stations'),
 };
@@ -70,6 +73,7 @@ const STRINGS = {
   styleUrls: ['./site-select.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public readonly strings = STRINGS;
 
@@ -79,6 +83,8 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   private configurationService = inject(ConfigurationService);
   private componentsService = inject(PicsaCommonComponentsService);
   private viewContainer = inject(ViewContainerRef);
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
 
   public readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
   public readonly picsaMap = viewChild(PicsaMapComponent);
@@ -133,18 +139,21 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     return getCombinedDistrictAndStationBounds(result.feature, primary?.station, result.center);
   });
 
-  /** Primary recommendation (first in ranked list) */
+  /** Primary recommendation (first in ranked list - closest station) */
   public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
 
-  /** Alternative recommended stations */
-  public readonly alternativeRecommendations = computed(() =>
+  /** Nearby stations (including closest station first, top 4) */
+  public readonly nearbyStations = computed(() =>
     this.stationRecommendations()
-      .slice(1, 4)
+      .slice(0, 4)
       .map((rec) => ({
         ...rec,
         station: { ...rec.station, name: formatStationLabel(rec.station.name) },
       })),
   );
+
+  /** Alias for backward compatibility */
+  public readonly alternativeRecommendations = this.nearbyStations;
 
   /** Currently displayed station (either explicitly selected or primary recommendation) */
   public readonly displayedStation = computed(() => {
@@ -219,6 +228,11 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   });
 
   constructor() {
+    this.matIconRegistry.addSvgIconLiteral(
+      'climate_station',
+      this.domSanitizer.bypassSecurityTrustHtml(STATION_ICON_SVG),
+    );
+
     // Seed location from user settings if available
     const initialLocation = this.configurationService.userSettings().location;
     if (initialLocation && initialLocation.length > 0) {
@@ -258,65 +272,43 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
         .then((result) => {
           if (reqId !== latestDistrictReqId) return;
-          this.isCalculatingProximity.set(false);
           this.districtCenterResult.set(result);
+          this.isCalculatingProximity.set(false);
 
           if (result) {
             const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
             this.stationRecommendations.set(recommendations);
 
-            const recStation = recommendations[0]?.station;
-            if (recStation) {
-              this.selectedStation.set(recStation);
-            }
-
-            const currentMap = this.picsaMap();
-            if (currentMap && this.mapReady()) {
-              if (result.feature) {
-                currentMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-                  lineColor: '#16a34a',
-                  lineWidth: 3,
-                  lineOpacity: 0.9,
-                  fitBounds: false,
-                });
-              }
-
-              const bounds = getCombinedDistrictAndStationBounds(result.feature, recStation, result.center);
-              if (bounds) {
-                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-                currentMap.fitBounds(bounds, {
-                  maxZoom: 8,
-                  padding: isMobile
-                    ? { top: 90, bottom: 90, left: 30, right: 30 }
-                    : { top: 40, bottom: 40, left: 40, right: 40 },
-                });
-              }
-
-              if (recStation) {
-                const marker = this.mapMarkers().find((m) => m.data?.id === recStation.id);
+            if (recommendations.length > 0) {
+              const closest = recommendations[0].station;
+              this.selectedStation.set(closest);
+              const picsaMapInstance = this.picsaMap();
+              if (picsaMapInstance && this.mapReady()) {
+                const marker = this.mapMarkers().find((m) => m.data?.id === closest.id);
                 if (marker) {
-                  currentMap.setActiveMarker(marker, false, false);
+                  picsaMapInstance.setActiveMarker(marker, false, true);
                 }
               }
             }
+          } else {
+            this.stationRecommendations.set([]);
           }
         })
         .catch((err) => {
           if (reqId !== latestDistrictReqId) return;
+          console.error('[SiteSelectPage] Failed to calculate proximity:', err);
           this.isCalculatingProximity.set(false);
-          this.districtCenterResult.set(undefined);
           this.stationRecommendations.set([]);
-          console.warn('[SiteSelect] Could not resolve district proximity boundary:', err);
         });
     });
 
-    // Effect: Synchronize boundary, bounds, and recommended marker once map becomes ready
-    let lastRenderedForMapDistrictId: string | undefined;
+    // Effect: Update MapGeoJsonLayer and camera when district and primary recommendation resolve
+    let lastRenderedForMapDistrictId: string | undefined = undefined;
     effect(() => {
-      const picsaMap = this.picsaMap();
-      const mapReady = this.mapReady();
       const district = this.selectedDistrict();
       const result = this.districtCenterResult();
+      const picsaMap = this.picsaMap();
+      const mapReady = this.mapReady();
       const primaryRec = this.primaryRecommendation();
 
       if (!picsaMap || !mapReady || !district || !result) {
@@ -438,15 +430,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public selectStation(stationName: string) {
     if (stationName) {
-      const tmpStation = stationName.replace(' ', '_').toLowerCase();
-      const marker = this.mapMarkers().find((v) => v.data?.id === tmpStation);
-      if (marker?.data) {
-        this.selectedStation.set(marker.data);
-        const picsaMap = this.picsaMap();
-        if (picsaMap && this.mapReady()) {
-          picsaMap.setActiveMarker(marker, false, true);
-        }
-      }
+      this.selectedStation.set({ name: stationName } as IStationMeta);
     }
   }
 }

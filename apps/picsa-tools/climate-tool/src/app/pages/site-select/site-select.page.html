@@ -7,7 +7,7 @@
     class="!text-white md:!hidden mr-1 flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 border border-white/30 transition-colors"
     [attr.aria-label]="toggleText | translate"
   >
-    <mat-icon class="!text-white !w-5 !h-5 !text-[20px]">{{ toggleIcon }}</mat-icon>
+    <mat-icon class="!text-white">{{ toggleIcon }}</mat-icon>
     <span class="!text-white text-sm font-semibold tracking-wide">{{ toggleText | translate }}</span>
   </button>
 </ng-template>
@@ -23,7 +23,7 @@
       <!-- Section 1: Standard Location Select -->
       <div class="bg-white p-3 md:p-4 rounded-xl border border-gray-200 shadow-sm">
         <div class="flex items-center gap-2 mb-2">
-          <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
+          <mat-icon class="text-primary">place</mat-icon>
           <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
         </div>
 
@@ -36,20 +36,20 @@
         }
       </div>
 
-      <!-- Section 2: Recommended Station & Confirmation -->
+      <!-- Section 2: Selected Station & Nearby Options -->
       @if (selectedDistrict(); as district) { @if (isCalculatingProximity()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
-        <mat-icon class="!text-2xl !h-6 !w-6 animate-spin text-primary mb-2">sync</mat-icon>
+        <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
         <div class="text-sm font-medium">{{ strings.findingStations | translate }}...</div>
       </div>
       } @else if (displayedStation(); as displayed) {
       <div class="recommendation-card border border-gray-200 bg-white rounded-xl p-4 shadow-sm">
-        @if (displayed.isPrimary) {
-        <div class="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
-          <mat-icon class="!text-sm !h-4 !w-4">star</mat-icon>
-          <span>{{ strings.recommended | translate }}</span>
+        <div class="flex items-center gap-2 mb-2">
+          <mat-icon svgIcon="climate_station" class="text-primary"></mat-icon>
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500"
+            >{{ strings.climateStation | translate }}</span
+          >
         </div>
-        }
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -67,18 +67,18 @@
           </button>
         </div>
 
-        <!-- Alternative Nearby Stations -->
-        @if (alternativeRecommendations().length > 0) {
+        <!-- Nearby Stations (closest station first and selected) -->
+        @if (nearbyStations().length > 0) {
         <div class="mt-4 pt-3 border-t border-gray-200">
           <div class="text-xs font-medium text-gray-500 mb-1.5">{{ strings.nearby | translate }}</div>
           <div class="flex flex-wrap gap-2">
-            @for (alt of alternativeRecommendations(); track alt.station.id) {
+            @for (alt of nearbyStations(); track alt.station.id) {
             <button
               matButton="outlined"
-              class="!text-xs !h-7 !px-2.5"
+              class="!text-xs !h-7 !px-2.5 transition-colors"
               [ngClass]="{
-                  '!border-primary bg-primary/10': selectedStation()?.id === alt.station.id
-                }"
+                '!border-primary !bg-primary/10 !text-primary font-semibold': displayedStation()?.station?.id === alt.station.id
+              }"
               (click)="selectAlternateStation(alt)"
             >
               <span>{{ alt.station.name }} ({{ alt.distanceKm }} km)</span>
@@ -93,7 +93,7 @@
       <!-- Section 3: Optional Browse All Stations Expander -->
       <div class="all-stations-section mt-4 pt-2">
         <button matButton="text" class="!text-xs text-gray-600 !p-0" (click)="toggleAllStations()">
-          <mat-icon class="!text-base !h-4 !w-4">{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <mat-icon>{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
           <span>{{ strings.allStations | translate }}</span>
         </button>
 
@@ -134,6 +134,10 @@
     <div class="absolute left-3 right-3 bottom-4 z-20 rounded-xl shadow-md px-4 py-3 md:hidden bg-white">
       <div class="flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider mb-0.5">
+            <mat-icon svgIcon="climate_station" class="text-primary"></mat-icon>
+            <span>{{ strings.climateStation | translate }}</span>
+          </div>
           <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>
         </div>
         <button matButton="filled" color="primary" class="!h-9 !px-4 shrink-0" (click)="confirmAndNavigate(station)">
