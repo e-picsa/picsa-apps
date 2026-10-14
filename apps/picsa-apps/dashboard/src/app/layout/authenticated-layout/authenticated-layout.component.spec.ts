@@ -93,4 +93,23 @@ describe('AuthenticatedLayoutComponent', () => {
     expect(component.isHovered()).toBe(false);
     expect(component.isEffectiveExpanded()).toBe(false);
   });
+
+  it('should dynamically update fixedTopGap on scroll to hide header without gap', () => {
+    expect(component.fixedTopGap()).toBe(64);
+
+    // Simulate scrolling by 30px
+    Object.defineProperty(window, 'scrollY', { value: 30, writable: true, configurable: true });
+    window.dispatchEvent(new Event('scroll'));
+    expect(component.fixedTopGap()).toBe(34);
+
+    // Simulate scrolling past toolbar height (e.g. 100px)
+    Object.defineProperty(window, 'scrollY', { value: 100, writable: true, configurable: true });
+    window.dispatchEvent(new Event('scroll'));
+    expect(component.fixedTopGap()).toBe(0);
+
+    // Reset window scroll
+    Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
+    window.dispatchEvent(new Event('scroll'));
+    expect(component.fixedTopGap()).toBe(64);
+  });
 });
