@@ -42,4 +42,18 @@ describe('FormLocationOverlayComponent', () => {
     confirmBtn.click();
     expect(confirmed).toEqual([[undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']]);
   });
+
+  // zw pairs admin_4 provinces with admin_6 districts (no admin_5 tier) - both segments still required
+  it('requires both segments for multi-tier countries without an admin_5 tier (zw)', () => {
+    fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.componentRef.setInput('open', true);
+
+    fixture.componentRef.setInput('value', [undefined, undefined, 'zw', undefined, 'masvingo', undefined]);
+    fixture.detectChanges();
+    expect(component.isTempLocationReady()).toBe(false);
+
+    fixture.componentRef.setInput('value', [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita']);
+    fixture.detectChanges();
+    expect(component.isTempLocationReady()).toBe(true);
+  });
 });

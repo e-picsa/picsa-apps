@@ -85,6 +85,79 @@
 .forecast-bottom-bar > mat-progress-bar {
   @apply absolute bottom-0 left-0 w-full;
 }
+// Horizontal scroller for forecast categories on smaller devices
+// Layout (flex-nowrap, overflow, snap) is handled via Tailwind in the template;
+// this adds touch momentum and a subtle scrollbar
+.forecast-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  // Opt out of scroll anchoring: async forecast data and images arriving
+  // mid-load must never shift the row's scroll position (e.g. national
+  // starting one card in with the back bar already showing).
+  overflow-anchor: none;
+}
+// Scroll-hint bars, template-rendered over each scroller edge and shown only
+// while more content is available off-screen in that direction (visibility
+// driven by ForecastScrollAffordanceDirective signals). Real buttons (not
+// pseudo-elements) so taps, keyboard focus and screen readers work, and so
+// nothing inside the scroll flow can shift the scroll origin. Faded via
+// opacity so bars never pop in or out abruptly.
+.forecast-scroll-wrap {
+  position: relative;
+}
+button.forecast-scroll-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  width: 2rem;
+  min-width: 0;
+  padding: 0;
+  border-radius: 0;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  background: #fff;
+  color: var(--color-secondary-600, #64748b);
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s;
+}
+button.forecast-scroll-bar.is-before {
+  left: 0;
+}
+button.forecast-scroll-bar.is-after {
+  right: 0;
+}
+button.forecast-scroll-bar.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  cursor: pointer;
+}
+// Subtle dot progress strip, template-rendered alongside each scroller and
+// shown only while that list overflows. Kept in this page stylesheet (not
+// global) as the dots are regular template elements covered by view encapsulation.
+.forecast-scroll-dots {
+  display: none;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0 2px;
+}
+.forecast-scroll-dots.is-visible {
+  display: flex;
+}
+.forecast-scroll-dots > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+}
+.forecast-scroll-dots > span.is-active {
+  background: #64748b;
+}
 .viewer-container {
   position: fixed;
   z-index: 2;
