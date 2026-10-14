@@ -772,6 +772,7 @@ export async function syncFromDatabaseForCountry(
       updatedCaps[stationId] = {
         schemaVersion: 1,
         years: [],
+        qcFailures: ['insufficient_total_years', 'no_recent_data', 'sparse_recent_data'],
       };
     }
   }

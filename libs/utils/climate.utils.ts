@@ -12,6 +12,8 @@ import type {
   IThreeMonthPeriod,
 } from '@picsa/models';
 
+import { evaluateStationQualityGates } from './climate-qc.utils';
+
 /**
  * Standard rounding for climate physical observations.
  * Eliminates float precision noise and ensures deterministic diffs.
@@ -426,6 +428,11 @@ export function calculateStationCapabilities(params: {
     completeTempYears,
     annual: annualCharts.length > 0 ? annualCharts : undefined,
     monthly: monthlyCharts.length > 0 ? monthlyCharts : undefined,
+    qcFailures: evaluateStationQualityGates(annualData).failures,
+    qcWarnings:
+      evaluateStationQualityGates(annualData).warnings.length > 0
+        ? evaluateStationQualityGates(annualData).warnings
+        : undefined,
   };
 }
 

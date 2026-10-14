@@ -29,7 +29,8 @@
     "scripts:forecasts:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/forecasts/sync-forecasts.ts",
     "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
     "ai:lint": "node tools/ai/ai-lint.mjs",
-    "ai:test": "node tools/ai/ai-test.mjs"
+    "ai:test": "node tools/ai/ai-test.mjs",
+    "ai:typecheck": "node tools/ai/ai-typecheck.mjs"
   },
   "private": true,
   "dependencies": {
