@@ -10,7 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClimateQcFailure, ClimateQcWarning, IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { arrayToHashmap, evaluateStationQualityGates, QC_FAILURE_LABELS } from '@picsa/utils';
+import { evaluateStationQualityGates, QC_FAILURE_LABELS } from '@picsa/utils';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 import { filter, lastValueFrom, map, switchMap } from 'rxjs';
@@ -189,20 +189,44 @@ export class ClimateAdminPageComponent {
   private allStationData = toSignal(
     toObservable(this.service.stations).pipe(
       filter((stations) => stations.length > 0),
-      switchMap(() => this.service.getAllStationData(this.service.apiCountryCode)),
+      switchMap((stations) => {
+        const countryCode = this.service.apiCountryCode || (stations[0]?.country_code as any);
+        return this.service.getAllStationData(countryCode);
+      }),
       map(({ data }) => data || []),
     ),
     { initialValue: [] },
   );
   private allStationDataHashmap = computed(() => {
-    return arrayToHashmap(this.allStationData(), 'station_id');
+    const list = this.allStationData();
+    const stations = this.service.stations();
+    const stationIdToSlug = new Map<string, string>();
+    for (const s of stations) {
+      if (s.id && s.station_id) {
+        stationIdToSlug.set(s.id, s.station_id);
+      }
+    }
+    const map: Record<string, IClimateStationData['Row']> = {};
+    for (const row of list) {
+      if (row.station_id) {
+        map[row.station_id] = row;
+        const slug = stationIdToSlug.get(row.station_id);
+        if (slug) {
+          map[slug] = row;
+        }
+      }
+    }
+    return map;
   });
 
   /** Bundled CSV app data loaded on deployment/country change */
   private allStationAppData = toSignal(
     toObservable(this.service.stations).pipe(
       filter((stations) => stations.length > 0),
-      switchMap((stations) => this.service.getAllStationsAppData(this.service.apiCountryCode, stations)),
+      switchMap((stations) => {
+        const countryCode = this.service.apiCountryCode || (stations[0]?.country_code as any);
+        return this.service.getAllStationsAppData(countryCode, stations);
+      }),
     ),
     { initialValue: {} as Record<string, IStationData[]> },
   );
@@ -488,7 +512,9 @@ export class ClimateAdminPageComponent {
     const allStationDataHashmap = this.allStationDataHashmap();
     const allStationAppData = this.allStationAppData();
 
-    const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
+    const stationData =
+      (station.id ? allStationDataHashmap[station.id] : undefined) ||
+      (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
     const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
     const appData = allStationAppData[stationId] || [];
     const diffSummary = compareStationDatasets(stationId, appData, dbData);
@@ -659,7 +685,9 @@ export class ClimateAdminPageComponent {
     return stations.map((station) => {
       const stationId = station.station_id;
       const appData = allStationAppData[stationId] || [];
-      const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
+      const stationData =
+        (station.id ? allStationDataHashmap[station.id] : undefined) ||
+        (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
       const dbDisplayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
       const diff = compareStationDatasets(stationId, appData, dbDisplayData);
 
@@ -703,7 +731,9 @@ export class ClimateAdminPageComponent {
     allStationDataHashmap: Record<string, IClimateStationData['Row']>,
   ): IStationAdminSummary[] {
     return stations.map((station) => {
-      const stationData = allStationDataHashmap[(station.station_id || station.id) as string];
+      const stationData =
+        (station.id ? allStationDataHashmap[station.id] : undefined) ||
+        (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
       const rainfallSummary = this.generateRainfallSummary(stationData);
       const updateSignal = this.getOrCreateRowUpdateSignal(station);
       return {

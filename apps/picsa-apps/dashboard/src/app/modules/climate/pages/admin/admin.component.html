@@ -17,16 +17,16 @@
       </ng-template>
 
       <div class="py-4">
-        <!-- KPI Summary / Filter Chips (Comparison pill design with selectable active styling) -->
-        <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium mb-4 select-none">
+        <!-- KPI Summary / Filter Chips (Flat design with ~4% scale on selection) -->
+        <div class="flex items-center gap-3 flex-wrap text-xs font-medium mb-4 select-none py-1">
           <button
             type="button"
             (click)="setDbQcFilter('all')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer text-xs"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer text-xs transform transition-transform duration-150"
             [class]="
               dbQcFilter() === 'all'
-                ? 'bg-slate-200 text-slate-900 border-slate-400 shadow-sm ring-2 ring-slate-400/50 font-bold'
-                : 'bg-[#f8fafc] text-[#334155] border-[#e2e8f0] hover:bg-slate-100'
+                ? 'scale-[1.04] bg-slate-200 text-slate-900 border-slate-400 font-bold'
+                : 'scale-100 bg-[#f8fafc] text-[#334155] border-[#e2e8f0] hover:bg-slate-100'
             "
           >
             <span class="opacity-85">Total Stations:</span>
@@ -36,11 +36,11 @@
           <button
             type="button"
             (click)="setDbQcFilter('passed')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer text-xs"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer text-xs transform transition-transform duration-150"
             [class]="
               dbQcFilter() === 'passed'
-                ? 'bg-emerald-100 text-emerald-950 border-emerald-500 shadow-sm ring-2 ring-emerald-500/50 font-bold'
-                : 'bg-[#f0fdf4] text-[#166534] border-[#bbf7d0] hover:bg-emerald-100/60'
+                ? 'scale-[1.04] bg-emerald-100 text-emerald-950 border-emerald-500 font-bold'
+                : 'scale-100 bg-[#f0fdf4] text-[#166534] border-[#bbf7d0] hover:bg-emerald-100/60'
             "
           >
             <mat-icon class="!text-[16px] !w-4 !h-4 leading-none text-emerald-600">check_circle</mat-icon>
@@ -51,11 +51,11 @@
           <button
             type="button"
             (click)="setDbQcFilter('failed')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer text-xs"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer text-xs transform transition-transform duration-150"
             [class]="
               dbQcFilter() === 'failed'
-                ? 'bg-rose-100 text-rose-950 border-rose-500 shadow-sm ring-2 ring-rose-500/50 font-bold'
-                : 'bg-[#fff1f2] text-[#9f1239] border-[#fecdd3] hover:bg-rose-100/60'
+                ? 'scale-[1.04] bg-rose-100 text-rose-950 border-rose-500 font-bold'
+                : 'scale-100 bg-[#fff1f2] text-[#9f1239] border-[#fecdd3] hover:bg-rose-100/60'
             "
           >
             <mat-icon class="!text-[16px] !w-4 !h-4 leading-none text-rose-600">cancel</mat-icon>
