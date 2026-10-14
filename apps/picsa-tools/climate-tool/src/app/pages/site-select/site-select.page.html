@@ -22,7 +22,7 @@
   >
     <div class="flex flex-col gap-4">
       <!-- Section 1: Standard Location Select -->
-      <div class="bg-slate-50/80 p-3 md:p-4 rounded-xl border border-slate-200/80">
+      <div class="bg-white p-3 md:p-4 rounded-xl border border-gray-200 shadow-sm">
         <div class="flex items-center gap-2 mb-1">
           <mat-icon class="text-primary !h-5 !w-5 !text-xl">place</mat-icon>
           <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
@@ -45,7 +45,7 @@
         <div class="text-sm font-medium">{{ strings.findingStations | translate }} {{ district.label }}...</div>
       </div>
       } @else if (displayedStation(); as displayed) {
-      <div class="recommendation-card border-2 border-primary/30 bg-primary/5 rounded-xl p-4 shadow-sm">
+      <div class="recommendation-card border border-gray-200 bg-white rounded-xl p-4 shadow-sm">
         <div class="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
           <mat-icon class="!text-sm !h-4 !w-4">{{ displayed.isPrimary ? 'star' : 'place' }}</mat-icon>
           <span>
@@ -129,7 +129,7 @@
   >
     <!-- Floating Location Selector (Mobile) -->
     <div
-      class="map-floating-location absolute left-3 right-3 top-14 z-20 backdrop-blur-md rounded-xl shadow-lg px-3 py-1 md:hidden bg-white/95 border border-slate-200/90"
+      class="map-floating-location absolute left-3 right-3 top-14 z-20 rounded-xl shadow-md px-3 py-1 md:hidden bg-white"
     >
       @if (userCountryCode(); as countryCode) {
       <picsa-form-location-select
@@ -143,7 +143,7 @@
     <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
     @if (activeStation(); as station) {
     <div
-      class="absolute left-3 right-3 bottom-4 z-20 backdrop-blur-md rounded-xl shadow-xl px-4 py-3 md:hidden bg-white/95 border border-slate-200/90"
+      class="absolute left-3 right-3 bottom-4 z-20 rounded-xl shadow-md px-4 py-3 md:hidden bg-white"
     >
       <div class="flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">

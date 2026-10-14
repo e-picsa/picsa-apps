@@ -62,10 +62,17 @@ export function normalizeLocationName(name?: string | null): string {
     .trim();
 }
 
+export interface IGeoBbox {
+  minLng: number;
+  minLat: number;
+  maxLng: number;
+  maxLat: number;
+}
+
 /**
- * Compute bounding-box centroid of a GeoJSON Feature (Polygon or MultiPolygon)
+ * Compute the bounding box of a GeoJSON Feature (Polygon or MultiPolygon)
  */
-export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { lat: number; lng: number } | undefined {
+export function computeFeatureBbox(feature?: IProximityFeature | null): IGeoBbox | undefined {
   if (!feature || !feature.geometry || !feature.geometry.coordinates) return undefined;
 
   let minLng = Infinity;
@@ -75,7 +82,7 @@ export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { 
 
   const extractCoords = (coords: unknown) => {
     if (!Array.isArray(coords)) return;
-    if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+    if (coords.length >= 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
       const [lng, lat] = coords as [number, number];
       if (lng < minLng) minLng = lng;
       if (lng > maxLng) maxLng = lng;
@@ -90,12 +97,55 @@ export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { 
 
   extractCoords(feature.geometry.coordinates);
 
-  if (minLng === Infinity || minLat === Infinity) return undefined;
+  if (minLng === Infinity || minLat === Infinity || minLng === -Infinity || minLat === -Infinity) {
+    return undefined;
+  }
 
+  return { minLng, minLat, maxLng, maxLat };
+}
+
+/**
+ * Compute bounding-box centroid of a GeoJSON Feature (Polygon or MultiPolygon)
+ */
+export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { lat: number; lng: number } | undefined {
+  const bbox = computeFeatureBbox(feature);
+  if (!bbox) return undefined;
   return {
-    lat: Math.round(((minLat + maxLat) / 2) * 100000) / 100000,
-    lng: Math.round(((minLng + maxLng) / 2) * 100000) / 100000,
+    lat: Math.round(((bbox.minLat + bbox.maxLat) / 2) * 100000) / 100000,
+    lng: Math.round(((bbox.minLng + bbox.maxLng) / 2) * 100000) / 100000,
   };
+}
+
+/**
+ * Compute a bounding box [[minLng, minLat], [maxLng, maxLat]] covering the district feature
+ * (or fallback centroid) and a target station location.
+ */
+export function getCombinedDistrictAndStationBounds(
+  feature: IProximityFeature | undefined,
+  station?: { latitude: number; longitude: number } | null,
+  fallbackCenter?: { lat: number; lng: number } | null,
+): [[number, number], [number, number]] | undefined {
+  const bbox = computeFeatureBbox(feature);
+  let minLng = bbox ? bbox.minLng : (fallbackCenter?.lng ?? Infinity);
+  let maxLng = bbox ? bbox.maxLng : (fallbackCenter?.lng ?? -Infinity);
+  let minLat = bbox ? bbox.minLat : (fallbackCenter?.lat ?? Infinity);
+  let maxLat = bbox ? bbox.maxLat : (fallbackCenter?.lat ?? -Infinity);
+
+  if (station && typeof station.longitude === 'number' && typeof station.latitude === 'number') {
+    if (station.longitude < minLng) minLng = station.longitude;
+    if (station.longitude > maxLng) maxLng = station.longitude;
+    if (station.latitude < minLat) minLat = station.latitude;
+    if (station.latitude > maxLat) maxLat = station.latitude;
+  }
+
+  if (minLng === Infinity || minLat === Infinity || minLng === -Infinity || minLat === -Infinity) {
+    return undefined;
+  }
+
+  return [
+    [minLng, minLat],
+    [maxLng, maxLat],
+  ];
 }
 
 /**

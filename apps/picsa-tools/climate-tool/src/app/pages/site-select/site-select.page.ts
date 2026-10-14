@@ -35,6 +35,7 @@ import { IGeoJsonData, IMapMarker, PicsaMapComponent } from '@picsa/shared/featu
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
   formatStationLabel,
+  getCombinedDistrictAndStationBounds,
   getDistrictCenterAndBoundary,
   getStationRecommendations,
   IDistrictCenterResult,
@@ -120,6 +121,18 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Centroid calculation & boundary resolution state */
   public readonly isCalculatingProximity = signal(false);
   public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
+
+  /** Bounding box [[minLng, minLat], [maxLng, maxLat]] covering the district boundary and nearest station */
+  public readonly districtAndStationBounds = computed(() => {
+    const result = this.districtCenterResult();
+    const primary = this.primaryRecommendation();
+    if (!result) return undefined;
+    return getCombinedDistrictAndStationBounds(result.feature, primary?.station, result.center);
+  });
+
+  /** Flag indicating that current station selection originated from a district switch (to prevent overriding fitBounds) */
+  private isDistrictSwitchSelection = false;
+  private lastFittedDistrictId: string | undefined;
 
   /** Primary recommendation (first in ranked list) */
   public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
@@ -252,11 +265,23 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         this.stationRecommendations.set([]);
         this.districtCenterResult.set(undefined);
         this.isCalculatingProximity.set(false);
+        this.selectedStation.set(undefined);
+        this.lastFittedDistrictId = undefined;
+        const picsaMap = this.picsaMap();
+        if (picsaMap) {
+          picsaMap.clearActiveMarker();
+          picsaMap.removeGeoJsonLayer('selected-district-boundary');
+        }
         return;
       }
 
       const reqId = ++latestDistrictReqId;
       this.isCalculatingProximity.set(true);
+      this.selectedStation.set(undefined);
+      const picsaMap = this.picsaMap();
+      if (picsaMap) {
+        picsaMap.clearActiveMarker();
+      }
 
       getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
         .then((result) => {
@@ -269,6 +294,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
             // Automatically select the recommended station
             if (recommendations.length > 0) {
+              this.isDistrictSwitchSelection = true;
               this.selectedStation.set(recommendations[0].station);
             }
           }
@@ -283,29 +309,56 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         });
     });
 
-    // Effect: Highlight district boundary on map when map is ready and boundary feature exists
+    // Effect: Highlight district boundary and pan/zoom to bounding box (district + nearest station)
     effect(() => {
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
+      const district = this.selectedDistrict();
       const result = this.districtCenterResult();
-      if (picsaMap && mapReady && result?.feature) {
-        // District boundary overlay without fitting bounds (camera focuses on recommended station)
-        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-          lineColor: '#16a34a',
-          lineWidth: 3,
-          lineOpacity: 0.9,
-          fitBounds: false,
-        });
+      const bounds = this.districtAndStationBounds();
+
+      if (picsaMap && mapReady) {
+        if (result?.feature) {
+          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+            lineColor: '#16a34a',
+            lineWidth: 3,
+            lineOpacity: 0.9,
+            fitBounds: false,
+          });
+        } else {
+          picsaMap.removeGeoJsonLayer('selected-district-boundary');
+        }
+
+        if (district && bounds && this.lastFittedDistrictId !== district.id) {
+          this.lastFittedDistrictId = district.id;
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          picsaMap.fitBounds(bounds, {
+            maxZoom: 8,
+            padding: isMobile
+              ? { top: 90, bottom: 90, left: 30, right: 30 }
+              : { top: 40, bottom: 40, left: 40, right: 40 },
+          });
+        }
       }
     });
 
-    // Effect: Sync active map marker and flyTo at offline-safe zoom (8) when selectedStation changes
+    // Effect: Sync active map marker when selectedStation changes
     effect(() => {
       const selectedStation = this.selectedStation();
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
-      if (selectedStation && picsaMap && mapReady) {
-        this.handleStationSelected(selectedStation, picsaMap);
+      if (!picsaMap || !mapReady) return;
+
+      if (!selectedStation) {
+        picsaMap.clearActiveMarker();
+        return;
+      }
+
+      const marker = this.mapMarkers().find((m) => m.data?.id === selectedStation.id);
+      if (marker) {
+        const flyTo = !this.isDistrictSwitchSelection;
+        this.isDistrictSwitchSelection = false;
+        picsaMap.setActiveMarker(marker, false, flyTo);
       }
     });
   }
@@ -333,11 +386,17 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         const picsaMap = this.picsaMap();
         if (picsaMap) {
           picsaMap.resize();
+          const bounds = this.districtAndStationBounds();
           const station = this.selectedStation();
-          if (station) {
+          if (bounds) {
+            picsaMap.fitBounds(bounds, {
+              maxZoom: 8,
+              padding: { top: 90, bottom: 90, left: 30, right: 30 },
+            });
+          } else if (station) {
             const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
             if (marker) {
-              picsaMap.setActiveMarker(marker, true);
+              picsaMap.setActiveMarker(marker, true, true);
             }
           }
         }
@@ -351,6 +410,12 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public handleLocationChanged(location: (string | undefined)[]) {
     this.selectedLocation.set(location);
+    this.selectedStation.set(undefined);
+    this.lastFittedDistrictId = undefined;
+    const picsaMap = this.picsaMap();
+    if (picsaMap) {
+      picsaMap.clearActiveMarker();
+    }
     // If complete location with district is selected, persist to userSettings
     const districtId = location[5] ?? location[4];
     if (districtId) {
@@ -359,6 +424,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   }
 
   public selectAlternateStation(recommendation: IStationRecommendation) {
+    this.isDistrictSwitchSelection = false;
     this.selectedStation.set(recommendation.station);
   }
 
@@ -387,6 +453,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       if (station.id === this.selectedStation()?.id) {
         this.confirmAndNavigate(station);
       } else {
+        this.isDistrictSwitchSelection = false;
         this.selectedStation.set(station);
       }
     }
@@ -394,14 +461,8 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public handleMarkerClick(e: IMapMarker) {
     if (e?.data) {
+      this.isDistrictSwitchSelection = false;
       this.selectedStation.set(e.data);
-    }
-  }
-
-  private handleStationSelected(selectedStation: IStationMeta, picsaMap: PicsaMapComponent) {
-    const marker = this.mapMarkers().find((m) => m.data?.id === selectedStation.id);
-    if (marker) {
-      picsaMap.setActiveMarker(marker, true);
     }
   }
 

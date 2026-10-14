@@ -60,7 +60,10 @@ class MockPicsaMapComponent {
   markers = input<any[]>([]);
   mapReady = signal(true);
   addGeoJsonLayer = jest.fn();
+  removeGeoJsonLayer = jest.fn();
   setActiveMarker = jest.fn();
+  clearActiveMarker = jest.fn();
+  fitBounds = jest.fn();
   resize = jest.fn();
 }
 

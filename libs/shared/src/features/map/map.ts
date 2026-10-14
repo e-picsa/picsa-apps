@@ -105,16 +105,32 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Set the active (selected) marker, highlighting it and centering the view.
+   * Set the active (selected) marker, highlighting it and optionally flying the camera to it.
    * @param forceZoom If true, forces zooming and centering even if already selected.
+   * @param flyTo If false, updates active highlight without moving the camera.
    */
-  public setActiveMarker(marker: IMapMarker, forceZoom = false) {
-    if (forceZoom) {
-      this.selected = {};
+  public setActiveMarker(marker: IMapMarker, forceZoom = false, flyTo = true) {
+    this.selected = { marker };
+    for (const rendered of this.renderedMarkers) {
+      if (rendered.marker._index !== marker._index) {
+        rendered.element.classList.remove('selected');
+      } else {
+        rendered.element.classList.add('selected');
+      }
     }
-    this._onMarkerClick(marker);
-    if (forceZoom) {
+    if (flyTo) {
       this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
+    }
+    this.onMarkerClick.emit(marker);
+  }
+
+  /**
+   * Clear active marker selection, removing .selected class from all markers.
+   */
+  public clearActiveMarker() {
+    this.selected = {};
+    for (const rendered of this.renderedMarkers) {
+      rendered.element.classList.remove('selected');
     }
   }
 
@@ -361,7 +377,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     } else {
       map.addSource(id, { type: 'geojson', data: geojson as any });
     }
-    const fillColor = options.fillColor || '';
+    const fillColor = options.fillColor ?? 'rgba(0, 0, 0, 0)';
+    const fillOpacity = options.fillOpacity ?? (options.fillColor ? 0.25 : 0);
     const lineColor = options.lineColor || GEOJSON_DEFAULT_COLOR;
     const fillLayerId = `${id}-fill`;
     const lineLayerId = `${id}-line`;
@@ -370,11 +387,11 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         id: fillLayerId,
         type: 'fill',
         source: id,
-        paint: { 'fill-color': fillColor, 'fill-opacity': options.fillOpacity ?? 0.25 },
+        paint: { 'fill-color': fillColor, 'fill-opacity': fillOpacity },
       });
     } else {
       map.setPaintProperty(fillLayerId, 'fill-color', fillColor);
-      map.setPaintProperty(fillLayerId, 'fill-opacity', options.fillOpacity ?? 0.25);
+      map.setPaintProperty(fillLayerId, 'fill-opacity', fillOpacity);
     }
     if (!map.getLayer(lineLayerId)) {
       map.addLayer({
@@ -451,13 +468,16 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     if (this.selected.marker?._index === marker._index) {
       return;
     }
-    const prevEntry = this.renderedMarkers.find((rendered) => rendered.marker._index === this.selected.marker?._index);
     this.selected = { marker };
     // Fly map to marker
     this.map()?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
-    // Programatically update classnames on current and previous selected marker
+    // Programatically update classnames on all markers to ensure single selection
+    for (const rendered of this.renderedMarkers) {
+      if (rendered.marker._index !== marker._index) {
+        rendered.element.classList.remove('selected');
+      }
+    }
     entry.element.classList.add('selected');
-    prevEntry?.element.classList.remove('selected');
     this.onMarkerClick.emit(marker);
   }
 }

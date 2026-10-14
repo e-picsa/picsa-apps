@@ -2,7 +2,9 @@ import { IStationMeta } from '@picsa/models';
 
 import {
   calculateHaversineDistanceKm,
+  computeFeatureBbox,
   computeFeatureBboxCenter,
+  getCombinedDistrictAndStationBounds,
   getDistrictCenterAndBoundary,
   getStationRecommendations,
   normalizeLocationName,
@@ -28,6 +30,28 @@ describe('Location Proximity Utils', () => {
       expect(normalizeLocationName('Chipepo Met')).toBe('chipepo');
       expect(normalizeLocationName('Makoholi Exp. Station (Met)')).toBe('makoholiexpstation');
       expect(normalizeLocationName(null)).toBe('');
+    });
+  });
+
+  describe('computeFeatureBbox', () => {
+    it('calculates min/max bounds from Polygon coordinates', () => {
+      const feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [20, 10],
+              [30, 10],
+              [30, 20],
+              [20, 20],
+              [20, 10],
+            ],
+          ],
+        },
+      };
+      const bbox = computeFeatureBbox(feature);
+      expect(bbox).toEqual({ minLng: 20, maxLng: 30, minLat: 10, maxLat: 20 });
     });
   });
 
@@ -60,6 +84,54 @@ describe('Location Proximity Utils', () => {
           geometry: {} as unknown as { type: string; coordinates: unknown },
         }),
       ).toBeUndefined();
+    });
+  });
+
+  describe('getCombinedDistrictAndStationBounds', () => {
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [20, 10],
+            [30, 10],
+            [30, 20],
+            [20, 20],
+            [20, 10],
+          ],
+        ],
+      },
+    };
+
+    it('includes both district feature and station outside the district', () => {
+      const station = { latitude: 25, longitude: 35 }; // outside north-east
+      const bounds = getCombinedDistrictAndStationBounds(feature, station);
+      expect(bounds).toEqual([
+        [20, 10],
+        [35, 25],
+      ]);
+    });
+
+    it('keeps district bounds when station is inside the district', () => {
+      const station = { latitude: 15, longitude: 25 }; // inside
+      const bounds = getCombinedDistrictAndStationBounds(feature, station);
+      expect(bounds).toEqual([
+        [20, 10],
+        [30, 20],
+      ]);
+    });
+
+    it('falls back to center if feature is missing', () => {
+      const bounds = getCombinedDistrictAndStationBounds(
+        undefined,
+        { latitude: -16.8, longitude: 27.0 },
+        { lat: -16.0, lng: 26.5 },
+      );
+      expect(bounds).toEqual([
+        [26.5, -16.8],
+        [27.0, -16.0],
+      ]);
     });
   });
 
