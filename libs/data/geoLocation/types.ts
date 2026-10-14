@@ -14,14 +14,6 @@ export interface IGeolocationAdmin6Location {
   topoName?: string;
 }
 
-export interface IGeolocationAdmin6Location {
-  id: string;
-  label: string;
-  admin_4: string;
-  /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
-  topoName?: string;
-}
-
 /** District-level location with resolved parent tier references */
 export interface IDeepestLocation {
   id: string;
@@ -84,16 +76,22 @@ export type ITopoJson = {
   objects: Record<string, ITopoJsonObject>;
 };
 
-interface ITopoJsonObject {
+export interface ITopoJsonFeatureProperties {
+  id: number | string;
+  name: string;
+  admin_level?: string | number;
+  /** [longitude, latitude] reference center / centroid for the administrative boundary */
+  center?: number[];
+  /** Algorithm/source used for the center point */
+  center_source?: string;
+  [key: string]: unknown;
+}
+
+export interface ITopoJsonObject {
   type: string;
   geometries: {
     arcs?: number[][][] | number[][] | number[];
     type: string | null;
-    // all other properties should be removed to reduce file size
-    properties: {
-      id: number;
-      name: string;
-      admin_level?: string | number;
-    };
+    properties: ITopoJsonFeatureProperties;
   }[];
 }

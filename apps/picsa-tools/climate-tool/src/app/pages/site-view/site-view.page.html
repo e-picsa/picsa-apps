@@ -7,7 +7,11 @@
   <div class="flex items-center w-auto max-w-full min-w-0 gap-1">
     <div class="relative min-w-36 md:min-w-48">
       <button matButton color="primary" (click)="select.open()" class="station-select">
-        @if(chartService.station(); as station){ <span class="station-select-label">{{station.name}}</span> }
+        @if(chartService.station(); as station){
+        <span class="station-select-label">
+          {{ station.name }}
+        </span>
+        }
         <mat-icon iconPositionEnd>expand_more</mat-icon>
       </button>
       <!-- Use a hidden select that opens from button (instead of using full select form component) -->
@@ -26,20 +30,20 @@
       </mat-select>
     </div>
 
-    <!-- Desktop: text button (MDC display beats non-important Tailwind, hence !inline-flex) -->
+    <!-- Desktop: text button -->
     <button matButton color="primary" (click)="goToSiteSelect()" class="map-button !hidden sm:!inline-flex">
-      <mat-icon>map</mat-icon>
-      <span>{{ 'Map' | translate }}</span>
+      <mat-icon>place</mat-icon>
+      <span>{{ 'Location' | translate }}</span>
     </button>
-    <!-- Mobile: outlined icon button with map icon -->
+    <!-- Mobile: outlined icon button with location icon -->
     <button
       matIconButton
       color="primary"
       (click)="goToSiteSelect()"
       class="sm:!hidden"
-      [attr.aria-label]="'Map' | translate"
+      [attr.aria-label]="'Location' | translate"
     >
-      <mat-icon>map</mat-icon>
+      <mat-icon>place</mat-icon>
     </button>
   </div>
 </ng-template>

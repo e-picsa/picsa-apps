@@ -1,28 +1,47 @@
 :host {
   display: contents;
-}
-.table-container {
-  @apply flex flex-1 flex-col overflow-auto;
-  // hide on smaller screens during map view
-  &[data-view='map'] {
-    @apply hidden md:flex;
-  }
-}
-.map-container {
-  @apply flex-1 relative;
-  // hide on smaller screens during table view
-  &[data-view='list'] {
-    @apply hidden md:block;
-  }
-}
-.view-toggle {
-  @apply absolute right-2 top-2 z-10 h-10 md:!hidden text-primary  bg-white;
-  margin-top: var(--status-bar-height);
-}
-.site-select-container {
-  @apply absolute bottom-8 w-full z-10 flex;
 
-  & > button {
-    @apply m-auto text-2xl shadow-2xl h-16 w-full max-w-96;
+  ::ng-deep {
+    picsa-form-location-select {
+      display: block;
+      width: 100%;
+
+      .flex.gap-4.my-4 {
+        display: flex !important;
+        width: 100% !important;
+        margin: 0 !important;
+        gap: 0.5rem !important;
+      }
+      mat-form-field {
+        flex: 1 1 0px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+      }
+      .mat-mdc-text-field-wrapper {
+        background-color: transparent !important;
+        padding: 0 !important;
+      }
+      .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: transparent !important;
+      }
+      .mat-mdc-form-field-focus-overlay,
+      .mdc-line-ripple,
+      .mdc-text-field--filled::before,
+      .mdc-text-field--filled::after {
+        display: none !important;
+      }
+      .mat-mdc-form-field-infix {
+        padding: 4px 0 !important;
+        min-height: 42px !important;
+        width: 100% !important;
+      }
+      .mat-mdc-select-trigger {
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
   }
 }

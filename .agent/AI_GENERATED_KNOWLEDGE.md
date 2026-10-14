@@ -188,7 +188,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zero Build Bloat**: The `apps/picsa-server/supabase/data/storage/` directory is not included in Angular `project.json` assets, ensuring sample binaries never bloat frontend production bundles.
 - **Dynamic Client Stubs Over Stale Database Rows**: Avoid storing daily or weekly forecast rows in database seed CSVs because date fields expire immediately. Instead, `ForecastService` supplies dynamic fallback stubs stamped with `new Date().toISOString().slice(0, 10)` when no server forecasts exist. A `?bypassStubs=true` query parameter enables developers to bypass stubs and test raw server data integration directly.
 - **Seasonal/Downscaled Retirement via `storage_file` Tombstone**: Retire forecasts by nulling `storage_file`, never by client-only filtering. All forecast queries already exclude null files, `ForecastService.reconcileForecastTombstones` purges matching RxDB docs (plus attachments) on next online sync, and the dashboard keeps listing tombstoned rows as an admin record. `bulkUpsert` never deletes, so server-side deletes/tombstones are otherwise invisible to cached clients forever. The reconcile is tombstone-only by design: mere absence from a server response must never delete, as empty dev databases would otherwise cannibalise valid bundle-seeded docs on every load (verified live: orphan-deletion wiped the `2026/seasonal/zm_en` fallback against an empty local `forecasts` table).
-- **Seed Import Overwrites `storage_file` (Tombstone Resurrection Trap)**: `db-seed.ts` applies `columnMappings` on import (`forecasts.storage_file` forced to the sample PDF) and empties tables before upserting. Retired rows must therefore be *removed* from `supabase/data/forecasts_rows.csv`, not nulled in place — nulled CSV values are overwritten back to live paths on every seed. Header-only CSVs are supported via an empty-skip guard in `importDBRows` (PostgREST rejects empty upsert payloads).
+- **Seed Import Overwrites `storage_file` (Tombstone Resurrection Trap)**: `db-seed.ts` applies `columnMappings` on import (`forecasts.storage_file` forced to the sample PDF) and empties tables before upserting. Retired rows must therefore be _removed_ from `supabase/data/forecasts_rows.csv`, not nulled in place — nulled CSV values are overwritten back to live paths on every seed. Header-only CSVs are supported via an empty-skip guard in `importDBRows` (PostgREST rejects empty upsert payloads).
 - **ZM Seasonal UUID Ordering Trap**: Legacy ZM seasonal rows use bare uuid ids while dashboard uploads use `{YEAR}/seasonal/{lang}`. Under `order('id', desc)` the stale uuid (`'c…'`) sorts ahead of current-season ids (`'2…'`), so per-country limits surface the wrong row unless old rows are tombstoned first. Match retirement predicates on `storage_file`/`label` as well as `id` — the season is absent from uuid ids.
 - **Forecast Bundle Sync (`yarn scripts:forecasts:sync`)**: Offline fallback rows live in `libs/data/climate/forecasts/{mw,zm,zw}.json` (shape `{ seasonal, downscaled }`) re-exported via `index.ts` as `FORECASTS_DB: IForecastBundleRow[]`. Never hand-edit the JSON — regenerate with the script (remote by default via `.env.server`, `--local` for docker, `--country=` to scope). The script exports live rows only (`storage_file NOT NULL`), strips `created_at`/`updated_at` for diff-stable output, and sorts byte-wise by id. `resolveJsonModule` is enabled, but JSON imports are untyped so `index.ts` uses a single documented `as unknown as` cast. Forecasts display must never use count limits — rows multiply by language, so caps silently drop translations; tombstone status (`isLiveForecast`) is the only exclusion.
 - **Inspecting RxDB/Dexie State From the Browser**: Dexie stores `_deleted` as the strings `'1'`/`'0'` (booleans are not indexable), so a raw-row check like `!!row._deleted` reports live `'0'` rows as deleted — always compare against `'1'` or read via the RxDB API. Related: `bulkUpsert` short-circuits byte-identical re-seeds without advancing `_meta.lwt`, so a frozen `lwt` across reloads means "nothing changed", not "writes are broken". In dev only, `wrappedValidateAjvStorage` rejects docs carrying props absent from the schema (e.g. legacy `location`), so server/bundle rows must pass through field-picking mappers like `SERVER_DB_MAPPING_V2` — raw rows go to the error bucket.
@@ -231,6 +231,28 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
+
+### Dynamic Header Actions via CDK Portals (`PicsaHeaderComponent`)
+
+- **Never Hack Standalone Overlay Buttons Over Header**: Do not float absolute-positioned action buttons over `<picsa-header>` using viewport hacks (e.g. `position: absolute`, `margin-top: var(--status-bar-height)`). Because page hosts frequently use `:host { display: contents }` and Angular Material MDC button CSS defaults to `position: relative`, floating buttons will either stretch across the screen as full-width bars below the header toolbar or misalign during route transitions.
+- **Portals Built into Header**: `PicsaHeaderComponent` natively provides three CDK portal outlets: `cdkPortalStart`, `cdkPortalCenter`, and `cdkPortalEnd`.
+- **Page Implementation Pattern**:
+  1. Wrap the action in `<ng-template #headerEndPortal>...</ng-template>` in the page template.
+  2. Inject `PicsaCommonComponentsService` and `ViewContainerRef` in the page component.
+  3. Query the template: `readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');`
+  4. In `ngAfterViewInit()`, mount it:
+     ```ts
+     const endPortal = this.headerEndPortal();
+     if (endPortal) {
+       this.componentsService.patchHeader({
+         cdkPortalEnd: new TemplatePortal(endPortal, this.viewContainer),
+       });
+     }
+     ```
+  5. In `ngOnDestroy()`, unmount:
+     ```ts
+     this.componentsService.patchHeader({ cdkPortalEnd: undefined });
+     ```
 
 ### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
 
@@ -392,6 +414,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Multiple Valid Stations in Same District (e.g. Salima vs Salima Airport)**: National meteorological services may operate multiple valid stations within the same district (such as `mw/salima` town/boma and `mw/salima_airport`). In production Supabase, `crop_data_downscaled` for district `salima` is linked to `mw/salima_airport`, where `crop_probability_data` has 1,750 records computed upstream. Both stations are valid, and no schema or data alteration is needed.
 - **Shared Geo Location Data Must Never Be Mutated**: `getGeoLocationData()` returns the module-level per-country singleton by reference. Location filters (e.g. crop-probability `locationModifier`) must be pure and return new objects. The location overlay destroys/recreates its select on every open (`@if (open())`), re-running the filter on the same shared object - an in-place filter/add-tier implementation permanently corrupts it (mw's synthesised `admin_5` tier was wiped on second open, leaving the sublocation dropdown empty). See `filterLocationsToProbabilityTables` and its idempotence specs.
 
+### District-to-Station Proximity & Administrative Center Resolution (`location-proximity.utils`)
+
+- **Administrative Selection as Primary Entry Point**: Rather than requiring users to identify specific weather stations on map pins or search dense lists, the climate tool entry workflow begins with standard administrative selection (Province & District via `FormLocationSelectComponent` from `@picsa/forms`).
+- **Centroid & Coordinates Fallback Architecture**: District reference coordinates are retrieved via `getDistrictCenterAndBoundary`: checking `district.coordinates` first (forward-compatible with upstream `geo-data#28` OSM `admin_centre` / centroid export) and falling back to computing the bounding box center and boundary polygon from the bundled TopoJSON feature geometry.
+- **Station Ranking & Quality Gate Scoring**: Stations are ranked via `getStationRecommendations`, computing Haversine distance with an inside-district priority boost and capability weighting (stations with $\ge 30$ complete rainfall years receive an advantage over sparse records).
+- **Location State Synchronization**: User-selected administrative location is synchronized with `ConfigurationService.userSettings().location`, ensuring district selections carry across tools (`forecasts-tool`, `crop-probability-tool`, and `climate-tool`), while `ClimateSiteViewComponent` displays the district context alongside the station name.
+
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
@@ -518,3 +547,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
+
+## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+- **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
+- **Root Causes**:
+  1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
+  2. Programmatic `setActiveMarker(marker)` called `this.onMarkerClick.emit(marker)`, creating an event feedback loop back into the host component.
+  3. MapLibre GL JS `TaskQueue.run()` sets `_currentlyRunning = true`. If a camera transition starts without `map.stop?.()` while another animation frame is running, it crashes and permanently disables the queue.
+  4. TopoJSON parsing on every keypress caused main thread stalls during rapid navigation.
+- **Solutions**:
+  1. Always invoke `map.stop?.()` before initiating `flyTo`, `easeTo`, or `fitBounds`.
+  2. Never emit click output events from programmatic marker selection methods (`setActiveMarker`).
+  3. Synchronize district boundary drawing, bounding box calculation, and marker highlight in a single unified resolution callback per request ID instead of fragmented competing effects.
+  4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
