@@ -40,6 +40,12 @@
             <span>{{ 'Downloads' | translate}}</span>
           </div>
         </a>
+        <a mat-list-item (click)="openShareApp(); drawer.close()">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">share</mat-icon>
+            <span>{{ 'Share App' | translate}}</span>
+          </div>
+        </a>
         <a mat-list-item (click)="openFeedback(); drawer.close()">
           <div style="display: flex; align-items: center">
             <mat-icon style="margin-right: 8px">feedback</mat-icon>

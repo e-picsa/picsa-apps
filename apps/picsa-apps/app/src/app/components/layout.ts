@@ -21,6 +21,7 @@ import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@pics
 import { ConfigurationService } from '@picsa/configuration/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PicsaScrollRestoreDirective } from '@picsa/shared/directives';
+import { ShareAppDialogComponent } from '@picsa/shared/features/app-share';
 import {
   FeedbackDialogComponent,
   FeedbackFabComponent,
@@ -104,6 +105,16 @@ export class AppLayoutComponent {
     this.dialog.open(FeedbackDialogComponent, {
       data: { screenPath: location.pathname },
       panelClass: 'feedback-dialog-panel',
+      maxWidth: '420px',
+      width: 'min(100vw - 24px, 420px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      autoFocus: false,
+    });
+  }
+
+  public openShareApp() {
+    this.dialog.open(ShareAppDialogComponent, {
+      panelClass: 'share-app-dialog-panel',
       maxWidth: '420px',
       width: 'min(100vw - 24px, 420px)',
       maxHeight: 'calc(100dvh - 24px)',

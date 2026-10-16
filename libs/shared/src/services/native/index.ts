@@ -1,5 +1,6 @@
 // NOTE - to use these service must import PicsaNativeModule in app root with forRoot call
 
+export * from './app-distribution.service';
 export * from './app-update';
 export * from './print';
 export * from './safe-area';

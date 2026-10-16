@@ -42,6 +42,7 @@ const MIME_TYPES: Record<string, string> = {
   '.json': 'application/json',
   '.xml': 'application/xml',
   '.zip': 'application/zip',
+  '.apk': 'application/vnd.android.package-archive',
 };
 
 // Built once at module load — first extension per MIME type wins
