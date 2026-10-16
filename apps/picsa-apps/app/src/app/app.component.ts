@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device';
 import { ConfigurationService } from '@picsa/configuration';
-import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateService } from '@picsa/i18n';
 import { PicsaMigrationService } from '@picsa/migrations';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -70,26 +68,6 @@ export class AppComponent implements OnInit {
 
     this.loadEagerServices();
     this.loadDeferredServices();
-  }
-
-  public async showDebugInfo() {
-    const { operatingSystem, osVersion, webViewVersion } = await Device.getInfo();
-    const { identifier: device_id } = await Device.getId();
-    const debugInfo = {
-      app_version: APP_VERSION,
-      user_id: this.appUserService.userId(),
-      device_id,
-      operatingSystem,
-      osVersion,
-      webViewVersion,
-    };
-    const debugText = JSON.stringify(debugInfo, null, 2);
-    alert(debugText);
-    try {
-      navigator.clipboard.writeText(debugText);
-    } catch (error) {
-      //
-    }
   }
 
   /** Load immediate services in background (non-blocking) */

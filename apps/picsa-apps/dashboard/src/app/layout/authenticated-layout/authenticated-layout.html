@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="mat-elevation-z2 flex items-center gap-2">
+<mat-toolbar #toolbar color="primary" class="mat-elevation-z2 flex items-center gap-2 shrink-0">
   <button
     matIconButton
     (click)="toggleSidebar()"
@@ -8,7 +8,19 @@
     <mat-icon>{{ isCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
   </button>
   <dashboard-deployment-select />
-  <dashboard-profile-menu class="ml-auto" />
+  <div class="flex-1"></div>
+  <a
+    matButton
+    href="https://guide.picsa.app"
+    target="_blank"
+    rel="noopener noreferrer"
+    matTooltip="Open the User Guide in a new tab"
+    class="flex items-center gap-1.5"
+  >
+    <mat-icon>menu_book</mat-icon>
+    User Guide
+  </a>
+  <dashboard-profile-menu />
 </mat-toolbar>
 <mat-sidenav-container style="flex: 1">
   <!-- Sidenav -->
@@ -17,7 +29,7 @@
     mode="side"
     opened
     [fixedInViewport]="true"
-    fixedTopGap="64"
+    [fixedTopGap]="fixedTopGap()"
     [class.is-collapsed]="isCollapsed()"
     [class.is-hovered]="isCollapsed() && isHovered()"
     (mouseenter)="onMouseEnter()"

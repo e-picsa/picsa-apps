@@ -1,5 +1,7 @@
 <div class="chart-select-container">
   @for(chart of chartService.availableCharts(); track chart._id){
+  <!-- specify chart color -->
+  @let chartColor = chart.viewSelectColor || chart.colors[0];
   <mat-card
     appearance="outlined"
     class="mat-elevation-z8 chart-card"
@@ -10,9 +12,9 @@
     routerLinkActive="chart-active"
     [routerLinkActiveOptions]="routerLinkActiveOptions"
     [replaceUrl]="true"
-    [style.color]="chart.colors[0]"
-    [style.background-color]="chart.colors[0]"
-    [style.border-color]="chart.colors[0]"
+    [style.color]="chartColor"
+    [style.background-color]="chartColor"
+    [style.border-color]="chartColor"
   >
     <div class="chart-name">{{ chart.shortname | translate }}</div>
     <div class="chart-image-container">

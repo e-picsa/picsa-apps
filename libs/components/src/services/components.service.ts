@@ -11,6 +11,7 @@ export interface IHeaderOptions {
   /** Angular portal cdk to inject component into header slots */
   cdkPortalStart?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
   cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
+  cdkPortalEnd?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
 
   hideBackButton?: boolean;
   hideHeader?: boolean;

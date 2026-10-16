@@ -9,3 +9,6 @@ export const CLIMATE_CHART_DEFINITIONS = {
   zw,
   default: defaultDefinitions(),
 };
+
+export { getChartDefinitionText } from './default';
+export * from './periods';

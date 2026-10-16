@@ -1,3 +1,17 @@
+/**
+ * Crop Variety Extractor (one-off)
+ *
+ * Scans crop-probability-tool data files to extract variety occurrences and writes
+ * per-country crop_data_rows / crop_data_downscaled_rows CSVs plus a sublocation
+ * audit report. Currently targets Malawi and Zimbabwe only (see TARGET_COUNTRIES).
+ *
+ * Usage:
+ *   yarn scripts picsa/crop-probability/extract-varieties/index
+ *
+ * Args: none (inputs, outputs and target countries are hardcoded below)
+ *
+ * NOTE: one-off data preparation - verify output carefully before committing changes.
+ */
 import { readdir, readFile, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 import { parseDaysRange, parseVarietyString, roundToNearest, IParsedVarietyOccurrence } from './parser';
@@ -22,7 +36,6 @@ interface ICropDownscaledRowCSV {
   country_code: string;
   location_id: string;
   water_requirements: string; // JSON string
-  override_data: string; // JSON string ({})
   station_id: string;
 }
 
@@ -363,20 +376,18 @@ async function runVarietyExtraction() {
         country_code: country,
         location_id: districtId,
         water_requirements: JSON.stringify(districtCrops),
-        override_data: '{}',
         station_id: districtStationId,
       });
     }
 
     const downscaledCSVPath = resolve(outputDir, `crop_data_downscaled_rows.${country}.csv`);
-    const downscaledHeader = 'country_code,location_id,water_requirements,override_data,station_id\n';
+    const downscaledHeader = 'country_code,location_id,water_requirements,station_id\n';
     const downscaledBody = downscaledCSVRows
       .map((r) =>
         [
           escapeCSVField(r.country_code),
           escapeCSVField(r.location_id),
           escapeCSVField(r.water_requirements),
-          escapeCSVField(r.override_data),
           escapeCSVField(r.station_id),
         ].join(','),
       )

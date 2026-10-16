@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Harsh sun in top-right corner -->
+  <path d="M42 10 a10 10 0 0 1 12 12" stroke="#d97706" stroke-width="3" stroke-linecap="round" fill="none" />
+  <line x1="40" y1="6" x2="37" y2="4" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="58" y1="24" x2="60" y2="27" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="51" y1="9" x2="54" y2="6" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Ground surface horizon -->
+  <path d="M10 40 H54" stroke="#78350f" stroke-width="3" stroke-linecap="round" />
+  <!-- Deep parched soil fissures / cracks -->
+  <path d="M22 40 L26 47 L34 49 L38 56" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M26 47 L21 53" stroke="#78350f" stroke-width="2" stroke-linecap="round" fill="none" />
+  <path d="M42 40 L45 46 L43 52" stroke="#78350f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>

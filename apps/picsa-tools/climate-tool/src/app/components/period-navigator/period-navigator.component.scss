@@ -1,0 +1,22 @@
+.period-navigator-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 4px 0;
+  margin-bottom: 4px;
+}
+
+.period-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  min-width: 120px;
+  text-align: center;
+  color: #1f2937;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

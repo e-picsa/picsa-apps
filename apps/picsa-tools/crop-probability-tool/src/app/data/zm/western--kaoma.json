@@ -1,0 +1,227 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "PHB30G19",
+        "days": "110 - 130",
+        "days_lower": 110,
+        "days_upper": 130,
+        "water": [
+          420
+        ],
+        "probabilities": [
+          0.9,
+          0.7,
+          0.5,
+          0.3
+        ]
+      },
+      {
+        "variety": "WH-507",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [
+          460
+        ],
+        "probabilities": [
+          0.9,
+          0.7,
+          0.4,
+          0.2
+        ]
+      },
+      {
+        "variety": "MRI514, PAN-53, ZMS-606",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          440
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.4,
+          0.2
+        ]
+      },
+      {
+        "variety": "SC-627",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [
+          440
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "SC-647",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [
+          425
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "SY6444",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [
+          435
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "ZMS-608Y",
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [
+          470
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "P3812W",
+        "days": "135 - 145",
+        "days_lower": 135,
+        "days_upper": 145,
+        "water": [
+          490
+        ],
+        "probabilities": [
+          0.7,
+          0.4,
+          0.2,
+          0
+        ]
+      },
+      {
+        "variety": "ZMS-720, ZMS-721",
+        "days": "140 - 150",
+        "days_lower": 140,
+        "days_upper": 150,
+        "water": [
+          510
+        ],
+        "probabilities": [
+          0.6,
+          0.3,
+          0.1,
+          0
+        ]
+      },
+      {
+        "variety": "SC-719",
+        "days": "145 - 150",
+        "days_lower": 145,
+        "days_upper": 150,
+        "water": [
+          440
+        ],
+        "probabilities": [
+          0.6,
+          0.3,
+          0.1,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "rice",
+    "data": [
+      {
+        "variety": "SUPER",
+        "days": "110 - 120",
+        "days_lower": 110,
+        "days_upper": 120,
+        "water": [
+          710
+        ],
+        "probabilities": [
+          0.4,
+          0.5,
+          0.4,
+          0.2
+        ]
+      },
+      {
+        "variety": "MONGU",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [
+          710
+        ],
+        "probabilities": [
+          0.5,
+          0.5,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "variety": "NERICA-4",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [
+          755
+        ],
+        "probabilities": [
+          0.4,
+          0.4,
+          0.3,
+          0.1
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "LUBASI",
+        "days": "110 - 125",
+        "days_lower": 110,
+        "days_upper": 125,
+        "water": [
+          360
+        ],
+        "probabilities": [
+          0.9,
+          0.8,
+          0.6,
+          0.3
+        ]
+      }
+    ]
+  }
+]

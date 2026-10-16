@@ -11,8 +11,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
-import { topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { getDeepestAdminLevel, getDeepestLocations, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -23,7 +25,7 @@ import { ICropDataDownscaled } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-linked-station-select',
-  imports: [MatSelectModule, MatFormField, MatButtonModule, PicsaMapComponent],
+  imports: [MatSelectModule, MatFormField, MatButtonModule, MatIconModule, MatTooltipModule, PicsaMapComponent],
   templateUrl: './linked-station-select.component.html',
   styleUrl: './linked-station-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,7 @@ export class CropLinkedStationSelectComponent {
   private deploymentService = inject(DeploymentDashboardService);
 
   public allStations = signal<IStationRow[]>([]);
+  public stationProbabilitiesMap = signal<Map<string, number>>(new Map());
   public locationId = input.required<string>();
   public downscaledData = input.required<ICropDataDownscaled['Row']>();
 
@@ -71,10 +74,21 @@ export class CropLinkedStationSelectComponent {
     }));
   });
 
+  public readonly selectedStation = computed(() => {
+    const id = this.selectedStationId();
+    if (!id) return undefined;
+    return this.allStations().find((s) => s.id === id);
+  });
+
   public getSelectedStationName(id: string | undefined): string {
     if (!id) return '';
     const station = this.allStations().find((s) => s.id === id);
     return station?.station_name || '';
+  }
+
+  public getStationProbabilityCount(stationId: string | null | undefined): number {
+    if (!stationId) return 0;
+    return this.stationProbabilitiesMap().get(stationId) ?? 0;
   }
 
   constructor() {
@@ -82,7 +96,9 @@ export class CropLinkedStationSelectComponent {
       const countryCode = this.deploymentService.activeDeploymentCountry();
       const locationId = this.locationId();
       if (countryCode && locationId) {
-        this.handleLocationChange(countryCode, locationId);
+        this.handleLocationChange(countryCode, locationId).catch((error) => {
+          console.error('Failed to load linked station data:', error);
+        });
       }
     });
 
@@ -90,49 +106,34 @@ export class CropLinkedStationSelectComponent {
       this.selectedStationId.set(this.downscaledData()?.station_id || undefined);
     });
 
-    // Reactive effect to draw/highlight the district polygon on the Leaflet map
+    // Reactive effect to draw/highlight the district polygon on the map
     effect((cleanup) => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const districtGeo = this.locationGeoJson();
+      if (!mapComponent || !mapComponent.mapReady() || !districtGeo) return;
 
-      if (!mapComponent || !map || !districtGeo) return;
-
-      const L = mapComponent.L;
-
-      const geoJsonLayer = L.geoJSON(districtGeo, {
-        style: {
-          color: '#3388ff',
-          fillColor: '#3388ff',
-          weight: 3,
-          opacity: 0.8,
-          fillOpacity: 0.25,
-        },
+      mapComponent.addGeoJsonLayer('district-boundary', districtGeo, {
+        fillColor: '#3388ff',
+        fillOpacity: 0.25,
+        lineColor: '#3388ff',
+        lineWidth: 3,
+        lineOpacity: 0.8,
+        fitBounds: true,
+        padding: 30,
       });
 
-      geoJsonLayer.addTo(map);
-
-      // Fit map bounds to the district boundary
-      const bounds = geoJsonLayer.getBounds();
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [30, 30] });
-      }
-
       cleanup(() => {
-        if (map.hasLayer(geoJsonLayer)) {
-          map.removeLayer(geoJsonLayer);
-        }
+        mapComponent.removeGeoJsonLayer('district-boundary');
       });
     });
 
     // Reactive effect to highlight the selected station's marker on the map when ready
     effect(() => {
       const mapComponent = this.picsaMap();
-      const map = mapComponent?.map();
       const selectedId = this.selectedStationId();
       const markers = this.mapMarkers();
 
-      if (!mapComponent || !map || !selectedId || markers.length === 0) return;
+      if (!mapComponent || !mapComponent.mapReady() || !selectedId || markers.length === 0) return;
 
       const selectedMarkerIndex = this.stationsWithCoords().findIndex((s) => s.id === selectedId);
 
@@ -140,11 +141,7 @@ export class CropLinkedStationSelectComponent {
         const marker = markers.find((m) => m._index === selectedMarkerIndex);
         if (marker) {
           setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const currentSelected = (mapComponent as any).selected?.marker;
-            if (!currentSelected || currentSelected._index !== marker._index) {
-              mapComponent.setActiveMarker(marker);
-            }
+            mapComponent.setActiveMarker(marker);
           }, 200);
         }
       }
@@ -156,6 +153,7 @@ export class CropLinkedStationSelectComponent {
     this.allStations.set(stations);
     const geoJsonFeature = await this.fetchMapData(countryCode, locationId);
     this.locationGeoJson.set(geoJsonFeature);
+    await this.fetchStationProbabilities(countryCode);
   }
 
   /** Retrieve list of climate stations from db */
@@ -169,21 +167,41 @@ export class CropLinkedStationSelectComponent {
     return data || [];
   }
 
+  /** Retrieve station crop probabilities availability */
+  private async fetchStationProbabilities(countryCode: CountryCodeLegacy) {
+    await this.supabaseService.ready();
+    const { data } = await this.supabaseService.db
+      .table('climate_station_data')
+      .select('station_id, crop_probability_data')
+      .eq('country_code', countryCode);
+    const map = new Map<string, number>();
+    if (data) {
+      for (const row of data) {
+        const count = Array.isArray(row.crop_probability_data) ? row.crop_probability_data.length : 0;
+        map.set(row.station_id, count);
+      }
+    }
+    this.stationProbabilitiesMap.set(map);
+  }
+
   /** Retrieve TopoJSON, convert to GeoJSON and match the current location's geometry */
   private async fetchMapData(countryCode: CountryCodeLegacy, locationId: string): Promise<any> {
     const locationData = this.deploymentService.activeDeploymentLocationData();
     if (!locationData) return undefined;
 
     const topojsonObj = await locationData.topoJson();
-    const adminLevel = locationData.admin_5 ? 5 : 4;
+    // filter to deepest tier with data - district geometries appear once level 6 topo exists
+    const adminLevel = getDeepestAdminLevel(locationData);
     const geojson = topoJsonToGeoJson(topojsonObj, adminLevel);
 
-    const locations = locationData.admin_5?.locations || locationData.admin_4.locations;
+    const locations = getDeepestLocations(locationData);
     const location = locations.find((v) => v.id === locationId);
 
     if (location) {
-      const normalizedTarget = this.normalizeName(location.label);
-      return geojson.features.find((f) => this.normalizeName(f.properties.name) === normalizedTarget);
+      const candidates = [location.label, (location as { topoName?: string }).topoName].filter((v): v is string => !!v);
+      return geojson.features.find((f) =>
+        candidates.some((name) => this.normalizeName(f.properties.name) === this.normalizeName(name)),
+      );
     }
     return undefined;
   }

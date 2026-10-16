@@ -1,47 +1,57 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
   OnDestroy,
+  OnInit,
   signal,
-  untracked,
+  TemplateRef,
+  ViewChild,
   viewChildren,
+  ViewContainerRef,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { ICountryCode } from '@picsa/data';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
+import { getGeoLocationData, getLocationLabel, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-item';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IResourceLink } from '@picsa/resources/schemas';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
 import { RxDocument } from 'rxdb';
 
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
 import { IForecast } from '../../schemas';
-import { ForecastService } from '../../services/forecast.service';
+import { ForecastService, isStubForecast } from '../../services/forecast.service';
+import { ForecastScrollAffordanceDirective } from './forecast-scroll-affordance.directive';
 
 const STRINGS = {
   National: translateMarker('National'),
   NoData: translateMarker('No data available'),
   UpToDate: translateMarker('Up to date'),
-  Stale: translateMarker('Stale data'),
-  Checking: translateMarker('Checking for updates…'),
-  Offline: translateMarker('Offline - showing saved forecasts'),
-  Error: translateMarker('Could not check for updates'),
-  NeverSynced: translateMarker('No data Available'),
+  Refresh: translateMarker('Refresh'),
+  RefreshForecasts: translateMarker('Refresh forecasts'),
+  ForecastsUpToDate: translateMarker('Forecasts are up to date'),
+  SelectLocation: translateMarker('Select Location'),
+  LoadingForecasts: translateMarker('Loading forecasts...'),
+  DownloadFailed: translateMarker('Could not download forecast. Check your connection and try again.'),
 };
 
 interface IForecastSummary {
@@ -63,22 +73,14 @@ interface IForecastCategory {
   loading: boolean;
 }
 
-interface ISyncStatus {
-  state: 'idle' | 'updating' | 'success' | 'stale' | 'offline' | 'error';
-  icon: string;
-  /** e.g. `Up to Date`, `Offline` */
-  label: string;
-  /** e.g. `Last checked: 2 hours ago` */
-  detail?: string;
-}
-
-const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+const FRESHNESS_THRESHOLD_MS = 12 * 60 * 60 * 1000;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './forecast.page.html',
   styleUrls: ['./forecast.page.scss'],
   imports: [
     CommonModule,
+    ForecastScrollAffordanceDirective,
     ForecastViewerComponent,
     MatButtonModule,
     MatIcon,
@@ -90,11 +92,16 @@ const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
     SupabaseStorageDownloadComponent,
   ],
 })
-export class ForecastComponent implements OnDestroy {
+export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   private service = inject(ForecastService);
   private configurationService = inject(ConfigurationService);
-  private snackbar = inject(MatSnackBar);
-  readonly dismissedBannerKey = signal<string | undefined>(undefined);
+  private componentsService = inject(PicsaCommonComponentsService);
+  private notificationService = inject(PicsaNotificationService);
+  private translateService = inject(PicsaTranslateService);
+  private viewContainer = inject(ViewContainerRef);
+
+  @ViewChild('headerCenterPortal') headerCenterPortal!: TemplateRef<unknown>;
+  @ViewChild('headerEndPortal') headerEndPortal!: TemplateRef<unknown>;
 
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
@@ -109,16 +116,21 @@ export class ForecastComponent implements OnDestroy {
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
   public locationReady = computed(() => {
-    const location = this.locationSelected() || [];
-    return !!location[2] && !!location[4];
+    const country = this.countryCode();
+    if (!country) return false;
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
+
+  public selectedLocationLabel = computed(() => {
+    const country = this.countryCode();
+    if (!country) return undefined;
+    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+  });
+
+  public locationOverlayOpen = signal(false);
 
   public loading = computed(() => this.service.loadingForecasts());
   public loadingDownscaled = computed(() => this.service.loadingDownscaled());
-
-  // Activity that should render the animated spinner
-  public refreshing = computed(() => this.service.isForceRefreshing());
-  public syncing = computed(() => this.loading() || this.loadingDownscaled() || this.refreshing());
 
   public resourceLinks = computed<IResourceLink[]>(() => {
     const { country_code } = this.configurationService.userSettings();
@@ -126,16 +138,16 @@ export class ForecastComponent implements OnDestroy {
   });
 
   // Utility to add type-safety to implicit ng-template data
-  public toForecastType = (data: any) => data as IForecastSummary;
-  public toCategory = (data: any) => data as IForecastCategory;
+  public toForecastType = (data: unknown) => data as IForecastSummary;
+  public toCategory = (data: unknown) => data as IForecastCategory;
 
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
   /** Categories are always rendered - each falls back to "No data available" */
   public shortTermCategories = computed<IForecastCategory[]>(() => [
-    { id: 'weekly', title: translateMarker('Weekly'), forecasts: this.weeklyForecasts(), loading: this.loading() },
     { id: 'daily', title: translateMarker('Daily'), forecasts: this.dailyForecasts(), loading: this.loading() },
+    { id: 'weekly', title: translateMarker('Weekly'), forecasts: this.weeklyForecasts(), loading: this.loading() },
   ]);
 
   public seasonalCategories = computed<IForecastCategory[]>(() => [
@@ -153,88 +165,123 @@ export class ForecastComponent implements OnDestroy {
     },
   ]);
 
-  /** Ticking clock used to keep relative "x hours ago" labels fresh */
-  private now = signal(Date.now());
-  private nowInterval = setInterval(() => this.now.set(Date.now()), 30_000);
-
-  public syncStatus = computed<ISyncStatus>(() => {
-    const state = this.service.syncState();
-    const lastSyncedAt = this.service.lastSyncedAt();
-    const now = this.now();
-
-    const detail = lastSyncedAt
-      ? `${translateMarker('Last checked')}: ${formatRelativeTime(new Date(lastSyncedAt).getTime(), now)}`
-      : STRINGS.NeverSynced;
-
-    if (this.syncing()) {
-      return { state: 'updating', icon: 'sync', label: STRINGS.Checking };
-    }
-    if (state === 'offline') {
-      return { state: 'offline', icon: 'cloud_off', label: STRINGS.Offline };
-    }
-    if (state === 'error') {
-      return { state: 'error', icon: 'error_outline', label: STRINGS.Error };
-    }
-    const isStale = !lastSyncedAt || now - new Date(lastSyncedAt).getTime() > STALE_THRESHOLD_MS;
-    return isStale
-      ? { state: 'stale', icon: 'schedule', label: STRINGS.Stale, detail }
-      : { state: 'success', icon: 'cloud_done', label: STRINGS.UpToDate, detail };
+  public isCheckedWithin12Hours = computed(() => {
+    const last = this.service.lastSyncedAt();
+    if (!last) return false;
+    return Date.now() - new Date(last).getTime() < FRESHNESS_THRESHOLD_MS;
   });
 
-  /** Inline banner message shown when a refresh fails (cached data is retained) */
-  public syncErrorMessage = computed(() => (this.syncing() ? undefined : this.service.syncError()));
+  public showOfflineBadge = computed(() => {
+    const notCheckedIn12Hours = !this.isCheckedWithin12Hours();
+    const isOffline = !this.isOnline() || this.service.syncState() === 'offline';
+    return notCheckedIn12Hours && isOffline;
+  });
 
-  /** Track last notified error to avoid duplicate toasts */
-  private lastNotifiedError?: string;
+  private isOnline() {
+    return typeof navigator === 'undefined' ? true : navigator.onLine !== false;
+  }
 
   constructor() {
     effect(() => {
       const { location } = this.configurationService.userSettings();
       this.service.setForecastLocation(location);
     });
-    // Toast feedback for offline/error sync states (data remains cached)
+
+    // Auto-open location overlay if location is not set when entering tool
     effect(() => {
-      const state = this.service.syncState();
-      const message = this.service.syncError();
-      untracked(() => {
-        if ((state === 'offline' || state === 'error') && message && message !== this.lastNotifiedError) {
-          this.lastNotifiedError = message;
-          this.snackbar.open(message, undefined, { duration: 4000, panelClass: 'forecast-sync-snackbar' });
-        }
-        if (state === 'success') {
-          this.lastNotifiedError = undefined;
-        }
-      });
+      const ready = this.locationReady();
+      if (!ready) {
+        this.locationOverlayOpen.set(true);
+      }
     });
   }
 
+  public hasRefreshedSuccessfully = signal(false);
+  public isManualRefreshing = signal(false);
+  public isRefreshing = computed(() => this.isManualRefreshing() || this.service.isForceRefreshing());
+
+  ngOnInit() {
+    // Subtly check for updates when entering the page if not checked within 12 hours
+    if (this.locationReady() && !this.isCheckedWithin12Hours()) {
+      this.executeRefreshWithMinTime()
+        .then((success) => {
+          if (success) {
+            this.hasRefreshedSuccessfully.set(true);
+          }
+        })
+        .catch((err) => console.error('[Forecast] refresh error', err));
+    }
+  }
+
+  private async executeRefreshWithMinTime(): Promise<boolean> {
+    const MIN_REFRESH_TIME_MS = 800;
+    const startTime = Date.now();
+    this.isManualRefreshing.set(true);
+
+    try {
+      await this.service.forceRefresh();
+    } catch (err) {
+      console.error('[Forecast] refresh error', err);
+    } finally {
+      const elapsed = Date.now() - startTime;
+      if (elapsed < MIN_REFRESH_TIME_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_REFRESH_TIME_MS - elapsed));
+      }
+      this.isManualRefreshing.set(false);
+    }
+
+    return this.service.syncState() !== 'error' && this.service.syncState() !== 'offline';
+  }
+
+  ngAfterViewInit() {
+    this.componentsService.patchHeader({
+      cdkPortalCenter: new TemplatePortal(this.headerCenterPortal, this.viewContainer),
+      cdkPortalEnd: new TemplatePortal(this.headerEndPortal, this.viewContainer),
+    });
+  }
+
+  public handleLocationConfirmed(location: (string | undefined)[]): void {
+    this.hasRefreshedSuccessfully.set(false);
+    this.configurationService.updateUserSettings({ location });
+    this.locationOverlayOpen.set(false);
+  }
+
   ngOnDestroy() {
+    this.componentsService.patchHeader({
+      cdkPortalCenter: undefined,
+      cdkPortalEnd: undefined,
+    });
     this.service.setForecastLocation(undefined);
   }
 
-  public handleLocationUpdate(location: (string | undefined)[]) {
-    this.configurationService.updateUserSettings({ location });
-  }
-
   public async handleForceRefresh() {
-    await this.service.forceRefresh();
+    if (this.isRefreshing() || this.hasRefreshedSuccessfully()) return;
+    const success = await this.executeRefreshWithMinTime();
+    if (success) {
+      this.hasRefreshedSuccessfully.set(true);
+    }
   }
 
   public async handleForecastClick(forecast: IForecastSummary) {
-    // open downloaded forecast
+    // open already-downloaded forecasts directly (fully offline)
     if (forecast.downloaded) {
       this.openForecast(forecast);
+      return;
     }
-    // download and open new forecast
-    else {
-      const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
-      if (downloader) {
-        await this.service.downloadForecastFile(forecast._doc, downloader);
-        forecast._doc = forecast._doc.getLatest();
-        if (forecast._doc.getAttachment(forecast.storage_file)) {
-          this.openForecast(forecast);
-        }
-      }
+    // download and open new forecasts (requires connection)
+    const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
+    if (!downloader) return;
+    try {
+      await this.service.downloadForecastFile(forecast._doc, downloader);
+    } catch (err) {
+      console.error('[Forecast] download failed', err);
+      const message = this.translateService.instant(STRINGS.DownloadFailed);
+      this.notificationService.showErrorNotification(message);
+      return;
+    }
+    forecast._doc = forecast._doc.getLatest();
+    if (forecast._doc.getAttachment(forecast.storage_file)) {
+      this.openForecast(forecast);
     }
   }
 
@@ -244,7 +291,10 @@ export class ForecastComponent implements OnDestroy {
   }
 
   private generateForecastSummary(docs: RxDocument<IForecast>[]): IForecastSummary[] {
-    const summaries = docs.map((doc) => {
+    // Display-layer bypass guarantee: stubs never render while bypassing, regardless
+    // of what the local cache holds (failed purges, races, legacy rows)
+    const visibleDocs = this.service.bypassStubs ? docs.filter((doc) => !isStubForecast(doc)) : docs;
+    const summaries = visibleDocs.map((doc) => {
       const { id, storage_file, forecast_type, language_code } = doc;
       // rename seasonal forecast title to say 'national' instead
       const title = forecast_type === 'seasonal' ? STRINGS.National : (forecast_type as string);
@@ -289,22 +339,6 @@ export class ForecastComponent implements OnDestroy {
     if (label) return label;
     return storageFileToLabel(storage_file);
   }
-
-  // Banner is visible when there's an error that hasn't been dismissed
-  readonly bannerKey = computed(() => {
-    const error = this.syncErrorMessage();
-
-    return error ? `${this.locationSelected()}|${error}` : undefined;
-  });
-  readonly showBanner = computed(() => {
-    const key = this.bannerKey();
-
-    return key !== undefined && key !== this.dismissedBannerKey();
-  });
-
-  closeBanner(): void {
-    this.dismissedBannerKey.set(this.bannerKey());
-  }
 }
 
 function storageFileToLabel(storage_file: string) {
@@ -314,23 +348,4 @@ function storageFileToLabel(storage_file: string) {
     return basename.replace(/[-_]/g, ' ');
   }
   return storage_file;
-}
-
-function formatRelativeTime(from: number, now: number) {
-  const diff = Math.max(0, now - from);
-  const minutes = Math.round(diff / 60_000);
-
-  if (minutes < 1) return translateMarker('just now');
-
-  if (minutes < 60) {
-    return `${minutes} ${translateMarker(minutes === 1 ? 'minute' : 'minutes')} ${translateMarker('ago')}`;
-  }
-
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) {
-    return `${hours} ${translateMarker(hours === 1 ? 'hour' : 'hours')} ${translateMarker('ago')}`;
-  }
-
-  const days = Math.round(hours / 24);
-  return `${days} ${translateMarker(days === 1 ? 'day' : 'days')} ${translateMarker('ago')}`;
 }

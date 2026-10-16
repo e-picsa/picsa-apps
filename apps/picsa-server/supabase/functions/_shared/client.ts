@@ -28,9 +28,12 @@ export const getClient = (req?: Request) => {
         schema: 'public',
       },
       auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
+        // Disabled: server-side edge functions authenticate via the per-request
+        // Authorization header. Enabling these browser-oriented options spawns an
+        // auto-refresh interval timer that Deno's test sanitizer flags as a leak.
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
       },
       global: {
         headers,

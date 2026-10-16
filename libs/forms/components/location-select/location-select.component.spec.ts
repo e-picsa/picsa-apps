@@ -1,18 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationSelectComponent } from './location-select.component';
+import { FormLocationSelectComponent } from './location-select.component';
 
-describe('LocationSelectComponent', () => {
-  let component: LocationSelectComponent;
-  let fixture: ComponentFixture<LocationSelectComponent>;
+describe('FormLocationSelectComponent', () => {
+  let component: FormLocationSelectComponent;
+  let fixture: ComponentFixture<FormLocationSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LocationSelectComponent],
+      imports: [FormLocationSelectComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LocationSelectComponent);
+    fixture = TestBed.createComponent(FormLocationSelectComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('countryCode', 'zm');
     fixture.detectChanges();
   });
 

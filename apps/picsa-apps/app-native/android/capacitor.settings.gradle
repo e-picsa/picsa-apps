@@ -8,6 +8,9 @@ project(':capacitor-app').projectDir = new File('../../../../node_modules/@capac
 include ':capacitor-browser'
 project(':capacitor-browser').projectDir = new File('../../../../node_modules/@capacitor/browser/android')
 
+include ':capawesome-capacitor-screenshot'
+project(':capawesome-capacitor-screenshot').projectDir = new File('../../../../node_modules/@capawesome/capacitor-screenshot/android')
+
 include ':capacitor-device'
 project(':capacitor-device').projectDir = new File('../../../../node_modules/@capacitor/device/android')
 
@@ -43,3 +46,6 @@ project(':capacitor-share').projectDir = new File('../../../../node_modules/@cap
 
 include ':capacitor-push-notifications'
 project(':capacitor-push-notifications').projectDir = new File('../../../../node_modules/@capacitor/push-notifications/android')
+
+include ':capawesome-capacitor-app-update'
+project(':capawesome-capacitor-app-update').projectDir = new File('../../../../node_modules/@capawesome/capacitor-app-update/android')

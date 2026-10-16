@@ -1,10 +1,12 @@
 @if (supabaseAuthService.authUser(); as user) {
-  <div style="position: absolute; top: 4px; right: 8px; font-size: 12px">
-    {{ user.email }}
-  </div>
-  <button matButton [matMenuTriggerFor]="beforeMenu" style="margin-top: 16px">
-    User
-    <mat-icon iconPositionEnd>account_circle</mat-icon>
+  <button matButton [matMenuTriggerFor]="beforeMenu" id="profileMenu" class="flex flex-col justify-center items-center">
+    <div class="text-xs max-w-40 overflow-hidden overflow-ellipsis">
+      {{ user.email }}
+    </div>
+    <div class="flex gap-2 justify-center items-center">
+      <span>User</span>
+      <mat-icon iconPositionEnd>account_circle</mat-icon>
+    </div>
   </button>
   <mat-menu #beforeMenu="matMenu" xPosition="before">
     <button mat-menu-item routerLink="/profile">

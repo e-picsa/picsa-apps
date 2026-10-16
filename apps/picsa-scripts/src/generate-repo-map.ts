@@ -1,3 +1,15 @@
+/**
+ * Repository Symbol Map Generator
+ *
+ * Scans the monorepo for TypeScript path aliases (@picsa/*) and code symbols
+ * (services, components, directives, pipes) plus Supabase migrations, and writes
+ * the results to .agent/generated-repo-map.md for agent context.
+ *
+ * Usage:
+ *   yarn ai:gen-codemap
+ *
+ * Args: none
+ */
 import * as fs from 'fs';
 import * as path from 'path';
 import { Project, SyntaxKind } from 'ts-morph';
@@ -163,6 +175,8 @@ function run() {
     'apps/picsa-server/**/*.ts',
     'apps/sites/*/src/**/*.ts',
     'libs/*/src/**/*.ts',
+    // Flat libs without a src/ directory (e.g. libs/forms, libs/utils, libs/models)
+    'libs/*/**/*.ts',
     'libs/*.ts',
     'libs/*/index.ts',
   ];

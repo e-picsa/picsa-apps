@@ -1,7 +1,7 @@
 .tool-select-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 
 mat-card.tool-card {
@@ -10,13 +10,14 @@ mat-card.tool-card {
   border-style: solid;
   border-color: #e0e0e0;
   width: 100%;
-  max-width: 88px;
+  max-width: 80px;
   cursor: pointer;
   text-align: center;
   box-shadow: none;
   opacity: 0.7;
   transition: all 0.2s ease-in-out;
   border-radius: 8px;
+  box-sizing: border-box;
 
   &:hover {
     opacity: 0.95;
@@ -45,10 +46,13 @@ mat-card.tool-card[data-enabled='true'] {
   margin-bottom: 4px;
   color: #424242;
   transition: color 0.2s ease-in-out;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tool-image {
-  height: 56px;
-  width: 56px;
+  height: 50px;
+  width: 50px;
   margin: auto;
 }

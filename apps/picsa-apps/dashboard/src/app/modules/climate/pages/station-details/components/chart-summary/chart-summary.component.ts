@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
-import { IChartMeta, IStationData } from '@picsa/models/src';
+import { IChartMeta, IStationData } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { ChartConfiguration } from 'c3';
 

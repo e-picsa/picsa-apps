@@ -1,4 +1,6 @@
-<h2 class="period-title">{{ periodLabel() | translate }}</h2>
+@if (periodLabel(); as label) {
+  <h2 class="period-title">{{ label.prefix | translate }}{{ label.suffix ? ' ' + label.suffix : '' }}</h2>
+}
 <!-- Editor -->
 <div id="editorContainer">
   @for (editorStep of editorSteps; track editorStep.type) {

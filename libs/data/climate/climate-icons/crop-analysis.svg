@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Maize cob -->
+  <path d="M34 10 c6 0 10 6 10 16 c0 12 -5 22 -10 24 c-5 -2 -10 -12 -10 -24 c0 -10 4 -16 10 -16 z" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+  <path d="M26 34 c4 12 10 18 18 18" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <path d="M42 34 c-4 12 -10 18 -18 18" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <!-- Analytics trend line -->
+  <path d="M12 44 l14 -12 l10 8 l16 -16" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <circle cx="26" cy="32" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="2" />
+  <circle cx="36" cy="40" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="2" />
+  <circle cx="52" cy="24" r="3.5" fill="#2563eb" />
+</svg>

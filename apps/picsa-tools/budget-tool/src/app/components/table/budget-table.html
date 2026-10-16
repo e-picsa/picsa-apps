@@ -31,7 +31,11 @@
         </button>
         }
         <!-- Label -->
-        <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
+        <span style="flex: 1">
+          @if (store.periodLabels[columnIndex]; as label) {
+            {{ label.prefix | translate }}{{ label.suffix ? ' ' + label.suffix : '' }}
+          }
+        </span>
         <!-- Editor - Copy -->
         @if (service.editMode()) {
         <button matIconButton class="editor-button" (click)="store.editorCopyTimePeriod(columnIndex)">
@@ -54,7 +58,11 @@
         @if(service.cashBalances()[columnIndex]; as cashBalance){
         <div class="balance-cell-contents">
           <div class="balance-value-container">
-            <div class="balance-label">{{ store.periodLabels[columnIndex] | translate }}</div>
+            <div class="balance-label">
+              @if (store.periodLabels[columnIndex]; as label) {
+                {{ label.prefix | translate }}{{ label.suffix ? ' ' + label.suffix : '' }}
+              }
+            </div>
             <div class="balance-value">{{ cashBalance.balance | number: '.0' }}</div>
           </div>
           <hr />

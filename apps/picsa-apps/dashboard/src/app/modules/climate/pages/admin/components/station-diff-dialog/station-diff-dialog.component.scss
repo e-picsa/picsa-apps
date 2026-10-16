@@ -1,0 +1,169 @@
+.product-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  color: inherit;
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container, #f5f5f5);
+  }
+
+  &.active {
+    background-color: #1976d2;
+    color: #ffffff;
+    border-color: #1976d2;
+
+    .badge-sync {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .badge-empty {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .diff-box {
+      &.box-added {
+        background-color: #bbdefb;
+        color: #0d47a1;
+        border-color: #90caf9;
+      }
+      &.box-removed {
+        background-color: #ffcdd2;
+        color: #b71c1c;
+        border-color: #ef9a9a;
+      }
+      &.box-changed {
+        background-color: #ffecb3;
+        color: #b45309;
+        border-color: #ffe082;
+      }
+    }
+  }
+
+  .tab-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+
+    &.badge-sync {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    &.badge-empty {
+      background-color: #f5f5f5;
+      color: #9e9e9e;
+    }
+  }
+
+  .product-diff-boxes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .diff-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.25rem;
+    padding: 0 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 4px;
+    line-height: 1;
+
+    &.box-added {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #bbdefb;
+    }
+
+    &.box-removed {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+
+    &.box-changed {
+      background-color: #fff8e1;
+      color: #b45309;
+      border: 1px solid #ffe0b2;
+    }
+  }
+}
+
+.changes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+
+  th,
+  td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--mat-sys-outline-variant, #eeeeee);
+  }
+
+  th {
+    background-color: var(--mat-sys-surface-container-low, #f8f9fa);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  tr:hover td {
+    background-color: var(--mat-sys-surface-container, #f5f5f5);
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+
+  ::ng-deep {
+    picsa-chart {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-container,
+    .c3 {
+      width: 100% !important;
+      height: 100%;
+    }
+
+    // App data line a small amount thicker at the bottom
+    .c3-lines [class*='c3-line-'][class*='_app'] {
+      stroke-width: 4px !important;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .c3-circles [class*='c3-circle-'][class*='_app'] {
+      r: 5px;
+    }
+
+    // Data system line on top
+    .c3-lines [class*='c3-line-'][class*='_db'] {
+      stroke-width: 4px !important;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .c3-circles [class*='c3-circle-'][class*='_db'] {
+      r: 3px;
+    }
+  }
+}

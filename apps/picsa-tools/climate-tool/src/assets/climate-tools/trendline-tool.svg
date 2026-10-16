@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Scatter Points (varied vertical spread around trendline) -->
+  <circle cx="24" cy="108" r="8" fill="#a9a9a9" />
+  <circle cx="42" cy="62" r="8" fill="#a9a9a9" />
+  <circle cx="58" cy="92" r="8" fill="#a9a9a9" />
+  <circle cx="72" cy="46" r="8" fill="#a9a9a9" />
+  <circle cx="88" cy="76" r="8" fill="#a9a9a9" />
+  <circle cx="106" cy="24" r="8" fill="#a9a9a9" />
+  <!-- Trendline -->
+  <line x1="16" y1="104" x2="114" y2="28" stroke="#13599e" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 6" />
+</svg>

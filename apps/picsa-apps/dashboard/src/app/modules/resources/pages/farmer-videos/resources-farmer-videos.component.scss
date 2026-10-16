@@ -1,0 +1,54 @@
+// Matrix Table sticky columns and fixed coordinates
+.matrix-table {
+  border-collapse: separate;
+  border-spacing: 0;
+
+  .sticky-step-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #ffffff;
+    min-width: 110px;
+    width: 110px;
+  }
+
+  .sticky-video-col {
+    position: sticky;
+    left: 110px;
+    z-index: 2;
+    background: #ffffff;
+    min-width: 220px;
+    max-width: 320px;
+    box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  thead .sticky-step-col,
+  thead .sticky-video-col {
+    background: #f8fafc;
+    z-index: 4;
+  }
+
+  tfoot .sticky-step-col {
+    background: #f8fafc;
+  }
+
+  tbody tr:hover .sticky-step-col,
+  tbody tr:hover .sticky-video-col {
+    background: #f8fafc;
+  }
+}
+
+// Tab headers
+::ng-deep .views-tab-group .mat-mdc-tab-header {
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+// Dialog Panel Styles (global overlay)
+::ng-deep .video-preview-dialog-panel {
+  .mat-mdc-dialog-surface {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+}

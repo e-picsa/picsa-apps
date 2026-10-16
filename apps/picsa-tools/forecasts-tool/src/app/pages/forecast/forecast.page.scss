@@ -1,14 +1,74 @@
-.page-content {
+.forecast-page.page-content {
   max-width: 1280px;
-  padding: unset;
-  margin: 16px 0;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
-.forecast-container {
-  @apply border-solid capitalize p-2;
+.header-sync-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 32px;
+  padding: 0 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+  white-space: nowrap;
 }
-
-.forecast-heading {
-  @apply border-solid border-0 border-b border-[var(--color-light)]  text-center p-2 m-0 capitalize;
+.header-sync-chip:hover:not([disabled]) {
+  background: rgba(255, 255, 255, 0.25);
+}
+.header-sync-chip__icon-container {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-sync-chip__icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  transition:
+    transform 0.4s ease,
+    opacity 0.3s ease;
+}
+.header-sync-chip .check-icon {
+  opacity: 0;
+  color: #16a34a;
+}
+.header-sync-chip.is-refreshing .sync-icon {
+  animation: header-sync-spin 0.75s linear infinite;
+}
+.header-sync-chip.is-uptodate {
+  background-color: #fff;
+  color: #15803d;
+  border-color: #fff;
+  border-radius: 9999px;
+}
+.header-sync-chip.is-uptodate .sync-icon {
+  opacity: 0;
+}
+.header-sync-chip.is-uptodate .check-icon {
+  opacity: 1;
+}
+@keyframes header-sync-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .forecast-bottom-bar {
   @apply flex items-center bg-[var(--color-secondary-50)] h-8 px-2 relative;
@@ -25,11 +85,79 @@
 .forecast-bottom-bar > mat-progress-bar {
   @apply absolute bottom-0 left-0 w-full;
 }
-
-h2 {
-  @apply md:text-left;
+// Horizontal scroller for forecast categories on smaller devices
+// Layout (flex-nowrap, overflow, snap) is handled via Tailwind in the template;
+// this adds touch momentum and a subtle scrollbar
+.forecast-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  // Opt out of scroll anchoring: async forecast data and images arriving
+  // mid-load must never shift the row's scroll position (e.g. national
+  // starting one card in with the back bar already showing).
+  overflow-anchor: none;
 }
-
+// Scroll-hint bars, template-rendered over each scroller edge and shown only
+// while more content is available off-screen in that direction (visibility
+// driven by ForecastScrollAffordanceDirective signals). Real buttons (not
+// pseudo-elements) so taps, keyboard focus and screen readers work, and so
+// nothing inside the scroll flow can shift the scroll origin. Faded via
+// opacity so bars never pop in or out abruptly.
+.forecast-scroll-wrap {
+  position: relative;
+}
+button.forecast-scroll-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  width: 2rem;
+  min-width: 0;
+  padding: 0;
+  border-radius: 0;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  background: #fff;
+  color: var(--color-secondary-600, #64748b);
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s;
+}
+button.forecast-scroll-bar.is-before {
+  left: 0;
+}
+button.forecast-scroll-bar.is-after {
+  right: 0;
+}
+button.forecast-scroll-bar.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  cursor: pointer;
+}
+// Subtle dot progress strip, template-rendered alongside each scroller and
+// shown only while that list overflows. Kept in this page stylesheet (not
+// global) as the dots are regular template elements covered by view encapsulation.
+.forecast-scroll-dots {
+  display: none;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0 2px;
+}
+.forecast-scroll-dots.is-visible {
+  display: flex;
+}
+.forecast-scroll-dots > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+}
+.forecast-scroll-dots > span.is-active {
+  background: #64748b;
+}
 .viewer-container {
   position: fixed;
   z-index: 2;
@@ -38,248 +166,10 @@ h2 {
   top: 0;
   left: 0;
 }
-
 .viewer-container.slide-in {
   transition: transform 0.3s ease-in-out;
   transform: translateY(100vh);
 }
-
 .viewer-container.slide-in.active {
   transform: translateY(0);
-}
-
-.language-label {
-  @apply text-sm flex-1 text-left;
-}
-.image-container {
-  @apply flex-1 p-2;
-}
-.forecast-image {
-  @apply h-full w-full object-contain;
-}
-
-.forecast-page {
-  & > picsa-form-location-select {
-    ::ng-deep {
-      .form-location-select {
-        margin: 0 12px 12px 12px;
-        .mat-mdc-form-field {
-          width: 100%;
-        }
-      }
-    }
-  }
-  .resources {
-    margin: 0 16px;
-  }
-}
-
-button span.mdc-button__label {
-  width: unset;
-}
-
-@media only screen and (max-width: 480px) {
-  .forecast-page {
-    & > picsa-form-location-select {
-      ::ng-deep {
-        .form-location-select {
-          display: flex;
-          flex-direction: column;
-        }
-      }
-    }
-    .sync-status {
-      max-width: 240px;
-    }
-  }
-}
-
-.forecast-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 1rem 1rem 1.5rem 1rem;
-  background-color: var(--color-secondary-50);
-  border-top: 1px solid var(--color-secondary-200);
-
-  &__title {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 600;
-    text-align: center;
-    width: 100%;
-  }
-
-  &__actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .forecast-group-title {
-    text-transform: uppercase;
-    font-weight: 500;
-    opacity: 0.7;
-  }
-}
-
-.sync-status {
-  display: flex;
-  align-items: center;
-  gap: 0.075rem;
-  font-size: 0.8125rem;
-  padding: 0.425rem 1rem;
-  border-radius: 999px;
-  background: var(--ion-color-secondary-100, #c1c1c1);
-  color: var(--color-secondary-800, #444);
-
-  &__detail {
-    opacity: 0.75;
-    margin-left: 0.25rem;
-    color: var(--ion-color-dark);
-  }
-
-  &__text {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-  }
-
-  &__icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-
-  &[data-state='success'] {
-    color: var(--ion-color-success, #2e7d32);
-    background: var(--ion-color-secondary-100, #edfff2);
-  }
-  &[data-state='stale'] {
-    color: var(--ion-color-primary-tint, #b26a00);
-    background: var(--ion-color-secondary-100, #fff4e5);
-  }
-  &[data-state='offline'],
-  &[data-state='error'] {
-    color: var(--ion-color-danger, #c62828);
-    background: var(--ion-color-secondary-100, #fdecea);
-  }
-  &[data-state='updating'] .sync-status__icon {
-    animation: forecast-spin 1.2s linear infinite;
-  }
-}
-
-@keyframes forecast-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.force-refresh-button {
-  display: flex;
-  flex-direction: row;
-  justify-items: center;
-  align-items: center;
-  padding: 8px 18px;
-  min-width: 100px;
-
-  &__spinner {
-    display: inline-block;
-  }
-}
-
-.sync-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
-  border-radius: 6px;
-  background: #fff4e5;
-  color: #8a5300;
-
-  &[data-state='error'] {
-    background: #fdecea;
-    color: var(--ion-color-danger, #c62828);
-  }
-
-  &__close {
-    background: none;
-    border: none;
-    color: inherit;
-  }
-}
-
-.forecast-group-title {
-  margin: 1rem 0 0.25rem;
-}
-
-.forecast-category {
-  margin-bottom: 1rem;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    h4 {
-      margin: 0.25rem 0;
-      text-transform: capitalize;
-    }
-  }
-}
-
-.forecast-step {
-  margin-bottom: 1.5rem;
-  width: 100%;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    h2 {
-      margin: 0;
-    }
-  }
-  &__number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: var(--color-primary, #0d6b3f);
-    color: #fff;
-    font-size: 0.875rem;
-  }
-}
-
-.forecast-empty,
-.forecast-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  font-style: italic;
-  color: var(--color-secondary-600);
-  border: 1px dashed var(--color-secondary-300, #ccc);
-  border-radius: 6px;
-}
-
-.forecast-format {
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 0 0.25rem;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.12);
 }

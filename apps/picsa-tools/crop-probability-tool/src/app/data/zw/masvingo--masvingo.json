@@ -1,0 +1,169 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "SC-419, SC-555, PAN-413, PHB3506W",
+        "days": "120 - 135",
+        "days_lower": 120,
+        "days_upper": 135,
+        "water": [450],
+        "probabilities": [0.6, 0.5, 0.3, 0.1, 0, 0]
+      },
+      {
+        "variety": "PAN-53, PGS-51, PGS-61, PGS-63, PGS-65, SC-659, PHB30G19",
+        "days": "135 - 150",
+        "days_lower": 135,
+        "days_upper": 150,
+        "water": [500],
+        "probabilities": [0.4, 0.3, 0.1, 0, 0, 0]
+      },
+      {
+        "variety": "P3812W, SC-727, PAN-7M81",
+        "days": "150 - 160",
+        "days_lower": 150,
+        "days_upper": 160,
+        "water": [550],
+        "probabilities": [0.3, 0.1, 0, 0, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "SV-1, SV-2, SV-3, VUMBA, MARCIA, SC-SILA, SHIRIKURE",
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [400],
+        "probabilities": [0.5, 0.5, 0.4, 0.3, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "beans",
+    "data": [
+      {
+        "variety": "KWARE, BOUNTY, CARDINAL, SC-SHARP",
+        "days": "75",
+        "days_lower": 75,
+        "days_upper": 75,
+        "water": [250],
+        "probabilities": [0.6, 0.7, 0.6, 0.7, 0.6, 0.4]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "VALENCIA, SC-NYANDA, MAKULU-RED, NATAL-COMMON",
+        "days": "85 - 105",
+        "days_lower": 85,
+        "days_upper": 105,
+        "water": [300],
+        "probabilities": [0.6, 0.7, 0.7, 0.5, 0.3, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "roundnuts",
+    "data": [
+      {
+        "variety": "RED, BLACK, BROWN, CREAM-NO-EYE, CREAM-BLACK-EYE, CREAM-BROWN-EYE",
+        "days": "110 - 150",
+        "days_lower": 110,
+        "days_upper": 150,
+        "water": [500],
+        "probabilities": [0.4, 0.3, 0.2, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "MASASA, PERODOVIC",
+        "days": "80 - 120",
+        "days_lower": 80,
+        "days_upper": 120,
+        "water": [300],
+        "probabilities": [0.6, 0.6, 0.6, 0.4, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "CBC1, CBC-2, IT-18",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [300],
+        "probabilities": [0.4, 0.5, 0.5, 0.5, 0.4, 0.3]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "G51, ALBAR",
+        "days": "120 - 150",
+        "days_lower": 120,
+        "days_upper": 150,
+        "water": [500],
+        "probabilities": [0.4, 0.3, 0.2, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "variety": "ALISHA, GERMANY-2",
+        "days": "120 - 150",
+        "days_lower": 120,
+        "days_upper": 150,
+        "water": [500],
+        "probabilities": [0.4, 0.3, 0.2, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "PMV3, PMV-1, PMV-2, TSHOLOTSHO",
+        "days": "75 - 120",
+        "days_lower": 75,
+        "days_upper": 120,
+        "water": [400],
+        "probabilities": [0.4, 0.4, 0.4, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "FMV-1, FMV-2",
+        "days": "130 - 145",
+        "days_lower": 130,
+        "days_upper": 145,
+        "water": [500],
+        "probabilities": [0.5, 0.3, 0.2, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sesame",
+    "data": [
+      {
+        "variety": "WHITE-SESAME, GOLDEN/BROWN-SESAM",
+        "days": "80 - 90",
+        "days_lower": 80,
+        "days_upper": 90,
+        "water": [300],
+        "probabilities": [0.5, 0.6, 0.6, 0.5, 0.4, 0.2]
+      }
+    ]
+  }
+]

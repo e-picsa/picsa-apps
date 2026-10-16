@@ -5,6 +5,7 @@ import { IGeolocationData } from './types';
 import ZM_PROVINCES from './zm/provinces';
 import ZM_DISTRICTS from './zm/districts';
 import ZW_PROVINCES from './zw/provinces';
+import ZW_DISTRICTS from './zw/districts';
 
 export * from './utils';
 export * from './types';
@@ -42,6 +43,10 @@ const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGeolocationData } =
     admin_4: {
       label: translateMarker('Province'),
       locations: ZW_PROVINCES,
+    },
+    admin_6: {
+      label: translateMarker('District'),
+      locations: ZW_DISTRICTS,
     },
   },
 };

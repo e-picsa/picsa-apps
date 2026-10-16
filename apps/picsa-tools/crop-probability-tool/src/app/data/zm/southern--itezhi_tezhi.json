@@ -1,0 +1,237 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "ETG-M401",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [
+          485
+        ],
+        "probabilities": [
+          0.7,
+          0.7,
+          0.6
+        ]
+      },
+      {
+        "variety": "PAN-413",
+        "days": "110 - 115",
+        "days_lower": 110,
+        "days_upper": 115,
+        "water": [
+          435
+        ],
+        "probabilities": [
+          0.8,
+          0.7,
+          0.5
+        ]
+      },
+      {
+        "variety": "DK777",
+        "days": "115 - 120",
+        "days_lower": 115,
+        "days_upper": 120,
+        "water": [
+          515
+        ],
+        "probabilities": [
+          0.7,
+          0.6,
+          0.4
+        ]
+      },
+      {
+        "variety": "PHB30G19",
+        "days": "110 - 130",
+        "days_lower": 110,
+        "days_upper": 130,
+        "water": [
+          515
+        ],
+        "probabilities": [
+          0.7,
+          0.6,
+          0.3
+        ]
+      },
+      {
+        "variety": "ETG-M-601",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          550
+        ],
+        "probabilities": [
+          0.7,
+          0.5,
+          0.2
+        ]
+      },
+      {
+        "variety": "PAN-53, SY-5054",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          555
+        ],
+        "probabilities": [
+          0.6,
+          0.5,
+          0.2
+        ]
+      },
+      {
+        "variety": "SC-555",
+        "days": "127 - 130",
+        "days_lower": 127,
+        "days_upper": 130,
+        "water": [
+          555
+        ],
+        "probabilities": [
+          0.6,
+          0.4,
+          0.2
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "beans",
+    "data": [
+      {
+        "variety": "KABULANGETI",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [
+          295
+        ],
+        "probabilities": [
+          0.7,
+          0.8,
+          0.8
+        ]
+      },
+      {
+        "variety": "MBERESHI",
+        "days": "80 - 85",
+        "days_lower": 80,
+        "days_upper": 85,
+        "water": [
+          310
+        ],
+        "probabilities": [
+          0.7,
+          0.8,
+          0.8
+        ]
+      },
+      {
+        "variety": "LUSAKA",
+        "days": "85 - 90",
+        "days_lower": 85,
+        "days_upper": 90,
+        "water": [
+          315
+        ],
+        "probabilities": [
+          0.8,
+          0.8,
+          0.8
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "MGV5",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          535
+        ],
+        "probabilities": [
+          0.7,
+          0.5,
+          0.2
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "variety": "KAFUE",
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [
+          420
+        ],
+        "probabilities": [
+          0.7,
+          0.7,
+          0.6
+        ]
+      },
+      {
+        "variety": "SPIKE",
+        "days": "120 - 125",
+        "days_lower": 120,
+        "days_upper": 125,
+        "water": [
+          435
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.3
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "MILIKA",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [
+          435
+        ],
+        "probabilities": [
+          0.7,
+          0.7,
+          0.6
+        ]
+      },
+      {
+        "variety": "RECORD",
+        "days": "110 - 120",
+        "days_lower": 110,
+        "days_upper": 120,
+        "water": [
+          475
+        ],
+        "probabilities": [
+          0.8,
+          0.7,
+          0.4
+        ]
+      }
+    ]
+  }
+]

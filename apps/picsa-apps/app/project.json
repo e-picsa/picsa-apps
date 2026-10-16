@@ -87,6 +87,11 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/data/climate/climate-icons",
+            "output": "assets/climate-icons"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/climate-tool/src/assets",
             "output": "assets"
           },
@@ -128,7 +133,6 @@
           }
         ],
         "styles": [
-          "node_modules/leaflet/dist/leaflet.css",
           "node_modules/maplibre-gl/dist/maplibre-gl.css",
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "apps/picsa-tools/budget-tool/src/styles.scss",
@@ -161,6 +165,11 @@
           ],
           "outputHashing": "all",
           "namedChunks": true,
+          "sourceMap": {
+            "scripts": true,
+            "styles": false,
+            "hidden": true
+          },
           "statsJson": false
         },
         "development": {

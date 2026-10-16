@@ -9,20 +9,22 @@ const entries: ITranslationEntry[] = [];
 
 const { default: defaultDefs, ...allCountryDefs } = CLIMATE_CHART_DEFINITIONS;
 
-const extractedKeys: (keyof IChartMeta)[] = ['definition'];
+const extractedKeys: (keyof IChartMeta)[] = ['definition', 'definitionMonthly', 'definitionThreeMonth'];
 
 // populate per-country overrides of chart definitions
 for (const chartId of Object.keys(defaultDefs)) {
   for (const key of extractedKeys) {
     for (const [countryCode, countryDefs] of Object.entries(allCountryDefs)) {
-      const text = countryDefs[chartId]?.[key] || '';
-      const id = `${countryCode}:climate.chart.${chartId}.${key}`;
-      entries.push({
-        id,
-        text,
-        tool: 'climate',
-        country_code: countryCode as ICountryCode,
-      });
+      const text = (countryDefs[chartId]?.[key] as string) || '';
+      if (text) {
+        const id = `${countryCode}:climate.chart.${chartId}.${key}`;
+        entries.push({
+          id,
+          text,
+          tool: 'climate',
+          country_code: countryCode as ICountryCode,
+        });
+      }
     }
   }
 }
