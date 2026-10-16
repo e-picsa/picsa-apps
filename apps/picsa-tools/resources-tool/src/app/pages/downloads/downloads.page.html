@@ -1,4 +1,34 @@
 <div class="page-content">
+  <!-- Share App / offline installer status -->
+  <div class="flex m-2 flex-wrap gap-2 items-center rounded-xl border border-gray-200 bg-gray-50 p-3">
+    <mat-icon class="text-[var(--mat-sys-primary,#0d6e3f)]">phone_android</mat-icon>
+    <div class="flex-1 min-w-48">
+      <div class="font-semibold">{{ 'Share App' | translate }}</div>
+      @if (appDistribution.cached(); as cached) {
+      <div class="text-xs opacity-60">
+        {{ 'Ready to share offline' | translate }} · {{ formatApkSize(cached.fileSize) }}
+      </div>
+      } @else if (appDistribution.latestMeta(); as meta) {
+      <div class="text-xs opacity-60">
+        {{ 'Version' | translate }} {{ meta.versionCode }} · {{ formatApkSize(meta.fileSize) }}
+      </div>
+      } @else {
+      <div class="text-xs opacity-60">{{ 'Offline installer for nearby sharing' | translate }}</div>
+      }
+    </div>
+    @if (appDistribution.isDownloading()) {
+    <mat-progress-bar mode="determinate" [value]="appDistribution.progress()" class="w-full"></mat-progress-bar>
+    <button matButton="tonal" (click)="appDistribution.cancelDownload()">{{ 'Cancel' | translate }}</button>
+    } @else if (appDistribution.cached()) {
+    <button matButton="filled" color="primary" (click)="openShareApp()">
+      <span class="inline-flex items-center gap-2"><mat-icon>share</mat-icon>{{ 'Share' | translate }}</span>
+    </button>
+    } @else {
+    <button matButton="tonal" (click)="openShareApp()">
+      <span class="inline-flex items-center gap-2"><mat-icon>download</mat-icon>{{ 'Get App' | translate }}</span>
+    </button>
+    }
+  </div>
   <div class="flex m-2 flex-wrap gap-4 justify-center">
     <mat-chip-listbox class="flex flex-1 gap-2 min-w-64" (change)="languageFilter.set($event.value)">
       @for(option of languageFilterOptions(); track option.id){

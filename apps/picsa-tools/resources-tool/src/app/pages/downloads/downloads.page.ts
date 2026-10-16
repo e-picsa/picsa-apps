@@ -1,14 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, model, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { ShareAppDialogComponent } from '@picsa/shared/features/app-share';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
+import { AppDistributionService } from '@picsa/shared/services/native';
 import { RxDocument } from 'rxdb';
 import { switchMap } from 'rxjs';
 
@@ -37,10 +42,12 @@ const DISPLAY_COLUMNS = [
   styleUrls: ['./downloads.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
     MatChipsModule,
+    MatProgressBarModule,
     PicsaTranslateModule,
     PicsaDataTableComponent,
     SizeMBPipe,
@@ -48,11 +55,18 @@ const DISPLAY_COLUMNS = [
     ResourceDownloadMultipleComponent,
   ],
 })
-export class DownloadsPageComponent {
+export class DownloadsPageComponent implements OnInit {
   service = inject(ResourcesToolService);
 
   private configurationService = inject(ConfigurationService);
   private downloadService = inject(ResourcesDownloadService);
+  private dialog = inject(MatDialog);
+
+  public appDistribution = inject(AppDistributionService);
+
+  async ngOnInit() {
+    await this.appDistribution.checkLatest().catch(() => undefined);
+  }
 
   private dbFiles$ = this.service.ready$.pipe(switchMap(() => this.service.dbFiles.find().$));
 
@@ -105,6 +119,23 @@ export class DownloadsPageComponent {
       return this.service.removeFileAttachment(doc);
     }
     return;
+  }
+
+  public openShareApp() {
+    this.dialog.open(ShareAppDialogComponent, {
+      panelClass: 'share-app-dialog-panel',
+      maxWidth: '420px',
+      width: 'min(100vw - 24px, 420px)',
+      maxHeight: 'calc(100dvh - 24px)',
+      autoFocus: false,
+    });
+  }
+
+  /** Human-readable APK size, falling back to KB for small/test builds to avoid "0.0 MB" */
+  public formatApkSize(bytes: number): string {
+    if (!bytes) return '';
+    if (bytes < 1_000_000) return `${Math.max(1, Math.round(bytes / 1_000))} KB`;
+    return `${(bytes / 1_000_000).toFixed(1)} MB`;
   }
 
   public async handleRowClick(entry: IResourceTableEntry) {
