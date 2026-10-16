@@ -1,40 +1,15 @@
-<div class="form-location-select flex gap-1 my-2">
+<div class="flex gap-4 my-4">
   <!-- Location Select (Admin 4 - district/province) -->
-  <div class="flex-col w-full">
-    @if (locationData().admin_4; as data) {
-      @if (fieldTitle() && locationData().admin_5) {
-        <div class="form-location-select__label">{{ 'Choose a Province' | translate }}</div>
-      } @else if (fieldTitle() && !locationData().admin_5) {
-        <div class="form-location-select__label">{{ 'Choose a District' | translate }}</div>
-      }
-      @if (selectedAdmin4Option() && !editingAdmin4()) {
-        <button
-          type="button"
-          class="form-location-select__selected"
-          (click)="editAdmin4()"
-          [attr.aria-label]="('Change' | translate) + ': ' + selectedAdmin4Option()!.label"
-        >
-          <span class="text-[20px]">{{ selectedAdmin4Option()!.label }}</span>
-          <mat-icon>edit</mat-icon>
-        </button>
-      } @else {
-        <mat-form-field>
-          <mat-label>{{ data.label }}</mat-label>
-          <mat-select #admin4
-            [value]="admin4Selected()"
-            (selectionChange)="onAdmin4SelectionChange($event.value)"
-            (closed)="closeAdmin4Editor()"
-          >
-            @for (option of data.locations; track option.id) {
-              <mat-option [value]="option.id">
-                {{ option.label }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      }
-    }
-  </div>
+  @if (locationData().admin_4; as data) {
+    <mat-form-field>
+      <mat-label>{{ data.label }}</mat-label>
+      <mat-select #admin4 (selectionChange)="admin4Selected.set(admin4.value)" [value]="admin4Selected()">
+        @for (option of data.locations; track option.id) {
+          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
 
   <!-- Location Select (sublocation tier, e.g. Admin 5 or 6) -->
   @if (sublocation(); as data) {
