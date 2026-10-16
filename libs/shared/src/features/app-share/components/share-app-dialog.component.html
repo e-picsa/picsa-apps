@@ -1,0 +1,117 @@
+<div class="share-app-dialog">
+  <!-- Header -->
+  <div class="flex items-center justify-between gap-2">
+    <h2 class="flex flex-1 items-center gap-2 text-lg font-semibold my-1">
+      <mat-icon class="header-icon">share</mat-icon>
+      <span>{{ 'Share App' | translate }}</span>
+    </h2>
+    <button type="button" matIconButton [attr.aria-label]="'Close' | translate" (click)="close()" class="shrink-0">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <p class="subtitle">{{ 'Share E-PICSA with others, even without internet' | translate }}</p>
+
+  <!-- Share download link -->
+  <section class="share-card">
+    <div class="flex items-center gap-2">
+      <mat-icon class="card-icon">link</mat-icon>
+      <h3 class="flex-1 font-semibold">{{ 'Share Download Link' | translate }}</h3>
+    </div>
+    <p class="card-hint">{{ 'Send the Play Store link or direct installer link' | translate }}</p>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" matButton="filled" color="primary" class="min-h-[44px] flex-1" (click)="shareLink()">
+        <span class="inline-flex items-center justify-center gap-2">
+          <mat-icon>send</mat-icon>
+          <span>{{ 'Share Link' | translate }}</span>
+        </span>
+      </button>
+      <button
+        type="button"
+        matButton="tonal"
+        class="min-h-[44px] flex-1"
+        (click)="copyDirectLink()"
+        [attr.aria-label]="'Copy installer link' | translate"
+      >
+        <span class="inline-flex items-center justify-center gap-2">
+          <mat-icon>content_copy</mat-icon>
+          <span>{{ 'Copy Link' | translate }}</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Offline APK sharing -->
+  <section class="share-card">
+    <div class="flex items-center gap-2">
+      <mat-icon class="card-icon">phone_android</mat-icon>
+      <h3 class="flex-1 font-semibold">{{ 'Offline APK Sharing' | translate }}</h3>
+      @if (formattedSize()) {
+        <span class="size-chip">{{ formattedSize() }}</span>
+      }
+    </div>
+    <p class="card-hint">
+      {{ 'Download the full installer once, then share to nearby devices via Bluetooth or Quick Share' | translate }}
+    </p>
+
+    @if (distribution.latestMeta(); as meta) {
+      <p class="meta-line">
+        {{ 'Version' | translate }} {{ meta.versionCode }} · {{ 'Updated' | translate }} {{ meta.uploadedAt | date }}
+      </p>
+    }
+
+    @if (distribution.isDownloading()) {
+      <mat-progress-bar mode="determinate" [value]="distribution.progress()" class="w-full"></mat-progress-bar>
+      <p class="meta-line">{{ distribution.progress() }}%</p>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" matButton="tonal" class="min-h-[44px] flex-1" (click)="cancelDownload()">
+          {{ 'Cancel' | translate }}
+        </button>
+      </div>
+    } @else if (distribution.cached(); as cached) {
+      <div class="cached-banner">
+        <mat-icon>check_circle</mat-icon>
+        <span class="flex-1">{{ 'Ready to share offline' | translate }} </span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" matButton="filled" color="primary" class="min-h-[44px] flex-1" (click)="shareFile()">
+          <span class="inline-flex items-center justify-center gap-2">
+            <mat-icon>bluetooth</mat-icon>
+            <span>{{ 'Share APK' | translate }}</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          matButton="tonal"
+          class="min-h-[44px]"
+          (click)="deleteDownload()"
+          [attr.aria-label]="'Delete downloaded installer' | translate"
+        >
+          <span class="inline-flex items-center justify-center gap-2">
+            <mat-icon>delete_outline</mat-icon>
+            <span>{{ 'Delete' | translate }}</span>
+          </span>
+        </button>
+      </div>
+    } @else {
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          matButton="filled"
+          color="primary"
+          class="min-h-[44px] flex-1"
+          (click)="download()"
+          [disabled]="distribution.status() === 'checking'"
+        >
+          <span class="inline-flex items-center justify-center gap-2">
+            <mat-icon>download</mat-icon>
+            <span>{{ 'Download APK' | translate }}</span>
+          </span>
+        </button>
+      </div>
+    }
+
+    @if (distribution.error(); as err) {
+      <p class="error-line">{{ err | translate }}</p>
+    }
+  </section>
+</div>
