@@ -41,11 +41,12 @@ export class ClimateDataService {
     const { climateTool } = this.configurationService.deploymentSettings();
     const stations = this.allStations();
     const filterFn = climateTool?.station_filter;
-    if (filterFn) {
-      return stations.filter((station) => filterFn(station));
-    } else {
-      return stations.filter((station) => !station.draft && hasStationClimateData(station));
-    }
+    return stations.filter((station) => {
+      if (station.draft || !hasStationClimateData(station)) {
+        return false;
+      }
+      return filterFn ? filterFn(station) : true;
+    });
   });
 
   private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));

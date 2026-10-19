@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { FormLocationSelectComponent } from '../location-select/location-select.component';
@@ -51,11 +51,7 @@ export class FormLocationOverlayComponent {
     const temp = this.tempLocation();
     const country = this.countryCode();
     if (!country || !temp) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    if (geoData.admin_5) {
-      return !!temp[4] && !!temp[5];
-    }
-    return !!temp[4];
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), temp);
   });
 
   constructor() {

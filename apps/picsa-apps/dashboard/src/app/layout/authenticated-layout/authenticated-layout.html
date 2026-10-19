@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="mat-elevation-z2 flex items-center gap-2">
+<mat-toolbar #toolbar color="primary" class="mat-elevation-z2 flex items-center gap-2 shrink-0">
   <button
     matIconButton
     (click)="toggleSidebar()"
@@ -29,7 +29,7 @@
     mode="side"
     opened
     [fixedInViewport]="true"
-    fixedTopGap="64"
+    [fixedTopGap]="fixedTopGap()"
     [class.is-collapsed]="isCollapsed()"
     [class.is-hovered]="isCollapsed() && isHovered()"
     (mouseenter)="onMouseEnter()"

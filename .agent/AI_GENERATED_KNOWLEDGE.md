@@ -91,6 +91,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Deterministic Array Sorting (S2871)**: Never use bare `Array.prototype.sort()` or `toSorted()` on string arrays or object keys. Always supply an explicit comparator `(a, b) => a.localeCompare(b)` to avoid locale-dependent sorting anomalies.
 - **Strict Number Checks & Parsing**: Always use `Number.isNaN()` and `Number.parseInt(..., 10)` rather than global `isNaN()` and `parseInt()`. The global variants perform loose implicit type coercions (e.g. `isNaN(undefined) === true`, `isNaN(null) === false`), whereas `Number.*` methods operate strictly on numbers.
 - **SonarCloud Duplication Prevention (Dictionaries & Grade Records)**: Defining repetitive structural configurations (e.g. grade settings, thresholds, hex colors, and size properties) across multiple constants can trigger Sonar's block duplication detector. Separate styling and definitions into modular JSON/object literals (`EL_NINO_STYLES`, `EL_NINO_DEFINITIONS`) and compose them using object spread syntax. This preserves crystal-clear JSON readability for reviewers while preventing large multi-line object block duplication (≥ 10 lines) in SonarCloud.
+- **Publicly Writable Directory Security (S5443)**: Never hardcode '/tmp/...' string literals in Node/JS tool scripts or production code. Sonar flags any hardcoded '/tmp' directory paths as high-severity security vulnerabilities. Instead, derive paths dynamically or avoid invoking temporary file writes.
+- **Child Process Untrusted Environment PATH (S4036)**: When passing a custom 'env' object to child_process execution, Sonar requires that PATH is either explicitly restricted to trusted system directories or not overridden loosely. Where possible, avoid invoking shell commands from script helpers if the same information can be resolved via in-memory data structures.
+- **Floating Unhandled Promises (S9383)**: Invoking an async method without await inside a non-async or event-handling context triggers Sonar's Reliability C-rating bug. Always prefix intentionally backgrounded promises with 'void' (e.g. 'void this.refreshStation(row);').
+- **Sequential Async Execution Without Await-in-Loop (S9382)**: Sonar flags await inside loops. When sequential processing is required (e.g. sequential API updates with reactive progress counters), use 'await items.reduce(async (prevPromise, item) => { await prevPromise; await processItem(item); }, Promise.resolve())' to avoid AST loop constructs while maintaining clean sequential execution.
 
 ---
 
@@ -138,6 +142,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   The seeded admin user (`00000000-0000-0000-0000-000000000000` / `admin@picsa.app`) requires rows in `public.user_roles` for every active deployment in `public.deployments` with roles `['admin', 'deployments.admin']`. This populates the `picsa_roles` JWT claim via the `custom_access_token_hook`, unlocking dashboard routes and permissions. This is automatically ensured by `seedDevUsersAndPermissions()` in both `db:seed` and `db:seed:extended`.
 - **Per-Table Extended Seed Cache**:
   In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
+- **Extended Storage File Cache (`StorageFileCache`)**:
+  Because extended seed resets the local DB (emptying `storage_objects`) before mirroring, referenced remote files were previously re-downloaded on every run. `scripts/utils/storage-cache.utils.ts` now keeps bytes plus a `manifest.json` under `scripts/db-seed/cache/storage` (gitignored, alongside the record cache). Freshness is decided by diffing that manifest against remote `storage.objects` metadata (`size`/`eTag`/`updated_at`, read via the exposed `storage` schema, batched 100 names/request) so unchanged files are uploaded from disk. Downloads/uploads run with bounded concurrency and orphaned cache entries are pruned at the end of a full (non `--tables`/`--country`) run. Cache reuse requires remote confirmation: a path missing from a *complete* `storage.objects` lookup is treated as a cache miss so deleted remote objects are never resurrected from disk (the size-only fallback applies only when the lookup itself failed). `--no-download` seeds storage from the cache only, making `db:seed:extended --no-fetch --no-download` fully offline.
 - **Extended Storage Mirroring (`mirrorStorage`)**:
   Tables declaring `mirrorStorage: ['<path-column>']` in `db-seed.config.ts` (currently `forecasts.storage_file`) have their referenced files downloaded from remote into local buckets ahead of row upserts, giving 1:1 local fidelity with working downloads. This ordering is load-bearing: `forecasts_storage_file_fkey` rejects rows whose paths are absent from `storage_objects` (verified live), so files must land before rows. Never use `columnMappings` to rewrite storage paths on import — it silently corrupts references (all short-term forecasts once mislabelled as samples this way); unmirrorable files warn and null the column instead. Tombstoned rows (`storage_file` null) are preserved as nulls, never revived.
 - **Dev Users & Storage Seeding**:
@@ -262,6 +268,16 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ---
 
+### Material Icon Glyph Clipping (`mat-icon` and Line-Height Traps)
+
+- **Root Cause of Icon Clipping**: Angular Material's `mat-icon` uses font-based glyphs sized to `24px` with `line-height: 1`. Applying Tailwind classes like `!w-5 !h-5 !text-lg` causes `text-lg` to set `line-height: 1.75rem` (28px) inside a `20px` (`h-5`) bounding box. This forces the glyph outside its container bounds, causing the icon to be sliced or clipped at the edges.
+- **Rule**: Never combine arbitrary Tailwind `text-*` and `w-*/h-*` on `mat-icon` without matching line-height (`leading-none`). Preferably, let Angular Material manage the icon size naturally or use standard 24px sizing, or specify `class="!text-[16px] !w-4 !h-4 leading-none"` when creating micro badges.
+
+### Fixed-Height Dialog Containers for Tabbed Content
+
+- **Consistent Dialog Height**: When presenting tabbed content (e.g. `mat-tab-group`) inside a modal where tabs have varying lengths (e.g., compact location summary vs long scrollable tables/charts), dialogs configured only with `maxHeight: '90vh'` will dynamically expand and shrink when switching tabs, creating jarring layout shifts.
+- **Rule**: Set explicit fixed height (`height: '90vh'`, `maxHeight: '90vh'`) in `MatDialogConfig`, use `panelClass: 'no-padding'`, configure `:host { display: flex; flex-direction: column; height: 100%; width: 100%; box-sizing: border-box; }`, and set inner tab containers to `flex-1 min-h-0 overflow-y-auto`. This locks the dialog to its max dimension consistently across all tabs.
+
 ### Jest ESM Transformation & Native Mocks in Tool Specs
 
 - **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
@@ -369,6 +385,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Zambia Climsoft & AWS Duplicate Station Filtering**: `/v2/station/zm` emits duplicate 8-character Climsoft legacy codes (`CHIPAT01`) alongside canonical names (`CHIPATA MET`), as well as empty AWS stations (`CHIPATA MET AWS`). The sync edge function must filter these out when the base station exists to prevent duplicate cards in the app and dashboard.
 - **District Preservation & Non-Destructive Sync**: Upstream feeds return `district: null` for ZW and MW. Rather than maintaining fragile hardcoded dictionary mappings in the application or edge functions, missing districts are populated one-time via database migrations. The sync edge function preserves existing non-null database values (`existingDistrict || d.district || null`), ensuring subsequent sync runs never overwrite existing districts with `null`.
 
+### Automated Quality Control & `qcFailures` Array
+
+- **Discrete Failure Codes**: Stations are evaluated against explicit scientific quality gates (`libs/utils/climate-qc.utils.ts`):
+  1. `insufficient_total_years`: Total rainfall years < 30.
+  2. `no_recent_data`: Fewer than 1 rainfall observation year in the past 10 years.
+  3. `sparse_recent_data`: Fewer than 10 rainfall observation years in the past 30 years.
+  4. `season_discrepancies`: Unpaired start/end of season boundaries (`Start` without `End` or vice versa).
+- **Clean Model & Zero Half-Features**: Station QC status is represented cleanly by `qcFailures?: ClimateQcFailure[]` on `IStationCapabilities` (defined in `libs/models/climate.models.ts`). An empty array (`[]`) signifies that the station passed automated QC.
+- **Automated Draft Status Resolution**: `resolveStationDraftStatus(qcFailures)` automatically marks stations as `draft: true` if `qcFailures` is undefined or non-empty, and `draft: false` (published) only when `qcFailures.length === 0`.
+- **UI Non-Alarmist Neutral Grey**: In dashboard admin QC tables and difference tables, failing stations or unassessed stations are styled in neutral slate grey badges (`bg-slate-100 text-slate-700 border-slate-300`), not red/warn, because inactive or historical stations with insufficient data are expected operational states rather than system errors.
+
 ### Multi-Column Climate Product Diffing & Overlaid C3 Preview
 
 - **Product-Level Diff Granularity**: Meteorological stations contain multiple products (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). Comparing data across databases and bundled app summaries requires product-level aggregation: detecting added years in DB, missing years in DB, and value changes exceeding floating-point tolerance (`|db - app| > 0.05`).
@@ -412,6 +439,15 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The Locations tab header includes summary badges tracking `Probabilities Available` and `Missing Probabilities` counts across all locations.
   - In the station picker modal (`CropLinkedStationSelectComponent`), dropdown options display clean status icons (`check_circle` vs `warning`) alongside district tags, and a contextual status card is displayed beneath the dropdown explaining whether probability records exist for the selected station before committing the change.
 - **Multiple Valid Stations in Same District (e.g. Salima vs Salima Airport)**: National meteorological services may operate multiple valid stations within the same district (such as `mw/salima` town/boma and `mw/salima_airport`). In production Supabase, `crop_data_downscaled` for district `salima` is linked to `mw/salima_airport`, where `crop_probability_data` has 1,750 records computed upstream. Both stations are valid, and no schema or data alteration is needed.
+- **Shared Geo Location Data Must Never Be Mutated**: `getGeoLocationData()` returns the module-level per-country singleton by reference. Location filters (e.g. crop-probability `locationModifier`) must be pure and return new objects. The location overlay destroys/recreates its select on every open (`@if (open())`), re-running the filter on the same shared object - an in-place filter/add-tier implementation permanently corrupts it (mw's synthesised `admin_5` tier was wiped on second open, leaving the sublocation dropdown empty). See `filterLocationsToProbabilityTables` and its idempotence specs.
+
+### Farmer Video Data & Dashboard Matrix Coupling
+
+- **Step Identity Is Implied by Array Order**: The dashboard "Direct-to-Farmer Videos" matrix (`resources-farmer-videos.utils.ts`) derives each `stepNumber` from the index in `PICSA_FARMER_VIDEOS_DATA` (`libs/data/resources/videos/picsaSteps.ts`), and `useLocalizedEn` is forced for steps 7 and 8. Reordering or inserting entries therefore silently renumbers steps and changes English expectations — do it deliberately and update the matrix spec counts.
+- **Supplementary Videos Belong to a Step**: A video that appears in a farmer-content step but is not one of the 8 PICSA steps (e.g. the Zambia-only `el_nino` explainer in module 7) must be registered in `SUPPLEMENTARY_STEP_VIDEOS` so the matrix keeps its parent step number and English handling instead of showing a phantom new step.
+- **Country Scoping Is Derived From Variants, Not Hardcoded**: For supplementary step videos, `getVideosForCountry()` includes the video only when at least one child variant's locale belongs to that country. Never hardcode a country for such a video — adding a variant for a new country should make it applicable there automatically with no code change.
+- **Farmer Steps Are Hidden When No Variant Matches the Deployment**: `FarmerContentModuleHomeComponent.visibleSteps` filters video/videoPlaylist steps through `hasVideosForUser` (see `step-video.utils.ts`, shared with `FarmerStepVideoComponent`). This stops country-specific videos rendering as empty cards (e.g. Zambia-only videos for Malawi users) and makes the step appear automatically once variants for that country are added.
+- **Data Entry Requires Hosted Assets**: Video entries reference Supabase public URLs; the media pipeline (`yarn scripts media/process`) only writes normalised 360p files to a gitignored `output/` folder. Uploading those files to the matching bucket path (`<country>/videos/...`) is a separate manual step, and the URL filename must match the uploaded object exactly. Follow the bucket naming convention (`<NN>. <Title> - <Country>_<LANG>_360p.mp4`, with `BEM/NYA/TNG/ENG` language suffixes).
 
 ### District-to-Station Proximity & Administrative Center Resolution (`location-proximity.utils`)
 
@@ -559,3 +595,93 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   2. Never emit click output events from programmatic marker selection methods (`setActiveMarker`).
   3. Synchronize district boundary drawing, bounding box calculation, and marker highlight in a single unified resolution callback per request ID instead of fragmented competing effects.
   4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
+
+---
+
+
+## 6. Climate Quality Control (QC) & Monorepo Tooling
+
+### Nx Socket Length Trap on macOS (Worktrees)
+
+- **Problem**: When running Jest or Nx within Git worktrees whose directory paths exceed 104 characters, the Unix domain socket creation for Nx daemon crashes with "Attempted to open socket that exceeds the maximum socket length".
+- **Solution**: Always set "NX_SOCKET_DIR=/tmp/nx-tmp NX_DAEMON=false" in the environment when invoking tests via "node tools/ai/ai-test.mjs" or running "yarn nx test".
+
+### Climate Quality Control (QC) Gates & Automated Station Drafting
+
+- **Standalone Engine**: Quality control criteria are defined in libs/utils/climate-qc.utils.ts under "CLIMATE_QC_GATES".
+  - **Min 30 Total Rainfall Years**: Evaluated strictly on valid annual rainfall observations ("hasValidRainfallObservation"), avoiding false counts from rows containing only start/end of season data.
+  - **Min 1 Year in Past 10 Years**: Ensures the station has recent observations.
+  - **Min 10 Years in Past 30 Years**: Ensures temporal continuity.
+  - **Season Boundary Consistency**: "detectSeasonDiscrepancies" detects years where start of season exists without end of season, or vice versa.
+- **QC Grading**:
+  - "approved": Passes all rainfall completeness gates and has 0 season discrepancies.
+  - "pending_review": Passes rainfall completeness gates but has season bound discrepancies.
+  - "insufficient_data": Fails rainfall completeness gates. In the UI, this must be displayed in **neutral slate/grey** ("bg-slate-100 text-slate-700"), not red/warn, as it is non-actionable archival data.
+- **Automated Drafting with Manual Overrides**:
+  - In country station loaders ("stations/<country>/index.ts"), stations are mapped with "draft: resolveStationDraftStatus(station.draft, caps?.qcStatus)".
+  - If a station has an explicit manual boolean override in "metadata.ts" ("draft: true" or "draft: false"), that override is preserved. Otherwise, non-approved stations automatically default to draft status and are excluded from the end-user app.
+
+### Climate Station Quality Control & Public Tool Filtering
+
+- **Automated Draft Status**: Climate stations are automatically flagged as draft via `resolveStationDraftStatus(caps?.qcFailures)`. Stations failing any QC gate (`rainfall_total_years_below_min`, `rainfall_no_recent_data`, `rainfall_recent_years_sparse`, or `season_bound_discrepancies`) receive `draft: true`.
+- **Public Tool Exclusion**: In `ClimateDataService.stations`, stations with `draft: true` or no climate data are strictly excluded from the active `stations()` signal, even when a custom deployment `station_filter` is defined. Public chart components and dropdowns derive strictly from `ClimateDataService.stations()`.
+- **Admin Visibility**: The dashboard fetches stations directly from Supabase and shows all stations regardless of draft or QC status, using subtle non-alert styling (slate grey icons/badges, never red) for QC failures.
+
+### Climate Quality Control & Data System Admin Conventions
+
+- **Breaking Failures vs Non-Breaking Warnings**:
+  - Only data availability gates (insufficient total years < 30, no recent data in past 10 years, sparse recent data < 10 years in past 30) constitute breaking QC failures (`ClimateQcFailure`).
+  - Season bound discrepancies (e.g. years having Start but missing End or vice versa) are classified as non-breaking warnings (`ClimateQcWarning = "season_discrepancies"`). Stations with only season discrepancies pass quality control (`passed = true`, not drafted).
+- **Google Material Icon Glyph Validation**:
+  - The Material Icons font used by Angular Material does not contain the glyph `database`. Always verify icon names against standard Material Icons (the standard Data System / cloud DB icon in picsa-apps is `cloud`).
+- **PicsaDataTable Context Binding**:
+  - In `picsa-data-table`, value templates receive context `[ngTemplateOutletContext]="$any({ $implicit: row[column], row: row, column: column })"`.
+  - The first implicit parameter receives `row[column]`. When defining custom templates that need object fields, use `let-row="row"`. For station names, provide a string column (e.g. `name`) rather than an object to avoid rendering `[object Object]`.
+
+- **Data System Table Layout & QC Breakdown**:
+  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `updated_at` (Last Sync). Action columns are omitted.
+  - Counters are color-coded: green (`text-emerald-700 font-semibold`) when meeting the check threshold, amber (`text-amber-700 font-semibold`) when failing.
+  - Warnings are displayed on separate lines prefixed with a bullet point (`•`) in the table column.
+  - Hovering the QC status icon displays a multi-line tooltip listing all verified quality control gates or specific failure reasons.
+  - Clicking a station row opens `StationDetailsDialogComponent` as a modal dialog, allowing full inspection of Location, Data, Charts, and Crop Probabilities tabs without page navigation.
+  - Material icon buttons in Angular 21 templates must use MDC directive syntax (`<button matIconButton>`), not legacy hyphenated attributes (`<button mat-icon-button>`).
+
+---
+
+## 5. Climate Data Quality Control & Sorting
+
+### Quality Control Ranking Score & Sort Order
+
+- **Formula (`calculateStationQcScore`)**:
+  - `failuresCount > 0`: Score is negative count of failed gates (`-3` = failed all 3, `-2` = failed 2, `-1` = failed 1).
+  - `failuresCount === 0`: Score is positive total rainfall observation years (e.g. `30`, `35`, `50+`).
+- **Sorting Behavior (`MatTableDataSource`)**:
+  - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
+  - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
+- **Rank Color Variations & Grouping Invariant**:
+  - Color classes must be a strict, monotonic function of the sort key (`score`) to guarantee that all rows of the same rank remain strictly grouped in contiguous blocks without interleaving or alternating colors when sorted.
+  - Failures (`cancel` icon): `-3` uses `text-rose-700`, `-2` uses `text-rose-500`, `-1` uses `text-amber-500` (lighter/paler shades).
+  - Passes (`check_circle` icon): `< 40` total years uses `text-teal-500` (baseline / near-miss), `40..59` uses `text-emerald-500` (solid pass), `>= 60` uses `text-emerald-600` (deep historical pass, avoiding overly dark shades like `emerald-800`).
+- **Season Boundary Discrepancies**:
+  - Season discrepancies are non-breaking warnings (not breaking failures). 106 of 109 stations in the dataset have historical boundary discrepancies; they do not turn the pass mark amber, but are listed separately in the Warnings column and tooltip.
+  - The "With Season Warnings" filter chip was removed as it matched virtually all stations, simplifying the filter options to Total, Passed, and Failed.
+
+### Database Table Columns & Product Availability Matrix
+
+- **Columns (`DB_DISPLAY_COLUMNS`)**:
+  - `name`: Station Name
+  - `qc_score`: QC Status (`check_circle` or `cancel`, sorted worst-to-best)
+  - `rainfall_year_range`: Rainfall Date Range (`rainfallStartYear – rainfallEndYear` or `—`)
+  - `rainfall_total_years`: Total observation years
+  - `rainfall_last_thirty_years`: Recent 30 years count
+  - `rainfall_last_ten_years`: Recent 10 years count
+  - `qc_warnings`: Warnings (distinct entries for start-no-end and end-no-start)
+  - `products`: Annual Products micro-matrix (`Products 🌧  🌡  🌾`)
+  - `monthly_data`: Monthly Data micro-matrix (`Monthly 🌧  🌡`)
+  - `updated_at`: Last Sync date
+- **Micro-Matrix UI Pattern**:
+  - Replaces bulky icon buttons with compact 16px indicators (`!text-[16px] !w-4 !h-4 leading-none`).
+  - Available: `check` (`text-emerald-500`), Missing: `close` (`text-rose-500`).
+  - Tooltips display individual item status, generation dates, and IDs.
+- **Monthly Data Nuances**:
+  - The Supabase `climate_station_data` schema and API currently provide `monthly_temperature_data` and metadata, but do not provide a `monthly_rainfall_data` column. Monthly rainfall observations historically exist only in bundled `.monthly.csv` files for select countries (e.g. Zambia, but 0 stations in Malawi). The UI explicitly notes this distinction in tooltips.

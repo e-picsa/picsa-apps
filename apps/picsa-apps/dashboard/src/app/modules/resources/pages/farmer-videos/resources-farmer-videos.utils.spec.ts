@@ -32,8 +32,8 @@ describe('resources-farmer-videos.utils', () => {
   }
 
   describe('getDirectToFarmerVideos', () => {
-    it('should include intro, 8 steps, and 4 testimonials', () => {
-      expect(allVideos.length).toBe(1 + 8 + 4);
+    it('should include intro, 8 steps, a supplementary step video, and 4 testimonials', () => {
+      expect(allVideos.length).toBe(1 + 8 + 1 + 4);
       expect(allVideos[0].category).toBe('intro');
       expect(allVideos[0].id).toBe('intro');
 
@@ -48,6 +48,11 @@ describe('resources-farmer-videos.utils', () => {
       const step8 = allVideos.find((v) => v.id === 'short_term_forecast');
       expect(step8?.stepNumber).toBe(8);
       expect(step8?.useLocalizedEn).toBe(true);
+
+      const elNino = allVideos.find((v) => v.id === 'el_nino');
+      expect(elNino?.category).toBe('step');
+      expect(elNino?.stepNumber).toBe(7);
+      expect(elNino?.useLocalizedEn).toBe(true);
 
       const testimonials = allVideos.filter((v) => v.category === 'testimonial');
       expect(testimonials.length).toBe(4);
@@ -67,18 +72,21 @@ describe('resources-farmer-videos.utils', () => {
       expect(mwVideos.length).toBe(1 + 8 + 2); // intro + 8 steps + 2 MW testimonials
       expect(mwVideos.some((v) => v.id === 'jackline_nkhoma')).toBe(true);
       expect(mwVideos.some((v) => v.id === 'john_tembo')).toBe(false);
+      // El Niño is Zambia-only, so should be excluded until MW variants exist
+      expect(mwVideos.some((v) => v.id === 'el_nino')).toBe(false);
     });
 
     it('should filter testimonials by country code for Zambia', () => {
       const zmVideos = getVideosForCountry(allVideos, 'zm');
-      expect(zmVideos.length).toBe(1 + 8 + 2); // intro + 8 steps + 2 ZM testimonials
+      expect(zmVideos.length).toBe(1 + 8 + 1 + 2); // intro + 8 steps + El Niño + 2 ZM testimonials
       expect(zmVideos.some((v) => v.id === 'john_tembo')).toBe(true);
       expect(zmVideos.some((v) => v.id === 'jackline_nkhoma')).toBe(false);
+      expect(zmVideos.some((v) => v.id === 'el_nino')).toBe(true);
     });
 
     it('should return all videos for global', () => {
       const globalVideos = getVideosForCountry(allVideos, 'global');
-      expect(globalVideos.length).toBe(13);
+      expect(globalVideos.length).toBe(14);
     });
   });
 

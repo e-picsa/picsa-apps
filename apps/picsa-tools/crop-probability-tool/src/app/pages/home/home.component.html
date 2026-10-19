@@ -66,5 +66,20 @@
     } @else {
       {{ 'Loading...' | translate }}
     }
+  } @else {
+    <!-- Selected location has no probability table (e.g. shared forecasts location without crop data) -->
+    <div class="flex flex-col items-center gap-4 px-6 py-16 text-center">
+      <mat-icon class="!w-12 !h-12 !text-5xl text-slate-300">place</mat-icon>
+      <p class="text-lg text-slate-600 m-0">
+        @if (selectedLocationLabel(); as district) {
+          {{ 'No crop probability data available for {district}.' | translate: { district } }}
+        } @else {
+          {{ 'No crop probability data available for this location.' | translate }}
+        }
+      </p>
+      <button matButton="filled" (click)="locationOverlayOpen.set(true)">
+        {{ 'Select Location' | translate }}
+      </button>
+    </div>
   }
 </div>

@@ -39,6 +39,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 ## 4. Verification Workflow (No Redundant Builds or Broad Test Suites)
 
 - **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
+- **Typechecking (ALWAYS via `yarn ai:typecheck`)**: After modifying TypeScript or Angular HTML template files, run `yarn ai:typecheck` with no args (auto-detects changed files vs `HEAD`, maps changed libs/apps to affected Nx projects, and verifies types + Angular templates via `ngc --noEmit` in 1-2 seconds without running heavy production builds).
 - **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
 - **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.
 

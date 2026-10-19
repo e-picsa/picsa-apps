@@ -395,6 +395,9 @@
 
 - **[file.utils.ts](../apps/picsa-server/scripts/utils/file.utils.ts)** (`apps/picsa-server/scripts/utils/file.utils.ts`)
   - `Function` **zipFolderContents**
+- **[storage-cache.utils.ts](../apps/picsa-server/scripts/utils/storage-cache.utils.ts)** (`apps/picsa-server/scripts/utils/storage-cache.utils.ts`)
+  - `Class` **StorageFileCache** (methods: [load, isFresh, read, write, prune])
+  - `Interface` **IStorageObjectMeta**
 - **[supabase.utils.ts](../apps/picsa-server/scripts/utils/supabase.utils.ts)** (`apps/picsa-server/scripts/utils/supabase.utils.ts`)
   - `Interface` **ILinkStatus**
   - `Function` **getSupabaseClient**
