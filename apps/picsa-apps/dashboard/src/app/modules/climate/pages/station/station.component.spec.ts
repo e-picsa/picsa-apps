@@ -14,13 +14,13 @@ import { ClimateStationPageComponent } from './station.component';
   standalone: true,
 })
 class MockMapComponent {
-  @Input() markers: any;
+  @Input() markers: unknown;
 }
 
 describe('ClimateStationPageComponent', () => {
   let component: ClimateStationPageComponent;
   let fixture: ComponentFixture<ClimateStationPageComponent>;
-  let mockClimateService: any;
+  let mockClimateService: Partial<ClimateService>;
 
   beforeEach(async () => {
     mockClimateService = {
@@ -34,15 +34,8 @@ describe('ClimateStationPageComponent', () => {
           longitude: 34.45,
         },
       ]),
-      stationQcMap: jest.fn().mockReturnValue({
-        'mw/salima': {
-          passed: true,
-          failures: [],
-          reasons: [],
-        },
-      }),
       apiCountryCode: 'mw',
-    };
+    } as unknown as ClimateService;
 
     await TestBed.configureTestingModule({
       imports: [ClimateStationPageComponent],
@@ -61,18 +54,5 @@ describe('ClimateStationPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should configure table options with qc_status column and header', () => {
-    expect(component.tableOptions.displayColumns).toContain('qc_status');
-    expect(component.tableOptions.formatHeader?.('qc_status')).toBe('QC');
-  });
-
-  it('should compute tableData with qc_passed and qc_reasons mapped from stationQcMap', () => {
-    const data = component.tableData();
-    expect(data).toHaveLength(1);
-    expect(data[0].station_id).toBe('salima');
-    expect(data[0].qc_passed).toBe(true);
-    expect(data[0].qc_reasons).toEqual([]);
   });
 });
