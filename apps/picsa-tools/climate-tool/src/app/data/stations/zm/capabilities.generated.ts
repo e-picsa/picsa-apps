@@ -8,14 +8,14 @@ import type { IStationCapabilities } from '@picsa/models';
 export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   chikuni_mission: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: '1fb79b8c0a3cb649012e1864373a8c93a2278390056b28f73acb949dcae151af',
     years: [2010, 2024],
     totalYears: 15,
     completeRainYears: 2,
     annual: ['rainfall', 'start', 'end', 'length'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chinsali_ftc: {
     schemaVersion: 1,
@@ -28,7 +28,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   chipata_met: {
     schemaVersion: 1,
@@ -41,7 +41,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   chipepo_met: {
     schemaVersion: 1,
@@ -54,7 +54,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   choma_met: {
     schemaVersion: 1,
@@ -67,18 +67,18 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   hangumba: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: '498d87c7af5272573f3d5e211d13d688a2b6d478070923347da273a9bc67d510',
     years: [2017, 2025],
     totalYears: 9,
     completeRainYears: 1,
     annual: ['rainfall', 'start', 'end', 'length'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   isoka_met: {
     schemaVersion: 1,
@@ -91,7 +91,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kabompo_met: {
     schemaVersion: 1,
@@ -104,7 +104,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kabwe_agro: {
     schemaVersion: 1,
@@ -117,7 +117,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kabwe_met: {
     schemaVersion: 1,
@@ -130,7 +130,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kafironda_agromet: {
     schemaVersion: 1,
@@ -143,7 +143,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kafue_polder: {
     schemaVersion: 1,
@@ -156,7 +156,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kalabo_met: {
     schemaVersion: 1,
@@ -169,7 +169,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kaoma_met: {
     schemaVersion: 1,
@@ -182,7 +182,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kasama_met: {
     schemaVersion: 1,
@@ -195,7 +195,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kasempa_met: {
     schemaVersion: 1,
@@ -208,18 +208,18 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kasyongo: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'f5552cc015b5e5135562c47c765e9802096a6f568a87b37e7f5f5a1cb6a80690',
     years: [2015, 2025],
     totalYears: 11,
     completeRainYears: 0,
     annual: ['end'],
     qcFailures: ['insufficient_total_years', 'no_recent_data', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   kawambwa_met: {
     schemaVersion: 1,
@@ -232,7 +232,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end'],
   },
   livingstone_met: {
     schemaVersion: 1,
@@ -245,7 +245,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   lundazi_met: {
     schemaVersion: 1,
@@ -258,7 +258,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   lusaka_city_airpor: {
     schemaVersion: 1,
@@ -271,7 +271,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   lusaka_int__airpor: {
     schemaVersion: 1,
@@ -284,18 +284,18 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   maamba_collieries: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'de72e29450052e1bbe33ae08221b3b1bf934fdee903f7511d86c0bdf13c5970d',
     years: [1999, 2025],
     totalYears: 27,
     completeRainYears: 15,
     annual: ['rainfall', 'start', 'end', 'length'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   magoye_agromet: {
     schemaVersion: 1,
@@ -308,7 +308,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mansa_agro: {
     schemaVersion: 1,
@@ -321,7 +321,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mansa_met: {
     schemaVersion: 1,
@@ -334,7 +334,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mbala_met: {
     schemaVersion: 1,
@@ -347,7 +347,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['no_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   mfuwe_met: {
     schemaVersion: 1,
@@ -360,7 +360,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   misamfu_agromet: {
     schemaVersion: 1,
@@ -373,7 +373,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mkushi_met: {
     schemaVersion: 1,
@@ -386,7 +386,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mongu_met: {
     schemaVersion: 1,
@@ -399,18 +399,18 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   moorings: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'bb263cc7a89d55e2f2ab41473a43d802bbf18f0a69bb852f35b273829466ac3e',
     years: [1921, 2025],
     totalYears: 105,
     completeRainYears: 93,
     annual: ['rainfall', 'start', 'end', 'length'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mpika_met: {
     schemaVersion: 1,
@@ -423,7 +423,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mpulungu_met: {
     schemaVersion: 1,
@@ -436,7 +436,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   msekera_agromet: {
     schemaVersion: 1,
@@ -449,7 +449,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   mt__makulu_agrome: {
     schemaVersion: 1,
@@ -474,7 +474,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'no_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   mwinilunga_met: {
     schemaVersion: 1,
@@ -487,18 +487,18 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   nabuya: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'a67c0f366eca6ed08f80f6fc23d4e0b6866685c4b1c42ceba92b261c087523a8',
     years: [2016, 2025],
     totalYears: 10,
     completeRainYears: 6,
     annual: ['rainfall', 'start', 'end', 'length'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   ndola_met: {
     schemaVersion: 1,
@@ -511,7 +511,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   petauke_met: {
     schemaVersion: 1,
@@ -524,7 +524,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   samfya_met: {
     schemaVersion: 1,
@@ -537,7 +537,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   senanga_met: {
     schemaVersion: 1,
@@ -550,7 +550,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   serenje_agro_met: {
     schemaVersion: 1,
@@ -563,7 +563,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   sesheke_met: {
     schemaVersion: 1,
@@ -576,7 +576,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   simon_mwansa_kapwepwe: {
     schemaVersion: 1,
@@ -589,7 +589,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years', 'sparse_recent_data'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   solwezi_met: {
     schemaVersion: 1,
@@ -602,7 +602,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   zambezi_met: {
     schemaVersion: 1,
@@ -615,6 +615,6 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
 };

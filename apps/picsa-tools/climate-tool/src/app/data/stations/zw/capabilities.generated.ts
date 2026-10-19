@@ -17,7 +17,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   buffalo_range_met: {
     schemaVersion: 1,
@@ -30,7 +30,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   buhera_met: {
     schemaVersion: 1,
@@ -43,7 +43,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chipinge_met: {
     schemaVersion: 1,
@@ -56,7 +56,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chisengu_met: {
     schemaVersion: 1,
@@ -69,7 +69,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chisumbanje_met: {
     schemaVersion: 1,
@@ -82,7 +82,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kezi_met: {
     schemaVersion: 1,
@@ -95,7 +95,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   makoholi_exp_station_met: {
     schemaVersion: 1,
@@ -108,7 +108,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   masvingo_airport_met: {
     schemaVersion: 1,
@@ -121,7 +121,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   matopos_res_stn_met: {
     schemaVersion: 1,
@@ -134,7 +134,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   mt_darwin: {
     schemaVersion: 1,
@@ -157,7 +157,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   plumtree_met: {
     schemaVersion: 1,
@@ -170,7 +170,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   rupike_irrigation_scheme_met: {
     schemaVersion: 1,
@@ -183,7 +183,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: ['insufficient_total_years'],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_end_no_start'],
   },
   rusape_met: {
     schemaVersion: 1,
@@ -196,7 +196,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   west_nicholson_met: {
     schemaVersion: 1,
@@ -209,7 +209,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   zaka_met: {
     schemaVersion: 1,
@@ -222,6 +222,6 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
     qcFailures: [],
-    qcWarnings: ['season_discrepancies'],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
 };
