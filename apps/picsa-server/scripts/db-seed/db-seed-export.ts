@@ -447,8 +447,8 @@ export class SupabaseSeedExport {
     if (missing.size === 0) return;
 
     const storagePaths = [...missing.keys()];
-    const remoteMeta = await this.fetchRemoteStorageMeta(storagePaths);
-    const cachedCount = storagePaths.filter((file) => this.storageCache.isFresh(file, remoteMeta.get(file))).length;
+    const { meta: remoteMeta, complete } = await this.fetchRemoteStorageMeta(storagePaths);
+    const cachedCount = storagePaths.filter((file) => this.isCacheFresh(file, remoteMeta.get(file), complete)).length;
     console.log(
       `   Mirroring ${storagePaths.length} storage files (${cachedCount} cached, ${storagePaths.length - cachedCount} to download)...`,
     );
@@ -459,7 +459,7 @@ export class SupabaseSeedExport {
     const tasks = storagePaths.map((file) => async () => {
       const refs = missing.get(file)!;
       try {
-        const { bytes, downloaded } = await this.loadStorageBytes(file, remoteMeta.get(file));
+        const { bytes, downloaded } = await this.loadStorageBytes(file, remoteMeta.get(file), complete);
         if (downloaded) stats.downloaded++;
         await this.uploadStorageBytes(file, bytes, refs[0]?.row?.mimetype);
         validStoragePaths.add(file);
@@ -481,11 +481,14 @@ export class SupabaseSeedExport {
   /**
    * Look up remote `storage.objects` metadata for the referenced paths so cached
    * files can be validated in a handful of requests instead of by re-downloading.
-   * Returns an empty map (size-only cache validation) when metadata is unavailable.
+   * `complete` is false when any lookup failed, in which case missing entries are
+   * ambiguous and callers fall back to size-only cache validation.
    */
-  private async fetchRemoteStorageMeta(storagePaths: string[]): Promise<Map<string, IStorageObjectMeta>> {
+  private async fetchRemoteStorageMeta(
+    storagePaths: string[],
+  ): Promise<{ meta: Map<string, IStorageObjectMeta>; complete: boolean }> {
     const meta = new Map<string, IStorageObjectMeta>();
-    if (!this.remoteClient || storagePaths.length === 0) return meta;
+    if (!this.remoteClient || storagePaths.length === 0) return { meta, complete: false };
 
     const byBucket = new Map<string, string[]>();
     for (const storagePath of storagePaths) {
@@ -495,36 +498,58 @@ export class SupabaseSeedExport {
       byBucket.set(bucket, names);
     }
 
+    const tasks: (() => Promise<void>)[] = [];
     for (const [bucket, names] of byBucket) {
       for (let i = 0; i < names.length; i += STORAGE_META_CHUNK_SIZE) {
-        const { data, error } = await this.remoteClient
-          .schema('storage')
-          .from('objects')
-          .select('name, metadata, updated_at')
-          .eq('bucket_id', bucket)
-          .in('name', names.slice(i, i + STORAGE_META_CHUNK_SIZE));
-        if (error) {
-          console.warn(`   ⚠️  Could not read remote storage metadata for bucket "${bucket}": ${error.message}`);
-          continue;
-        }
-        for (const row of (data ?? []) as { name: string; metadata?: any; updated_at?: string }[]) {
-          meta.set(`${bucket}/${row.name}`, {
-            size: Number(row.metadata?.size ?? row.metadata?.contentLength) || null,
-            etag: row.metadata?.eTag ?? row.metadata?.etag ?? null,
-            updatedAt: row.updated_at ?? null,
-          });
-        }
+        const chunk = names.slice(i, i + STORAGE_META_CHUNK_SIZE);
+        tasks.push(async () => {
+          const { data, error } = await this.remoteClient!.schema('storage')
+            .from('objects')
+            .select('name, metadata, updated_at')
+            .eq('bucket_id', bucket)
+            .in('name', chunk);
+          if (error) throw error;
+          for (const row of (data ?? []) as { name: string; metadata?: any; updated_at?: string }[]) {
+            meta.set(`${bucket}/${row.name}`, {
+              size: Number(row.metadata?.size ?? row.metadata?.contentLength) || null,
+              etag: row.metadata?.eTag ?? row.metadata?.etag ?? null,
+              updatedAt: row.updated_at ?? null,
+            });
+          }
+        });
       }
     }
-    return meta;
+
+    const results = await allSettledInBatches(tasks, STORAGE_MIRROR_CONCURRENCY);
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.warn(`   ⚠️  Could not read remote storage metadata: ${String(result.reason)}`);
+      }
+    }
+    return { meta, complete: results.every((result) => result.status === 'fulfilled') };
+  }
+
+  /**
+   * Cached bytes are reusable only when they still match the remote object.
+   * A path missing from a complete remote lookup no longer exists remotely, so
+   * its cache entry must not be reused (avoids resurrecting deleted objects).
+   */
+  private isCacheFresh(
+    storagePath: string,
+    remote: IStorageObjectMeta | undefined,
+    remoteLookupComplete: boolean,
+  ): boolean {
+    if (!remote && remoteLookupComplete) return false;
+    return this.storageCache.isFresh(storagePath, remote);
   }
 
   /** Resolve bytes from the local cache when fresh, otherwise download once and cache the result */
   private async loadStorageBytes(
     storagePath: string,
-    remote?: IStorageObjectMeta,
+    remote: IStorageObjectMeta | undefined,
+    remoteLookupComplete: boolean,
   ): Promise<{ bytes: Buffer; downloaded: boolean }> {
-    if (this.storageCache.isFresh(storagePath, remote)) {
+    if (this.isCacheFresh(storagePath, remote, remoteLookupComplete)) {
       const cached = this.storageCache.read(storagePath);
       if (cached) return { bytes: cached, downloaded: false };
     }
