@@ -37,7 +37,7 @@
       </div>
 
       <!-- Section 2: Selected Station & Nearby Options -->
-      @if (selectedDistrict(); as district) { @if (isCalculatingProximity()) {
+      @if (isCalculatingProximity() && !displayedStation()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
         <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
         <div class="text-sm font-medium">{{ strings.findingStations | translate }}...</div>
@@ -75,20 +75,25 @@
             @for (alt of nearbyStations(); track alt.station.id) {
             <button
               matButton="outlined"
-              class="!text-xs !h-7 !px-2.5 transition-colors"
+              class="!h-auto !py-1.5 !px-3 transition-colors"
               [ngClass]="{
                 '!border-primary !bg-primary/10 !text-primary font-semibold': displayedStation()?.station?.id === alt.station.id
               }"
               (click)="selectAlternateStation(alt)"
             >
-              <span>{{ alt.station.name }} ({{ alt.distanceKm }} km)</span>
+              <span class="flex flex-col items-start text-left leading-tight">
+                <span class="text-xs">
+                  @if (alt.mapNumber) {<span>{{ alt.mapNumber }}. </span>}{{ alt.station.name }}
+                </span>
+                <span class="text-[11px] font-normal text-gray-400">{{ alt.distanceKm }} km</span>
+              </span>
             </button>
             }
           </div>
         </div>
         }
       </div>
-      } }
+      }
 
       <!-- Section 3: Optional Browse All Stations Expander -->
       <div class="all-stations-section mt-4 pt-2">

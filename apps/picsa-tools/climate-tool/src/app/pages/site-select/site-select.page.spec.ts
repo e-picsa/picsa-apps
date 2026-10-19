@@ -65,6 +65,22 @@ describe('SiteSelectPage', () => {
         completeRainYears: 40,
       },
     },
+    {
+      id: 'chipata',
+      name: 'Chipata',
+      latitude: -13.55,
+      longitude: 32.58,
+      countryCode: 'zm',
+      location: ['CHIPATA'],
+      capabilities: {
+        schemaVersion: 1,
+        lastUpdated: '2024-01-01',
+        contentHash: 'hash3',
+        years: [1970, 2020],
+        totalYears: 50,
+        completeRainYears: 45,
+      },
+    },
   ];
 
   beforeEach(async () => {
@@ -138,7 +154,7 @@ describe('SiteSelectPage', () => {
     expect(component.showAllStations()).toBe(true);
   });
 
-  it('should include closest station first in nearbyStations and update selection on click', () => {
+  it('should include closest station first in nearbyStations with mapNumber and update selection on click', () => {
     component.stationRecommendations.set([
       { station: mockStations[0], distanceKm: 5, isInsideDistrict: true, isRecommended: true, score: -45 },
       { station: mockStations[1], distanceKm: 25, isInsideDistrict: true, isRecommended: false, score: -25 },
@@ -146,6 +162,9 @@ describe('SiteSelectPage', () => {
 
     expect(component.nearbyStations().length).toBe(2);
     expect(component.nearbyStations()[0].station.id).toBe(mockStations[0].id);
+    // sortedAllStations sorts by district ('CHIPATA' then 'CHOMA') then name ('Batoka', 'Choma')
+    expect(component.nearbyStations()[0].mapNumber).toBe(3);
+    expect(component.nearbyStations()[1].mapNumber).toBe(2);
 
     // Initial selectedStation
     component.selectedStation.set(mockStations[0]);
@@ -157,5 +176,18 @@ describe('SiteSelectPage', () => {
 
     // First entry in nearbyStations remains the closest station for easy switching back
     expect(component.nearbyStations()[0].station.id).toBe(mockStations[0].id);
+  });
+
+  it('should populate district and selectedStation when clicking a map marker directly', () => {
+    const chipataStation = mockStations[2];
+    component.handleMarkerClick({
+      latlng: [chipataStation.latitude, chipataStation.longitude],
+      data: chipataStation,
+      _index: 0,
+    });
+
+    expect(component.selectedStation()?.id).toBe('chipata');
+    expect(component.selectedDistrict()?.id).toBe('chipata');
+    expect(component.selectedLocation()).toEqual([undefined, undefined, 'zm', undefined, 'eastern', 'chipata']);
   });
 });

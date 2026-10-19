@@ -32,6 +32,7 @@ import {
   PicsaDataTableComponent,
 } from '@picsa/shared/features/data-table/data-table.component';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
@@ -40,6 +41,7 @@ import {
   getDistrictCenterAndBoundary,
   getStationRecommendations,
   IDistrictCenterResult,
+  isStationInDistrict,
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
 
@@ -86,6 +88,9 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
 
+  /** Tracks a station directly clicked on the map/table so district sync does not overwrite it */
+  private manualStationSelection: IStationMeta | undefined = undefined;
+
   public readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
   public readonly picsaMap = viewChild(PicsaMapComponent);
 
@@ -104,7 +109,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public readonly selectedDistrict = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
-    if (!country || !loc || loc.length === 0) return undefined;
+    if (!country || !loc || !loc.length) return undefined;
 
     const districtId = loc[5] ?? loc[4];
     if (!districtId) return undefined;
@@ -142,15 +147,36 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Primary recommendation (first in ranked list - closest station) */
   public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
 
-  /** Nearby stations (including closest station first, top 4) */
-  public readonly nearbyStations = computed(() =>
-    this.stationRecommendations()
+  /** Active country stations (excluding draft/empty stations) sorted alphabetically by district, then by station name */
+  public readonly sortedAllStations = computed(() => {
+    const stations = this.dataService.stations().filter((s) => s.latitude !== null && s.longitude !== null);
+    return [...stations].sort((a, b) => {
+      const distA = a.location?.[0] || '';
+      const distB = b.location?.[0] || '';
+      const distCmp = distA.localeCompare(distB);
+      if (distCmp !== 0) return distCmp;
+      return a.name.localeCompare(b.name);
+    });
+  });
+
+  /** Lookup of station ID to its 1-based map marker number */
+  public readonly stationNumberMap = computed(() => {
+    const map = new Map<string, number>();
+    this.sortedAllStations().forEach((s, index) => map.set(s.id, index + 1));
+    return map;
+  });
+
+  /** Nearby stations (including closest station first, top 4) with map station number */
+  public readonly nearbyStations = computed(() => {
+    const numberMap = this.stationNumberMap();
+    return this.stationRecommendations()
       .slice(0, 4)
       .map((rec) => ({
         ...rec,
+        mapNumber: numberMap.get(rec.station.id),
         station: { ...rec.station, name: formatStationLabel(rec.station.name) },
-      })),
-  );
+      }));
+  });
 
   /** Alias for backward compatibility */
   public readonly alternativeRecommendations = this.nearbyStations;
@@ -176,18 +202,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   /** Active station for floating mobile card */
   public readonly activeStation = computed(() => this.displayedStation()?.station);
-
-  /** Active country stations (excluding draft/empty stations) sorted alphabetically by district, then by station name */
-  public readonly sortedAllStations = computed(() => {
-    const stations = this.dataService.stations().filter((s) => s.latitude !== null && s.longitude !== null);
-    return [...stations].sort((a, b) => {
-      const distA = a.location?.[0] || '';
-      const distB = b.location?.[0] || '';
-      const distCmp = distA.localeCompare(distB);
-      if (distCmp !== 0) return distCmp;
-      return a.name.localeCompare(b.name);
-    });
-  });
 
   /** Markers prepared for PicsaMapComponent */
   public readonly mapMarkers = computed<IMapMarker[]>(() => {
@@ -252,21 +266,28 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         this.stationRecommendations.set([]);
         this.districtCenterResult.set(undefined);
         this.isCalculatingProximity.set(false);
-        this.selectedStation.set(undefined);
-        if (picsaMap && mapReady) {
+        if (!this.manualStationSelection) {
+          this.selectedStation.set(undefined);
+        }
+        if (picsaMap && mapReady && !this.manualStationSelection) {
           picsaMap.clearActiveMarker();
           picsaMap.removeGeoJsonLayer('selected-district-boundary');
         }
         return;
       }
 
+      const preservedStation = this.manualStationSelection;
+      this.manualStationSelection = undefined;
+
       const reqId = ++latestDistrictReqId;
       this.isCalculatingProximity.set(true);
       this.districtCenterResult.set(undefined);
-      this.selectedStation.set(undefined);
-      if (picsaMap && mapReady) {
-        picsaMap.clearActiveMarker();
-        picsaMap.removeGeoJsonLayer('selected-district-boundary');
+      if (!preservedStation) {
+        this.selectedStation.set(undefined);
+        if (picsaMap && mapReady) {
+          picsaMap.clearActiveMarker();
+          picsaMap.removeGeoJsonLayer('selected-district-boundary');
+        }
       }
 
       getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
@@ -285,13 +306,13 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
             this.stationRecommendations.set(recommendations);
 
             if (recommendations.length > 0) {
-              const closest = recommendations[0].station;
-              this.selectedStation.set(closest);
+              const targetStation = preservedStation ?? recommendations[0].station;
+              this.selectedStation.set(targetStation);
               const picsaMapInstance = this.picsaMap();
               if (picsaMapInstance && this.mapReady()) {
-                const marker = this.mapMarkers().find((m) => m.data?.id === closest.id);
+                const marker = this.mapMarkers().find((m) => m.data?.id === targetStation.id);
                 if (marker) {
-                  picsaMapInstance.setActiveMarker(marker, false, true);
+                  picsaMapInstance.setActiveMarker(marker, false, !preservedStation);
                 }
               }
             }
@@ -314,7 +335,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       const result = this.districtCenterResult();
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
-      const primaryRec = this.primaryRecommendation();
+      const activeStation = this.displayedStation()?.station;
 
       if (!picsaMap || !mapReady || !district || !result) {
         if (!district) lastRenderedForMapDistrictId = undefined;
@@ -343,8 +364,8 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         });
       }
 
-      if (primaryRec?.station) {
-        const marker = this.mapMarkers().find((m) => m.data?.id === primaryRec.station.id);
+      if (activeStation) {
+        const marker = this.mapMarkers().find((m) => m.data?.id === activeStation.id);
         if (marker) {
           picsaMap.setActiveMarker(marker, false, false);
         }
@@ -376,6 +397,10 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   }
 
   public handleLocationChanged(location: (string | undefined)[]) {
+    if (isEqual(location, this.selectedLocation())) {
+      return;
+    }
+    this.manualStationSelection = undefined;
     this.selectedLocation.set(location);
     this.districtCenterResult.set(undefined);
     this.selectedStation.set(undefined);
@@ -416,6 +441,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         this.confirmAndNavigate(station);
       } else {
         this.selectedStation.set(station);
+        this.syncDistrictFromStation(station);
         const picsaMap = this.picsaMap();
         if (picsaMap && this.mapReady()) {
           const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
@@ -430,6 +456,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public handleMarkerClick(e: IMapMarker) {
     if (e?.data) {
       this.selectedStation.set(e.data);
+      this.syncDistrictFromStation(e.data);
     }
   }
 
@@ -437,5 +464,29 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     if (stationName) {
       this.selectedStation.set({ name: stationName } as IStationMeta);
     }
+  }
+
+  /**
+   * When a user clicks a station directly on the map or table, populate the district
+   * selector if the station maps to a known district and no district (or a different district) is selected.
+   */
+  private syncDistrictFromStation(station: IStationMeta) {
+    const country = this.userCountryCode();
+    if (!country || !station.location?.length) return;
+
+    const geoData = getGeoLocationData(country as ICountryCode);
+    const deepest = getDeepestLocations(geoData);
+    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id));
+    if (!matchingDistrict || matchingDistrict.id === this.selectedDistrict()?.id) {
+      return;
+    }
+
+    this.manualStationSelection = station;
+    const location: (string | undefined)[] = matchingDistrict.parentId
+      ? [undefined, undefined, country, undefined, matchingDistrict.parentId, matchingDistrict.id]
+      : [undefined, undefined, country, undefined, matchingDistrict.id];
+
+    this.selectedLocation.set(location);
+    this.configurationService.updateUserSettings({ location });
   }
 }
