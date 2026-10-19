@@ -20,6 +20,12 @@ Resets the local database and seeds directly with complete, unfiltered data from
 yarn nx run picsa-server:db:seed:extended
 ```
 
+Referenced storage files (e.g. forecast PDFs) are mirrored into local buckets. Downloads are cached on disk under `scripts/db-seed/cache/storage` (gitignored, with a `manifest.json` recording remote size/eTag/updatedAt), so unchanged files are uploaded from cache instead of being re-downloaded on every run. `--no-fetch` reuses the cached DB records and `--no-download` seeds storage from the local cache only, both allowing fully offline runs:
+
+```bash
+yarn nx run picsa-server:db:seed:extended --no-fetch --no-download
+```
+
 ### 3. Seed data export (`db:seed:export`)
 
 Pulls filtered seed tables from the remote database into local CSVs (`supabase/data/*_rows.csv`).
