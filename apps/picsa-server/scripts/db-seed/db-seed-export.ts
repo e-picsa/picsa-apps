@@ -4,6 +4,8 @@ import { writeFile, readFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execSync } from 'node:child_process';
+import { allSettledInBatches } from '@picsa/utils/async.utils';
+import { getMimeType } from '@picsa/utils/mimetypes';
 
 import {
   SEED_DATA_CONFIG,
@@ -12,12 +14,18 @@ import {
   ISeedDataConfiguration,
 } from './db-seed.config';
 import { getExportSupabaseClient } from '../utils/supabase.utils';
+import { StorageFileCache, IStorageObjectMeta } from '../utils/storage-cache.utils';
 import { SupabaseSeed } from './db-seed';
 
 const ROOT_DIR = resolve(__dirname, '../../../../');
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const CACHE_DIR = resolve(__dirname, 'cache');
+const STORAGE_CACHE_DIR = resolve(CACHE_DIR, 'storage');
+/** Parallel storage downloads/uploads during extended seeding */
+const STORAGE_MIRROR_CONCURRENCY = 6;
+/** Max storage object names sent per metadata lookup (keeps PostgREST URLs bounded) */
+const STORAGE_META_CHUNK_SIZE = 100;
 
 interface ExportTableConfig {
   table: string;
@@ -29,6 +37,7 @@ export interface SeedExportCliOptions {
   country?: string;
   extended?: boolean;
   noFetch?: boolean;
+  noDownload?: boolean;
   writeCsv?: boolean;
 }
 
@@ -45,6 +54,10 @@ export function parseExportCliArgs(argv = process.argv.slice(2)): SeedExportCliO
     }
     if (arg === '--no-fetch') {
       options.noFetch = true;
+      continue;
+    }
+    if (arg === '--no-download') {
+      options.noDownload = true;
       continue;
     }
     if (arg === '--no-csv') {
@@ -100,15 +113,23 @@ export function parseExportCliArgs(argv = process.argv.slice(2)): SeedExportCliO
  * 2. Extended Seed (`yarn nx run picsa-server:db:seed:extended`):
  *    Pulls full unfiltered remote data (`SEED_DATA_EXTENDED_CONFIG`), verifies remote
  *    access and caches records BEFORE resetting the local database, and directly seeds
- *    into local Postgres without writing CSV files. Supports `--no-fetch` for offline caching.
+ *    into local Postgres without writing CSV files. Supports `--no-fetch` for offline
+ *    record caching, `--no-download` for offline storage (seeds referenced files from
+ *    the local storage cache only), and reuses downloaded storage files via
+ *    `StorageFileCache` so unchanged remote files are not re-fetched on repeat runs.
  */
 export class SupabaseSeedExport {
   private remoteClient?: SupabaseClient<any, 'public', any>;
   private localClient?: SupabaseClient<any, 'public', any>;
+  private readonly storageCache = new StorageFileCache(STORAGE_CACHE_DIR);
+  /** Every storage file referenced by the active configuration, used to prune orphaned cache entries */
+  private readonly referencedStoragePaths = new Set<string>();
+  private noDownload = false;
 
   public async run(options: SeedExportCliOptions = parseExportCliArgs()) {
     const isExtended = Boolean(options.extended);
     const writeCsv = options.writeCsv ?? !isExtended;
+    this.noDownload = Boolean(options.noDownload);
 
     console.log(
       `\n🚀 Starting ${isExtended ? 'extended database seed (direct to local DB)' : 'seed data export to CSV'}...\n`,
@@ -249,6 +270,10 @@ export class SupabaseSeedExport {
       console.log('\n📦 Step 1/4: Seeding local storage assets...');
       await localSeed.importStorageObjects();
 
+      // Reuse previously downloaded remote storage files instead of re-fetching them all
+      this.storageCache.load();
+      console.log(`📦 Storage file cache: ${STORAGE_CACHE_DIR}`);
+
       // Retrieve list of existing storage paths to safely validate foreign keys
       const { data: storageObjectRows } = await this.localClient
         .schema('public')
@@ -274,6 +299,15 @@ export class SupabaseSeedExport {
         console.log(`✅ Seeded ${schema}.${table}: ${rows.length} rows upserted to local DB`);
         results.push({ table, rows: rows.length, schema, destination: 'local db' });
       }
+
+      // Drop cached files no longer referenced so the gitignored cache cannot grow unbounded.
+      // Skipped for partial (`--tables` / `--country`) runs, which don't see the full reference set.
+      const isPartialRun = Boolean(options.tables?.length || options.country);
+      if (!isPartialRun) {
+        const pruned = this.storageCache.prune(this.referencedStoragePaths);
+        if (pruned > 0) console.log(`\n🧹 Removed ${pruned} orphaned storage cache file(s)`);
+      }
+      this.storageCache.save();
 
       console.log('\n👤 Step 3/4: Configuring dev users and deployment admin permissions...');
       await localSeed.seedDevUsersAndPermissions();
@@ -389,6 +423,10 @@ export class SupabaseSeedExport {
    * Download storage files referenced by staged rows from remote into local buckets.
    * Runs ahead of row upserts so storage foreign keys resolve and files stay
    * downloadable offline. Null values are preserved (e.g. tombstoned rows).
+   *
+   * Freshness is decided from remote `storage.objects` metadata (one lookup per
+   * bucket/chunk) diffed against the on-disk `StorageFileCache`, so unchanged
+   * files are uploaded from disk rather than re-downloaded on every extended run.
    * Files that cannot be mirrored null the referencing column (with warning) so
    * the import still succeeds - the row stays live remotely and reappears later.
    */
@@ -398,47 +436,159 @@ export class SupabaseSeedExport {
     for (const row of rows) {
       for (const column of columns) {
         const file = row?.[column] as string | null;
-        if (file && !validStoragePaths.has(file)) {
-          const list = missing.get(file) ?? [];
-          list.push({ row, column });
-          missing.set(file, list);
-        }
+        if (!file) continue;
+        this.referencedStoragePaths.add(file);
+        if (validStoragePaths.has(file)) continue;
+        const list = missing.get(file) ?? [];
+        list.push({ row, column });
+        missing.set(file, list);
       }
     }
     if (missing.size === 0) return;
 
-    console.log(`   Mirroring ${missing.size} storage files from remote...`);
-    const buckets = new Set([...missing.keys()].map((file) => file.split('/')[0]));
-    const { data: existingBuckets } = await this.localClient.storage.listBuckets();
-    const existing = new Set((existingBuckets || []).map((b: any) => b.name));
-    for (const bucket of buckets) {
-      if (!existing.has(bucket)) {
-        console.log(`   Creating local bucket: ${bucket}`);
-        await this.localClient.storage.createBucket(bucket, { public: true });
+    const storagePaths = [...missing.keys()];
+    const { meta: remoteMeta, complete } = await this.fetchRemoteStorageMeta(storagePaths);
+    const cachedCount = storagePaths.filter((file) => this.isCacheFresh(file, remoteMeta.get(file), complete)).length;
+    console.log(
+      `   Mirroring ${storagePaths.length} storage files (${cachedCount} cached, ${storagePaths.length - cachedCount} to download)...`,
+    );
+
+    await this.ensureStorageBuckets(storagePaths);
+
+    const stats = { uploaded: 0, downloaded: 0, failed: 0 };
+    const tasks = storagePaths.map((file) => async () => {
+      const refs = missing.get(file)!;
+      try {
+        const { bytes, downloaded } = await this.loadStorageBytes(file, remoteMeta.get(file), complete);
+        if (downloaded) stats.downloaded++;
+        await this.uploadStorageBytes(file, bytes, refs[0]?.row?.mimetype);
+        validStoragePaths.add(file);
+        stats.uploaded++;
+      } catch {
+        console.warn(`   ⚠️  Could not mirror ${file} - nulling ${refs.length} reference(s)`);
+        for (const { row, column } of refs) row[column] = null;
+        stats.failed++;
+      }
+    });
+
+    await allSettledInBatches(tasks, STORAGE_MIRROR_CONCURRENCY);
+    this.storageCache.save();
+    console.log(
+      `   Mirrored ${stats.uploaded}/${storagePaths.length} storage files (${stats.downloaded} downloaded, ${stats.failed} failed)`,
+    );
+  }
+
+  /**
+   * Look up remote `storage.objects` metadata for the referenced paths so cached
+   * files can be validated in a handful of requests instead of by re-downloading.
+   * `complete` is false when any lookup failed, in which case missing entries are
+   * ambiguous and callers fall back to size-only cache validation.
+   */
+  private async fetchRemoteStorageMeta(
+    storagePaths: string[],
+  ): Promise<{ meta: Map<string, IStorageObjectMeta>; complete: boolean }> {
+    const meta = new Map<string, IStorageObjectMeta>();
+    if (!this.remoteClient || storagePaths.length === 0) return { meta, complete: false };
+
+    const byBucket = new Map<string, string[]>();
+    for (const storagePath of storagePaths) {
+      const [bucket, ...segments] = storagePath.split('/');
+      const names = byBucket.get(bucket) ?? [];
+      names.push(segments.join('/'));
+      byBucket.set(bucket, names);
+    }
+
+    const tasks: (() => Promise<void>)[] = [];
+    for (const [bucket, names] of byBucket) {
+      for (let i = 0; i < names.length; i += STORAGE_META_CHUNK_SIZE) {
+        const chunk = names.slice(i, i + STORAGE_META_CHUNK_SIZE);
+        tasks.push(async () => {
+          const { data, error } = await this.remoteClient!.schema('storage')
+            .from('objects')
+            .select('name, metadata, updated_at')
+            .eq('bucket_id', bucket)
+            .in('name', chunk);
+          if (error) throw error;
+          for (const row of (data ?? []) as { name: string; metadata?: any; updated_at?: string }[]) {
+            meta.set(`${bucket}/${row.name}`, {
+              size: Number(row.metadata?.size ?? row.metadata?.contentLength) || null,
+              etag: row.metadata?.eTag ?? row.metadata?.etag ?? null,
+              updatedAt: row.updated_at ?? null,
+            });
+          }
+        });
       }
     }
 
-    let mirrored = 0;
-    for (const [file, refs] of missing) {
-      const [bucket, ...segments] = file.split('/');
-      try {
-        const { data: blob, error: downloadError } = await this.remoteClient.storage
-          .from(bucket)
-          .download(segments.join('/'));
-        if (downloadError || !blob) throw downloadError ?? new Error('empty download');
-        const { error: uploadError } = await this.localClient.storage.from(bucket).upload(segments.join('/'), blob, {
-          upsert: true,
-          contentType: (refs[0] as any)?.row?.mimetype || blob.type || 'application/octet-stream',
-        });
-        if (uploadError) throw uploadError;
-        validStoragePaths.add(file);
-        mirrored++;
-      } catch (err) {
-        console.warn(`   ⚠️  Could not mirror ${file} - nulling ${refs.length} reference(s)`);
-        for (const { row, column } of refs) row[column] = null;
+    const results = await allSettledInBatches(tasks, STORAGE_MIRROR_CONCURRENCY);
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.warn(`   ⚠️  Could not read remote storage metadata: ${String(result.reason)}`);
       }
     }
-    console.log(`   Mirrored ${mirrored}/${missing.size} storage files`);
+    return { meta, complete: results.every((result) => result.status === 'fulfilled') };
+  }
+
+  /**
+   * Cached bytes are reusable only when they still match the remote object.
+   * A path missing from a complete remote lookup no longer exists remotely, so
+   * its cache entry must not be reused (avoids resurrecting deleted objects).
+   */
+  private isCacheFresh(
+    storagePath: string,
+    remote: IStorageObjectMeta | undefined,
+    remoteLookupComplete: boolean,
+  ): boolean {
+    if (!remote && remoteLookupComplete) return false;
+    return this.storageCache.isFresh(storagePath, remote);
+  }
+
+  /** Resolve bytes from the local cache when fresh, otherwise download once and cache the result */
+  private async loadStorageBytes(
+    storagePath: string,
+    remote: IStorageObjectMeta | undefined,
+    remoteLookupComplete: boolean,
+  ): Promise<{ bytes: Buffer; downloaded: boolean }> {
+    if (this.isCacheFresh(storagePath, remote, remoteLookupComplete)) {
+      const cached = this.storageCache.read(storagePath);
+      if (cached) return { bytes: cached, downloaded: false };
+    }
+    if (this.noDownload) {
+      // Offline: fall back to any cached copy even when freshness could not be verified
+      const cached = this.storageCache.read(storagePath);
+      if (cached) return { bytes: cached, downloaded: false };
+      throw new Error('--no-download set and file is not present in the local storage cache');
+    }
+    const [bucket, ...segments] = storagePath.split('/');
+    const { data: blob, error } = await this.remoteClient!.storage.from(bucket).download(segments.join('/'));
+    if (error || !blob) throw error ?? new Error('empty download');
+    const bytes = Buffer.from(await blob.arrayBuffer());
+    this.storageCache.write(storagePath, bytes, remote);
+    return { bytes, downloaded: true };
+  }
+
+  /** Upload bytes into the local Supabase storage bucket */
+  private async uploadStorageBytes(storagePath: string, bytes: Buffer, mimetype?: string | null): Promise<void> {
+    const [bucket, ...segments] = storagePath.split('/');
+    if (!bucket || segments.length === 0) throw new Error(`Invalid storage path: ${storagePath}`);
+    const contentType = mimetype || getMimeType(storagePath) || 'application/octet-stream';
+    const { error } = await this.localClient!.storage.from(bucket).upload(segments.join('/'), bytes, {
+      upsert: true,
+      contentType,
+    });
+    if (error) throw error;
+  }
+
+  /** Create any local buckets referenced by the staged storage paths */
+  private async ensureStorageBuckets(storagePaths: string[]): Promise<void> {
+    const buckets = new Set(storagePaths.map((file) => file.split('/')[0]));
+    const { data: existingBuckets } = await this.localClient!.storage.listBuckets();
+    const existing = new Set((existingBuckets || []).map((b: any) => b.name));
+    for (const bucket of buckets) {
+      if (existing.has(bucket)) continue;
+      console.log(`   Creating local bucket: ${bucket}`);
+      await this.localClient!.storage.createBucket(bucket, { public: true });
+    }
   }
 
   /** Upsert fetched rows directly into local Supabase database */
