@@ -71,8 +71,8 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.formatHeader('rainfall_last_thirty_years')).toBe('Past 30 Years');
     expect(component.dbTableOptions.formatHeader('rainfall_last_ten_years')).toBe('Past 10 Years');
     expect(component.dbTableOptions.formatHeader('qc_warnings')).toBe('Warnings');
-    expect(component.dbTableOptions.formatHeader('products')).toBe('Products (🌧 🌡 🌾)');
-    expect(component.dbTableOptions.formatHeader('monthly_data')).toBe('Monthly (🌧 🌡)');
+    expect(component.dbTableOptions.formatHeader('products')).toBe('Products 🌧  🌡  🌾');
+    expect(component.dbTableOptions.formatHeader('monthly_data')).toBe('Monthly 🌧  🌡');
     expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
   });
 

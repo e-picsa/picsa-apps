@@ -598,6 +598,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ## 5. Climate Data Quality Control & Sorting
 
 ### Quality Control Ranking Score & Sort Order
+
 - **Formula (`calculateStationQcScore`)**:
   - `failuresCount > 0`: Score is negative count of failed gates (`-3` = failed all 3, `-2` = failed 2, `-1` = failed 1).
   - `failuresCount === 0`: Score is positive total rainfall observation years (e.g. `30`, `35`, `50+`).
@@ -613,6 +614,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The "With Season Warnings" filter chip was removed as it matched virtually all stations, simplifying the filter options to Total, Passed, and Failed.
 
 ### Database Table Columns & Product Availability Matrix
+
 - **Columns (`DB_DISPLAY_COLUMNS`)**:
   - `name`: Station Name
   - `qc_score`: QC Status (`check_circle` or `cancel`, sorted worst-to-best)
@@ -621,8 +623,8 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `rainfall_last_thirty_years`: Recent 30 years count
   - `rainfall_last_ten_years`: Recent 10 years count
   - `qc_warnings`: Warnings (distinct entries for start-no-end and end-no-start)
-  - `products`: Annual Products micro-matrix (`Products (🌧 🌡 🌾)`)
-  - `monthly_data`: Monthly Data micro-matrix (`Monthly (🌧 🌡)`)
+  - `products`: Annual Products micro-matrix (`Products 🌧  🌡  🌾`)
+  - `monthly_data`: Monthly Data micro-matrix (`Monthly 🌧  🌡`)
   - `updated_at`: Last Sync date
 - **Micro-Matrix UI Pattern**:
   - Replaces bulky icon buttons with compact 16px indicators (`!text-[16px] !w-4 !h-4 leading-none`).

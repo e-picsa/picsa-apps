@@ -297,8 +297,8 @@ export class ClimateAdminPageComponent {
       if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
       if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
       if (v === 'qc_warnings') return 'Warnings';
-      if (v === 'products') return 'Products (🌧 🌡 🌾)';
-      if (v === 'monthly_data') return 'Monthly (🌧 🌡)';
+      if (v === 'products') return 'Products 🌧  🌡  🌾';
+      if (v === 'monthly_data') return 'Monthly 🌧  🌡';
       if (v === 'updated_at') return 'Last Sync';
       return formatHeaderDefault(v);
     },
