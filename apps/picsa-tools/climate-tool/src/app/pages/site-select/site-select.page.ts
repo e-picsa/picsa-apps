@@ -177,9 +177,9 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Active station for floating mobile card */
   public readonly activeStation = computed(() => this.displayedStation()?.station);
 
-  /** All country stations sorted alphabetically by district, then by station name */
+  /** Active country stations (excluding draft/empty stations) sorted alphabetically by district, then by station name */
   public readonly sortedAllStations = computed(() => {
-    const stations = this.dataService.allStations();
+    const stations = this.dataService.stations().filter((s) => s.latitude !== null && s.longitude !== null);
     return [...stations].sort((a, b) => {
       const distA = a.location?.[0] || '';
       const distB = b.location?.[0] || '';
@@ -244,7 +244,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     effect(() => {
       const district = this.selectedDistrict();
       const countryCode = this.userCountryCode();
-      const allStations = this.dataService.allStations();
+      const activeStations = this.dataService.stations();
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
 
@@ -276,7 +276,12 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
           this.isCalculatingProximity.set(false);
 
           if (result) {
-            const recommendations = getStationRecommendations(allStations, result.center, district.label, district.id);
+            const recommendations = getStationRecommendations(
+              activeStations,
+              result.center,
+              district.label,
+              district.id,
+            );
             this.stationRecommendations.set(recommendations);
 
             if (recommendations.length > 0) {
@@ -405,7 +410,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public handleRowClick(row: IStationMeta) {
     if (!row) return;
-    const station = this.dataService.allStations().find((s) => s.id === row.id);
+    const station = this.dataService.stations().find((s) => s.id === row.id);
     if (station) {
       if (station.id === this.selectedStation()?.id) {
         this.confirmAndNavigate(station);

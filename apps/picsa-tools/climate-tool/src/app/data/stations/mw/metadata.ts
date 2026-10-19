@@ -47,6 +47,7 @@ const stations: IStationMeta[] = [
     latitude: -15.7,
     longitude: 35.18,
     location: ['Chiradzulu'],
+    draft: true,
   },
   {
     id: 'dowa_agr',
@@ -68,6 +69,7 @@ const stations: IStationMeta[] = [
     latitude: -13.77,
     longitude: 33.53,
     location: ['Lilongwe'],
+    draft: true,
   },
   {
     id: 'mponela',
@@ -96,6 +98,7 @@ const stations: IStationMeta[] = [
     latitude: -11.5,
     longitude: 34.2,
     location: ['Nkhata Bay'],
+    draft: true,
   },
   {
     id: 'mtakataka',
@@ -103,6 +106,7 @@ const stations: IStationMeta[] = [
     latitude: -14.23,
     longitude: 34.52,
     location: ['Dedza'],
+    draft: true,
   },
   {
     id: 'ndakwera',
@@ -131,6 +135,7 @@ const stations: IStationMeta[] = [
     latitude: -13.5,
     longitude: 34.3,
     location: ['Salima'],
+    draft: true,
   },
   {
     id: 'mzandu',
@@ -138,6 +143,7 @@ const stations: IStationMeta[] = [
     latitude: -13.5,
     longitude: 34.5,
     location: ['Nkhotakota'],
+    draft: true,
   },
   {
     id: 'nalunga',
@@ -145,6 +151,7 @@ const stations: IStationMeta[] = [
     latitude: -13.633,
     longitude: 34.066,
     location: ['Dowa'],
+    draft: true,
   },
   {
     id: 'bunda',
