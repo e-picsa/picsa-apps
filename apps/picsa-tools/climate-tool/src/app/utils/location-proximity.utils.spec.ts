@@ -1,5 +1,9 @@
-import { IStationMeta } from '@picsa/models';
+import type { ICountryCode } from '@picsa/data';
+import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
+import type { IStationMeta } from '@picsa/models';
+import type { CountryCodeLegacy } from '@picsa/server-types';
 
+import { CLIMATE_STATIONS_META } from '../data/stations';
 import {
   calculateHaversineDistanceKm,
   computeFeatureBbox,
@@ -7,6 +11,7 @@ import {
   getCombinedDistrictAndStationBounds,
   getDistrictCenterAndBoundary,
   getStationRecommendations,
+  isStationInDistrict,
   normalizeLocationName,
 } from './location-proximity.utils';
 
@@ -50,13 +55,24 @@ describe('Location Proximity Utils', () => {
           ],
         },
       };
+
       const bbox = computeFeatureBbox(feature);
-      expect(bbox).toEqual({ minLng: 20, maxLng: 30, minLat: 10, maxLat: 20 });
+      expect(bbox).toEqual({
+        minLng: 20,
+        minLat: 10,
+        maxLng: 30,
+        maxLat: 20,
+      });
+    });
+
+    it('returns undefined for invalid geometry', () => {
+      expect(computeFeatureBbox(undefined)).toBeUndefined();
+      expect(computeFeatureBbox({ type: 'Feature' })).toBeUndefined();
     });
   });
 
   describe('computeFeatureBboxCenter', () => {
-    it('calculates center from Polygon coordinates', () => {
+    it('returns centroid of the bounding box', () => {
       const feature = {
         type: 'Feature',
         geometry: {
@@ -72,18 +88,9 @@ describe('Location Proximity Utils', () => {
           ],
         },
       };
+
       const center = computeFeatureBboxCenter(feature);
       expect(center).toEqual({ lat: 15, lng: 25 });
-    });
-
-    it('returns undefined for invalid features', () => {
-      expect(computeFeatureBboxCenter(null as unknown as { type: string })).toBeUndefined();
-      expect(
-        computeFeatureBboxCenter({
-          type: 'Feature',
-          geometry: {} as unknown as { type: string; coordinates: unknown },
-        }),
-      ).toBeUndefined();
     });
   });
 
@@ -224,5 +231,30 @@ describe('Location Proximity Utils', () => {
       expect(recommendations[0].isInsideDistrict).toBe(true);
       expect(recommendations[1].isRecommended).toBe(false);
     });
+  });
+
+  describe('Station metadata district integrity', () => {
+    const activeCountries: ICountryCode[] = ['mw', 'zm', 'zw'];
+
+    for (const country of activeCountries) {
+      it(`validates all stations in "${country}" map to a recognized district`, () => {
+        const geoData = getGeoLocationData(country);
+        const deepest = getDeepestLocations(geoData);
+        const stations = CLIMATE_STATIONS_META[country as CountryCodeLegacy];
+
+        expect(stations.length).toBeGreaterThan(0);
+
+        for (const station of stations) {
+          expect(station.location?.length).toBeGreaterThan(0);
+          const matchesDistrict = deepest.some((d) => isStationInDistrict(station, d.label, d.id));
+          expect(matchesDistrict).toBe(
+            true,
+            `Station "${station.name}" (${station.id}) in ${country} has location [${station.location?.join(
+              ', ',
+            )}] which does not match any recognized district in @picsa/data.`,
+          );
+        }
+      });
+    }
   });
 });

@@ -14,7 +14,7 @@ const stations: IStationMeta[] = [
     name: 'Beitbridge (Met)',
     latitude: -22.217,
     longitude: 30,
-    location: ['Matabeleland South'],
+    location: ['Beitbridge'],
     metStationId: '67991020',
   },
   {
@@ -22,7 +22,7 @@ const stations: IStationMeta[] = [
     name: 'Buffalo Range (Met)',
     latitude: -21.017,
     longitude: 31.583,
-    location: ['Masvingo'],
+    location: ['Chiredzi'],
     metStationId: '67977040',
   },
   {
@@ -30,7 +30,7 @@ const stations: IStationMeta[] = [
     name: 'Buhera (Met)',
     latitude: -19.317,
     longitude: 31.433,
-    location: ['Manicaland'],
+    location: ['Buhera'],
     metStationId: '67875010',
   },
   {
@@ -38,7 +38,7 @@ const stations: IStationMeta[] = [
     name: 'Chipinge (Met)',
     latitude: -20.2,
     longitude: 32.617,
-    location: ['Manicaland'],
+    location: ['Chipinge'],
     metStationId: '67983030',
   },
   {
@@ -46,7 +46,7 @@ const stations: IStationMeta[] = [
     name: 'Chisengu (Met)',
     latitude: -19.883,
     longitude: 32.883,
-    location: ['Manicaland'],
+    location: ['Chimanimani'],
     metStationId: '67897020',
   },
   {
@@ -54,7 +54,7 @@ const stations: IStationMeta[] = [
     name: 'Chisumbanje (Met)',
     latitude: -20.8,
     longitude: 32.233,
-    location: ['Manicaland'],
+    location: ['Chipinge'],
     metStationId: '67985020',
   },
   {
@@ -62,7 +62,7 @@ const stations: IStationMeta[] = [
     name: 'Kezi (Met)',
     latitude: -20.92,
     longitude: 28.45,
-    location: ['Matabeleland South'],
+    location: ['Matobo'],
     metStationId: '67961020',
   },
   {
@@ -86,7 +86,7 @@ const stations: IStationMeta[] = [
     name: 'Matopos Res. Stn. (Met)',
     latitude: -20.4,
     longitude: 28.467,
-    location: ['Matabeleland South'],
+    location: ['Matobo'],
     metStationId: '67963040',
   },
   {
@@ -94,14 +94,14 @@ const stations: IStationMeta[] = [
     name: 'Mt Darwin',
     latitude: -16.783,
     longitude: 31.583,
-    location: ['Mashonaland Central'],
+    location: ['Mount Darwin'],
   },
   {
     id: 'nyanga_exp_stn_met',
     name: 'Nyanga Exp. Stn. (Met)',
     latitude: -18.283,
     longitude: 32.75,
-    location: ['Manicaland'],
+    location: ['Nyanga'],
     metStationId: '67889030',
   },
   {
@@ -109,7 +109,7 @@ const stations: IStationMeta[] = [
     name: 'Plumtree (Met)',
     latitude: -20.48,
     longitude: 27.8,
-    location: ['Matabeleland South'],
+    location: ['Mangwe'],
     metStationId: '67951020',
   },
   {
@@ -125,7 +125,7 @@ const stations: IStationMeta[] = [
     name: 'Rusape (Met)',
     latitude: -18.533,
     longitude: 32.133,
-    location: ['Manicaland'],
+    location: ['Makoni'],
     metStationId: '67881040',
   },
   {
@@ -133,7 +133,7 @@ const stations: IStationMeta[] = [
     name: 'West Nicholson (Met)',
     latitude: -21.05,
     longitude: 29.367,
-    location: ['Matabeleland South'],
+    location: ['Insiza'],
     metStationId: '67969020',
   },
   {
@@ -141,7 +141,7 @@ const stations: IStationMeta[] = [
     name: 'Zaka (Met)',
     latitude: -20.333,
     longitude: 31.467,
-    location: ['Masvingo'],
+    location: ['Zaka'],
     metStationId: '67979020',
   },
 ].map((station) => ({
