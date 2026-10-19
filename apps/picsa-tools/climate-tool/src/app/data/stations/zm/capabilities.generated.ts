@@ -8,7 +8,7 @@ import type { IStationCapabilities } from '@picsa/models';
 export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   chikuni_mission: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: '1fb79b8c0a3cb649012e1864373a8c93a2278390056b28f73acb949dcae151af',
     years: [2010, 2024],
     totalYears: 15,
@@ -29,7 +29,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   chipata_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
-    contentHash: 'ae7ac5b1261c45cca5101c7a22a3c371acecc4b0cb14f4a1c4bc9f70bc5e5a4c',
+    contentHash: 'ef17d58c42395ff08dc0c1ecf6bb158cbd8192005c0f41ca1244be3461376c67',
     years: [1944, 2025],
     totalYears: 82,
     completeRainYears: 76,
@@ -61,7 +61,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   hangumba: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: '498d87c7af5272573f3d5e211d13d688a2b6d478070923347da273a9bc67d510',
     years: [2017, 2025],
     totalYears: 9,
@@ -180,7 +180,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kasyongo: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'f5552cc015b5e5135562c47c765e9802096a6f568a87b37e7f5f5a1cb6a80690',
     years: [2015, 2025],
     totalYears: 11,
@@ -212,10 +212,10 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   lundazi_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
-    contentHash: 'd80455fc1f14bc5b328fabd82210620081d5568c39d6f92fbd2b5dedf803fe92',
+    contentHash: '23df70b6dc87f03b714532dc2c921f3a9c70c3fca02b480a850b153335250eae',
     years: [1955, 2025],
     totalYears: 71,
-    completeRainYears: 59,
+    completeRainYears: 60,
     completeTempYears: 47,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
@@ -244,7 +244,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   maamba_collieries: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'de72e29450052e1bbe33ae08221b3b1bf934fdee903f7511d86c0bdf13c5970d',
     years: [1999, 2025],
     totalYears: 27,
@@ -298,7 +298,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   mfuwe_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
-    contentHash: '748b6ef4d8a4f52e227b9b0bb01ee240755a3527a2ee18fef9c1763f117bf255',
+    contentHash: '5eb5b56986c3a5de50e0b76c283bebb63c53e8693c30485089891f545aba258d',
     years: [1978, 2025],
     totalYears: 48,
     completeRainYears: 42,
@@ -341,7 +341,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   moorings: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'bb263cc7a89d55e2f2ab41473a43d802bbf18f0a69bb852f35b273829466ac3e',
     years: [1921, 2025],
     totalYears: 105,
@@ -373,10 +373,10 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   msekera_agromet: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
-    contentHash: '2400896928d1e3e1164a3cc5fe7608d2d7cddc5d0d323840b837cda46658c4b7',
+    contentHash: '449eed972072082d1682cf63952c62bf6daa69abe530d5eb69b47e4ea6f2bcf0',
     years: [1981, 2025],
     totalYears: 45,
-    completeRainYears: 37,
+    completeRainYears: 36,
     completeTempYears: 24,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
@@ -415,7 +415,7 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   nabuya: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-08',
+    lastUpdated: '2026-10-06',
     contentHash: 'a67c0f366eca6ed08f80f6fc23d4e0b6866685c4b1c42ceba92b261c087523a8',
     years: [2016, 2025],
     totalYears: 10,
@@ -436,10 +436,10 @@ export const ZM_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   petauke_met: {
     schemaVersion: 1,
     lastUpdated: '2026-10-06',
-    contentHash: '5a7af3666b2725e48d202acf1f1a23e2cb9fb97cf71846c99e4a542c32e3eb03',
+    contentHash: '96677ad5c0277ba4dc2410b8e1454180e697e8b3bd5f06158fc83a31274e35c8',
     years: [1949, 2025],
     totalYears: 77,
-    completeRainYears: 73,
+    completeRainYears: 74,
     completeTempYears: 63,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['rainfall', 'temp_min', 'temp_max'],
