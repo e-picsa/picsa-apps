@@ -222,7 +222,7 @@ const stations: IStationMeta[] = [
     name: 'Ntaja',
     latitude: -14.87,
     longitude: 35.53,
-    location: ['Mahinga'],
+    location: ['Machinga'],
   },
   {
     id: 'chitedze',
