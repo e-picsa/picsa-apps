@@ -17,47 +17,47 @@
       </ng-template>
 
       <div class="py-4">
-        <!-- KPI Summary / Filter Chips (Outline-free design aligned with Data Comparison tab badges) -->
+        <!-- KPI Summary / Filter Chips -->
         <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium mb-4 select-none py-1">
           <button
             type="button"
             (click)="setDbQcFilter('all')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
             [class]="
               dbQcFilter() === 'all'
-                ? 'bg-slate-200 text-slate-900 font-bold shadow-sm'
+                ? 'bg-slate-200 text-slate-900 font-bold scale-[1.04]'
                 : 'bg-[#f8fafc] text-[#334155] hover:bg-slate-100'
             "
           >
-            <span class="opacity-80">Total Stations:</span>
+            <span class="opacity-85">Total Stations:</span>
             <span class="font-bold">{{ dbStats().total }}</span>
           </button>
 
           <button
             type="button"
             (click)="setDbQcFilter('passed')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+            class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
             [class]="
               dbQcFilter() === 'passed'
-                ? 'bg-emerald-200/90 text-emerald-950 font-bold shadow-sm'
+                ? 'bg-emerald-200/80 text-emerald-950 font-bold scale-[1.04]'
                 : 'bg-[#f0fdf4] text-[#166534] hover:bg-emerald-100/60'
             "
           >
-            <span class="opacity-80">QC Passed:</span>
+            <span class="opacity-85">QC Passed:</span>
             <span class="font-bold">{{ dbStats().passed }}</span>
           </button>
 
           <button
             type="button"
             (click)="setDbQcFilter('failed')"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+            class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
             [class]="
               dbQcFilter() === 'failed'
-                ? 'bg-rose-200/90 text-rose-950 font-bold shadow-sm'
+                ? 'bg-rose-200/80 text-rose-950 font-bold scale-[1.04]'
                 : 'bg-[#fff1f2] text-[#9f1239] hover:bg-rose-100/60'
             "
           >
-            <span class="opacity-80">QC Failed:</span>
+            <span class="opacity-85">QC Failed:</span>
             <span class="font-bold">{{ dbStats().failed }}</span>
           </button>
         </div>
