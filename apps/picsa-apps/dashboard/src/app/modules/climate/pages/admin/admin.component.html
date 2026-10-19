@@ -318,43 +318,76 @@
 
       <div class="py-4">
         <div class="flex flex-col gap-3 mb-4">
-          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium select-none">
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f8fafc] text-[#334155] border-[#e2e8f0]"
+          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium select-none py-1">
+            <button
+              type="button"
+              (click)="setDiffFilter('all')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                diffFilter() === 'all' && !showOnlyDiffs()
+                  ? 'bg-slate-200 text-slate-900 font-bold scale-[1.04]'
+                  : 'bg-[#f8fafc] text-[#334155] hover:bg-slate-100'
+              "
             >
               <span class="opacity-85">Total Stations:</span>
               <span class="font-bold">{{ diffStats().total }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f0fdf4] text-[#166534] border-[#bbf7d0]"
+            </button>
+
+            <button
+              type="button"
+              (click)="setDiffFilter('in_sync')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                diffFilter() === 'in_sync'
+                  ? 'bg-emerald-200/80 text-emerald-950 font-bold scale-[1.04]'
+                  : 'bg-[#f0fdf4] text-[#166534] hover:bg-emerald-100/60'
+              "
             >
               <span class="opacity-85">In Sync:</span>
               <span class="font-bold">{{ diffStats().inSync }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]"
+            </button>
+
+            <button
+              type="button"
+              (click)="setDiffFilter('diff')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                diffFilter() === 'diff' || showOnlyDiffs()
+                  ? 'bg-orange-200/80 text-orange-950 font-bold scale-[1.04]'
+                  : 'bg-[#fff7ed] text-[#c2410c] hover:bg-orange-100/60'
+              "
             >
               <span class="opacity-85">Divergent:</span>
               <span class="font-bold">{{ diffStats().diff }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
+            </button>
+
+            <button
+              type="button"
+              (click)="setDiffFilter('db_only')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                diffFilter() === 'db_only'
+                  ? 'bg-blue-200/80 text-blue-950 font-bold scale-[1.04]'
+                  : 'bg-[#eff6ff] text-[#1e40af] hover:bg-blue-100/60'
+              "
             >
               <span class="opacity-85">Data System Only:</span>
               <span class="font-bold">{{ diffStats().dbOnly }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#faf5ff] text-[#6b21a8] border-[#e9d5ff]"
+            </button>
+
+            <button
+              type="button"
+              (click)="setDiffFilter('app_only')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                diffFilter() === 'app_only'
+                  ? 'bg-purple-200/80 text-purple-950 font-bold scale-[1.04]'
+                  : 'bg-[#faf5ff] text-[#6b21a8] hover:bg-purple-100/60'
+              "
             >
               <span class="opacity-85">App Only:</span>
               <span class="font-bold">{{ diffStats().appOnly }}</span>
-            </div>
-          </div>
-
-          <div class="flex items-center py-1">
-            <mat-checkbox [checked]="showOnlyDiffs()" (change)="showOnlyDiffs.set($event.checked)">
-              Show only stations with differences ({{ diffStats().diff }})
-            </mat-checkbox>
+            </button>
           </div>
         </div>
 

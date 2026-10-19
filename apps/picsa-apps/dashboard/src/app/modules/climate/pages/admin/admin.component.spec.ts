@@ -183,4 +183,20 @@ describe('ClimateAdminPageComponent', () => {
     component.diffTableOptions.handleRowClick(mockRow);
     expect(diffDialogSpy).toHaveBeenCalledWith(mockRow.station);
   });
+
+  it('should support filtering Diff table by comparison status', () => {
+    expect(component.diffFilter()).toBe('all');
+    component.setDiffFilter('diff');
+    expect(component.diffFilter()).toBe('diff');
+    expect(component.showOnlyDiffs()).toBe(true);
+
+    // toggling same filter resets to all
+    component.setDiffFilter('diff');
+    expect(component.diffFilter()).toBe('all');
+    expect(component.showOnlyDiffs()).toBe(false);
+
+    component.setDiffFilter('in_sync');
+    expect(component.diffFilter()).toBe('in_sync');
+    expect(component.showOnlyDiffs()).toBe(false);
+  });
 });

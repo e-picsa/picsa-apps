@@ -357,12 +357,24 @@ export class ClimateAdminPageComponent {
     };
   });
 
+  public diffFilter = signal<'all' | 'in_sync' | 'diff' | 'db_only' | 'app_only'>('all');
+
+  public setDiffFilter(mode: 'all' | 'in_sync' | 'diff' | 'db_only' | 'app_only'): void {
+    const next = this.diffFilter() === mode ? 'all' : mode;
+    this.diffFilter.set(next);
+    this.showOnlyDiffs.set(next === 'diff');
+  }
+
   public diffTableData = computed<IStationDiffRow[]>(() => {
     const rows = this.allDiffRows();
-    if (this.showOnlyDiffs()) {
-      return rows.filter((r) => r.diff_status === 'diff');
+    const filterMode = this.diffFilter();
+    if (filterMode === 'all') {
+      if (this.showOnlyDiffs()) {
+        return rows.filter((r) => r.diff_status === 'diff');
+      }
+      return rows;
     }
-    return rows;
+    return rows.filter((r) => r.diff_status === filterMode);
   });
 
   public diffTableOptions: IDataTableOptions = {
