@@ -471,6 +471,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `.map` files are deleted before hosting deployment or Capacitor sync (`find dist -name "*.map" -delete`) to prevent shipping source files to users or bundling them into native Android binaries.
 - **Jest Mocking Gotcha (`@capacitor/core`)**:
   - When mocking `@capacitor/core` in unit tests, always spread `jest.requireActual('@capacitor/core')` (`{ ...actual, Capacitor: { ...actual.Capacitor, isNativePlatform: jest.fn() } }`). `@capacitor/device` calls `core.registerPlugin` during module evaluation; completely overwriting `@capacitor/core` without `registerPlugin` causes `TypeError: core.registerPlugin is not a function`.
+- **Unified Error Triage & Device-ID Cross-Referencing (`yarn ai:triage`)**:
+  - Both Sentry (`initSentry`) and Firebase Crashlytics (`CrashlyticsService.init`) tag errors using anonymous `Device.getId()`. When investigating native crashes from Crashlytics where a device UUID is known, query Sentry with `yarn ai:triage user <device-uuid>` to inspect preceding Angular route navigation, UI clicks, and console breadcrumbs.
+  - `yarn ai:triage --doctor` checks Sentry token validity (`de.sentry.io`) and BigQuery Crashlytics streaming connectivity, reporting actionable steps if credentials are missing without failing catastrophically.
 
 ## 8. CI / CD & Nx Remote Caching Strategy
 
