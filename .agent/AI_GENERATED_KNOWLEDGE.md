@@ -614,7 +614,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The first implicit parameter receives `row[column]`. When defining custom templates that need object fields, use `let-row="row"`. For station names, provide a string column (e.g. `name`) rather than an object to avoid rendering `[object Object]`.
 
 - **Data System Table Layout & QC Breakdown**:
-  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `updated_at` (Last Sync). Action columns are omitted.
+  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `generation_timestamp` (Data Generated). Action columns are omitted.
   - Counters are color-coded: green (`text-emerald-700 font-semibold`) when meeting the check threshold, amber (`text-amber-700 font-semibold`) when failing.
   - Warnings are displayed on separate lines prefixed with a bullet point (`•`) in the table column.
   - Hovering the QC status icon displays a multi-line tooltip listing all verified quality control gates or specific failure reasons.
@@ -633,6 +633,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Sorting Behavior (`MatTableDataSource`)**:
   - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
   - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
+  - **Preventing Initial QC Re-Sort & Flash of Failure**: In `admin.component.ts`, `allStationData` and `allStationAppData` load asynchronously. `isDbLoading = computed(() => this.service.stations().length > 0 && this.allStationData() === undefined)`. Rendering tables before `allStationData` emitted evaluated stations against empty data (`evaluateStationQualityGates([])` -> `qc_score = -3`), flashing all stations as failed and triggering a jarring table re-sort when real data arrived. Gating the tables behind `@if (isDbLoading())` / `@if (isDiffLoading())` with `<mat-spinner>` ensures tables render only once with true QC scores in stable sorted order.
 - **Rank Color Variations & Grouping Invariant**:
   - Color classes must be a strict, monotonic function of the sort key (`score`) to guarantee that all rows of the same rank remain strictly grouped in contiguous blocks without interleaving or alternating colors when sorted.
   - Failures (`cancel` icon): `-3` uses `text-rose-700`, `-2` uses `text-rose-500`, `-1` uses `text-amber-500` (lighter/paler shades).
@@ -653,7 +654,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `qc_warnings`: Warnings (distinct entries for start-no-end and end-no-start)
   - `products`: Annual Products micro-matrix (`Products 🌧  🌡  🌾`)
   - `monthly_data`: Monthly Data micro-matrix (`Monthly 🌧  🌡`)
-  - `updated_at`: Last Sync date
+  - `generation_timestamp`: Data Generated date (formatted as YYYY-MM-DD or `—`)
+- **Generation Metadata Consistency & Strict No-Fallback Rule**:
+  - In both the Data System table and Station Details / Diff views, `generation_timestamp` represents the upstream calculation/generation date extracted from product metadata (`annual_rainfall_metadata`, `annual_temperature_metadata`, `crop_probability_metadata`, etc.).
+  - **No Fallback to `updated_at`**: It must NEVER fall back to the database record's `updated_at`. When upstream generation metadata is absent or missing, display `—` rather than masking it with database synchronization timestamps.
+  - The database sync timestamp (`updated_at`) and Generation ID are surfaced cleanly in the hover tooltip and the Station Details debug card for administrative inspection.
 - **Micro-Matrix UI Pattern**:
   - Replaces bulky icon buttons with compact 16px indicators (`!text-[16px] !w-4 !h-4 leading-none`).
   - Available: `check` (`text-emerald-500`), Missing: `close` (`text-rose-500`).
