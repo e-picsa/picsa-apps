@@ -14,7 +14,7 @@
  *   yarn ai:triage ignore <issue-id>      # mute issue in Sentry
  *   yarn ai:triage resolve <issue-id>     # mark issue resolved in Sentry
  */
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -27,6 +27,27 @@ const DEFAULT_FIREBASE_PROJECT = 'picsa-apps';
 const DEFAULT_PACKAGE_NAME = 'io.picsa.extension';
 const DEFAULT_SENTRY_URL = 'https://e-picsa.sentry.io';
 const DEFAULT_SENTRY_ORG = 'e-picsa';
+
+// ---------------------------------------------------------------------------
+// 0. Logging & Sanitization (prevents log injection S5145)
+// ---------------------------------------------------------------------------
+
+function sanitizeLog(val) {
+  if (val === null || val === undefined) return '';
+  return String(val)
+    .replaceAll(/[\r\n\t]/g, ' ')
+    .trim();
+}
+
+function safeLog(...args) {
+  const sanitized = args.map((arg) => (typeof arg === 'string' ? sanitizeLog(arg) : arg));
+  console.log(...sanitized);
+}
+
+function safeError(...args) {
+  const sanitized = args.map((arg) => (typeof arg === 'string' ? sanitizeLog(arg) : arg));
+  console.error(...sanitized);
+}
 
 // ---------------------------------------------------------------------------
 // 1. Environment Loading & Discovery
@@ -70,8 +91,7 @@ function loadEnv() {
     if (path.basename(absCommon) === '.git') {
       const mainRoot = path.dirname(absCommon);
       if (mainRoot !== REPO_ROOT) {
-        candidateFiles.push(path.join(mainRoot, 'apps/picsa-scripts/.env'));
-        candidateFiles.push(path.join(mainRoot, '.env.local'));
+        candidateFiles.push(path.join(mainRoot, 'apps/picsa-scripts/.env'), path.join(mainRoot, '.env.local'));
       }
     }
   }
@@ -95,21 +115,35 @@ let SENTRY_PROJECT = process.env.SENTRY_PROJECT || '';
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || DEFAULT_FIREBASE_PROJECT;
 
 // ---------------------------------------------------------------------------
-// 2. Sentry API Helpers
+// 2. Sentry API Helpers (strictly validated against API Traversal / SSRF)
 // ---------------------------------------------------------------------------
+
+function buildSentryUrl(endpoint) {
+  const cleanEndpoint = endpoint.replace(/^\/+/, '');
+  if (cleanEndpoint.includes('..') || cleanEndpoint.includes('%2e%2e')) {
+    throw new Error(`Forbidden API traversal in path: ${endpoint}`);
+  }
+  const base = new URL('/api/0/', SENTRY_URL);
+  const target = new URL(cleanEndpoint, base);
+  if (target.origin !== new URL(SENTRY_URL).origin || !target.pathname.startsWith('/api/0/')) {
+    throw new Error(`Forbidden API traversal: ${endpoint}`);
+  }
+  return target.href;
+}
 
 async function sentryFetch(endpoint, options = {}) {
   if (!SENTRY_AUTH_TOKEN) {
     throw new Error('SENTRY_AUTH_TOKEN is not configured.');
   }
 
-  const url = endpoint.startsWith('http') ? endpoint : `${SENTRY_URL}/api/0/${endpoint.replace(/^\//, '')}`;
+  const url = buildSentryUrl(endpoint);
   const response = await fetch(url, {
-    ...options,
+    method: options.method || 'GET',
+    body: options.body,
     headers: {
       Authorization: `Bearer ${SENTRY_AUTH_TOKEN}`,
       'Content-Type': 'application/json',
-      ...(options.headers || {}),
+      ...options.headers,
     },
   });
 
@@ -138,10 +172,8 @@ async function resolveSentryTarget() {
 
   try {
     const orgs = await sentryFetch('organizations/');
-    if (orgs && orgs.length > 0) {
-      if (!SENTRY_ORG) {
-        SENTRY_ORG = orgs[0].slug;
-      }
+    if (orgs && orgs.length > 0 && !SENTRY_ORG) {
+      SENTRY_ORG = orgs[0].slug;
     }
 
     if (!SENTRY_PROJECT && SENTRY_ORG) {
@@ -163,29 +195,17 @@ async function resolveSentryTarget() {
 // ---------------------------------------------------------------------------
 
 function checkToolCommand(cmd) {
+  if (!/^[a-zA-Z0-9_-]+$/.test(cmd)) return false;
   try {
-    execSync(`which ${cmd}`, { stdio: 'ignore' });
-    return true;
+    const res = spawnSync('which', [cmd], { stdio: 'ignore' });
+    return res.status === 0;
   } catch {
     return false;
   }
 }
 
-async function queryCrashlyticsBigQuery({ limit = 10, isFatal = null } = {}) {
-  if (!checkToolCommand('bq')) {
-    return { error: 'bq CLI tool not found in PATH.' };
-  }
-
-  const dataset = `firebase_crashlytics`;
-  const sanitizedPkg = DEFAULT_PACKAGE_NAME.replace(/\./g, '_');
-  const table = `${FIREBASE_PROJECT_ID}.${dataset}.${sanitizedPkg}_ANDROID`;
-
-  let whereClause = `event_timestamp > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 14 DAY)`;
-  if (isFatal !== null) {
-    whereClause += ` AND is_fatal = ${isFatal}`;
-  }
-
-  const query = `
+function buildBigQuerySql({ table, whereClause, limit }) {
+  return `
     SELECT
       issue_id,
       issue_title,
@@ -200,13 +220,45 @@ async function queryCrashlyticsBigQuery({ limit = 10, isFatal = null } = {}) {
     ORDER BY is_fatal DESC, user_count DESC, event_count DESC
     LIMIT ${Number(limit)}
   `;
+}
+
+async function queryCrashlyticsBigQuery({ limit = 10, isFatal = null } = {}) {
+  if (!checkToolCommand('bq')) {
+    return { error: 'bq CLI tool not found in PATH.' };
+  }
+
+  const dataset = `firebase_crashlytics`;
+  const sanitizedPkg = DEFAULT_PACKAGE_NAME.replaceAll('.', '_');
+  const table = `${FIREBASE_PROJECT_ID}.${dataset}.${sanitizedPkg}_ANDROID`;
+
+  let whereClause = `event_timestamp > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 14 DAY)`;
+  if (isFatal !== null) {
+    whereClause += ` AND is_fatal = ${isFatal}`;
+  }
+
+  const query = buildBigQuerySql({ table, whereClause, limit });
 
   try {
-    const stdout = execSync(
-      `bq query --use_legacy_sql=false --format=json --project_id=${FIREBASE_PROJECT_ID} ${JSON.stringify(query)}`,
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    const res = spawnSync(
+      'bq',
+      ['query', '--use_legacy_sql=false', '--format=json', `--project_id=${FIREBASE_PROJECT_ID}`, query],
+      { encoding: 'utf8' },
     );
-    const parsed = JSON.parse(stdout);
+    if (res.status !== 0) {
+      const errOut = (res.stderr || res.stdout || '').trim();
+      if (errOut.includes('Not found: Dataset') || errOut.includes('404')) {
+        return {
+          error: `BigQuery dataset '${dataset}' not found in project '${FIREBASE_PROJECT_ID}'. Export is not yet toggled in Firebase Console.`,
+        };
+      }
+      if (errOut.includes('credentials') || errOut.includes('auth')) {
+        return {
+          error: `Application Default Credentials missing. Run 'gcloud auth application-default login' to authenticate bq.`,
+        };
+      }
+      return { error: errOut.split('\n')[0] || `BigQuery query exited with status ${res.status}` };
+    }
+    const parsed = JSON.parse(res.stdout);
     return { data: parsed };
   } catch (err) {
     return { error: err.message || String(err) };
@@ -218,7 +270,7 @@ async function queryCrashlyticsBigQuery({ limit = 10, isFatal = null } = {}) {
 // ---------------------------------------------------------------------------
 
 function printHelp() {
-  console.log(`ai-error-triage: unified Sentry + Firebase Crashlytics error triage
+  safeLog(`ai-error-triage: unified Sentry + Firebase Crashlytics error triage
 
 Usage:
   yarn ai:triage [command] [options]
@@ -241,77 +293,172 @@ List Options:
 }
 
 async function runDoctor() {
-  console.log(`\n======================================================`);
-  console.log(`          AI Error Triage Doctor & Setup Check        `);
-  console.log(`======================================================\n`);
+  safeLog(`\n======================================================`);
+  safeLog(`          AI Error Triage Doctor & Setup Check        `);
+  safeLog(`======================================================\n`);
 
   // 1. Check Sentry
-  console.log(`[1/2] Sentry Configuration Check:`);
-  console.log(`  Sentry Base URL : ${SENTRY_URL}`);
+  safeLog(`[1/2] Sentry Configuration Check:`);
+  safeLog(`  Sentry Base URL : ${SENTRY_URL}`);
   if (!SENTRY_AUTH_TOKEN) {
-    console.log(`  Auth Token      : ❌ MISSING (SENTRY_AUTH_TOKEN)`);
-    console.log(`\n  👉 How to set up Sentry:`);
-    console.log(`     1. Go to: ${SENTRY_URL}/settings/account/api/auth-tokens/`);
-    console.log(`     2. Create a User Auth Token with scopes:`);
-    console.log(`        - project:read, org:read, event:read (required for triage)`);
-    console.log(`        - event:write (optional, if you want CLI ignore/resolve support)`);
-    console.log(`     3. Add to 'apps/picsa-scripts/.env' or '.env.local':`);
-    console.log(`        SENTRY_AUTH_TOKEN=your_token_here`);
-    console.log(`        SENTRY_ORG=${SENTRY_ORG}  # optional, auto-detected if omitted`);
-    console.log(`        SENTRY_PROJECT=picsa-apps  # optional, auto-detected if omitted`);
+    safeLog(`  Auth Token      : ❌ MISSING (SENTRY_AUTH_TOKEN)`);
+    safeLog(`\n  👉 How to set up Sentry:`);
+    safeLog(`     1. Go to: ${SENTRY_URL}/settings/account/api/auth-tokens/`);
+    safeLog(`     2. Create a User Auth Token with scopes:`);
+    safeLog(`        - project:read, org:read, event:read (required for triage)`);
+    safeLog(`        - event:write (optional, if you want CLI ignore/resolve support)`);
+    safeLog(`     3. Add to 'apps/picsa-scripts/.env' or '.env.local':`);
+    safeLog(`        SENTRY_AUTH_TOKEN=your_token_here`);
+    safeLog(`        SENTRY_ORG=${SENTRY_ORG}  # optional, auto-detected if omitted`);
+    safeLog(`        SENTRY_PROJECT=picsa-apps  # optional, auto-detected if omitted`);
   } else {
-    console.log(`  Auth Token      : ✅ Found (${SENTRY_AUTH_TOKEN.slice(0, 8)}...)`);
+    safeLog(`  Auth Token      : ✅ Found (${SENTRY_AUTH_TOKEN.slice(0, 8)}...)`);
     try {
       const { org, project } = await resolveSentryTarget();
-      console.log(`  Organization    : ✅ ${org || 'Not resolved'}`);
-      console.log(`  Project         : ✅ ${project || 'Not resolved'}`);
+      safeLog(`  Organization    : ✅ ${org || 'Not resolved'}`);
+      safeLog(`  Project         : ✅ ${project || 'Not resolved'}`);
 
       const issues = await sentryFetch(`projects/${org}/${project}/issues/?query=is:unresolved&limit=1`);
-      console.log(
+      safeLog(
         `  API Connection  : ✅ Connected successfully (accessible issues: ${Array.isArray(issues) ? 'yes' : 'no'})`,
       );
     } catch (err) {
-      console.log(`  API Connection  : ❌ Failed to query Sentry API: ${err.message}`);
+      safeLog(`  API Connection  : ❌ Failed to query Sentry API: ${err.message}`);
     }
   }
 
   // 2. Check Firebase Crashlytics
-  console.log(`\n[2/2] Firebase Crashlytics Check:`);
-  console.log(`  Firebase Project: ${FIREBASE_PROJECT_ID}`);
-  console.log(`  Android Package : ${DEFAULT_PACKAGE_NAME}`);
+  safeLog(`\n[2/2] Firebase Crashlytics Check:`);
+  safeLog(`  Firebase Project: ${FIREBASE_PROJECT_ID}`);
+  safeLog(`  Android Package : ${DEFAULT_PACKAGE_NAME}`);
 
   const hasGcloud = checkToolCommand('gcloud');
   const hasBq = checkToolCommand('bq');
   const hasFirebase = checkToolCommand('firebase');
 
-  console.log(`  gcloud CLI      : ${hasGcloud ? '✅ Found' : '⚠️ Not installed'}`);
-  console.log(`  bq CLI          : ${hasBq ? '✅ Found' : '⚠️ Not installed'}`);
-  console.log(`  firebase CLI    : ${hasFirebase ? '⚠️ Not installed' : '✅ Found'}`);
+  safeLog(`  gcloud CLI      : ${hasGcloud ? '✅ Found' : '⚠️ Not installed'}`);
+  safeLog(`  bq CLI          : ${hasBq ? '✅ Found' : '⚠️ Not installed'}`);
+  safeLog(`  firebase CLI    : ${hasFirebase ? '⚠️ Not installed' : '✅ Found'}`);
 
   if (hasBq) {
     const bqResult = await queryCrashlyticsBigQuery({ limit: 1 });
     if (bqResult.error) {
-      console.log(`  BigQuery Stream : ⚠️ Query failed: ${bqResult.error.split('\n')[0]}`);
-      console.log(`\n  👉 How to enable Crashlytics BigQuery Export:`);
-      console.log(
+      safeLog(`  BigQuery Stream : ⚠️ ${bqResult.error}`);
+      safeLog(`\n  👉 How to enable Crashlytics BigQuery Export:`);
+      safeLog(
         `     1. Open Firebase Console: https://console.firebase.google.com/project/${FIREBASE_PROJECT_ID}/settings/integrations`,
       );
-      console.log(`     2. Under 'BigQuery', click Link/Manage and toggle 'Crashlytics' ON.`);
-      console.log(`     3. Run locally: 'gcloud auth application-default login'`);
+      safeLog(`     2. Under 'BigQuery', click Link/Manage and toggle 'Crashlytics' ON (free tier).`);
+      safeLog(`     3. Run locally: 'gcloud auth application-default login'`);
     } else {
-      console.log(`  BigQuery Stream : ✅ Connected! Found Crashlytics dataset table.`);
+      safeLog(`  BigQuery Stream : ✅ Connected! Found Crashlytics dataset table.`);
     }
   } else {
-    console.log(`\n  ℹ️ Note on Crashlytics:`);
-    console.log(`     For low-friction triage, Sentry captures all JS/TS errors and sourcemapped stack traces.`);
-    console.log(`     Crashlytics tracks fatal Android native OS/plugin crashes.`);
-    console.log(
+    safeLog(`\n  ℹ️ Note on Crashlytics:`);
+    safeLog(`     For low-friction triage, Sentry captures all JS/TS errors and sourcemapped stack traces.`);
+    safeLog(`     Crashlytics tracks fatal Android native OS/plugin crashes.`);
+    safeLog(
       `     To enable programmatic Crashlytics querying, install Google Cloud SDK ('brew install google-cloud-sdk')`,
     );
-    console.log(`     and enable BigQuery export in the Firebase Console.`);
+    safeLog(`     and enable BigQuery export in the Firebase Console.`);
   }
 
-  console.log(`\n======================================================\n`);
+  safeLog(`\n======================================================\n`);
+}
+
+function mapSentryIssue(item) {
+  return {
+    id: item.id,
+    shortId: item.shortId || item.id,
+    source: 'sentry',
+    title: item.title || item.metadata?.value || 'Unknown error',
+    culprit: item.culprit || '',
+    eventCount: Number(item.count || 0),
+    userCount: Number(item.userCount || 0),
+    firstSeen: item.firstSeen ? new Date(item.firstSeen).toLocaleDateString() : 'N/A',
+    lastSeen: item.lastSeen ? new Date(item.lastSeen).toLocaleDateString() : 'N/A',
+    isFatal: false,
+    permalink: item.permalink || '',
+  };
+}
+
+async function fetchSentryIssues(options) {
+  const { limit, platform, release } = options;
+  if (!SENTRY_AUTH_TOKEN) {
+    return {
+      error: 'SENTRY_AUTH_TOKEN missing. Run `yarn ai:triage --doctor` for setup guide.',
+      items: [],
+    };
+  }
+
+  try {
+    const { org, project } = await resolveSentryTarget();
+    if (!org || !project) {
+      throw new Error('Could not resolve Sentry organization or project.');
+    }
+
+    let query = 'is:unresolved';
+    if (platform === 'web') query += ' platform:javascript !tag:isNative:true';
+    if (platform === 'android') query += ' tag:isNative:true';
+    if (release) query += ` release:${release}`;
+
+    const issues = await sentryFetch(
+      `projects/${org}/${project}/issues/?query=${encodeURIComponent(query)}&limit=${limit}&sort=user`,
+    );
+
+    return { items: issues.map(mapSentryIssue), error: null };
+  } catch (err) {
+    return { items: [], error: err.message };
+  }
+}
+
+function mapCrashlyticsIssue(row) {
+  return {
+    id: row.issue_id,
+    shortId: `crash-${row.issue_id?.slice(0, 8)}`,
+    source: 'crashlytics',
+    title: row.issue_title || 'Fatal Native Crash',
+    culprit: '',
+    eventCount: Number(row.event_count || 0),
+    userCount: Number(row.user_count || 0),
+    firstSeen: row.first_seen?.value ? new Date(row.first_seen.value).toLocaleDateString() : 'N/A',
+    lastSeen: row.last_seen?.value ? new Date(row.last_seen.value).toLocaleDateString() : 'N/A',
+    isFatal: Boolean(row.is_fatal),
+    permalink: `https://console.firebase.google.com/project/${FIREBASE_PROJECT_ID}/crashlytics/app/android:${DEFAULT_PACKAGE_NAME}/issues/${row.issue_id}`,
+  };
+}
+
+async function fetchCrashlyticsIssues(limit) {
+  const bq = await queryCrashlyticsBigQuery({ limit });
+  if (bq.error) {
+    return { items: [], error: bq.error };
+  }
+  const items = Array.isArray(bq.data) ? bq.data.map(mapCrashlyticsIssue) : [];
+  return { items, error: null };
+}
+
+function sortTriageIssues(items) {
+  return [...items].sort((a, b) => {
+    if (a.isFatal !== b.isFatal) return a.isFatal ? -1 : 1;
+    if (b.userCount !== a.userCount) return b.userCount - a.userCount;
+    return b.eventCount - a.eventCount;
+  });
+}
+
+function printIssueTable(items, limit) {
+  safeLog(`| # | Pri | Source | Users | Events | Last Seen | Issue Title & Culprit | Issue ID |`);
+  safeLog(`|---|---|---|---|---|---|---|---|`);
+
+  items.slice(0, limit).forEach((it, idx) => {
+    const pri = it.isFatal ? '🚨 P0' : it.userCount > 5 ? '⚠️ P1' : 'ℹ️ P2';
+    const cleanTitle = (it.title || '').replaceAll('|', '-').slice(0, 60);
+    const culpritSuffix = it.culprit ? ` (${it.culprit.slice(0, 35)})` : '';
+    safeLog(
+      `| ${idx + 1} | ${pri} | ${it.source} | ${it.userCount} | ${it.eventCount} | ${it.lastSeen} | ${cleanTitle}${culpritSuffix} | \`${it.id}\` |`,
+    );
+  });
+
+  safeLog(`\nNext step: Run \`yarn ai:triage inspect <issue-id>\` to view the stacktrace and breadcrumbs.`);
 }
 
 async function runList(options) {
@@ -319,243 +466,176 @@ async function runList(options) {
   const items = [];
   const errors = [];
 
-  // --- A. Query Sentry ---
   if (source === 'all' || source === 'sentry') {
-    if (!SENTRY_AUTH_TOKEN) {
-      errors.push({
-        source: 'Sentry',
-        message: 'SENTRY_AUTH_TOKEN missing. Run `yarn ai:triage --doctor` for setup guide.',
-      });
-    } else {
-      try {
-        const { org, project } = await resolveSentryTarget();
-        if (!org || !project) {
-          throw new Error('Could not resolve Sentry organization or project.');
-        }
-
-        let query = 'is:unresolved';
-        if (platform === 'web') query += ' platform:javascript !tag:isNative:true';
-        if (platform === 'android') query += ' tag:isNative:true';
-        if (release) query += ` release:${release}`;
-
-        const issues = await sentryFetch(
-          `projects/${org}/${project}/issues/?query=${encodeURIComponent(query)}&limit=${limit}&sort=user`,
-        );
-
-        for (const item of issues) {
-          items.push({
-            id: item.id,
-            shortId: item.shortId || item.id,
-            source: 'sentry',
-            title: item.title || item.metadata?.value || 'Unknown error',
-            culprit: item.culprit || '',
-            eventCount: Number(item.count || 0),
-            userCount: Number(item.userCount || 0),
-            firstSeen: item.firstSeen ? new Date(item.firstSeen).toLocaleDateString() : 'N/A',
-            lastSeen: item.lastSeen ? new Date(item.lastSeen).toLocaleDateString() : 'N/A',
-            isFatal: false,
-            permalink: item.permalink || '',
-          });
-        }
-      } catch (err) {
-        errors.push({ source: 'Sentry', message: err.message });
-      }
+    const sentryRes = await fetchSentryIssues({ limit, platform, release });
+    if (sentryRes.error) {
+      errors.push({ source: 'Sentry', message: sentryRes.error });
     }
+    items.push(...sentryRes.items);
   }
 
-  // --- B. Query Crashlytics (BigQuery) ---
   if (source === 'all' || source === 'crashlytics') {
-    const bq = await queryCrashlyticsBigQuery({ limit });
-    if (bq.error) {
-      // Don't treat missing Crashlytics bq as a fatal error if Sentry worked
-      if (source === 'crashlytics') {
-        errors.push({ source: 'Crashlytics', message: bq.error });
-      }
-    } else if (Array.isArray(bq.data)) {
-      for (const row of bq.data) {
-        items.push({
-          id: row.issue_id,
-          shortId: `crash-${row.issue_id?.slice(0, 8)}`,
-          source: 'crashlytics',
-          title: row.issue_title || 'Fatal Native Crash',
-          culprit: '',
-          eventCount: Number(row.event_count || 0),
-          userCount: Number(row.user_count || 0),
-          firstSeen: row.first_seen?.value ? new Date(row.first_seen.value).toLocaleDateString() : 'N/A',
-          lastSeen: row.last_seen?.value ? new Date(row.last_seen.value).toLocaleDateString() : 'N/A',
-          isFatal: Boolean(row.is_fatal),
-          permalink: `https://console.firebase.google.com/project/${FIREBASE_PROJECT_ID}/crashlytics/app/android:${DEFAULT_PACKAGE_NAME}/issues/${row.issue_id}`,
-        });
-      }
+    const crashRes = await fetchCrashlyticsIssues(limit);
+    if (crashRes.error && source === 'crashlytics') {
+      errors.push({ source: 'Crashlytics', message: crashRes.error });
     }
+    items.push(...crashRes.items);
   }
 
-  // Rank items: Fatal Native Crashes (P0) > Most Affected Users > Total Events
-  items.sort((a, b) => {
-    if (a.isFatal !== b.isFatal) return a.isFatal ? -1 : 1;
-    if (b.userCount !== a.userCount) return b.userCount - a.userCount;
-    return b.eventCount - a.eventCount;
-  });
+  const sorted = sortTriageIssues(items);
 
   if (json) {
-    console.log(JSON.stringify({ items, errors }, null, 2));
+    safeLog(JSON.stringify({ items: sorted, errors }, null, 2));
     return;
   }
 
-  console.log(`\n=== Production Error Triage (${items.length} issues found) ===\n`);
+  safeLog(`\n=== Production Error Triage (${sorted.length} issues found) ===\n`);
 
-  if (errors.length > 0) {
-    for (const e of errors) {
-      console.log(`⚠️  ${e.source}: ${e.message}`);
+  for (const e of errors) {
+    safeLog(`⚠️  ${e.source}: ${e.message}`);
+  }
+  if (errors.length > 0) safeLog('');
+
+  if (sorted.length === 0) {
+    safeLog(`✅ No unresolved issues found matching criteria.`);
+    return;
+  }
+
+  printIssueTable(sorted, limit);
+}
+
+function formatBreadcrumbTimestamp(timestamp) {
+  if (!timestamp) return '';
+  const d = new Date(timestamp);
+  if (Number.isNaN(d.getTime())) {
+    return new Date(Number(timestamp) * 1000).toLocaleTimeString();
+  }
+  return d.toLocaleTimeString();
+}
+
+function renderTags(tags) {
+  if (!tags || tags.length === 0) return;
+  safeLog(`### Key Tags:`);
+  const keyTags = ['release', 'platform', 'isNative', 'browser.name', 'os.name', 'user'];
+  for (const t of tags) {
+    if (keyTags.some((k) => t.key.includes(k))) {
+      safeLog(`- **${t.key}**: \`${t.value}\``);
     }
-    console.log(``);
   }
+  safeLog('');
+}
 
-  if (items.length === 0) {
-    console.log(`✅ No unresolved issues found matching criteria.`);
-    return;
+function renderStacktrace(entries) {
+  const exceptions = entries?.find((e) => e.type === 'exception')?.data?.values || [];
+  if (exceptions.length === 0) return;
+
+  safeLog(`### Exception & Stacktrace:`);
+  for (const ex of exceptions) {
+    safeLog(`\n**${ex.type}**: ${ex.value}\n`);
+    const frames = ex.stacktrace?.frames || [];
+    for (const frame of frames.slice(-15)) {
+      const inAppTag = frame.inApp ? '👉 [In-App]' : '   ';
+      const fileLine = `${frame.filename || 'unknown'}:${frame.lineNo || '?'}:${frame.colNo || '?'}`;
+      safeLog(`${inAppTag} ${frame.function || 'anonymous'} at ${fileLine}`);
+      if (frame.context && frame.context.length > 0) {
+        for (const [lineNum, lineContent] of frame.context) {
+          const prefix = lineNum === frame.lineNo ? '  > ' : '    ';
+          safeLog(`${prefix}${lineNum}: ${lineContent}`);
+        }
+      }
+    }
   }
+  safeLog('');
+}
 
-  // Format Markdown table for readability and agent comprehension
-  console.log(`| # | Pri | Source | Users | Events | Last Seen | Issue Title & Culprit | Issue ID |`);
-  console.log(`|---|---|---|---|---|---|---|---|`);
+function renderBreadcrumbs(entries) {
+  const breadcrumbEntries = entries?.find((e) => e.type === 'breadcrumbs')?.data?.values || [];
+  if (breadcrumbEntries.length === 0) return;
 
-  items.slice(0, limit).forEach((it, idx) => {
-    const pri = it.isFatal ? '🚨 P0' : it.userCount > 5 ? '⚠️ P1' : 'ℹ️ P2';
-    const cleanTitle = (it.title || '').replace(/\|/g, '-').slice(0, 60);
-    const culpritSuffix = it.culprit ? ` (${it.culprit.slice(0, 35)})` : '';
-    console.log(
-      `| ${idx + 1} | ${pri} | ${it.source} | ${it.userCount} | ${it.eventCount} | ${it.lastSeen} | ${cleanTitle}${culpritSuffix} | \`${it.id}\` |`,
-    );
-  });
-
-  console.log(`\nNext step: Run \`yarn ai:triage inspect <issue-id>\` to view the stacktrace and breadcrumbs.`);
+  safeLog(`### Recent User Breadcrumbs (Last 10):`);
+  for (const b of breadcrumbEntries.slice(-10)) {
+    const timeStr = formatBreadcrumbTimestamp(b.timestamp);
+    const category = b.category || b.type || 'info';
+    const msg = b.message || JSON.stringify(b.data || {});
+    safeLog(`- \`[${timeStr}] [${category}]\`: ${msg}`);
+  }
+  safeLog('');
 }
 
 async function runInspect(issueId) {
   if (!SENTRY_AUTH_TOKEN) {
-    console.error('❌ SENTRY_AUTH_TOKEN is required. Run `yarn ai:triage --doctor` for setup.');
+    safeError('❌ SENTRY_AUTH_TOKEN is required. Run `yarn ai:triage --doctor` for setup.');
     return;
   }
 
-  console.log(`\nFetching Sentry issue details for: ${issueId}...`);
+  safeLog(`\nFetching Sentry issue details for: ${issueId}...`);
 
   try {
     const { org } = await resolveSentryTarget();
     const issue = await sentryFetch(`organizations/${org}/issues/${issueId}/`);
     const latestEvent = await sentryFetch(`organizations/${org}/issues/${issueId}/events/latest/`);
 
-    console.log(`\n======================================================`);
-    console.log(`  Issue: ${issue.title}`);
-    console.log(`  ID: ${issue.id} (${issue.shortId || ''})`);
-    console.log(`  Status: ${issue.status} | Events: ${issue.count} | Users: ${issue.userCount}`);
-    console.log(`  First Seen: ${issue.firstSeen} | Last Seen: ${issue.lastSeen}`);
-    console.log(`  Permalink: ${issue.permalink}`);
-    console.log(`======================================================\n`);
+    safeLog(`\n======================================================`);
+    safeLog(`  Issue: ${issue.title}`);
+    safeLog(`  ID: ${issue.id} (${issue.shortId || ''})`);
+    safeLog(`  Status: ${issue.status} | Events: ${issue.count} | Users: ${issue.userCount}`);
+    safeLog(`  First Seen: ${issue.firstSeen} | Last Seen: ${issue.lastSeen}`);
+    safeLog(`  Permalink: ${issue.permalink}`);
+    safeLog(`======================================================\n`);
 
-    // Tags
-    if (latestEvent.tags && latestEvent.tags.length > 0) {
-      console.log(`### Key Tags:`);
-      const keyTags = ['release', 'platform', 'isNative', 'browser.name', 'os.name', 'user'];
-      for (const t of latestEvent.tags) {
-        if (keyTags.some((k) => t.key.includes(k))) {
-          console.log(`- **${t.key}**: \`${t.value}\``);
-        }
-      }
-      console.log(``);
-    }
+    renderTags(latestEvent.tags);
+    renderStacktrace(latestEvent.entries);
+    renderBreadcrumbs(latestEvent.entries);
 
-    // Stacktrace
-    const exceptions = latestEvent.entries?.find((e) => e.type === 'exception')?.data?.values || [];
-    if (exceptions.length > 0) {
-      console.log(`### Exception & Stacktrace:`);
-      for (const ex of exceptions) {
-        console.log(`\n**${ex.type}**: ${ex.value}\n`);
-        const frames = ex.stacktrace?.frames || [];
-        // Focus on in-app frames first
-        for (const frame of frames.slice(-15)) {
-          const inAppTag = frame.inApp ? '👉 [In-App]' : '   ';
-          const fileLine = `${frame.filename || 'unknown'}:${frame.lineNo || '?'}:${frame.colNo || '?'}`;
-          console.log(`${inAppTag} ${frame.function || 'anonymous'} at ${fileLine}`);
-          if (frame.context && frame.context.length > 0) {
-            for (const [lineNum, lineContent] of frame.context) {
-              const prefix = lineNum === frame.lineNo ? '  > ' : '    ';
-              console.log(`${prefix}${lineNum}: ${lineContent}`);
-            }
-          }
-        }
-      }
-      console.log(``);
-    }
-
-    // Breadcrumbs
-    const breadcrumbEntries = latestEvent.entries?.find((e) => e.type === 'breadcrumbs')?.data?.values || [];
-    if (breadcrumbEntries.length > 0) {
-      console.log(`### Recent User Breadcrumbs (Last 10):`);
-      for (const b of breadcrumbEntries.slice(-10)) {
-        let timeStr = '';
-        if (b.timestamp) {
-          const d = new Date(b.timestamp);
-          timeStr = Number.isNaN(d.getTime())
-            ? new Date(Number(b.timestamp) * 1000).toLocaleTimeString()
-            : d.toLocaleTimeString();
-        }
-        const category = b.category || b.type || 'info';
-        const msg = b.message || JSON.stringify(b.data || {});
-        console.log(`- \`[${timeStr}] [${category}]\`: ${msg}`);
-      }
-      console.log(``);
-    }
-
-    // Agent Guidance
-    console.log(`### 🤖 Triage Classification & Next Steps:`);
-    console.log(
+    safeLog(`### 🤖 Triage Classification & Next Steps:`);
+    safeLog(
       `1. **Bucket A (Code Bug)**: If in-app stack frames pinpoint a file in \`libs/\` or \`apps/\`, check root cause and create a test in \`*.spec.ts\`.`,
     );
-    console.log(
+    safeLog(
       `2. **Bucket B (Noise)**: If caused by browser extension, network drop, or benign WebView message, add filter in \`libs/shared/src/services/core/sentry.service.ts\` (\`beforeSend\`) or run \`yarn ai:triage ignore ${issueId}\`.`,
     );
-    console.log(
+    safeLog(
       `3. **Bucket C (Telemetry)**: If stacktrace is ambiguous, add \`SentryService.addBreadcrumb()\` or \`setExtra()\` in the calling service.`,
     );
   } catch (err) {
-    console.error(`❌ Failed to inspect issue: ${err.message}`);
+    safeError(`❌ Failed to inspect issue: ${err.message}`);
   }
 }
 
 async function runUser(deviceUuid) {
   if (!SENTRY_AUTH_TOKEN) {
-    console.error('❌ SENTRY_AUTH_TOKEN is required. Run `yarn ai:triage --doctor` for setup.');
+    safeError('❌ SENTRY_AUTH_TOKEN is required. Run `yarn ai:triage --doctor` for setup.');
     return;
   }
 
   const { org, project } = await resolveSentryTarget();
-  console.log(`\nQuerying Sentry events for Device ID (\`user.id:${deviceUuid}\`)...`);
+  safeLog(`\nQuerying Sentry events for Device ID (\`user.id:${deviceUuid}\`)...`);
 
   try {
+    const userQuery = `user.id:${deviceUuid}`;
     const events = await sentryFetch(
-      `projects/${org}/${project}/events/?query=${encodeURIComponent(`user.id:${deviceUuid}`)}&limit=5`,
+      `projects/${org}/${project}/events/?query=${encodeURIComponent(userQuery)}&limit=5`,
     );
 
     if (!events || events.length === 0) {
-      console.log(`No Sentry events found for device UUID: ${deviceUuid}`);
+      safeLog(`No Sentry events found for device UUID: ${deviceUuid}`);
       return;
     }
 
-    console.log(`\nFound ${events.length} recent events for device: ${deviceUuid}\n`);
+    safeLog(`\nFound ${events.length} recent events for device: ${deviceUuid}\n`);
     for (const ev of events) {
-      console.log(
+      safeLog(
         `- **Event ID**: \`${ev.eventID}\` | **Date**: ${ev.dateCreated} | **Message**: ${ev.message || ev.title}`,
       );
     }
   } catch (err) {
-    console.error(`❌ Failed to search user events: ${err.message}`);
+    safeError(`❌ Failed to search user events: ${err.message}`);
   }
 }
 
 async function runUpdateStatus(issueId, newStatus) {
   if (!SENTRY_AUTH_TOKEN) {
-    console.error('❌ SENTRY_AUTH_TOKEN is required.');
+    safeError('❌ SENTRY_AUTH_TOKEN is required.');
     return;
   }
 
@@ -565,15 +645,78 @@ async function runUpdateStatus(issueId, newStatus) {
       method: 'PUT',
       body: JSON.stringify({ status: newStatus }),
     });
-    console.log(`✅ Issue ${issueId} successfully marked as: ${newStatus}`);
+    safeLog(`✅ Issue ${issueId} successfully marked as: ${newStatus}`);
   } catch (err) {
-    console.error(`❌ Failed to update issue status: ${err.message}`);
+    safeError(`❌ Failed to update issue status: ${err.message}`);
   }
 }
 
 // ---------------------------------------------------------------------------
 // 5. CLI Entrypoint
 // ---------------------------------------------------------------------------
+
+function parseListOptions(rawArgs) {
+  const limitIdx = rawArgs.indexOf('--limit');
+  const limit = limitIdx >= 0 ? Number(rawArgs[limitIdx + 1]) || 10 : 10;
+  const sourceIdx = rawArgs.indexOf('--source');
+  const source = sourceIdx >= 0 ? rawArgs[sourceIdx + 1] : 'all';
+  const platIdx = rawArgs.indexOf('--platform');
+  const platform = platIdx >= 0 ? rawArgs[platIdx + 1] : 'all';
+  const relIdx = rawArgs.indexOf('--release');
+  const release = relIdx >= 0 ? rawArgs[relIdx + 1] : undefined;
+  const json = rawArgs.includes('--json');
+
+  return { limit, source, platform, release, json };
+}
+
+async function executeCommand(command, rawArgs) {
+  switch (command) {
+    case 'list': {
+      await runList(parseListOptions(rawArgs));
+      return 0;
+    }
+    case 'inspect': {
+      const issueId = rawArgs[1];
+      if (!issueId) {
+        safeError('❌ Usage: yarn ai:triage inspect <issue-id>');
+        return 1;
+      }
+      await runInspect(issueId);
+      return 0;
+    }
+    case 'user': {
+      const deviceUuid = rawArgs[1];
+      if (!deviceUuid) {
+        safeError('❌ Usage: yarn ai:triage user <device-uuid>');
+        return 1;
+      }
+      await runUser(deviceUuid);
+      return 0;
+    }
+    case 'ignore': {
+      const issueId = rawArgs[1];
+      if (!issueId) {
+        safeError('❌ Usage: yarn ai:triage ignore <issue-id>');
+        return 1;
+      }
+      await runUpdateStatus(issueId, 'ignored');
+      return 0;
+    }
+    case 'resolve': {
+      const issueId = rawArgs[1];
+      if (!issueId) {
+        safeError('❌ Usage: yarn ai:triage resolve <issue-id>');
+        return 1;
+      }
+      await runUpdateStatus(issueId, 'resolved');
+      return 0;
+    }
+    default:
+      safeError(`❌ Unknown command: ${command}`);
+      printHelp();
+      return 1;
+  }
+}
 
 async function main() {
   const rawArgs = process.argv.slice(2);
@@ -588,71 +731,12 @@ async function main() {
   }
 
   const command = rawArgs[0] && !rawArgs[0].startsWith('-') ? rawArgs[0] : 'list';
-
-  switch (command) {
-    case 'list': {
-      const limitIdx = rawArgs.indexOf('--limit');
-      const limit = limitIdx >= 0 ? Number(rawArgs[limitIdx + 1]) || 10 : 10;
-      const sourceIdx = rawArgs.indexOf('--source');
-      const source = sourceIdx >= 0 ? rawArgs[sourceIdx + 1] : 'all';
-      const platIdx = rawArgs.indexOf('--platform');
-      const platform = platIdx >= 0 ? rawArgs[platIdx + 1] : 'all';
-      const relIdx = rawArgs.indexOf('--release');
-      const release = relIdx >= 0 ? rawArgs[relIdx + 1] : undefined;
-      const json = rawArgs.includes('--json');
-
-      await runList({ limit, source, platform, release, json });
-      return 0;
-    }
-
-    case 'inspect': {
-      const issueId = rawArgs[1];
-      if (!issueId) {
-        console.error('❌ Usage: yarn ai:triage inspect <issue-id>');
-        return 1;
-      }
-      await runInspect(issueId);
-      return 0;
-    }
-
-    case 'user': {
-      const deviceUuid = rawArgs[1];
-      if (!deviceUuid) {
-        console.error('❌ Usage: yarn ai:triage user <device-uuid>');
-        return 1;
-      }
-      await runUser(deviceUuid);
-      return 0;
-    }
-
-    case 'ignore': {
-      const issueId = rawArgs[1];
-      if (!issueId) {
-        console.error('❌ Usage: yarn ai:triage ignore <issue-id>');
-        return 1;
-      }
-      await runUpdateStatus(issueId, 'ignored');
-      return 0;
-    }
-
-    case 'resolve': {
-      const issueId = rawArgs[1];
-      if (!issueId) {
-        console.error('❌ Usage: yarn ai:triage resolve <issue-id>');
-        return 1;
-      }
-      await runUpdateStatus(issueId, 'resolved');
-      return 0;
-    }
-
-    default:
-      console.error(`❌ Unknown command: ${command}`);
-      printHelp();
-      return 1;
-  }
+  return executeCommand(command, rawArgs);
 }
 
-main().catch((err) => {
-  console.error(`\nUnexpected error:`, err);
+try {
+  await main();
+} catch (err) {
+  safeError('\nUnexpected error:', err);
   process.exit(1);
-});
+}
