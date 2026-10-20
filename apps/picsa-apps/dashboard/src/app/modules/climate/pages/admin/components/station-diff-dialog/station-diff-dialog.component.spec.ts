@@ -116,7 +116,7 @@ describe('StationDiffDialogComponent', () => {
     expect(el.textContent).not.toContain('yrs removed');
   });
 
-  it('should compute selectedProductGeneration when stationData is present', () => {
+  it('should compute selectedProductGeneration when stationData is present without falling back to updated_at', () => {
     // Initial selectedProductId is 'rainfall', populated from mockData.stationData
     expect(component.selectedProductGeneration()).toEqual({
       timestamp: '2026-10-01T10:00:00Z',
@@ -130,10 +130,10 @@ describe('StationDiffDialogComponent', () => {
       id: 'gen_temp_88',
     });
 
-    // Switch to product without specific metadata - falls back to station updated_at
+    // Switch to product without specific metadata - strictly does not fallback to station updated_at
     component.selectProduct('extremes');
     expect(component.selectedProductGeneration()).toEqual({
-      timestamp: '2026-09-01T00:00:00Z',
+      timestamp: undefined,
       id: undefined,
     });
   });

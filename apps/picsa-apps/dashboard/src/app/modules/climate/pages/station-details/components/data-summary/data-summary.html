@@ -1,1 +1,32 @@
+@if (generationMetadata(); as meta) {
+<div
+  class="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 p-3.5 mb-4 bg-gray-50 border border-gray-200 rounded-lg"
+>
+  <div class="flex flex-col gap-1">
+    <span class="text-xs text-gray-500">Generation Date</span>
+    <span class="text-sm font-semibold">
+      @if (meta.generation_timestamp) { {{ meta.generation_timestamp | date: 'mediumDate' }} } @else {
+      <span class="text-gray-400 font-normal">—</span>
+      }
+    </span>
+  </div>
+  <div class="flex flex-col gap-1">
+    <span class="text-xs text-gray-500">Generation ID</span>
+    <span class="text-sm font-semibold font-mono truncate" [matTooltip]="meta.generation_id || ''">
+      @if (meta.generation_id) { {{ meta.generation_id }} } @else {
+      <span class="text-gray-400 font-normal font-sans">—</span>
+      }
+    </span>
+  </div>
+  <div class="flex flex-col gap-1">
+    <span class="text-xs text-gray-500">Last Synced to DB</span>
+    <span class="text-sm font-semibold">
+      @if (meta.updated_at) { {{ meta.updated_at | date: 'mediumDate' }} } @else {
+      <span class="text-gray-400 font-normal">—</span>
+      }
+    </span>
+  </div>
+</div>
+}
+
 <picsa-data-table [data]="tableData()" [options]="tableOptions()"> </picsa-data-table>
