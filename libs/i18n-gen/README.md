@@ -21,6 +21,7 @@ yarn scripts:translations:sync [--country=mw] [--locale=mw_ny] [--local] [--audi
 ```
 
 This writes the per-locale JSON files to [assets](../i18n/assets/) and mirrors the admin dashboard "Export All" output.
+Untranslated strings are omitted from each file rather than marked with placeholders, so the app falls back to the English source text (used as the translation key).
 
 Alternatively, export from the admin dashboard and copy the generated files to the [i18n assets](../i18n/assets/) folder
 
