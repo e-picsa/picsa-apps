@@ -59,7 +59,7 @@ describe('ClimateAdminPageComponent', () => {
       'qc_warnings',
       'products',
       'monthly_data',
-      'updated_at',
+      'generation_timestamp',
     ]);
     expect(component.dbTableOptions.sort).toEqual({ id: 'qc_score', start: 'asc' });
 
@@ -73,7 +73,7 @@ describe('ClimateAdminPageComponent', () => {
     expect(component.dbTableOptions.formatHeader('qc_warnings')).toBe('Warnings');
     expect(component.dbTableOptions.formatHeader('products')).toBe('Products 🌧  🌡  🌾');
     expect(component.dbTableOptions.formatHeader('monthly_data')).toBe('Monthly 🌧  🌡');
-    expect(component.dbTableOptions.formatHeader('updated_at')).toBe('Last Sync');
+    expect(component.dbTableOptions.formatHeader('generation_timestamp')).toBe('Data Generated');
   });
 
   it('should assign color classes based on QC rank severity and data depth strictly by score', () => {
@@ -99,7 +99,7 @@ describe('ClimateAdminPageComponent', () => {
     expect(dialogSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        data: { station: mockStation },
+        data: expect.objectContaining({ station: mockStation }),
       }),
     );
   });
@@ -208,5 +208,12 @@ describe('ClimateAdminPageComponent', () => {
     component.setDiffFilter('in_sync');
     expect(component.diffFilter()).toBe('in_sync');
     expect(component.showOnlyDiffs()).toBe(false);
+  });
+
+  it('should format generation tooltip correctly', () => {
+    const tooltip = component.getGenerationTooltip('2024-10-14T08:00:00Z', 'zm-2024-v2', '2026-10-19T20:00:00Z');
+    expect(tooltip).toContain('Generated:');
+    expect(tooltip).toContain('Generation ID: zm-2024-v2');
+    expect(tooltip).toContain('Last Synced:');
   });
 });

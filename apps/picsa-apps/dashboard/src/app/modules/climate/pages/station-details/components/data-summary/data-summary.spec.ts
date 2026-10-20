@@ -1,3 +1,8 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+
+import { DataSummaryComponent } from './data-summary';
+
 export const RAINFALL_SUMMARY_MOCK = {
   metadata: {
     annual_rain: {
@@ -153,3 +158,54 @@ export const RAINFALL_SUMMARY_MOCK = {
     },
   ],
 };
+
+describe('DataSummaryComponent', () => {
+  let component: DataSummaryComponent;
+  let fixture: ComponentFixture<DataSummaryComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DataSummaryComponent],
+      providers: [provideNoopAnimations()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DataSummaryComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('station', { id: 'test_station', station_name: 'Test Station' });
+  });
+
+  it('should create and extract generation metadata correctly', () => {
+    fixture.componentRef.setInput('data', {
+      updated_at: '2026-10-19T20:00:00Z',
+      annual_rainfall_metadata: {
+        generation_timestamp: '2024-10-14T08:00:00Z',
+        generation_id: 'zm-2024-v2-d8f9',
+      },
+      annual_rainfall_data: [],
+      annual_temperature_data: [],
+    });
+    fixture.detectChanges();
+
+    expect(component.generationMetadata()).toEqual({
+      generation_timestamp: '2024-10-14T08:00:00Z',
+      generation_id: 'zm-2024-v2-d8f9',
+      updated_at: '2026-10-19T20:00:00Z',
+    });
+  });
+
+  it('should not fallback generation_timestamp to updated_at when generation metadata is absent', () => {
+    fixture.componentRef.setInput('data', {
+      updated_at: '2026-10-19T20:00:00Z',
+      annual_rainfall_metadata: null,
+      annual_rainfall_data: [],
+      annual_temperature_data: [],
+    });
+    fixture.detectChanges();
+
+    expect(component.generationMetadata()).toEqual({
+      generation_timestamp: undefined,
+      generation_id: undefined,
+      updated_at: '2026-10-19T20:00:00Z',
+    });
+  });
+});

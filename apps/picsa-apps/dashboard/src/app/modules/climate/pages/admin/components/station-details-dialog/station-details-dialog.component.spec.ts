@@ -26,6 +26,10 @@ describe('StationDetailsDialogComponent', () => {
           id: 'station-1',
           station_id: 'station-1',
           annual_rainfall_summaries: [],
+          annual_rainfall_metadata: {
+            generation_timestamp: '2024-10-14T08:00:00Z',
+            generation_id: 'zm-2024-v2-d8f9',
+          },
           crop_probability_data: [],
         },
       }),
@@ -55,5 +59,9 @@ describe('StationDetailsDialogComponent', () => {
     expect(mockClimateService.getStationData).toHaveBeenCalledWith('station-1');
     expect(component.stationData()).toBeTruthy();
     expect(component.loading()).toBe(false);
+    expect(component.generationMetadata()).toEqual({
+      generation_timestamp: '2024-10-14T08:00:00Z',
+      generation_id: 'zm-2024-v2-d8f9',
+    });
   });
 });

@@ -99,7 +99,7 @@
             qc_warnings: qcWarningsTemplate,
             products: productsTemplate,
             monthly_data: monthlyDataTemplate,
-            updated_at: updatedAtTemplate,
+            generation_timestamp: generationTimestampTemplate,
           }"
         >
           <ng-template #nameTemplate let-name>
@@ -165,9 +165,11 @@
             }
           </ng-template>
 
-          <ng-template #updatedAtTemplate let-value>
-            @if (value) {
-              {{ value | date: 'mediumDate' }}
+          <ng-template #generationTimestampTemplate let-value let-row="row">
+            @if (row.generation_timestamp) {
+              <span [matTooltip]="getGenerationTooltip(row.generation_timestamp, row.generation_id, row.updated_at)">
+                {{ row.generation_timestamp | date: 'mediumDate' }}
+              </span>
             } @else {
               <span class="text-muted text-xs">—</span>
             }
@@ -405,11 +407,9 @@
           <!-- Data System Generated / Updated Column -->
           <ng-template #diffUpdatedAtTemplate let-value let-row="row">
             @if (row.generation_timestamp) {
-              <span [matTooltip]="row.generation_id ? 'Generation ID: ' + row.generation_id : ''">
+              <span [matTooltip]="getGenerationTooltip(row.generation_timestamp, row.generation_id, row.updated_at)">
                 {{ row.generation_timestamp | date: 'mediumDate' }}
               </span>
-            } @else if (value) {
-              <span>{{ value | date: 'mediumDate' }}</span>
             } @else {
               <span class="text-muted text-xs">—</span>
             }

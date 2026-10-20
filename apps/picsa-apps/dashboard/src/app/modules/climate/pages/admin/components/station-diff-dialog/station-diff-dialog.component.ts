@@ -88,7 +88,7 @@ export class StationDiffDialogComponent implements AfterViewInit {
     const productId = this.selectedProductId();
     const metaField = PRODUCT_METADATA_MAP[productId] || 'annual_rainfall_metadata';
     const meta = stationData[metaField] as { generation_timestamp?: string; generation_id?: string } | null | undefined;
-    const timestamp = meta?.generation_timestamp || stationData.updated_at;
+    const timestamp = meta?.generation_timestamp;
     const id = meta?.generation_id;
     return { timestamp, id };
   });

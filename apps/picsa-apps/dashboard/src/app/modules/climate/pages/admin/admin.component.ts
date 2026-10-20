@@ -16,7 +16,7 @@ import { unparse } from 'papaparse';
 import { filter, lastValueFrom, map, switchMap } from 'rxjs';
 
 import { ClimateService } from '../../climate.service';
-import { hackConvertStationDataForDisplay } from '../../climate.utils';
+import { extractStationGenerationMetadata, hackConvertStationDataForDisplay } from '../../climate.utils';
 import { IStationDiffSummary, StationDiffStatus } from '../../climate-diff.types';
 import { CLIMATE_PRODUCTS, compareStationDatasets } from '../../climate-diff.utils';
 import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
@@ -41,6 +41,8 @@ export interface IStationAdminSummary {
   name: string;
   station: IStationRow;
   updated_at?: string;
+  generation_timestamp?: string;
+  generation_id?: string;
   rainfall_data?: IAnnualRainfallSummariesData[];
   rainfall_year_range?: string;
   rainfall_start_year?: number;
@@ -134,7 +136,7 @@ const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'qc_warnings',
   'products',
   'monthly_data',
-  'updated_at',
+  'generation_timestamp',
 ];
 
 const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
@@ -275,8 +277,14 @@ export class ClimateAdminPageComponent {
   }
 
   public openStationDetailsDialog(station: IStationRow): void {
+    const allStationDataHashmap = this.allStationDataHashmap();
+    const stationData =
+      (station.id ? allStationDataHashmap[station.id] : undefined) ||
+      (station.station_id ? allStationDataHashmap[station.station_id] : undefined) ||
+      null;
+
     this.dialog.open(StationDetailsDialogComponent, {
-      data: { station },
+      data: { station, stationData },
       width: '92vw',
       maxWidth: '1280px',
       height: '90vh',
@@ -299,7 +307,7 @@ export class ClimateAdminPageComponent {
       if (v === 'qc_warnings') return 'Warnings';
       if (v === 'products') return 'Products 🌧  🌡  🌾';
       if (v === 'monthly_data') return 'Monthly 🌧  🌡';
-      if (v === 'updated_at') return 'Last Sync';
+      if (v === 'generation_timestamp' || v === 'updated_at') return 'Data Generated';
       return formatHeaderDefault(v);
     },
   };
@@ -473,6 +481,30 @@ export class ClimateAdminPageComponent {
     ].join('\n');
   }
 
+  public getGenerationTooltip(timestamp?: string, id?: string, syncedAt?: string): string {
+    const lines: string[] = [];
+    if (timestamp) {
+      const formattedDate = new Date(timestamp).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      lines.push(`Generated: ${formattedDate}`);
+    }
+    if (id) {
+      lines.push(`Generation ID: ${id}`);
+    }
+    if (syncedAt) {
+      const syncedDate = new Date(syncedAt).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      lines.push(`Last Synced: ${syncedDate}`);
+    }
+    return lines.join('\n');
+  }
+
   public getDiffTooltip(diff?: IStationDiffSummary): string {
     if (!diff) return 'Checking app data differences...';
     if (diff.status === 'in_sync') {
@@ -559,6 +591,10 @@ export class ClimateAdminPageComponent {
       Object.assign(summary, rainfallSummary);
       summary.products = this.generateProductSummary(data);
       summary.monthly_data = this.generateMonthlySummary(data);
+      summary.updated_at = data.updated_at || undefined;
+      const { generation_timestamp, generation_id } = extractStationGenerationMetadata(data);
+      summary.generation_timestamp = generation_timestamp;
+      summary.generation_id = generation_id;
     }
     summary.updateSignal.update((signal) => ({ ...signal, started: false }));
   }
@@ -711,12 +747,8 @@ export class ClimateAdminPageComponent {
         .map((d) => d.Year)
         .filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
 
-      const rainMeta = stationData?.annual_rainfall_metadata as
-        | { generation_timestamp?: string; generation_id?: string }
-        | null
-        | undefined;
-      const genTimestamp = rainMeta?.generation_timestamp || stationData?.updated_at;
-      const genId = rainMeta?.generation_id;
+      const { generation_timestamp: genTimestamp, generation_id: genId } =
+        extractStationGenerationMetadata(stationData);
 
       return {
         name: station.station_name as string,
@@ -748,10 +780,13 @@ export class ClimateAdminPageComponent {
         (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
       const rainfallSummary = this.generateRainfallSummary(stationData);
       const updateSignal = this.getOrCreateRowUpdateSignal(station);
+      const { generation_timestamp, generation_id } = extractStationGenerationMetadata(stationData);
       return {
         name: station.station_name as string,
         station,
         updated_at: stationData?.updated_at || undefined,
+        generation_timestamp,
+        generation_id,
         products: this.generateProductSummary(stationData),
         monthly_data: this.generateMonthlySummary(stationData),
         updateSignal,
@@ -765,9 +800,21 @@ export class ClimateAdminPageComponent {
       return this.defaultProductSummaries();
     }
     return [
-      this.createProductSummary('Annual Rainfall', stationData.annual_rainfall_data),
-      this.createProductSummary('Annual Temperature', stationData.annual_temperature_data),
-      this.createProductSummary('Crop Probabilities', stationData.crop_probability_data),
+      this.createProductSummary(
+        'Annual Rainfall',
+        stationData.annual_rainfall_data,
+        stationData.annual_rainfall_metadata,
+      ),
+      this.createProductSummary(
+        'Annual Temperature',
+        stationData.annual_temperature_data,
+        stationData.annual_temperature_metadata,
+      ),
+      this.createProductSummary(
+        'Crop Probabilities',
+        stationData.crop_probability_data,
+        stationData.crop_probability_metadata,
+      ),
     ];
   }
 
@@ -789,16 +836,11 @@ export class ClimateAdminPageComponent {
     };
   }
 
-  private createProductSummary(id: string, data: unknown): IProductSummary {
+  private createProductSummary(id: string, data: unknown, metadata?: unknown): IProductSummary {
     const available = this.hasProductData(data);
-    let generation_timestamp: string | undefined;
-    let generation_id: string | undefined;
-
-    if (available && Array.isArray(data) && data.length > 0) {
-      const first = data[0] as Record<string, any>;
-      generation_timestamp = first?._metadata?.generation_timestamp || first?.generation_timestamp;
-      generation_id = first?._metadata?.generation_id || first?.generation_id;
-    }
+    const meta = metadata as { generation_timestamp?: string; generation_id?: string } | null | undefined;
+    const generation_timestamp = meta?.generation_timestamp;
+    const generation_id = meta?.generation_id;
 
     return {
       id,
