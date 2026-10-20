@@ -1,0 +1,16 @@
+{
+  "seasonal": [
+    {
+      "id": "2026/seasonal/zm_en",
+      "forecast_type": "seasonal",
+      "location": [],
+      "country_code": "zm",
+      "language_code": "zm_en",
+      "storage_file": "zm/forecasts/seasonal/2026/zm_en.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": null
+    }
+  ],
+  "downscaled": []
+}

@@ -12,6 +12,8 @@ import type {
   IThreeMonthPeriod,
 } from '@picsa/models';
 
+import { evaluateStationQualityGates } from './climate-qc.utils';
+
 /**
  * Standard rounding for climate physical observations.
  * Eliminates float precision noise and ensures deterministic diffs.
@@ -426,6 +428,11 @@ export function calculateStationCapabilities(params: {
     completeTempYears,
     annual: annualCharts.length > 0 ? annualCharts : undefined,
     monthly: monthlyCharts.length > 0 ? monthlyCharts : undefined,
+    qcFailures: evaluateStationQualityGates(annualData).failures,
+    qcWarnings:
+      evaluateStationQualityGates(annualData).warnings.length > 0
+        ? evaluateStationQualityGates(annualData).warnings
+        : undefined,
   };
 }
 
@@ -1250,6 +1257,7 @@ export function resolveClimateProducts(filter?: string | string[]): Set<ClimateP
 
 export type ClimateApiSummaryAction =
   | 'rainfall-summaries'
+  | 'monthly-rainfall'
   | 'annual-temperature'
   | 'monthly-temperatures'
   | 'crop-probabilities';
@@ -1260,8 +1268,15 @@ export type ClimateApiSummaryAction =
 export function resolveClimateApiActions(products: Set<ClimateProductId>): ClimateApiSummaryAction[] {
   const actions: ClimateApiSummaryAction[] = [];
   const seasonProducts: ClimateProductId[] = ['rainfall', 'start', 'end', 'length', 'extremes'];
-  if (seasonProducts.some((p) => products.has(p))) {
-    actions.push('rainfall-summaries', 'crop-probabilities');
+  const hasSeasonProducts = seasonProducts.some((p) => products.has(p));
+  if (hasSeasonProducts) {
+    actions.push('rainfall-summaries');
+  }
+  if (products.has('rainfall')) {
+    actions.push('monthly-rainfall');
+  }
+  if (hasSeasonProducts) {
+    actions.push('crop-probabilities');
   }
   if (products.has('temp_min') || products.has('temp_max')) {
     actions.push('annual-temperature', 'monthly-temperatures');
@@ -1390,8 +1405,30 @@ export function mergeStationMonthlyData(
 }
 
 /**
+ * Resolve a monthly summary record into a YYYY-MM key.
+ * Handles numeric month + year, string 'YYYY-MM', or ISO date string formats.
+ */
+function resolveMonthlySummaryKey(entry: any): string {
+  if (!entry) return '';
+
+  let monthStr = '';
+  if (typeof entry.year === 'number' && typeof entry.month === 'number') {
+    monthStr = `${entry.year}-${String(entry.month).padStart(2, '0')}`;
+  } else if (typeof entry.month === 'string') {
+    monthStr = normalizeMonthKey(entry.month);
+  } else if (typeof entry.time_value === 'string') {
+    monthStr = normalizeMonthKey(entry.time_value);
+  }
+
+  const match = monthStr.match(/^(\d{4})-(\d{2})$/);
+  if (!match) return '';
+
+  const monthNumber = Number(match[2]);
+  return monthNumber >= 1 && monthNumber <= 12 ? monthStr : '';
+}
+
+/**
  * Convert database monthly temperature summary records into typed IMonthlyStationData rows.
- * Handles month normalization (numeric month + year, string 'YYYY-MM', or ISO date string).
  */
 export function convertMonthlyTemperatureSummariesToRows(monthlyTemperatureData?: any[] | null): IMonthlyStationData[] {
   if (!monthlyTemperatureData || !Array.isArray(monthlyTemperatureData)) {
@@ -1401,29 +1438,40 @@ export function convertMonthlyTemperatureSummariesToRows(monthlyTemperatureData?
   const rows: IMonthlyStationData[] = [];
 
   for (const entry of monthlyTemperatureData) {
-    if (!entry) continue;
-
-    let monthStr = '';
-    if (typeof entry.year === 'number' && typeof entry.month === 'number') {
-      monthStr = `${entry.year}-${String(entry.month).padStart(2, '0')}`;
-    } else if (typeof entry.month === 'string') {
-      monthStr = normalizeMonthKey(entry.month);
-    } else if (typeof entry.time_value === 'string') {
-      monthStr = normalizeMonthKey(entry.time_value);
-    }
-
-    if (!monthStr || !/^\d{4}-\d{2}$/.test(monthStr)) {
-      continue;
-    }
+    const month = resolveMonthlySummaryKey(entry);
+    if (!month) continue;
 
     rows.push({
-      month: monthStr,
+      month,
       min_tmin: roundClimateValue(entry.min_tmin),
       mean_tmin: roundClimateValue(entry.mean_tmin),
       max_tmin: roundClimateValue(entry.max_tmin),
       min_tmax: roundClimateValue(entry.min_tmax),
       mean_tmax: roundClimateValue(entry.mean_tmax),
       max_tmax: roundClimateValue(entry.max_tmax),
+    });
+  }
+
+  return rows.sort((a, b) => a.month.localeCompare(b.month));
+}
+
+/**
+ * Convert database monthly rainfall summary records into typed IMonthlyStationData rows.
+ */
+export function convertMonthlyRainfallSummariesToRows(monthlyRainfallData?: any[] | null): IMonthlyStationData[] {
+  if (!monthlyRainfallData || !Array.isArray(monthlyRainfallData)) {
+    return [];
+  }
+
+  const rows: IMonthlyStationData[] = [];
+
+  for (const entry of monthlyRainfallData) {
+    const month = resolveMonthlySummaryKey(entry);
+    if (!month) continue;
+
+    rows.push({
+      month,
+      Rainfall: roundClimateValue(entry.monthly_rain),
     });
   }
 

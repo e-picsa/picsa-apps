@@ -20,7 +20,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, getLocationLabel, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { TourService } from '@picsa/shared/services/core/tour';
@@ -30,6 +30,7 @@ import { CropProbabilityTableComponent } from '../../components/crop-probability
 import { PROBABILITY_TABLE_DATA } from '../../data';
 import { CROP_PROBABILITY_SELECT_TOUR, CROP_PROBABILITY_TABLE_TOUR } from '../../data/tour';
 import { IProbabilityTable, IStationCropData } from '../../models';
+import { filterLocationsToProbabilityTables } from '../../utils/location-filter.utils';
 
 interface IQueryParams {
   /** id of active selected station */
@@ -65,16 +66,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
 
-  public locationReady = computed(() => {
-    const location = this.locationSelected();
+  /** Display label for the selected district, used when no probability table matches */
+  public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
-    if (!country || !location) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    // multi-tier countries require both top and sublocation segments (stored at indexes 4 and 5)
-    if (getLocationSlots(geoData).length > 1) {
-      return !!location[4] && !!location[5];
-    }
-    return !!location[4];
+    if (!country) return undefined;
+    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+  });
+
+  public locationReady = computed(() => {
+    const country = this.countryCode();
+    if (!country) return false;
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
 
   /** Deepest selected location segment, used to match probability tables */
@@ -107,9 +109,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Auto-open location overlay if location is not set when entering tool
+    // Auto-open location overlay if no location set, or if the shared location
+    // (e.g. carried over from the forecasts tool) has no probability table
     effect(() => {
-      if (!this.locationReady()) {
+      if (!this.locationReady() || !this.tableStationMeta()) {
         this.locationOverlayOpen.set(true);
       }
     });
@@ -146,52 +149,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationOverlayOpen.set(false);
   }
 
-  /** Modify locations to only include values that have probability data */
+  /**
+   * Modify locations to only include values that have probability data.
+   * Pure delegation - the shared per-country geo data must never be mutated as the
+   * filter re-runs every time the location overlay is opened.
+   */
   public locationModifier(data: IGeolocationData, country_code: string): IGeolocationData {
     const allData: IProbabilityTable[] = PROBABILITY_TABLE_DATA[country_code] || [];
-    const slots = getLocationSlots(data);
-    // track table ids per level - ids use format parent[/child[--sublocation]]
-    const availableByLevel: string[][] = slots.map(() => []);
-    for (const entry of allData) {
-      entry.id.split('/').forEach((segment, i) => {
-        if (i < slots.length) availableByLevel[i].push(segment.split('--')[0]);
-      });
-    }
-
-    // filter each level to only include those with child probability tables available
-    slots.forEach((slot, i) => {
-      const locations = data[slot]?.locations ?? [];
-      (data[slot] as { locations: { id: string }[] }).locations = locations.filter((v) =>
-        availableByLevel[i].includes(v.id),
-      );
-    });
-
-    if (slots.length > 1) {
-      const deepSlot = slots[slots.length - 1];
-      const parentSlot = slots[slots.length - 2];
-      // HACK - data can have multiple tables in same sublocation, e.g.
-      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
-      allData.forEach((entry) => {
-        const segments = entry.id.split('/');
-        const [, sublocation] = (segments[1] || '').split('--');
-        if (sublocation) {
-          (data[deepSlot]?.locations as unknown[]).push({
-            id: entry.id,
-            label: entry.label,
-            [parentSlot]: segments[0],
-          });
-        }
-      });
-    } else {
-      // HACK - single-tier geo data but crop probability tables include multiple per
-      // location so create entries to use in filter
-      const additionalLocations = allData.map(({ id, label }) => {
-        const [parent, child] = id.split('/');
-        return { id: child ?? parent, admin_4: parent, label };
-      });
-      data.admin_5 = { label: 'Location', locations: additionalLocations };
-    }
-    return data;
+    return filterLocationsToProbabilityTables(data, allData);
   }
 
   /** One-time import of pre-overlay saved locations into user settings */

@@ -6,6 +6,7 @@
 export * from './async.utils';
 export * from './browser.utils';
 export * from './climate.utils';
+export * from './climate-qc.utils';
 export * from './data';
 export * from './mimetypes';
 export * from './platform';

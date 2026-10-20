@@ -25,3 +25,27 @@ td {
   pointer-events: all;
   cursor: pointer;
 }
+
+// Custom headline filter chip colors via Material chip tokens
+// (CSS vars inherit into inner MDC elements, no ::ng-deep required)
+mat-chip-option.chip-translated {
+  --mat-chip-elevated-container-color: #f0fdf4;
+  --mat-chip-label-text-color: #166534;
+  --mat-chip-with-icon-icon-color: #15803d;
+  // Selected tokens need !important to beat theme .mat-primary rules
+  // (chip-option defaults color to primary)
+  --mat-chip-elevated-selected-container-color: #16a34a !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
+
+mat-chip-option.chip-pending {
+  --mat-chip-elevated-container-color: #fffbeb;
+  --mat-chip-label-text-color: #92400e;
+  --mat-chip-with-icon-icon-color: #b45309;
+  // Selected tokens need !important to beat theme .mat-primary rules
+  // (chip-option defaults color to primary)
+  --mat-chip-elevated-selected-container-color: #d97706 !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
