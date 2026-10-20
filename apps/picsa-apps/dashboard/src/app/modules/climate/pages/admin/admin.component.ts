@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -170,6 +171,7 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
     MatCheckboxModule,
     MatDialogModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     MatTabsModule,
     MatTooltipModule,
     PicsaDataTableComponent,
@@ -188,7 +190,7 @@ export class ClimateAdminPageComponent {
   public isRefreshingAll = computed(() => this.refreshCount() > -1);
   public showOnlyDiffs = signal(false);
 
-  private allStationData = toSignal(
+  public allStationData = toSignal(
     toObservable(this.service.stations).pipe(
       filter((stations) => stations.length > 0),
       switchMap((stations) => {
@@ -197,10 +199,15 @@ export class ClimateAdminPageComponent {
       }),
       map(({ data }) => data || []),
     ),
-    { initialValue: [] },
   );
+
+  public isDbLoading = computed(() => {
+    const stations = this.service.stations();
+    return stations.length > 0 && this.allStationData() === undefined;
+  });
+
   private allStationDataHashmap = computed(() => {
-    const list = this.allStationData();
+    const list = this.allStationData() || [];
     const stations = this.service.stations();
     const stationIdToSlug = new Map<string, string>();
     for (const s of stations) {
@@ -222,7 +229,7 @@ export class ClimateAdminPageComponent {
   });
 
   /** Bundled CSV app data loaded on deployment/country change */
-  private allStationAppData = toSignal(
+  public allStationAppData = toSignal(
     toObservable(this.service.stations).pipe(
       filter((stations) => stations.length > 0),
       switchMap((stations) => {
@@ -230,8 +237,14 @@ export class ClimateAdminPageComponent {
         return this.service.getAllStationsAppData(countryCode, stations);
       }),
     ),
-    { initialValue: {} as Record<string, IStationData[]> },
   );
+
+  public isAppLoading = computed(() => {
+    const stations = this.service.stations();
+    return stations.length > 0 && this.allStationAppData() === undefined;
+  });
+
+  public isDiffLoading = computed(() => this.isDbLoading() || this.isAppLoading());
 
   /** Keep reference to generated row update signals to prevent recreation on data load */
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
@@ -315,7 +328,7 @@ export class ClimateAdminPageComponent {
   // 2. App Bundled Table Data & Options
   public appTableData = computed<IStationAppSummary[]>(() => {
     const stations = this.service.stations();
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
     return this.generateAppSummaryData(stations, allStationAppData);
   });
 
@@ -337,7 +350,7 @@ export class ClimateAdminPageComponent {
   private allDiffRows = computed<IStationDiffRow[]>(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
     return this.generateDiffSummaryData(stations, allStationDataHashmap, allStationAppData);
   });
 
@@ -554,7 +567,7 @@ export class ClimateAdminPageComponent {
 
     const stationId = station.station_id;
     const allStationDataHashmap = this.allStationDataHashmap();
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
 
     const stationData =
       (station.id ? allStationDataHashmap[station.id] : undefined) ||
@@ -625,7 +638,7 @@ export class ClimateAdminPageComponent {
   }
 
   public downloadAllAppStationsCSV() {
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
     for (const station of this.service.stations()) {
       const data = allStationAppData[station.station_id];
       if (data && data.length > 0) {

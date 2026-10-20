@@ -630,6 +630,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Sorting Behavior (`MatTableDataSource`)**:
   - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
   - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
+  - **Preventing Initial QC Re-Sort & Flash of Failure**: In `admin.component.ts`, `allStationData` and `allStationAppData` load asynchronously. `isDbLoading = computed(() => this.service.stations().length > 0 && this.allStationData() === undefined)`. Rendering tables before `allStationData` emitted evaluated stations against empty data (`evaluateStationQualityGates([])` -> `qc_score = -3`), flashing all stations as failed and triggering a jarring table re-sort when real data arrived. Gating the tables behind `@if (isDbLoading())` / `@if (isDiffLoading())` with `<mat-spinner>` ensures tables render only once with true QC scores in stable sorted order.
 - **Rank Color Variations & Grouping Invariant**:
   - Color classes must be a strict, monotonic function of the sort key (`score`) to guarantee that all rows of the same rank remain strictly grouped in contiguous blocks without interleaving or alternating colors when sorted.
   - Failures (`cancel` icon): `-3` uses `text-rose-700`, `-2` uses `text-rose-500`, `-1` uses `text-amber-500` (lighter/paler shades).

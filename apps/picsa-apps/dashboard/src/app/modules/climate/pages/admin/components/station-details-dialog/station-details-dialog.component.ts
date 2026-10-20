@@ -55,12 +55,13 @@ export class StationDetailsDialogComponent implements OnInit {
   public async ngOnInit(): Promise<void> {
     if (this.data?.stationData) {
       this.stationData.set(this.data.stationData);
-      this.loading.set(false);
-      return;
     }
 
     const stationId = this.data?.station?.id as string;
     if (stationId) {
+      if (!this.data?.stationData) {
+        this.loading.set(true);
+      }
       try {
         const { data } = await this.climateService.getStationData(stationId);
         if (data) {
