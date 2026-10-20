@@ -14,7 +14,20 @@ This will be stored in the [templates](./templates/) folder, to be uploaded to t
 
 ## Populate Translations
 
-This is done from within the admin dashboard. Generated files should be copied to the [assets](./assets/) folder
+Pull the latest translations directly from the database:
+
+```bash
+yarn scripts:translations:sync [--country=mw] [--locale=mw_ny] [--local] [--audit-only]
+```
+
+This writes the per-locale JSON files to [assets](../i18n/assets/) and mirrors the admin dashboard "Export All" output.
+Untranslated strings are omitted from each file rather than marked with placeholders, so the app falls back to the English source text (used as the translation key).
+
+Alternatively, export from the admin dashboard and copy the generated files to the [i18n assets](../i18n/assets/) folder
+
+## Debug Missing Translations
+
+Append `?translationDebug=1` to the app URL to mark untranslated strings with `•bullet•` markers. The setting is persisted in `localStorage`, so it survives reloads, and `?translationDebug=0` disables it. Internal testers can also toggle it from the in-app Debug Info dialog.
 
 ## Use in app
 
