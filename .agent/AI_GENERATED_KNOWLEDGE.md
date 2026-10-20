@@ -202,6 +202,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Climate Data Sync & Upstream API Fault Tolerance
 
 - **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
+- **Upstream Station Identifier Format**: Upstream `/v2/*_summaries/` endpoints expect the display `station_name` (e.g. `MAGOYE AGROMET`), not the canonical slug (`magoye_agromet`). The slug silently returns an empty result rather than a 4xx, so `refreshUpstreamDataForCountry` validates `climate_stations.station_name` and skips malformed rows instead of falling back to the slug. New dashboard/climate actions (e.g. `monthly-rainfall`) also require redeploying the edge function; a stale deployment returns `Invalid climate action: <action>`.
 
 ---
 

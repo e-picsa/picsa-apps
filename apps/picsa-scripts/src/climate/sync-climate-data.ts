@@ -441,6 +441,44 @@ export function getSyncSupabaseClient(options: { local?: boolean; env?: string }
   return createClient(url, key);
 }
 
+function recordUpstreamRefreshFailure(
+  auditReport: IClimateAuditReport | undefined,
+  failure: { country: string; stationId: string; message: string },
+) {
+  if (!auditReport) return;
+  auditReport.warnings = auditReport.warnings || [];
+  auditReport.warnings.push(failure);
+}
+
+interface IInvokeErrorWithContext {
+  message?: string;
+  context?: {
+    json?: () => Promise<unknown>;
+  };
+}
+
+async function resolveInvokeErrorDetail(error: unknown): Promise<string> {
+  const invokeError = error as IInvokeErrorWithContext;
+  let detail = invokeError?.message || String(error);
+
+  const context = invokeError?.context;
+  if (typeof context?.json !== 'function') return detail;
+
+  try {
+    const body = (await context.json()) as { message?: string; error?: { message?: string } };
+    const contextMessage = body?.message || body?.error?.message;
+    if (contextMessage) detail += ` (${contextMessage})`;
+  } catch {
+    // Context body may not be JSON; keep the transport error message.
+  }
+
+  return detail;
+}
+
+function isUnsupportedClimateActionError(errorDetail: string): boolean {
+  return errorDetail.includes('Invalid climate action');
+}
+
 /**
  * Refresh upstream Climate API data into Supabase database (climate_station_data)
  * by invoking the dashboard/climate edge functions for each station in a country.
@@ -491,66 +529,79 @@ export async function refreshUpstreamDataForCountry(
 
   let successfulRequests = 0;
   let failedRequests = 0;
+  const unsupportedActions = new Set<string>();
 
   for (let i = 0; i < stations.length; i++) {
     const s = stations[i];
     const stationSlug = s.station_id;
-    const metStationName = s.station_name || stationSlug;
+    const stationId = s.id;
+    const stationName = s.station_name?.trim();
+
+    if (!stationId || !stationName || stationName === stationSlug) {
+      const message = !stationId
+        ? 'Missing climate_stations.id; cannot invoke the dashboard/climate edge function.'
+        : 'Missing display station_name in climate_stations; upstream Climate API requires the display name (e.g. "MAGOYE AGROMET"), not the slug.';
+      console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug}: ${message}`);
+      recordUpstreamRefreshFailure(options.auditReport, {
+        country: countryUpper,
+        stationId: stationSlug,
+        message,
+      });
+      failedRequests += actions.length;
+      continue;
+    }
 
     for (const action of actions) {
       try {
         const { error: invokeErr } = await client.functions.invoke(`dashboard/climate/${action}`, {
           body: {
             station: {
-              id: s.id,
+              id: stationId,
               country_code: s.country_code,
-              station_name: metStationName,
+              station_name: stationName,
             },
             country_code: s.country_code,
           },
         });
 
-        if (invokeErr) {
-          let errorDetail = invokeErr.message;
-          try {
-            if ('context' in invokeErr && typeof (invokeErr as any).context?.json === 'function') {
-              const body = await (invokeErr as any).context.json();
-              if (body?.message) {
-                errorDetail += ` (${body.message})`;
-              } else if (body?.error?.message) {
-                errorDetail += ` (${body.error.message})`;
-              }
-            }
-          } catch {
-            // ignore context json parse error
-          }
-          console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) API error: ${errorDetail}`);
-          failedRequests++;
-          if (options.auditReport) {
-            options.auditReport.warnings = options.auditReport.warnings || [];
-            options.auditReport.warnings.push({
-              country: countryUpper,
-              stationId: stationSlug,
-              message: `Upstream Climate API refresh error (${action})`,
-            });
-          }
-        } else {
+        if (!invokeErr) {
           successfulRequests++;
+          continue;
         }
-      } catch (err: any) {
-        const errorMsg = err?.message || String(err);
-        console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${errorMsg}`);
+
+        const errorDetail = await resolveInvokeErrorDetail(invokeErr);
+        if (isUnsupportedClimateActionError(errorDetail)) unsupportedActions.add(action);
+
+        console.warn(
+          `    ⚠️ [${i + 1}/${stations.length}] ${stationName} [${stationSlug}] (${action}) API error: ${errorDetail}`,
+        );
         failedRequests++;
-        if (options.auditReport) {
-          options.auditReport.warnings = options.auditReport.warnings || [];
-          options.auditReport.warnings.push({
-            country: countryUpper,
-            stationId: stationSlug,
-            message: `Upstream Climate API refresh error (${action})`,
-          });
-        }
+        recordUpstreamRefreshFailure(options.auditReport, {
+          country: countryUpper,
+          stationId: stationSlug,
+          message: `Upstream Climate API refresh error (${action}) for ${stationName}: ${errorDetail}`,
+        });
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.warn(
+          `    ⚠️ [${i + 1}/${stations.length}] ${stationName} [${stationSlug}] (${action}) invocation failed: ${errorMsg}`,
+        );
+        failedRequests++;
+        recordUpstreamRefreshFailure(options.auditReport, {
+          country: countryUpper,
+          stationId: stationSlug,
+          message: `Upstream Climate API refresh error (${action}) for ${stationName}: ${errorMsg}`,
+        });
       }
     }
+  }
+
+  if (unsupportedActions.size > 0) {
+    console.warn(
+      `  ℹ️ The deployed dashboard/climate Edge Function does not support: ${Array.from(unsupportedActions).join(
+        ', ',
+      )}. Deploy the function (e.g. yarn nx run picsa-server:functions:deploy) and retry.`,
+    );
   }
 
   console.log(
