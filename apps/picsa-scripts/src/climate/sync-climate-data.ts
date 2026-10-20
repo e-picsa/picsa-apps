@@ -453,6 +453,7 @@ function recordUpstreamRefreshFailure(
 interface IInvokeErrorWithContext {
   message?: string;
   context?: {
+    status?: number;
     json?: () => Promise<unknown>;
   };
 }
@@ -462,6 +463,9 @@ async function resolveInvokeErrorDetail(error: unknown): Promise<string> {
   let detail = invokeError?.message || String(error);
 
   const context = invokeError?.context;
+  const status = context?.status;
+  if (status) detail += ` [HTTP ${status}]`;
+
   if (typeof context?.json !== 'function') return detail;
 
   try {
@@ -473,6 +477,38 @@ async function resolveInvokeErrorDetail(error: unknown): Promise<string> {
   }
 
   return detail;
+}
+
+/** Format a millisecond duration as a compact human readable string (e.g. `12.3s`, `2m 05s`). */
+export function formatDuration(ms: number): string {
+  if (!Number.isFinite(ms) || ms < 0) return '0.0s';
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+  const totalSeconds = Math.round(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${String(seconds).padStart(2, '0')}s`;
+}
+
+/**
+ * Estimate remaining runtime from the average time taken per completed station.
+ * Returns 0 when there is not enough data to make a sensible estimate.
+ */
+export function estimateRemainingMs(elapsedMs: number, completedStations: number, remainingStations: number): number {
+  if (completedStations <= 0 || remainingStations <= 0) return 0;
+  return (elapsedMs / completedStations) * remainingStations;
+}
+
+/**
+ * Render a consistent progress suffix for station level log lines, e.g. `43% done · ETA ~1m 20s`.
+ */
+export function formatProgressSuffix(completedCount: number, totalCount: number, elapsedMs: number): string {
+  if (totalCount <= 0) return '';
+  const percentComplete = Math.round((completedCount / totalCount) * 100);
+  const remainingCount = totalCount - completedCount;
+  if (remainingCount <= 0) return `${percentComplete}% done`;
+  const remainingMs = estimateRemainingMs(elapsedMs, completedCount, remainingCount);
+  if (remainingMs < 1000) return `${percentComplete}% done`;
+  return `${percentComplete}% done · ETA ~${formatDuration(remainingMs)}`;
 }
 
 function isUnsupportedClimateActionError(errorDetail: string): boolean {
@@ -526,22 +562,28 @@ export async function refreshUpstreamDataForCountry(
   }
 
   console.log(`  Found ${stations.length} station(s) to refresh from Climate API`);
+  console.log(
+    `  ${actions.length} action(s) per station (${stations.length * actions.length} upstream requests total)\n`,
+  );
 
   let successfulRequests = 0;
   let failedRequests = 0;
   const unsupportedActions = new Set<string>();
+  const totalStations = stations.length;
+  const refreshStartedAt = Date.now();
 
   for (let i = 0; i < stations.length; i++) {
     const s = stations[i];
     const stationSlug = s.station_id;
     const stationId = s.id;
     const stationName = s.station_name?.trim();
+    const position = `[${i + 1}/${totalStations}]`;
 
     if (!stationId || !stationName || stationName === stationSlug) {
       const message = !stationId
         ? 'Missing climate_stations.id; cannot invoke the dashboard/climate edge function.'
         : 'Missing display station_name in climate_stations; upstream Climate API requires the display name (e.g. "MAGOYE AGROMET"), not the slug.';
-      console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug}: ${message}`);
+      console.warn(`    ⚠️ ${position} ${stationSlug}: ${message}`);
       recordUpstreamRefreshFailure(options.auditReport, {
         country: countryUpper,
         stationId: stationSlug,
@@ -550,6 +592,12 @@ export async function refreshUpstreamDataForCountry(
       failedRequests += actions.length;
       continue;
     }
+
+    console.log(`    → ${position} ${stationName} (${stationSlug}) — refreshing ${actions.length} action(s)...`);
+
+    const stationStartedAt = Date.now();
+    let stationSuccesses = 0;
+    let stationFailures = 0;
 
     for (const action of actions) {
       try {
@@ -566,16 +614,16 @@ export async function refreshUpstreamDataForCountry(
 
         if (!invokeErr) {
           successfulRequests++;
+          stationSuccesses++;
           continue;
         }
 
         const errorDetail = await resolveInvokeErrorDetail(invokeErr);
         if (isUnsupportedClimateActionError(errorDetail)) unsupportedActions.add(action);
 
-        console.warn(
-          `    ⚠️ [${i + 1}/${stations.length}] ${stationName} [${stationSlug}] (${action}) API error: ${errorDetail}`,
-        );
+        console.warn(`      ⚠️ ${action}: ${errorDetail}`);
         failedRequests++;
+        stationFailures++;
         recordUpstreamRefreshFailure(options.auditReport, {
           country: countryUpper,
           stationId: stationSlug,
@@ -583,10 +631,9 @@ export async function refreshUpstreamDataForCountry(
         });
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);
-        console.warn(
-          `    ⚠️ [${i + 1}/${stations.length}] ${stationName} [${stationSlug}] (${action}) invocation failed: ${errorMsg}`,
-        );
+        console.warn(`      ⚠️ ${action}: invocation failed: ${errorMsg}`);
         failedRequests++;
+        stationFailures++;
         recordUpstreamRefreshFailure(options.auditReport, {
           country: countryUpper,
           stationId: stationSlug,
@@ -594,6 +641,18 @@ export async function refreshUpstreamDataForCountry(
         });
       }
     }
+
+    const stationElapsed = Date.now() - stationStartedAt;
+    const elapsedSinceStart = Date.now() - refreshStartedAt;
+    const progressSuffix = formatProgressSuffix(i + 1, totalStations, elapsedSinceStart);
+
+    const statusIcon = stationFailures === 0 ? '✓' : '⚠️';
+    const failureSuffix = stationFailures === 0 ? '' : `, ${stationFailures} failed`;
+    console.log(
+      `    ${statusIcon} ${position} ${stationName} — ${stationSuccesses}/${actions.length} action(s) refreshed${failureSuffix} (${formatDuration(
+        stationElapsed,
+      )} · ${progressSuffix})`,
+    );
   }
 
   if (unsupportedActions.size > 0) {
@@ -604,8 +663,11 @@ export async function refreshUpstreamDataForCountry(
     );
   }
 
+  const totalElapsed = Date.now() - refreshStartedAt;
   console.log(
-    `  Completed upstream Climate API refresh for ${countryUpper}: ${successfulRequests} successful, ${failedRequests} failed.`,
+    `  Completed upstream Climate API refresh for ${countryUpper}: ${successfulRequests} successful, ${failedRequests} failed in ${formatDuration(
+      totalElapsed,
+    )}.`,
   );
 
   return { totalStations: stations.length, successfulRequests, failedRequests };
@@ -685,8 +747,12 @@ export async function syncFromDatabaseForCountry(
   let newCount = 0;
   let updatedCount = 0;
   let unchangedCount = 0;
+  const totalRows = dataRows.length;
+  const syncStartedAt = Date.now();
 
-  for (const row of dataRows) {
+  for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+    const row = dataRows[rowIndex];
+    const position = `[${rowIndex + 1}/${totalRows}]`;
     const stationInfo = stationMap.get(row.station_id);
     const stationSlug = (stationInfo?.slug || row.station_id.replace(`${countryLower}/`, '')).toLowerCase();
 
@@ -731,6 +797,13 @@ export async function syncFromDatabaseForCountry(
         updatedCaps[stationSlug] = existingCaps[stationSlug];
       }
       unchangedCount++;
+      console.log(
+        `    ⏭ ${position} ${stationSlug} — skipped (no temperature data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
       continue;
     }
     if (isOnlyRainfall && !hasAnnualRain && !hasMonthlyRain) {
@@ -738,6 +811,13 @@ export async function syncFromDatabaseForCountry(
         updatedCaps[stationSlug] = existingCaps[stationSlug];
       }
       unchangedCount++;
+      console.log(
+        `    ⏭ ${position} ${stationSlug} — skipped (no rainfall data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
       continue;
     }
 
@@ -783,6 +863,13 @@ export async function syncFromDatabaseForCountry(
         country: countryUpper,
         stationId: stationSlug,
       });
+      console.log(
+        `    ⚠️ ${position} ${stationSlug} — skipped (no annual or monthly data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
       continue;
     }
 
@@ -875,10 +962,21 @@ export async function syncFromDatabaseForCountry(
       }
       fs.writeFileSync(monthlyCsvPath, newMonthlyCsvContent, 'utf-8');
     }
+
+    const statusIcon = status === 'UNCHANGED' ? '•' : '✓';
+    console.log(
+      `    ${statusIcon} ${position} ${stationSlug} — ${status} (${formatProgressSuffix(
+        rowIndex + 1,
+        totalRows,
+        Date.now() - syncStartedAt,
+      )})`,
+    );
   }
 
   console.log(
-    `  ${countryUpper}: ${dataRows.length} station(s) (New: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount})`,
+    `  ${countryUpper}: ${dataRows.length} station(s) (New: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount}) in ${formatDuration(
+      Date.now() - syncStartedAt,
+    )}`,
   );
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
@@ -933,8 +1031,13 @@ export function computeExistingCapabilitiesForCountry(
 
   console.log(`\nProcessing existing stations for ${country.toUpperCase()} (${annualFiles.length} stations)...`);
 
-  for (const file of annualFiles) {
+  const totalStations = annualFiles.length;
+  const capabilitiesStartedAt = Date.now();
+
+  for (let fileIndex = 0; fileIndex < totalStations; fileIndex++) {
+    const file = annualFiles[fileIndex];
     const stationId = path.basename(file, '.csv');
+    const position = `[${fileIndex + 1}/${totalStations}]`;
     const annualCsvPath = path.join(countryDir, file);
     const monthlyCsvPath = path.join(countryDir, `${stationId}.monthly.csv`);
 
@@ -995,6 +1098,16 @@ export function computeExistingCapabilitiesForCountry(
       hash: contentHash,
     });
     options.auditReport.totalStationsProcessed++;
+
+    const stationStatus = isUnchanged ? 'UNCHANGED' : prevCap ? 'UPDATED' : 'NEW';
+    const statusIcon = stationStatus === 'UNCHANGED' ? '•' : '✓';
+    console.log(
+      `    ${statusIcon} ${position} ${stationId} — ${stationStatus} (${formatProgressSuffix(
+        fileIndex + 1,
+        totalStations,
+        Date.now() - capabilitiesStartedAt,
+      )})`,
+    );
   }
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
