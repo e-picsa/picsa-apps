@@ -79,6 +79,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
 - Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
+### Firebase SDK Version Skew & Private `@firebase/*` Imports
+
+- `rxdb@14` pins `firebase@9.23.0` and `rxdb@16` pins `firebase@11.3.0`, so two Firebase major lines coexist in the dependency graph.
+- `firebase/app` (9.x) creates app instances in its nested `@firebase/app@0.9.x` registry, while a deep import such as `@firebase/performance` resolves the hoisted `@firebase/app@0.11.x` (11.x) registry. Calling `getPerformance(app)` then throws `Service performance is not available`, because the performance component was registered against the other registry.
+- Never deep-import private `@firebase/*` packages. Use the public `firebase/<product>` entry points (same copy as `firebase/app`), and for native tracing use `@capacitor-firebase/performance` exclusively — the browser performance SDK adds nothing inside a Capacitor WebView.
+
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
 - **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
