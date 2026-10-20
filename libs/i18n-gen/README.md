@@ -25,6 +25,10 @@ Untranslated strings are omitted from each file rather than marked with placehol
 
 Alternatively, export from the admin dashboard and copy the generated files to the [i18n assets](../i18n/assets/) folder
 
+## Debug Missing Translations
+
+Append `?translationDebug=1` to the app URL to mark untranslated strings with `•bullet•` markers. The setting is persisted in `localStorage`, so it survives reloads, and `?translationDebug=0` disables it. Internal testers can also toggle it from the in-app Debug Info dialog.
+
 ## Use in app
 
 1. Ensure translation assets included in app
