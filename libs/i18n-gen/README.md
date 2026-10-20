@@ -14,7 +14,15 @@ This will be stored in the [templates](./templates/) folder, to be uploaded to t
 
 ## Populate Translations
 
-This is done from within the admin dashboard. Generated files should be copied to the [assets](./assets/) folder
+Pull the latest translations directly from the database:
+
+```bash
+yarn scripts:translations:sync [--country=mw] [--locale=mw_ny] [--local] [--audit-only]
+```
+
+This writes the per-locale JSON files to [assets](../i18n/assets/) and mirrors the admin dashboard "Export All" output.
+
+Alternatively, export from the admin dashboard and copy the generated files to the [i18n assets](../i18n/assets/) folder
 
 ## Use in app
 
