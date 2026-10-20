@@ -198,9 +198,7 @@
             <div class="flex items-center gap-2">
               <span
                 class="cursor-help"
-                [matTooltip]="
-                  'Monthly Rainfall: ' + (row.monthly_data?.has_rain ? 'Available' : 'Missing (not provided by API)')
-                "
+                [matTooltip]="'Monthly Rainfall: ' + (row.monthly_data?.has_rain ? 'Available' : 'Missing')"
               >
                 <mat-icon
                   class="!text-[16px] !w-4 !h-4 leading-none"

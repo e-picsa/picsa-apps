@@ -37,6 +37,7 @@ import {
   auditMonthlyChanges,
   calculateStationCapabilities,
   type ClimateProductId,
+  convertMonthlyRainfallSummariesToRows,
   convertMonthlyTemperatureSummariesToRows,
   convertStationSummariesToRows,
   formatAnnualCsv,
@@ -531,9 +532,11 @@ export async function syncFromDatabaseForCountry(
   const countryDir = path.join(CLIMATE_TOOL_ASSETS, countryLower);
 
   const targetProducts = resolveClimateProducts(options.only);
+  const isRainfallTargeted = targetProducts.has('rainfall');
   const isTemperatureTargeted = targetProducts.has('temp_min') || targetProducts.has('temp_max');
   const isOnlyTemperature =
     targetProducts.size <= 2 && Array.from(targetProducts).every((p) => p === 'temp_min' || p === 'temp_max');
+  const isOnlyRainfall = targetProducts.size === 1 && targetProducts.has('rainfall');
 
   console.log(`\nProcessing database stations for ${countryUpper}...`);
   if (options.only) {
@@ -594,6 +597,8 @@ export async function syncFromDatabaseForCountry(
       continue;
     }
 
+    const hasAnnualRain = Array.isArray(row.annual_rainfall_data) && row.annual_rainfall_data.length > 0;
+    const hasMonthlyRain = Array.isArray(row.monthly_rainfall_data) && row.monthly_rainfall_data.length > 0;
     const hasAnnualTemp = Array.isArray(row.annual_temperature_data) && row.annual_temperature_data.length > 0;
     const hasMonthlyTemp = Array.isArray(row.monthly_temperature_data) && row.monthly_temperature_data.length > 0;
 
@@ -623,7 +628,7 @@ export async function syncFromDatabaseForCountry(
     const annualCsvPath = path.join(countryDir, `${stationSlug}.csv`);
     const monthlyCsvPath = path.join(countryDir, `${stationSlug}.monthly.csv`);
 
-    // If targeted strictly to temperature but station has zero temperature records in DB, preserve existing and skip
+    // If targeted strictly to a product with no corresponding DB records, preserve existing and skip
     if (isOnlyTemperature && !hasAnnualTemp && !hasMonthlyTemp) {
       if (existingCaps[stationSlug]) {
         updatedCaps[stationSlug] = existingCaps[stationSlug];
@@ -631,29 +636,15 @@ export async function syncFromDatabaseForCountry(
       unchangedCount++;
       continue;
     }
-
-    // 1. Annual Data Processing
-    let existingAnnualData: IStationData[] = [];
-    if (fs.existsSync(annualCsvPath)) {
-      existingAnnualData = parseAnnualCsv(fs.readFileSync(annualCsvPath, 'utf-8'));
-    }
-
-    const candidateAnnualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
-    const annualData = mergeStationAnnualData(existingAnnualData, candidateAnnualData, targetProducts);
-
-    if (annualData.length === 0) {
-      options.auditReport.warnings = options.auditReport.warnings || [];
-      options.auditReport.warnings.push({
-        message: 'Station has database record but zero annual data entries',
-        country: countryUpper,
-        stationId: stationSlug,
-      });
+    if (isOnlyRainfall && !hasAnnualRain && !hasMonthlyRain) {
+      if (existingCaps[stationSlug]) {
+        updatedCaps[stationSlug] = existingCaps[stationSlug];
+      }
+      unchangedCount++;
       continue;
     }
 
-    const annualCsvContent = formatAnnualCsv(annualData);
-
-    // 2. Monthly Data Processing
+    // 1. Monthly Data Processing
     let monthlyData: IMonthlyStationData[] = [];
     let existingMonthlyCsvContent = '';
     if (fs.existsSync(monthlyCsvPath)) {
@@ -662,16 +653,43 @@ export async function syncFromDatabaseForCountry(
     }
 
     let newMonthlyCsvContent = existingMonthlyCsvContent;
+    if (isRainfallTargeted && hasMonthlyRain) {
+      const incomingMonthlyRainfall = convertMonthlyRainfallSummariesToRows(row.monthly_rainfall_data);
+      const monthlyRainfallProducts = new Set<ClimateProductId>(['rainfall']);
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthlyRainfall, monthlyRainfallProducts);
+      newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
+    }
     if (isTemperatureTargeted && hasMonthlyTemp) {
-      const incomingMonthly = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
+      const incomingMonthlyTemperature = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
       const monthlyTemperatureProducts = new Set<ClimateProductId>(
         Array.from(targetProducts).filter(
           (product): product is ClimateProductId => product === 'temp_min' || product === 'temp_max',
         ),
       );
-      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthly, monthlyTemperatureProducts);
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthlyTemperature, monthlyTemperatureProducts);
       newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
     }
+
+    // 2. Annual Data Processing
+    let existingAnnualData: IStationData[] = [];
+    if (fs.existsSync(annualCsvPath)) {
+      existingAnnualData = parseAnnualCsv(fs.readFileSync(annualCsvPath, 'utf-8'));
+    }
+
+    const candidateAnnualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
+    const annualData = mergeStationAnnualData(existingAnnualData, candidateAnnualData, targetProducts);
+
+    if (annualData.length === 0 && monthlyData.length === 0) {
+      options.auditReport.warnings = options.auditReport.warnings || [];
+      options.auditReport.warnings.push({
+        message: 'Station has database record but zero annual and monthly data entries',
+        country: countryUpper,
+        stationId: stationSlug,
+      });
+      continue;
+    }
+
+    const annualCsvContent = formatAnnualCsv(annualData);
 
     const contentHash = computeSha256(annualCsvContent.trim());
     const prevCap = existingCaps[stationSlug];
@@ -708,7 +726,7 @@ export async function syncFromDatabaseForCountry(
     }
 
     let status: 'NEW' | 'UPDATED' | 'UNCHANGED' = 'NEW';
-    if (fs.existsSync(annualCsvPath)) {
+    if (fs.existsSync(annualCsvPath) || fs.existsSync(monthlyCsvPath)) {
       status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
     }
 
@@ -746,7 +764,7 @@ export async function syncFromDatabaseForCountry(
     options.auditReport.totalStationsProcessed++;
 
     // Only write CSV file when station data has changed or is new
-    if (!options.auditOnly && status !== 'UNCHANGED') {
+    if (!options.auditOnly && status !== 'UNCHANGED' && annualData.length > 0) {
       if (!fs.existsSync(countryDir)) {
         fs.mkdirSync(countryDir, { recursive: true });
       }

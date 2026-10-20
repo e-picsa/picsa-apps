@@ -188,6 +188,10 @@ export class ClimateService extends PicsaAsyncService {
         fn: this.loadFromAPI.rainfallSummaries(station),
       },
       {
+        id: 'Monthly Rainfall',
+        fn: this.loadFromAPI.monthlyRainfall(station),
+      },
+      {
         id: 'Crop Probabilities',
         fn: this.loadFromAPI.cropProbabilities(station),
       },

@@ -35,7 +35,7 @@
 | `@picsa/utils`               | `libs/utils/index.ts`                       |
 | `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (495 files scanned)
+## Codebase Symbol Index (524 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -76,7 +76,7 @@
 - **[data-import.component.ts](../apps/picsa-apps/dashboard/src/app/components/data-import/data-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/components/data-import/data-import.component.ts`)
   - `Component` **DataImportComponent**
 - **[authenticated-layout.ts](../apps/picsa-apps/dashboard/src/app/layout/authenticated-layout/authenticated-layout.ts)** (`apps/picsa-apps/dashboard/src/app/layout/authenticated-layout/authenticated-layout.ts`)
-  - `Component` **AuthenticatedLayoutComponent** (methods: [toggleSidebar, onMouseEnter, onMouseLeave])
+  - `Component` **AuthenticatedLayoutComponent** (methods: [ngAfterViewInit, toggleSidebar, onMouseEnter, onMouseLeave])
 - **[deployment-select.component.ts](../apps/picsa-apps/dashboard/src/app/layout/deployment-select/deployment-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/deployment-select/deployment-select.component.ts`)
   - `Component` **DeploymentSelectLayoutComponent** (methods: [onRequestAccess, onJoinPublic])
 - **[email-confirmation-layout.component.ts](../apps/picsa-apps/dashboard/src/app/layout/email-confirmation/email-confirmation-layout.component.ts)** (`apps/picsa-apps/dashboard/src/app/layout/email-confirmation/email-confirmation-layout.component.ts`)
@@ -126,13 +126,16 @@
   - `Component` **ApiStatusComponent** (methods: [runApi])
   - `Type` **ApiStatusState**
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/admin.component.ts`)
-  - `Component` **ClimateAdminPageComponent** (methods: [downloadAllStationsCSV, downloadStationCSV, downloadAllAppStationsCSV, downloadAppStationCSV, refreshStation])
+  - `Component` **ClimateAdminPageComponent** (methods: [setDbQcFilter, openStationDetailsDialog, setDiffFilter, getQcScoreColorClass, getQcStatusTooltip])
   - `Interface` **IProductSummary**
   - `Interface` **IStationAdminSummary**
   - `Interface` **IStationAppSummary**
   - `Interface` **IProductDiffLine**
   - `Interface` **IGroupDiffSummary**
   - `Interface` **IStationDiffRow**
+- **[station-details-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-details-dialog/station-details-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-details-dialog/station-details-dialog.component.ts`)
+  - `Component` **StationDetailsDialogComponent** (methods: [ngOnInit])
+  - `Interface` **IStationDetailsDialogData**
 - **[station-diff-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-diff-dialog/station-diff-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/admin/components/station-diff-dialog/station-diff-dialog.component.ts`)
   - `Component` **StationDiffDialogComponent** (methods: [ngAfterViewInit, resizeChart, selectProduct, close])
   - `Interface` **IStationDiffDialogData**
@@ -171,6 +174,8 @@
   - `Type` **IAnnualRainfallSummariesMetadata**
   - `Type` **IAnnualTemperatureSummariesData**
   - `Type` **IAnnualTemperatureSummariesMetadata**
+  - `Type` **IMonthlyRainfallSummariesData**
+  - `Type` **IMonthlyRainfallSummariesMetadata**
   - `Type` **IAPICountryCode**
   - `Type` **ICropSuccessEntry**
   - `Type` **ForecastType**
@@ -200,6 +205,7 @@
   - `Interface` **ICoverageGeoLocation**
   - `Interface` **ICoverageRow**
   - `Type` **LocationCoverageStatus**
+  - `Type` **StationProbabilitiesAvailability**
   - `Function` **buildLocationCoverageRows**
 - **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
   - `Component` **CropMissingStationInfoComponent** (methods: [ngAfterViewInit])
@@ -215,7 +221,7 @@
 - **[language-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/language-select/language-select.component.ts`)
   - `Component` **CropProbabilityLanguageSelectComponent**
 - **[linked-station-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/linked-station-select/linked-station-select.component.ts`)
-  - `Component` **CropLinkedStationSelectComponent** (methods: [getSelectedStationName, handleStationSelectOpen, handleStationSelectClose, onMarkerClicked])
+  - `Component` **CropLinkedStationSelectComponent** (methods: [getSelectedStationName, getStationProbabilityCount, handleStationSelectOpen, handleStationSelectClose, onMarkerClicked])
 - **[probability-table.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/probability-table/probability-table.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/components/probability-table/probability-table.component.ts`)
   - `Component` **CropProbabilityTableComponent** (methods: [exportDocx, exportAppJson, copyToClipboard])
 - **[probability-downscaled.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/probability-downscaled.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/probability/downscaled/probability-downscaled.component.ts`)
@@ -725,6 +731,8 @@
   - `Type` **IProbabilityTable**
 - **[home.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts`)
   - `Component` **HomeComponent** (methods: [ngOnInit, ngAfterViewInit, ngOnDestroy, shareTable, handleLocationConfirmed])
+- **[location-filter.utils.ts](../apps/picsa-tools/crop-probability-tool/src/app/utils/location-filter.utils.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/utils/location-filter.utils.ts`)
+  - `Function` **filterLocationsToProbabilityTables**
 - **[probability-table.utils.ts](../apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts`)
   - `Function` **getDaysBounds**
   - `Function` **groupAndSortCropDataItems**
@@ -744,6 +752,9 @@
   - `Component` **FarmerStepVideoPlayerComponent** (methods: [handleDlStatusChange, handleItemClick, shareVideo])
 - **[step-video.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.component.ts`)
   - `Component` **FarmerStepVideoComponent** (methods: [shareActiveVideo, sharePlaylistItem])
+- **[step-video.utils.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.utils.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/components/step-video/step-video.utils.ts`)
+  - `Function` **getRankedChildVideos**
+  - `Function` **hasVideosForUser**
 - **[module-home.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/module-home/module-home.component.ts`)
   - `Component` **FarmerContentModuleHomeComponent** (methods: [ngOnDestroy, showTool, hideTool, goToModule, handlePhotoShareClick])
 - **[farmer-tool.component.ts](../apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts)** (`apps/picsa-tools/farmer-content/src/app/pages/tool/farmer-tool.component.ts`)
@@ -752,6 +763,11 @@
   - `Component` **PicsaForecastsTool**
 - **[forecast-viewer.component.ts](../apps/picsa-tools/forecasts-tool/src/app/components/forecast-viewer/forecast-viewer.component.ts)** (`apps/picsa-tools/forecasts-tool/src/app/components/forecast-viewer/forecast-viewer.component.ts`)
   - `Component` **ForecastViewerComponent** (methods: [ngOnDestroy])
+- **[forecast-scroll-affordance.directive.ts](../apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast-scroll-affordance.directive.ts)** (`apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast-scroll-affordance.directive.ts`)
+  - `Directive` **ForecastScrollAffordanceDirective** (methods: [scrollStep, ngOnInit, ngOnDestroy])
+  - `Interface` **IScrollAffordanceMetrics**
+  - `Function` **getScrollAffordanceState**
+  - `Function` **getActiveCardIndex**
 - **[forecast.page.ts](../apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast.page.ts)** (`apps/picsa-tools/forecasts-tool/src/app/pages/forecast/forecast.page.ts`)
   - `Component` **ForecastComponent** (methods: [ngOnInit, ngAfterViewInit, handleLocationConfirmed, ngOnDestroy, handleForceRefresh])
 - **[index.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/index.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/index.ts`)
@@ -762,9 +778,13 @@
   - `Interface` **IForecast_V1**
 - **[schema_v2.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v2.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v2.ts`)
   - `Interface` **IForecast_V2**
+- **[schema_v3.ts](../apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v3.ts)** (`apps/picsa-tools/forecasts-tool/src/app/schemas/schema_v3.ts`)
+  - `Type` **IForecast_V3**
 - **[forecast.service.ts](../apps/picsa-tools/forecasts-tool/src/app/services/forecast.service.ts)** (`apps/picsa-tools/forecasts-tool/src/app/services/forecast.service.ts`)
   - `Service` **ForecastService** (methods: [init, setForecastLocation, forceRefresh, downloadForecastFile])
   - `Type` **DataSyncType**
+  - `Function` **isStubForecast**
+  - `Function` **shouldUseBypassStubs**
 - **[forecast.types.ts](../apps/picsa-tools/forecasts-tool/src/app/types/forecast.types.ts)** (`apps/picsa-tools/forecasts-tool/src/app/types/forecast.types.ts`)
   - `Type` **IForecastRow**
 - **[app.component.ts](../apps/picsa-tools/manual-tool/src/app/app.component.ts)** (`apps/picsa-tools/manual-tool/src/app/app.component.ts`)
@@ -950,8 +970,7 @@
   - `Function` **formatThreeMonthPeriodLabel**
 - **[index.ts](../libs/data/climate/forecasts/index.ts)** (`libs/data/climate/forecasts/index.ts`)
   - `Type` **IForecastRow**
-- **[types.ts](../libs/data/climate/forecasts/types.ts)** (`libs/data/climate/forecasts/types.ts`)
-  - `Type` **IForecastRow**
+  - `Type` **IForecastBundleRow**
 - **[el-nino-tool.ts](../libs/data/climate/tool_definitions/el-nino-tool.ts)** (`libs/data/climate/tool_definitions/el-nino-tool.ts`)
   - `Interface` **IRoniSeasonRecord**
   - `Interface` **IEnsoStyleConfig**
@@ -993,14 +1012,24 @@
   - `Type` **IFarmerContentStep**
 - **[types.ts](../libs/data/geoLocation/types.ts)** (`libs/data/geoLocation/types.ts`)
   - `Interface` **IGeolocationAdmin5Location**
+  - `Interface` **IGeolocationAdmin6Location**
+  - `Interface` **IGeolocationAdmin6Location**
+  - `Interface` **IDeepestLocation**
   - `Interface` **IGeolocationData**
   - `Interface` **IGeoJsonData**
   - `Type` **IBoundaryData**
   - `Type` **ITopoJson**
 - **[utils.ts](../libs/data/geoLocation/utils.ts)** (`libs/data/geoLocation/utils.ts`)
+  - `Type` **GeoLocationSlot**
+  - `Function` **getLocationSlots**
+  - `Function` **getDeepestLocations**
+  - `Function` **getDeepestAdminLevel**
+  - `Function` **findLocationById**
+  - `Function` **isLocationComplete**
+  - `Function` **getLocationLabel**
+  - `Function` **formatLocationIdAsLabel**
   - `Function` **topoJsonToGeoJson**
   - `Function` **geoJsonToBoundaries**
-  - `Function` **boundariesToGeoJson**
 - **[iconRegistry.ts](../libs/data/iconRegistry.ts)** (`libs/data/iconRegistry.ts`)
   - `Service` **DataIconRegistry** (methods: [registerMatIcons])
   - `Type` **IconPackName**
@@ -1102,6 +1131,7 @@
   - `Interface` **IRegionLang**
   - `Interface` **ICurrencyCounters**
   - `Interface` **IFirebaseConfig**
+  - `Interface` **ISentryConfig**
   - `Interface` **IEnvironment**
   - `Type` **IAppVariants**
   - `Type` **LanguageCode**
@@ -1378,17 +1408,28 @@
   - `Function` **allSettledInBatches**
 - **[browser.utils.ts](../libs/utils/browser.utils.ts)** (`libs/utils/browser.utils.ts`)
   - `Function` **\_wait**
+- **[climate-qc.utils.ts](../libs/utils/climate-qc.utils.ts)** (`libs/utils/climate-qc.utils.ts`)
+  - `Interface` **IClimateQcGates**
+  - `Interface` **ISeasonDiscrepancyRecord**
+  - `Interface` **ISeasonDiscrepancyResult**
+  - `Interface` **IStationQcEvaluation**
+  - `Function` **hasValidRainfallObservation**
+  - `Function` **hasValidSeasonBound**
+  - `Function` **detectSeasonDiscrepancies**
+  - `Function` **formatSeasonDiscrepancyWarnings**
+  - `Function` **formatSeasonDiscrepancySummary**
+  - `Function` **calculateStationQcScore**
 - **[climate.utils.ts](../libs/utils/climate.utils.ts)** (`libs/utils/climate.utils.ts`)
   - `Interface` **IPivotDuplicateRecord**
   - `Interface` **IPivotOptions**
+  - `Type` **ClimateProductId**
+  - `Type` **ClimateApiSummaryAction**
   - `Function` **roundClimateValue**
   - `Function` **normalizeMonthKey**
   - `Function` **pivotLongToWideMonthly**
   - `Function` **stationHasTemperatureData**
   - `Function` **formatMonthlyCsv**
   - `Function` **parseMonthlyCsv**
-  - `Function` **parseAnnualCsv**
-  - `Function` **calculateStationCapabilities**
 - **[data.ts](../libs/utils/data.ts)** (`libs/utils/data.ts`)
   - `Function` **arrayToHashmap**
   - `Function` **hashmapToArray**
@@ -1496,3 +1537,9 @@
   - `Migration` **20261001220000_cleanup_climate_stations.sql**
 - **[20261007120000_zw_crop_downscaled_backfill.sql](../apps/picsa-server/supabase/migrations/20261007120000_zw_crop_downscaled_backfill.sql)** (`apps/picsa-server/supabase/migrations/20261007120000_zw_crop_downscaled_backfill.sql`)
   - `Migration` **20261007120000_zw_crop_downscaled_backfill.sql**
+- **[20261012000000_zw_storage_bucket.sql](../apps/picsa-server/supabase/migrations/20261012000000_zw_storage_bucket.sql)** (`apps/picsa-server/supabase/migrations/20261012000000_zw_storage_bucket.sql`)
+  - `Migration` **20261012000000_zw_storage_bucket.sql**
+- **[20261012000001_retire_2025_forecasts.sql](../apps/picsa-server/supabase/migrations/20261012000001_retire_2025_forecasts.sql)** (`apps/picsa-server/supabase/migrations/20261012000001_retire_2025_forecasts.sql`)
+  - `Migration` **20261012000001_retire_2025_forecasts.sql**
+- **[20261019120000_add_monthly_rainfall_to_climate_station_data.sql](../apps/picsa-server/supabase/migrations/20261019120000_add_monthly_rainfall_to_climate_station_data.sql)** (`apps/picsa-server/supabase/migrations/20261019120000_add_monthly_rainfall_to_climate_station_data.sql`)
+  - `Migration` **20261019120000_add_monthly_rainfall_to_climate_station_data.sql**
