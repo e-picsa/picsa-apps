@@ -175,6 +175,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Edge Functions Deployment in Release Pipelines
 
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
+- **ECR Public Shared-IP Quota Trap**: The CLI's Docker bundling path pulls `public.ecr.aws/supabase/edge-runtime:<tag>` (tag baked into the pinned CLI's `pkg/config/templates/Dockerfile`). ECR Public caps anonymous pulls at **500GB/month per source IP**, and GitHub-hosted runners share egress IPs across all repos on the runner pool, so CI fails with `failed to pull docker image: toomanyrequests: Data limit exceeded`. This is not transient — retries on the same IP hit the same quota. Fix: set `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` (the CLI rewrites the image to `ghcr.io/supabase/<image>`, which has no shared-IP quota; this is also what `supabase/setup-cli@v1` does on GHA). Permanent fix: CLI >= 2.109.1 falls back ECR -> GHCR -> Docker Hub automatically on rate limits.
 
 ### Edge Runtime Phantom CORS Masking on Uncaught Exceptions
 
