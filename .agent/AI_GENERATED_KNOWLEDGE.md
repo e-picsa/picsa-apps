@@ -79,6 +79,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
 - Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
 
+### Firebase SDK Version Skew & Private `@firebase/*` Imports
+
+- `rxdb@14` pins `firebase@9.23.0` and `rxdb@16` pins `firebase@11.3.0`, so two Firebase major lines coexist in the dependency graph.
+- `firebase/app` (9.x) creates app instances in its nested `@firebase/app@0.9.x` registry, while a deep import such as `@firebase/performance` resolves the hoisted `@firebase/app@0.11.x` (11.x) registry. Calling `getPerformance(app)` then throws `Service performance is not available`, because the performance component was registered against the other registry.
+- Never deep-import private `@firebase/*` packages. Use the public `firebase/<product>` entry points (same copy as `firebase/app`), and for native tracing use `@capacitor-firebase/performance` exclusively — the browser performance SDK adds nothing inside a Capacitor WebView.
+
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
 - **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
@@ -233,6 +239,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
 - The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
+
+### Translation Asset Sync & English Locales
+
+- `yarn scripts:translations:sync` pulls live rows from Supabase into `libs/i18n/assets`, replacing the manual dashboard "Export All" zip/copy round-trip. Archived rows are excluded by default (they are no longer referenced by the app); pass `--include-archived` to include them.
+- Locale files contain translated strings only: untranslated rows are omitted rather than written as `•text•` placeholders. Translation keys are the English source text, so ngx-translate falls back to the key and displays English. Do not write `""` values either - ngx-translate treats an empty string as a valid translation and renders blank (only `undefined`/missing keys trigger fallback).
+- Locale files for `*_en` codes stay `{}`. `PicsaTranslateService.setLanguage()` routes every `*_en` locale to `global_en`, which is intentionally empty, so English always resolves through key fallback.
+- Untranslated strings can be surfaced for QA with `?translationDebug=1` (persisted in `localStorage`, disable with `0`) or the internal-tester toggle in the Debug Info dialog. This uses `PicsaMissingTranslationHandler` registered on `TranslateModule.forRoot/forChild`, so it applies to pipes, `instant()`, and `translateText()` without template changes. Toggling at runtime calls `reloadLang()` so rendered strings update.
 
 ### Angular Component SCSS Budgets & Scoped Selector Expansion
 

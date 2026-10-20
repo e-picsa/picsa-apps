@@ -120,4 +120,25 @@ describe('TranslationDashboardService', () => {
     expect(json['End definition']).toBe('Tanthauzo lomaliza');
     expect(json['mw:climate.chart.end.definition']).toBe('Tanthauzo lomaliza');
   });
+
+  it('should omit untranslated and archived rows from export', () => {
+    service.translations.set([
+      { id: 'budget-inputs-vaccine', tool: 'budget', context: 'inputs', text: 'Vaccine', mw_ny: 'Katambala' },
+      { id: 'budget-inputs-maize', tool: 'budget', context: 'inputs', text: 'Maize', mw_ny: null },
+      {
+        id: 'budget-inputs-archived',
+        tool: 'budget',
+        context: 'inputs',
+        text: 'Archived string',
+        mw_ny: 'Zosungidwa',
+        archived: true,
+      },
+    ] as any[]);
+
+    const json = service.exportJson('mw_ny');
+    expect(json['Vaccine']).toBe('Katambala');
+    expect(json).not.toHaveProperty('Maize');
+    expect(json).not.toHaveProperty('Archived string');
+    expect(Object.values(json).some((value) => value.includes('•'))).toBe(false);
+  });
 });
