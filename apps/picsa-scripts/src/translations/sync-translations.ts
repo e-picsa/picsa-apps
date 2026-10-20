@@ -5,6 +5,9 @@
  * via libs/i18n/assets. Output mirrors the dashboard translations "Export All"
  * action, so the manual zip download/copy step is no longer required.
  *
+ * Untranslated strings are omitted from locale files. Translation keys are the
+ * English source text, so ngx-translate falls back to English automatically.
+ *
  * Usage:
  *   yarn scripts:translations:sync [--country=mw] [--locale=mw_ny] [--local] [--audit-only]
  *
@@ -119,7 +122,7 @@ function getTranslationValue(row: ITranslationRow, locale: string): string | nul
 
 /**
  * Build locale lookup, preferring human text keys and retaining legacy row ids.
- * Untranslated strings are wrapped in bullets so missing translations stay visible in-app.
+ * Untranslated rows are omitted so ngx-translate falls back to the English key.
  */
 function buildLocaleTranslations(rows: ITranslationRow[], locale: string): Record<string, string> {
   const translations = new Map<string, string>();
@@ -128,22 +131,15 @@ function buildLocaleTranslations(rows: ITranslationRow[], locale: string): Recor
 
   for (const row of sortedRows) {
     const translatedText = getTranslationValue(row, locale);
-    const generatedId = generateTranslationId(row);
-    const shouldIncludeId = Boolean(row.id) && row.id !== generatedId;
-
-    if (translatedText) {
-      translations.set(row.text, translatedText);
-      if (shouldIncludeId) {
-        translations.set(row.id, translatedText);
-      }
+    if (!translatedText) {
       continue;
     }
 
-    if (!translations.has(row.text)) {
-      translations.set(row.text, `•${row.text}•`);
-    }
-    if (shouldIncludeId && !translations.has(row.id)) {
-      translations.set(row.id, `•${row.id}•`);
+    translations.set(row.text, translatedText);
+
+    const generatedId = generateTranslationId(row);
+    if (row.id && row.id !== generatedId) {
+      translations.set(row.id, translatedText);
     }
   }
 
