@@ -155,6 +155,29 @@
       </div>
     }
 
+    <!-- Translation Debug (internal testers only) -->
+    @if (isInternalTester()) {
+      <div
+        class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center justify-between gap-2 min-w-0"
+      >
+        <div class="pr-3 min-w-0">
+          <div class="text-sm font-semibold text-gray-900 dark:text-white">
+            {{ 'Show Untranslated Text' | translate }}
+          </div>
+          <div class="text-xs text-gray-500 dark:text-neutral-400">
+            {{ 'Marks strings missing a translation with bullets' | translate }}
+          </div>
+        </div>
+        <mat-slide-toggle
+          [checked]="translationDebug()"
+          (change)="onToggleTranslationDebug($event.checked)"
+          color="primary"
+          class="shrink-0"
+        >
+        </mat-slide-toggle>
+      </div>
+    }
+
     <!-- Raw Diagnostic JSON details -->
     <details class="text-xs border border-gray-200 dark:border-neutral-700 rounded-lg p-2 min-w-0">
       <summary class="font-semibold text-gray-700 dark:text-neutral-300 cursor-pointer select-none">

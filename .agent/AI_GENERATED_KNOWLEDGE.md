@@ -238,6 +238,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - `yarn scripts:translations:sync` pulls live rows from Supabase into `libs/i18n/assets`, replacing the manual dashboard "Export All" zip/copy round-trip. Archived rows are excluded by default (they are no longer referenced by the app); pass `--include-archived` to include them.
 - Locale files contain translated strings only: untranslated rows are omitted rather than written as `•text•` placeholders. Translation keys are the English source text, so ngx-translate falls back to the key and displays English. Do not write `""` values either - ngx-translate treats an empty string as a valid translation and renders blank (only `undefined`/missing keys trigger fallback).
 - Locale files for `*_en` codes stay `{}`. `PicsaTranslateService.setLanguage()` routes every `*_en` locale to `global_en`, which is intentionally empty, so English always resolves through key fallback.
+- Untranslated strings can be surfaced for QA with `?translationDebug=1` (persisted in `localStorage`, disable with `0`) or the internal-tester toggle in the Debug Info dialog. This uses `PicsaMissingTranslationHandler` registered on `TranslateModule.forRoot/forChild`, so it applies to pipes, `instant()`, and `translateText()` without template changes. Toggling at runtime calls `reloadLang()` so rendered strings update.
 
 ### Angular Component SCSS Budgets & Scoped Selector Expansion
 
