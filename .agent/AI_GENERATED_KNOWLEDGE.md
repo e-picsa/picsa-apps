@@ -208,6 +208,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Climate Data Sync & Upstream API Fault Tolerance
 
 - **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
+- **Upstream Station Identifier Format**: Upstream `/v2/*_summaries/` endpoints expect the display `station_name` (e.g. `MAGOYE AGROMET`), not the canonical slug (`magoye_agromet`). The slug silently returns an empty result rather than a 4xx, so `refreshUpstreamDataForCountry` validates `climate_stations.station_name` and skips malformed rows instead of falling back to the slug. New dashboard/climate actions (e.g. `monthly-rainfall`) also require redeploying the edge function; a stale deployment returns `Invalid climate action: <action>`.
 
 ---
 
@@ -512,7 +513,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Selective Climate Product Sync & Monthly Lockstep (`--only`)
 
 - **Non-Destructive Partial Syncs**: Meteorological station CSV summaries contain multiple annual and monthly metrics (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). When executing targeted syncs (e.g. `--only=temperature` or `--only=seasonal`), existing CSV columns for unselected metrics must be strictly preserved on disk (`mergeStationAnnualData` / `mergeStationMonthlyData`).
-- **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report.
+- **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report. Monthly rainfall is likewise sourced from `/v2/monthly_rainfall_summaries/` into `monthly_rainfall_data` and merged into the same monthly CSV; empty upstream responses must preserve existing monthly rainfall rather than clearing it.
 
 ### macOS AF_UNIX Socket Length in Nx Daemon
 
@@ -521,7 +522,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Climate Data Sync Pipeline & Automated Upstream Ingestion
 
 - **2-Step Sync Pipeline (Upstream Climate API -> Supabase DB -> App CSV Assets)**:
-  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
+  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `monthly-rainfall`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
   - Step 2: `yarn scripts:climate:sync` pulls from `climate_station_data`, merges selectively (honoring `--only`), formats wide CSVs, recalculates capabilities in `capabilities.generated.ts`, and produces an audit report (`dist/climate-sync-report.md`).
 - **GitHub Actions Isolated Country Workflow**:
   - The CI workflow (`.github/workflows/climate-sync.yml`) runs weekly on schedule or on demand via `workflow_dispatch`. It executes per country with `max-parallel: 1` to protect upstream API throughput.
@@ -654,4 +655,4 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Available: `check` (`text-emerald-500`), Missing: `close` (`text-rose-500`).
   - Tooltips display individual item status, generation dates, and IDs.
 - **Monthly Data Nuances**:
-  - The Supabase `climate_station_data` schema and API currently provide `monthly_temperature_data` and metadata, but do not provide a `monthly_rainfall_data` column. Monthly rainfall observations historically exist only in bundled `.monthly.csv` files for select countries (e.g. Zambia, but 0 stations in Malawi). The UI explicitly notes this distinction in tooltips.
+  - Supabase `climate_station_data` stores both `monthly_temperature_data` and `monthly_rainfall_data` (plus metadata), sourced from `/v2/monthly_temperature_summaries/` and `/v2/monthly_rainfall_summaries/` respectively. Monthly rainfall coverage is currently partial upstream (ZM returns data for many stations; MW/ZW may return empty arrays), so empty responses preserve existing DB rows and CSVs. The admin monthly micro-matrix reflects the presence of each column, and capabilities record `monthly: ['rainfall']` when a monthly CSV contains rainfall.

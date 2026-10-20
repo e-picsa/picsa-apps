@@ -65,12 +65,12 @@ export const ApiMapping = (service: ClimateService, supabaseService: SupabaseSer
     },
 
     /**
-     * /v2/season_start_probabilities/
+     * /v2/monthly_rainfall_summaries/
      * stored to columns in `climate_station_data` table
      */
-    seasonStart: async (station: IStationRow) => {
+    monthlyRainfall: async (station: IStationRow) => {
       const { country_code } = station;
-      return supabaseService.invokeFunction(`dashboard/climate/season-start`, {
+      return supabaseService.invokeFunction(`dashboard/climate/monthly-rainfall`, {
         body: { station, country_code },
       });
     },

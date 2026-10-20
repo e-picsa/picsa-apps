@@ -3,6 +3,7 @@ import {
   auditMonthlyChanges,
   calculateStationCapabilities,
   aggregateThreeMonthSeries,
+  convertMonthlyRainfallSummariesToRows,
   convertMonthlyTemperatureSummariesToRows,
   convertMonthlyToStationData,
   convertStationSummariesToRows,
@@ -1151,20 +1152,76 @@ describe('Climate Utils (libs/utils/climate.utils.ts)', () => {
       expect(convertMonthlyTemperatureSummariesToRows([])).toEqual([]);
     });
   });
+
+  describe('convertMonthlyRainfallSummariesToRows', () => {
+    it('should convert and sort monthly rainfall records', () => {
+      const raw = [
+        { year: 1980, month: 2, monthly_rain: 120.44 },
+        { year: 1980, month: 1, monthly_rain: 200.15 },
+      ];
+
+      const rows = convertMonthlyRainfallSummariesToRows(raw);
+      expect(rows).toEqual([
+        { month: '1980-01', Rainfall: 200.2 },
+        { month: '1980-02', Rainfall: 120.4 },
+      ]);
+    });
+
+    it('should normalize string and ISO month values and preserve missing rainfall', () => {
+      const raw = [
+        { month: '1980-3', monthly_rain: 50 },
+        { year: 1980, month: 4, monthly_rain: null },
+        { year: 1980, month: 5 },
+      ];
+
+      const rows = convertMonthlyRainfallSummariesToRows(raw);
+      expect(rows).toEqual([
+        { month: '1980-03', Rainfall: 50 },
+        { month: '1980-04', Rainfall: null },
+        { month: '1980-05', Rainfall: null },
+      ]);
+    });
+
+    it('should skip invalid month records and return empty for missing data', () => {
+      expect(convertMonthlyRainfallSummariesToRows([{ year: 1980, month: 13 }, { month: 'nope' }])).toEqual([]);
+      expect(convertMonthlyRainfallSummariesToRows(null)).toEqual([]);
+      expect(convertMonthlyRainfallSummariesToRows(undefined)).toEqual([]);
+    });
+
+    it('should track monthly rainfall in generated station capabilities', () => {
+      const converted = convertMonthlyRainfallSummariesToRows([
+        { year: 1980, month: 1, monthly_rain: 100 },
+        { year: 1980, month: 2, monthly_rain: 80 },
+      ]);
+      const merged = mergeStationMonthlyData([], converted, new Set(['rainfall']));
+      const caps = calculateStationCapabilities({ monthlyData: merged });
+
+      expect(caps.years).toEqual([1980, 1980]);
+      expect(caps.monthly).toEqual(['rainfall']);
+    });
+  });
+
   describe('resolveClimateApiActions', () => {
     it('should return all API summary actions when all products are targeted', () => {
       const all = resolveClimateProducts();
       const actions = resolveClimateApiActions(all);
       expect(actions).toEqual([
         'rainfall-summaries',
+        'monthly-rainfall',
         'crop-probabilities',
         'annual-temperature',
         'monthly-temperatures',
       ]);
     });
 
-    it('should return only rainfall-summaries for rainfall filter', () => {
+    it('should return rainfall and monthly rainfall actions for rainfall filter', () => {
       const products = resolveClimateProducts('rainfall');
+      const actions = resolveClimateApiActions(products);
+      expect(actions).toEqual(['rainfall-summaries', 'monthly-rainfall', 'crop-probabilities']);
+    });
+
+    it('should omit monthly rainfall when only seasonal timing products are targeted', () => {
+      const products = resolveClimateProducts('start,end,length');
       const actions = resolveClimateApiActions(products);
       expect(actions).toEqual(['rainfall-summaries', 'crop-probabilities']);
     });

@@ -18,6 +18,13 @@ export interface paths {
      */
     post: operations['get_annual_rainfall_summaries_v2_annual_rainfall_summaries__post'];
   };
+  '/v2/monthly_rainfall_summaries/': {
+    /**
+     * Get Monthly Rainfall Summaries
+     * @description Retrieve monthly rainfall summaries from PostgreSQL.
+     */
+    post: operations['get_monthly_rainfall_summaries_v2_monthly_rainfall_summaries__post'];
+  };
   '/v2/annual_temperature_summaries/': {
     /**
      * Get Annual Temperature Summaries
@@ -38,13 +45,6 @@ export interface paths {
      * @description Retrieve monthly temperature summaries from PostgreSQL.
      */
     post: operations['get_monthly_temperature_summaries_v2_monthly_temperature_summaries__post'];
-  };
-  '/v2/season_start_probabilities/': {
-    /**
-     * Get Season Start Probabilities
-     * @description Retrieve cumulative season start probabilities from PostgreSQL.
-     */
-    post: operations['get_season_start_probabilities_v2_season_start_probabilities__post'];
   };
   '/v2/station/{country}': {
     /**
@@ -74,6 +74,14 @@ export interface paths {
      * @description Download a specific document
      */
     get: operations['download_document_v2_documents__country___filepath__get'];
+  };
+  '/v2/manifest/{country}': {
+    /**
+     * Get Manifest
+     * @description Retrieve discovery manifest of data generations for a country or station.
+     * Supports fast change detection and delta sync via since_timestamp and since_generation_id.
+     */
+    get: operations['get_manifest_v2_manifest__country__get'];
   };
 }
 
@@ -273,6 +281,38 @@ export interface components {
       /** Data */
       data: components['schemas']['AnnualTempartureSummariesdata'][];
     };
+    /**
+     * CountryManifestResponse
+     * @description Manifest response representing climate data generation inventory for a country.
+     */
+    CountryManifestResponse: {
+      /**
+       * Country Code
+       * @description Country code (e.g. zm, mw, zw)
+       */
+      country_code: string;
+      /**
+       * Has Updates
+       * @description True if any station has an update available
+       */
+      has_updates: boolean;
+      /**
+       * Latest Timestamp
+       * Format: date-time
+       * @description Latest generation timestamp across all stations in the country
+       */
+      latest_timestamp?: string;
+      /**
+       * Station Count
+       * @description Number of stations returned in this manifest
+       */
+      station_count: number;
+      /**
+       * Stations
+       * @description List of station manifest entries
+       */
+      stations: components['schemas']['StationManifestEntry'][];
+    };
     /** CropSuccessProbabilitiesMetadata */
     CropSuccessProbabilitiesMetadata: {
       start_rains?: components['schemas']['StartRains'];
@@ -283,6 +323,7 @@ export interface components {
     CropSuccessProbabilitiesParameters: {
       /**
        * Country
+       * @description Two-letter country code (e.g. 'zm', 'zw', 'mw')
        * @default mw_test
        * @enum {string}
        */
@@ -299,6 +340,7 @@ export interface components {
         | 'internal_tests';
       /**
        * Station Id
+       * @description Target station identifier
        * @default Kasungu
        */
       station_id?: string;
@@ -318,17 +360,35 @@ export interface components {
     };
     /** CropSuccessProbabilitiesdata */
     CropSuccessProbabilitiesdata: {
-      /** Station */
+      /**
+       * Station
+       * @description Station identifier
+       */
       station: string;
-      /** Total Rain */
+      /**
+       * Total Rain
+       * @description Crop water requirement threshold in mm (e.g. 200 to 1200 mm)
+       */
       total_rain: number;
-      /** Plant Day */
+      /**
+       * Plant Day
+       * @description Planting day relative to season start July 1 (e.g. 123=31-Oct, 138=15-Nov, 153=30-Nov, 168=15-Dec, 183=30-Dec)
+       */
       plant_day: number;
-      /** Plant Length */
+      /**
+       * Plant Length
+       * @description Crop growth cycle / duration in days (e.g. 60 to 150 days)
+       */
       plant_length: number;
-      /** Prop Success With Start */
+      /**
+       * Prop Success With Start
+       * @description Probability of crop success (0.0-1.0) when planting only after rainy season start criteria are satisfied
+       */
       prop_success_with_start: number;
-      /** Prop Success No Start */
+      /**
+       * Prop Success No Start
+       * @description Probability of crop success (0.0-1.0) when planting on the calendar day regardless of rainy season start condition
+       */
       prop_success_no_start: number;
     };
     /** CropsSuccess */
@@ -401,10 +461,102 @@ export interface components {
       /** S Start Doy */
       s_start_doy?: number;
     };
+    /**
+     * GenerationMetricInfo
+     * @description Metadata about a specific climate metric generation for a station.
+     */
+    GenerationMetricInfo: {
+      /**
+       * Available
+       * @description Whether this metric has data available for this station
+       */
+      available: boolean;
+      /**
+       * Status
+       * @description Availability or update status relative to query parameters
+       * @enum {string}
+       */
+      status: 'no_data' | 'up_to_date' | 'update_available';
+      /**
+       * Generation Id
+       * @description Latest batch definition/generation ID
+       */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       * @description Timestamp of the generation
+       */
+      generation_timestamp?: string;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components['schemas']['ValidationError'][];
+    };
+    /** MonthlyRainfallSummariesMetadata */
+    MonthlyRainfallSummariesMetadata: {
+      monthly_rain?: components['schemas']['AnnualRain'];
+    };
+    /** MonthlyRainfallSummariesParameters */
+    MonthlyRainfallSummariesParameters: {
+      /**
+       * Country
+       * @default zm
+       * @enum {string}
+       */
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
+      /**
+       * Station Id
+       * @default MAGOYE AGROMET
+       */
+      station_id?: string;
+      /**
+       * Summaries
+       * @default [
+       *   "monthly_rain"
+       * ]
+       */
+      summaries?: ('monthly_rain' | 'total_rain')[];
+      /**
+       * Override
+       * @default false
+       */
+      override?: boolean;
+    };
+    /** MonthlyRainfallSummariesResponce */
+    MonthlyRainfallSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
+      metadata: components['schemas']['MonthlyRainfallSummariesMetadata'];
+      /** Data */
+      data: components['schemas']['MonthlyRainfallSummariesdata'][];
+    };
+    /** MonthlyRainfallSummariesdata */
+    MonthlyRainfallSummariesdata: {
+      /** Station */
+      station: string;
+      /** Year */
+      year: number;
+      /** Month */
+      month: number;
+      /** Monthly Rain */
+      monthly_rain?: number;
     };
     /** MonthlyTempartureSummariesdata */
     MonthlyTempartureSummariesdata: {
@@ -489,74 +641,6 @@ export interface components {
         | {
             [key: string]: number;
           };
-    };
-    /** SeasonStartProbabilitiesMetadata */
-    SeasonStartProbabilitiesMetadata: {
-      start_rains?: components['schemas']['StartRains'];
-      season_start_probabilities?: components['schemas']['SeasonStartProbabilities'];
-    };
-    /** SeasonStartProbabilitiesParameters */
-    SeasonStartProbabilitiesParameters: {
-      /**
-       * Country
-       * @default mw_test
-       * @enum {string}
-       */
-      country?:
-        | 'zm'
-        | 'mw'
-        | 'zw'
-        | 'zm_test'
-        | 'mw_test'
-        | 'zw_test'
-        | 'zm_workshops'
-        | 'mw_workshops'
-        | 'zw_workshops'
-        | 'internal_tests';
-      /**
-       * Station Id
-       * @default Kasungu
-       */
-      station_id?: string;
-      /**
-       * Start Dates
-       * @default [
-       *   200,
-       *   220,
-       *   250,
-       *   270,
-       *   300,
-       *   320
-       * ]
-       */
-      start_dates?: number[];
-      /**
-       * Override
-       * @default false
-       */
-      override?: boolean;
-    };
-    /** SeasonStartProbabilitiesResponce */
-    SeasonStartProbabilitiesResponce: {
-      /** Generation Id */
-      generation_id?: string;
-      /**
-       * Generation Timestamp
-       * Format: date-time
-       */
-      generation_timestamp?: string;
-      metadata: components['schemas']['SeasonStartProbabilitiesMetadata'];
-      /** Data */
-      data: components['schemas']['SeasonStartProbabilitiesdata'][];
-    };
-    /** SeasonStartProbabilitiesdata */
-    SeasonStartProbabilitiesdata: {
-      /** Station */
-      station: string;
-      /** Day */
-      day: number;
-      /** Proportion */
-      proportion: number;
     };
     /** SeasonalLength */
     SeasonalLength: {
@@ -779,6 +863,40 @@ export interface components {
     StationListResponce: {
       /** Data */
       data: components['schemas']['StationDataResponce'][];
+    };
+    /**
+     * StationManifestEntry
+     * @description Manifest entry for a single station showing generation statuses across all metrics.
+     */
+    StationManifestEntry: {
+      /**
+       * Station Id
+       * @description Station identifier
+       */
+      station_id: string;
+      /**
+       * Station Name
+       * @description Station human-readable name
+       */
+      station_name: string;
+      /**
+       * Has Updates
+       * @description True if any metric has an update available
+       */
+      has_updates: boolean;
+      /**
+       * Latest Timestamp
+       * Format: date-time
+       * @description Latest timestamp across all metrics for this station
+       */
+      latest_timestamp?: string;
+      /**
+       * Generations
+       * @description Map of climate metric keys (annual_rain, monthly_rain, annual_temperature, monthly_temperature, crops, season_start_probabilities) to their generation info
+       */
+      generations: {
+        [key: string]: components['schemas']['GenerationMetricInfo'];
+      };
     };
     /** Temp */
     Temp: {
@@ -1113,6 +1231,31 @@ export interface operations {
     };
   };
   /**
+   * Get Monthly Rainfall Summaries
+   * @description Retrieve monthly rainfall summaries from PostgreSQL.
+   */
+  get_monthly_rainfall_summaries_v2_monthly_rainfall_summaries__post: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MonthlyRainfallSummariesParameters'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          'application/json': components['schemas']['MonthlyRainfallSummariesResponce'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  /**
    * Get Annual Temperature Summaries
    * @description Retrieve annual temperature summaries from PostgreSQL.
    */
@@ -1177,31 +1320,6 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['MonthlyTemperatureSummariesResponce'];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  /**
-   * Get Season Start Probabilities
-   * @description Retrieve cumulative season start probabilities from PostgreSQL.
-   */
-  get_season_start_probabilities_v2_season_start_probabilities__post: {
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SeasonStartProbabilitiesParameters'];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          'application/json': components['schemas']['SeasonStartProbabilitiesResponce'];
         };
       };
       /** @description Validation Error */
@@ -1368,6 +1486,53 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['DocumentMetadata'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  /**
+   * Get Manifest
+   * @description Retrieve discovery manifest of data generations for a country or station.
+   * Supports fast change detection and delta sync via since_timestamp and since_generation_id.
+   */
+  get_manifest_v2_manifest__country__get: {
+    parameters: {
+      query?: {
+        /** @description Optional station identifier to filter to a single station */
+        station_id?: string;
+        /** @description Only return stations and metrics with updates newer than this ISO-8601 timestamp */
+        since_timestamp?: string;
+        /** @description Only return stations and metrics with updates newer than this generation definition ID */
+        since_generation_id?: string;
+        /** @description Whether to include stations and metrics that are already up to date when using since_timestamp or since_generation_id */
+        include_up_to_date?: boolean;
+      };
+      path: {
+        /** @description Two-letter country code (e.g. zm, mw, zw) */
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          'application/json': components['schemas']['CountryManifestResponse'];
         };
       };
       /** @description Validation Error */

@@ -468,7 +468,7 @@ export class ClimateAdminPageComponent {
 
   public getMonthlyTooltip(monthly?: { has_temp: boolean; has_rain: boolean }): string {
     return [
-      `Monthly Rainfall: ${monthly?.has_rain ? 'Available' : 'Missing (not provided by API)'}`,
+      `Monthly Rainfall: ${monthly?.has_rain ? 'Available' : 'Missing'}`,
       `Monthly Temperature: ${monthly?.has_temp ? 'Available' : 'Missing'}`,
     ].join('\n');
   }
@@ -785,7 +785,7 @@ export class ClimateAdminPageComponent {
   } {
     return {
       has_temp: this.hasProductData(stationData?.monthly_temperature_data),
-      has_rain: false,
+      has_rain: this.hasProductData(stationData?.monthly_rainfall_data),
     };
   }
 

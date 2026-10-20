@@ -141,6 +141,16 @@ describe('ClimateAdminPageComponent', () => {
     expect(tooltip).toContain('Monthly Temperature: Available');
   });
 
+  it('should detect monthly rainfall and temperature availability from station data', () => {
+    const monthly = (component as any).generateMonthlySummary({
+      monthly_rainfall_data: [{ station: 'Test', year: 2020, month: 1, monthly_rain: 100 }],
+      monthly_temperature_data: null,
+    });
+    expect(monthly).toEqual({ has_rain: true, has_temp: false });
+
+    expect((component as any).generateMonthlySummary(undefined)).toEqual({ has_rain: false, has_temp: false });
+  });
+
   it('should configure App Bundled table options', () => {
     expect(component.appTableOptions.displayColumns).toContain('name');
     expect(component.appTableOptions.displayColumns).toContain('has_bundled_data');
