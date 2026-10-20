@@ -6,21 +6,24 @@
  * report for the climate-tool assets.
  *
  * Usage:
- *   yarn scripts:climate:sync [--country=mw] [--station=<station_id>] [--local]
+ *   yarn scripts:climate:sync [options]
  *
- * Args:
- *   --country=<code>    Only sync one country (mw, zm, zw). Default: all countries
- *   --station=<id>      Only sync a single station_id within the country
- *   --only=<products>   Limit sync to specific climate products
- *   --local             Use the local Supabase container instead of remote.
- *                       Default uses apps/picsa-server/.env.server credentials
- *   --env=<path>        Load environment variables from a custom env file
- *   --input=<path>      Process a local fixture file instead of pulling live data
- *   --audit-only        Compute and report changes without writing files
- *   --compute-existing  Recompute capabilities from existing files, skipping pull
- *   --no-pull           Skip the pull phase (use existing data only)
- *   --refresh-api       Force refresh of upstream Climate API data into Supabase
- *   --report=<path>     Audit report output path (default: dist/climate-sync-report.md)
+ * Pull options:
+ *   --pull             Pull station data from Supabase (default)
+ *   --no-pull          Skip the pull and recompute capabilities from existing CSVs
+ *
+ * Other options:
+ *   --country=<code>   Only sync one country (mw, zm, zw). Default: all countries
+ *   --station=<id>     Only sync a single station_id within the country
+ *   --only=<products>  Limit sync to specific climate products
+ *   --local            Use the local Supabase container instead of remote.
+ *                      Default uses apps/picsa-server/.env.server credentials
+ *   --env=<path>       Load environment variables from a custom env file
+ *   --refresh-api      Refresh upstream Climate API data into Supabase before pulling (default: off)
+ *   --input=<path>     Process a local fixture file instead of pulling (implies --no-pull)
+ *   --audit-only       Compute and report changes without writing files
+ *   --report=<path>    Audit report output path (default: dist/climate-sync-report.md)
+ *   --help, -h         Show this help
  */
 import { execSync } from 'child_process';
 import * as crypto from 'crypto';
@@ -64,26 +67,20 @@ export interface CliArgs {
   station?: string;
   input?: string;
   auditOnly?: boolean;
-  computeExisting?: boolean;
   skipPull?: boolean;
   local?: boolean;
   env?: string;
   report?: string;
   only?: string;
   refreshApi?: boolean;
+  help?: boolean;
 }
 
 const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
   '--audit-only': (res) => {
     res.auditOnly = true;
   },
-  '--compute-existing': (res) => {
-    res.computeExisting = true;
-  },
   '--no-pull': (res) => {
-    res.skipPull = true;
-  },
-  '--skip-pull': (res) => {
     res.skipPull = true;
   },
   '--pull': (res) => {
@@ -93,9 +90,6 @@ const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
     res.local = true;
   },
   '--refresh-api': (res) => {
-    res.refreshApi = true;
-  },
-  '--sync-upstream': (res) => {
     res.refreshApi = true;
   },
 };
@@ -119,46 +113,98 @@ const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
   only: (res, val) => {
     res.only = val.toLowerCase();
   },
-  'refresh-api': (res, val) => {
-    res.refreshApi = val !== 'false' && val !== '0';
-  },
-  'sync-upstream': (res, val) => {
-    res.refreshApi = val !== 'false' && val !== '0';
-  },
 };
 
+export const CLIMATE_SYNC_HELP = `Climate Data Sync
+
+Usage:
+  yarn scripts:climate:sync [options]
+
+Pull options:
+  --pull             Pull station data from Supabase (default)
+  --no-pull          Skip the pull and recompute capabilities from existing CSVs
+
+Other options:
+  --country=<code>   Only sync one country (mw, zm, zw). Default: all countries
+  --station=<id>     Only sync a single station_id within the country
+  --only=<products>  Limit sync to specific climate products
+  --local            Use the local Supabase container instead of remote
+                     (default: apps/picsa-server/.env.server credentials)
+  --env=<path>       Load environment variables from a custom env file
+  --refresh-api      Refresh upstream Climate API data into Supabase before pulling (default: off)
+  --input=<path>     Process a local fixture file instead of pulling (implies --no-pull)
+  --audit-only       Compute and report changes without writing files
+  --report=<path>    Audit report output path (default: dist/climate-sync-report.md)
+  --help, -h         Show this help
+`;
+
+export function printHelp(): void {
+  console.log(CLIMATE_SYNC_HELP);
+}
+
 export function parseCliArgs(argv = process.argv.slice(2)): CliArgs {
+  if (argv.includes('--help') || argv.includes('-h')) {
+    return { help: true };
+  }
+
   const result: CliArgs = {};
+  let pullFlag: '--pull' | '--no-pull' | undefined;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
 
     const booleanHandler = BOOLEAN_FLAGS[arg];
     if (booleanHandler) {
+      if (arg === '--pull' || arg === '--no-pull') {
+        if (pullFlag && pullFlag !== arg) {
+          throw new Error(`Conflicting options: ${pullFlag} and ${arg} cannot be used together.`);
+        }
+        pullFlag = arg;
+      }
       booleanHandler(result);
       continue;
     }
 
     if (!arg.startsWith('--')) {
-      continue;
+      throw new Error(`Unexpected argument: ${arg}`);
     }
 
     const eqIndex = arg.indexOf('=');
     const key = eqIndex !== -1 ? arg.slice(2, eqIndex) : arg.slice(2);
+
+    if (BOOLEAN_FLAGS[`--${key}`]) {
+      throw new Error(`Option --${key} does not accept a value.`);
+    }
+
     const handler = VALUED_OPTIONS[key];
     if (!handler) {
-      continue;
+      throw new Error(`Unknown option: ${arg}. Run with --help to see available options.`);
     }
 
     if (eqIndex !== -1) {
       handler(result, arg.slice(eqIndex + 1));
-    } else {
-      const nextArg = argv[i + 1];
-      if (nextArg && !nextArg.startsWith('--')) {
-        handler(result, nextArg);
-        i++;
-      }
+      continue;
     }
+
+    const nextArg = argv[i + 1];
+    if (!nextArg || nextArg.startsWith('--')) {
+      throw new Error(`Missing value for option --${key}`);
+    }
+    handler(result, nextArg);
+    i++;
+  }
+
+  if (pullFlag === '--pull' && result.input) {
+    throw new Error('--pull cannot be used with --input.');
+  }
+  if (result.skipPull && result.refreshApi) {
+    throw new Error('--refresh-api cannot be used with --no-pull.');
+  }
+  if (result.skipPull && result.input) {
+    throw new Error('--input cannot be used with --no-pull; --input already implies no pull.');
+  }
+  if (result.refreshApi && result.input) {
+    throw new Error('--refresh-api cannot be used with --input.');
   }
 
   return result;
@@ -939,7 +985,9 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
   const reportPath = options.report || DEFAULT_REPORT_PATH;
 
-  const shouldPull = !options.skipPull && !options.computeExisting && !options.input;
+  const shouldPull = !options.skipPull && !options.input;
+
+  console.log(`\nPull mode: ${shouldPull ? 'YES (default)' : 'NO (--no-pull or --input)'}`);
 
   // 1. Pull directly from Supabase by default (Remote by default, --local for local dev container)
   if (shouldPull) {
@@ -987,8 +1035,8 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     return auditReport;
   }
 
-  // 2. Retroactive capabilities computation for existing local data (when --skip-pull or --compute-existing)
-  if (options.computeExisting || options.skipPull) {
+  // 2. Retroactive capabilities computation for existing local data (--no-pull)
+  if (options.skipPull) {
     const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
 
     for (const c of countriesToProcess) {
@@ -1193,7 +1241,20 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
 // Run CLI directly if executed
 if (require.main === module) {
-  const cliArgs = parseCliArgs();
+  let cliArgs: CliArgs;
+  try {
+    cliArgs = parseCliArgs();
+  } catch (err) {
+    console.error(`[Climate Sync Error]: ${(err as Error).message}\n`);
+    printHelp();
+    process.exit(1);
+  }
+
+  if (cliArgs.help) {
+    printHelp();
+    process.exit(0);
+  }
+
   runSync(cliArgs).catch((err) => {
     console.error(`[Climate Sync Error]:`, err);
     process.exit(1);
