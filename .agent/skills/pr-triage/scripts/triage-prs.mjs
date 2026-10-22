@@ -30,6 +30,7 @@ function parseArgs() {
     all: false,
     refresh: false,
     json: false,
+    cacheTtlMinutes: 30, // Default 30 minute TTL for cached PR records
     cacheFile: path.resolve(process.cwd(), '.agent/pr-triage-cache.json'),
   };
 
@@ -45,6 +46,8 @@ function parseArgs() {
       options.refresh = true;
     } else if (arg === '--json') {
       options.json = true;
+    } else if ((arg === '--ttl' || arg === '--cache-ttl') && args[i + 1]) {
+      options.cacheTtlMinutes = parseInt(args[++i], 10) || 30;
     } else if (arg === '--cache-file' && args[i + 1]) {
       options.cacheFile = path.resolve(process.cwd(), args[++i]);
     }
@@ -247,7 +250,12 @@ async function main() {
 
   for (const pr of selectedPrs) {
     const cached = cache.prs?.[pr.number];
-    const isUnchanged = cached && cached.headSha === pr.headRefOid && !opts.refresh;
+    const cacheAgeMs = cached?.auditedAt ? Date.now() - new Date(cached.auditedAt).getTime() : Infinity;
+    const cacheTtlMs = (opts.cacheTtlMinutes || 30) * 60 * 1000;
+    const isCacheFresh = cacheAgeMs < cacheTtlMs;
+    // Don't reuse cache if previous state was pending (checks likely concluded)
+    const wasPending = cached?.verdict === '⏳ CHECKS_PENDING' || cached?.ciStatus === 'PENDING';
+    const isUnchanged = cached && cached.headSha === pr.headRefOid && isCacheFresh && !wasPending && !opts.refresh;
 
     if (isUnchanged) {
       triaged.push({
@@ -308,7 +316,9 @@ async function main() {
 
     // 7. Overall Actionable Verdict
     let verdict = '🟢 READY_FOR_REVIEW';
-    let verdictReason = 'Checks passing, mergeable, waiting on senior review.';
+    let verdictReason = ci.status === 'SUCCESS'
+      ? 'Checks passing, mergeable, waiting on senior review.'
+      : 'Mergeable, waiting on senior review.';
 
     if (pr.isDraft) {
       verdict = '🔵 DRAFT';
@@ -319,6 +329,9 @@ async function main() {
     } else if (ci.status === 'FAILURE' || botReview.hasSonarFailureComment) {
       verdict = '🟡 BLOCKED_ON_AUTHOR';
       verdictReason = `CI or Sonar failure: ${ci.failures.join(', ') || 'Quality Gate failed'}.`;
+    } else if (ci.status === 'PENDING') {
+      verdict = '⏳ CHECKS_PENDING';
+      verdictReason = `Automated checks still in progress: ${ci.badge}.`;
     } else if (botReview.hasSuggestions && botReview.isFresh) {
       verdict = '🟡 PENDING_BOT_FIXES';
       verdictReason = 'Open PR-Agent suggestions pending on current commit.';
@@ -391,6 +404,7 @@ async function main() {
     if (t.verdict === '🟢 READY_FOR_REVIEW') verdictBadge = `**🟢 Ready for Review**${cacheTag}`;
     else if (t.verdict === '🟡 BLOCKED_ON_AUTHOR') verdictBadge = `**🟡 Blocked on Author**${cacheTag}`;
     else if (t.verdict === '🟡 PENDING_BOT_FIXES') verdictBadge = `**🟡 Bot Fixes Pending**${cacheTag}`;
+    else if (t.verdict === '⏳ CHECKS_PENDING') verdictBadge = `**⏳ Checks Pending**${cacheTag}`;
     else if (t.verdict === '🔴 CONFLICTED') verdictBadge = `**🔴 Conflicts**${cacheTag}`;
     else if (t.verdict === '🔵 DRAFT') verdictBadge = `**🔵 Draft**${cacheTag}`;
 

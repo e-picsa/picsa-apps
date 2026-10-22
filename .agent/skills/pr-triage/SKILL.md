@@ -11,12 +11,12 @@ Use this skill when auditing the repository's open pull request backlog, priorit
 
 The goal of this skill is **not** to conduct an exhaustive line-by-line code review (use the `pr-review` skill for that). Instead, it gives a senior engineer or tech lead **instant situational awareness** across the PR backlog:
 
-1. **Avoid Repetitive Auditing (Smart Caching)**: Use commit-level delta detection to skip re-evaluating unchanged PRs.
+1. **Avoid Repetitive Auditing (Smart Caching)**: Use commit-level delta detection to skip re-evaluating unchanged PRs within a 30-minute freshness TTL.
 2. **Default Focused Window**: Inspect the **5 most recent** PRs by default, while explicitly cataloging older untriaged PRs in the backlog.
 3. **Merge Health & Rebase Readiness**: Detect merge conflicts, measure how many commits a branch is behind `main`/`develop`, and identify if it can be cleanly auto-updated.
 4. **Automated Gatekeeper Status**: Verify CI build passes, SonarCloud Quality Gate status, and check whether PR-Agent bot suggestions are fresh or already actioned.
 5. **Monorepo Blast Radius**: Measure true cognitive churn (filtering out noise like lockfiles and seed data) and categorize impacted domains (App Shell, Native, Backend, Tools).
-6. **Actionable Ownership**: Clearly tag whether each PR is **Ready for Senior Review**, **Blocked on Author**, or in need of rebase.
+6. **Actionable Ownership**: Clearly tag whether each PR is **Ready for Senior Review**, **Blocked on Author**, **Checks Pending**, or in need of rebase.
 
 ---
 
@@ -34,6 +34,9 @@ Run the project-native triage script from the repository root:
 # Or triage all open PRs:
 .agent/skills/pr-triage/scripts/triage-prs.sh --all
 
+# Or customize the cache TTL (default 30 minutes):
+.agent/skills/pr-triage/scripts/triage-prs.sh --ttl 15
+
 # Or force refresh all cached PRs disregarding previous cache:
 .agent/skills/pr-triage/scripts/triage-prs.sh --refresh
 ```
@@ -42,7 +45,8 @@ Run the project-native triage script from the repository root:
 
 The script records each triaged PR's `headSha` (commit hash), audit timestamp, and verdict:
 
-- **`[UNCHANGED]`**: If a PR's `headSha` has not changed since the previous run, the triage outputs the cached assessment in `< 100ms` without making redundant API calls or re-reading diffs.
+- **`[UNCHANGED]`**: If a PR's `headSha` has not changed and the cached record is within the TTL window (< 30 min, and not previously pending), the triage outputs the cached assessment in `< 100ms` without making redundant API calls or re-reading diffs.
+- **`[EXPIRED / STALE]`**: If a cached record exceeds the TTL or was in a `⏳ Checks Pending` state, it is automatically re-evaluated live.
 - **`[UPDATED]`**: If new commits were pushed (`headSha` changed), a fresh evaluation runs automatically.
 - **`[NEW]`**: First time encountering the PR.
 
@@ -92,6 +96,7 @@ Do not judge PR size by raw additions/deletions. Filter out non-cognitive churn:
 | **🟢 READY_FOR_REVIEW** | CI passing, Sonar passed, no conflicts, bot suggestions actioned, not draft | Senior engineer can review and merge. |
 | **🟡 BLOCKED_ON_AUTHOR** | Build test failing, SonarCloud failing, or unaddressed bot suggestions | Author must resolve failures before senior review. |
 | **🟡 PENDING_BOT_FIXES** | PR-Agent suggestions pending on current commit | Author should review suggestions via `pr-address-feedback`. |
+| **⏳ CHECKS_PENDING** | Automated CI or analysis checks are still in progress | Wait for CI workflows to finish. |
 | **🔴 CONFLICTED** | Merge conflicts detected (`mergeable: false`) | Author must rebase or merge target branch. |
 | **🔵 DRAFT** | `isDraft: true` | Work in progress; no review action required. |
 
@@ -133,7 +138,7 @@ Always structure the output in three clear sections:
 - **[#680](https://...)**: [FEATURE] Forecasts manual update (@author, updated 2mo ago)
 
 > **💡 Next Steps:**
-> - To review any PR in depth, prompt: `"Review PR #810 using pr-review"`
+> - To review any PR in depth, prompt: `"Review PR #<number> using pr-review"`
 > - To triage backlog PRs, prompt: `"Triage PRs #729, #728"` or `"Triage top 10 PRs"`
 > - To force refresh all PRs disregarding cache, prompt: `"Triage PRs --refresh"`
 ````
