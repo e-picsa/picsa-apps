@@ -68,6 +68,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - When executing standalone TypeScript scripts using `node ./node_modules/tsx/dist/cli.mjs` from the repository root, pass `--tsconfig tsconfig.base.json` so that path aliases defined in the base configuration (`@picsa/models`, `@picsa/utils`) resolve correctly at runtime.
 
+### macOS UNIX Domain Socket Path Length Limit (`NX_SOCKET_DIR`)
+
+- In nested worktrees or deep directory paths, the Nx daemon UNIX domain socket path can exceed macOS's 104-character limit (`sockaddr_un.sun_path`), causing commands like `yarn ai:test` or `nx test` to hang or fail with `Attempted to open socket that exceeds the maximum socket length`.
+- Fix: Prepend `NX_SOCKET_DIR=/tmp/nx` (or a short path) when executing test runner commands in deep worktree paths.
+
 ### Unit Test Colocation Convention
 
 - **Strict Colocation Next to Source**: Unit test specifications (`*.spec.ts`) must always be colocated directly next to the source file they test (e.g. `libs/utils/climate.utils.spec.ts` next to `libs/utils/climate.utils.ts`, and `libs/data/climate/chart_definitions/periods.spec.ts` next to `periods.ts`).
@@ -78,6 +83,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - In this monorepo, Capacitor does not automatically discover plugins from the root `package.json`.
 - Any newly installed native Capacitor plugin (e.g. `@capawesome/capacitor-app-update`, `@capacitor/push-notifications`) must be explicitly declared in the `includePlugins` array in `apps/picsa-apps/app-native/capacitor.config.ts`.
 - Omitting plugins from `includePlugins` causes `npx cap sync` to skip them in `capacitor.settings.gradle` and `capacitor.build.gradle`, causing runtime failures with `Plugin ... is not implemented on android``.
+
+### Firebase SDK Version Skew & Private `@firebase/*` Imports
+
+- `rxdb@14` pins `firebase@9.23.0` and `rxdb@16` pins `firebase@11.3.0`, so two Firebase major lines coexist in the dependency graph.
+- `firebase/app` (9.x) creates app instances in its nested `@firebase/app@0.9.x` registry, while a deep import such as `@firebase/performance` resolves the hoisted `@firebase/app@0.11.x` (11.x) registry. Calling `getPerformance(app)` then throws `Service performance is not available`, because the performance component was registered against the other registry.
+- Never deep-import private `@firebase/*` packages. Use the public `firebase/<product>` entry points (same copy as `firebase/app`), and for native tracing use `@capacitor-firebase/performance` exclusively — the browser performance SDK adds nothing inside a Capacitor WebView.
 
 ### Capacitor Push Notifications & User Profile Sync Lifecycle
 
@@ -143,7 +154,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Per-Table Extended Seed Cache**:
   In extended mode, `db-seed-export.ts` validates and fetches remote data first, saving records into `apps/picsa-server/scripts/db-seed/cache/<table_name>.json` (gitignored). Offline seeding can be run via `yarn nx run picsa-server:db:seed:extended --no-fetch`.
 - **Extended Storage File Cache (`StorageFileCache`)**:
-  Because extended seed resets the local DB (emptying `storage_objects`) before mirroring, referenced remote files were previously re-downloaded on every run. `scripts/utils/storage-cache.utils.ts` now keeps bytes plus a `manifest.json` under `scripts/db-seed/cache/storage` (gitignored, alongside the record cache). Freshness is decided by diffing that manifest against remote `storage.objects` metadata (`size`/`eTag`/`updated_at`, read via the exposed `storage` schema, batched 100 names/request) so unchanged files are uploaded from disk. Downloads/uploads run with bounded concurrency and orphaned cache entries are pruned at the end of a full (non `--tables`/`--country`) run. Cache reuse requires remote confirmation: a path missing from a *complete* `storage.objects` lookup is treated as a cache miss so deleted remote objects are never resurrected from disk (the size-only fallback applies only when the lookup itself failed). `--no-download` seeds storage from the cache only, making `db:seed:extended --no-fetch --no-download` fully offline.
+  Because extended seed resets the local DB (emptying `storage_objects`) before mirroring, referenced remote files were previously re-downloaded on every run. `scripts/utils/storage-cache.utils.ts` now keeps bytes plus a `manifest.json` under `scripts/db-seed/cache/storage` (gitignored, alongside the record cache). Freshness is decided by diffing that manifest against remote `storage.objects` metadata (`size`/`eTag`/`updated_at`, read via the exposed `storage` schema, batched 100 names/request) so unchanged files are uploaded from disk. Downloads/uploads run with bounded concurrency and orphaned cache entries are pruned at the end of a full (non `--tables`/`--country`) run. Cache reuse requires remote confirmation: a path missing from a _complete_ `storage.objects` lookup is treated as a cache miss so deleted remote objects are never resurrected from disk (the size-only fallback applies only when the lookup itself failed). `--no-download` seeds storage from the cache only, making `db:seed:extended --no-fetch --no-download` fully offline.
 - **Extended Storage Mirroring (`mirrorStorage`)**:
   Tables declaring `mirrorStorage: ['<path-column>']` in `db-seed.config.ts` (currently `forecasts.storage_file`) have their referenced files downloaded from remote into local buckets ahead of row upserts, giving 1:1 local fidelity with working downloads. This ordering is load-bearing: `forecasts_storage_file_fkey` rejects rows whose paths are absent from `storage_objects` (verified live), so files must land before rows. Never use `columnMappings` to rewrite storage paths on import — it silently corrupts references (all short-term forecasts once mislabelled as samples this way); unmirrorable files warn and null the column instead. Tombstoned rows (`storage_file` null) are preserved as nulls, never revived.
 - **Dev Users & Storage Seeding**:
@@ -169,6 +180,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Edge Functions Deployment in Release Pipelines
 
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
+- **ECR Public Shared-IP Quota Trap**: The CLI's Docker bundling path pulls `public.ecr.aws/supabase/edge-runtime:<tag>` (tag baked into the pinned CLI's `pkg/config/templates/Dockerfile`). ECR Public caps anonymous pulls at **500GB/month per source IP**, and GitHub-hosted runners share egress IPs across all repos on the runner pool, so CI fails with `failed to pull docker image: toomanyrequests: Data limit exceeded`. This is not transient — retries on the same IP hit the same quota. Fix: set `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` (the CLI rewrites the image to `ghcr.io/supabase/<image>`, which has no shared-IP quota; this is also what `supabase/setup-cli@v1` does on GHA). Permanent fix: CLI >= 2.109.1 falls back ECR -> GHCR -> Docker Hub automatically on rate limits.
 
 ### Edge Runtime Phantom CORS Masking on Uncaught Exceptions
 
@@ -202,6 +214,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Climate Data Sync & Upstream API Fault Tolerance
 
 - **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
+- **Upstream Station Identifier Format**: Upstream `/v2/*_summaries/` endpoints expect the display `station_name` (e.g. `MAGOYE AGROMET`), not the canonical slug (`magoye_agromet`). The slug silently returns an empty result rather than a 4xx, so `refreshUpstreamDataForCountry` validates `climate_stations.station_name` and skips malformed rows instead of falling back to the slug. New dashboard/climate actions (e.g. `monthly-rainfall`) also require redeploying the edge function; a stale deployment returns `Invalid climate action: <action>`.
 
 ---
 
@@ -232,6 +245,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - Never import `TranslatePipe` or `TranslateModule` directly from `@ngx-translate/core`.
 - The correct pattern for this monorepo is to import `PicsaTranslateModule` (or `PicsaTranslateModule.forRoot()` in specs) from `@picsa/i18n` into the `imports` array of standalone components and tests.
+
+### Translation Asset Sync & English Locales
+
+- `yarn scripts:translations:sync` pulls live rows from Supabase into `libs/i18n/assets`, replacing the manual dashboard "Export All" zip/copy round-trip. Archived rows are excluded by default (they are no longer referenced by the app); pass `--include-archived` to include them.
+- Locale files contain translated strings only: untranslated rows are omitted rather than written as `•text•` placeholders. Translation keys are the English source text, so ngx-translate falls back to the key and displays English. Do not write `""` values either - ngx-translate treats an empty string as a valid translation and renders blank (only `undefined`/missing keys trigger fallback).
+- Locale files for `*_en` codes stay `{}`. `PicsaTranslateService.setLanguage()` routes every `*_en` locale to `global_en`, which is intentionally empty, so English always resolves through key fallback.
+- Untranslated strings can be surfaced for QA with `?translationDebug=1` (persisted in `localStorage`, disable with `0`) or the internal-tester toggle in the Debug Info dialog. This uses `PicsaMissingTranslationHandler` registered on `TranslateModule.forRoot/forChild`, so it applies to pipes, `instant()`, and `translateText()` without template changes. Toggling at runtime calls `reloadLang()` so rendered strings update.
 
 ### Angular Component SCSS Budgets & Scoped Selector Expansion
 
@@ -485,6 +505,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `.map` files are deleted before hosting deployment or Capacitor sync (`find dist -name "*.map" -delete`) to prevent shipping source files to users or bundling them into native Android binaries.
 - **Jest Mocking Gotcha (`@capacitor/core`)**:
   - When mocking `@capacitor/core` in unit tests, always spread `jest.requireActual('@capacitor/core')` (`{ ...actual, Capacitor: { ...actual.Capacitor, isNativePlatform: jest.fn() } }`). `@capacitor/device` calls `core.registerPlugin` during module evaluation; completely overwriting `@capacitor/core` without `registerPlugin` causes `TypeError: core.registerPlugin is not a function`.
+- **Unified Error Triage & Device-ID Cross-Referencing (`yarn ai:triage`)**:
+  - Both Sentry (`initSentry`) and Firebase Crashlytics (`CrashlyticsService.init`) tag errors using anonymous `Device.getId()`. When investigating native crashes from Crashlytics where a device UUID is known, query Sentry with `yarn ai:triage user <device-uuid>` to inspect preceding Angular route navigation, UI clicks, and console breadcrumbs.
+  - `yarn ai:triage --doctor` checks Sentry token validity (`de.sentry.io`) and BigQuery Crashlytics streaming connectivity, reporting actionable steps if credentials are missing without failing catastrophically.
 
 ## 8. CI / CD & Nx Remote Caching Strategy
 
@@ -528,7 +551,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Selective Climate Product Sync & Monthly Lockstep (`--only`)
 
 - **Non-Destructive Partial Syncs**: Meteorological station CSV summaries contain multiple annual and monthly metrics (`rainfall`, `start`, `end`, `length`, `temp_min`, `temp_max`, `extremes`). When executing targeted syncs (e.g. `--only=temperature` or `--only=seasonal`), existing CSV columns for unselected metrics must be strictly preserved on disk (`mergeStationAnnualData` / `mergeStationMonthlyData`).
-- **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report.
+- **Annual/Monthly Lockstep Requirement**: Temperature series depend on both annual and monthly files (`{station}.csv` and `{station}.monthly.csv`). If a station possesses `annual_temperature_data` in Supabase `climate_station_data` but lacks corresponding `monthly_temperature_data`, the sync pipeline must emit an explicit breaking warning (`❌ [BREAKING]`) and register a sanity violation in the audit report. Monthly rainfall is likewise sourced from `/v2/monthly_rainfall_summaries/` into `monthly_rainfall_data` and merged into the same monthly CSV; empty upstream responses must preserve existing monthly rainfall rather than clearing it.
 
 ### macOS AF_UNIX Socket Length in Nx Daemon
 
@@ -537,7 +560,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Climate Data Sync Pipeline & Automated Upstream Ingestion
 
 - **2-Step Sync Pipeline (Upstream Climate API -> Supabase DB -> App CSV Assets)**:
-  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
+  - Step 1: Upstream Climate API data is pulled into Supabase via edge functions (`dashboard/climate/{action}` for `rainfall-summaries`, `monthly-rainfall`, `annual-temperature`, `monthly-temperatures`), saving records into `climate_station_data`. Sequential execution per station is enforced to prevent upstream API timeouts.
   - Step 2: `yarn scripts:climate:sync` pulls from `climate_station_data`, merges selectively (honoring `--only`), formats wide CSVs, recalculates capabilities in `capabilities.generated.ts`, and produces an audit report (`dist/climate-sync-report.md`).
 - **GitHub Actions Isolated Country Workflow**:
   - The CI workflow (`.github/workflows/climate-sync.yml`) runs weekly on schedule or on demand via `workflow_dispatch`. It executes per country with `max-parallel: 1` to protect upstream API throughput.
@@ -639,7 +662,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The first implicit parameter receives `row[column]`. When defining custom templates that need object fields, use `let-row="row"`. For station names, provide a string column (e.g. `name`) rather than an object to avoid rendering `[object Object]`.
 
 - **Data System Table Layout & QC Breakdown**:
-  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `updated_at` (Last Sync). Action columns are omitted.
+  - The Data System admin table orders columns as: `name` (Station), `qc_passed` (QC Status icon), `rainfall_total_years`, `rainfall_last_thirty_years`, `rainfall_last_ten_years`, `qc_warnings` (Warnings), `products` (Available Products), `generation_timestamp` (Data Generated). Action columns are omitted.
   - Counters are color-coded: green (`text-emerald-700 font-semibold`) when meeting the check threshold, amber (`text-amber-700 font-semibold`) when failing.
   - Warnings are displayed on separate lines prefixed with a bullet point (`•`) in the table column.
   - Hovering the QC status icon displays a multi-line tooltip listing all verified quality control gates or specific failure reasons.
@@ -656,8 +679,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `failuresCount > 0`: Score is negative count of failed gates (`-3` = failed all 3, `-2` = failed 2, `-1` = failed 1).
   - `failuresCount === 0`: Score is positive total rainfall observation years (e.g. `30`, `35`, `50+`).
 - **Sorting Behavior (`MatTableDataSource`)**:
-  - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
+  - The default table sort on initial load is alphabetical by Station (`name`, `asc`). Users can manually click the "QC Status" column header to sort by `qc_score` (ascending places worst data at top: `-3` -> `-2` -> `-1` -> `30` -> `77`).
   - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
+  - **Preventing Initial QC Re-Sort & Flash of Failure**: In `admin.component.ts`, `allStationData` and `allStationAppData` load asynchronously. `isDbLoading = computed(() => this.service.stations().length > 0 && this.allStationData() === undefined)`. Rendering tables before `allStationData` emitted evaluated stations against empty data (`evaluateStationQualityGates([])` -> `qc_score = -3`), flashing all stations as failed and triggering a jarring table re-sort when real data arrived. Gating the tables behind `@if (isDbLoading())` / `@if (isDiffLoading())` with `<mat-spinner>` ensures tables render only once with true QC scores in stable sorted order.
 - **Rank Color Variations & Grouping Invariant**:
   - Color classes must be a strict, monotonic function of the sort key (`score`) to guarantee that all rows of the same rank remain strictly grouped in contiguous blocks without interleaving or alternating colors when sorted.
   - Failures (`cancel` icon): `-3` uses `text-rose-700`, `-2` uses `text-rose-500`, `-1` uses `text-amber-500` (lighter/paler shades).
@@ -678,10 +702,31 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `qc_warnings`: Warnings (distinct entries for start-no-end and end-no-start)
   - `products`: Annual Products micro-matrix (`Products 🌧  🌡  🌾`)
   - `monthly_data`: Monthly Data micro-matrix (`Monthly 🌧  🌡`)
-  - `updated_at`: Last Sync date
+  - `generation_timestamp`: Data Generated date (formatted as YYYY-MM-DD or `—`)
+- **Generation Metadata Consistency & Strict No-Fallback Rule**:
+  - In both the Data System table and Station Details / Diff views, `generation_timestamp` represents the upstream calculation/generation date extracted from product metadata (`annual_rainfall_metadata`, `annual_temperature_metadata`, `crop_probability_metadata`, etc.).
+  - **No Fallback to `updated_at`**: It must NEVER fall back to the database record's `updated_at`. When upstream generation metadata is absent or missing, display `—` rather than masking it with database synchronization timestamps.
+  - The database sync timestamp (`updated_at`) and Generation ID are surfaced cleanly in the hover tooltip and the Station Details debug card for administrative inspection.
 - **Micro-Matrix UI Pattern**:
   - Replaces bulky icon buttons with compact 16px indicators (`!text-[16px] !w-4 !h-4 leading-none`).
   - Available: `check` (`text-emerald-500`), Missing: `close` (`text-rose-500`).
   - Tooltips display individual item status, generation dates, and IDs.
 - **Monthly Data Nuances**:
-  - The Supabase `climate_station_data` schema and API currently provide `monthly_temperature_data` and metadata, but do not provide a `monthly_rainfall_data` column. Monthly rainfall observations historically exist only in bundled `.monthly.csv` files for select countries (e.g. Zambia, but 0 stations in Malawi). The UI explicitly notes this distinction in tooltips.
+  - Supabase `climate_station_data` stores both `monthly_temperature_data` and `monthly_rainfall_data` (plus metadata), sourced from `/v2/monthly_temperature_summaries/` and `/v2/monthly_rainfall_summaries/` respectively. Monthly rainfall coverage is currently partial upstream (ZM returns data for many stations; MW/ZW may return empty arrays), so empty responses preserve existing DB rows and CSVs. The admin monthly micro-matrix reflects the presence of each column, and capabilities record `monthly: ['rainfall']` when a monthly CSV contains rainfall.
+
+## PR Triage Workflow & Skill (`pr-triage`)
+
+- **Skill Location**: `.agent/skills/pr-triage/` (symlinked via `.gemini/skills/pr-triage/`).
+- **Core Script**: `.agent/skills/pr-triage/scripts/triage-prs.sh` (wraps `triage-prs.mjs`).
+- **Cache Persistence & Anti-Duplication**:
+  - Triage audits are cached at `.agent/pr-triage-cache.json` (gitignored).
+  - Delta detection checks `headRefOid`. If unchanged, audits take < 1s without redundant GitHub API calls and report as `[cached]`.
+  - Stale detection checks whether PR-Agent bot suggestions match the current branch HEAD SHA. If newer commits were pushed, suggestions are flagged as potentially addressed.
+- **Default Window & Untriaged Backlog**:
+  - Defaults to triaging the 5 most recently active open PRs.
+  - Transparently lists the remaining untriaged PR backlog with age and author, providing one-shot prompts to drill down (`--prs <id>,<id>` or `--all`).
+- **Senior Engineer Signals Surfaced**:
+  - Merge Health: clean vs dirty (conflicted), behind by `N` commits, and auto-updatable via `PUT /repos/:owner/:repo/pulls/:id/update-branch`.
+  - Gatekeeper status: CI build checks and SonarCloud Quality Gate passes/failures.
+  - Sizing & Blast Radius: Noise-filtered churn (excludes CSVs, lockfiles, specs) mapped across monorepo boundaries (App Shell, Native, Backend, Tools) with `S/M/L/XL` effort sizing.
+  - Actionable Verdict: `READY_FOR_REVIEW`, `BLOCKED_ON_AUTHOR`, `PENDING_BOT_FIXES`, `CONFLICTED`, `DRAFT`.

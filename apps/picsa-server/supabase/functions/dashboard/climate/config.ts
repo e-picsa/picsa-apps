@@ -45,11 +45,12 @@ export const STATION_SUMMARY_CONFIGS = {
     metadataField: 'monthly_temperature_metadata',
     endpointName: 'monthlyTemperatures',
   },
-  'season-start': {
-    endpoint: '/v2/season_start_probabilities/',
-    dataField: 'season_start_data',
-    metadataField: 'season_start_metadata',
-    endpointName: 'seasonStart',
+  'monthly-rainfall': {
+    endpoint: '/v2/monthly_rainfall_summaries/',
+    dataField: 'monthly_rainfall_data',
+    metadataField: 'monthly_rainfall_metadata',
+    endpointName: 'monthlyRainfall',
+    summaries: ['monthly_rain'],
   },
 } as const satisfies Record<string, StationSummaryConfig>;
 

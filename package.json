@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "5.18.0",
+  "version": "5.19.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -27,10 +27,12 @@
     "scripts:crop:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/crop/sync-crop-data.ts",
     "scripts:climate:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/climate/sync-climate-data.ts",
     "scripts:forecasts:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/forecasts/sync-forecasts.ts",
+    "scripts:translations:sync": "tsx --tsconfig tsconfig.base.json apps/picsa-scripts/src/translations/sync-translations.ts",
     "ai:gen-codemap": "tsx apps/picsa-scripts/src/generate-repo-map.ts",
     "ai:lint": "node tools/ai/ai-lint.mjs",
     "ai:test": "node tools/ai/ai-test.mjs",
-    "ai:typecheck": "node tools/ai/ai-typecheck.mjs"
+    "ai:typecheck": "node tools/ai/ai-typecheck.mjs",
+    "ai:triage": "node tools/ai/ai-error-triage.mjs"
   },
   "private": true,
   "dependencies": {

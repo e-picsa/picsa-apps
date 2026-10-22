@@ -3,10 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
-import { PicsaTranslateModule } from '@picsa/i18n';
+import { PicsaTranslateDebugService, PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
+import { of } from 'rxjs';
 
 import { PicsaVersionDebugDialogComponent } from './version-debug-dialog.component';
 
@@ -51,6 +52,14 @@ describe('PicsaVersionDebugDialogComponent', () => {
     showSuccessNotification: jest.Mock;
     showErrorNotification: jest.Mock;
   };
+  let translateServiceMock: {
+    instant: jest.Mock;
+    ngxTranslate: { currentLang: string; reloadLang: jest.Mock };
+  };
+  let translateDebugServiceMock: {
+    enabled: ReturnType<typeof signal<boolean>>;
+    setEnabled: jest.Mock;
+  };
 
   beforeEach(async () => {
     (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
@@ -78,6 +87,14 @@ describe('PicsaVersionDebugDialogComponent', () => {
       showSuccessNotification: jest.fn(),
       showErrorNotification: jest.fn(),
     };
+    translateServiceMock = {
+      instant: jest.fn((key: string) => key),
+      ngxTranslate: { currentLang: 'mw_ny', reloadLang: jest.fn(() => of({})) },
+    };
+    translateDebugServiceMock = {
+      enabled: signal(false),
+      setEnabled: jest.fn(),
+    };
 
     Object.assign(navigator, {
       clipboard: {
@@ -92,6 +109,8 @@ describe('PicsaVersionDebugDialogComponent', () => {
         { provide: AppUserService, useValue: appUserServiceMock },
         { provide: AppUpdateService, useValue: appUpdateServiceMock },
         { provide: PicsaNotificationService, useValue: notificationServiceMock },
+        { provide: PicsaTranslateService, useValue: translateServiceMock },
+        { provide: PicsaTranslateDebugService, useValue: translateDebugServiceMock },
       ],
     }).compileComponents();
 
@@ -113,6 +132,12 @@ describe('PicsaVersionDebugDialogComponent', () => {
     component.onToggleTester(true);
     expect(appUserServiceMock.setInternalTester).toHaveBeenCalledWith(true, true);
     expect(notificationServiceMock.showSuccessNotification).toHaveBeenCalledWith('Internal Tester mode enabled');
+  });
+
+  it('toggles translation debug and reloads the current language', () => {
+    component.onToggleTranslationDebug(true);
+    expect(translateDebugServiceMock.setEnabled).toHaveBeenCalledWith(true);
+    expect(translateServiceMock.ngxTranslate.reloadLang).toHaveBeenCalledWith('mw_ny');
   });
 
   it('copies debug JSON to clipboard', async () => {
