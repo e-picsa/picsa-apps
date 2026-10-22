@@ -61,7 +61,7 @@ describe('ClimateAdminPageComponent', () => {
       'monthly_data',
       'generation_timestamp',
     ]);
-    expect(component.dbTableOptions.sort).toEqual({ id: 'qc_score', start: 'asc' });
+    expect(component.dbTableOptions.sort).toEqual({ id: 'name', start: 'asc' });
 
     expect(component.dbTableOptions.formatHeader('name')).toBe('Station');
     expect(component.dbTableOptions.formatHeader('qc_score')).toBe('QC Status');
