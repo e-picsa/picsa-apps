@@ -161,10 +161,20 @@ function evaluateChecks(checks) {
 
   for (const c of checks) {
     const name = c.name || c.workflowName || 'Check';
-    const conclusion = c.conclusion || c.status;
-    if (conclusion === 'FAILURE' || conclusion === 'TIMED_OUT' || conclusion === 'CANCELLED') {
+    // Support CheckRun (conclusion, status) and StatusContext (state)
+    const rawConclusion = (c.conclusion || c.status || c.state || '').toUpperCase();
+    if (
+      rawConclusion === 'FAILURE' ||
+      rawConclusion === 'TIMED_OUT' ||
+      rawConclusion === 'CANCELLED' ||
+      rawConclusion === 'ERROR'
+    ) {
       failures.push(name);
-    } else if (conclusion === 'IN_PROGRESS' || conclusion === 'QUEUED') {
+    } else if (
+      rawConclusion === 'IN_PROGRESS' ||
+      rawConclusion === 'QUEUED' ||
+      rawConclusion === 'PENDING'
+    ) {
       pendingCount++;
     }
     if (name.toLowerCase().includes('build')) hasBuild = true;
@@ -186,10 +196,22 @@ function evaluateChecks(checks) {
 
 function evaluateBotReview(comments, headSha) {
   let hasSuggestions = false;
-  let latestSuggestionSha = null;
+  let hasReviewFindings = false;
+  let hasSecurityAlert = false;
+  let activeFindingsCount = 0;
+  let latestSha = null;
   let hasSonarFailureComment = false;
 
-  if (!comments) return { hasSuggestions, isFresh: true, hasSonarFailureComment };
+  if (!comments) {
+    return {
+      hasSuggestions,
+      hasReviewFindings,
+      hasSecurityAlert,
+      activeFindingsCount,
+      isFresh: true,
+      hasSonarFailureComment,
+    };
+  }
 
   for (const c of comments) {
     const author = c.author?.login || '';
@@ -199,22 +221,51 @@ function evaluateBotReview(comments, headSha) {
       hasSonarFailureComment = true;
     }
 
+    // 1. Inspect PR Reviewer Guide (/review)
+    if (body.includes('pr-agent:review:full') || body.includes('PR Reviewer Guide')) {
+      if (body.includes('Security concerns') && !body.includes('Security concerns: None')) {
+        hasSecurityAlert = true;
+      }
+      const stateMatch = body.match(/<!-- pr-agent-review-state:v1\s*([\s\S]*?)\s*-->/);
+      if (stateMatch) {
+        try {
+          const stateData = JSON.parse(stateMatch[1]);
+          const active = stateData.findings?.filter((f) => f.state === 'ACTIVE') || [];
+          if (active.length > 0) {
+            hasReviewFindings = true;
+            activeFindingsCount += active.length;
+          }
+          if (stateData.last_run?.head_sha) {
+            latestSha = stateData.last_run.head_sha;
+          }
+        } catch {}
+      }
+    }
+
+    // 2. Inspect PR Code Suggestions (/improve)
     if (body.includes('pr-agent:improve:summary') || body.includes('PR Code Suggestions')) {
       hasSuggestions = true;
       const shaMatch = body.match(/<!-- ([0-9a-f]{7,40}) -->/);
       if (shaMatch) {
-        latestSuggestionSha = shaMatch[1];
+        latestSha = shaMatch[1];
       }
     }
   }
 
   let isFresh = true;
-  if (latestSuggestionSha && headSha) {
-    // If suggestion SHA does not prefix the current headSha, the branch received new commits afterwards
-    isFresh = headSha.startsWith(latestSuggestionSha);
+  if (latestSha && headSha) {
+    isFresh = headSha.startsWith(latestSha);
   }
 
-  return { hasSuggestions, isFresh, latestSuggestionSha, hasSonarFailureComment };
+  return {
+    hasSuggestions,
+    hasReviewFindings,
+    hasSecurityAlert,
+    activeFindingsCount,
+    isFresh,
+    latestSha,
+    hasSonarFailureComment,
+  };
 }
 
 async function main() {
@@ -222,9 +273,10 @@ async function main() {
   const repo = runCmd('gh repo view --json nameWithOwner -q .nameWithOwner') || 'e-picsa/picsa-apps';
   const cache = loadCache(opts.cacheFile);
 
-  // Fetch open PRs
+  // Fetch open PRs (capped adequately for repository size)
+  const fetchLimit = opts.all ? 100 : Math.max(50, (opts.limit || 5) * 2);
   const rawPrs = runGhJson(
-    'gh pr list --limit 50 --json number,title,author,headRefName,baseRefName,headRefOid,updatedAt,createdAt,isDraft,statusCheckRollup,additions,deletions,changedFiles,url'
+    `gh pr list --limit ${fetchLimit} --json number,title,author,headRefName,baseRefName,headRefOid,updatedAt,createdAt,isDraft,statusCheckRollup,additions,deletions,changedFiles,url`
   );
 
   if (!rawPrs || rawPrs.length === 0) {
@@ -277,8 +329,10 @@ async function main() {
     const mergeable = prDetails?.mergeable;
     const mergeableState = prDetails?.mergeable_state || 'unknown';
 
-    // 2. Behind/Ahead comparison
-    const compare = runGhJson(`gh api repos/${repo}/compare/${pr.baseRefName}...${pr.headRefOid}`);
+    // 2. Behind/Ahead comparison (safely encode git refs)
+    const safeBase = encodeURIComponent(pr.baseRefName);
+    const safeHead = encodeURIComponent(pr.headRefOid);
+    const compare = runGhJson(`gh api repos/${repo}/compare/${safeBase}...${safeHead}`);
     const behindBy = compare?.behind_by ?? null;
     const aheadBy = compare?.ahead_by ?? null;
 
@@ -291,7 +345,7 @@ async function main() {
     // 4. Check CI runs
     const ci = evaluateChecks(pr.statusCheckRollup);
 
-    // 5. Check comments (PR-Agent & Sonar)
+    // 5. Check comments (PR-Agent Review Guide, Suggestions & Sonar)
     const commentsData = runGhJson(`gh pr view ${pr.number} --json comments`);
     const botReview = evaluateBotReview(commentsData?.comments || [], pr.headRefOid);
 
@@ -332,9 +386,11 @@ async function main() {
     } else if (ci.status === 'PENDING') {
       verdict = '⏳ CHECKS_PENDING';
       verdictReason = `Automated checks still in progress: ${ci.badge}.`;
-    } else if (botReview.hasSuggestions && botReview.isFresh) {
+    } else if ((botReview.hasSuggestions || botReview.hasReviewFindings) && botReview.isFresh) {
       verdict = '🟡 PENDING_BOT_FIXES';
-      verdictReason = 'Open PR-Agent suggestions pending on current commit.';
+      verdictReason = botReview.hasSecurityAlert
+        ? 'Open PR-Agent security concerns or review findings on current commit.'
+        : 'Open PR-Agent review findings or suggestions pending on current commit.';
     }
 
     const triageRecord = {
@@ -425,9 +481,11 @@ async function main() {
       console.log(`  > 💡 *Quick branch update command*: \`gh api repos/${repo}/pulls/${t.number}/update-branch -X PUT\``);
     }
     console.log(`- **CI & Quality**: ${t.ciBadge}`);
-    if (t.botReview?.hasSuggestions) {
+    if (t.botReview?.hasSuggestions || t.botReview?.hasReviewFindings) {
       const freshText = t.botReview.isFresh ? 'Fresh (on latest commit)' : 'Older commit (potentially addressed)';
-      console.log(`- **PR-Agent Review**: Code suggestions posted (${freshText}).`);
+      const secText = t.botReview.hasSecurityAlert ? ' ⚠️ Security concerns flagged' : '';
+      const findingsCount = t.botReview.activeFindingsCount > 0 ? ` (${t.botReview.activeFindingsCount} active findings)` : '';
+      console.log(`- **PR-Agent Review**: Feedback posted${findingsCount} [${freshText}].${secText}`);
     }
     console.log(`- **Recommended Action**: **${t.verdictReason}**`);
     console.log('');
