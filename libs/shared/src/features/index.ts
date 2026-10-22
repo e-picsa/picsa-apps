@@ -1,3 +1,4 @@
+export * from './app-share';
 export * from './audio-playback';
 export * from './charts';
 export * from './data-table';

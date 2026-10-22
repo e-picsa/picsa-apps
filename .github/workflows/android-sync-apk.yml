@@ -191,7 +191,65 @@ jobs:
             
           echo "🎉 Upload complete!"
 
-      # 6. Cleanup Old APKs (Keep only the latest 5)
+      # 6. Publish canonical pointers (latest APK + metadata)
+      - name: Publish latest pointers
+        if: steps.supabase_check.outputs.needs_update == 'true'
+        env:
+          FILENAME: ${{ steps.supabase_check.outputs.file_name }}
+          VERSION: ${{ steps.play_store.outputs.version_code }}
+        run: |
+          if [ ! -f "$FILENAME" ]; then
+            echo "❌ File $FILENAME not found on runner!"
+            exit 1
+          fi
+
+          echo "☁️ Publishing canonical e-picsa-universal-latest.apk pointer..."
+
+          # Upsert canonical copy (same bytes, stable download URL)
+          cp "$FILENAME" e-picsa-universal-latest.apk
+          for TARGET in "e-picsa-universal-latest.apk"; do
+            if [ "$TARGET" = "e-picsa-universal-latest.apk" ]; then
+              SRC="e-picsa-universal-latest.apk"
+              CT="application/vnd.android.package-archive"
+            fi
+            HTTP_STATUS=$(curl -s -w "%{http_code}" -o supabase_pointer_response.json -X PUT \
+              "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/$TARGET" \
+              -H "Authorization: Bearer $SUPABASE_KEY" \
+              -H "Content-Type: $CT" \
+              -H "x-upsert: true" \
+              --data-binary @"$SRC")
+            if [ "$HTTP_STATUS" != "200" ]; then
+              echo "❌ Pointer upload failed for $TARGET (HTTP $HTTP_STATUS)"
+              cat supabase_pointer_response.json | jq . || cat supabase_pointer_response.json
+              exit 1
+            fi
+          done
+
+          # Publish version metadata consumed by AppDistributionService
+          FILE_SIZE=$(stat -c%s "$FILENAME")
+          UPLOADED_AT=$(date -u +%FT%TZ)
+          jq -n \
+            --argjson versionCode "$VERSION" \
+            --arg fileName "$FILENAME" \
+            --argjson fileSize "$FILE_SIZE" \
+            --arg uploadedAt "$UPLOADED_AT" \
+            '{versionCode:$versionCode,fileName:$fileName,fileSize:$fileSize,uploadedAt:$uploadedAt}' > latest.json
+          cat latest.json | jq .
+
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -o supabase_meta_response.json -X PUT \
+            "$SUPABASE_URL/storage/v1/object/$BUCKET_NAME/latest.json" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "x-upsert: true" \
+            --data-binary @"latest.json")
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ Metadata upload failed (HTTP $HTTP_STATUS)"
+            cat supabase_meta_response.json | jq . || cat supabase_meta_response.json
+            exit 1
+          fi
+          echo "🎉 Latest pointers published!"
+
+      # 7. Cleanup Old APKs (Keep only the latest 5 versioned builds)
       - name: Cleanup Old APKs
         if: steps.supabase_check.outputs.needs_update == 'true'
         run: |
@@ -205,9 +263,10 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{ "prefix": "", "limit": 100, "offset": 0, "sortBy": { "column": "name", "order": "desc" } }')
 
-          # 2. Extract filenames, skip the latest MAX_FILES
+          # 2. Extract only versioned builds, keep canonical pointers (latest.apk, latest.json) untouched
           OLD_FILES=$(echo "$FILES_JSON" \
             | jq -r '.[].name // empty' \
+            | grep -E '^e-picsa-universal-[0-9]+\.apk$' \
             | sort -t'-' -k4 -n -r \
             | tail -n +$((MAX_FILES + 1)))
 
