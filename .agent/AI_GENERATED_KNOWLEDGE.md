@@ -68,6 +68,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - When executing standalone TypeScript scripts using `node ./node_modules/tsx/dist/cli.mjs` from the repository root, pass `--tsconfig tsconfig.base.json` so that path aliases defined in the base configuration (`@picsa/models`, `@picsa/utils`) resolve correctly at runtime.
 
+### macOS UNIX Domain Socket Path Length Limit (`NX_SOCKET_DIR`)
+
+- In nested worktrees or deep directory paths, the Nx daemon UNIX domain socket path can exceed macOS's 104-character limit (`sockaddr_un.sun_path`), causing commands like `yarn ai:test` or `nx test` to hang or fail with `Attempted to open socket that exceeds the maximum socket length`.
+- Fix: Prepend `NX_SOCKET_DIR=/tmp/nx` (or a short path) when executing test runner commands in deep worktree paths.
+
 ### Unit Test Colocation Convention
 
 - **Strict Colocation Next to Source**: Unit test specifications (`*.spec.ts`) must always be colocated directly next to the source file they test (e.g. `libs/utils/climate.utils.spec.ts` next to `libs/utils/climate.utils.ts`, and `libs/data/climate/chart_definitions/periods.spec.ts` next to `periods.ts`).
@@ -631,7 +636,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `failuresCount > 0`: Score is negative count of failed gates (`-3` = failed all 3, `-2` = failed 2, `-1` = failed 1).
   - `failuresCount === 0`: Score is positive total rainfall observation years (e.g. `30`, `35`, `50+`).
 - **Sorting Behavior (`MatTableDataSource`)**:
-  - Sorting `qc_score` ascending (`asc`) places the worst data at the top: `-3` (critical) -> `-2` (major) -> `-1` (minor) -> borderline passes (`30`) -> long historical records (`77`).
+  - The default table sort on initial load is alphabetical by Station (`name`, `asc`). Users can manually click the "QC Status" column header to sort by `qc_score` (ascending places worst data at top: `-3` -> `-2` -> `-1` -> `30` -> `77`).
   - Column is labeled "QC Status" via `dbTableOptions.formatHeader`.
   - **Preventing Initial QC Re-Sort & Flash of Failure**: In `admin.component.ts`, `allStationData` and `allStationAppData` load asynchronously. `isDbLoading = computed(() => this.service.stations().length > 0 && this.allStationData() === undefined)`. Rendering tables before `allStationData` emitted evaluated stations against empty data (`evaluateStationQualityGates([])` -> `qc_score = -3`), flashing all stations as failed and triggering a jarring table re-sort when real data arrived. Gating the tables behind `@if (isDbLoading())` / `@if (isDiffLoading())` with `<mat-spinner>` ensures tables render only once with true QC scores in stable sorted order.
 - **Rank Color Variations & Grouping Invariant**:

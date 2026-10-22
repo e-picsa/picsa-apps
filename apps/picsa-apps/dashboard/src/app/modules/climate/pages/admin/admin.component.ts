@@ -308,7 +308,7 @@ export class ClimateAdminPageComponent {
 
   public dbTableOptions: IDataTableOptions = {
     displayColumns: DB_DISPLAY_COLUMNS,
-    sort: { id: 'qc_score', start: 'asc' },
+    sort: { id: 'name', start: 'asc' },
     handleRowClick: ({ station }: IStationAdminSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
       if (v === 'name') return 'Station';
