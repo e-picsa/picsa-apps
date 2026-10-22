@@ -93,3 +93,7 @@ apps/picsa-server/.cache
 apps/picsa-server/supabase/.cache
 apps/picsa-server/scripts/backup/backups
 apps/picsa-server/scripts/db-seed/cache
+
+# Agent local cache & triage state
+.agent/*.cache.json
+.agent/pr-triage-cache.json

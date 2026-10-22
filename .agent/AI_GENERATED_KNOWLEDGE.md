@@ -670,3 +670,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Tooltips display individual item status, generation dates, and IDs.
 - **Monthly Data Nuances**:
   - Supabase `climate_station_data` stores both `monthly_temperature_data` and `monthly_rainfall_data` (plus metadata), sourced from `/v2/monthly_temperature_summaries/` and `/v2/monthly_rainfall_summaries/` respectively. Monthly rainfall coverage is currently partial upstream (ZM returns data for many stations; MW/ZW may return empty arrays), so empty responses preserve existing DB rows and CSVs. The admin monthly micro-matrix reflects the presence of each column, and capabilities record `monthly: ['rainfall']` when a monthly CSV contains rainfall.
+
+## PR Triage Workflow & Skill (`pr-triage`)
+
+- **Skill Location**: `.agent/skills/pr-triage/` (symlinked via `.gemini/skills/pr-triage/`).
+- **Core Script**: `.agent/skills/pr-triage/scripts/triage-prs.sh` (wraps `triage-prs.mjs`).
+- **Cache Persistence & Anti-Duplication**:
+  - Triage audits are cached at `.agent/pr-triage-cache.json` (gitignored).
+  - Delta detection checks `headRefOid`. If unchanged, audits take < 1s without redundant GitHub API calls and report as `[cached]`.
+  - Stale detection checks whether PR-Agent bot suggestions match the current branch HEAD SHA. If newer commits were pushed, suggestions are flagged as potentially addressed.
+- **Default Window & Untriaged Backlog**:
+  - Defaults to triaging the 5 most recently active open PRs.
+  - Transparently lists the remaining untriaged PR backlog with age and author, providing one-shot prompts to drill down (`--prs <id>,<id>` or `--all`).
+- **Senior Engineer Signals Surfaced**:
+  - Merge Health: clean vs dirty (conflicted), behind by `N` commits, and auto-updatable via `PUT /repos/:owner/:repo/pulls/:id/update-branch`.
+  - Gatekeeper status: CI build checks and SonarCloud Quality Gate passes/failures.
+  - Sizing & Blast Radius: Noise-filtered churn (excludes CSVs, lockfiles, specs) mapped across monorepo boundaries (App Shell, Native, Backend, Tools) with `S/M/L/XL` effort sizing.
+  - Actionable Verdict: `READY_FOR_REVIEW`, `BLOCKED_ON_AUTHOR`, `PENDING_BOT_FIXES`, `CONFLICTED`, `DRAFT`.
