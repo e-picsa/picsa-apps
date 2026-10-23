@@ -36,9 +36,6 @@ export class FormLocationSelectComponent {
   /** Optional method to apply to data before rendering locations in list */
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
-  /** When true, emits value changes even when only the parent tier (admin 4) is selected */
-  public emitPartial = input<boolean>(false);
-
   public valueChanged = output<(string | undefined)[]>();
 
   /** Location selected as stored to user profile (admin_4 district/province level) */
@@ -72,6 +69,8 @@ export class FormLocationSelectComponent {
     return this.getLocationData(countryCode);
   });
 
+  private hasEmittedValid = false;
+
   constructor() {
     // Set input values when passed
     effect(() => {
@@ -84,12 +83,15 @@ export class FormLocationSelectComponent {
       const admin4Selected = this.admin4Selected();
       this.handleAdmin4Selected(admin4Selected);
     });
-    // Emit value changes when valid or when emitPartial is enabled and admin4 is selected
+    // Emit value changes when valid, or when an existing valid selection becomes incomplete
     effect(() => {
       const computedValue = this.computedValue();
       const isValid = this.isValid();
-      const emitPartial = this.emitPartial();
-      if (computedValue && (isValid || (emitPartial && computedValue[4]))) {
+      if (computedValue && isValid) {
+        this.hasEmittedValid = true;
+        this.valueChanged.emit(computedValue);
+      } else if (this.hasEmittedValid && computedValue) {
+        this.hasEmittedValid = false;
         this.valueChanged.emit(computedValue);
       }
     });
@@ -110,7 +112,11 @@ export class FormLocationSelectComponent {
 
   /** Update sublocation options/selected when admin 4 changes */
   private handleAdmin4Selected(admin4Selected: string | undefined) {
-    if (!admin4Selected) return;
+    if (!admin4Selected) {
+      this.admin5Options.set([]);
+      this.admin5Selected.set(undefined);
+      return;
+    }
     const sublocation = this.sublocation();
     if (sublocation) {
       const parentSlot = sublocation.parentSlot;
@@ -118,12 +124,13 @@ export class FormLocationSelectComponent {
         (o) => (o as Record<string, string>)[parentSlot] === admin4Selected,
       );
       this.admin5Options.set(filteredLocations);
-      const admin5Selected = this.admin5Selected();
-      if (admin5Selected && !filteredLocations.find((v) => v.id === admin5Selected)) {
+      let currentAdmin5 = this.admin5Selected();
+      if (currentAdmin5 && !filteredLocations.find((v) => v.id === currentAdmin5)) {
+        currentAdmin5 = undefined;
         this.admin5Selected.set(undefined);
       }
       // Set value when only 1 option available
-      if (!admin5Selected && filteredLocations.length === 1) {
+      if (!currentAdmin5 && filteredLocations.length === 1) {
         this.admin5Selected.set(filteredLocations[0].id);
       }
     }

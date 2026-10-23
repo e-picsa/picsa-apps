@@ -15,7 +15,8 @@ export function getLocationSlots(data: IGeolocationData): GeoLocationSlot[] {
 /** Locations at the deepest defined tier (e.g. districts), with parent tier references resolved */
 export function getDeepestLocations(data: IGeolocationData): IDeepestLocation[] {
   const slots = getLocationSlots(data);
-  const locations: { id: string; label: string; admin_4?: string }[] = data[slots[slots.length - 1]]?.locations ?? [];
+  const locations: { id: string; label: string; admin_4?: string; topoName?: string }[] =
+    data[slots[slots.length - 1]]?.locations ?? [];
   const parentLabels: Record<string, string> = {};
   for (const parent of data.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
   return locations.map((location) => {
@@ -25,6 +26,7 @@ export function getDeepestLocations(data: IGeolocationData): IDeepestLocation[] 
       label: location.label,
       parentId,
       parentLabel: parentId ? (parentLabels[parentId] ?? '') : '',
+      ...(location.topoName ? { topoName: location.topoName } : {}),
     };
   });
 }

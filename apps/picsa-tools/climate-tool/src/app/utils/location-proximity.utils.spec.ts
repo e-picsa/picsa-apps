@@ -134,47 +134,28 @@ describe('Location Proximity Utils', () => {
   });
 
   describe('getDistrictCenterAndBoundary', () => {
-    it('resolves district center for Malawi district from bundled TopoJSON', async () => {
-      const result = await getDistrictCenterAndBoundary('mw', 'salima');
-      expect(result).toBeDefined();
-      expect(result?.center.lat).toBeCloseTo(-13.78, 1);
-      expect(result?.center.lng).toBeCloseTo(34.38, 1);
-      expect(result?.feature).toBeDefined();
-    });
+    const activeCountries: ICountryCode[] = ['mw', 'zm', 'zw'];
 
-    it('resolves district center for Zambia district from bundled TopoJSON', async () => {
-      const result = await getDistrictCenterAndBoundary('zm', 'choma');
-      expect(result).toBeDefined();
-      expect(result?.center.lat).toBeLessThan(-16.0);
-      expect(result?.center.lng).toBeGreaterThan(26.0);
-      expect(result?.feature).toBeDefined();
-    });
+    for (const country of activeCountries) {
+      it(`resolves center and boundary feature for every district in "${country}" (including topoName aliases)`, async () => {
+        const geoData = getGeoLocationData(country);
+        const deepest = getDeepestLocations(geoData);
 
-    it('resolves province boundary and center for Zimbabwe province from bundled TopoJSON', async () => {
-      const result = await getDistrictCenterAndBoundary('zw', 'manicaland');
-      expect(result).toBeDefined();
-      expect(result?.center.lat).toBeLessThan(-17.0);
-      expect(result?.center.lng).toBeGreaterThan(31.0);
-      expect(result?.feature).toBeDefined();
-    });
+        expect(deepest.length).toBeGreaterThan(0);
+
+        for (const district of deepest) {
+          const result = await getDistrictCenterAndBoundary(country, district.id);
+          expect(result).toBeDefined();
+          expect(typeof result?.center.lat).toBe('number');
+          expect(typeof result?.center.lng).toBe('number');
+          expect(result?.feature).toBeDefined();
+        }
+      });
+    }
 
     it('returns undefined for non-existent district', async () => {
       const result = await getDistrictCenterAndBoundary('zm', 'non_existent_district_12345');
       expect(result).toBeUndefined();
-    });
-  });
-
-  describe('isStationInDistrict', () => {
-    it('matches station inside district to its parent province when countryCode is supplied', () => {
-      const buheraStation: IStationMeta = {
-        id: 'buhera_met',
-        name: 'Buhera (Met)',
-        latitude: -19.317,
-        longitude: 31.433,
-        location: ['Buhera'],
-      };
-      expect(isStationInDistrict(buheraStation, 'Manicaland', 'manicaland', 'zw')).toBe(true);
-      expect(isStationInDistrict(buheraStation, 'Masvingo', 'masvingo', 'zw')).toBe(false);
     });
   });
 

@@ -130,11 +130,9 @@ describe('SiteSelectPage', () => {
     expect(district?.id).toBe('choma');
   });
 
-  it('should resolve province fallback when only province is selected', () => {
+  it('should clear selectedDistrict when location is incomplete (only province selected)', () => {
     component.selectedLocation.set([undefined, undefined, 'zm', undefined, 'southern', undefined]);
-    const districtOrProvince = component.selectedDistrict();
-    expect(districtOrProvince).toBeDefined();
-    expect(districtOrProvince?.id).toBe('southern');
+    expect(component.selectedDistrict()).toBeUndefined();
   });
 
   it('should update location and settings when handleLocationChanged is called with complete location', () => {

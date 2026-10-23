@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
 import type { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData, isLocationComplete } from '@picsa/data/geoLocation';
+import { getDeepestLocations, getGeoLocationData, getLocationSlots, isLocationComplete } from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IStationMeta } from '@picsa/models';
@@ -92,38 +92,19 @@ export class SiteSelectPage {
   /** GPS location in progress */
   public readonly isLocating = signal(false);
 
-  /** Deepest selected location entry (district, or province fallback) */
+  /** Deepest selected location entry (district) when selection is complete */
   public readonly selectedDistrict = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
     if (!country || !loc || !loc.length) return undefined;
 
     const geoData = getGeoLocationData(country as ICountryCode);
-    const deepest = getDeepestLocations(geoData);
+    if (!isLocationComplete(geoData, loc)) return undefined;
 
-    const districtId = loc[5];
-    if (districtId) {
-      const match = deepest.find((l) => l.id === districtId);
-      if (match) return match;
-    }
+    const districtId = loc[5] ?? loc[4];
+    if (!districtId) return undefined;
 
-    const provinceOrDistrictId = loc[4];
-    if (provinceOrDistrictId) {
-      const match = deepest.find((l) => l.id === provinceOrDistrictId);
-      if (match) return match;
-
-      const province = geoData.admin_4?.locations.find((l) => l.id === provinceOrDistrictId);
-      if (province) {
-        return {
-          id: province.id,
-          label: province.label,
-          parentId: '',
-          parentLabel: '',
-        };
-      }
-    }
-
-    return undefined;
+    return getDeepestLocations(geoData).find((l) => l.id === districtId);
   });
 
   /** Selected station on map/table/card */
@@ -216,7 +197,7 @@ export class SiteSelectPage {
   public readonly tableData = computed(() => {
     const stations = this.sortedAllStations();
     return stations.map((station, index) => {
-      const district = station.location?.[0] || '—';
+      const district = station.location?.[0] || '\u2014';
       return {
         ...station,
         name: formatStationLabel(station.name),
@@ -229,10 +210,12 @@ export class SiteSelectPage {
   public readonly tableOptions = computed(() => {
     const country_code = this.userCountryCode();
     const geoData = getGeoLocationData(country_code);
+    const slots = getLocationSlots(geoData);
+    const deepestLabel = geoData[slots[slots.length - 1]]?.label ?? geoData.admin_4.label;
     return {
       displayColumns: ['map', 'name', 'district'],
       formatHeader: (v) => {
-        if (v === 'district') return geoData.admin_4.label;
+        if (v === 'district') return deepestLabel;
         return formatHeaderDefault(v);
       },
       sort: { id: 'district', start: 'asc' },
@@ -300,7 +283,6 @@ export class SiteSelectPage {
               result.center,
               district.label,
               district.id,
-              countryCode as ICountryCode,
             );
             this.stationRecommendations.set(recommendations);
 
@@ -553,7 +535,7 @@ export class SiteSelectPage {
 
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
-    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id, country as ICountryCode));
+    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id));
     if (!matchingDistrict || matchingDistrict.id === this.selectedDistrict()?.id) {
       return;
     }
@@ -562,6 +544,8 @@ export class SiteSelectPage {
     const location: (string | undefined)[] = matchingDistrict.parentId
       ? [undefined, undefined, country, undefined, matchingDistrict.parentId, matchingDistrict.id]
       : [undefined, undefined, country, undefined, matchingDistrict.id];
+
     this.selectedLocation.set(location);
+    this.configurationService.updateUserSettings({ location });
   }
 }

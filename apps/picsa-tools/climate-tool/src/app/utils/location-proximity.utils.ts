@@ -156,39 +156,22 @@ export function getCombinedDistrictAndStationBounds(
 }
 
 /**
- * Retrieve district or province reference coordinates and GeoJSON boundary.
- * 1. Checks deepest locations (districts) first, falling back to admin_4 (provinces).
- * 2. Checks precomputed `center: [lng, lat]` property in the TopoJSON feature.
- * 3. Falls back to calculating the centroid from the polygon bounding box.
- * 4. Falls back to precomputed location coordinates if available.
+ * Retrieve district reference coordinates and GeoJSON boundary.
+ * 1. Checks precomputed `center: [lng, lat]` property in the TopoJSON feature.
+ * 2. Falls back to calculating the centroid from the polygon bounding box.
+ * 3. Falls back to precomputed district coordinates if available.
  */
 export async function getDistrictCenterAndBoundary(
   countryCode: ICountryCode,
-  locationId: string,
+  districtId: string,
 ): Promise<IDistrictCenterResult | undefined> {
   const geoData = getGeoLocationData(countryCode);
   const deepest = getDeepestLocations(geoData);
-  let locationItem = deepest.find((d) => d.id === locationId);
-  let adminLevel: number = getDeepestAdminLevel(geoData);
-
-  // Fallback to admin_4 (province level) when locationId refers to a province rather than district
-  if (!locationItem) {
-    const province = geoData.admin_4?.locations.find((p) => p.id === locationId);
-    if (province) {
-      locationItem = {
-        id: province.id,
-        label: province.label,
-        parentId: '',
-        parentLabel: '',
-        topoName: (province as { topoName?: string }).topoName,
-      } as (typeof deepest)[number];
-      adminLevel = 4;
-    }
-  }
-
-  if (!locationItem) return undefined;
+  const district = deepest.find((d) => d.id === districtId);
+  if (!district) return undefined;
 
   try {
+    const adminLevel = getDeepestAdminLevel(geoData);
     const cacheKey = `${countryCode}:${adminLevel}`;
     let geojson = geoJsonCache.get(cacheKey);
     if (!geojson) {
@@ -197,7 +180,7 @@ export async function getDistrictCenterAndBoundary(
       geoJsonCache.set(cacheKey, geojson);
     }
 
-    const candidates = [locationItem.label, (locationItem as { topoName?: string }).topoName, locationItem.id].filter(
+    const candidates = [district.label, district.topoName, district.id].filter(
       (v): v is string => typeof v === 'string' && Boolean(v),
     );
 
@@ -226,16 +209,16 @@ export async function getDistrictCenterAndBoundary(
       }
     }
   } catch (err) {
-    console.warn(`[LocationProximity] Could not compute boundary from TopoJSON for ${locationId}:`, err);
+    console.warn(`[LocationProximity] Could not compute district center from TopoJSON for ${districtId}:`, err);
   }
 
-  // 3. Fallback: Check if location item itself has precomputed coordinates
-  const locationCoords = (locationItem as { coordinates?: { latitude: number; longitude: number } }).coordinates;
-  if (locationCoords?.latitude && locationCoords?.longitude) {
+  // 3. Fallback: Check if district item itself has precomputed coordinates
+  const districtCoords = (district as { coordinates?: { latitude: number; longitude: number } }).coordinates;
+  if (districtCoords?.latitude && districtCoords?.longitude) {
     return {
       center: {
-        lat: locationCoords.latitude,
-        lng: locationCoords.longitude,
+        lat: districtCoords.latitude,
+        lng: districtCoords.longitude,
       },
     };
   }
@@ -244,41 +227,16 @@ export async function getDistrictCenterAndBoundary(
 }
 
 /**
- * Check whether a station is mapped to a specific district or province
+ * Check whether a station is mapped to a specific district
  */
-export function isStationInDistrict(
-  station: IStationMeta,
-  districtLabel?: string,
-  districtId?: string,
-  countryCode?: ICountryCode,
-): boolean {
+export function isStationInDistrict(station: IStationMeta, districtLabel?: string, districtId?: string): boolean {
   if (!districtLabel || !station.location || station.location.length === 0) return false;
   const normDistrictLabel = normalizeLocationName(districtLabel);
   const normDistrictId = districtId ? normalizeLocationName(districtId) : '';
-
-  // Direct match against station's location array
-  const isDirect = station.location.some((loc) => {
+  return station.location.some((loc) => {
     const norm = normalizeLocationName(loc);
     return norm === normDistrictLabel || (normDistrictId !== '' && norm === normDistrictId);
   });
-  if (isDirect) return true;
-
-  // Province-level fallback: check if station is in a district that belongs to this province
-  if (countryCode && districtId) {
-    const geoData = getGeoLocationData(countryCode);
-    const deepest = getDeepestLocations(geoData);
-    const matchesParent = deepest.some(
-      (d) =>
-        d.parentId === districtId &&
-        station.location.some((loc) => {
-          const norm = normalizeLocationName(loc);
-          return norm === normalizeLocationName(d.label) || norm === normalizeLocationName(d.id);
-        }),
-    );
-    if (matchesParent) return true;
-  }
-
-  return false;
 }
 
 /**
@@ -289,12 +247,11 @@ export function getStationRecommendations(
   districtCoords: { lat: number; lng: number },
   districtLabel: string,
   districtId: string,
-  countryCode?: ICountryCode,
 ): IStationRecommendation[] {
   const scored = stations
     .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft)
     .map((station) => {
-      const isInsideDistrict = isStationInDistrict(station, districtLabel, districtId, countryCode);
+      const isInsideDistrict = isStationInDistrict(station, districtLabel, districtId);
 
       const distanceKm = calculateHaversineDistanceKm(
         districtCoords.lat,
@@ -304,7 +261,7 @@ export function getStationRecommendations(
       );
 
       // Lightweight scoring:
-      // - Inside district/province gives a strong 50km advantage
+      // - Inside district gives a strong 50km advantage
       // - Stations with >30 complete rain years get a slight 10km advantage over sparse stations
       const completeYears = station.capabilities?.completeRainYears ?? station.capabilities?.totalYears ?? 0;
       const dataBonus = completeYears >= 30 ? -10 : 0;

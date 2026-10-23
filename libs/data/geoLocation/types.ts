@@ -22,6 +22,8 @@ export interface IDeepestLocation {
   parentId: string;
   /** Parent tier label, empty when no parent */
   parentLabel: string;
+  /** Optional OSM boundary name when it differs from the display label */
+  topoName?: string;
 }
 
 export interface IGeolocationData {
