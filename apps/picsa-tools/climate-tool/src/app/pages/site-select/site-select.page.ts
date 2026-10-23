@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -47,6 +48,7 @@ const STRINGS = {
     CommonModule,
     FormLocationSelectComponent,
     MatIconModule,
+    MatButtonModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
     PicsaMapComponent,

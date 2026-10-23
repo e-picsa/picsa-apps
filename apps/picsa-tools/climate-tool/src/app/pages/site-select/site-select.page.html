@@ -11,12 +11,7 @@
             <mat-icon class="text-primary">place</mat-icon>
             <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
           </div>
-          <button
-            matButton="text"
-            class="!text-xs text-primary flex items-center gap-1 !p-1.5"
-            (click)="locateUser()"
-            [disabled]="isLocating()"
-          >
+          <button matButton="outlined" color="primary" (click)="locateUser()" [disabled]="isLocating()">
             <mat-icon class="!w-4 !h-4 text-[16px]">my_location</mat-icon>
             <span>{{ strings.locate | translate }}</span>
           </button>
@@ -50,9 +45,7 @@
   </div>
 
   <!-- Right panel: Interactive Station & Boundary Map (Desktop & Mobile) -->
-  <div
-    class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden block"
-  >
+  <div class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden block">
     <!-- Floating Location Selector (Mobile) with Locate Button -->
     <div
       class="map-floating-location absolute left-3 right-3 top-14 z-20 rounded-2xl shadow-lg px-3 py-1.5 md:hidden bg-white flex items-center gap-2"
@@ -68,7 +61,7 @@
       </div>
       <button
         matIconButton
-        class="text-primary shrink-0"
+        color="primary"
         (click)="locateUser()"
         [disabled]="isLocating()"
         [attr.aria-label]="strings.locate | translate"
