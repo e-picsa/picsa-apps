@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { provideRouter, Router } from '@angular/router';
 import { ConfigurationService, IUserSettings } from '@picsa/configuration';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { IStationMeta } from '@picsa/models';
 import { PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { of } from 'rxjs';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import { SiteSelectPage } from './site-select.page';
@@ -22,6 +24,7 @@ class MockPicsaMapComponent {
   clearActiveMarker = jest.fn();
   addGeoJsonLayer = jest.fn();
   removeGeoJsonLayer = jest.fn();
+  setLocationMarker = jest.fn();
 }
 
 describe('SiteSelectPage', () => {
@@ -144,14 +147,47 @@ describe('SiteSelectPage', () => {
     expect(router.navigate).toHaveBeenCalledWith(['./', 'choma'], expect.anything());
   });
 
-  it('should toggle view and all stations visibility', () => {
+  it('should toggle view between map and recommendation', () => {
     expect(component.view()).toBe('map');
     component.toggleView();
     expect(component.view()).toBe('recommendation');
+    component.toggleView();
+    expect(component.view()).toBe('map');
+  });
 
-    expect(component.showAllStations()).toBe(false);
-    component.toggleAllStations();
-    expect(component.showAllStations()).toBe(true);
+  it('should open AllStationsDialogComponent when openAllStationsDialog is called', () => {
+    const openSpy = jest.spyOn(MatDialog.prototype, 'open').mockReturnValue({
+      afterClosed: () => of(mockStations[1]),
+    } as unknown as MatDialogRef<unknown>);
+
+    component.openAllStationsDialog();
+
+    expect(openSpy).toHaveBeenCalled();
+    expect(component.selectedStation()?.id).toBe('batoka');
+    openSpy.mockRestore();
+  });
+
+  it('should locate user and select closest station when geolocation succeeds', () => {
+    const mockGeolocation = {
+      getCurrentPosition: jest.fn().mockImplementation((success) => {
+        success({
+          coords: {
+            latitude: -16.82,
+            longitude: 27.0,
+          },
+        });
+      }),
+    };
+    Object.defineProperty(global.navigator, 'geolocation', {
+      value: mockGeolocation,
+      configurable: true,
+      writable: true,
+    });
+
+    component.locateUser();
+
+    expect(mockGeolocation.getCurrentPosition).toHaveBeenCalled();
+    expect(component.selectedStation()?.id).toBe('choma');
   });
 
   it('should include closest station first in nearbyStations with mapNumber and update selection on click', () => {

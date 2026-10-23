@@ -14,6 +14,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -21,21 +22,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration';
-import { ICountryCode } from '@picsa/data';
+import type { ICountryCode } from '@picsa/data';
 import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { IStationMeta } from '@picsa/models';
-import {
-  formatHeaderDefault,
-  IDataTableOptions,
-  PicsaDataTableComponent,
-} from '@picsa/shared/features/data-table/data-table.component';
+import type { IStationMeta } from '@picsa/models';
+import { formatHeaderDefault, IDataTableOptions } from '@picsa/shared/features/data-table/data-table.component';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
+  calculateHaversineDistanceKm,
   formatStationLabel,
   getCombinedDistrictAndStationBounds,
   getDistrictCenterAndBoundary,
@@ -44,6 +42,7 @@ import {
   isStationInDistrict,
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
+import { AllStationsDialogComponent } from './components/all-stations-dialog/all-stations-dialog.component';
 import { StationCardComponent } from './components/station-card/station-card.component';
 
 const STATION_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.191 0 87.619 100" fill="currentColor"><path d="M82.447,57.766c-3.112,0-5.937,1.255-7.992,3.29L55.353,47.369v-1.773c0-2.015-1.303-3.692-3.094-4.333V22.592c5.521-0.768,9.769-5.509,9.769-11.236C62.027,5.09,56.946,0,50.667,0c-6.266,0-11.348,5.091-11.348,11.355c0,5.727,4.247,10.468,9.77,11.236v18.688c-1.76,0.662-3.027,2.335-3.027,4.316v1.604L25.906,61.064c-2.071-2.262-5.049-3.678-8.355-3.678c-6.277,0-11.36,5.087-11.36,11.357c0,6.27,5.083,11.356,11.36,11.356c6.265,0,11.348-5.087,11.348-11.356c0-1.818-0.436-3.544-1.193-5.066l18.353-12.622v44.299c0,2.561,2.089,4.646,4.647,4.646c2.564,0,4.646-2.085,4.646-4.646V51.27l17.183,12.314c-0.91,1.632-1.437,3.524-1.437,5.529c0,6.283,5.087,11.357,11.351,11.357c6.273,0,11.36-5.074,11.36-11.357C93.808,62.844,88.721,57.766,82.447,57.766z"/></svg>`;
@@ -52,10 +51,11 @@ const STRINGS = {
   map: translateMarker('Map'),
   list: translateMarker('List'),
   location: translateMarker('Location'),
+  locate: translateMarker('Locate'),
   view: translateMarker('View'),
   allStations: translateMarker('All Stations'),
   climateStation: translateMarker('Climate Station'),
-  nearby: translateMarker('Nearby'),
+  stations: translateMarker('Stations'),
   findingStations: translateMarker('Finding closest stations'),
 };
 
@@ -65,11 +65,11 @@ const STRINGS = {
   imports: [
     CommonModule,
     MatButtonModule,
+    MatDialogModule,
     MatIconModule,
     MatTooltipModule,
     PicsaTranslateModule,
     FormLocationSelectComponent,
-    PicsaDataTableComponent,
     PicsaMapComponent,
     StationCardComponent,
   ],
@@ -89,6 +89,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   private viewContainer = inject(ViewContainerRef);
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
+  private dialog = inject(MatDialog);
 
   /** Tracks a station directly clicked on the map/table so district sync does not overwrite it */
   private manualStationSelection: IStationMeta | undefined = undefined;
@@ -106,6 +107,9 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   /** Map readiness flag bound from picsa-map */
   public readonly mapReady = signal(false);
+
+  /** GPS location in progress */
+  public readonly isLocating = signal(false);
 
   /** Deepest selected location entry (district) */
   public readonly selectedDistrict = computed(() => {
@@ -134,9 +138,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
 
   public readonly isCalculatingProximity = signal(false);
-
-  /** Whether the full stations data table is expanded */
-  public readonly showAllStations = signal(false);
 
   /** Bounding box combining the selected district feature and the recommended station */
   public readonly districtAndStationBounds = computed(() => {
@@ -191,12 +192,10 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     if (!targetStation) return undefined;
 
     const numberMap = this.stationNumberMap();
-    const rec = this.stationRecommendations().find((r) => r.station.id === targetStation.id);
 
     return {
       station: { ...targetStation, name: formatStationLabel(targetStation.name) },
       isPrimary: targetStation.id === primary?.station.id,
-      distanceKm: rec?.distanceKm,
       mapNumber: numberMap.get(targetStation.id),
     };
   });
@@ -372,6 +371,19 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         }
       }
     });
+
+    // Effect: Automated location attempt when map is ready and no location is set
+    let hasAttemptedInitialLocate = false;
+    effect(() => {
+      const mapReady = this.mapReady();
+      const location = this.selectedLocation();
+      const selectedStation = this.selectedStation();
+
+      if (mapReady && (!location || location.length === 0) && !selectedStation && !hasAttemptedInitialLocate) {
+        hasAttemptedInitialLocate = true;
+        this.locateUser(true);
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -391,10 +403,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
   public toggleView() {
     this.view.update((v) => (v === 'map' ? 'recommendation' : 'map'));
-  }
-
-  public toggleAllStations() {
-    this.showAllStations.update((v) => !v);
   }
 
   public handleLocationChanged(location: (string | undefined)[]) {
@@ -465,6 +473,91 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     if (stationName) {
       this.selectedStation.set({ name: stationName } as IStationMeta);
     }
+  }
+
+  /**
+   * Request browser geolocation, place location pin, and recommend closest stations
+   */
+  public locateUser(silent = false) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      if (!silent) console.warn('[SiteSelectPage] Geolocation not supported');
+      return;
+    }
+    this.isLocating.set(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.isLocating.set(false);
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        const picsaMap = this.picsaMap();
+        if (picsaMap && this.mapReady()) {
+          picsaMap.setLocationMarker(userLat, userLng);
+        }
+        this.recommendStationsFromCoordinates(userLat, userLng);
+      },
+      (err) => {
+        this.isLocating.set(false);
+        if (!silent) {
+          console.warn('[SiteSelectPage] Geolocation error:', err);
+        }
+      },
+      { timeout: 10000, enableHighAccuracy: false },
+    );
+  }
+
+  /**
+   * Given user coordinates, find closest station and sync location
+   */
+  private recommendStationsFromCoordinates(userLat: number, userLng: number) {
+    const activeStations = this.dataService
+      .stations()
+      .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft);
+    if (activeStations.length === 0) return;
+
+    let closestStation: IStationMeta = activeStations[0];
+    let minDistance = Infinity;
+
+    for (const station of activeStations) {
+      const distance = calculateHaversineDistanceKm(userLat, userLng, station.latitude, station.longitude);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestStation = station;
+      }
+    }
+
+    this.selectedStation.set(closestStation);
+    this.syncDistrictFromStation(closestStation);
+
+    const picsaMap = this.picsaMap();
+    if (picsaMap && this.mapReady()) {
+      const marker = this.mapMarkers().find((m) => m.data?.id === closestStation.id);
+      if (marker) {
+        picsaMap.setActiveMarker(marker, false, true);
+      }
+    }
+  }
+
+  /**
+   * Open dialog showing all stations in a table
+   */
+  public openAllStationsDialog() {
+    const dialogRef = this.dialog.open(AllStationsDialogComponent, {
+      data: {
+        data: this.tableData(),
+        options: this.tableOptions(),
+      },
+      panelClass: 'no-padding',
+      autoFocus: false,
+      width: '95vw',
+      maxWidth: '650px',
+      maxHeight: '85vh',
+    });
+
+    dialogRef.afterClosed().subscribe((station?: IStationMeta) => {
+      if (station) {
+        this.handleRowClick(station);
+      }
+    });
   }
 
   /**

@@ -13,7 +13,7 @@ export class PicsaMissingTranslationHandler implements MissingTranslationHandler
 
   public handle({ key, interpolateParams, translateService }: MissingTranslationHandlerParams): Translation {
     if (!this.debugService.enabled()) {
-      return key;
+      return translateService.parser.interpolate(key, interpolateParams) ?? key;
     }
     const marked = `•${key}•`;
     return translateService.parser.interpolate(marked, interpolateParams) ?? marked;

@@ -63,10 +63,9 @@ describe('StationCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display station name, map number, and distance when displayedStation is provided', () => {
+  it('should display station name and map number without distance', () => {
     fixture.componentRef.setInput('displayedStation', {
       station: mockStation,
-      distanceKm: 3,
       mapNumber: 1,
       isPrimary: true,
     });
@@ -75,13 +74,12 @@ describe('StationCardComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Mt. Makulu Agrome');
     expect(compiled.textContent).toContain('1.');
-    expect(compiled.textContent).toContain('3 km');
+    expect(compiled.textContent).not.toContain('km');
   });
 
-  it('should render nearby stations when nearbyStations input is populated', () => {
+  it('should render stations without distance and include All Stations button', () => {
     fixture.componentRef.setInput('displayedStation', {
       station: mockStation,
-      distanceKm: 3,
       mapNumber: 1,
       isPrimary: true,
     });
@@ -90,14 +88,35 @@ describe('StationCardComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Lusaka City Airport');
-    expect(compiled.textContent).toContain('14 km');
     expect(compiled.textContent).toContain('15.');
+    expect(compiled.textContent).not.toContain('km');
+    expect(compiled.textContent).toContain('All Stations');
+  });
+
+  it('should emit openAllStations when All Stations button is clicked', () => {
+    fixture.componentRef.setInput('displayedStation', {
+      station: mockStation,
+      mapNumber: 1,
+      isPrimary: true,
+    });
+    fixture.componentRef.setInput('nearbyStations', mockNearby);
+    fixture.detectChanges();
+
+    const openAllStationsSpy = jest.fn();
+    component.openAllStations.subscribe(openAllStationsSpy);
+
+    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll('button[matbutton="outlined"]');
+    // Last outlined button is the All Stations button
+    const allStationsBtn = buttons[buttons.length - 1] as HTMLButtonElement;
+    expect(allStationsBtn.textContent).toContain('All Stations');
+    allStationsBtn.click();
+
+    expect(openAllStationsSpy).toHaveBeenCalled();
   });
 
   it('should emit confirm when View button is clicked', () => {
     fixture.componentRef.setInput('displayedStation', {
       station: mockStation,
-      distanceKm: 3,
       mapNumber: 1,
       isPrimary: true,
     });
@@ -110,6 +129,7 @@ describe('StationCardComponent', () => {
       'button[matbutton="filled"]',
     ) as HTMLButtonElement;
     expect(viewButton).toBeTruthy();
+    expect(viewButton.textContent).toContain('Mt. Makulu Agrome');
     viewButton.click();
 
     expect(confirmSpy).toHaveBeenCalledWith(mockStation);
@@ -118,7 +138,6 @@ describe('StationCardComponent', () => {
   it('should emit selectAlternate when an alternate station button is clicked', () => {
     fixture.componentRef.setInput('displayedStation', {
       station: mockStation,
-      distanceKm: 3,
       mapNumber: 1,
       isPrimary: true,
     });
@@ -129,8 +148,7 @@ describe('StationCardComponent', () => {
     component.selectAlternate.subscribe(selectSpy);
 
     const altButtons = (fixture.nativeElement as HTMLElement).querySelectorAll('button[matbutton="outlined"]');
-    expect(altButtons.length).toBe(2);
-    // Click the second alternate button
+    // First two buttons are the alternate station options
     (altButtons[1] as HTMLButtonElement).click();
 
     expect(selectSpy).toHaveBeenCalledWith(mockNearby[1]);

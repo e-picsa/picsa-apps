@@ -20,11 +20,22 @@
     [class.flex]="view() !== 'map'"
   >
     <div class="flex flex-col gap-4">
-      <!-- Section 1: Standard Location Select -->
+      <!-- Section 1: Standard Location Select with Locate Button -->
       <div class="bg-white p-3 md:p-4 rounded-xl border border-gray-200 shadow-sm">
-        <div class="flex items-center gap-2 mb-2">
-          <mat-icon class="text-primary">place</mat-icon>
-          <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-primary">place</mat-icon>
+            <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
+          </div>
+          <button
+            matButton="text"
+            class="!text-xs text-primary flex items-center gap-1 !p-1.5"
+            (click)="locateUser()"
+            [disabled]="isLocating()"
+          >
+            <mat-icon class="!w-4 !h-4 text-[16px]">my_location</mat-icon>
+            <span>{{ strings.locate | translate }}</span>
+          </button>
         </div>
 
         @if (userCountryCode(); as countryCode) {
@@ -36,7 +47,7 @@
         }
       </div>
 
-      <!-- Section 2: Selected Station & Nearby Options (Desktop & Mobile List View) -->
+      <!-- Section 2: Selected Station & Station Options (Desktop & Mobile List View) -->
       @if (isCalculatingProximity() && !displayedStation()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
         <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
@@ -48,27 +59,9 @@
         [nearbyStations]="nearbyStations()"
         (confirm)="confirmAndNavigate($event)"
         (selectAlternate)="selectAlternateStation($event)"
+        (openAllStations)="openAllStationsDialog()"
       ></climate-station-card>
       }
-
-      <!-- Section 3: Optional Browse All Stations Expander -->
-      <div class="all-stations-section mt-4 pt-2">
-        <button matButton="text" class="!text-xs text-gray-600 !p-0" (click)="toggleAllStations()">
-          <mat-icon>{{ showAllStations() ? 'expand_less' : 'expand_more' }}</mat-icon>
-          <span>{{ strings.allStations | translate }}</span>
-        </button>
-
-        @if (showAllStations()) {
-        <div class="mt-2 border rounded-lg bg-white">
-          <picsa-data-table
-            [options]="tableOptions()"
-            [data]="tableData()"
-            class="flex-1"
-            (rowClick)="handleRowClick($event)"
-          ></picsa-data-table>
-        </div>
-        }
-      </div>
     </div>
   </div>
 
@@ -77,20 +70,32 @@
     class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden md:block"
     [class.hidden]="view() === 'recommendation'"
   >
-    <!-- Floating Location Selector (Mobile) -->
+    <!-- Floating Location Selector (Mobile) with Locate Button -->
     <div
-      class="map-floating-location absolute left-3 right-3 top-14 z-20 rounded-xl shadow-md px-3 py-1 md:hidden bg-white"
+      class="map-floating-location absolute left-3 right-3 top-14 z-20 rounded-2xl shadow-lg px-3 py-1.5 md:hidden bg-white flex items-center gap-2"
     >
-      @if (userCountryCode(); as countryCode) {
-      <picsa-form-location-select
-        [countryCode]="countryCode"
-        [value]="selectedLocation()"
-        (valueChanged)="handleLocationChanged($event)"
-      ></picsa-form-location-select>
-      }
+      <div class="flex-1 min-w-0">
+        @if (userCountryCode(); as countryCode) {
+        <picsa-form-location-select
+          [countryCode]="countryCode"
+          [value]="selectedLocation()"
+          (valueChanged)="handleLocationChanged($event)"
+        ></picsa-form-location-select>
+        }
+      </div>
+      <button
+        matIconButton
+        class="text-primary shrink-0"
+        (click)="locateUser()"
+        [disabled]="isLocating()"
+        [attr.aria-label]="strings.locate | translate"
+        [matTooltip]="strings.locate | translate"
+      >
+        <mat-icon>my_location</mat-icon>
+      </button>
     </div>
 
-    <!-- Floating Bottom Station Card with Nearby Options (Mobile Map View) -->
+    <!-- Floating Bottom Station Card with Options & All Stations Trigger (Mobile Map View) -->
     @if (displayedStation(); as displayed) {
     <div class="absolute left-3 right-3 bottom-4 z-20 md:hidden">
       <climate-station-card
@@ -98,6 +103,7 @@
         [nearbyStations]="nearbyStations()"
         (confirm)="confirmAndNavigate($event)"
         (selectAlternate)="selectAlternateStation($event)"
+        (openAllStations)="openAllStationsDialog()"
       ></climate-station-card>
     </div>
     }

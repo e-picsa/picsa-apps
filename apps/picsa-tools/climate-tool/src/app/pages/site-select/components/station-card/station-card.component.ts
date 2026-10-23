@@ -11,7 +11,6 @@ import type { IStationRecommendation } from '../../../../utils/location-proximit
 export interface IStationCardDisplayed {
   station: IStationMeta;
   isPrimary?: boolean;
-  distanceKm?: number;
   mapNumber?: number;
 }
 
@@ -21,8 +20,9 @@ export type IStationCardNearby = IStationRecommendation & {
 
 const strings = {
   climateStation: translateMarker('Climate Station'),
-  view: translateMarker('View'),
-  nearby: translateMarker('Nearby'),
+  stations: translateMarker('Stations'),
+  allStations: translateMarker('All Stations'),
+  viewStation: translateMarker('View {{station}}'),
 };
 
 @Component({
@@ -38,7 +38,7 @@ export class StationCardComponent {
   /** Currently displayed/selected station details */
   public readonly displayedStation = input<IStationCardDisplayed | undefined>(undefined);
 
-  /** Nearby / alternate stations */
+  /** Recommended / alternate stations */
   public readonly nearbyStations = input<IStationCardNearby[]>([]);
 
   /** Confirm station selection and navigate */
@@ -46,4 +46,7 @@ export class StationCardComponent {
 
   /** Select an alternate station */
   public readonly selectAlternate = output<IStationRecommendation>();
+
+  /** Request opening the all stations modal */
+  public readonly openAllStations = output<void>();
 }
