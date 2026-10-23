@@ -13,12 +13,22 @@
     <button matButton="outlined" (click)="service.exportXlsx()">Download Template</button>
   </div>
 
-  <!-- Progress -->
-  <div style="display: flex; justify-content: center; align-items: center; gap: 8px">
-    <mat-progress-bar mode="determinate" [value]="translationProgress()" style="flex: 1"></mat-progress-bar>
-    <div>{{countTranslated}} / {{countTotal}}</div>
-    <mat-checkbox [(ngModel)]="includeTranslated">Show All</mat-checkbox>
-  </div>
+  <!-- Headline filter chips -->
+  <!-- Default to 'all' as single-select listbox allows deselecting the active chip (emits undefined) -->
+  <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
+    <mat-chip-option value="all" [selected]="tableFilter() === 'all'">
+      <mat-icon matChipAvatar>list</mat-icon>
+      Total: {{ countTotal }}
+    </mat-chip-option>
+    <mat-chip-option value="translated" [selected]="tableFilter() === 'translated'" class="chip-translated">
+      <mat-icon matChipAvatar>check_circle</mat-icon>
+      Translated: {{ countTranslated }}
+    </mat-chip-option>
+    <mat-chip-option value="pending" [selected]="tableFilter() === 'pending'" class="chip-pending">
+      <mat-icon matChipAvatar>translate</mat-icon>
+      Needs Translation: {{ countPending }}
+    </mat-chip-option>
+  </mat-chip-listbox>
 
   <!-- Table -->
   @if(tableOptions() && countTotal>0){

@@ -66,6 +66,16 @@ export interface IFarmerVideoStats {
 }
 
 /**
+ * Supplementary videos that sit within a PICSA step rather than being a step of
+ * their own, alongside the English handling they require.
+ * e.g. the El Niño explainer is shown in Step 7 and is only applicable to
+ * countries that have at least one matching variant.
+ */
+const SUPPLEMENTARY_STEP_VIDEOS: Record<string, Pick<IFarmerVideoConfig, 'stepNumber' | 'useLocalizedEn'>> = {
+  el_nino: { stepNumber: 7, useLocalizedEn: true },
+};
+
+/**
  * Derives the complete list of all direct-to-farmer videos.
  * Includes intro, the 8 PICSA steps, and farmer testimonials.
  */
@@ -83,10 +93,11 @@ export function getDirectToFarmerVideos(): IFarmerVideoConfig[] {
     });
   }
 
-  // 2. PICSA Steps 1-8
+  // 2. PICSA Steps 1-8 (plus supplementary videos belonging to a step)
   for (let i = 0; i < PICSA_FARMER_VIDEOS_DATA.length; i++) {
     const step = PICSA_FARMER_VIDEOS_DATA[i];
-    const stepNumber = i + 1;
+    const supplementary = SUPPLEMENTARY_STEP_VIDEOS[step.id];
+    const stepNumber = supplementary?.stepNumber ?? i + 1;
     const config: IFarmerVideoConfig = {
       id: step.id,
       title: step.title || step.id,
@@ -95,7 +106,8 @@ export function getDirectToFarmerVideos(): IFarmerVideoConfig[] {
       children: step.children,
     };
     // Steps 7 and 8 expect localized English
-    if (stepNumber === 7 || stepNumber === 8) {
+    const useLocalizedEn = supplementary?.useLocalizedEn ?? (stepNumber === 7 || stepNumber === 8);
+    if (useLocalizedEn) {
       config.useLocalizedEn = true;
     }
     list.push(config);
@@ -135,15 +147,30 @@ export function getVideosForCountry(
     return videos;
   }
   return videos.filter((video) => {
-    // Intro and Steps are relevant to all deployments
-    if (video.category === 'intro' || video.category === 'step') {
+    // Intro is relevant to all deployments
+    if (video.category === 'intro') {
       return true;
+    }
+    // Core steps are relevant to all deployments. Supplementary videos only
+    // apply to countries that have at least one matching variant, so adding a
+    // variant for a new country makes the video applicable there automatically.
+    if (video.category === 'step') {
+      if (!SUPPLEMENTARY_STEP_VIDEOS[video.id]) return true;
+      return hasVariantForCountry(video, countryCode);
     }
     // Testimonials are specific to country
     if (video.category === 'testimonial') {
       return video.countryCode === countryCode;
     }
     return true;
+  });
+}
+
+/** Whether a video has at least one child variant for the given country */
+function hasVariantForCountry(video: IFarmerVideoConfig, countryCode: string): boolean {
+  return video.children.some((child) => {
+    const [locale] = child.locale_codes;
+    return LOCALES_DATA_HASHMAP[locale]?.country_code === countryCode;
   });
 }
 

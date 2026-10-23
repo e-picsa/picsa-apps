@@ -1,190 +1,319 @@
-<div class="page-content">
-  <h2>Climate Data Admin</h2>
+<div class="p-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900 m-0">Climate Administration</h1>
+      <p class="text-sm text-slate-500 m-0 mt-1">
+        Manage climate stations, review data quality control, monitor app sync status, and resolve discrepancies.
+      </p>
+    </div>
+  </div>
 
-  <mat-tab-group animationDuration="0ms" class="mt-4">
-    <!-- TAB 1: DATA SYSTEM -->
+  <mat-tab-group animationDuration="0ms" class="climate-admin-tabs">
+    <!-- TAB 1: DATA SYSTEM (DB) -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">cloud</mat-icon>
+        <mat-icon class="mr-2">cloud</mat-icon>
         <span>Data System</span>
       </ng-template>
 
       <div class="py-4">
-        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
-          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
-            Inspect data system station records, data completeness, and trigger API refresh updates.
-          </p>
-          <div class="flex items-center gap-3">
-            <button matButton="outlined" color="primary" (click)="downloadAllStationsCSV()">
-              <mat-icon>download</mat-icon>Download All
-            </button>
+        @if (isDbLoading()) {
+          <div class="flex flex-col items-center justify-center p-12 text-slate-500">
+            <mat-spinner diameter="36" class="mb-3"></mat-spinner>
+            <span class="text-sm font-medium">Loading station data and evaluating quality control...</span>
+          </div>
+        } @else {
+          <!-- KPI Summary / Filter Chips -->
+          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium mb-4 select-none py-1">
             <button
-              matButton="outlined"
-              color="primary"
-              (click)="refreshAllStations()"
-              [disabled]="refreshCount() > -1"
+              type="button"
+              (click)="setDbQcFilter('all')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                dbQcFilter() === 'all'
+                  ? 'bg-slate-200 text-slate-900 font-bold scale-[1.04]'
+                  : 'bg-[#f8fafc] text-[#334155] hover:bg-slate-100'
+              "
             >
-              <mat-icon>refresh</mat-icon>
-              <span>
-                @if (refreshCount() > -1) {
-                  {{ refreshCount() }} / {{ dbTableData().length }}
-                } @else {
-                  Refresh All
-                }
-              </span>
+              <span class="opacity-85">Total Stations:</span>
+              <span class="font-bold">{{ dbStats().total }}</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="setDbQcFilter('passed')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                dbQcFilter() === 'passed'
+                  ? 'bg-emerald-200/80 text-emerald-950 font-bold scale-[1.04]'
+                  : 'bg-[#f0fdf4] text-[#166534] hover:bg-emerald-100/60'
+              "
+            >
+              <span class="opacity-85">QC Passed:</span>
+              <span class="font-bold">{{ dbStats().passed }}</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="setDbQcFilter('failed')"
+              class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+              [class]="
+                dbQcFilter() === 'failed'
+                  ? 'bg-rose-200/80 text-rose-950 font-bold scale-[1.04]'
+                  : 'bg-[#fff1f2] text-[#9f1239] hover:bg-rose-100/60'
+              "
+            >
+              <span class="opacity-85">QC Failed:</span>
+              <span class="font-bold">{{ dbStats().failed }}</span>
             </button>
           </div>
-        </div>
 
-        <picsa-data-table
-          [data]="dbTableData()"
-          [options]="dbTableOptions"
-          [valueTemplates]="{
-            updated_at: updatedAtTemplate,
-            products: productsTemplate,
-            rainfall_issues: rainfallIssuesTemplate,
-            rainfall_export_data: downloadDbTemplate,
-          }"
-        >
-          <ng-template #updatedAtTemplate let-value>
-            {{ value | date: 'mediumDate' }}
-          </ng-template>
-
-          <ng-template #productsTemplate let-products let-row="row">
-            <div class="flex gap-2 items-center">
-              @if (row.updateSignal().started) {
-                @for (statusUpdate of row.updateSignal().statuses; track $index) {
-                  @let status = statusUpdate.status;
-                  <button
-                    matIconButton
-                    [matTooltip]="statusUpdate.id"
-                    class="status-icon"
-                    [attr.data-status]="status"
-                    (click)="handleSummaryClick($event, row, statusUpdate)"
-                  >
-                    @switch (status) {
-                      @case ('pending') {
-                        <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
-                      }
-                      @case ('fulfilled') {
-                        <mat-icon color="primary">check_circle</mat-icon>
-                      }
-                      @case ('rejected') {
-                        <mat-icon color="warn">error</mat-icon>
-                      }
-                    }
-                  </button>
-                }
-              } @else {
-                @for (product of products; track $index) {
-                  <button
-                    matIconButton
-                    [matTooltip]="getProductTooltip(product)"
-                    class="status-icon"
-                    (click)="refreshStation(row, $event)"
-                  >
-                    @if (product.available) {
-                      <mat-icon color="primary">check</mat-icon>
-                    } @else {
-                      <mat-icon color="warn">error</mat-icon>
-                    }
-                  </button>
-                }
-              }
+          <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+            <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
+              Climate data summaries stored in Supabase (<code>climate_station_data</code>).
+            </p>
+            <div class="flex items-center gap-3">
+              <button
+                matButton="outlined"
+                color="primary"
+                (click)="refreshAllStations()"
+                [disabled]="refreshCount() > -1"
+              >
+                <mat-icon>refresh</mat-icon>
+                <span>
+                  @if (refreshCount() > -1) {
+                    {{ refreshCount() }} / {{ allDbTableData().length }}
+                  } @else {
+                    Refresh All
+                  }
+                </span>
+              </button>
             </div>
-          </ng-template>
+          </div>
 
-          <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
-            @if (issues) {
-              <div [matTooltip]="row.rainfall_issues_details.join(',\n')" class="text-warn flex items-center">
-                <mat-icon>announcement</mat-icon>
+          <picsa-data-table
+            [data]="dbTableData()"
+            [options]="dbTableOptions"
+            [valueTemplates]="{
+              name: nameTemplate,
+              qc_score: qcStatusTemplate,
+              qc_passed: qcStatusTemplate,
+              rainfall_year_range: yearRangeTemplate,
+              rainfall_total_years: totalYearsTemplate,
+              rainfall_last_thirty_years: lastThirtyYearsTemplate,
+              rainfall_last_ten_years: lastTenYearsTemplate,
+              qc_warnings: qcWarningsTemplate,
+              products: productsTemplate,
+              monthly_data: monthlyDataTemplate,
+              generation_timestamp: generationTimestampTemplate,
+            }"
+          >
+            <ng-template #nameTemplate let-name>
+              <span class="font-medium text-slate-900">{{ name }}</span>
+            </ng-template>
+
+            <ng-template #qcStatusTemplate let-score let-row="row">
+              @if (row.qc_score !== undefined ? row.qc_score < 0 : !row.qc_passed) {
+                <mat-icon [class]="getQcScoreColorClass(row) + ' cursor-help'" [matTooltip]="getQcStatusTooltip(row)">
+                  cancel
+                </mat-icon>
+              } @else {
+                <mat-icon [class]="getQcScoreColorClass(row) + ' cursor-help'" [matTooltip]="getQcStatusTooltip(row)">
+                  check_circle
+                </mat-icon>
+              }
+            </ng-template>
+
+            <ng-template #yearRangeTemplate let-val>
+              <span class="text-xs text-slate-700 whitespace-nowrap">{{ val || '—' }}</span>
+            </ng-template>
+
+            <ng-template #totalYearsTemplate let-val>
+              @if (val !== undefined && val !== null) {
+                <span [class]="val >= 30 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
+                  {{ val }}
+                </span>
+              } @else {
+                <span class="text-slate-400">—</span>
+              }
+            </ng-template>
+
+            <ng-template #lastThirtyYearsTemplate let-val>
+              @if (val !== undefined && val !== null) {
+                <span [class]="val >= 10 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
+                  {{ val }}
+                </span>
+              } @else {
+                <span class="text-slate-400">—</span>
+              }
+            </ng-template>
+
+            <ng-template #lastTenYearsTemplate let-val>
+              @if (val !== undefined && val !== null) {
+                <span [class]="val >= 1 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
+                  {{ val }}
+                </span>
+              } @else {
+                <span class="text-slate-400">—</span>
+              }
+            </ng-template>
+
+            <ng-template #qcWarningsTemplate let-row="row">
+              @let warnings = getWarningLines(row);
+              @if (warnings.length > 0) {
+                <div class="flex flex-col gap-1 text-xs text-amber-800 leading-snug">
+                  @for (w of warnings; track w) {
+                    <div>{{ w }}</div>
+                  }
+                </div>
+              } @else {
+                <span class="text-slate-400">—</span>
+              }
+            </ng-template>
+
+            <ng-template #generationTimestampTemplate let-value let-row="row">
+              @if (row.generation_timestamp) {
+                <span [matTooltip]="getGenerationTooltip(row.generation_timestamp, row.generation_id, row.updated_at)">
+                  {{ row.generation_timestamp | date: 'mediumDate' }}
+                </span>
+              } @else {
+                <span class="text-muted text-xs">—</span>
+              }
+            </ng-template>
+
+            <ng-template #productsTemplate let-products let-row="row">
+              @if (row.updateSignal().started) {
+                <mat-icon class="!text-[16px] !w-4 !h-4 leading-none text-slate-400 animate-spin">
+                  hourglass_top
+                </mat-icon>
+              } @else {
+                <div class="flex items-center gap-2">
+                  @for (product of row.products; track product.id) {
+                    <span class="cursor-help" [matTooltip]="getProductTooltip(product)">
+                      <mat-icon
+                        class="!text-[16px] !w-4 !h-4 leading-none"
+                        [class]="product.available ? 'text-emerald-500' : 'text-rose-500'"
+                      >
+                        {{ product.available ? 'check' : 'close' }}
+                      </mat-icon>
+                    </span>
+                  }
+                </div>
+              }
+            </ng-template>
+
+            <ng-template #monthlyDataTemplate let-monthly let-row="row">
+              <div class="flex items-center gap-2">
+                <span
+                  class="cursor-help"
+                  [matTooltip]="'Monthly Rainfall: ' + (row.monthly_data?.has_rain ? 'Available' : 'Missing')"
+                >
+                  <mat-icon
+                    class="!text-[16px] !w-4 !h-4 leading-none"
+                    [class]="row.monthly_data?.has_rain ? 'text-emerald-500' : 'text-rose-500'"
+                  >
+                    {{ row.monthly_data?.has_rain ? 'check' : 'close' }}
+                  </mat-icon>
+                </span>
+                <span
+                  class="cursor-help"
+                  [matTooltip]="'Monthly Temperature: ' + (row.monthly_data?.has_temp ? 'Available' : 'Missing')"
+                >
+                  <mat-icon
+                    class="!text-[16px] !w-4 !h-4 leading-none"
+                    [class]="row.monthly_data?.has_temp ? 'text-emerald-500' : 'text-rose-500'"
+                  >
+                    {{ row.monthly_data?.has_temp ? 'check' : 'close' }}
+                  </mat-icon>
+                </span>
               </div>
-            }
-          </ng-template>
-
-          <ng-template #downloadDbTemplate let-row="row">
-            <button
-              matIconButton
-              (click)="downloadStationCSV(row, $event)"
-              [disabled]="!row.rainfall_export_data"
-              matTooltip="Download Data System CSV"
-            >
-              <mat-icon>download</mat-icon>
-            </button>
-          </ng-template>
-        </picsa-data-table>
+            </ng-template>
+          </picsa-data-table>
+        }
       </div>
     </mat-tab>
 
     <!-- TAB 2: APP DATA -->
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">smartphone</mat-icon>
+        <mat-icon class="mr-2">smartphone</mat-icon>
         <span>App Data</span>
       </ng-template>
 
       <div class="py-4">
-        <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
-          <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
-            Station summary CSV files bundled directly into the application assets
-            (<code>assets/summaries/&lt;country&gt;/&lt;station_id&gt;.csv</code>).
-          </p>
-          <div class="flex items-center gap-3">
-            <button matButton="outlined" color="primary" (click)="downloadAllAppStationsCSV()">
-              <mat-icon>download</mat-icon>Download All App CSVs
-            </button>
+        @if (isAppLoading()) {
+          <div class="flex flex-col items-center justify-center p-12 text-slate-500">
+            <mat-spinner diameter="36" class="mb-3"></mat-spinner>
+            <span class="text-sm font-medium">Loading bundled app summaries...</span>
           </div>
-        </div>
-
-        <picsa-data-table
-          [data]="appTableData()"
-          [options]="appTableOptions"
-          [valueTemplates]="{
-            has_bundled_data: bundledStatusTemplate,
-            products: appProductsTemplate,
-            actions: appActionTemplate,
-          }"
-        >
-          <ng-template #bundledStatusTemplate let-hasBundled>
-            @if (hasBundled) {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base">check_circle</mat-icon>Bundled
-              </span>
-            } @else {
-              <span
-                class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#ffebee] text-[#c62828]"
-              >
-                <mat-icon class="!w-4 !h-4 !text-base">cancel</mat-icon>Missing
-              </span>
-            }
-          </ng-template>
-
-          <ng-template #appProductsTemplate let-products>
-            <div class="flex flex-wrap gap-1.5">
-              @for (product of products; track product) {
-                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[0.72rem] font-medium">{{
-                  product
-                }}</span>
-              }
-              @if (products.length === 0) {
-                <span class="text-muted">-</span>
-              }
+        } @else {
+          <div class="flex items-center justify-between gap-6 mb-4 flex-wrap">
+            <p class="m-0 text-sm flex-1 min-w-[250px] text-gray-600">
+              Station summary CSV files bundled directly into the application assets
+              (<code>assets/summaries/&lt;country&gt;/&lt;station_id&gt;.csv</code>).
+            </p>
+            <div class="flex items-center gap-3">
+              <button matButton="outlined" color="primary" (click)="downloadAllAppStationsCSV()">
+                <mat-icon>download</mat-icon>Download All App CSVs
+              </button>
             </div>
-          </ng-template>
+          </div>
 
-          <ng-template #appActionTemplate let-row="row">
-            <button
-              matIconButton
-              (click)="downloadAppStationCSV(row, $event)"
-              [disabled]="!row.has_bundled_data"
-              matTooltip="Download App CSV"
-            >
-              <mat-icon>download</mat-icon>
-            </button>
-          </ng-template>
-        </picsa-data-table>
+          <picsa-data-table
+            [data]="appTableData()"
+            [options]="appTableOptions"
+            [valueTemplates]="{
+              name: appNameTemplate,
+              has_bundled_data: bundledStatusTemplate,
+              products: appProductsTemplate,
+              actions: appActionTemplate,
+            }"
+          >
+            <ng-template #appNameTemplate let-name>
+              <span class="font-medium text-slate-900">{{ name }}</span>
+            </ng-template>
+
+            <ng-template #bundledStatusTemplate let-hasBundled>
+              @if (hasBundled) {
+                <span
+                  class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+                >
+                  <mat-icon class="!text-[16px] !w-4 !h-4 leading-none">check_circle</mat-icon>Bundled
+                </span>
+              } @else {
+                <span
+                  class="inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-xs font-medium bg-[#ffebee] text-[#c62828]"
+                >
+                  <mat-icon class="!text-[16px] !w-4 !h-4 leading-none">cancel</mat-icon>Missing
+                </span>
+              }
+            </ng-template>
+
+            <ng-template #appProductsTemplate let-products>
+              <div class="flex flex-wrap gap-1.5">
+                @for (product of products; track product) {
+                  <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[0.72rem] font-medium">{{
+                    product
+                  }}</span>
+                }
+                @if (products.length === 0) {
+                  <span class="text-muted">-</span>
+                }
+              </div>
+            </ng-template>
+
+            <ng-template #appActionTemplate let-row="row">
+              <button
+                matIconButton
+                (click)="downloadStationCSV(row, $event)"
+                [disabled]="!row.has_bundled_data"
+                matTooltip="Download App CSV"
+              >
+                <mat-icon>download</mat-icon>
+              </button>
+            </ng-template>
+          </picsa-data-table>
+        }
       </div>
     </mat-tab>
 
@@ -202,196 +331,234 @@
       </ng-template>
 
       <div class="py-4">
-        <div class="flex flex-col gap-3 mb-4">
-          <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium">
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f8fafc] text-[#334155] border-[#e2e8f0]"
-            >
-              <span class="opacity-85">Total Stations:</span>
-              <span class="font-bold">{{ diffStats().total }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#f0fdf4] text-[#166534] border-[#bbf7d0]"
-            >
-              <span class="opacity-85">In Sync:</span>
-              <span class="font-bold">{{ diffStats().inSync }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]"
-            >
-              <span class="opacity-85">Divergent:</span>
-              <span class="font-bold">{{ diffStats().diff }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
-            >
-              <span class="opacity-85">Data System Only:</span>
-              <span class="font-bold">{{ diffStats().dbOnly }}</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-[#faf5ff] text-[#6b21a8] border-[#e9d5ff]"
-            >
-              <span class="opacity-85">App Only:</span>
-              <span class="font-bold">{{ diffStats().appOnly }}</span>
-            </div>
+        @if (isDiffLoading()) {
+          <div class="flex flex-col items-center justify-center p-12 text-slate-500">
+            <mat-spinner diameter="36" class="mb-3"></mat-spinner>
+            <span class="text-sm font-medium">Comparing data system records with app assets...</span>
           </div>
-
-          <div class="flex items-center py-1">
-            <mat-checkbox [checked]="showOnlyDiffs()" (change)="showOnlyDiffs.set($event.checked)">
-              Show only stations with differences ({{ diffStats().diff }})
-            </mat-checkbox>
-          </div>
-        </div>
-
-        <picsa-data-table
-          [data]="diffTableData()"
-          [options]="diffTableOptions"
-          [valueTemplates]="{
-            diff_status: diffStatusTemplate,
-            updated_at: diffUpdatedAtTemplate,
-            season_diff_percent: seasonPercentTemplate,
-            season_diff: seasonBreakdownTemplate,
-            temp_diff_percent: tempPercentTemplate,
-            temp_diff: tempBreakdownTemplate,
-            actions: diffActionTemplate,
-          }"
-        >
-          <!-- Data System Generated / Updated Column -->
-          <ng-template #diffUpdatedAtTemplate let-value let-row="row">
-            @if (row.generation_timestamp) {
-              <span [matTooltip]="row.generation_id ? 'Generation ID: ' + row.generation_id : ''">
-                {{ row.generation_timestamp | date: 'mediumDate' }}
-              </span>
-            } @else if (value) {
-              <span>{{ value | date: 'mediumDate' }}</span>
-            } @else {
-              <span class="text-muted text-xs">—</span>
-            }
-          </ng-template>
-
-          <!-- Status Badge -->
-          <ng-template #diffStatusTemplate let-status let-row="row">
-            <button
-              type="button"
-              class="diff-badge-btn"
-              [attr.data-status]="status"
-              [matTooltip]="getDiffTooltip(row.diff)"
-              (click)="openStationDiffDialog(row.station, $event)"
-            >
-              @switch (status) {
-                @case ('in_sync') {
-                  <mat-icon class="diff-icon text-[#2e7d32]">check_circle</mat-icon>
-                  <span>In Sync</span>
-                }
-                @case ('diff') {
-                  <mat-icon class="diff-icon text-[#e65100]">difference</mat-icon>
-                  <span>Diff</span>
-                }
-                @case ('db_only') {
-                  <mat-icon class="diff-icon">cloud</mat-icon>
-                  <span>Data System only</span>
-                }
-                @case ('app_only') {
-                  <mat-icon class="diff-icon">smartphone</mat-icon>
-                  <span>App only</span>
-                }
-                @default {
-                  <span class="text-muted">No data</span>
-                }
-              }
-            </button>
-          </ng-template>
-
-          <!-- Season Change % Column -->
-          <ng-template #seasonPercentTemplate let-row="row">
-            <ng-container
-              [ngTemplateOutlet]="groupPercentTemplate"
-              [ngTemplateOutletContext]="{ summary: row.season_summary }"
-            ></ng-container>
-          </ng-template>
-
-          <!-- Season Change Breakdown Column -->
-          <ng-template #seasonBreakdownTemplate let-row="row">
-            <ng-container
-              [ngTemplateOutlet]="groupBreakdownTemplate"
-              [ngTemplateOutletContext]="{ summary: row.season_summary }"
-            ></ng-container>
-          </ng-template>
-
-          <!-- Temp Change % Column -->
-          <ng-template #tempPercentTemplate let-row="row">
-            <ng-container
-              [ngTemplateOutlet]="groupPercentTemplate"
-              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
-            ></ng-container>
-          </ng-template>
-
-          <!-- Temp Change Breakdown Column -->
-          <ng-template #tempBreakdownTemplate let-row="row">
-            <ng-container
-              [ngTemplateOutlet]="groupBreakdownTemplate"
-              [ngTemplateOutletContext]="{ summary: row.temp_summary }"
-            ></ng-container>
-          </ng-template>
-
-          <!-- Shared Group Percent Template -->
-          <ng-template #groupPercentTemplate let-summary="summary">
-            @if (!summary.hasData || summary.isAppOnly || summary.isDbOnly) {
-              <span class="text-muted text-xs">—</span>
-            } @else if (summary.isInSync) {
-              <span
-                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
-              >
-                <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
-              </span>
-            } @else if (summary.headlinePercentFormatted) {
-              <span
-                class="inline-flex items-center justify-center font-semibold text-xs px-2 py-0.5 rounded-md min-w-[2.75rem] bg-gray-100 text-gray-800 border border-gray-200"
-                [matTooltip]="
-                  summary.diffValuesCount +
-                  ' of ' +
-                  summary.totalValuesCount +
-                  ' values differ (' +
-                  summary.headlinePercentFormatted +
-                  ')'
+        } @else {
+          <div class="flex flex-col gap-3 mb-4">
+            <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium select-none py-1">
+              <button
+                type="button"
+                (click)="setDiffFilter('all')"
+                class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+                [class]="
+                  diffFilter() === 'all' && !showOnlyDiffs()
+                    ? 'bg-slate-200 text-slate-900 font-bold scale-[1.04]'
+                    : 'bg-[#f8fafc] text-[#334155] hover:bg-slate-100'
                 "
               >
-                {{ summary.headlinePercentFormatted }}
-              </span>
-            } @else {
-              <span class="text-muted text-xs">—</span>
-            }
-          </ng-template>
+                <span class="opacity-85">Total Stations:</span>
+                <span class="font-bold">{{ diffStats().total }}</span>
+              </button>
 
-          <!-- Shared Group Breakdown Template -->
-          <ng-template #groupBreakdownTemplate let-summary="summary">
-            @if (!summary.hasData || summary.isAppOnly || summary.isInSync || summary.productLines.length === 0) {
-              <span class="text-muted text-xs">—</span>
-            } @else {
-              <div class="flex flex-col text-xs text-gray-700 leading-snug whitespace-nowrap py-1">
-                @for (line of summary.productLines; track line.label) {
-                  <div>
-                    <span class="font-medium text-gray-800">{{ line.label }}</span>
-                    <span class="text-gray-500 ml-1">({{ line.summary }})</span>
-                  </div>
+              <button
+                type="button"
+                (click)="setDiffFilter('in_sync')"
+                class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+                [class]="
+                  diffFilter() === 'in_sync'
+                    ? 'bg-emerald-200/80 text-emerald-950 font-bold scale-[1.04]'
+                    : 'bg-[#f0fdf4] text-[#166534] hover:bg-emerald-100/60'
+                "
+              >
+                <span class="opacity-85">In Sync:</span>
+                <span class="font-bold">{{ diffStats().inSync }}</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="setDiffFilter('diff')"
+                class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+                [class]="
+                  diffFilter() === 'diff' || showOnlyDiffs()
+                    ? 'bg-orange-200/80 text-orange-950 font-bold scale-[1.04]'
+                    : 'bg-[#fff7ed] text-[#c2410c] hover:bg-orange-100/60'
+                "
+              >
+                <span class="opacity-85">Divergent:</span>
+                <span class="font-bold">{{ diffStats().diff }}</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="setDiffFilter('db_only')"
+                class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+                [class]="
+                  diffFilter() === 'db_only'
+                    ? 'bg-blue-200/80 text-blue-950 font-bold scale-[1.04]'
+                    : 'bg-[#eff6ff] text-[#1e40af] hover:bg-blue-100/60'
+                "
+              >
+                <span class="opacity-85">Data System Only:</span>
+                <span class="font-bold">{{ diffStats().dbOnly }}</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="setDiffFilter('app_only')"
+                class="border-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-xs transition-all duration-150"
+                [class]="
+                  diffFilter() === 'app_only'
+                    ? 'bg-purple-200/80 text-purple-950 font-bold scale-[1.04]'
+                    : 'bg-[#faf5ff] text-[#6b21a8] hover:bg-purple-100/60'
+                "
+              >
+                <span class="opacity-85">App Only:</span>
+                <span class="font-bold">{{ diffStats().appOnly }}</span>
+              </button>
+            </div>
+          </div>
+
+          <picsa-data-table
+            [data]="diffTableData()"
+            [options]="diffTableOptions"
+            [valueTemplates]="{
+              diff_status: diffStatusTemplate,
+              updated_at: diffUpdatedAtTemplate,
+              season_diff_percent: seasonPercentTemplate,
+              season_diff: seasonBreakdownTemplate,
+              temp_diff_percent: tempPercentTemplate,
+              temp_diff: tempBreakdownTemplate,
+              actions: diffActionTemplate,
+            }"
+          >
+            <!-- Data System Generated / Updated Column -->
+            <ng-template #diffUpdatedAtTemplate let-value let-row="row">
+              @if (row.generation_timestamp) {
+                <span [matTooltip]="getGenerationTooltip(row.generation_timestamp, row.generation_id, row.updated_at)">
+                  {{ row.generation_timestamp | date: 'mediumDate' }}
+                </span>
+              } @else {
+                <span class="text-muted text-xs">—</span>
+              }
+            </ng-template>
+
+            <!-- Status Badge -->
+            <ng-template #diffStatusTemplate let-status let-row="row">
+              <button
+                type="button"
+                class="diff-badge-btn"
+                [attr.data-status]="status"
+                [matTooltip]="getDiffTooltip(row.diff)"
+                (click)="openStationDiffDialog(row.station, $event)"
+              >
+                @switch (status) {
+                  @case ('in_sync') {
+                    <mat-icon class="diff-icon text-[#2e7d32]">check_circle</mat-icon>
+                    <span>In Sync</span>
+                  }
+                  @case ('diff') {
+                    <mat-icon class="diff-icon text-[#e65100]">difference</mat-icon>
+                    <span>Diff</span>
+                  }
+                  @case ('db_only') {
+                    <mat-icon class="diff-icon">cloud</mat-icon>
+                    <span>Data System only</span>
+                  }
+                  @case ('app_only') {
+                    <mat-icon class="diff-icon">smartphone</mat-icon>
+                    <span>App only</span>
+                  }
+                  @default {
+                    <span class="text-muted">No data</span>
+                  }
                 }
-              </div>
-            }
-          </ng-template>
+              </button>
+            </ng-template>
 
-          <!-- Compare Action Button -->
-          <ng-template #diffActionTemplate let-row="row">
-            <button
-              matButton="outlined"
-              color="primary"
-              class="!text-xs [&_mat-icon]:!w-[1.1rem] [&_mat-icon]:!h-[1.1rem] [&_mat-icon]:!text-[1.1rem] [&_mat-icon]:mr-1"
-              (click)="openStationDiffDialog(row.station, $event)"
-              matTooltip="Inspect product differences and preview overlaid charts"
-            >
-              <mat-icon>show_chart</mat-icon>Preview
-            </button>
-          </ng-template>
-        </picsa-data-table>
+            <!-- Season Change % Column -->
+            <ng-template #seasonPercentTemplate let-row="row">
+              <ng-container
+                [ngTemplateOutlet]="groupPercentTemplate"
+                [ngTemplateOutletContext]="{ summary: row.season_summary }"
+              ></ng-container>
+            </ng-template>
+
+            <!-- Season Change Breakdown Column -->
+            <ng-template #seasonBreakdownTemplate let-row="row">
+              <ng-container
+                [ngTemplateOutlet]="groupBreakdownTemplate"
+                [ngTemplateOutletContext]="{ summary: row.season_summary }"
+              ></ng-container>
+            </ng-template>
+
+            <!-- Temp Change % Column -->
+            <ng-template #tempPercentTemplate let-row="row">
+              <ng-container
+                [ngTemplateOutlet]="groupPercentTemplate"
+                [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+              ></ng-container>
+            </ng-template>
+
+            <!-- Temp Change Breakdown Column -->
+            <ng-template #tempBreakdownTemplate let-row="row">
+              <ng-container
+                [ngTemplateOutlet]="groupBreakdownTemplate"
+                [ngTemplateOutletContext]="{ summary: row.temp_summary }"
+              ></ng-container>
+            </ng-template>
+
+            <!-- Shared Group Percent Template -->
+            <ng-template #groupPercentTemplate let-summary="summary">
+              @if (!summary.hasData || summary.isAppOnly || summary.isDbOnly) {
+                <span class="text-muted text-xs">—</span>
+              } @else if (summary.isInSync) {
+                <span
+                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
+                >
+                  <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
+                </span>
+              } @else if (summary.headlinePercentFormatted) {
+                <span
+                  class="inline-flex items-center justify-center font-semibold text-xs px-2 py-0.5 rounded-md min-w-[2.75rem] bg-gray-100 text-gray-800 border border-gray-200"
+                  [matTooltip]="
+                    summary.diffValuesCount +
+                    ' of ' +
+                    summary.totalValuesCount +
+                    ' values differ (' +
+                    summary.headlinePercentFormatted +
+                    ')'
+                  "
+                >
+                  {{ summary.headlinePercentFormatted }}
+                </span>
+              } @else {
+                <span class="text-muted text-xs">—</span>
+              }
+            </ng-template>
+
+            <!-- Shared Group Breakdown Template -->
+            <ng-template #groupBreakdownTemplate let-summary="summary">
+              @if (!summary.hasData || summary.isAppOnly || summary.isInSync || summary.productLines.length === 0) {
+                <span class="text-muted text-xs">—</span>
+              } @else {
+                <div class="flex flex-col text-xs text-gray-700 leading-snug whitespace-nowrap py-1">
+                  @for (line of summary.productLines; track line.label) {
+                    <div>
+                      <span class="font-medium text-gray-800">{{ line.label }}</span>
+                      <span class="text-gray-500 ml-1">({{ line.summary }})</span>
+                    </div>
+                  }
+                </div>
+              }
+            </ng-template>
+
+            <!-- Compare Action Button -->
+            <ng-template #diffActionTemplate let-row="row">
+              <button
+                matButton="outlined"
+                color="primary"
+                class="!text-xs [&_mat-icon]:!w-[1.1rem] [&_mat-icon]:!h-[1.1rem] [&_mat-icon]:!text-[1.1rem] [&_mat-icon]:mr-1"
+                (click)="openStationDiffDialog(row.station, $event)"
+                matTooltip="Inspect product differences and preview overlaid charts"
+              >
+                <mat-icon>show_chart</mat-icon>Preview
+              </button>
+            </ng-template>
+          </picsa-data-table>
+        }
       </div>
     </mat-tab>
   </mat-tab-group>

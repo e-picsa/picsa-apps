@@ -1,16 +1,16 @@
 <div class="page-content">
   <!-- Header Center Slot (Location Button) -->
   <ng-template #headerCenterPortal>
-    <div class="flex items-center justify-center gap-2 text-white max-w-full leading-none">
-      <span class="text-lg sm:text-xl font-semibold text-white"> {{ 'Crop Probability' | translate }} </span>
+    <div class="flex items-center justify-center gap-2 max-w-full leading-none">
+      <span class="hidden sm:inline text-lg sm:text-xl font-semibold"> {{ 'Crop Probability' | translate }} </span>
       <button
         matButton="outlined"
-        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30 [&_.mdc-button__label]:!text-white"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none rounded-md whitespace-nowrap max-w-[200px] sm:max-w-[280px] shrink-0 bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]"
         (click)="locationOverlayOpen.set(true)"
         [attr.aria-label]="'Change location' | translate"
       >
-        <mat-icon class="!text-[20px] !w-5 !h-5 !text-white shrink-0">place</mat-icon>
-        <span class="truncate text-white"> {{ tableStationMeta()?.label || ('Select Location' | translate) }} </span>
+        <mat-icon class="!text-[20px] !w-5 !h-5 shrink-0">place</mat-icon>
+        <span class="truncate"> {{ tableStationMeta()?.label || ('Select Location' | translate) }} </span>
       </button>
     </div>
   </ng-template>
@@ -21,25 +21,25 @@
       <!-- Desktop: text + icon button -->
       <button
         matButton
-        class="!text-white !hidden sm:!inline-flex"
+        class="!hidden sm:!inline-flex"
         (click)="table.sharePicture()"
         [disabled]="table.shareDisabled()"
         [attr.aria-label]="'Share' | translate"
         [attr.title]="table.shareStatus() | translate"
       >
-        <mat-icon class="!text-white">share</mat-icon>
+        <mat-icon>share</mat-icon>
         <span>{{ table.shareStatus() | translate }}</span>
       </button>
       <!-- Mobile: icon-only button -->
       <button
         matIconButton
-        class="!text-white sm:!hidden"
+        class="sm:!hidden"
         (click)="table.sharePicture()"
         [disabled]="table.shareDisabled()"
         [attr.aria-label]="'Share' | translate"
         [attr.title]="table.shareStatus() | translate"
       >
-        <mat-icon class="!text-white">share</mat-icon>
+        <mat-icon>share</mat-icon>
       </button>
     }
   </ng-template>
@@ -66,5 +66,20 @@
     } @else {
       {{ 'Loading...' | translate }}
     }
+  } @else {
+    <!-- Selected location has no probability table (e.g. shared forecasts location without crop data) -->
+    <div class="flex flex-col items-center gap-4 px-6 py-16 text-center">
+      <mat-icon class="!w-12 !h-12 !text-5xl text-slate-300">place</mat-icon>
+      <p class="text-lg text-slate-600 m-0">
+        @if (selectedLocationLabel(); as district) {
+          {{ 'No crop probability data available for {district}.' | translate: { district } }}
+        } @else {
+          {{ 'No crop probability data available for this location.' | translate }}
+        }
+      </p>
+      <button matButton="filled" (click)="locationOverlayOpen.set(true)">
+        {{ 'Select Location' | translate }}
+      </button>
+    </div>
   }
 </div>

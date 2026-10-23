@@ -2,9 +2,10 @@
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 // eslint-disable-next-line no-restricted-imports
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+import { PicsaMissingTranslationHandler } from './missing-translation.handler';
 import { PicsaTranslateService } from './translate.service';
 
 // repeat main app.module loader to allow lazy-loaded modules import of translate
@@ -31,6 +32,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: PicsaMissingTranslationHandler,
+      },
       isolate: false,
     }),
   ],
@@ -45,6 +50,10 @@ export class _PicsaTranslateRootModule {}
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: PicsaMissingTranslationHandler,
       },
       isolate: false,
     }),

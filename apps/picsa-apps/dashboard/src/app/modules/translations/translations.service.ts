@@ -143,9 +143,12 @@ export class TranslationDashboardService extends PicsaAsyncService {
     download(blob, `i18n_assets.zip`);
   }
 
-  /** Export a single language json to include in the app */
+  /**
+   * Export a single language json to include in the app.
+   * Untranslated rows are omitted so ngx-translate falls back to the English key.
+   */
   public exportJson(locale: string) {
-    const data = this.translations();
+    const data = this.translations().filter((row) => !row.archived);
     const translations = new Map<string, string>();
     const sortedData = [...data].sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
 
@@ -153,21 +156,15 @@ export class TranslationDashboardService extends PicsaAsyncService {
       const { text, id } = row;
       const translatedText = row[locale];
 
-      if (translatedText !== null && translatedText !== undefined && translatedText !== '') {
-        translations.set(text, translatedText);
+      if (!translatedText) {
+        continue;
+      }
 
-        const generatedId = this.generateTranslationID(row);
-        if (id && id !== generatedId) {
-          translations.set(id, translatedText);
-        }
-      } else {
-        if (!translations.has(text)) {
-          translations.set(text, `•${text}•`);
-        }
-        const generatedId = this.generateTranslationID(row);
-        if (id && id !== generatedId && !translations.has(id)) {
-          translations.set(id, `•${id}•`);
-        }
+      translations.set(text, translatedText);
+
+      const generatedId = this.generateTranslationID(row);
+      if (id && id !== generatedId) {
+        translations.set(id, translatedText);
       }
     }
     return Object.fromEntries(translations);

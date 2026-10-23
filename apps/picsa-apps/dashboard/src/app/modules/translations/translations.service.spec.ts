@@ -1,5 +1,5 @@
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { LOCALES_DATA } from '@picsa/data';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
@@ -14,38 +14,21 @@ describe('TranslationDashboardService', () => {
 
   beforeEach(() => {
     mockSupabase = {
-      ready: () => Promise.resolve(),
+      ready: jest.fn().mockResolvedValue(true),
       db: {
-        table: (tableName: string) => {
-          return {
-            select: () => {
-              const query: any = {
-                or: (filterStr: string) => {
-                  mockSupabase.lastFilter = filterStr;
-                  return Promise.resolve({ data: mockSupabase.mockData, error: null });
-                },
-                then: (resolve: any) => {
-                  mockSupabase.lastFilter = '';
-                  return Promise.resolve({ data: mockSupabase.mockData, error: null }).then(resolve);
-                },
-              };
-              return query;
-            },
-            insert: (data: any[]) => {
-              mockSupabase.lastInsert = data;
-              return Promise.resolve({ data, error: null });
-            },
-          };
-        },
+        table: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnThis(),
+          or: jest.fn().mockImplementation((filter: string) => {
+            mockSupabase.lastFilter = filter;
+            return Promise.resolve({ data: mockSupabase.mockData || [], error: null });
+          }),
+        }),
       },
-      lastFilter: '',
-      lastInsert: null as any,
-      mockData: [] as any[],
     };
 
     mockDeployment = {
-      activeDeployment: signal<any>(null),
-      activeDeploymentCountry: signal<string>('mw'),
+      activeDeployment: jest.fn(),
+      activeDeploymentCountry: jest.fn().mockReturnValue('mw'),
     };
 
     mockXlsxExportService = {
@@ -64,62 +47,65 @@ describe('TranslationDashboardService', () => {
     service = TestBed.inject(TranslationDashboardService);
   });
 
-  it('should generate translation ID if not present', async () => {
-    const entry = {
-      tool: 'crops',
-      context: 'crop-list',
-      text: 'Maize',
+  it('should generate translation ID if not present', () => {
+    const row = {
+      tool: 'crop-info',
+      context: 'variety',
+      text: 'Early Maturing',
     };
-    const id = service.generateTranslationID(entry);
-    expect(id).toBe('crops-croplist-maize');
+    const id = service.generateTranslationID(row);
+    expect(id).toBe('cropinfo-variety-earlymaturing');
   });
 
-  it('should include country code in generated translation ID if country_code is set', async () => {
-    const entry = {
+  it('should include country code in generated translation ID if country_code is set', () => {
+    const row = {
+      tool: 'crop-info',
+      context: 'variety',
+      text: 'Early Maturing',
       country_code: 'mw',
-      tool: 'crops',
-      context: 'crop-list',
-      text: 'Maize',
     };
-    const id = service.generateTranslationID(entry);
-    expect(id).toBe('mw-crops-croplist-maize');
+    const id = service.generateTranslationID(row);
+    expect(id).toBe('mw-cropinfo-variety-earlymaturing');
   });
 
   it('should preserve custom translation ID if present', async () => {
-    const entry = {
-      id: 'mw:climate.chart.end.definition',
-      country_code: 'mw',
-      tool: 'climate',
-      context: 'chart',
-      text: 'End definition',
+    const rowWithCustomId = {
+      id: 'custom-id-123',
+      tool: 'crop-info',
+      context: 'variety',
+      text: 'Early Maturing',
     };
-    await service.addTranslation(entry);
-    expect(mockSupabase.lastInsert[0].id).toBe('mw:climate.chart.end.definition');
+
+    let insertedData: any;
+    mockSupabase.db.table = jest.fn().mockReturnValue({
+      insert: jest.fn().mockImplementation((data) => {
+        insertedData = data;
+        return Promise.resolve({ data, error: null });
+      }),
+    });
+
+    await service.addTranslation(rowWithCustomId);
+    expect(insertedData[0].id).toBe('custom-id-123');
   });
 
   it('should filter by active deployment country code', async () => {
-    mockDeployment.activeDeployment.set({ country_code: 'mw' });
+    mockDeployment.activeDeployment.mockReturnValue({ country_code: 'mw' });
+    mockSupabase.mockData = [
+      { id: 'global-1', tool: 'climate', text: 'Global text', country_code: null },
+      { id: 'mw:climate.chart.1', tool: 'climate', text: 'Malawi override', country_code: 'mw' },
+    ];
+
     await service.listTranslations();
     expect(mockSupabase.lastFilter).toContain('country_code.eq.mw');
-
-    mockDeployment.activeDeployment.set(null);
-    await service.listTranslations();
-    expect(mockSupabase.lastFilter).toContain('country_code.is.null,country_code.eq.global');
+    expect(mockSupabase.lastFilter).toContain('country_code.is.null');
+    expect(service.translations().length).toBe(2);
   });
 
   it('should export correct JSON structure with standard and custom keys', () => {
     service.translations.set([
-      {
-        id: 'crops-crop-list-maize',
-        country_code: 'mw',
-        tool: 'crops',
-        context: 'crop-list',
-        text: 'Vaccine',
-        mw_ny: 'Katambala',
-      },
+      { id: 'budget-inputs-vaccine', tool: 'budget', context: 'inputs', text: 'Vaccine', mw_ny: 'Katambala' },
       {
         id: 'mw:climate.chart.end.definition',
-        country_code: 'mw',
         tool: 'climate',
         context: 'chart',
         text: 'End definition',
@@ -133,6 +119,27 @@ describe('TranslationDashboardService', () => {
     // Custom ID translation should be present under its text AND its custom ID
     expect(json['End definition']).toBe('Tanthauzo lomaliza');
     expect(json['mw:climate.chart.end.definition']).toBe('Tanthauzo lomaliza');
+  });
+
+  it('should omit untranslated and archived rows from export', () => {
+    service.translations.set([
+      { id: 'budget-inputs-vaccine', tool: 'budget', context: 'inputs', text: 'Vaccine', mw_ny: 'Katambala' },
+      { id: 'budget-inputs-maize', tool: 'budget', context: 'inputs', text: 'Maize', mw_ny: null },
+      {
+        id: 'budget-inputs-archived',
+        tool: 'budget',
+        context: 'inputs',
+        text: 'Archived string',
+        mw_ny: 'Zosungidwa',
+        archived: true,
+      },
+    ] as any[]);
+
+    const json = service.exportJson('mw_ny');
+    expect(json['Vaccine']).toBe('Katambala');
+    expect(json).not.toHaveProperty('Maize');
+    expect(json).not.toHaveProperty('Archived string');
+    expect(Object.values(json).some((value) => value.includes('•'))).toBe(false);
   });
 
   it('should delegate exportXlsx to TranslationsXlsxExportService with active country and non-archived translations', async () => {
@@ -152,6 +159,7 @@ describe('TranslationDashboardService', () => {
         tool: 'crops',
         context: 'crop-list',
         text: 'Old Archived Item',
+        mw_ny: 'Zakale',
         archived: true,
       },
     ] as any[]);
@@ -163,5 +171,7 @@ describe('TranslationDashboardService', () => {
     expect(options.countryCode).toBe('mw');
     expect(options.translations.length).toBe(1);
     expect(options.translations[0].id).toBe('entry-1');
+    const expectedLocales = LOCALES_DATA.filter((v) => v.country_code === 'mw' && !v.language_code.includes('en'));
+    expect(options.locales).toEqual(expectedLocales);
   });
 });

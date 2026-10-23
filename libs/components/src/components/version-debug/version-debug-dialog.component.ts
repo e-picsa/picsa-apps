@@ -6,7 +6,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Capacitor } from '@capacitor/core';
 import { Device, DeviceId, DeviceInfo } from '@capacitor/device';
 import { APP_VERSION } from '@picsa/environments/src/version';
-import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
+import { PicsaTranslateDebugService, PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { AppUpdateService, IAppUpdateDiagnostics } from '@picsa/shared/services/native/app-update';
@@ -24,9 +24,11 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
   private appUpdateService = inject(AppUpdateService);
   private notificationService = inject(PicsaNotificationService);
   private translateService = inject(PicsaTranslateService, { optional: true });
+  private translateDebugService = inject(PicsaTranslateDebugService);
 
   public appVersion = APP_VERSION;
   public isInternalTester = this.appUserService.isInternalTester;
+  public translationDebug = this.translateDebugService.enabled;
   public fcmToken = this.appUserService.fcmToken;
 
   public isUpdateAvailable = this.appUpdateService.isUpdateAvailable;
@@ -89,6 +91,15 @@ export class PicsaVersionDebugDialogComponent implements OnInit {
       ? (this.translateService?.instant('Internal Tester mode enabled') ?? 'Internal Tester mode enabled')
       : (this.translateService?.instant('Internal Tester mode disabled') ?? 'Internal Tester mode disabled');
     this.notificationService.showSuccessNotification(msg);
+  }
+
+  public onToggleTranslationDebug(checked: boolean): void {
+    this.translateDebugService.setEnabled(checked);
+    // Reload current language so already-rendered strings pick up the marker change
+    const ngxTranslate = this.translateService?.ngxTranslate;
+    if (ngxTranslate?.currentLang) {
+      ngxTranslate.reloadLang(ngxTranslate.currentLang).subscribe({ error: () => undefined });
+    }
   }
 
   public async copyDebugJson(): Promise<void> {

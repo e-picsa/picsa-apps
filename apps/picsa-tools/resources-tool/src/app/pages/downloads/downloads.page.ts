@@ -13,6 +13,7 @@ import { RxDocument } from 'rxdb';
 import { switchMap } from 'rxjs';
 
 import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
+import { ResourcesMaterialModule } from '../../material.module';
 import { IResourceFile } from '../../schemas';
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
@@ -37,6 +38,7 @@ const DISPLAY_COLUMNS = [
   styleUrls: ['./downloads.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ResourcesMaterialModule,
     MatIconModule,
     MatMenuModule,
     MatButtonModule,

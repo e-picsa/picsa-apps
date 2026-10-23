@@ -1,4 +1,4 @@
-import { IBoundaryData, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
+import { IBoundaryData, IDeepestLocation, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
 
 import * as topojson from 'topojson-client';
 
@@ -12,10 +12,21 @@ export function getLocationSlots(data: IGeolocationData): GeoLocationSlot[] {
   return ALL_SLOTS.filter((slot) => data[slot] !== undefined);
 }
 
-/** Locations at the deepest defined tier (e.g. districts) */
-export function getDeepestLocations(data: IGeolocationData): { id: string; label: string }[] {
+/** Locations at the deepest defined tier (e.g. districts), with parent tier references resolved */
+export function getDeepestLocations(data: IGeolocationData): IDeepestLocation[] {
   const slots = getLocationSlots(data);
-  return data[slots[slots.length - 1]]?.locations ?? [];
+  const locations: { id: string; label: string; admin_4?: string }[] = data[slots[slots.length - 1]]?.locations ?? [];
+  const parentLabels: Record<string, string> = {};
+  for (const parent of data.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
+  return locations.map((location) => {
+    const parentId = location.admin_4 ?? '';
+    return {
+      id: location.id,
+      label: location.label,
+      parentId,
+      parentLabel: parentId ? (parentLabels[parentId] ?? '') : '',
+    };
+  });
 }
 
 /** OSM-style level number of the deepest tier, for topojson geometry filtering */
@@ -31,6 +42,38 @@ export function findLocationById(data: IGeolocationData, id: string) {
     const slot = slots[i];
     const location = data[slot]?.locations.find((v) => v.id === id);
     if (location) return { location, slot };
+  }
+  return undefined;
+}
+
+/**
+ * Check all required hierarchy segments are selected for the country's tier structure.
+ * Multi-tier countries (e.g. zm: admin_4+admin_5, zw: admin_4+admin_6) require both
+ * segments (stored at indexes 4 and 5), single-tier countries (e.g. mw) only the first.
+ */
+export function isLocationComplete(data: IGeolocationData, location: (string | undefined)[] | undefined): boolean {
+  if (!location) return false;
+  if (getLocationSlots(data).length > 1) {
+    return !!location[4] && !!location[5];
+  }
+  return !!location[4];
+}
+
+/** Display label for a stored location array, resolving the deepest selected tier first */
+export function getLocationLabel(
+  data: IGeolocationData,
+  location: (string | undefined)[] | undefined,
+): string | undefined {
+  const admin4Id = location?.[4];
+  const deepId = location?.[5];
+  const slots = getLocationSlots(data);
+  if (slots.length > 1 && deepId) {
+    const deepSlot = slots[slots.length - 1];
+    const match = data[deepSlot]?.locations.find((l) => l.id === deepId);
+    if (match) return match.label;
+  }
+  if (admin4Id) {
+    return data.admin_4.locations.find((l) => l.id === admin4Id)?.label;
   }
   return undefined;
 }

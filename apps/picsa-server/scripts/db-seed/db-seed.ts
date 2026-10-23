@@ -237,6 +237,12 @@ export class SupabaseSeed {
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
       const seedConfig = SEED_DATA_CONFIGURATION[tableName] || {};
       const parsedRows = parseCSVRows(csvRows, seedConfig);
+      // Tables with header-only seed CSVs (e.g. forecasts after retiring stale
+      // rows) still get emptied above; skip the upsert as PostgREST rejects empty payloads
+      if (parsedRows.length === 0) {
+        results.push({ table: tableName, rows: 0 });
+        continue;
+      }
       const { schema = 'public' } = seedConfig;
       const { error, data, status, statusText } = await this.client
         .schema(schema)

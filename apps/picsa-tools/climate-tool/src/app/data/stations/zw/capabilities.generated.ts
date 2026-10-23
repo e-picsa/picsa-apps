@@ -16,6 +16,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 64,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   buffalo_range_met: {
     schemaVersion: 1,
@@ -27,6 +29,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 43,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   buhera_met: {
     schemaVersion: 1,
@@ -38,6 +42,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 52,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chipinge_met: {
     schemaVersion: 1,
@@ -49,6 +55,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 64,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chisengu_met: {
     schemaVersion: 1,
@@ -60,6 +68,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 34,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   chisumbanje_met: {
     schemaVersion: 1,
@@ -71,6 +81,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 58,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   kezi_met: {
     schemaVersion: 1,
@@ -82,6 +94,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 34,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   makoholi_exp_station_met: {
     schemaVersion: 1,
@@ -93,6 +107,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 47,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   masvingo_airport_met: {
     schemaVersion: 1,
@@ -104,6 +120,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 63,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   matopos_res_stn_met: {
     schemaVersion: 1,
@@ -115,6 +133,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 61,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_end_no_start'],
   },
   mt_darwin: {
     schemaVersion: 1,
@@ -124,6 +144,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     totalYears: 61,
     completeRainYears: 59,
     annual: ['rainfall', 'start', 'end', 'length'],
+    qcFailures: [],
   },
   nyanga_exp_stn_met: {
     schemaVersion: 1,
@@ -135,6 +156,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 59,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   plumtree_met: {
     schemaVersion: 1,
@@ -146,6 +169,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 40,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_end_no_start'],
   },
   rupike_irrigation_scheme_met: {
     schemaVersion: 1,
@@ -157,6 +182,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 20,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: ['insufficient_total_years'],
+    qcWarnings: ['season_end_no_start'],
   },
   rusape_met: {
     schemaVersion: 1,
@@ -168,6 +195,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 52,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   west_nicholson_met: {
     schemaVersion: 1,
@@ -179,6 +208,8 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 48,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
   zaka_met: {
     schemaVersion: 1,
@@ -190,5 +221,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
     completeTempYears: 53,
     annual: ['rainfall', 'start', 'end', 'length', 'temp_min', 'temp_max'],
     monthly: ['temp_min', 'temp_max'],
+    qcFailures: [],
+    qcWarnings: ['season_start_no_end', 'season_end_no_start'],
   },
 };

@@ -49,28 +49,38 @@ export class SupabaseStorageDownloadComponent {
 
   public async start() {
     this.progress.set(0);
+    this.error = undefined;
     this.completed$ = new BehaviorSubject(false);
 
-    await this.service.ready();
-    const [bucketId, ...pathSegments] = this.storage_path().split('/');
-    const url = this.service.storage.getPublicLink(bucketId, pathSegments.join('/'));
-    const controller = new AbortController();
-    return ky(url, {
-      signal: controller.signal,
-      onDownloadProgress: (progress) => {
-        this.progress.set(Math.round(progress.percent * 100));
-      },
-    }).then(
-      async (res) => {
-        this.data = await this.getResData(res);
-        this.completed$.next(true);
-      },
-      (err) => {
-        console.error(err);
-        this.error = err;
-        this.completed$.next(true);
-      },
-    );
+    try {
+      await this.service.ready();
+      const [bucketId, ...pathSegments] = this.storage_path().split('/');
+      const url = this.service.storage.getPublicLink(bucketId, pathSegments.join('/'));
+      const controller = new AbortController();
+      await ky(url, {
+        signal: controller.signal,
+        onDownloadProgress: (progress) => {
+          this.progress.set(Math.round(progress.percent * 100));
+        },
+      }).then(
+        async (res) => {
+          this.data = await this.getResData(res);
+          this.completed$.next(true);
+        },
+        (err) => {
+          console.error(err);
+          this.error = err;
+          this.completed$.next(true);
+        },
+      );
+    } catch (err) {
+      // e.g. storage client unavailable while offline (`getPublicLink` throws) -
+      // resolve through the same error path so callers awaiting `completed()` never hang
+      console.error(err);
+      this.error = err;
+      this.progress.set(undefined);
+      this.completed$.next(true);
+    }
   }
 
   public stop() {

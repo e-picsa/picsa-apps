@@ -1,17 +1,19 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import type { IStationData } from '@picsa/models';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { arrayToHashmap, evaluateStationQualityGates, type IStationQcEvaluation } from '@picsa/utils';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 import { parse as parseCSV } from 'papaparse';
-import { catchError, concat, concatMap, from, map, mergeMap, of } from 'rxjs';
+import { catchError, concat, concatMap, filter, from, map, mergeMap, of, switchMap } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
+import { hackConvertStationDataForDisplay } from './climate.utils';
 import { ApiMapping } from './climate-api.mapping';
 import { IAPICountryCode, IClimateStationData, IStationRow } from './types';
 
@@ -58,6 +60,27 @@ export class ClimateService extends PicsaAsyncService {
   private activeStationId = toSignal(
     ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId))),
   );
+
+  /** All station data records keyed by station_id */
+  public allStationData = toSignal(
+    toObservable(this.stations).pipe(
+      filter((stations) => stations.length > 0),
+      switchMap(() => this.getAllStationData(this.apiCountryCode)),
+      map(({ data }) => arrayToHashmap((data || []) as IClimateStationData['Row'][], 'station_id')),
+    ),
+    { initialValue: {} as Record<string, IClimateStationData['Row']> },
+  );
+
+  /** Quality control evaluation for all stations */
+  public stationQcMap = computed<Record<string, IStationQcEvaluation>>(() => {
+    const dataMap = this.allStationData();
+    const result: Record<string, IStationQcEvaluation> = {};
+    for (const [stationId, row] of Object.entries(dataMap)) {
+      const displayData = hackConvertStationDataForDisplay(row).sort((a, b) => a.Year - b.Year);
+      result[stationId] = evaluateStationQualityGates(displayData);
+    }
+    return result;
+  });
 
   private appDataCache = new Map<string, IStationData[]>();
 
@@ -163,6 +186,10 @@ export class ClimateService extends PicsaAsyncService {
       {
         id: 'Annual Rainfall',
         fn: this.loadFromAPI.rainfallSummaries(station),
+      },
+      {
+        id: 'Monthly Rainfall',
+        fn: this.loadFromAPI.monthlyRainfall(station),
       },
       {
         id: 'Crop Probabilities',

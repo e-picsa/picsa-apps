@@ -1,3 +1,30 @@
+/**
+ * Climate Data Sync
+ *
+ * Pulls upstream Climate API data into Supabase (climate_station_data), then exports
+ * per-station annual/monthly CSV summaries, station capabilities and a markdown audit
+ * report for the climate-tool assets.
+ *
+ * Usage:
+ *   yarn scripts:climate:sync [options]
+ *
+ * Pull options:
+ *   --pull             Pull station data from Supabase (default)
+ *   --no-pull          Skip the pull and recompute capabilities from existing CSVs
+ *
+ * Other options:
+ *   --country=<code>   Only sync one country (mw, zm, zw). Default: all countries
+ *   --station=<id>     Only sync a single station_id within the country
+ *   --only=<products>  Limit sync to specific climate products
+ *   --local            Use the local Supabase container instead of remote.
+ *                      Default uses apps/picsa-server/.env.server credentials
+ *   --env=<path>       Load environment variables from a custom env file
+ *   --refresh-api      Refresh upstream Climate API data into Supabase before pulling (default: off)
+ *   --input=<path>     Process a local fixture file instead of pulling (implies --no-pull)
+ *   --audit-only       Compute and report changes without writing files
+ *   --report=<path>    Audit report output path (default: dist/climate-sync-report.md)
+ *   --help, -h         Show this help
+ */
 import { execSync } from 'child_process';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
@@ -13,6 +40,7 @@ import {
   auditMonthlyChanges,
   calculateStationCapabilities,
   type ClimateProductId,
+  convertMonthlyRainfallSummariesToRows,
   convertMonthlyTemperatureSummariesToRows,
   convertStationSummariesToRows,
   formatAnnualCsv,
@@ -39,26 +67,20 @@ export interface CliArgs {
   station?: string;
   input?: string;
   auditOnly?: boolean;
-  computeExisting?: boolean;
   skipPull?: boolean;
   local?: boolean;
   env?: string;
   report?: string;
   only?: string;
   refreshApi?: boolean;
+  help?: boolean;
 }
 
 const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
   '--audit-only': (res) => {
     res.auditOnly = true;
   },
-  '--compute-existing': (res) => {
-    res.computeExisting = true;
-  },
   '--no-pull': (res) => {
-    res.skipPull = true;
-  },
-  '--skip-pull': (res) => {
     res.skipPull = true;
   },
   '--pull': (res) => {
@@ -68,9 +90,6 @@ const BOOLEAN_FLAGS: Record<string, (result: CliArgs) => void> = {
     res.local = true;
   },
   '--refresh-api': (res) => {
-    res.refreshApi = true;
-  },
-  '--sync-upstream': (res) => {
     res.refreshApi = true;
   },
 };
@@ -94,46 +113,98 @@ const VALUED_OPTIONS: Record<string, (res: CliArgs, val: string) => void> = {
   only: (res, val) => {
     res.only = val.toLowerCase();
   },
-  'refresh-api': (res, val) => {
-    res.refreshApi = val !== 'false' && val !== '0';
-  },
-  'sync-upstream': (res, val) => {
-    res.refreshApi = val !== 'false' && val !== '0';
-  },
 };
 
+export const CLIMATE_SYNC_HELP = `Climate Data Sync
+
+Usage:
+  yarn scripts:climate:sync [options]
+
+Pull options:
+  --pull             Pull station data from Supabase (default)
+  --no-pull          Skip the pull and recompute capabilities from existing CSVs
+
+Other options:
+  --country=<code>   Only sync one country (mw, zm, zw). Default: all countries
+  --station=<id>     Only sync a single station_id within the country
+  --only=<products>  Limit sync to specific climate products
+  --local            Use the local Supabase container instead of remote
+                     (default: apps/picsa-server/.env.server credentials)
+  --env=<path>       Load environment variables from a custom env file
+  --refresh-api      Refresh upstream Climate API data into Supabase before pulling (default: off)
+  --input=<path>     Process a local fixture file instead of pulling (implies --no-pull)
+  --audit-only       Compute and report changes without writing files
+  --report=<path>    Audit report output path (default: dist/climate-sync-report.md)
+  --help, -h         Show this help
+`;
+
+export function printHelp(): void {
+  console.log(CLIMATE_SYNC_HELP);
+}
+
 export function parseCliArgs(argv = process.argv.slice(2)): CliArgs {
+  if (argv.includes('--help') || argv.includes('-h')) {
+    return { help: true };
+  }
+
   const result: CliArgs = {};
+  let pullFlag: '--pull' | '--no-pull' | undefined;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
 
     const booleanHandler = BOOLEAN_FLAGS[arg];
     if (booleanHandler) {
+      if (arg === '--pull' || arg === '--no-pull') {
+        if (pullFlag && pullFlag !== arg) {
+          throw new Error(`Conflicting options: ${pullFlag} and ${arg} cannot be used together.`);
+        }
+        pullFlag = arg;
+      }
       booleanHandler(result);
       continue;
     }
 
     if (!arg.startsWith('--')) {
-      continue;
+      throw new Error(`Unexpected argument: ${arg}`);
     }
 
     const eqIndex = arg.indexOf('=');
     const key = eqIndex !== -1 ? arg.slice(2, eqIndex) : arg.slice(2);
+
+    if (BOOLEAN_FLAGS[`--${key}`]) {
+      throw new Error(`Option --${key} does not accept a value.`);
+    }
+
     const handler = VALUED_OPTIONS[key];
     if (!handler) {
-      continue;
+      throw new Error(`Unknown option: ${arg}. Run with --help to see available options.`);
     }
 
     if (eqIndex !== -1) {
       handler(result, arg.slice(eqIndex + 1));
-    } else {
-      const nextArg = argv[i + 1];
-      if (nextArg && !nextArg.startsWith('--')) {
-        handler(result, nextArg);
-        i++;
-      }
+      continue;
     }
+
+    const nextArg = argv[i + 1];
+    if (!nextArg || nextArg.startsWith('--')) {
+      throw new Error(`Missing value for option --${key}`);
+    }
+    handler(result, nextArg);
+    i++;
+  }
+
+  if (pullFlag === '--pull' && result.input) {
+    throw new Error('--pull cannot be used with --input.');
+  }
+  if (result.skipPull && result.refreshApi) {
+    throw new Error('--refresh-api cannot be used with --no-pull.');
+  }
+  if (result.skipPull && result.input) {
+    throw new Error('--input cannot be used with --no-pull; --input already implies no pull.');
+  }
+  if (result.refreshApi && result.input) {
+    throw new Error('--refresh-api cannot be used with --input.');
   }
 
   return result;
@@ -370,6 +441,80 @@ export function getSyncSupabaseClient(options: { local?: boolean; env?: string }
   return createClient(url, key);
 }
 
+function recordUpstreamRefreshFailure(
+  auditReport: IClimateAuditReport | undefined,
+  failure: { country: string; stationId: string; message: string },
+) {
+  if (!auditReport) return;
+  auditReport.warnings = auditReport.warnings || [];
+  auditReport.warnings.push(failure);
+}
+
+interface IInvokeErrorWithContext {
+  message?: string;
+  context?: {
+    status?: number;
+    json?: () => Promise<unknown>;
+  };
+}
+
+async function resolveInvokeErrorDetail(error: unknown): Promise<string> {
+  const invokeError = error as IInvokeErrorWithContext;
+  let detail = invokeError?.message || String(error);
+
+  const context = invokeError?.context;
+  const status = context?.status;
+  if (status) detail += ` [HTTP ${status}]`;
+
+  if (typeof context?.json !== 'function') return detail;
+
+  try {
+    const body = (await context.json()) as { message?: string; error?: { message?: string } };
+    const contextMessage = body?.message || body?.error?.message;
+    if (contextMessage) detail += ` (${contextMessage})`;
+  } catch {
+    // Context body may not be JSON; keep the transport error message.
+  }
+
+  return detail;
+}
+
+/** Format a millisecond duration as a compact human readable string (e.g. `12.3s`, `2m 05s`). */
+export function formatDuration(ms: number): string {
+  if (!Number.isFinite(ms) || ms < 0) return '0.0s';
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+  const totalSeconds = Math.round(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${String(seconds).padStart(2, '0')}s`;
+}
+
+/**
+ * Estimate remaining runtime from the average time taken per completed station.
+ * Returns 0 when there is not enough data to make a sensible estimate.
+ */
+export function estimateRemainingMs(elapsedMs: number, completedStations: number, remainingStations: number): number {
+  if (completedStations <= 0 || remainingStations <= 0) return 0;
+  return (elapsedMs / completedStations) * remainingStations;
+}
+
+/**
+ * Render a consistent progress suffix for station level log lines, e.g. `43% done · ETA ~1m 20s`.
+ */
+export function formatProgressSuffix(completedCount: number, totalCount: number, elapsedMs: number): string {
+  if (totalCount <= 0) return '';
+  const percentComplete = Math.round((completedCount / totalCount) * 100);
+  const remainingCount = totalCount - completedCount;
+  if (remainingCount <= 0) return `${percentComplete}% done`;
+  const remainingMs = estimateRemainingMs(elapsedMs, completedCount, remainingCount);
+  if (remainingMs < 1000) return `${percentComplete}% done`;
+  return `${percentComplete}% done · ETA ~${formatDuration(remainingMs)}`;
+}
+
+function isUnsupportedClimateActionError(errorDetail: string): boolean {
+  return errorDetail.includes('Invalid climate action');
+}
+
 /**
  * Refresh upstream Climate API data into Supabase database (climate_station_data)
  * by invoking the dashboard/climate edge functions for each station in a country.
@@ -417,73 +562,112 @@ export async function refreshUpstreamDataForCountry(
   }
 
   console.log(`  Found ${stations.length} station(s) to refresh from Climate API`);
+  console.log(
+    `  ${actions.length} action(s) per station (${stations.length * actions.length} upstream requests total)\n`,
+  );
 
   let successfulRequests = 0;
   let failedRequests = 0;
+  const unsupportedActions = new Set<string>();
+  const totalStations = stations.length;
+  const refreshStartedAt = Date.now();
 
   for (let i = 0; i < stations.length; i++) {
     const s = stations[i];
     const stationSlug = s.station_id;
-    const metStationName = s.station_name || stationSlug;
+    const stationId = s.id;
+    const stationName = s.station_name?.trim();
+    const position = `[${i + 1}/${totalStations}]`;
+
+    if (!stationId || !stationName || stationName === stationSlug) {
+      const message = !stationId
+        ? 'Missing climate_stations.id; cannot invoke the dashboard/climate edge function.'
+        : 'Missing display station_name in climate_stations; upstream Climate API requires the display name (e.g. "MAGOYE AGROMET"), not the slug.';
+      console.warn(`    ⚠️ ${position} ${stationSlug}: ${message}`);
+      recordUpstreamRefreshFailure(options.auditReport, {
+        country: countryUpper,
+        stationId: stationSlug,
+        message,
+      });
+      failedRequests += actions.length;
+      continue;
+    }
+
+    console.log(`    → ${position} ${stationName} (${stationSlug}) — refreshing ${actions.length} action(s)...`);
+
+    const stationStartedAt = Date.now();
+    let stationSuccesses = 0;
+    let stationFailures = 0;
 
     for (const action of actions) {
       try {
         const { error: invokeErr } = await client.functions.invoke(`dashboard/climate/${action}`, {
           body: {
             station: {
-              id: s.id,
+              id: stationId,
               country_code: s.country_code,
-              station_name: metStationName,
+              station_name: stationName,
             },
             country_code: s.country_code,
           },
         });
 
-        if (invokeErr) {
-          let errorDetail = invokeErr.message;
-          try {
-            if ('context' in invokeErr && typeof (invokeErr as any).context?.json === 'function') {
-              const body = await (invokeErr as any).context.json();
-              if (body?.message) {
-                errorDetail += ` (${body.message})`;
-              } else if (body?.error?.message) {
-                errorDetail += ` (${body.error.message})`;
-              }
-            }
-          } catch {
-            // ignore context json parse error
-          }
-          console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) API error: ${errorDetail}`);
-          failedRequests++;
-          if (options.auditReport) {
-            options.auditReport.warnings = options.auditReport.warnings || [];
-            options.auditReport.warnings.push({
-              country: countryUpper,
-              stationId: stationSlug,
-              message: `Upstream Climate API refresh error (${action})`,
-            });
-          }
-        } else {
+        if (!invokeErr) {
           successfulRequests++;
+          stationSuccesses++;
+          continue;
         }
-      } catch (err: any) {
-        const errorMsg = err?.message || String(err);
-        console.warn(`    ⚠️ [${i + 1}/${stations.length}] ${stationSlug} (${action}) invocation failed: ${errorMsg}`);
+
+        const errorDetail = await resolveInvokeErrorDetail(invokeErr);
+        if (isUnsupportedClimateActionError(errorDetail)) unsupportedActions.add(action);
+
+        console.warn(`      ⚠️ ${action}: ${errorDetail}`);
         failedRequests++;
-        if (options.auditReport) {
-          options.auditReport.warnings = options.auditReport.warnings || [];
-          options.auditReport.warnings.push({
-            country: countryUpper,
-            stationId: stationSlug,
-            message: `Upstream Climate API refresh error (${action})`,
-          });
-        }
+        stationFailures++;
+        recordUpstreamRefreshFailure(options.auditReport, {
+          country: countryUpper,
+          stationId: stationSlug,
+          message: `Upstream Climate API refresh error (${action}) for ${stationName}: ${errorDetail}`,
+        });
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.warn(`      ⚠️ ${action}: invocation failed: ${errorMsg}`);
+        failedRequests++;
+        stationFailures++;
+        recordUpstreamRefreshFailure(options.auditReport, {
+          country: countryUpper,
+          stationId: stationSlug,
+          message: `Upstream Climate API refresh error (${action}) for ${stationName}: ${errorMsg}`,
+        });
       }
     }
+
+    const stationElapsed = Date.now() - stationStartedAt;
+    const elapsedSinceStart = Date.now() - refreshStartedAt;
+    const progressSuffix = formatProgressSuffix(i + 1, totalStations, elapsedSinceStart);
+
+    const statusIcon = stationFailures === 0 ? '✓' : '⚠️';
+    const failureSuffix = stationFailures === 0 ? '' : `, ${stationFailures} failed`;
+    console.log(
+      `    ${statusIcon} ${position} ${stationName} — ${stationSuccesses}/${actions.length} action(s) refreshed${failureSuffix} (${formatDuration(
+        stationElapsed,
+      )} · ${progressSuffix})`,
+    );
   }
 
+  if (unsupportedActions.size > 0) {
+    console.warn(
+      `  ℹ️ The deployed dashboard/climate Edge Function does not support: ${Array.from(unsupportedActions).join(
+        ', ',
+      )}. Deploy the function (e.g. yarn nx run picsa-server:functions:deploy) and retry.`,
+    );
+  }
+
+  const totalElapsed = Date.now() - refreshStartedAt;
   console.log(
-    `  Completed upstream Climate API refresh for ${countryUpper}: ${successfulRequests} successful, ${failedRequests} failed.`,
+    `  Completed upstream Climate API refresh for ${countryUpper}: ${successfulRequests} successful, ${failedRequests} failed in ${formatDuration(
+      totalElapsed,
+    )}.`,
   );
 
   return { totalStations: stations.length, successfulRequests, failedRequests };
@@ -507,9 +691,11 @@ export async function syncFromDatabaseForCountry(
   const countryDir = path.join(CLIMATE_TOOL_ASSETS, countryLower);
 
   const targetProducts = resolveClimateProducts(options.only);
+  const isRainfallTargeted = targetProducts.has('rainfall');
   const isTemperatureTargeted = targetProducts.has('temp_min') || targetProducts.has('temp_max');
   const isOnlyTemperature =
     targetProducts.size <= 2 && Array.from(targetProducts).every((p) => p === 'temp_min' || p === 'temp_max');
+  const isOnlyRainfall = targetProducts.size === 1 && targetProducts.has('rainfall');
 
   console.log(`\nProcessing database stations for ${countryUpper}...`);
   if (options.only) {
@@ -561,8 +747,12 @@ export async function syncFromDatabaseForCountry(
   let newCount = 0;
   let updatedCount = 0;
   let unchangedCount = 0;
+  const totalRows = dataRows.length;
+  const syncStartedAt = Date.now();
 
-  for (const row of dataRows) {
+  for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+    const row = dataRows[rowIndex];
+    const position = `[${rowIndex + 1}/${totalRows}]`;
     const stationInfo = stationMap.get(row.station_id);
     const stationSlug = (stationInfo?.slug || row.station_id.replace(`${countryLower}/`, '')).toLowerCase();
 
@@ -570,6 +760,8 @@ export async function syncFromDatabaseForCountry(
       continue;
     }
 
+    const hasAnnualRain = Array.isArray(row.annual_rainfall_data) && row.annual_rainfall_data.length > 0;
+    const hasMonthlyRain = Array.isArray(row.monthly_rainfall_data) && row.monthly_rainfall_data.length > 0;
     const hasAnnualTemp = Array.isArray(row.annual_temperature_data) && row.annual_temperature_data.length > 0;
     const hasMonthlyTemp = Array.isArray(row.monthly_temperature_data) && row.monthly_temperature_data.length > 0;
 
@@ -599,37 +791,37 @@ export async function syncFromDatabaseForCountry(
     const annualCsvPath = path.join(countryDir, `${stationSlug}.csv`);
     const monthlyCsvPath = path.join(countryDir, `${stationSlug}.monthly.csv`);
 
-    // If targeted strictly to temperature but station has zero temperature records in DB, preserve existing and skip
+    // If targeted strictly to a product with no corresponding DB records, preserve existing and skip
     if (isOnlyTemperature && !hasAnnualTemp && !hasMonthlyTemp) {
       if (existingCaps[stationSlug]) {
         updatedCaps[stationSlug] = existingCaps[stationSlug];
       }
       unchangedCount++;
+      console.log(
+        `    ⏭ ${position} ${stationSlug} — skipped (no temperature data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
+      continue;
+    }
+    if (isOnlyRainfall && !hasAnnualRain && !hasMonthlyRain) {
+      if (existingCaps[stationSlug]) {
+        updatedCaps[stationSlug] = existingCaps[stationSlug];
+      }
+      unchangedCount++;
+      console.log(
+        `    ⏭ ${position} ${stationSlug} — skipped (no rainfall data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
       continue;
     }
 
-    // 1. Annual Data Processing
-    let existingAnnualData: IStationData[] = [];
-    if (fs.existsSync(annualCsvPath)) {
-      existingAnnualData = parseAnnualCsv(fs.readFileSync(annualCsvPath, 'utf-8'));
-    }
-
-    const candidateAnnualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
-    const annualData = mergeStationAnnualData(existingAnnualData, candidateAnnualData, targetProducts);
-
-    if (annualData.length === 0) {
-      options.auditReport.warnings = options.auditReport.warnings || [];
-      options.auditReport.warnings.push({
-        message: 'Station has database record but zero annual data entries',
-        country: countryUpper,
-        stationId: stationSlug,
-      });
-      continue;
-    }
-
-    const annualCsvContent = formatAnnualCsv(annualData);
-
-    // 2. Monthly Data Processing
+    // 1. Monthly Data Processing
     let monthlyData: IMonthlyStationData[] = [];
     let existingMonthlyCsvContent = '';
     if (fs.existsSync(monthlyCsvPath)) {
@@ -638,16 +830,50 @@ export async function syncFromDatabaseForCountry(
     }
 
     let newMonthlyCsvContent = existingMonthlyCsvContent;
+    if (isRainfallTargeted && hasMonthlyRain) {
+      const incomingMonthlyRainfall = convertMonthlyRainfallSummariesToRows(row.monthly_rainfall_data);
+      const monthlyRainfallProducts = new Set<ClimateProductId>(['rainfall']);
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthlyRainfall, monthlyRainfallProducts);
+      newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
+    }
     if (isTemperatureTargeted && hasMonthlyTemp) {
-      const incomingMonthly = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
+      const incomingMonthlyTemperature = convertMonthlyTemperatureSummariesToRows(row.monthly_temperature_data);
       const monthlyTemperatureProducts = new Set<ClimateProductId>(
         Array.from(targetProducts).filter(
           (product): product is ClimateProductId => product === 'temp_min' || product === 'temp_max',
         ),
       );
-      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthly, monthlyTemperatureProducts);
+      monthlyData = mergeStationMonthlyData(monthlyData, incomingMonthlyTemperature, monthlyTemperatureProducts);
       newMonthlyCsvContent = formatMonthlyCsv(monthlyData);
     }
+
+    // 2. Annual Data Processing
+    let existingAnnualData: IStationData[] = [];
+    if (fs.existsSync(annualCsvPath)) {
+      existingAnnualData = parseAnnualCsv(fs.readFileSync(annualCsvPath, 'utf-8'));
+    }
+
+    const candidateAnnualData = convertStationSummariesToRows(row.annual_rainfall_data, row.annual_temperature_data);
+    const annualData = mergeStationAnnualData(existingAnnualData, candidateAnnualData, targetProducts);
+
+    if (annualData.length === 0 && monthlyData.length === 0) {
+      options.auditReport.warnings = options.auditReport.warnings || [];
+      options.auditReport.warnings.push({
+        message: 'Station has database record but zero annual and monthly data entries',
+        country: countryUpper,
+        stationId: stationSlug,
+      });
+      console.log(
+        `    ⚠️ ${position} ${stationSlug} — skipped (no annual or monthly data) (${formatProgressSuffix(
+          rowIndex + 1,
+          totalRows,
+          Date.now() - syncStartedAt,
+        )})`,
+      );
+      continue;
+    }
+
+    const annualCsvContent = formatAnnualCsv(annualData);
 
     const contentHash = computeSha256(annualCsvContent.trim());
     const prevCap = existingCaps[stationSlug];
@@ -684,7 +910,7 @@ export async function syncFromDatabaseForCountry(
     }
 
     let status: 'NEW' | 'UPDATED' | 'UNCHANGED' = 'NEW';
-    if (fs.existsSync(annualCsvPath)) {
+    if (fs.existsSync(annualCsvPath) || fs.existsSync(monthlyCsvPath)) {
       status = isUnchanged ? 'UNCHANGED' : 'UPDATED';
     }
 
@@ -722,7 +948,7 @@ export async function syncFromDatabaseForCountry(
     options.auditReport.totalStationsProcessed++;
 
     // Only write CSV file when station data has changed or is new
-    if (!options.auditOnly && status !== 'UNCHANGED') {
+    if (!options.auditOnly && status !== 'UNCHANGED' && annualData.length > 0) {
       if (!fs.existsSync(countryDir)) {
         fs.mkdirSync(countryDir, { recursive: true });
       }
@@ -736,10 +962,21 @@ export async function syncFromDatabaseForCountry(
       }
       fs.writeFileSync(monthlyCsvPath, newMonthlyCsvContent, 'utf-8');
     }
+
+    const statusIcon = status === 'UNCHANGED' ? '•' : '✓';
+    console.log(
+      `    ${statusIcon} ${position} ${stationSlug} — ${status} (${formatProgressSuffix(
+        rowIndex + 1,
+        totalRows,
+        Date.now() - syncStartedAt,
+      )})`,
+    );
   }
 
   console.log(
-    `  ${countryUpper}: ${dataRows.length} station(s) (New: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount})`,
+    `  ${countryUpper}: ${dataRows.length} station(s) (New: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount}) in ${formatDuration(
+      Date.now() - syncStartedAt,
+    )}`,
   );
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
@@ -748,6 +985,7 @@ export async function syncFromDatabaseForCountry(
       updatedCaps[stationId] = {
         schemaVersion: 1,
         years: [],
+        qcFailures: ['insufficient_total_years', 'no_recent_data', 'sparse_recent_data'],
       };
     }
   }
@@ -793,8 +1031,13 @@ export function computeExistingCapabilitiesForCountry(
 
   console.log(`\nProcessing existing stations for ${country.toUpperCase()} (${annualFiles.length} stations)...`);
 
-  for (const file of annualFiles) {
+  const totalStations = annualFiles.length;
+  const capabilitiesStartedAt = Date.now();
+
+  for (let fileIndex = 0; fileIndex < totalStations; fileIndex++) {
+    const file = annualFiles[fileIndex];
     const stationId = path.basename(file, '.csv');
+    const position = `[${fileIndex + 1}/${totalStations}]`;
     const annualCsvPath = path.join(countryDir, file);
     const monthlyCsvPath = path.join(countryDir, `${stationId}.monthly.csv`);
 
@@ -855,6 +1098,16 @@ export function computeExistingCapabilitiesForCountry(
       hash: contentHash,
     });
     options.auditReport.totalStationsProcessed++;
+
+    const stationStatus = isUnchanged ? 'UNCHANGED' : prevCap ? 'UPDATED' : 'NEW';
+    const statusIcon = stationStatus === 'UNCHANGED' ? '•' : '✓';
+    console.log(
+      `    ${statusIcon} ${position} ${stationId} — ${stationStatus} (${formatProgressSuffix(
+        fileIndex + 1,
+        totalStations,
+        Date.now() - capabilitiesStartedAt,
+      )})`,
+    );
   }
 
   // Populate default capabilities (years: []) for stations registered in metadata without data files
@@ -896,7 +1149,9 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
   const reportPath = options.report || DEFAULT_REPORT_PATH;
 
-  const shouldPull = !options.skipPull && !options.computeExisting && !options.input;
+  const shouldPull = !options.skipPull && !options.input;
+
+  console.log(`\nPull mode: ${shouldPull ? 'YES (default)' : 'NO (--no-pull or --input)'}`);
 
   // 1. Pull directly from Supabase by default (Remote by default, --local for local dev container)
   if (shouldPull) {
@@ -944,8 +1199,8 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
     return auditReport;
   }
 
-  // 2. Retroactive capabilities computation for existing local data (when --skip-pull or --compute-existing)
-  if (options.computeExisting || options.skipPull) {
+  // 2. Retroactive capabilities computation for existing local data (--no-pull)
+  if (options.skipPull) {
     const countriesToProcess = options.country && options.country !== 'all' ? [options.country] : SUPPORTED_COUNTRIES;
 
     for (const c of countriesToProcess) {
@@ -1150,7 +1405,20 @@ export async function runSync(options: CliArgs = {}): Promise<IClimateAuditRepor
 
 // Run CLI directly if executed
 if (require.main === module) {
-  const cliArgs = parseCliArgs();
+  let cliArgs: CliArgs;
+  try {
+    cliArgs = parseCliArgs();
+  } catch (err) {
+    console.error(`[Climate Sync Error]: ${(err as Error).message}\n`);
+    printHelp();
+    process.exit(1);
+  }
+
+  if (cliArgs.help) {
+    printHelp();
+    process.exit(0);
+  }
+
   runSync(cliArgs).catch((err) => {
     console.error(`[Climate Sync Error]:`, err);
     process.exit(1);

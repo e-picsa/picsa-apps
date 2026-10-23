@@ -1,6 +1,49 @@
-import { hackConvertStationDataForDisplay } from './climate.utils';
+import { extractStationGenerationMetadata, hackConvertStationDataForDisplay } from './climate.utils';
 
 describe('climate.utils', () => {
+  describe('extractStationGenerationMetadata', () => {
+    it('should return empty object when stationData is null or undefined', () => {
+      expect(extractStationGenerationMetadata(null)).toEqual({});
+      expect(extractStationGenerationMetadata(undefined)).toEqual({});
+    });
+
+    it('should extract generation_timestamp and generation_id from annual_rainfall_metadata', () => {
+      const mockData = {
+        updated_at: '2026-10-19T12:00:00Z',
+        annual_rainfall_metadata: {
+          generation_timestamp: '2024-10-14T08:00:00Z',
+          generation_id: 'zm-2024-v2-d8f9',
+        },
+      } as any;
+      expect(extractStationGenerationMetadata(mockData)).toEqual({
+        generation_timestamp: '2024-10-14T08:00:00Z',
+        generation_id: 'zm-2024-v2-d8f9',
+      });
+    });
+
+    it('should extract from secondary metadata candidate if rainfall metadata is missing', () => {
+      const mockData = {
+        updated_at: '2026-10-19T12:00:00Z',
+        annual_temperature_metadata: {
+          generation_timestamp: '2024-10-14T08:00:00Z',
+          generation_id: 'zm-temp-v1',
+        },
+      } as any;
+      expect(extractStationGenerationMetadata(mockData)).toEqual({
+        generation_timestamp: '2024-10-14T08:00:00Z',
+        generation_id: 'zm-temp-v1',
+      });
+    });
+
+    it('should not fallback to updated_at when generation metadata is absent', () => {
+      const mockData = {
+        updated_at: '2026-10-19T12:00:00Z',
+        annual_rainfall_metadata: {},
+      } as any;
+      expect(extractStationGenerationMetadata(mockData)).toEqual({});
+    });
+  });
+
   describe('hackConvertStationDataForDisplay', () => {
     it('should sort merged data by year', () => {
       const mockStationData = {
