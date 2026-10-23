@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { PICSA_FARMER_VIDEOS_DATA } from '@picsa/data/resources';
 import { PicsaTranslateModule } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -88,5 +89,16 @@ describe('FarmerStepVideoComponent', () => {
 
     expect((itemShareBtns[0] as HTMLButtonElement).disabled).toBe(false);
     expect((itemShareBtns[1] as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('should handle null or missing language_code and country_code in userSettings without throwing', () => {
+    const configService = TestBed.inject(ConfigurationService);
+    jest.spyOn(configService, 'userSettings').mockReturnValue({
+      country_code: null as unknown as never,
+      language_code: null as unknown as never,
+    } as ReturnType<ConfigurationService['userSettings']>);
+
+    expect(() => component.videosWithRankedChildren()).not.toThrow();
+    expect(component.videosWithRankedChildren().length).toBeGreaterThan(0);
   });
 });
