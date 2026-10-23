@@ -15,9 +15,9 @@
   font-size: 0.8125rem;
   font-weight: 500;
   line-height: 1;
-  color: white;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: inherit;
+  background: var(--header-surface-bg, rgba(255, 255, 255, 0.12));
+  border: 1px solid var(--header-surface-border, rgba(255, 255, 255, 0.85));
   cursor: pointer;
   transition:
     background-color 0.35s ease,
@@ -25,7 +25,7 @@
   white-space: nowrap;
 }
 .header-sync-chip:hover:not([disabled]) {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--header-surface-bg-hover, rgba(255, 255, 255, 0.25));
 }
 .header-sync-chip__icon-container {
   position: relative;
