@@ -1,16 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnDestroy,
-  signal,
-  TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -42,8 +31,6 @@ import {
 import { AllStationsDialogComponent } from './components/all-stations-dialog/all-stations-dialog.component';
 import { StationCardComponent } from './components/station-card/station-card.component';
 
-const STATION_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.191 0 87.619 100" fill="currentColor"><path d="M82.447,57.766c-3.112,0-5.937,1.255-7.992,3.29L55.353,47.369v-1.773c0-2.015-1.303-3.692-3.094-4.333V22.592c5.521-0.768,9.769-5.509,9.769-11.236C62.027,5.09,56.946,0,50.667,0c-6.266,0-11.348,5.091-11.348,11.355c0,5.727,4.247,10.468,9.77,11.236v18.688c-1.76,0.662-3.027,2.335-3.027,4.316v1.604L25.906,61.064c-2.071-2.262-5.049-3.678-8.355-3.678c-6.277,0-11.36,5.087-11.36,11.357c0,6.27,5.083,11.356,11.36,11.356c6.265,0,11.348-5.087,11.348-11.356c0-1.818-0.436-3.544-1.193-5.066l18.353-12.622v44.299c0,2.561,2.089,4.646,4.647,4.646c2.564,0,4.646-2.085,4.646-4.646V51.27l17.183,12.314c-0.91,1.632-1.437,3.524-1.437,5.529c0,6.283,5.087,11.357,11.351,11.357c6.273,0,11.36-5.074,11.36-11.357C93.808,62.844,88.721,57.766,82.447,57.766z"/></svg>`;
-
 const STRINGS = {
   location: translateMarker('Location'),
   locate: translateMarker('Locate'),
@@ -70,7 +57,7 @@ const STRINGS = {
   styleUrl: './site-select.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SiteSelectPage implements AfterViewInit, OnDestroy {
+export class SiteSelectPage {
   public readonly strings = STRINGS;
 
   public readonly dataService = inject(ClimateDataService);
@@ -79,7 +66,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   private readonly configurationService = inject(ConfigurationService);
   private readonly dialog = inject(MatDialog);
 
-  private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
   public readonly picsaMap = viewChild(PicsaMapComponent);
 
   /** User's assigned deployment country */
@@ -207,16 +193,15 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Map markers for all valid stations in the country */
   public readonly mapMarkers = computed<IMapMarker[]>(() => {
     const numberMap = this.stationNumberMap();
-    return this.sortedAllStations().map((station) => {
+    return this.sortedAllStations().map((station, index) => {
       const num = numberMap.get(station.id);
       const label = num ? `${num}. ${formatStationLabel(station.name)}` : formatStationLabel(station.name);
       return {
-        lat: station.latitude,
-        lng: station.longitude,
-        title: label,
+        latlng: [station.latitude, station.longitude] as [number, number],
+        label,
         data: station,
-        icon: STATION_ICON_SVG,
-        badgeNumber: num,
+        number: num,
+        _index: index,
       };
     });
   });
@@ -225,7 +210,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public readonly tableData = computed(() => {
     const stations = this.sortedAllStations();
     return stations.map((station, index) => {
-      const locationText = station.location?.join(', ') || '\u2014';
+      const locationText = station.location?.join(', ') || '—';
       return {
         ...station,
         name: formatStationLabel(station.name),
@@ -248,7 +233,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
         return formatHeaderDefault(v);
       },
       sort: { id: 'district', start: 'asc' },
-    } as IDataTableOptions<IStationMeta>;
+    } as IDataTableOptions;
   });
 
   /** Tracks station selections triggered by user clicks vs automatic recommendations */
@@ -433,20 +418,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     });
   }
 
-  public ngAfterViewInit() {
-    this.registerHeaderPortal();
-    // Default to map view on initial load
-    this.setView('map');
-  }
-
-  public ngOnDestroy() {
-    // Clean up header portal on navigate away
-    this.configurationService.setPortalContent?.({
-      headerCenterPortal: null,
-      headerEndPortal: null,
-    });
-  }
-
   public setView(view: 'map' | 'table') {
     if (view === 'table') {
       this.openAllStationsDialog();
@@ -464,15 +435,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       if (isLocationComplete(geoData, location)) {
         this.configurationService.updateUserSettings({ location });
       }
-    }
-  }
-
-  private registerHeaderPortal() {
-    const centerPortal = this.headerCenterPortal();
-    if (centerPortal) {
-      this.configurationService.setPortalContent?.({
-        headerCenterPortal: centerPortal,
-      });
     }
   }
 
