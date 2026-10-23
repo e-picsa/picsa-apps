@@ -6,6 +6,7 @@ import { z } from 'npm:zod@4/v4';
 
 /** List endpoint filters */
 export const listFeedbackSchema = z.object({
+  id: z.uuid().optional(),
   status: z.enum(['open', 'in_review', 'resolved', 'closed']).optional(),
   type: z.enum(['feedback', 'bug_report']).optional(),
   app_version: z.string().max(64).optional(),
