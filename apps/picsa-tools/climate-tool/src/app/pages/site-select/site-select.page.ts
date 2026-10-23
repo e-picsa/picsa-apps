@@ -1,10 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  signal,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
@@ -21,11 +31,11 @@ import { ClimateDataService } from '../../services/climate-data.service';
 import {
   calculateHaversineDistanceKm,
   formatStationLabel,
-  getCombinedDistrictAndStationBounds,
-  getDistrictCenterAndBoundary,
+  getCombinedLocationAndStationBounds,
+  getLocationCenterAndBoundary,
   getStationRecommendations,
-  IDistrictCenterResult,
-  isStationInDistrict,
+  ILocationCenterResult,
+  isStationInLocation,
   IStationRecommendation,
 } from '../../utils/location-proximity.utils';
 import { AllStationsDialogComponent } from './components/all-stations-dialog/all-stations-dialog.component';
@@ -43,45 +53,36 @@ const STRINGS = {
   findingStations: translateMarker('Finding closest stations'),
 };
 
-// eslint-disable-next-line @angular-eslint/component-class-suffix
 @Component({
-  selector: 'climate-site-select',
+  selector: 'picsa-site-select',
   imports: [
     CommonModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatTooltipModule,
-    PicsaTranslateModule,
     FormLocationSelectComponent,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     PicsaMapComponent,
+    PicsaTranslateModule,
     StationCardComponent,
   ],
   templateUrl: './site-select.page.html',
-  styleUrls: ['./site-select.page.scss'],
+  styleUrl: './site-select.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix
-export class SiteSelectPage {
+export class SiteSelectPage implements AfterViewInit, OnDestroy {
   public readonly strings = STRINGS;
 
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   public readonly dataService = inject(ClimateDataService);
-  private configurationService = inject(ConfigurationService);
-  private matIconRegistry = inject(MatIconRegistry);
-  private domSanitizer = inject(DomSanitizer);
-  private dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly configurationService = inject(ConfigurationService);
+  private readonly dialog = inject(MatDialog);
 
-  /** Tracks a station directly clicked on the map/table so district sync does not overwrite it */
-  private manualStationSelection: IStationMeta | undefined = undefined;
-
+  private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
   public readonly picsaMap = viewChild(PicsaMapComponent);
 
-  /** User country code from active configuration/settings */
-  public readonly userCountryCode = computed(() => {
-    return this.configurationService.userSettings().country_code;
-  });
+  /** User's assigned deployment country */
+  public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
   /** Selected [country, admin_1, ..., admin_n] from form-location-select */
   public readonly selectedLocation = signal<(string | undefined)[]>([]);
@@ -92,8 +93,8 @@ export class SiteSelectPage {
   /** GPS location in progress */
   public readonly isLocating = signal(false);
 
-  /** Deepest selected location entry (district) when selection is complete */
-  public readonly selectedDistrict = computed(() => {
+  /** Deepest selected location entry when hierarchy selection is complete */
+  public readonly selectedLocationEntry = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
     if (!country || !loc || !loc.length) return undefined;
@@ -101,54 +102,42 @@ export class SiteSelectPage {
     const geoData = getGeoLocationData(country as ICountryCode);
     if (!isLocationComplete(geoData, loc)) return undefined;
 
-    const districtId = loc[5] ?? loc[4];
-    if (!districtId) return undefined;
+    const locationId = loc[5] ?? loc[4];
+    if (!locationId) return undefined;
 
-    return getDeepestLocations(geoData).find((l) => l.id === districtId);
+    return getDeepestLocations(geoData).find((l) => l.id === locationId);
   });
+
+  /** Backwards-compatible alias for selectedLocationEntry */
+  public readonly selectedDistrict = this.selectedLocationEntry;
 
   /** Selected station on map/table/card */
   public readonly selectedStation = signal<IStationMeta | undefined>(undefined);
 
-  /** Ranked stations by proximity to district center */
+  /** Ranked stations by proximity to selected location center */
   public readonly stationRecommendations = signal<IStationRecommendation[]>([]);
 
-  /** Resolved center coordinates & feature boundary of the selected district */
-  public readonly districtCenterResult = signal<IDistrictCenterResult | undefined>(undefined);
+  /** Resolved center coordinates & feature boundary of the selected location */
+  public readonly locationCenterResult = signal<ILocationCenterResult | undefined>(undefined);
+  /** Backwards-compatible alias */
+  public readonly districtCenterResult = this.locationCenterResult;
 
   public readonly isCalculatingProximity = signal(false);
 
-  /** Bounding box combining the selected district feature and the recommended station */
-  public readonly districtAndStationBounds = computed(() => {
-    const result = this.districtCenterResult();
+  /** Bounding box combining the selected location feature and the recommended station */
+  public readonly locationAndStationBounds = computed(() => {
+    const result = this.locationCenterResult();
     const primary = this.primaryRecommendation();
     if (!result) return undefined;
-    return getCombinedDistrictAndStationBounds(result.feature, primary?.station, result.center);
+    return getCombinedLocationAndStationBounds(result.feature, primary?.station, result.center);
   });
+  /** Backwards-compatible alias */
+  public readonly districtAndStationBounds = this.locationAndStationBounds;
 
   /** Primary recommendation (first in ranked list - closest station) */
   public readonly primaryRecommendation = computed(() => this.stationRecommendations()[0]);
 
-  /** Active country stations (excluding draft/empty stations) sorted alphabetically by district, then by station name */
-  public readonly sortedAllStations = computed(() => {
-    const stations = this.dataService.stations().filter((s) => s.latitude !== null && s.longitude !== null);
-    return [...stations].sort((a, b) => {
-      const distA = a.location?.[0] || '';
-      const distB = b.location?.[0] || '';
-      const distCmp = distA.localeCompare(distB);
-      if (distCmp !== 0) return distCmp;
-      return a.name.localeCompare(b.name);
-    });
-  });
-
-  /** Lookup of station ID to its 1-based map marker number */
-  public readonly stationNumberMap = computed(() => {
-    const map = new Map<string, number>();
-    this.sortedAllStations().forEach((s, index) => map.set(s.id, index + 1));
-    return map;
-  });
-
-  /** Nearby stations (including closest station first, top 4) with map station number */
+  /** Nearby stations (including closest station first, top 4) */
   public readonly nearbyStations = computed(() => {
     const numberMap = this.stationNumberMap();
     return this.stationRecommendations()
@@ -163,50 +152,89 @@ export class SiteSelectPage {
   /** Alias for backward compatibility */
   public readonly alternativeRecommendations = this.nearbyStations;
 
-  /** Currently displayed station (either explicitly selected or primary recommendation) */
+  /** Active country stations (excluding draft/empty stations) sorted alphabetically by location, then by station name */
+  public readonly sortedAllStations = computed(() => {
+    const stations = this.dataService.stations().filter((s) => s.latitude !== null && s.longitude !== null);
+    return [...stations].sort((a, b) => {
+      const locA = a.location?.join(', ') || '';
+      const locB = b.location?.join(', ') || '';
+      const locCmp = locA.localeCompare(locB);
+      if (locCmp !== 0) return locCmp;
+      return a.name.localeCompare(b.name);
+    });
+  });
+
+  /** Lookup of station ID to its 1-based map marker number */
+  public readonly stationNumberMap = computed(() => {
+    const map = new Map<string, number>();
+    this.sortedAllStations().forEach((s, index) => map.set(s.id, index + 1));
+    return map;
+  });
+
+  /** Recommendations mapped with their global station number */
+  public readonly numberedRecommendations = computed(() => {
+    const numberMap = this.stationNumberMap();
+    return this.stationRecommendations().map((rec) => ({
+      ...rec,
+      stationNumber: numberMap.get(rec.station.id),
+    }));
+  });
+
+  /** Displayed recommendation for the mobile station card */
   public readonly displayedStation = computed(() => {
     const selected = this.selectedStation();
-    const primary = this.primaryRecommendation();
-    const targetStation = selected ?? primary?.station;
-    if (!targetStation) return undefined;
-
-    const numberMap = this.stationNumberMap();
-
-    return {
-      station: { ...targetStation, name: formatStationLabel(targetStation.name) },
-      isPrimary: targetStation.id === primary?.station.id,
-      mapNumber: numberMap.get(targetStation.id),
-    };
+    const numbered = this.numberedRecommendations();
+    if (selected) {
+      const match = numbered.find((r) => r.station.id === selected.id);
+      if (match) return match;
+      return {
+        station: selected,
+        distanceKm: 0,
+        isInsideLocation: false,
+        isInsideDistrict: false,
+        isRecommended: false,
+        score: 0,
+        stationNumber: this.stationNumberMap().get(selected.id),
+      };
+    }
+    return numbered[0];
   });
 
   /** Active station for floating mobile card */
   public readonly activeStation = computed(() => this.displayedStation()?.station);
 
-  /** Markers prepared for PicsaMapComponent */
+  /** Map markers for all valid stations in the country */
   public readonly mapMarkers = computed<IMapMarker[]>(() => {
-    const stations = this.sortedAllStations();
-    return stations.map((station, index) => ({
-      latlng: [station.latitude, station.longitude],
-      number: index + 1,
-      label: formatStationLabel(station.name),
-      data: station,
-      _index: index,
-    }));
-  });
-
-  public readonly tableData = computed(() => {
-    const stations = this.sortedAllStations();
-    return stations.map((station, index) => {
-      const district = station.location?.[0] || '\u2014';
+    const numberMap = this.stationNumberMap();
+    return this.sortedAllStations().map((station) => {
+      const num = numberMap.get(station.id);
+      const label = num ? `${num}. ${formatStationLabel(station.name)}` : formatStationLabel(station.name);
       return {
-        ...station,
-        name: formatStationLabel(station.name),
-        district,
-        map: index + 1,
+        lat: station.latitude,
+        lng: station.longitude,
+        title: label,
+        data: station,
+        icon: STATION_ICON_SVG,
+        badgeNumber: num,
       };
     });
   });
 
+  /** Table rows for the "All stations" dialog */
+  public readonly tableData = computed(() => {
+    const stations = this.sortedAllStations();
+    return stations.map((station, index) => {
+      const locationText = station.location?.join(', ') || '\u2014';
+      return {
+        ...station,
+        name: formatStationLabel(station.name),
+        district: locationText,
+        number: this.stationNumberMap().get(station.id) ?? index + 1,
+      };
+    });
+  });
+
+  /** Table configuration for the "All stations" dialog */
   public readonly tableOptions = computed(() => {
     const country_code = this.userCountryCode();
     const geoData = getGeoLocationData(country_code);
@@ -219,33 +247,31 @@ export class SiteSelectPage {
         return formatHeaderDefault(v);
       },
       sort: { id: 'district', start: 'asc' },
-    } satisfies IDataTableOptions;
+    } as IDataTableOptions<IStationMeta>;
   });
 
-  constructor() {
-    this.matIconRegistry.addSvgIconLiteral(
-      'climate_station',
-      this.domSanitizer.bypassSecurityTrustHtml(STATION_ICON_SVG),
-    );
+  /** Tracks station selections triggered by user clicks vs automatic recommendations */
+  private manualStationSelection: IStationMeta | undefined = undefined;
 
-    // Seed location from user settings if available
-    const initialLocation = this.configurationService.userSettings().location;
+  constructor() {
+    const settings = this.configurationService.userSettings();
+    const initialLocation = settings?.location;
     if (initialLocation && initialLocation.length > 0) {
       this.selectedLocation.set(initialLocation);
     }
 
-    // Effect: Whenever selectedDistrict changes, asynchronously compute recommendations & boundary
-    let latestDistrictReqId = 0;
+    // Effect: Whenever selected location entry changes, asynchronously compute recommendations & boundary
+    let latestLocationReqId = 0;
     effect(() => {
-      const district = this.selectedDistrict();
+      const locationEntry = this.selectedLocationEntry();
       const countryCode = this.userCountryCode();
       const activeStations = this.dataService.stations();
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
 
-      if (!district || !countryCode) {
+      if (!locationEntry || !countryCode) {
         this.stationRecommendations.set([]);
-        this.districtCenterResult.set(undefined);
+        this.locationCenterResult.set(undefined);
         this.isCalculatingProximity.set(false);
         if (!this.manualStationSelection) {
           this.selectedStation.set(undefined);
@@ -260,9 +286,9 @@ export class SiteSelectPage {
       const preservedStation = this.manualStationSelection;
       this.manualStationSelection = undefined;
 
-      const reqId = ++latestDistrictReqId;
+      const reqId = ++latestLocationReqId;
       this.isCalculatingProximity.set(true);
-      this.districtCenterResult.set(undefined);
+      this.locationCenterResult.set(undefined);
       if (!preservedStation) {
         this.selectedStation.set(undefined);
         if (picsaMap && mapReady) {
@@ -271,18 +297,18 @@ export class SiteSelectPage {
         }
       }
 
-      getDistrictCenterAndBoundary(countryCode as ICountryCode, district.id)
+      getLocationCenterAndBoundary(countryCode as ICountryCode, locationEntry.id)
         .then((result) => {
-          if (reqId !== latestDistrictReqId) return;
-          this.districtCenterResult.set(result);
+          if (reqId !== latestLocationReqId) return;
+          this.locationCenterResult.set(result);
           this.isCalculatingProximity.set(false);
 
           if (result) {
             const recommendations = getStationRecommendations(
               activeStations,
               result.center,
-              district.label,
-              district.id,
+              locationEntry.label,
+              locationEntry.id,
             );
             this.stationRecommendations.set(recommendations);
 
@@ -293,37 +319,35 @@ export class SiteSelectPage {
               if (picsaMapInstance && this.mapReady()) {
                 const marker = this.mapMarkers().find((m) => m.data?.id === targetStation.id);
                 if (marker) {
-                  picsaMapInstance.setActiveMarker(marker, false, false);
+                  picsaMapInstance.setActiveMarker(marker, false, true);
                 }
               }
             }
-          } else {
-            this.stationRecommendations.set([]);
           }
         })
         .catch((err) => {
-          if (reqId !== latestDistrictReqId) return;
-          console.error('[SiteSelectPage] Failed to calculate proximity:', err);
-          this.isCalculatingProximity.set(false);
-          this.stationRecommendations.set([]);
+          if (reqId === latestLocationReqId) {
+            console.error('[SiteSelectPage] Error calculating proximity:', err);
+            this.isCalculatingProximity.set(false);
+          }
         });
     });
 
-    // Effect: Update MapGeoJsonLayer and camera when district and primary recommendation resolve
-    let lastRenderedForMapDistrictId: string | undefined = undefined;
+    // Effect: Update MapGeoJsonLayer and camera when location and primary recommendation resolve
+    let lastRenderedForMapLocationId: string | undefined = undefined;
     effect(() => {
-      const district = this.selectedDistrict();
-      const result = this.districtCenterResult();
+      const locationEntry = this.selectedLocationEntry();
+      const result = this.locationCenterResult();
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
       const activeStation = this.displayedStation()?.station;
 
-      if (!picsaMap || !mapReady || !district || !result) {
-        if (!district) lastRenderedForMapDistrictId = undefined;
+      if (!picsaMap || !mapReady || !locationEntry || !result) {
+        if (!locationEntry) lastRenderedForMapLocationId = undefined;
         return;
       }
-      if (lastRenderedForMapDistrictId === district.id) return;
-      lastRenderedForMapDistrictId = district.id;
+      if (lastRenderedForMapLocationId === locationEntry.id) return;
+      lastRenderedForMapLocationId = locationEntry.id;
 
       if (result.feature) {
         picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
@@ -334,7 +358,7 @@ export class SiteSelectPage {
         });
       }
 
-      const bounds = this.districtAndStationBounds();
+      const bounds = this.locationAndStationBounds();
       if (bounds) {
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         picsaMap.fitBounds(bounds, {
@@ -348,46 +372,52 @@ export class SiteSelectPage {
       if (activeStation) {
         const marker = this.mapMarkers().find((m) => m.data?.id === activeStation.id);
         if (marker) {
-          picsaMap.setActiveMarker(marker, false, false);
+          picsaMap.setActiveMarker(marker, false, true);
         }
       }
     });
+  }
 
-    // Effect: Automated location attempt when map is ready and no location is set
-    let hasAttemptedInitialLocate = false;
-    effect(() => {
-      const mapReady = this.mapReady();
-      const location = this.selectedLocation();
-      const selectedStation = this.selectedStation();
+  public ngAfterViewInit() {
+    this.registerHeaderPortal();
+    // Default to map view on initial load
+    this.setView('map');
+  }
 
-      if (mapReady && (!location || location.length === 0) && !selectedStation && !hasAttemptedInitialLocate) {
-        hasAttemptedInitialLocate = true;
-        this.locateUser(true);
-      }
+  public ngOnDestroy() {
+    // Clean up header portal on navigate away
+    this.configurationService.setPortalContent?.({
+      headerCenterPortal: null,
+      headerEndPortal: null,
     });
+  }
+
+  public setView(view: 'map' | 'table') {
+    if (view === 'table') {
+      this.openAllStationsDialog();
+    }
   }
 
   public handleLocationChanged(location: (string | undefined)[]) {
     if (isEqual(location, this.selectedLocation())) {
       return;
     }
-    this.manualStationSelection = undefined;
     this.selectedLocation.set(location);
-    this.districtCenterResult.set(undefined);
-    this.selectedStation.set(undefined);
-    this.stationRecommendations.set([]);
-    const picsaMap = this.picsaMap();
-    if (picsaMap && this.mapReady()) {
-      picsaMap.clearActiveMarker();
-      picsaMap.removeGeoJsonLayer('selected-district-boundary');
-    }
-    // If complete location with district is selected, persist to userSettings
     const country = this.userCountryCode();
     if (country) {
       const geoData = getGeoLocationData(country as ICountryCode);
       if (isLocationComplete(geoData, location)) {
         this.configurationService.updateUserSettings({ location });
       }
+    }
+  }
+
+  private registerHeaderPortal() {
+    const centerPortal = this.headerCenterPortal();
+    if (centerPortal) {
+      this.configurationService.setPortalContent?.({
+        headerCenterPortal: centerPortal,
+      });
     }
   }
 
@@ -415,7 +445,7 @@ export class SiteSelectPage {
         this.confirmAndNavigate(station);
       } else {
         this.selectedStation.set(station);
-        this.syncDistrictFromStation(station);
+        this.syncLocationFromStation(station);
         const picsaMap = this.picsaMap();
         if (picsaMap && this.mapReady()) {
           const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
@@ -430,7 +460,7 @@ export class SiteSelectPage {
   public handleMarkerClick(e: IMapMarker) {
     if (e?.data) {
       this.selectedStation.set(e.data);
-      this.syncDistrictFromStation(e.data);
+      this.syncLocationFromStation(e.data);
     }
   }
 
@@ -479,19 +509,20 @@ export class SiteSelectPage {
       .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft);
     if (activeStations.length === 0) return;
 
-    let closestStation: IStationMeta = activeStations[0];
-    let minDistance = Infinity;
+    let closestStation = activeStations[0];
+    let minDistance = calculateHaversineDistanceKm(userLat, userLng, closestStation.latitude, closestStation.longitude);
 
-    for (const station of activeStations) {
-      const distance = calculateHaversineDistanceKm(userLat, userLng, station.latitude, station.longitude);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestStation = station;
+    for (let i = 1; i < activeStations.length; i++) {
+      const s = activeStations[i];
+      const dist = calculateHaversineDistanceKm(userLat, userLng, s.latitude, s.longitude);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestStation = s;
       }
     }
 
     this.selectedStation.set(closestStation);
-    this.syncDistrictFromStation(closestStation);
+    this.syncLocationFromStation(closestStation);
 
     const picsaMap = this.picsaMap();
     if (picsaMap && this.mapReady()) {
@@ -526,26 +557,30 @@ export class SiteSelectPage {
   }
 
   /**
-   * When a user clicks a station directly on the map or table, populate the district
-   * selector if the station maps to a known district and no district (or a different district) is selected.
+   * When a user clicks a station directly on the map or table, populate the location
+   * selector if the station maps to a known location and no location (or a different location) is selected.
    */
-  private syncDistrictFromStation(station: IStationMeta) {
+  public syncLocationFromStation(station: IStationMeta) {
     const country = this.userCountryCode();
     if (!country || !station.location?.length) return;
 
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
-    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id));
-    if (!matchingDistrict || matchingDistrict.id === this.selectedDistrict()?.id) {
+    const matchingLocation = deepest.find((d) => isStationInLocation(station, d.label, d.id));
+    if (!matchingLocation || matchingLocation.id === this.selectedLocationEntry()?.id) {
       return;
     }
 
     this.manualStationSelection = station;
-    const location: (string | undefined)[] = matchingDistrict.parentId
-      ? [undefined, undefined, country, undefined, matchingDistrict.parentId, matchingDistrict.id]
-      : [undefined, undefined, country, undefined, matchingDistrict.id];
+    const location: (string | undefined)[] = matchingLocation.parentId
+      ? [undefined, undefined, country, undefined, matchingLocation.parentId, matchingLocation.id]
+      : [undefined, undefined, country, undefined, matchingLocation.id];
 
     this.selectedLocation.set(location);
     this.configurationService.updateUserSettings({ location });
+  }
+
+  public syncDistrictFromStation(station: IStationMeta) {
+    this.syncLocationFromStation(station);
   }
 }

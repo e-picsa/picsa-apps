@@ -7,19 +7,12 @@ import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/d
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
- * Forecast location select displays dropdown selection boxes for administrative level 4 and
- * sublocation levels within the current user selected country.
+ * Location select displays dropdown selection boxes for administrative parent and sub-location
+ * tiers within the current user selected country.
  *
- * This is slightly complicated as different countries use different terminology to describe
- * administrative location levels, and not all countries use all levels. Each country defines
- * its own slots (mw: admin_4, zm: admin_4+admin_5, zw: admin_4+admin_6) and the second
- * dropdown always renders the deepest defined tier.
- *
- * E.g. In Malawi it shows dropdown  [4|District]
- * E.g. In Zambia is shows dropdowns [4|Province] [5|District]
- * E.g. In Zimbabwe is shows dropdowns [4|Province] [6|District]
- *
- * NOTE - this is not currently setup for full formcontrol binding (Future TODO)
+ * Each country defines its own slots (e.g. mw: [admin_4], zm: [admin_4, admin_5], zw: [admin_4, admin_6]).
+ * The first dropdown renders the parent tier, and when a secondary tier exists, the second dropdown renders
+ * the deepest defined sublocation tier.
  */
 @Component({
   selector: 'picsa-form-location-select',
@@ -38,10 +31,22 @@ export class FormLocationSelectComponent {
 
   public valueChanged = output<(string | undefined)[]>();
 
-  /** Location selected as stored to user profile (admin_4 district/province level) */
-  public admin4Selected = signal<string | undefined>(undefined);
-  public admin5Options = signal<{ id: string; label: string }[]>([]);
-  public admin5Selected = signal<string | undefined>(undefined);
+  /** Parent tier selected (e.g. Province in multi-tier, District in single-tier) */
+  public parentSelected = signal<string | undefined>(undefined);
+  /** Deepest sublocation tier options and selection */
+  public sublocationOptions = signal<{ id: string; label: string }[]>([]);
+  public sublocationSelected = signal<string | undefined>(undefined);
+
+  /** Backwards-compatible aliases for legacy templates and specs */
+  public get admin4Selected() {
+    return this.parentSelected;
+  }
+  public get admin5Selected() {
+    return this.sublocationSelected;
+  }
+  public get admin5Options() {
+    return this.sublocationOptions;
+  }
 
   /** Deepest location tier defined for the country (drives the second dropdown) */
   public sublocation = computed(() => {
@@ -54,14 +59,14 @@ export class FormLocationSelectComponent {
   });
 
   public computedValue = computed<(string | undefined)[]>(
-    () => this.getComputedValue(this.admin4Selected(), this.admin5Selected()),
+    () => this.getComputedValue(this.parentSelected(), this.sublocationSelected()),
     { equal: isEqual },
   );
 
   public isValid = computed(() => {
     const computedValue = this.computedValue();
-    if (this.sublocation()) return computedValue[5] ? true : false;
-    return computedValue[4] ? true : false;
+    if (this.sublocation()) return Boolean(computedValue[5]);
+    return Boolean(computedValue[4]);
   });
 
   public locationData = computed<IGeolocationData>(() => {
@@ -75,14 +80,15 @@ export class FormLocationSelectComponent {
     // Set input values when passed
     effect(() => {
       const inputValue = this.value();
-      this.admin4Selected.set(inputValue[4]);
-      this.admin5Selected.set(inputValue[5]);
+      this.parentSelected.set(inputValue[4]);
+      this.sublocationSelected.set(inputValue[5]);
     });
 
     effect(() => {
-      const admin4Selected = this.admin4Selected();
-      this.handleAdmin4Selected(admin4Selected);
+      const parentSelected = this.parentSelected();
+      this.handleParentSelected(parentSelected);
     });
+
     // Emit value changes when valid, or when an existing valid selection becomes incomplete
     effect(() => {
       const computedValue = this.computedValue();
@@ -97,10 +103,10 @@ export class FormLocationSelectComponent {
     });
   }
 
-  private getComputedValue(admin4Selected?: string, admin5Selected?: string) {
-    const value = [undefined, undefined, this.countryCode(), undefined, admin4Selected];
+  private getComputedValue(parentSelected?: string, sublocationSelected?: string) {
+    const value = [undefined, undefined, this.countryCode(), undefined, parentSelected];
     if (this.sublocation()) {
-      value.push(admin5Selected);
+      value.push(sublocationSelected);
     }
     return value;
   }
@@ -110,28 +116,28 @@ export class FormLocationSelectComponent {
     return this.locationModifier()(locationData, country_code);
   }
 
-  /** Update sublocation options/selected when admin 4 changes */
-  private handleAdmin4Selected(admin4Selected: string | undefined) {
-    if (!admin4Selected) {
-      this.admin5Options.set([]);
-      this.admin5Selected.set(undefined);
+  /** Update sublocation options/selected when parent tier selection changes */
+  private handleParentSelected(parentSelected: string | undefined) {
+    if (!parentSelected) {
+      this.sublocationOptions.set([]);
+      this.sublocationSelected.set(undefined);
       return;
     }
     const sublocation = this.sublocation();
     if (sublocation) {
       const parentSlot = sublocation.parentSlot;
       const filteredLocations = sublocation.locations.filter(
-        (o) => (o as Record<string, string>)[parentSlot] === admin4Selected,
+        (o) => (o as Record<string, string>)[parentSlot] === parentSelected,
       );
-      this.admin5Options.set(filteredLocations);
-      let currentAdmin5 = this.admin5Selected();
-      if (currentAdmin5 && !filteredLocations.find((v) => v.id === currentAdmin5)) {
-        currentAdmin5 = undefined;
-        this.admin5Selected.set(undefined);
+      this.sublocationOptions.set(filteredLocations);
+      let currentSublocation = this.sublocationSelected();
+      if (currentSublocation && !filteredLocations.find((v) => v.id === currentSublocation)) {
+        currentSublocation = undefined;
+        this.sublocationSelected.set(undefined);
       }
       // Set value when only 1 option available
-      if (!currentAdmin5 && filteredLocations.length === 1) {
-        this.admin5Selected.set(filteredLocations[0].id);
+      if (!currentSublocation && filteredLocations.length === 1) {
+        this.sublocationSelected.set(filteredLocations[0].id);
       }
     }
   }

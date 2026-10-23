@@ -11,6 +11,9 @@ import type { IStationMeta } from '@picsa/models';
 export interface IStationRecommendation {
   station: IStationMeta;
   distanceKm: number;
+  /** Whether station matches the selected administrative location */
+  isInsideLocation: boolean;
+  /** Backwards-compatible alias for isInsideLocation */
   isInsideDistrict: boolean;
   isRecommended: boolean;
   score: number;
@@ -31,10 +34,13 @@ export interface IProximityFeature {
   };
 }
 
-export interface IDistrictCenterResult {
+export interface ILocationCenterResult {
   center: { lat: number; lng: number };
   feature?: IProximityFeature;
 }
+
+/** Backwards-compatible alias */
+export type IDistrictCenterResult = ILocationCenterResult;
 
 /** In-memory cache for parsed GeoJSON by country code and admin level to prevent CPU lockup on rapid navigation */
 const geoJsonCache = new Map<string, IGeoJsonData>();
@@ -58,9 +64,9 @@ export function calculateHaversineDistanceKm(lat1: number, lon1: number, lat2: n
 }
 
 /**
- * Normalize location names for fuzzy comparison
+ * Normalize location names for comparison by stripping common administrative suffixes and punctuation
  */
-export function normalizeLocationName(name?: string | null): string {
+export function normalizeLocationName(name?: string): string {
   if (!name) return '';
   return name
     .toLowerCase()
@@ -69,42 +75,37 @@ export function normalizeLocationName(name?: string | null): string {
     .trim();
 }
 
-export interface IGeoBbox {
-  minLng: number;
-  minLat: number;
-  maxLng: number;
-  maxLat: number;
-}
-
 /**
- * Compute the bounding box of a GeoJSON Feature (Polygon or MultiPolygon)
+ * Compute the bounding box [minLng, minLat, maxLng, maxLat] of a GeoJSON Feature
  */
-export function computeFeatureBbox(feature?: IProximityFeature | null): IGeoBbox | undefined {
-  if (!feature || !feature.geometry || !feature.geometry.coordinates) return undefined;
-
+export function computeFeatureBbox(
+  feature: IProximityFeature | undefined,
+): { minLng: number; minLat: number; maxLng: number; maxLat: number } | undefined {
+  if (!feature || !feature.geometry) return undefined;
+  const geom = feature.geometry;
   let minLng = Infinity;
   let maxLng = -Infinity;
   let minLat = Infinity;
   let maxLat = -Infinity;
 
-  const extractCoords = (coords: unknown) => {
+  function traverse(coords: unknown) {
     if (!Array.isArray(coords)) return;
-    if (coords.length >= 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+    if (typeof coords[0] === 'number' && typeof coords[1] === 'number') {
       const [lng, lat] = coords as [number, number];
       if (lng < minLng) minLng = lng;
       if (lng > maxLng) maxLng = lng;
       if (lat < minLat) minLat = lat;
       if (lat > maxLat) maxLat = lat;
     } else {
-      for (const child of coords) {
-        extractCoords(child);
+      for (const item of coords) {
+        traverse(item);
       }
     }
-  };
+  }
 
-  extractCoords(feature.geometry.coordinates);
+  traverse(geom.coordinates);
 
-  if (minLng === Infinity || minLat === Infinity || minLng === -Infinity || minLat === -Infinity) {
+  if (minLng === Infinity || minLat === Infinity) {
     return undefined;
   }
 
@@ -112,22 +113,22 @@ export function computeFeatureBbox(feature?: IProximityFeature | null): IGeoBbox
 }
 
 /**
- * Compute bounding-box centroid of a GeoJSON Feature (Polygon or MultiPolygon)
+ * Compute center { lat, lng } from a feature bounding box
  */
-export function computeFeatureBboxCenter(feature?: IProximityFeature | null): { lat: number; lng: number } | undefined {
+export function computeFeatureBboxCenter(feature: IProximityFeature): { lat: number; lng: number } | undefined {
   const bbox = computeFeatureBbox(feature);
   if (!bbox) return undefined;
   return {
-    lat: Math.round(((bbox.minLat + bbox.maxLat) / 2) * 100000) / 100000,
-    lng: Math.round(((bbox.minLng + bbox.maxLng) / 2) * 100000) / 100000,
+    lat: (bbox.minLat + bbox.maxLat) / 2,
+    lng: (bbox.minLng + bbox.maxLng) / 2,
   };
 }
 
 /**
- * Compute a bounding box [[minLng, minLat], [maxLng, maxLat]] covering the district feature
+ * Compute a bounding box [[minLng, minLat], [maxLng, maxLat]] covering the location feature
  * (or fallback centroid) and a target station location.
  */
-export function getCombinedDistrictAndStationBounds(
+export function getCombinedLocationAndStationBounds(
   feature: IProximityFeature | undefined,
   station?: { latitude: number; longitude: number } | null,
   fallbackCenter?: { lat: number; lng: number } | null,
@@ -155,20 +156,22 @@ export function getCombinedDistrictAndStationBounds(
   ];
 }
 
+export const getCombinedDistrictAndStationBounds = getCombinedLocationAndStationBounds;
+
 /**
- * Retrieve district reference coordinates and GeoJSON boundary.
+ * Retrieve reference coordinates and GeoJSON boundary for a location at the country's deepest tier.
  * 1. Checks precomputed `center: [lng, lat]` property in the TopoJSON feature.
  * 2. Falls back to calculating the centroid from the polygon bounding box.
- * 3. Falls back to precomputed district coordinates if available.
+ * 3. Falls back to precomputed location coordinates if available.
  */
-export async function getDistrictCenterAndBoundary(
+export async function getLocationCenterAndBoundary(
   countryCode: ICountryCode,
-  districtId: string,
-): Promise<IDistrictCenterResult | undefined> {
+  locationId: string,
+): Promise<ILocationCenterResult | undefined> {
   const geoData = getGeoLocationData(countryCode);
   const deepest = getDeepestLocations(geoData);
-  const district = deepest.find((d) => d.id === districtId);
-  if (!district) return undefined;
+  const locationItem = deepest.find((d) => d.id === locationId);
+  if (!locationItem) return undefined;
 
   try {
     const adminLevel = getDeepestAdminLevel(geoData);
@@ -180,7 +183,7 @@ export async function getDistrictCenterAndBoundary(
       geoJsonCache.set(cacheKey, geojson);
     }
 
-    const candidates = [district.label, district.topoName, district.id].filter(
+    const candidates = [locationItem.label, locationItem.topoName, locationItem.id].filter(
       (v): v is string => typeof v === 'string' && Boolean(v),
     );
 
@@ -209,16 +212,16 @@ export async function getDistrictCenterAndBoundary(
       }
     }
   } catch (err) {
-    console.warn(`[LocationProximity] Could not compute district center from TopoJSON for ${districtId}:`, err);
+    console.warn(`[LocationProximity] Could not compute location center from TopoJSON for ${locationId}:`, err);
   }
 
-  // 3. Fallback: Check if district item itself has precomputed coordinates
-  const districtCoords = (district as { coordinates?: { latitude: number; longitude: number } }).coordinates;
-  if (districtCoords?.latitude && districtCoords?.longitude) {
+  // 3. Fallback: Check if location item itself has precomputed coordinates
+  const locationCoords = (locationItem as { coordinates?: { latitude: number; longitude: number } }).coordinates;
+  if (locationCoords?.latitude && locationCoords?.longitude) {
     return {
       center: {
-        lat: districtCoords.latitude,
-        lng: districtCoords.longitude,
+        lat: locationCoords.latitude,
+        lng: locationCoords.longitude,
       },
     };
   }
@@ -226,59 +229,64 @@ export async function getDistrictCenterAndBoundary(
   return undefined;
 }
 
+export const getDistrictCenterAndBoundary = getLocationCenterAndBoundary;
+
 /**
- * Check whether a station is mapped to a specific district
+ * Check whether a station is mapped to a specific administrative location (by label or id)
  */
-export function isStationInDistrict(station: IStationMeta, districtLabel?: string, districtId?: string): boolean {
-  if (!districtLabel || !station.location || station.location.length === 0) return false;
-  const normDistrictLabel = normalizeLocationName(districtLabel);
-  const normDistrictId = districtId ? normalizeLocationName(districtId) : '';
+export function isStationInLocation(station: IStationMeta, locationLabel?: string, locationId?: string): boolean {
+  if (!locationLabel || !station.location || station.location.length === 0) return false;
+  const normLocationLabel = normalizeLocationName(locationLabel);
+  const normLocationId = locationId ? normalizeLocationName(locationId) : '';
   return station.location.some((loc) => {
     const norm = normalizeLocationName(loc);
-    return norm === normDistrictLabel || (normDistrictId !== '' && norm === normDistrictId);
+    return norm === normLocationLabel || (normLocationId !== '' && norm === normLocationId);
   });
 }
 
+export const isStationInDistrict = isStationInLocation;
+
 /**
- * Rank stations for a district based on proximity and data viability
+ * Rank stations for an administrative location based on proximity and data viability
  */
 export function getStationRecommendations(
   stations: IStationMeta[],
-  districtCoords: { lat: number; lng: number },
-  districtLabel: string,
-  districtId: string,
+  locationCoords: { lat: number; lng: number },
+  locationLabel: string,
+  locationId: string,
 ): IStationRecommendation[] {
   const scored = stations
     .filter((s) => s.latitude !== null && s.longitude !== null && !s.draft)
     .map((station) => {
-      const isInsideDistrict = isStationInDistrict(station, districtLabel, districtId);
+      const isInsideLocation = isStationInLocation(station, locationLabel, locationId);
 
       const distanceKm = calculateHaversineDistanceKm(
-        districtCoords.lat,
-        districtCoords.lng,
+        locationCoords.lat,
+        locationCoords.lng,
         station.latitude,
         station.longitude,
       );
 
       // Lightweight scoring:
-      // - Inside district gives a strong 50km advantage
+      // - Inside location gives a strong 50km advantage
       // - Stations with >30 complete rain years get a slight 10km advantage over sparse stations
       const completeYears = station.capabilities?.completeRainYears ?? station.capabilities?.totalYears ?? 0;
       const dataBonus = completeYears >= 30 ? -10 : 0;
-      const districtBonus = isInsideDistrict ? -50 : 0;
+      const locationBonus = isInsideLocation ? -50 : 0;
 
-      const score = distanceKm + districtBonus + dataBonus;
+      const score = distanceKm + locationBonus + dataBonus;
 
       return {
         station,
         distanceKm,
-        isInsideDistrict,
+        isInsideLocation,
+        isInsideDistrict: isInsideLocation,
         isRecommended: false,
         score,
       };
     });
 
-  // Sort by score ascending (lower score is better)
+  // Sort by score ascending (lowest score is highest priority)
   scored.sort((a, b) => a.score - b.score);
 
   if (scored.length > 0) {
