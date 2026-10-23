@@ -18,6 +18,9 @@ type GestureAxis = 'pending' | 'horizontal' | 'vertical';
 @Directive({
   selector: '[picsaSwipeDismiss]',
   standalone: true,
+  host: {
+    '[style.touch-action]': "picsaSwipeDismissEnabled() ? 'pan-y pinch-zoom' : null",
+  },
 })
 export class PicsaSwipeDismissDirective implements OnInit {
   /** Whether the swipe dismiss gesture detection is active */

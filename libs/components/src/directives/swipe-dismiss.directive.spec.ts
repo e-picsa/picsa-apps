@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Renderer2, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PicsaSwipeDismissDirective } from './swipe-dismiss.directive';
@@ -61,6 +61,20 @@ describe('PicsaSwipeDismissDirective', () => {
     dispatchPointer(target, 'pointermove', { x: endX, y: endY, time: duration, pointerType });
     dispatchPointer(target, 'pointerup', { x: endX, y: endY, time: duration + 10, pointerType });
   }
+
+  it('binds touch-action to pan-y pinch-zoom when enabled and clears it when disabled', () => {
+    const renderer = fixture.debugElement.injector.get(Renderer2);
+    const setStyleSpy = jest.spyOn(renderer, 'setStyle');
+    const removeStyleSpy = jest.spyOn(renderer, 'removeStyle');
+
+    host.enabled.set(false);
+    fixture.detectChanges();
+    expect(removeStyleSpy).toHaveBeenCalledWith(target, 'touch-action', expect.anything());
+
+    host.enabled.set(true);
+    fixture.detectChanges();
+    expect(setStyleSpy).toHaveBeenCalledWith(target, 'touch-action', 'pan-y pinch-zoom', expect.anything());
+  });
 
   it('dismisses on a rightward touch swipe past the distance threshold', () => {
     swipe(0, 100);

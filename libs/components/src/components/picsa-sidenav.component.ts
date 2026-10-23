@@ -95,7 +95,6 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         padding-left: 1rem;
         &[data-mobile='true'] {
           padding-right: 1rem;
-          touch-action: pan-y pinch-zoom;
         }
       }
 
