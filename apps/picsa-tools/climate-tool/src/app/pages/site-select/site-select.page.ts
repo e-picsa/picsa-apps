@@ -114,11 +114,14 @@ export class SiteSelectPage {
   public readonly isCalculatingProximity = signal(false);
 
   /** Bounding box combining the selected location feature and the recommended station */
+  public readonly shouldFitMarkers = computed(() => !this.selectedLocation()?.some(Boolean));
+
+  /** Bounding box combining the selected location feature and the displayed or recommended station */
   public readonly locationAndStationBounds = computed(() => {
     const result = this.locationCenterResult();
-    const primary = this.primaryRecommendation();
+    const station = this.displayedStation()?.station ?? this.primaryRecommendation()?.station;
     if (!result) return undefined;
-    return getCombinedLocationAndStationBounds(result.feature, primary?.station, result.center);
+    return getCombinedLocationAndStationBounds(result.feature, station, result.center);
   });
   /** Backwards-compatible alias */
   public readonly districtAndStationBounds = this.locationAndStationBounds;
@@ -211,13 +214,14 @@ export class SiteSelectPage {
   /** Table rows for the "All stations" dialog */
   public readonly tableData = computed(() => {
     const stations = this.sortedAllStations();
-    return stations.map((station, index) => {
+    const numberMap = this.stationNumberMap();
+    return stations.map((station) => {
       const locationText = station.location?.join(', ') || '—';
       return {
         ...station,
         name: formatStationLabel(station.name),
         district: locationText,
-        number: this.stationNumberMap().get(station.id) ?? index + 1,
+        map: numberMap.get(station.id),
       };
     });
   });
@@ -227,7 +231,7 @@ export class SiteSelectPage {
     const country_code = this.userCountryCode();
     const geoData = getGeoLocationData(country_code);
     const slots = getLocationSlots(geoData);
-    const deepestLabel = geoData[slots[slots.length - 1]]?.label ?? geoData.admin_4.label;
+    const deepestLabel = geoData[slots[slots.length - 1]]?.label ?? geoData[slots[0]]?.label ?? '';
     return {
       displayColumns: ['map', 'name', 'district'],
       formatHeader: (v) => {
@@ -389,7 +393,9 @@ export class SiteSelectPage {
       if (lastRenderedParentLocationId === parentId) return;
       lastRenderedParentLocationId = parentId;
 
-      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, 4).then((result) => {
+      const slots = getLocationSlots(getGeoLocationData(countryCode as ICountryCode));
+      const parentSlot = slots[0];
+      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, parentSlot).then((result) => {
         if (!result?.feature) return;
         if (this.selectedLocationEntry()) return;
 
@@ -446,7 +452,17 @@ export class SiteSelectPage {
     if (picsaMap && this.mapReady()) {
       const marker = this.mapMarkers().find((m) => m.data?.id === recommendation.station.id);
       if (marker) {
-        picsaMap.setActiveMarker(marker, false, true);
+        picsaMap.setActiveMarker(marker, false, false);
+      }
+      const bounds = this.locationAndStationBounds();
+      if (bounds) {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        picsaMap.fitBounds(bounds, {
+          maxZoom: 8,
+          padding: isMobile
+            ? { top: 110, bottom: 145, left: 30, right: 30 }
+            : { top: 40, bottom: 40, left: 40, right: 40 },
+        });
       }
     }
   }

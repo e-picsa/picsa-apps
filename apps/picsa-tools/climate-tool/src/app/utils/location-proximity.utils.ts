@@ -1,11 +1,7 @@
 import type { ICountryCode } from '@picsa/data';
 import type { IGeoJsonData } from '@picsa/data/geoLocation';
-import {
-  getDeepestAdminLevel,
-  getDeepestLocations,
-  getGeoLocationData,
-  topoJsonToGeoJson,
-} from '@picsa/data/geoLocation';
+import type { GeoLocationSlot } from '@picsa/data/geoLocation';
+import { findLocationById, getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import type { IStationMeta } from '@picsa/models';
 
 export interface IStationRecommendation {
@@ -167,30 +163,37 @@ export const getCombinedDistrictAndStationBounds = getCombinedLocationAndStation
 export async function getLocationCenterAndBoundary(
   countryCode: ICountryCode,
   locationId: string,
-  preferredAdminLevel?: number,
+  preferredSlotOrLevel?: GeoLocationSlot | number,
 ): Promise<ILocationCenterResult | undefined> {
   const geoData = getGeoLocationData(countryCode);
 
   let locationItem:
     | { id: string; label: string; topoName?: string; coordinates?: { latitude: number; longitude: number } }
     | undefined;
-  let adminLevel: number;
+  let adminLevel = 0;
 
-  if (preferredAdminLevel === 4 && geoData.admin_4) {
-    locationItem = geoData.admin_4.locations.find((l) => l.id === locationId);
-    adminLevel = 4;
-  } else {
-    const deepest = getDeepestLocations(geoData);
-    locationItem = deepest.find((d) => d.id === locationId);
-    adminLevel = getDeepestAdminLevel(geoData);
-
-    if (!locationItem && geoData.admin_4) {
-      locationItem = geoData.admin_4.locations.find((l) => l.id === locationId);
-      adminLevel = 4;
+  if (preferredSlotOrLevel) {
+    const slotKey: GeoLocationSlot =
+      typeof preferredSlotOrLevel === 'number'
+        ? (`admin_${preferredSlotOrLevel}` as GeoLocationSlot)
+        : preferredSlotOrLevel;
+    if (geoData[slotKey]) {
+      locationItem = geoData[slotKey]?.locations.find((l) => l.id === locationId);
+      if (locationItem) {
+        adminLevel = Number(slotKey.split('_')[1]);
+      }
     }
   }
 
-  if (!locationItem) return undefined;
+  if (!locationItem) {
+    const found = findLocationById(geoData, locationId);
+    if (found) {
+      locationItem = found.location;
+      adminLevel = Number(found.slot.split('_')[1]);
+    }
+  }
+
+  if (!locationItem || !adminLevel) return undefined;
 
   try {
     const cacheKey = `${countryCode}:${adminLevel}`;

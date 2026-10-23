@@ -20,6 +20,7 @@ import { SiteSelectPage } from './site-select.page';
 })
 class MockPicsaMapComponent {
   @Input() markers: unknown;
+  @Input() fitBoundsOnMarkerUpdate?: boolean;
   fitBounds = jest.fn();
   setActiveMarker = jest.fn();
   clearActiveMarker = jest.fn();

@@ -139,6 +139,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   mapOptions = input<IMapOptions>({});
   markers = input<IMapMarker[]>([]);
+  fitBoundsOnMarkerUpdate = input<boolean>(true);
 
   public mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -605,7 +606,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       const mlMarker = new maplibregl.Marker({ element }).setLngLat(toLngLat(marker.latlng)).addTo(map);
       this.renderedMarkers.push({ marker, mlMarker, element });
     });
-    if (markers.length > 0) {
+    if (markers.length > 0 && this.fitBoundsOnMarkerUpdate()) {
       this.fitMapToMarkers(markers);
     }
   }

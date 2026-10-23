@@ -87,6 +87,7 @@
     <picsa-map
       (onMarkerClick)="handleMarkerClick($event)"
       [markers]="mapMarkers()"
+      [fitBoundsOnMarkerUpdate]="shouldFitMarkers()"
       (onMapReady)="mapReady.set(true)"
       #picsaMap
       class="flex-1 w-full h-full"

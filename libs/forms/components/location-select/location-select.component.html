@@ -1,6 +1,6 @@
 <div class="flex gap-4 my-4">
   <!-- Parent Tier Location Select (e.g. Province in multi-tier, District in single-tier) -->
-  @if (locationData().admin_4; as data) {
+  @if (parentLocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>
       <mat-select #parentSelect (selectionChange)="parentSelected.set(parentSelect.value)" [value]="parentSelected()">
@@ -11,7 +11,7 @@
     </mat-form-field>
   }
 
-  <!-- Deepest Sub-location Tier Select (e.g. District in ZM [admin 5] or ZW [admin 6]) -->
+  <!-- Deepest Sub-location Tier Select (e.g. District in ZM or ZW) -->
   @if (sublocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>

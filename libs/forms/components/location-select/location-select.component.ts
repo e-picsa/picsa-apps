@@ -48,6 +48,14 @@ export class FormLocationSelectComponent {
     return this.sublocationOptions;
   }
 
+  /** Parent location tier defined for the country (drives the first dropdown) */
+  public parentLocation = computed(() => {
+    const locationData = this.locationData();
+    const slots = getLocationSlots(locationData);
+    const slot = slots[0];
+    return slot ? { slot, ...locationData[slot]! } : undefined;
+  });
+
   /** Deepest location tier defined for the country (drives the second dropdown) */
   public sublocation = computed(() => {
     const locationData = this.locationData();
