@@ -19,4 +19,16 @@ describe('TranslationsPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call service.exportXlsx when download template button is clicked', () => {
+    const exportSpy = jest.spyOn(component.service, 'exportXlsx').mockResolvedValue(undefined as never);
+    const buttons = fixture.nativeElement.querySelectorAll('button');
+    const downloadBtn = Array.from(buttons).find((btn) =>
+      (btn as HTMLButtonElement).textContent?.includes('Download Template'),
+    ) as HTMLButtonElement;
+
+    expect(downloadBtn).toBeTruthy();
+    downloadBtn.click();
+    expect(exportSpy).toHaveBeenCalled();
+  });
 });

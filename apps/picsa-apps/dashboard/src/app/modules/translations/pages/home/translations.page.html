@@ -1,13 +1,17 @@
 <div class="page-content">
-  <!-- Language Select -->
-  <mat-form-field>
-    <mat-label>Language</mat-label>
-    <mat-select [(ngModel)]="locale">
-      @for(locale of localeOptions(); track locale.id){
-      <mat-option [value]="locale.id">{{locale.language_label}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <!-- Language Select & Actions -->
+  <div class="flex items-center gap-4">
+    <mat-form-field>
+      <mat-label>Language</mat-label>
+      <mat-select [(ngModel)]="locale">
+        @for(locale of localeOptions(); track locale.id){
+        <mat-option [value]="locale.id">{{locale.language_label}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button matButton="outlined" (click)="service.exportXlsx()">Download Template</button>
+  </div>
 
   <!-- Headline filter chips -->
   <!-- Default to 'all' as single-select listbox allows deselecting the active chip (emits undefined) -->
@@ -34,9 +38,4 @@
   } @else {
   <picsa-loading style="margin: auto"></picsa-loading>
   }
-
-  <!-- JSON Export -->
-  <button style="margin-top: 2rem; max-width: 200px" matButton (click)="service.exportJson(locale(),true)">
-    Export JSON
-  </button>
 </div>
