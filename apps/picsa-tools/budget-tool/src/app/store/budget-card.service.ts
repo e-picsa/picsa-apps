@@ -1,33 +1,30 @@
 import { inject, Injectable } from '@angular/core';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
-import { RxCollection } from 'rxdb';
+import { IAppMeta } from '@picsa/models';
+import { PicsaCustomCardService } from '@picsa/shared/features/cards';
+import { PicsaDbService } from '@picsa/shared/services/core/db';
 
 import { BUDGET_CARDS, ENTERPRISE_GROUPS } from '../data';
 import * as CardSchema from '../schema/cards';
+import { filterLegacyCustomCards, LEGACY_CUSTOM_CARDS_ENDPOINT } from './budget-card.upgrade';
 
 @Injectable({ providedIn: 'root' })
-export class BudgetCardService extends PicsaAsyncService {
-  private dbService = inject(PicsaDatabase_V2_Service);
+export class BudgetCardService extends PicsaCustomCardService<CardSchema.IBudgetCard> {
+  protected collectionName = 'budget_cards' as const;
+  protected collectionCreator = CardSchema.COLLECTION;
+
+  private legacyDb = inject(PicsaDbService);
 
   public enterpriseGroups = this.getEnterpriseGroupCards();
 
   constructor() {
     super();
     this.ready().then(() => console.log('[Budget Card] service ready'));
-    // TODO - migrate legacy db custom cards (if possible)
   }
 
   public override async init() {
-    await this.dbService.ready();
-    await this.dbService.ensureCollections({
-      budget_cards: CardSchema.COLLECTION,
-    });
+    await super.init();
     await this.loadHardcodedData();
-  }
-
-  public get dbCollection() {
-    return this.dbService.db.collections.budget_cards as RxCollection<CardSchema.IBudgetCard>;
+    await this.migrateLegacyCustomCardsOnce();
   }
 
   private getEnterpriseGroupCards(): CardSchema.IBudgetCard[] {
@@ -42,15 +39,27 @@ export class BudgetCardService extends PicsaAsyncService {
     }));
   }
 
-  public async saveCustomCard(card: CardSchema.IBudgetCard) {
-    return this.dbCollection.upsert(card);
-  }
-  public async deleteCustomCard(card: CardSchema.IBudgetCard) {
-    const ref = this.dbCollection.findOne(card.id);
-    return ref.remove();
-  }
-
   private async loadHardcodedData() {
     return this.dbCollection.bulkUpsert(BUDGET_CARDS);
+  }
+
+  /**
+   * One-time migration of custom cards saved through the legacy PicsaDbService
+   * Guarded by an `_appMeta` flag so the legacy store is only ever read once per device.
+   */
+  private async migrateLegacyCustomCardsOnce() {
+    const migrated = await this.legacyDb.getDoc<IAppMeta>('_appMeta', 'BUDGET_CARDS_LEGACY_MIGRATED');
+    if (migrated) return;
+
+    const legacyCards = await this.legacyDb.getCollection<CardSchema.IBudgetCard>(LEGACY_CUSTOM_CARDS_ENDPOINT);
+    const customCards = filterLegacyCustomCards(legacyCards);
+    if (customCards.length > 0) {
+      await this.dbCollection.bulkUpsert(customCards);
+      console.log(`[Budget Card] migrated ${customCards.length} legacy custom card(s) to RxDB`);
+    }
+    await this.legacyDb.setDoc('_appMeta', {
+      _key: 'BUDGET_CARDS_LEGACY_MIGRATED',
+      value: new Date().toISOString(),
+    });
   }
 }
