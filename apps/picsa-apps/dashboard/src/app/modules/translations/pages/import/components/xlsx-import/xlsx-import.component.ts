@@ -88,12 +88,16 @@ export class TranslationsXLSXImportComponent {
   });
 
   public tableOptions: IDataTableOptions = {
-    columns: {
-      tool: { title: 'Tool' },
-      context: { title: 'Context' },
-      text: { title: 'English' },
-      before: { title: 'Before' },
-      after: { title: 'After' },
+    displayColumns: ['tool', 'context', 'text', 'before', 'after'],
+    formatHeader: (key: string) => {
+      const headers: Record<string, string> = {
+        tool: 'Tool',
+        context: 'Context',
+        text: 'English',
+        before: 'Before',
+        after: 'After',
+      };
+      return headers[key] || key;
     },
   };
 
@@ -132,10 +136,6 @@ export class TranslationsXLSXImportComponent {
       this.importCounter.update((v) => v + 1);
     }
     await this.service.listTranslations();
-  }
-
-  public async exportTemplate() {
-    await this.service.exportXlsx();
   }
 
   private setupDropZone(target: HTMLDivElement) {

@@ -26,9 +26,4 @@ describe('TranslationsXLSXImportComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should delegate exportTemplate to TranslationDashboardService.exportXlsx', async () => {
-    await component.exportTemplate();
-    expect(mockTranslationService.exportXlsx).toHaveBeenCalledTimes(1);
-  });
 });

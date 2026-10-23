@@ -102,7 +102,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   // In your TranslationDashboardService
   public async addTranslation(translation: ITranslationInsert): Promise<string> {
     translation.id = translation.id || this.generateTranslationID(translation);
-    const { data, error } = await this.supabaseService.db.table('translations').insert([translation]);
+    const { error } = await this.supabaseService.db.table('translations').insert([translation]);
 
     if (error) {
       throw error;
@@ -144,7 +144,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   }
 
   /** Export a single language json to include in the app */
-  public exportJson(locale: string, shouldDownload = false) {
+  public exportJson(locale: string) {
     const data = this.translations();
     const translations = new Map<string, string>();
     const sortedData = [...data].sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
@@ -170,12 +170,6 @@ export class TranslationDashboardService extends PicsaAsyncService {
         }
       }
     }
-    const json = Object.fromEntries(translations);
-
-    if (shouldDownload) {
-      download(JSON.stringify(json, null, 2), `${locale}.json`);
-    }
-
-    return json;
+    return Object.fromEntries(translations);
   }
 }
