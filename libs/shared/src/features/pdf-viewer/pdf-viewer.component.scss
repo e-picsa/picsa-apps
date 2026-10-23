@@ -3,6 +3,7 @@
 }
 ngx-extended-pdf-viewer {
   #toolbarViewer {
+    justify-content: unset;
     color: var(--color-primary);
 
     // Ensure icon buttons in the toolbar (e.g. resource-share) match PDF toolbar button dimensions
@@ -36,10 +37,19 @@ ngx-extended-pdf-viewer {
     display: flex;
     align-items: center;
     gap: 4px;
+    min-width: 60px;
 
     > * {
       float: none;
     }
+  }
+  #toolbarViewerRight {
+    justify-content: end;
+  }
+  #toolbarViewerMiddle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
   #mainContainer {
     min-width: 250px !important;
