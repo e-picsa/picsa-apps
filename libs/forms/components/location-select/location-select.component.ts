@@ -36,6 +36,9 @@ export class FormLocationSelectComponent {
   /** Optional method to apply to data before rendering locations in list */
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
+  /** When true, emits value changes even when only the parent tier (admin 4) is selected */
+  public emitPartial = input<boolean>(false);
+
   public valueChanged = output<(string | undefined)[]>();
 
   /** Location selected as stored to user profile (admin_4 district/province level) */
@@ -81,11 +84,12 @@ export class FormLocationSelectComponent {
       const admin4Selected = this.admin4Selected();
       this.handleAdmin4Selected(admin4Selected);
     });
-    // Emit value changes when valid
+    // Emit value changes when valid or when emitPartial is enabled and admin4 is selected
     effect(() => {
       const computedValue = this.computedValue();
       const isValid = this.isValid();
-      if (computedValue && isValid) {
+      const emitPartial = this.emitPartial();
+      if (computedValue && (isValid || (emitPartial && computedValue[4]))) {
         this.valueChanged.emit(computedValue);
       }
     });

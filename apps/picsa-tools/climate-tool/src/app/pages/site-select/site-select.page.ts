@@ -1,18 +1,5 @@
-import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnDestroy,
-  signal,
-  TemplateRef,
-  viewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
@@ -20,10 +7,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration';
 import type { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
+import { getDeepestLocations, getGeoLocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IStationMeta } from '@picsa/models';
@@ -48,8 +34,6 @@ import { StationCardComponent } from './components/station-card/station-card.com
 const STATION_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.191 0 87.619 100" fill="currentColor"><path d="M82.447,57.766c-3.112,0-5.937,1.255-7.992,3.29L55.353,47.369v-1.773c0-2.015-1.303-3.692-3.094-4.333V22.592c5.521-0.768,9.769-5.509,9.769-11.236C62.027,5.09,56.946,0,50.667,0c-6.266,0-11.348,5.091-11.348,11.355c0,5.727,4.247,10.468,9.77,11.236v18.688c-1.76,0.662-3.027,2.335-3.027,4.316v1.604L25.906,61.064c-2.071-2.262-5.049-3.678-8.355-3.678c-6.277,0-11.36,5.087-11.36,11.357c0,6.27,5.083,11.356,11.36,11.356c6.265,0,11.348-5.087,11.348-11.356c0-1.818-0.436-3.544-1.193-5.066l18.353-12.622v44.299c0,2.561,2.089,4.646,4.647,4.646c2.564,0,4.646-2.085,4.646-4.646V51.27l17.183,12.314c-0.91,1.632-1.437,3.524-1.437,5.529c0,6.283,5.087,11.357,11.351,11.357c6.273,0,11.36-5.074,11.36-11.357C93.808,62.844,88.721,57.766,82.447,57.766z"/></svg>`;
 
 const STRINGS = {
-  map: translateMarker('Map'),
-  list: translateMarker('List'),
   location: translateMarker('Location'),
   locate: translateMarker('Locate'),
   view: translateMarker('View'),
@@ -78,15 +62,13 @@ const STRINGS = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class SiteSelectPage implements AfterViewInit, OnDestroy {
+export class SiteSelectPage {
   public readonly strings = STRINGS;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   public readonly dataService = inject(ClimateDataService);
   private configurationService = inject(ConfigurationService);
-  private componentsService = inject(PicsaCommonComponentsService);
-  private viewContainer = inject(ViewContainerRef);
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
   private dialog = inject(MatDialog);
@@ -94,7 +76,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** Tracks a station directly clicked on the map/table so district sync does not overwrite it */
   private manualStationSelection: IStationMeta | undefined = undefined;
 
-  public readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
   public readonly picsaMap = viewChild(PicsaMapComponent);
 
   /** User country code from active configuration/settings */
@@ -111,25 +92,42 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
   /** GPS location in progress */
   public readonly isLocating = signal(false);
 
-  /** Deepest selected location entry (district) */
+  /** Deepest selected location entry (district, or province fallback) */
   public readonly selectedDistrict = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
     if (!country || !loc || !loc.length) return undefined;
 
-    const districtId = loc[5] ?? loc[4];
-    if (!districtId) return undefined;
-
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
-    return deepest.find((l) => l.id === districtId);
+
+    const districtId = loc[5];
+    if (districtId) {
+      const match = deepest.find((l) => l.id === districtId);
+      if (match) return match;
+    }
+
+    const provinceOrDistrictId = loc[4];
+    if (provinceOrDistrictId) {
+      const match = deepest.find((l) => l.id === provinceOrDistrictId);
+      if (match) return match;
+
+      const province = geoData.admin_4?.locations.find((l) => l.id === provinceOrDistrictId);
+      if (province) {
+        return {
+          id: province.id,
+          label: province.label,
+          parentId: '',
+          parentLabel: '',
+        };
+      }
+    }
+
+    return undefined;
   });
 
   /** Selected station on map/table/card */
   public readonly selectedStation = signal<IStationMeta | undefined>(undefined);
-
-  /** Whether the user is viewing the map or list on mobile (default is map) */
-  public readonly view = signal<'recommendation' | 'map'>('map');
 
   /** Ranked stations by proximity to district center */
   public readonly stationRecommendations = signal<IStationRecommendation[]>([]);
@@ -302,6 +300,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
               result.center,
               district.label,
               district.id,
+              countryCode as ICountryCode,
             );
             this.stationRecommendations.set(recommendations);
 
@@ -312,7 +311,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
               if (picsaMapInstance && this.mapReady()) {
                 const marker = this.mapMarkers().find((m) => m.data?.id === targetStation.id);
                 if (marker) {
-                  picsaMapInstance.setActiveMarker(marker, false, !preservedStation);
+                  picsaMapInstance.setActiveMarker(marker, false, false);
                 }
               }
             }
@@ -386,25 +385,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    const portal = this.headerEndPortal();
-    if (portal) {
-      this.componentsService.patchHeader?.({
-        cdkPortalEnd: new TemplatePortal(portal, this.viewContainer),
-      });
-    }
-  }
-
-  ngOnDestroy() {
-    this.componentsService.patchHeader?.({
-      cdkPortalEnd: undefined,
-    });
-  }
-
-  public toggleView() {
-    this.view.update((v) => (v === 'map' ? 'recommendation' : 'map'));
-  }
-
   public handleLocationChanged(location: (string | undefined)[]) {
     if (isEqual(location, this.selectedLocation())) {
       return;
@@ -420,9 +400,12 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
       picsaMap.removeGeoJsonLayer('selected-district-boundary');
     }
     // If complete location with district is selected, persist to userSettings
-    const districtId = location[5] ?? location[4];
-    if (districtId) {
-      this.configurationService.updateUserSettings({ location });
+    const country = this.userCountryCode();
+    if (country) {
+      const geoData = getGeoLocationData(country as ICountryCode);
+      if (isLocationComplete(geoData, location)) {
+        this.configurationService.updateUserSettings({ location });
+      }
     }
   }
 
@@ -570,7 +553,7 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
 
     const geoData = getGeoLocationData(country as ICountryCode);
     const deepest = getDeepestLocations(geoData);
-    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id));
+    const matchingDistrict = deepest.find((d) => isStationInDistrict(station, d.label, d.id, country as ICountryCode));
     if (!matchingDistrict || matchingDistrict.id === this.selectedDistrict()?.id) {
       return;
     }
@@ -579,8 +562,6 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
     const location: (string | undefined)[] = matchingDistrict.parentId
       ? [undefined, undefined, country, undefined, matchingDistrict.parentId, matchingDistrict.id]
       : [undefined, undefined, country, undefined, matchingDistrict.id];
-
     this.selectedLocation.set(location);
-    this.configurationService.updateUserSettings({ location });
   }
 }

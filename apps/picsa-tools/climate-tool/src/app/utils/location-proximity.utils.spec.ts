@@ -101,31 +101,22 @@ describe('Location Proximity Utils', () => {
         type: 'Polygon',
         coordinates: [
           [
-            [20, 10],
-            [30, 10],
-            [30, 20],
-            [20, 20],
-            [20, 10],
+            [26.5, -17.0],
+            [27.5, -17.0],
+            [27.5, -16.0],
+            [26.5, -16.0],
+            [26.5, -17.0],
           ],
         ],
       },
     };
 
-    it('includes both district feature and station outside the district', () => {
-      const station = { latitude: 25, longitude: 35 }; // outside north-east
+    it('includes both feature bounds and station coordinates', () => {
+      const station = { latitude: -15.5, longitude: 28.0 }; // Northeast of district
       const bounds = getCombinedDistrictAndStationBounds(feature, station);
       expect(bounds).toEqual([
-        [20, 10],
-        [35, 25],
-      ]);
-    });
-
-    it('keeps district bounds when station is inside the district', () => {
-      const station = { latitude: 15, longitude: 25 }; // inside
-      const bounds = getCombinedDistrictAndStationBounds(feature, station);
-      expect(bounds).toEqual([
-        [20, 10],
-        [30, 20],
+        [26.5, -17.0],
+        [28.0, -15.5],
       ]);
     });
 
@@ -159,19 +150,57 @@ describe('Location Proximity Utils', () => {
       expect(result?.feature).toBeDefined();
     });
 
+    it('resolves province boundary and center for Zimbabwe province from bundled TopoJSON', async () => {
+      const result = await getDistrictCenterAndBoundary('zw', 'manicaland');
+      expect(result).toBeDefined();
+      expect(result?.center.lat).toBeLessThan(-17.0);
+      expect(result?.center.lng).toBeGreaterThan(31.0);
+      expect(result?.feature).toBeDefined();
+    });
+
     it('returns undefined for non-existent district', async () => {
       const result = await getDistrictCenterAndBoundary('zm', 'non_existent_district_12345');
       expect(result).toBeUndefined();
     });
   });
 
+  describe('isStationInDistrict', () => {
+    it('matches station inside district to its parent province when countryCode is supplied', () => {
+      const buheraStation: IStationMeta = {
+        id: 'buhera_met',
+        name: 'Buhera (Met)',
+        latitude: -19.317,
+        longitude: 31.433,
+        location: ['Buhera'],
+      };
+      expect(isStationInDistrict(buheraStation, 'Manicaland', 'manicaland', 'zw')).toBe(true);
+      expect(isStationInDistrict(buheraStation, 'Masvingo', 'masvingo', 'zw')).toBe(false);
+    });
+  });
+
   describe('getStationRecommendations', () => {
     const mockStations: IStationMeta[] = [
       {
-        id: 'station_far',
-        name: 'Far Station',
-        latitude: -18.0,
-        longitude: 27.0,
+        id: 'station_in_district',
+        name: 'Choma Central',
+        latitude: -16.83,
+        longitude: 26.98,
+        countryCode: 'zm',
+        location: ['Choma District'],
+        capabilities: {
+          schemaVersion: 1,
+          lastUpdated: '2024-01-01',
+          contentHash: 'abc',
+          years: [1970, 2020],
+          totalYears: 50,
+          completeRainYears: 35,
+        },
+      },
+      {
+        id: 'station_far_away',
+        name: 'Far Away Station',
+        latitude: -14.0,
+        longitude: 28.0,
         countryCode: 'zm',
         location: ['Other District'],
         capabilities: {
@@ -180,23 +209,7 @@ describe('Location Proximity Utils', () => {
           contentHash: 'abc',
           years: [1970, 2020],
           totalYears: 50,
-          completeRainYears: 48,
-        },
-      },
-      {
-        id: 'station_in_district',
-        name: 'In District Station',
-        latitude: -16.9,
-        longitude: 27.0,
-        countryCode: 'zm',
-        location: ['Choma'],
-        capabilities: {
-          schemaVersion: 1,
-          lastUpdated: '2024-01-01',
-          contentHash: 'abc',
-          years: [1970, 2020],
-          totalYears: 50,
-          completeRainYears: 45,
+          completeRainYears: 40,
         },
       },
       {

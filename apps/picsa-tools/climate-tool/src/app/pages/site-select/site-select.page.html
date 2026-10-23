@@ -1,23 +1,7 @@
-<!-- Header End Portal: Mobile View Toggle (hidden on md+ screens) -->
-<ng-template #headerEndPortal>
-  @let toggleIcon = view() === 'map' ? 'list' : 'map'; @let toggleText = view() === 'map' ? strings.list : strings.map;
-  <button
-    matButton
-    (click)="toggleView()"
-    class="!text-white md:!hidden mr-1 flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 border border-white/30 transition-colors"
-    [attr.aria-label]="toggleText | translate"
-  >
-    <mat-icon class="!text-white">{{ toggleIcon }}</mat-icon>
-    <span class="!text-white text-sm font-semibold tracking-wide">{{ toggleText | translate }}</span>
-  </button>
-</ng-template>
-
 <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative z-0 h-full w-full">
-  <!-- Left panel: Location selection & Recommendations -->
+  <!-- Left panel: Location selection & Recommendations (Desktop only; on mobile all info is on the map) -->
   <div
-    class="flex-1 flex-col overflow-y-auto p-4 md:p-6 bg-white border-r border-gray-200 z-10 max-w-[600px] md:flex"
-    [class.hidden]="view() === 'map'"
-    [class.flex]="view() !== 'map'"
+    class="hidden md:flex flex-1 flex-col overflow-y-auto p-4 md:p-6 bg-white border-r border-gray-200 z-10 max-w-[600px]"
   >
     <div class="flex flex-col gap-4">
       <!-- Section 1: Standard Location Select with Locate Button -->
@@ -42,12 +26,13 @@
         <picsa-form-location-select
           [countryCode]="countryCode"
           [value]="selectedLocation()"
+          [emitPartial]="true"
           (valueChanged)="handleLocationChanged($event)"
         ></picsa-form-location-select>
         }
       </div>
 
-      <!-- Section 2: Selected Station & Station Options (Desktop & Mobile List View) -->
+      <!-- Section 2: Selected Station & Station Options (Desktop) -->
       @if (isCalculatingProximity() && !displayedStation()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
         <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
@@ -65,10 +50,9 @@
     </div>
   </div>
 
-  <!-- Right panel: Interactive Station & Boundary Map -->
+  <!-- Right panel: Interactive Station & Boundary Map (Desktop & Mobile) -->
   <div
-    class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden md:block"
-    [class.hidden]="view() === 'recommendation'"
+    class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden block"
   >
     <!-- Floating Location Selector (Mobile) with Locate Button -->
     <div
@@ -79,6 +63,7 @@
         <picsa-form-location-select
           [countryCode]="countryCode"
           [value]="selectedLocation()"
+          [emitPartial]="true"
           (valueChanged)="handleLocationChanged($event)"
         ></picsa-form-location-select>
         }

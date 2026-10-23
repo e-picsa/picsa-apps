@@ -130,7 +130,14 @@ describe('SiteSelectPage', () => {
     expect(district?.id).toBe('choma');
   });
 
-  it('should update location and settings when handleLocationChanged is called', () => {
+  it('should resolve province fallback when only province is selected', () => {
+    component.selectedLocation.set([undefined, undefined, 'zm', undefined, 'southern', undefined]);
+    const districtOrProvince = component.selectedDistrict();
+    expect(districtOrProvince).toBeDefined();
+    expect(districtOrProvince?.id).toBe('southern');
+  });
+
+  it('should update location and settings when handleLocationChanged is called with complete location', () => {
     const newLocation = [undefined, undefined, 'zm', undefined, 'southern', 'monze'];
 
     component.handleLocationChanged(newLocation);
@@ -139,20 +146,22 @@ describe('SiteSelectPage', () => {
     expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: newLocation });
   });
 
+  it('should not persist incomplete location to user settings', () => {
+    const partialLocation = [undefined, undefined, 'zm', undefined, 'southern', undefined];
+    jest.clearAllMocks();
+
+    component.handleLocationChanged(partialLocation);
+
+    expect(component.selectedLocation()).toEqual(partialLocation);
+    expect(configService.updateUserSettings).not.toHaveBeenCalled();
+  });
+
   it('should set preferred station and navigate when confirmAndNavigate is called', () => {
     const targetStation = mockStations[0];
     component.confirmAndNavigate(targetStation);
 
     expect(dataService.setPreferredStation).toHaveBeenCalledWith('choma');
     expect(router.navigate).toHaveBeenCalledWith(['./', 'choma'], expect.anything());
-  });
-
-  it('should toggle view between map and recommendation', () => {
-    expect(component.view()).toBe('map');
-    component.toggleView();
-    expect(component.view()).toBe('recommendation');
-    component.toggleView();
-    expect(component.view()).toBe('map');
   });
 
   it('should open AllStationsDialogComponent when openAllStationsDialog is called', () => {
