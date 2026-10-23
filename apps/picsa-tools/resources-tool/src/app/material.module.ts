@@ -1,4 +1,4 @@
-import { inject,NgModule } from '@angular/core';
+import { inject, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatOptionModule } from '@angular/material/core';
@@ -28,6 +28,8 @@ const Modules = [
   MatSelectModule,
 ];
 
+const registeredRegistries = new WeakSet<MatIconRegistry>();
+
 // use custom module to make it easier to control what is available through app
 @NgModule({
   imports: Modules,
@@ -48,10 +50,14 @@ export class ResourcesMaterialModule {
   }
 
   registerIcons() {
+    if (registeredRegistries.has(this.matIconRegistry)) {
+      return;
+    }
     const icons = ['filetype_document', 'filetype_pdf', 'filetype_video', 'play_store'];
     for (const icon of icons) {
       const url = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/resources/mat-icons/${icon}.svg`);
       this.matIconRegistry.addSvgIconInNamespace('resources_tool', icon, url);
     }
+    registeredRegistries.add(this.matIconRegistry);
   }
 }
