@@ -4,7 +4,7 @@ import { FileService } from '@picsa/shared/services/core/file.service';
 import { RxDocument } from 'rxdb';
 import { Subject, Subscription } from 'rxjs';
 
-import { IResourceFile } from '../../schemas';
+import { IResourceFile } from '../schemas';
 import { ResourcesDownloadService } from './resources-download.service';
 
 describe('ResourcesDownloadService', () => {
@@ -33,7 +33,7 @@ describe('ResourcesDownloadService', () => {
     };
 
     mockAttachmentService = {
-      getFileAttachmentURIs: jest.fn().mockResolvedValue({}),
+      getFileAttachmentURI: jest.fn().mockResolvedValue({}),
       revokeFileAttachmentURIs: jest.fn(),
       putAttachment: jest.fn(),
     };
