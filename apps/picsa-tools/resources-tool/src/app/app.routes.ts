@@ -14,6 +14,12 @@ export const ROUTES_COMMON: Routes = [
   },
 
   {
+    path: 'downloads/:id',
+    loadComponent: () =>
+      import('./pages/downloads-viewer/downloads-viewer.page').then((m) => m.DownloadsViewerPageComponent),
+    title: 'Downloads',
+  },
+  {
     path: 'downloads',
     loadComponent: () => import('./pages/downloads/downloads.page').then((m) => m.DownloadsPageComponent),
     title: 'Downloads',

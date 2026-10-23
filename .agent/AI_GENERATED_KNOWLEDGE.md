@@ -107,6 +107,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Floating Unhandled Promises (S9383)**: Invoking an async method without await inside a non-async or event-handling context triggers Sonar's Reliability C-rating bug. Always prefix intentionally backgrounded promises with 'void' (e.g. 'void this.refreshStation(row);').
 - **Sequential Async Execution Without Await-in-Loop (S9382)**: Sonar flags await inside loops. When sequential processing is required (e.g. sequential API updates with reactive progress counters), use 'await items.reduce(async (prevPromise, item) => { await prevPromise; await processItem(item); }, Promise.resolve())' to avoid AST loop constructs while maintaining clean sequential execution.
 
+### ngx-extended-pdf-viewer Assets in Standalone Tool Builds
+
+- `PicsaPdfViewerComponent` loads pdf.js worker/locale assets from `/assets/pdf-viewer` at runtime. The super app's asset list does **not** apply to standalone tool builds, so any tool whose project renders the viewer must declare the glob in its own `project.json`:
+  ```json
+  {
+    "glob": "{*.min.mjs,images/*,locale/en-US/*,locale/locale.json,standard_fonts/**}",
+    "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+    "ignore": ["**/*-es5.min.mjs"],
+    "output": "/assets/pdf-viewer"
+  }
+  ```
+  Without it the viewer still builds, but fails silently in the browser with 404s. The glob deliberately excludes the `*-es5` bundles and non-`en-US` locales (see the viewer's locale note).
+
 ---
 
 ## 3. Supabase, Edge Functions & Database Triggers
@@ -280,6 +293,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
 - **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
+- **Async `ngOnInit` in Zoneless TestBed**: `await fixture.whenStable()` resolves before an async `ngOnInit` load chain completes, so signal assertions read initial values. After `fixture.detectChanges()`, await a macrotask (`await new Promise((resolve) => setTimeout(resolve))`) to drain the pending microtasks before asserting.
 
 ---
 

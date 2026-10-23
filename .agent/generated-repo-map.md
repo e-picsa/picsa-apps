@@ -35,7 +35,7 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (526 files scanned)
+## Codebase Symbol Index (527 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -121,6 +121,8 @@
   - `Service` **ClimateService** (methods: [init, getStationData, getAllStationData, updateStationData, getStationAppData])
   - `Interface` **IDataRefreshStatus**
 - **[climate.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/climate.utils.ts`)
+  - `Interface` **IStationGenerationMetadata**
+  - `Function` **extractStationGenerationMetadata**
   - `Function` **hackConvertStationDataForDisplay**
 - **[api-status.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/components/api-status/api-status.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/components/api-status/api-status.component.ts`)
   - `Component` **ApiStatusComponent** (methods: [runApi])
@@ -865,7 +867,9 @@
 - **[collection.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts`)
   - `Component` **CollectionComponent** (methods: [ngOnDestroy, ngOnInit, handleCollectionLoaded])
 - **[downloads.page.ts](../apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts`)
-  - `Component` **DownloadsPageComponent** (methods: [deleteDownload, handleRowClick])
+  - `Component` **DownloadsPageComponent** (methods: [deleteDownload, handleRowClick, openResource])
+- **[downloads-viewer.page.ts](../apps/picsa-tools/resources-tool/src/app/pages/downloads-viewer/downloads-viewer.page.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/downloads-viewer/downloads-viewer.page.ts`)
+  - `Component` **DownloadsViewerPageComponent** (methods: [ngOnInit, ngOnDestroy, handleDownloadStatusChange, openExternally])
 - **[home.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts`)
   - `Component` **HomeComponent** (methods: [ngOnInit])
 - **[search.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts`)
@@ -891,7 +895,7 @@
   - `Interface` **DownloadEntry**
   - `Type` **DownloadId**
 - **[resources-tool.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts`)
-  - `Service` **ResourcesToolService** (methods: [init, filterLocalisedResources, openFileResource, getFileAttachmentURI, revokeFileAttachmentURIs])
+  - `Service` **ResourcesToolService** (methods: [init, filterLocalisedResources, openFileResource, getFileAttachmentURI, getFileAttachmentBlob])
   - `Type` **IDownloadStatus**
 - **[data.utils.ts](../apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts)** (`apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts`)
   - `Function` **filterHashmap**
