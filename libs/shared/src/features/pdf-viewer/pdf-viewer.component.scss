@@ -5,6 +5,15 @@ ngx-extended-pdf-viewer {
   #toolbarViewer {
     color: var(--color-primary);
   }
+  #toolbarViewerLeft {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    > * {
+      float: none;
+    }
+  }
   #mainContainer {
     min-width: 250px !important;
   }

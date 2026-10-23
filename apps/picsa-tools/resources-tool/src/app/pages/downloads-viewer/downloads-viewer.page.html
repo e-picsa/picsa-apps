@@ -16,7 +16,9 @@
 
   @if (videoSrc(); as src) {
   <div class="min-h-0 flex-1 overflow-auto p-4">
-    <resource-item-video [resource]="doc._data" [fileURI]="src"></resource-item-video>
+    <div class="mx-auto w-full max-w-[854px]">
+      <resource-item-video [resource]="doc._data" [fileURI]="src"></resource-item-video>
+    </div>
   </div>
   } @else if (needsDownload()) {
   <div class="flex flex-1 flex-col items-center justify-center gap-4 p-4 text-center">
