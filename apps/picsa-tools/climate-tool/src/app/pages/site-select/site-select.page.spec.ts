@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, Input, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { provideRouter, Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { SiteSelectPage } from './site-select.page';
   selector: 'picsa-map',
   template: '<div>Mock Map</div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{ provide: PicsaMapComponent, useExisting: forwardRef(() => MockPicsaMapComponent) }],
 })
 class MockPicsaMapComponent {
   @Input() markers: unknown;
@@ -232,5 +233,26 @@ describe('SiteSelectPage', () => {
     expect(component.selectedStation()?.id).toBe('chipata');
     expect(component.selectedDistrict()?.id).toBe('chipata');
     expect(component.selectedLocation()).toEqual([undefined, undefined, 'zm', undefined, 'eastern', 'chipata']);
+  });
+
+  it('should zoom map to parent location bounds and outline feature when parent location is selected ahead of sublocation', async () => {
+    component.mapReady.set(true);
+    const partialLocation = [undefined, undefined, 'zm', undefined, 'central', undefined];
+    component.handleLocationChanged(partialLocation);
+    fixture.detectChanges();
+
+    // Allow async getLocationCenterAndBoundary to resolve and effect to execute
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    fixture.detectChanges();
+
+    const map = component.picsaMap();
+    if (map) {
+      expect(map.addGeoJsonLayer).toHaveBeenCalledWith(
+        'selected-district-boundary',
+        expect.anything(),
+        expect.objectContaining({ lineWidth: 2, lineOpacity: 0.6 }),
+      );
+      expect(map.fitBounds).toHaveBeenCalled();
+    }
   });
 });

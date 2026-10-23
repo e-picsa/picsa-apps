@@ -74,8 +74,6 @@ export class FormLocationSelectComponent {
     return this.getLocationData(countryCode);
   });
 
-  private hasEmittedValid = false;
-
   constructor() {
     // Set input values when passed
     effect(() => {
@@ -89,16 +87,15 @@ export class FormLocationSelectComponent {
       this.handleParentSelected(parentSelected);
     });
 
-    // Emit value changes when valid, or when an existing valid selection becomes incomplete
+    // Emit value changes whenever computedValue updates (e.g. parent selected, sublocation selected, or cleared)
+    let lastEmitted: (string | undefined)[] | undefined = undefined;
     effect(() => {
       const computedValue = this.computedValue();
-      const isValid = this.isValid();
-      if (computedValue && isValid) {
-        this.hasEmittedValid = true;
-        this.valueChanged.emit(computedValue);
-      } else if (this.hasEmittedValid && computedValue) {
-        this.hasEmittedValid = false;
-        this.valueChanged.emit(computedValue);
+      if (computedValue && !isEqual(computedValue, lastEmitted)) {
+        if (computedValue[4] || computedValue[5] || (lastEmitted && (lastEmitted[4] || lastEmitted[5]))) {
+          lastEmitted = computedValue;
+          this.valueChanged.emit(computedValue);
+        }
       }
     });
   }

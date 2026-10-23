@@ -30,6 +30,7 @@ import { isEqual } from '@picsa/utils/object.utils';
 import { ClimateDataService } from '../../services/climate-data.service';
 import {
   calculateHaversineDistanceKm,
+  computeFeatureBbox,
   formatStationLabel,
   getCombinedLocationAndStationBounds,
   getLocationCenterAndBoundary,
@@ -375,6 +376,60 @@ export class SiteSelectPage implements AfterViewInit, OnDestroy {
           picsaMap.setActiveMarker(marker, false, true);
         }
       }
+    });
+
+    // Effect: When selecting an initial parent location ahead of sublocation selection, zoom to its bounds
+    let lastRenderedParentLocationId: string | undefined = undefined;
+    effect(() => {
+      const loc = this.selectedLocation();
+      const parentId = loc?.[4];
+      const hasSublocation = this.selectedLocationEntry() !== undefined;
+      const countryCode = this.userCountryCode();
+      const picsaMap = this.picsaMap();
+      const mapReady = this.mapReady();
+
+      if (!picsaMap || !mapReady || !countryCode || !parentId) {
+        if (!parentId) lastRenderedParentLocationId = undefined;
+        return;
+      }
+
+      // Only zoom to parent ahead of sublocation when sublocation is not yet selected
+      if (hasSublocation) {
+        lastRenderedParentLocationId = parentId;
+        return;
+      }
+
+      if (lastRenderedParentLocationId === parentId) return;
+      lastRenderedParentLocationId = parentId;
+
+      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, 4).then((result) => {
+        if (!result?.feature) return;
+        if (this.selectedLocationEntry()) return;
+
+        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+          lineColor: '#16a34a',
+          lineWidth: 2,
+          lineOpacity: 0.6,
+          fitBounds: false,
+        });
+
+        const bbox = computeFeatureBbox(result.feature);
+        if (bbox) {
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          picsaMap.fitBounds(
+            [
+              [bbox.minLng, bbox.minLat],
+              [bbox.maxLng, bbox.maxLat],
+            ],
+            {
+              maxZoom: 7,
+              padding: isMobile
+                ? { top: 110, bottom: 145, left: 30, right: 30 }
+                : { top: 40, bottom: 40, left: 40, right: 40 },
+            },
+          );
+        }
+      });
     });
   }
 

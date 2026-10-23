@@ -10,6 +10,7 @@ import {
   computeFeatureBboxCenter,
   getCombinedDistrictAndStationBounds,
   getDistrictCenterAndBoundary,
+  getLocationCenterAndBoundary,
   getStationRecommendations,
   isStationInDistrict,
   normalizeLocationName,
@@ -156,6 +157,18 @@ describe('Location Proximity Utils', () => {
     it('returns undefined for non-existent district', async () => {
       const result = await getDistrictCenterAndBoundary('zm', 'non_existent_district_12345');
       expect(result).toBeUndefined();
+    });
+
+    it('resolves parent location boundary when preferredAdminLevel: 4 is passed', async () => {
+      const zwProvince = await getLocationCenterAndBoundary('zw', 'manicaland', 4);
+      expect(zwProvince).toBeDefined();
+      expect(zwProvince?.feature).toBeDefined();
+      expect(typeof zwProvince?.center.lat).toBe('number');
+
+      const zmProvince = await getLocationCenterAndBoundary('zm', 'central', 4);
+      expect(zmProvince).toBeDefined();
+      expect(zmProvince?.feature).toBeDefined();
+      expect(typeof zmProvince?.center.lat).toBe('number');
     });
   });
 

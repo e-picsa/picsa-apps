@@ -167,14 +167,32 @@ export const getCombinedDistrictAndStationBounds = getCombinedLocationAndStation
 export async function getLocationCenterAndBoundary(
   countryCode: ICountryCode,
   locationId: string,
+  preferredAdminLevel?: number,
 ): Promise<ILocationCenterResult | undefined> {
   const geoData = getGeoLocationData(countryCode);
-  const deepest = getDeepestLocations(geoData);
-  const locationItem = deepest.find((d) => d.id === locationId);
+
+  let locationItem:
+    | { id: string; label: string; topoName?: string; coordinates?: { latitude: number; longitude: number } }
+    | undefined;
+  let adminLevel: number;
+
+  if (preferredAdminLevel === 4 && geoData.admin_4) {
+    locationItem = geoData.admin_4.locations.find((l) => l.id === locationId);
+    adminLevel = 4;
+  } else {
+    const deepest = getDeepestLocations(geoData);
+    locationItem = deepest.find((d) => d.id === locationId);
+    adminLevel = getDeepestAdminLevel(geoData);
+
+    if (!locationItem && geoData.admin_4) {
+      locationItem = geoData.admin_4.locations.find((l) => l.id === locationId);
+      adminLevel = 4;
+    }
+  }
+
   if (!locationItem) return undefined;
 
   try {
-    const adminLevel = getDeepestAdminLevel(geoData);
     const cacheKey = `${countryCode}:${adminLevel}`;
     let geojson = geoJsonCache.get(cacheKey);
     if (!geojson) {
