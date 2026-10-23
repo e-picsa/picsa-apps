@@ -72,8 +72,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### macOS UNIX Domain Socket Path Length Limit (`NX_SOCKET_DIR`)
 
-- In nested worktrees or deep directory paths, the Nx daemon UNIX domain socket path can exceed macOS's 104-character limit (`sockaddr_un.sun_path`), causing commands like `yarn ai:test` or `nx test` to hang or fail with `Attempted to open socket that exceeds the maximum socket length`.
-- Fix: Prepend `NX_SOCKET_DIR=/tmp/nx` (or a short path) when executing test runner commands in deep worktree paths.
+- **Max Socket Length (104/108 chars)**: On macOS/Darwin, UNIX domain sockets exceed the system character limit (`sockaddr_un.sun_path`) when running inside nested worktrees or deep directory paths (e.g. `~/.t3/worktrees/...`).
+- **Symptom**: `yarn nx ...` hangs indefinitely on `- Calculating the project graph on the Nx Daemon` or fails with `Attempted to open socket that exceeds the maximum socket length`.
+- **Solution**: Run Nx with `NX_DAEMON=false NX_SOCKET_DIR=/tmp/nx yarn nx <target>`.
 
 ### Unit Test Colocation Convention
 
@@ -342,6 +343,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
 - **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
 - **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
+
+### Touch Gestures & Sidenav Swipe-Dismissal
+
+- **Touch-Action Scoping & Ancestor Boundaries**: CSS `touch-action: pan-y pinch-zoom` must be placed inside Material's `.mat-drawer-inner-container` (on `.sidenav-container`), not on `<mat-sidenav>`. The browser only evaluates `touch-action` up the ancestor chain to the first scroll container.
+- **Zone.js Decoupling for High-Frequency Pointer Events**: Direct `addEventListener('pointermove')` inside an Angular component causes Zone.js to run change detection on every movement frame. Always register pointer event listeners within `NgZone.runOutsideAngular()`, only re-entering `ngZone.run()` when emitting completion/dismissal.
+- **Gating Touch Gestures by Drawer Mode and Pointer Type**: Do not gate gestures solely on window width/`mobileQuery` or `isNativePlatform()`. Gate dismiss gestures on `matSidenav.mode === 'over'` (avoiding interference when the drawer is pinned side-by-side in `mode === 'side'`) and `event.pointerType === 'touch'` (preventing desktop mouse selection and clicks from being captured or suppressed).
 
 ### Unified Y-Value Formatting Across Chart Tools
 
