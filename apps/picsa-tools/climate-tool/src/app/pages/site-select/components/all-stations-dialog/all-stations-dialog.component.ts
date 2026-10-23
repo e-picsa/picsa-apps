@@ -32,7 +32,6 @@ const STRINGS = {
   template: `
     <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-gray-200">
       <div class="flex items-center gap-2 min-w-0">
-        <mat-icon class="text-primary shrink-0">table_view</mat-icon>
         <h2 mat-dialog-title class="!m-0 !p-0 text-base font-bold text-gray-900 truncate">
           {{ strings.allStations | translate }}
         </h2>
