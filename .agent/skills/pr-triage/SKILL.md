@@ -57,6 +57,7 @@ The script records each triaged PR's `headSha` (commit hash), audit timestamp, a
 ### 1. Merge Health & Conflicts
 
 For each PR, inspect:
+
 - **`mergeable`**:
   - `true`: Branch can merge without conflicts.
   - `false` / `dirty`: Branch has merge conflicts with its base. Flag as **`🔴 Conflicts`**.
@@ -78,6 +79,7 @@ For each PR, inspect:
 ### 3. Noise-Filtered Blast Radius & Sizing
 
 Do not judge PR size by raw additions/deletions. Filter out non-cognitive churn:
+
 - **Noise Exclusions**: `*.spec.ts`, `yarn.lock`, `deno.lock`, `apps/picsa-server/supabase/data/*.csv`, and generated files (`*.generated.ts`, `database.types.ts`).
 - **Domain Footprint**:
   - 🔴 **High Blast Radius**: `Super App Shell` (`apps/picsa-apps/app/`), `Mobile Native` (`apps/picsa-apps/app-native/`), `Supabase / Backend` (`apps/picsa-server/`).
@@ -91,14 +93,14 @@ Do not judge PR size by raw additions/deletions. Filter out non-cognitive churn:
 
 ### 4. Actionable Verdict Taxonomy
 
-| Verdict | Criteria | Action Required |
-| :--- | :--- | :--- |
-| **🟢 READY_FOR_REVIEW** | CI passing, Sonar passed, no conflicts, bot suggestions actioned, not draft | Senior engineer can review and merge. |
-| **🟡 BLOCKED_ON_AUTHOR** | Build test failing, SonarCloud failing, or unaddressed bot suggestions | Author must resolve failures before senior review. |
-| **🟡 PENDING_BOT_FIXES** | PR-Agent suggestions pending on current commit | Author should review suggestions via `pr-address-feedback`. |
-| **⏳ CHECKS_PENDING** | Automated CI or analysis checks are still in progress | Wait for CI workflows to finish. |
-| **🔴 CONFLICTED** | Merge conflicts detected (`mergeable: false`) | Author must rebase or merge target branch. |
-| **🔵 DRAFT** | `isDraft: true` | Work in progress; no review action required. |
+| Verdict                  | Criteria                                                                    | Action Required                                             |
+| :----------------------- | :-------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| **🟢 READY_FOR_REVIEW**  | CI passing, Sonar passed, no conflicts, bot suggestions actioned, not draft | Senior engineer can review and merge.                       |
+| **🟡 BLOCKED_ON_AUTHOR** | Build test failing, SonarCloud failing, or unaddressed bot suggestions      | Author must resolve failures before senior review.          |
+| **🟡 PENDING_BOT_FIXES** | PR-Agent suggestions pending on current commit                              | Author should review suggestions via `pr-address-feedback`. |
+| **⏳ CHECKS_PENDING**    | Automated CI or analysis checks are still in progress                       | Wait for CI workflows to finish.                            |
+| **🔴 CONFLICTED**        | Merge conflicts detected (`mergeable: false`)                               | Author must rebase or merge target branch.                  |
+| **🔵 DRAFT**             | `isDraft: true`                                                             | Work in progress; no review action required.                |
 
 ---
 
@@ -106,25 +108,27 @@ Do not judge PR size by raw additions/deletions. Filter out non-cognitive churn:
 
 Always structure the output in three clear sections:
 
-````markdown
+```markdown
 # 🔍 Open PR Triage Dashboard (5 PRs evaluated)
-*14 total open PRs in `e-picsa/picsa-apps` | 2 unchanged (cached), 3 evaluated live*
 
-| PR | Title | Author | Size & Blast Radius | CI / Quality | Merge Health | Verdict / Next Step |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| [#810](https://...) | [FEATURE] In-app download... | @author | 🟡 M (+280/-6)<br><sub>Mobile Native, Shared Libs</sub> | ✅ All CI Green | 🟡 Behind (21) | **🟢 Ready for Review** |
-| [#804](https://...) | feat(climate): recommend... | @author | 🟢 S (+45/-10)<br><sub>Tool (climate-tool)</sub> | ❌ Sonar failed | 🟢 Clean | **🟡 Blocked on Author** |
-| [#792](https://...) | feat(screenshot): integrate... | @author | 🟡 M (+264/-30)<br><sub>Admin Dashboard</sub> | ✅ All CI Green | 🟢 Up-to-date | **🟢 Ready for Review** <sub>[cached]</sub> |
+_14 total open PRs in `e-picsa/picsa-apps` | 2 unchanged (cached), 3 evaluated live_
+
+| PR                  | Title                          | Author  | Size & Blast Radius                                     | CI / Quality    | Merge Health   | Verdict / Next Step                         |
+| :------------------ | :----------------------------- | :------ | :------------------------------------------------------ | :-------------- | :------------- | :------------------------------------------ |
+| [#810](https://...) | [FEATURE] In-app download...   | @author | 🟡 M (+280/-6)<br><sub>Mobile Native, Shared Libs</sub> | ✅ All CI Green | 🟡 Behind (21) | **🟢 Ready for Review**                     |
+| [#804](https://...) | feat(climate): recommend...    | @author | 🟢 S (+45/-10)<br><sub>Tool (climate-tool)</sub>        | ❌ Sonar failed | 🟢 Clean       | **🟡 Blocked on Author**                    |
+| [#792](https://...) | feat(screenshot): integrate... | @author | 🟡 M (+264/-30)<br><sub>Admin Dashboard</sub>           | ✅ All CI Green | 🟢 Up-to-date  | **🟢 Ready for Review** <sub>[cached]</sub> |
 
 ---
 
 ## 🔎 Detailed PR Breakdown & Action Items
 
 ### [PR #810: [FEATURE] In-app download and share for Android users](https://...)
+
 - **Author**: @author | **Branch**: `696-android-...` → `main` | **Updated**: 6d ago
 - **Blast Radius**: 🟡 M (~15-30m) · Touches: **Mobile Native • Shared Libs** (6 files changed)
 - **Merge Health**: Behind main by 21 commits. Can cleanly update-branch.
-  > 💡 *Quick branch update command*: `gh api repos/e-picsa/picsa-apps/pulls/810/update-branch -X PUT`
+  > 💡 _Quick branch update command_: `gh api repos/e-picsa/picsa-apps/pulls/810/update-branch -X PUT`
 - **CI & Quality**: ✅ All CI Green (Build Test, SonarCloud, Labels)
 - **PR-Agent Review**: Code suggestions posted (Fresh on latest commit; author fixed APK memory issue).
 - **Recommended Action**: **Ready for senior review. Use `pr-review` to inspect native storage hooks.**
@@ -138,10 +142,11 @@ Always structure the output in three clear sections:
 - **[#680](https://...)**: [FEATURE] Forecasts manual update (@author, updated 2mo ago)
 
 > **💡 Next Steps:**
+>
 > - To review any PR in depth, prompt: `"Review PR #<number> using pr-review"`
 > - To triage backlog PRs, prompt: `"Triage PRs #729, #728"` or `"Triage top 10 PRs"`
 > - To force refresh all PRs disregarding cache, prompt: `"Triage PRs --refresh"`
-````
+```
 
 ---
 

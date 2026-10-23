@@ -107,7 +107,8 @@ function classifyDomains(files) {
     else if (p.startsWith('libs/theme/') || p.startsWith('libs/components/')) domains.add('UI & Theme');
     else if (p.startsWith('libs/')) domains.add('Shared Libs');
     else if (p.startsWith('.agent/') || p.endsWith('.md')) domains.add('Docs & Tooling');
-    else if (p.includes('package.json') || p.includes('tsconfig') || p.includes('nx.json')) domains.add('Workspace Config');
+    else if (p.includes('package.json') || p.includes('tsconfig') || p.includes('nx.json'))
+      domains.add('Workspace Config');
   }
   return Array.from(domains);
 }
@@ -170,11 +171,7 @@ function evaluateChecks(checks) {
       rawConclusion === 'ERROR'
     ) {
       failures.push(name);
-    } else if (
-      rawConclusion === 'IN_PROGRESS' ||
-      rawConclusion === 'QUEUED' ||
-      rawConclusion === 'PENDING'
-    ) {
+    } else if (rawConclusion === 'IN_PROGRESS' || rawConclusion === 'QUEUED' || rawConclusion === 'PENDING') {
       pendingCount++;
     }
     if (name.toLowerCase().includes('build')) hasBuild = true;
@@ -276,7 +273,7 @@ async function main() {
   // Fetch open PRs (capped adequately for repository size)
   const fetchLimit = opts.all ? 100 : Math.max(50, (opts.limit || 5) * 2);
   const rawPrs = runGhJson(
-    `gh pr list --limit ${fetchLimit} --json number,title,author,headRefName,baseRefName,headRefOid,updatedAt,createdAt,isDraft,statusCheckRollup,additions,deletions,changedFiles,url`
+    `gh pr list --limit ${fetchLimit} --json number,title,author,headRefName,baseRefName,headRefOid,updatedAt,createdAt,isDraft,statusCheckRollup,additions,deletions,changedFiles,url`,
   );
 
   if (!rawPrs || rawPrs.length === 0) {
@@ -370,9 +367,10 @@ async function main() {
 
     // 7. Overall Actionable Verdict
     let verdict = '🟢 READY_FOR_REVIEW';
-    let verdictReason = ci.status === 'SUCCESS'
-      ? 'Checks passing, mergeable, waiting on senior review.'
-      : 'Mergeable, waiting on senior review.';
+    let verdictReason =
+      ci.status === 'SUCCESS'
+        ? 'Checks passing, mergeable, waiting on senior review.'
+        : 'Mergeable, waiting on senior review.';
 
     if (pr.isDraft) {
       verdict = '🔵 DRAFT';
@@ -441,7 +439,9 @@ async function main() {
   const liveCount = triaged.length - cachedCount;
 
   console.log(`# 🔍 Open PR Triage Dashboard (${triaged.length} PRs evaluated)`);
-  console.log(`*${rawPrs.length} total open PRs in \`${repo}\` | ${cachedCount} unchanged (cached), ${liveCount} evaluated live*\n`);
+  console.log(
+    `*${rawPrs.length} total open PRs in \`${repo}\` | ${cachedCount} unchanged (cached), ${liveCount} evaluated live*\n`,
+  );
 
   // Summary Table
   console.log('| PR | Title | Author | Size & Blast Radius | CI / Quality | Merge Health | Verdict / Next Step |');
@@ -474,17 +474,24 @@ async function main() {
     const age = formatRelativeTime(t.updatedAt);
     const domainList = t.domains?.join(' • ') || 'Standard';
     console.log(`### [PR #${t.number}: ${t.title}](${t.url})`);
-    console.log(`- **Author**: @${t.author} | **Branch**: \`${t.headRefName}\` → \`${t.baseRefName}\` | **Updated**: ${age}`);
-    console.log(`- **Blast Radius**: ${t.size?.label} (~${t.size?.estMinutes}) · Touches: **${domainList}** (${t.totalFiles} files changed)`);
+    console.log(
+      `- **Author**: @${t.author} | **Branch**: \`${t.headRefName}\` → \`${t.baseRefName}\` | **Updated**: ${age}`,
+    );
+    console.log(
+      `- **Blast Radius**: ${t.size?.label} (~${t.size?.estMinutes}) · Touches: **${domainList}** (${t.totalFiles} files changed)`,
+    );
     console.log(`- **Merge Health**: ${t.mergeNotes}`);
     if (t.canAutoUpdate) {
-      console.log(`  > 💡 *Quick branch update command*: \`gh api repos/${repo}/pulls/${t.number}/update-branch -X PUT\``);
+      console.log(
+        `  > 💡 *Quick branch update command*: \`gh api repos/${repo}/pulls/${t.number}/update-branch -X PUT\``,
+      );
     }
     console.log(`- **CI & Quality**: ${t.ciBadge}`);
     if (t.botReview?.hasSuggestions || t.botReview?.hasReviewFindings) {
       const freshText = t.botReview.isFresh ? 'Fresh (on latest commit)' : 'Older commit (potentially addressed)';
       const secText = t.botReview.hasSecurityAlert ? ' ⚠️ Security concerns flagged' : '';
-      const findingsCount = t.botReview.activeFindingsCount > 0 ? ` (${t.botReview.activeFindingsCount} active findings)` : '';
+      const findingsCount =
+        t.botReview.activeFindingsCount > 0 ? ` (${t.botReview.activeFindingsCount} active findings)` : '';
       console.log(`- **PR-Agent Review**: Feedback posted${findingsCount} [${freshText}].${secText}`);
     }
     console.log(`- **Recommended Action**: **${t.verdictReason}**`);
@@ -500,7 +507,12 @@ async function main() {
     }
     console.log('\n> **💡 Next Steps:**');
     console.log(`> - To review any PR in depth, prompt: \`"Review PR #<number> using pr-review"\``);
-    console.log(`> - To triage backlog PRs, prompt: \`"Triage PRs #${backlogPrs.slice(0, 3).map((p) => p.number).join(', #')}"\` or \`"Triage top 10 PRs"\``);
+    console.log(
+      `> - To triage backlog PRs, prompt: \`"Triage PRs #${backlogPrs
+        .slice(0, 3)
+        .map((p) => p.number)
+        .join(', #')}"\` or \`"Triage top 10 PRs"\``,
+    );
     console.log(`> - To force refresh all PRs disregarding cache, prompt: \`"Triage PRs --refresh"\``);
   }
 }
