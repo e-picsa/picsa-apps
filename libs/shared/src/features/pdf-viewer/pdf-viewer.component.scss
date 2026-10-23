@@ -3,7 +3,53 @@
 }
 ngx-extended-pdf-viewer {
   #toolbarViewer {
+    justify-content: unset;
     color: var(--color-primary);
+
+    // Ensure icon buttons in the toolbar (e.g. resource-share) match PDF toolbar button dimensions
+    .mat-mdc-icon-button {
+      --mat-icon-button-state-layer-size: 32px;
+      --mdc-icon-button-state-layer-size: 32px;
+      width: 32px;
+      height: 32px;
+      padding: 4px;
+      box-sizing: border-box;
+
+      .mat-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+      }
+      .mat-mdc-button-touch-target {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    resource-share {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  #toolbarViewerLeft,
+  #toolbarViewerRight {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 60px;
+
+    > * {
+      float: none;
+    }
+  }
+  #toolbarViewerRight {
+    justify-content: end;
+  }
+  #toolbarViewerMiddle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
   #mainContainer {
     min-width: 250px !important;

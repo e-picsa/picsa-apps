@@ -1,0 +1,12 @@
+// Full-screen viewer overlay, covering the app header (same approach as the manual tool pdf viewer)
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding-top: var(--status-bar-height, 0px);
+  padding-bottom: var(--nav-bar-height, 0px);
+}

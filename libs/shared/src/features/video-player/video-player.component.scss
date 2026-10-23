@@ -6,6 +6,7 @@ $playerWidth: 854px;
   display: block;
   width: 100%;
   max-width: $playerWidth;
+  margin-inline: auto;
   aspect-ratio: 16/9;
 }
 .placeholderContainer {
