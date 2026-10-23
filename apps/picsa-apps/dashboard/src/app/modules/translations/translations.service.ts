@@ -1,11 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
+import { LOCALES_DATA } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
-import download from 'downloadjs';
-import JSZip from 'jszip';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { TranslationsXlsxExportService } from './services/translations-xlsx-export.service';
@@ -129,44 +127,5 @@ export class TranslationDashboardService extends PicsaAsyncService {
       translations,
       locales,
     });
-  }
-
-  /** Export a single zip file containing all translations for use in the app */
-  public async exportAllAppJsons() {
-    const locales = Object.keys(LOCALES_DATA_HASHMAP);
-    const zip = new JSZip();
-    for (const locale of locales) {
-      const json = this.exportJson(locale);
-      zip.file(`${locale}.json`, JSON.stringify(json, null, 2));
-    }
-    const blob = await zip.generateAsync({ type: 'blob' });
-    download(blob, `i18n_assets.zip`);
-  }
-
-  /**
-   * Export a single language json to include in the app.
-   * Untranslated rows are omitted so ngx-translate falls back to the English key.
-   */
-  public exportJson(locale: string) {
-    const data = this.translations().filter((row) => !row.archived);
-    const translations = new Map<string, string>();
-    const sortedData = [...data].sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
-
-    for (const row of sortedData) {
-      const { text, id } = row;
-      const translatedText = row[locale];
-
-      if (!translatedText) {
-        continue;
-      }
-
-      translations.set(text, translatedText);
-
-      const generatedId = this.generateTranslationID(row);
-      if (id && id !== generatedId) {
-        translations.set(id, translatedText);
-      }
-    }
-    return Object.fromEntries(translations);
   }
 }

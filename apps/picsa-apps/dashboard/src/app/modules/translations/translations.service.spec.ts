@@ -101,47 +101,6 @@ describe('TranslationDashboardService', () => {
     expect(service.translations().length).toBe(2);
   });
 
-  it('should export correct JSON structure with standard and custom keys', () => {
-    service.translations.set([
-      { id: 'budget-inputs-vaccine', tool: 'budget', context: 'inputs', text: 'Vaccine', mw_ny: 'Katambala' },
-      {
-        id: 'mw:climate.chart.end.definition',
-        tool: 'climate',
-        context: 'chart',
-        text: 'End definition',
-        mw_ny: 'Tanthauzo lomaliza',
-      },
-    ] as any[]);
-
-    const json = service.exportJson('mw_ny');
-    // Standard translation key should be the English text
-    expect(json['Vaccine']).toBe('Katambala');
-    // Custom ID translation should be present under its text AND its custom ID
-    expect(json['End definition']).toBe('Tanthauzo lomaliza');
-    expect(json['mw:climate.chart.end.definition']).toBe('Tanthauzo lomaliza');
-  });
-
-  it('should omit untranslated and archived rows from export', () => {
-    service.translations.set([
-      { id: 'budget-inputs-vaccine', tool: 'budget', context: 'inputs', text: 'Vaccine', mw_ny: 'Katambala' },
-      { id: 'budget-inputs-maize', tool: 'budget', context: 'inputs', text: 'Maize', mw_ny: null },
-      {
-        id: 'budget-inputs-archived',
-        tool: 'budget',
-        context: 'inputs',
-        text: 'Archived string',
-        mw_ny: 'Zosungidwa',
-        archived: true,
-      },
-    ] as any[]);
-
-    const json = service.exportJson('mw_ny');
-    expect(json['Vaccine']).toBe('Katambala');
-    expect(json).not.toHaveProperty('Maize');
-    expect(json).not.toHaveProperty('Archived string');
-    expect(Object.values(json).some((value) => value.includes('•'))).toBe(false);
-  });
-
   it('should delegate exportXlsx to TranslationsXlsxExportService with active country and non-archived translations', async () => {
     service.translations.set([
       {
