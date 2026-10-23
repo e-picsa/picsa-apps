@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 
+import { PicsaSwipeDismissDirective } from '../directives/swipe-dismiss.directive';
 import { PicsaCommonComponentsService } from '../services/components.service';
 
 /**
@@ -44,10 +45,15 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         [opened]="opened()"
         [fixedTopGap]="0"
         (openedChange)="handleSidenavChange(snav.opened)"
-        (swipeRight)="snav.toggle()"
       >
         <!-- Sidenav Content -->
-        <div class="sidenav-container" [attr.data-mobile]="mobileQuery.matches">
+        <div
+          class="sidenav-container"
+          [attr.data-mobile]="mobileQuery.matches"
+          picsaSwipeDismiss
+          [picsaSwipeDismissEnabled]="snav.mode === 'over'"
+          (swipeDismiss)="handleSwipeDismiss()"
+        >
           <!-- Mobile-only  -->
           <div class="sidenav-mobile-header" [style.display]="mobileQuery.matches ? 'flex' : 'none'">
             <button matIconButton color="primary" (click)="snav.toggle()">
@@ -112,7 +118,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
-  imports: [MatButtonModule, MatSidenavModule, MatIconModule],
+  imports: [MatButtonModule, MatSidenavModule, MatIconModule, PicsaSwipeDismissDirective],
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
   componentsService = inject(PicsaCommonComponentsService);
@@ -152,6 +158,13 @@ export class PicsaSidenavComponent implements OnInit, OnDestroy {
   /** Public method to trigger sidebar close from child content */
   public close() {
     this.matSidenav.close();
+  }
+
+  /** Close the sidenav when swiped to dismiss in overlay mode */
+  public handleSwipeDismiss() {
+    if (this.matSidenav?.mode === 'over' && this.matSidenav?.opened) {
+      this.close();
+    }
   }
 
   /** Use media queries to handle sidenav */

@@ -89,14 +89,14 @@ export class ResourcesToolService extends PicsaAsyncService {
   public async openFileResource(uri: string, mimetype: string, id: string) {
     // track the resource open event
     this.analyticsService.trackResourceOpen(id);
-    if (Capacitor.isNativePlatform()) {
-      try {
-        this.nativeStorageService.openFileURI(uri, mimetype);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
+    if (!Capacitor.isNativePlatform()) {
       return Browser.open({ url: uri });
+    }
+    try {
+      await this.nativeStorageService.openFileURI(uri, mimetype);
+    } catch (error) {
+      console.error(error);
+      this.notificationService.showErrorNotification('Unable to open file on this device');
     }
   }
 
@@ -112,6 +112,16 @@ export class ResourcesToolService extends PicsaAsyncService {
 
     return this.dbAttachmentService.getFileAttachmentURI(doc, filename, convertFileSrc);
   }
+
+  /**
+   * Retrieve a file attachment as raw Blob data.
+   * Only available on web, where attachments are stored as base64 in indexeddb (native uses on-disk file URIs)
+   * */
+  public async getFileAttachmentBlob(doc: RxDocument<schemas.IResourceFile>) {
+    const filename = doc.filename || doc.id;
+    return this.dbAttachmentService.getFileAttachmentBlob(doc, filename);
+  }
+
   /**
    * Release a file attachment URI when no longer required
    * @param filenames specific resource filenames to revoke (default all)

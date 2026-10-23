@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
@@ -13,6 +14,7 @@ import { RxDocument } from 'rxdb';
 import { switchMap } from 'rxjs';
 
 import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
+import { ResourcesMaterialModule } from '../../material.module';
 import { IResourceFile } from '../../schemas';
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
@@ -37,6 +39,7 @@ const DISPLAY_COLUMNS = [
   styleUrls: ['./downloads.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ResourcesMaterialModule,
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
@@ -53,6 +56,8 @@ export class DownloadsPageComponent {
 
   private configurationService = inject(ConfigurationService);
   private downloadService = inject(ResourcesDownloadService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   private dbFiles$ = this.service.ready$.pipe(switchMap(() => this.service.dbFiles.find().$));
 
@@ -109,17 +114,17 @@ export class DownloadsPageComponent {
 
   public async handleRowClick(entry: IResourceTableEntry) {
     if (entry._downloaded) {
-      return this.handleResourceOpen(entry);
+      return this.openResource(entry);
     } else {
       return this.downloadResource(entry.doc);
     }
   }
 
-  private async handleResourceOpen(entry: IResourceTableEntry) {
-    const uri = await this.service.getFileAttachmentURI(entry.doc, false);
-    if (uri) {
-      await this.service.openFileResource(uri, entry.mimetype, entry.id);
-    }
+  /** Open a downloaded resource in the in-app viewer */
+  public openResource(entry: IResourceTableEntry, event?: Event) {
+    // prevent the row click handler from triggering a duplicate navigation
+    event?.stopPropagation();
+    return this.router.navigate([entry.id], { relativeTo: this.route });
   }
 
   /** Programatically trigger rendered <resource-download> component to download specific resource */

@@ -22,6 +22,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
   - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
   - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
+- **Nx Socket Length on macOS Worktrees (`NX_SOCKET_DIR`)**: Deeply nested worktree paths (e.g. `/Users/.../.t3/worktrees/...`) exceed the 104-byte Unix domain socket length on macOS, crashing `nx` commands with `Attempted to open socket that exceeds the maximum socket length`. `tools/ai/_shared.mjs` sets `NX_SOCKET_DIR: process.env.NX_SOCKET_DIR || '/tmp'` so all agent lint/test scripts operate safely across deep parallel worktrees.
 
 ---
 
@@ -59,10 +60,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   static_files = [ "./functions/dashboard/**/*.html" ]
   ```
 
-### Heavy Document Export Isolation (DOCX/PDF)
+### Heavy Document Export Isolation (DOCX/PDF/XLSX)
 
-- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
+- Client-side export libraries (e.g., `docx`, `exceljs`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
 - In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
+- **ExcelJS Conditional Formatting for Missing Translations**: To highlight blanks in OpenXML spreadsheets using ExcelJS, configure rules using `{ type: 'containsText', operator: 'containsBlanks', style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFC7CE' }, fgColor: { argb: 'FFFFC7CE' } }, font: { color: { argb: 'FF9C0006' } } } }`. This serializes both OpenXML blank rule metadata and formula `<formula>LEN(TRIM(cell))=0</formula>`, ensuring cross-compatibility across Microsoft Excel, Google Sheets, and LibreOffice Calc.
 
 ### TSX tsconfig-paths Resolution in Monorepos
 
@@ -70,8 +72,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ### macOS UNIX Domain Socket Path Length Limit (`NX_SOCKET_DIR`)
 
-- In nested worktrees or deep directory paths, the Nx daemon UNIX domain socket path can exceed macOS's 104-character limit (`sockaddr_un.sun_path`), causing commands like `yarn ai:test` or `nx test` to hang or fail with `Attempted to open socket that exceeds the maximum socket length`.
-- Fix: Prepend `NX_SOCKET_DIR=/tmp/nx` (or a short path) when executing test runner commands in deep worktree paths.
+- **Max Socket Length (104/108 chars)**: On macOS/Darwin, UNIX domain sockets exceed the system character limit (`sockaddr_un.sun_path`) when running inside nested worktrees or deep directory paths (e.g. `~/.t3/worktrees/...`).
+- **Symptom**: `yarn nx ...` hangs indefinitely on `- Calculating the project graph on the Nx Daemon` or fails with `Attempted to open socket that exceeds the maximum socket length`.
+- **Solution**: Run Nx with `NX_DAEMON=false NX_SOCKET_DIR=/tmp/nx yarn nx <target>`.
 
 ### Unit Test Colocation Convention
 
@@ -106,6 +109,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Child Process Untrusted Environment PATH (S4036)**: When passing a custom 'env' object to child_process execution, Sonar requires that PATH is either explicitly restricted to trusted system directories or not overridden loosely. Where possible, avoid invoking shell commands from script helpers if the same information can be resolved via in-memory data structures.
 - **Floating Unhandled Promises (S9383)**: Invoking an async method without await inside a non-async or event-handling context triggers Sonar's Reliability C-rating bug. Always prefix intentionally backgrounded promises with 'void' (e.g. 'void this.refreshStation(row);').
 - **Sequential Async Execution Without Await-in-Loop (S9382)**: Sonar flags await inside loops. When sequential processing is required (e.g. sequential API updates with reactive progress counters), use 'await items.reduce(async (prevPromise, item) => { await prevPromise; await processItem(item); }, Promise.resolve())' to avoid AST loop constructs while maintaining clean sequential execution.
+
+### ngx-extended-pdf-viewer Assets in Standalone Tool Builds
+
+- `PicsaPdfViewerComponent` loads pdf.js worker/locale assets from `/assets/pdf-viewer` at runtime. The super app's asset list does **not** apply to standalone tool builds, so any tool whose project renders the viewer must declare the glob in its own `project.json`:
+  ```json
+  {
+    "glob": "{*.min.mjs,images/*,locale/en-US/*,locale/locale.json,standard_fonts/**}",
+    "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+    "ignore": ["**/*-es5.min.mjs"],
+    "output": "/assets/pdf-viewer"
+  }
+  ```
+  Without it the viewer still builds, but fails silently in the browser with 404s. The glob deliberately excludes the `*-es5` bundles and non-`en-US` locales (see the viewer's locale note).
 
 ---
 
@@ -302,6 +318,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Jest ESM `transformIgnorePatterns`**: When testing components in tools that import modern ESM libraries (`rxdb`, `ky`, `@uppy`, `@awesome-cordova-plugins`), Jest throws `Cannot use import statement outside a module`. Ensure the project's `jest.config.ts` includes these packages in `transformIgnorePatterns` (matching `libs/shared/jest.config.ts`).
 - **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
+- **Async `ngOnInit` in Zoneless TestBed**: `await fixture.whenStable()` resolves before an async `ngOnInit` load chain completes, so signal assertions read initial values. After `fixture.detectChanges()`, await a macrotask (`await new Promise((resolve) => setTimeout(resolve))`) to drain the pending microtasks before asserting.
 
 ---
 
@@ -348,6 +365,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Inline Drawer Tool Headers & Dedicated Section Headings**: When a tool's detailed customization replaces the tool selection list, place the back button inline with the active tool's title (`.tools-header.has-active-tool`) rather than stacking a separate action row. Section headers (`Chart`, `Tools`, `Share`) provide clean visual hierarchy, pairing with focused actions like `Share Image`.
 - **Handler Singleton Registration**: `BaseChartToolComponent` registers itself as `chartService.activeToolHandler` on construction and clears it on destroy. Therefore, tool components must never have duplicate template declarations. Moving a tool to `climate-chart-options` requires removing it from `chart-layout`.
 - **Slot Dismissal**: Dismissing the customization slot via `toolService.disableAll()` resets `activeTool`, clearing SVG chart point/line overlays and SVG canvas legends, and gracefully restoring the tool selection view.
+
+### Touch Gestures & Sidenav Swipe-Dismissal
+
+- **Touch-Action Scoping & Ancestor Boundaries**: CSS `touch-action: pan-y pinch-zoom` must be placed inside Material's `.mat-drawer-inner-container` (on `.sidenav-container`), not on `<mat-sidenav>`. The browser only evaluates `touch-action` up the ancestor chain to the first scroll container.
+- **Zone.js Decoupling for High-Frequency Pointer Events**: Direct `addEventListener('pointermove')` inside an Angular component causes Zone.js to run change detection on every movement frame. Always register pointer event listeners within `NgZone.runOutsideAngular()`, only re-entering `ngZone.run()` when emitting completion/dismissal.
+- **Gating Touch Gestures by Drawer Mode and Pointer Type**: Do not gate gestures solely on window width/`mobileQuery` or `isNativePlatform()`. Gate dismiss gestures on `matSidenav.mode === 'over'` (avoiding interference when the drawer is pinned side-by-side in `mode === 'side'`) and `event.pointerType === 'touch'` (preventing desktop mouse selection and clicks from being captured or suppressed).
 
 ### Unified Y-Value Formatting Across Chart Tools
 
@@ -497,7 +520,9 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - On native Android (`Capacitor.isNativePlatform()`), additionally dispatches to `crashlyticsService.recordException(...)` in a protected try/catch block.
   - Always calls `super.handleError(error)` to preserve local console output.
 - **Inbound Noise Filtering & Quota Protection**:
-  - In `beforeSend`, errors originating from browser extensions (`chrome-extension:`, `moz-extension:`, `safari-extension:`) or Angular DevTools messaging hooks are discarded to avoid burning monthly event quotas.
+  - In `beforeSend` (`isIgnoredErrorMessage` in `sentry.service.ts`), errors originating from browser extensions (`chrome-extension:`, `moz-extension:`, `safari-extension:`), Angular DevTools hooks, or client-side offline network drops (`Failed to fetch`, `: 0 Unknown Error`, `ERR_INTERNET_DISCONNECTED`) are discarded to avoid burning monthly event quotas, and are also excluded from native Crashlytics non-fatal exception reporting in `ErrorHandlerService`.
+  - Non-`Error` objects with `.message` (such as Angular `HttpErrorResponse` or Supabase `PostgrestError`) are normalized into `Error` instances with `{ cause: error }` in `ErrorHandlerService.normalizeError()` so Sentry groups them with actionable stack traces rather than generic `Object captured as exception` titles.
+  - In `ResourcesDownloadService`, `download()` resolves `null` on failure (matching `DownloadEntry.download` signature) while distinguishing offline connection drops (`status === 0` or `isIgnoredErrorMessage`) from invalid storage URLs (`404`/`403`/`500`) or local storage write failures (`putAttachment`), forwarding actionable errors to `ErrorHandlerService` and deduplicating user error notifications across `queueMultiple()` bulk downloads.
   - Sentry is enabled in production builds by default (`ENVIRONMENT.production`), with optional explicit overrides via `ENVIRONMENT.sentry.enabled`.
 - **Production Sourcemaps & CI Release Ingestion**:
   - `apps/picsa-apps/app/project.json` configures `sourceMap: { "scripts": true, "styles": false, "hidden": true }` for production. `hidden: true` emits `.map` files on disk for debug symbolication while omitting `//# sourceMappingURL=` comments from bundles.
@@ -730,3 +755,29 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Gatekeeper status: CI build checks and SonarCloud Quality Gate passes/failures.
   - Sizing & Blast Radius: Noise-filtered churn (excludes CSVs, lockfiles, specs) mapped across monorepo boundaries (App Shell, Native, Backend, Tools) with `S/M/L/XL` effort sizing.
   - Actionable Verdict: `READY_FOR_REVIEW`, `BLOCKED_ON_AUTHOR`, `PENDING_BOT_FIXES`, `CONFLICTED`, `DRAFT`.
+
+---
+
+## 7. Header Theming & Cross-Host Tool Portals
+
+### Unified Header Surface & Material Button Contract
+
+- **The Problem (Primary vs Inverted & Farmer Mode)**:
+  - In standalone/extension mode, `picsa-header` defaults to `data-style="primary"` (`background-color: var(--color-primary); color: white`).
+  - When routed with `headerStyle: 'inverted'`, `picsa-header` uses a white background and primary text (`background-color: white; color: var(--color-primary)`).
+  - In farmer nested tools, the global header is hidden (`hideHeader: true`) and `.tool-header` in `module-home.component` renders directly over the white page.
+  - Angular Material M3 button directives (`matButton`, `matButton="outlined"`, `matIconButton`) and `mat-icon` enforce MDC internal theme variables rather than simply inheriting `currentColor`. Tool portals that hardcoded `text-white`, `bg-white/20`, `border-white/80`, and `[&_.mdc-button__label]:!text-white` worked on dark primary headers but became invisible white-on-white text in farmer mode and inverted routes.
+- **The Solution (Header CSS Token Contract)**:
+  - Both `picsa-header.component.scss` and `module-home.component.scss` (`.tool-header`) define unified surface tokens:
+    - `--header-fg`: `white` (on primary) / `var(--color-primary)` (on inverted / farmer)
+    - `--header-surface-bg`: `rgba(255, 255, 255, 0.18)` (on primary) / `color-mix(in srgb, var(--color-primary) 8%, transparent)` (on light)
+    - `--header-surface-bg-hover`: `rgba(255, 255, 255, 0.28)` / `color-mix(in srgb, var(--color-primary) 14%, transparent)`
+    - `--header-surface-border`: `rgba(255, 255, 255, 0.75)` / `color-mix(in srgb, var(--color-primary) 35%, transparent)`
+    - Inherited Material tokens: `--mat-button-text-label-text-color: currentColor; --mat-button-outlined-label-text-color: currentColor; --mat-button-outlined-outline-color: var(--header-surface-border); --mat-icon-color: currentColor;`
+  - Portal markup (`crop-probability`, `forecasts`, etc.) must use `bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]` and rely on inherited `currentColor` rather than hardcoding `text-white` or `color="primary"`.
+- **`cdkPortalEnd` Outlet Parity in Farmer Mode**:
+  - `module-home.component.html` (.tool-header) previously only outletted `headerContent()` (`cdkPortalCenter`), omitting `cdkPortalEnd`.
+  - Adding `public headerEndContent = computed(() => this.componentsService.headerOptions().cdkPortalEnd)` and rendering `<ng-template [cdkPortalOutlet]="headerEndContent()"></ng-template>` in the right-aligned header slot ensures end-slot controls (such as the table image Share button in #784) render consistently in both standalone and farmer modes.
+- **`@picsa/shared/features` Barrel Import Trap in Specs**:
+  - The `@picsa/shared/features` barrel exports chart components which load `c3`. In Jest/JSDOM environments without full SVG/DOM globals, importing from `@picsa/shared/features` throws `TypeError: Cannot read properties of undefined (reading 'prototype')` during C3 initialization.
+  - Deep-import feature modules directly (e.g. `import { PhotoListComponent } from '@picsa/shared/features/photo'`) to avoid loading C3 in unrelated component test suites.

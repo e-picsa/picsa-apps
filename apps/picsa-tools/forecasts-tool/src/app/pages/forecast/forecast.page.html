@@ -5,27 +5,27 @@
 
   <!-- Header Center Slot (Location Button) -->
   <ng-template #headerCenterPortal>
-    <div class="flex items-center justify-center gap-2 text-white max-w-full leading-none">
-      <span class="text-lg sm:text-xl font-semibold text-white"> {{ 'Forecasts' | translate }} </span>
+    <div class="flex items-center justify-center gap-2 max-w-full leading-none">
+      <span class="hidden sm:inline text-lg sm:text-xl font-semibold"> {{ 'Forecasts' | translate }} </span>
       <button
         matButton="outlined"
-        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none text-white bg-white/20 border border-white/80 rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 hover:bg-white/30 [&_.mdc-button__label]:!text-white"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none rounded-md whitespace-nowrap max-w-[200px] sm:max-w-[280px] shrink-0 bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]"
         (click)="locationOverlayOpen.set(true)"
         [attr.aria-label]="'Change location' | translate"
       >
-        <mat-icon class="!text-[20px] !w-5 !h-5 !text-white shrink-0">map</mat-icon>
-        <span class="truncate text-white"> {{ selectedLocationLabel() || ('Select Location' | translate) }} </span>
+        <mat-icon class="!text-[20px] !w-5 !h-5 shrink-0">map</mat-icon>
+        <span class="truncate"> {{ selectedLocationLabel() || ('Select Location' | translate) }} </span>
       </button>
     </div>
   </ng-template>
 
   <!-- Header End Slot (Freshness + Refresh / Up-to-date Chip) -->
   <ng-template #headerEndPortal>
-    <div class="flex items-center gap-2 text-white mr-2 sm:mr-3">
+    <div class="flex items-center gap-2 mr-2 sm:mr-3">
       <!-- Freshness / Offline Badge: only shown if not checked in 12h AND offline -->
       @if (showOfflineBadge()) {
       <div
-        class="inline-flex items-center gap-1 text-xs bg-white/20 text-white px-2 py-1 rounded-full"
+        class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-[var(--header-surface-bg)] border border-[var(--header-surface-border)]"
         [attr.title]="'Offline' | translate"
       >
         <mat-icon class="!text-base !w-4 !h-4">cloud_off</mat-icon>

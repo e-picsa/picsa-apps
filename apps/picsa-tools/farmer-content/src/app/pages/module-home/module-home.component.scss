@@ -28,6 +28,32 @@ header,
   // Previously minmax(0, 1fr) auto minmax(0, 1fr) allowed injected
   // climate station-select content to overflow on narrow screens.
   grid-template-columns: auto minmax(0, 1fr) auto;
+  background-color: white;
+  color: var(--color-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+  --header-fg: var(--color-primary);
+  --header-surface-bg: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  --header-surface-bg-hover: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  --header-surface-border: color-mix(in srgb, var(--color-primary) 35%, transparent);
+
+  --mat-button-text-label-text-color: currentColor;
+  --mat-button-outlined-label-text-color: currentColor;
+  --mat-button-outlined-outline-color: var(--header-surface-border);
+  --mat-icon-color: currentColor;
+  --mat-icon-button-state-layer-color: currentColor;
+  --mat-button-state-layer-color: currentColor;
+
+  button.mat-mdc-button-base:not(:disabled) {
+    color: inherit;
+
+    .mat-icon {
+      color: inherit;
+    }
+    .mdc-button__label {
+      color: inherit;
+    }
+  }
 }
 mat-icon.tool-icon {
   @apply h-16 w-16;

@@ -11,7 +11,7 @@ import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from
 import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features/photo';
 import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { filter, map } from 'rxjs';
@@ -119,6 +119,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   public fadeInContent = signal(true);
 
   public headerContent = computed(() => this.componentsService.headerOptions().cdkPortalCenter);
+  public headerEndContent = computed(() => this.componentsService.headerOptions().cdkPortalEnd);
 
   private slug = toSignal(this.route.params.pipe(map((params) => params.slug)));
 

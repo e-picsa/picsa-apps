@@ -1,13 +1,12 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { LOCALES_DATA_HASHMAP } from '@picsa/data';
+import { LOCALES_DATA } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
-import download from 'downloadjs';
-import JSZip from 'jszip';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
+import { TranslationsXlsxExportService } from './services/translations-xlsx-export.service';
 
 type ITranslationDB = Database['public']['Tables']['translations'];
 export type ITranslationRow = ITranslationDB['Row'];
@@ -17,6 +16,7 @@ export type ITranslationInsert = ITranslationDB['Insert'];
 export class TranslationDashboardService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
+  private xlsxExportService = inject(TranslationsXlsxExportService);
 
   public translations = signal<ITranslationRow[]>([]);
 
@@ -69,7 +69,6 @@ export class TranslationDashboardService extends PicsaAsyncService {
 
     // If no data is returned, it might be a no-op update caught by a trigger.
     // Fallback to our existing local copy.
-    // If no data is returned, it might be a no-op update caught by a trigger.
     // We only update the local state and signal if new data was actually returned.
     if (data) {
       this.translationsHashmap[id] = data;
@@ -101,7 +100,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   // In your TranslationDashboardService
   public async addTranslation(translation: ITranslationInsert): Promise<string> {
     translation.id = translation.id || this.generateTranslationID(translation);
-    const { data, error } = await this.supabaseService.db.table('translations').insert([translation]);
+    const { error } = await this.supabaseService.db.table('translations').insert([translation]);
 
     if (error) {
       throw error;
@@ -118,48 +117,15 @@ export class TranslationDashboardService extends PicsaAsyncService {
     return parts.map((t) => t?.toLowerCase().replace(/[^a-z0-9]/g, '')).join('-');
   }
 
-  /** Export a single zip file containing all translations for use in the app */
-  public async exportAllAppJsons() {
-    const locales = Object.keys(LOCALES_DATA_HASHMAP);
-    const zip = new JSZip();
-    for (const locale of locales) {
-      const json = this.exportJson(locale);
-      zip.file(`${locale}.json`, JSON.stringify(json, null, 2));
-    }
-    const blob = await zip.generateAsync({ type: 'blob' });
-    download(blob, `i18n_assets.zip`);
-  }
-
-  /**
-   * Export a single language json to include in the app.
-   * Untranslated rows are omitted so ngx-translate falls back to the English key.
-   */
-  public exportJson(locale: string, shouldDownload = false) {
-    const data = this.translations().filter((row) => !row.archived);
-    const translations = new Map<string, string>();
-    const sortedData = [...data].sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
-
-    for (const row of sortedData) {
-      const { text, id } = row;
-      const translatedText = row[locale];
-
-      if (!translatedText) {
-        continue;
-      }
-
-      translations.set(text, translatedText);
-
-      const generatedId = this.generateTranslationID(row);
-      if (id && id !== generatedId) {
-        translations.set(id, translatedText);
-      }
-    }
-    const json = Object.fromEntries(translations);
-
-    if (shouldDownload) {
-      download(JSON.stringify(json, null, 2), `${locale}.json`);
-    }
-
-    return json;
+  /** Export translations for the active country or specified country code as an enhanced XLSX */
+  public async exportXlsx(countryCode?: string) {
+    const code = countryCode || this.deploymentService.activeDeploymentCountry() || 'global';
+    const translations = this.translations().filter((v) => !v.archived);
+    const locales = LOCALES_DATA.filter((v) => v.country_code === code && !v.language_code.includes('en'));
+    await this.xlsxExportService.exportTranslations({
+      countryCode: code,
+      translations,
+      locales,
+    });
   }
 }
