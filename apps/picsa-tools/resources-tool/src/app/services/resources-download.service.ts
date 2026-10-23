@@ -20,8 +20,8 @@ export interface DownloadEntry {
   attachment: ReturnType<typeof signal<RxAttachment<IResourceFile> | null>>;
 
   // Action
-  /** Download will return doc with file attachment included */
-  download: () => Promise<RxDocument<IResourceFile>>;
+  /** Download will return doc with file attachment included, or null if download failed */
+  download: () => Promise<RxDocument<IResourceFile> | null>;
   cancel: () => void;
   /**
    * @param convertFileSrc
@@ -97,7 +97,7 @@ export class ResourcesDownloadService {
   }
 
   /** Start download */
-  private async download(doc: RxDocument<IResourceFile>): Promise<RxDocument<IResourceFile>> {
+  private async download(doc: RxDocument<IResourceFile>): Promise<RxDocument<IResourceFile> | null> {
     const entry = await this.register(doc);
 
     const { progress, status } = entry;
@@ -113,7 +113,7 @@ export class ResourcesDownloadService {
       entry.subscription = undefined;
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let downloadData: Blob | null = null;
       updates$.subscribe({
         next: ({ progress: dlProgress, data }) => {
@@ -123,9 +123,8 @@ export class ResourcesDownloadService {
         error: (error) => {
           cleanUpSubscriptions();
           status.set('error');
-          console.error(error);
-
-          reject(error);
+          console.warn('[ResourcesDownload] Download failed', doc.url, error);
+          resolve(null);
         },
         complete: async () => {
           try {
@@ -146,7 +145,8 @@ export class ResourcesDownloadService {
             resolve(updatedDoc);
           } catch (error) {
             status.set('error');
-            reject(error);
+            console.warn('[ResourcesDownload] Failed finalizing download', doc.url, error);
+            resolve(null);
           } finally {
             // Drop strong refs so GC can reclaim Blob
             downloadData = null;

@@ -6,6 +6,19 @@ import { APP_VERSION } from '@picsa/environments/src/version';
 import * as Sentry from '@sentry/angular';
 
 /**
+ * Known client-side network drop and DevTools message patterns that are
+ * environmental noise rather than actionable application bugs.
+ */
+const IGNORED_ERROR_MESSAGES = [
+  'Angular DevTools',
+  'Angular debugging APIs',
+  'Failed to fetch',
+  'NetworkError when attempting to fetch resource',
+  'Load failed',
+  ': 0 Unknown Error',
+];
+
+/**
  * Initializes Sentry for Angular (PWA and Capacitor webview).
  * Call early during application bootstrapping (e.g. in main.ts).
  */
@@ -22,7 +35,7 @@ export function initSentry(): void {
     enabled: isEnabled,
     release: APP_VERSION,
     environment: ENVIRONMENT.production ? 'production' : 'development',
-    // Inbound filters to drop browser extension and DevTools noise
+    // Inbound filters to drop browser extension, DevTools, and offline network drop noise
     beforeSend(event) {
       const frames = event.exception?.values?.[0]?.stacktrace?.frames;
       if (frames) {
@@ -37,9 +50,8 @@ export function initSentry(): void {
         }
       }
 
-      // Ignore known extension/DevTools messages
       const message = event.message || event.exception?.values?.[0]?.value || '';
-      if (message.includes('Angular DevTools') || message.includes('Angular debugging APIs')) {
+      if (IGNORED_ERROR_MESSAGES.some((pattern) => message.includes(pattern))) {
         return null;
       }
 

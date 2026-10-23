@@ -20,8 +20,11 @@ export class ErrorHandlerService extends ErrorHandler {
   override async handleError(error: unknown): Promise<void> {
     super.handleError(error);
 
-    // Unwrap Angular/Zone.js wrapped error if present
-    const extractedError = (error as { ngOriginalError?: unknown })?.ngOriginalError || error;
+    // Unwrap Angular/Zone.js wrapped error if present, then normalize error-like objects
+    // (such as Angular HttpErrorResponse or Supabase PostgrestError) into Error instances
+    // so Sentry does not group them under generic `Object captured as exception` titles.
+    const unwrapped = (error as { ngOriginalError?: unknown })?.ngOriginalError || error;
+    const extractedError = this.normalizeError(unwrapped);
 
     // Send to Sentry (captures JS exceptions across web and mobile webview)
     if (Sentry.isEnabled()) {
@@ -37,6 +40,23 @@ export class ErrorHandlerService extends ErrorHandler {
         console.warn('[ErrorHandler] Failed to log to Crashlytics', err);
       }
     }
+  }
+
+  private normalizeError(error: unknown): unknown {
+    if (error instanceof Error) {
+      return error;
+    }
+    if (error && typeof error === 'object' && 'message' in error) {
+      const candidate = error as { message?: unknown; name?: unknown };
+      if (typeof candidate.message === 'string' && candidate.message.length > 0) {
+        const normalized = new Error(candidate.message);
+        if (typeof candidate.name === 'string' && candidate.name.length > 0) {
+          normalized.name = candidate.name;
+        }
+        return normalized;
+      }
+    }
+    return error;
   }
 
   private async logToCrashlytics(error: Error) {

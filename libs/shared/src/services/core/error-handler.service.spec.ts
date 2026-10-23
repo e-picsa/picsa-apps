@@ -80,6 +80,34 @@ describe('ErrorHandlerService', () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(originalError);
   });
 
+  it('normalizes non-Error objects with a message property into Error instances', async () => {
+    (Sentry.isEnabled as jest.Mock).mockReturnValue(true);
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+
+    const httpErrorLike = {
+      name: 'HttpErrorResponse',
+      message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+      status: 0,
+      ok: false,
+    };
+
+    await service.handleError(httpErrorLike);
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'HttpErrorResponse',
+        message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+      }),
+    );
+    const capturedArg = (Sentry.captureException as jest.Mock).mock.calls[0][0];
+    expect(capturedArg).toBeInstanceOf(Error);
+    expect(mockCrashlyticsService.recordException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+      }),
+    );
+  });
+
   it('logs to Crashlytics on native platform in addition to Sentry', async () => {
     (Sentry.isEnabled as jest.Mock).mockReturnValue(true);
     (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
