@@ -91,8 +91,9 @@ export class FarmerStepVideoPlayerComponent {
     }
     const dlComponent = this.downloaderComponent();
     const videoPlayer = this.playerComponent();
-    if (dlComponent?.downloadStatus() === 'ready') {
-      dlComponent.download(e);
+    const dlStatus = dlComponent?.downloadStatus();
+    if (dlStatus === 'ready' || dlStatus === 'error') {
+      void dlComponent?.download(e);
       return;
     }
     if (videoPlayer?.source()) {
