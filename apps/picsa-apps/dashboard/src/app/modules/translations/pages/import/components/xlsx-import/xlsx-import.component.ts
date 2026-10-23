@@ -91,11 +91,7 @@ export class TranslationsXLSXImportComponent {
     displayColumns: ['tool', 'context', 'text', 'before', 'after'],
     formatHeader: (key: string) => {
       const headers: Record<string, string> = {
-        tool: 'Tool',
-        context: 'Context',
         text: 'English',
-        before: 'Before',
-        after: 'After',
       };
       return headers[key] || key;
     },
