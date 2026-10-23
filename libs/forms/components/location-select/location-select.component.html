@@ -3,7 +3,11 @@
   @if (parentLocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>
-      <mat-select #parentSelect (selectionChange)="parentSelected.set(parentSelect.value)" [value]="parentSelected()">
+      <mat-select
+        #parentSelect
+        (selectionChange)="onParentSelectionChange(parentSelect.value)"
+        [value]="parentSelected()"
+      >
         @for (option of data.locations; track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
         }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, viewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
 import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
@@ -30,6 +30,8 @@ export class FormLocationSelectComponent {
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
   public valueChanged = output<(string | undefined)[]>();
+
+  public readonly sublocationSelect = viewChild<MatSelect>('sublocationSelect');
 
   /** Parent tier selected (e.g. Province in multi-tier, District in single-tier) */
   public parentSelected = signal<string | undefined>(undefined);
@@ -106,6 +108,18 @@ export class FormLocationSelectComponent {
         }
       }
     });
+  }
+
+  public onParentSelectionChange(newParentValue: string | undefined) {
+    this.parentSelected.set(newParentValue);
+    // If a sublocation tier exists and has multiple options, auto-open the sublocation dropdown on user interaction
+    if (newParentValue && this.sublocation()) {
+      setTimeout(() => {
+        if (this.sublocationOptions().length > 1 && !this.sublocationSelected()) {
+          this.sublocationSelect()?.open();
+        }
+      });
+    }
   }
 
   private getComputedValue(parentSelected?: string, sublocationSelected?: string) {

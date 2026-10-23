@@ -232,7 +232,7 @@ describe('Location Proximity Utils', () => {
         'choma',
       );
 
-      expect(recommendations.length).toBe(3);
+      expect(recommendations).toHaveLength(3);
       expect(recommendations[0].station.id).toBe('station_in_district');
       expect(recommendations[0].isRecommended).toBe(true);
       expect(recommendations[0].isInsideDistrict).toBe(true);

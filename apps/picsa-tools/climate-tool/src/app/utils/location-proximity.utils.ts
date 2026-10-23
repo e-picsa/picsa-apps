@@ -21,7 +21,7 @@ export interface IProximityFeature {
     id?: number | string;
     name?: string;
     center?: [number, number];
-    center_source?: 'admin_centre' | 'label' | 'centroid' | 'point_on_surface' | string;
+    center_source?: string;
     [key: string]: unknown;
   };
   geometry?: {

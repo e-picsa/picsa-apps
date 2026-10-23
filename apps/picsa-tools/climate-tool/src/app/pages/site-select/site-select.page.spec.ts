@@ -146,14 +146,14 @@ describe('SiteSelectPage', () => {
     expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: newLocation });
   });
 
-  it('should not persist incomplete location to user settings', () => {
+  it('should persist incomplete location to user settings when sublocation not present', () => {
     const partialLocation = [undefined, undefined, 'zm', undefined, 'southern', undefined];
     jest.clearAllMocks();
 
     component.handleLocationChanged(partialLocation);
 
     expect(component.selectedLocation()).toEqual(partialLocation);
-    expect(configService.updateUserSettings).not.toHaveBeenCalled();
+    expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: partialLocation });
   });
 
   it('should set preferred station and navigate when confirmAndNavigate is called', () => {

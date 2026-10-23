@@ -69,7 +69,7 @@ button {
   }
 
   &.selected {
-    z-index: 9999;
+    z-index: 10;
     .marker-label {
       background: var(--color-primary, #991b1b);
       color: white;
@@ -104,5 +104,5 @@ button {
     background: var(--color-primary);
     color: white;
   }
-  z-index: 9999;
+  z-index: 10;
 }

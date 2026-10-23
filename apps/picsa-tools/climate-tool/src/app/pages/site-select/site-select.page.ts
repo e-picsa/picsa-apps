@@ -395,34 +395,38 @@ export class SiteSelectPage {
 
       const slots = getLocationSlots(getGeoLocationData(countryCode as ICountryCode));
       const parentSlot = slots[0];
-      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, parentSlot).then((result) => {
-        if (!result?.feature) return;
-        if (this.selectedLocationEntry()) return;
+      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, parentSlot)
+        .then((result) => {
+          if (!result?.feature) return;
+          if (this.selectedLocationEntry()) return;
 
-        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-          lineColor: '#16a34a',
-          lineWidth: 2,
-          lineOpacity: 0.6,
-          fitBounds: false,
+          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
+            lineColor: '#16a34a',
+            lineWidth: 2,
+            lineOpacity: 0.6,
+            fitBounds: false,
+          });
+
+          const bbox = computeFeatureBbox(result.feature);
+          if (bbox) {
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            picsaMap.fitBounds(
+              [
+                [bbox.minLng, bbox.minLat],
+                [bbox.maxLng, bbox.maxLat],
+              ],
+              {
+                maxZoom: 7,
+                padding: isMobile
+                  ? { top: 110, bottom: 145, left: 30, right: 30 }
+                  : { top: 40, bottom: 40, left: 40, right: 40 },
+              },
+            );
+          }
+        })
+        .catch((err) => {
+          console.warn('[SiteSelectPage] Could not load parent location boundary:', err);
         });
-
-        const bbox = computeFeatureBbox(result.feature);
-        if (bbox) {
-          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-          picsaMap.fitBounds(
-            [
-              [bbox.minLng, bbox.minLat],
-              [bbox.maxLng, bbox.maxLat],
-            ],
-            {
-              maxZoom: 7,
-              padding: isMobile
-                ? { top: 110, bottom: 145, left: 30, right: 30 }
-                : { top: 40, bottom: 40, left: 40, right: 40 },
-            },
-          );
-        }
-      });
     });
   }
 
@@ -437,13 +441,7 @@ export class SiteSelectPage {
       return;
     }
     this.selectedLocation.set(location);
-    const country = this.userCountryCode();
-    if (country) {
-      const geoData = getGeoLocationData(country as ICountryCode);
-      if (isLocationComplete(geoData, location)) {
-        this.configurationService.updateUserSettings({ location });
-      }
-    }
+    this.configurationService.updateUserSettings({ location });
   }
 
   public selectAlternateStation(recommendation: IStationRecommendation) {
