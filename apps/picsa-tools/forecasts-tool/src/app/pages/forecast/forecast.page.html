@@ -6,10 +6,10 @@
   <!-- Header Center Slot (Location Button) -->
   <ng-template #headerCenterPortal>
     <div class="flex items-center justify-center gap-2 max-w-full leading-none">
-      <span class="text-lg sm:text-xl font-semibold"> {{ 'Forecasts' | translate }} </span>
+      <span class="hidden sm:inline text-lg sm:text-xl font-semibold"> {{ 'Forecasts' | translate }} </span>
       <button
         matButton="outlined"
-        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none rounded-md whitespace-nowrap max-w-[180px] sm:max-w-[280px] shrink-0 bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]"
+        class="inline-flex items-center gap-1 h-9 sm:h-[38px] px-2 text-lg sm:text-xl font-semibold leading-none rounded-md whitespace-nowrap max-w-[200px] sm:max-w-[280px] shrink-0 bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]"
         (click)="locationOverlayOpen.set(true)"
         [attr.aria-label]="'Change location' | translate"
       >
