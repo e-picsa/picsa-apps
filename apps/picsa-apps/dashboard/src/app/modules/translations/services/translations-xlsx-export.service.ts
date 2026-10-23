@@ -17,10 +17,10 @@ export interface IExportTranslationsOptions {
 }
 
 export const EXCEL_COLUMN_WIDTHS = {
-  context: 25,
-  tool: 20,
-  english: 50,
-  language: 50,
+  context: 10,
+  tool: 10,
+  english: 40,
+  language: 40,
 } as const;
 
 export const BLANK_CELL_STYLE = {
