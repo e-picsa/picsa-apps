@@ -109,17 +109,15 @@
         <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
       </div>
 
-      @if (showSidenavToggle()) {
-        <button
-          matButton
-          color="primary"
-          class="p-4 justify-self-end min-w-0"
-          (click)="componentsService.toggleSidenav()"
-        >
-          <span style="display: none" class="sm:!block"> {{ 'Options' | translate }}</span>
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
+      <div class="justify-self-end flex items-center min-w-0">
+        <ng-template [cdkPortalOutlet]="headerEndContent()"></ng-template>
+        @if (showSidenavToggle()) {
+          <button matButton color="primary" class="p-4 min-w-0" (click)="componentsService.toggleSidenav()">
+            <span style="display: none" class="sm:!block"> {{ 'Options' | translate }}</span>
+            <mat-icon>menu</mat-icon>
+          </button>
+        }
+      </div>
     </div>
     <router-outlet #toolRouter></router-outlet>
   </div>

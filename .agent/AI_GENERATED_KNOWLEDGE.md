@@ -687,3 +687,29 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Gatekeeper status: CI build checks and SonarCloud Quality Gate passes/failures.
   - Sizing & Blast Radius: Noise-filtered churn (excludes CSVs, lockfiles, specs) mapped across monorepo boundaries (App Shell, Native, Backend, Tools) with `S/M/L/XL` effort sizing.
   - Actionable Verdict: `READY_FOR_REVIEW`, `BLOCKED_ON_AUTHOR`, `PENDING_BOT_FIXES`, `CONFLICTED`, `DRAFT`.
+
+---
+
+## 7. Header Theming & Cross-Host Tool Portals
+
+### Unified Header Surface & Material Button Contract
+
+- **The Problem (Primary vs Inverted & Farmer Mode)**:
+  - In standalone/extension mode, `picsa-header` defaults to `data-style="primary"` (`background-color: var(--color-primary); color: white`).
+  - When routed with `headerStyle: 'inverted'`, `picsa-header` uses a white background and primary text (`background-color: white; color: var(--color-primary)`).
+  - In farmer nested tools, the global header is hidden (`hideHeader: true`) and `.tool-header` in `module-home.component` renders directly over the white page.
+  - Angular Material M3 button directives (`matButton`, `matButton="outlined"`, `matIconButton`) and `mat-icon` enforce MDC internal theme variables rather than simply inheriting `currentColor`. Tool portals that hardcoded `text-white`, `bg-white/20`, `border-white/80`, and `[&_.mdc-button__label]:!text-white` worked on dark primary headers but became invisible white-on-white text in farmer mode and inverted routes.
+- **The Solution (Header CSS Token Contract)**:
+  - Both `picsa-header.component.scss` and `module-home.component.scss` (`.tool-header`) define unified surface tokens:
+    - `--header-fg`: `white` (on primary) / `var(--color-primary)` (on inverted / farmer)
+    - `--header-surface-bg`: `rgba(255, 255, 255, 0.18)` (on primary) / `color-mix(in srgb, var(--color-primary) 8%, transparent)` (on light)
+    - `--header-surface-bg-hover`: `rgba(255, 255, 255, 0.28)` / `color-mix(in srgb, var(--color-primary) 14%, transparent)`
+    - `--header-surface-border`: `rgba(255, 255, 255, 0.75)` / `color-mix(in srgb, var(--color-primary) 35%, transparent)`
+    - Inherited Material tokens: `--mat-button-text-label-text-color: currentColor; --mat-button-outlined-label-text-color: currentColor; --mat-button-outlined-outline-color: var(--header-surface-border); --mat-icon-color: currentColor;`
+  - Portal markup (`crop-probability`, `forecasts`, etc.) must use `bg-[var(--header-surface-bg)] hover:bg-[var(--header-surface-bg-hover)] border border-[var(--header-surface-border)]` and rely on inherited `currentColor` rather than hardcoding `text-white` or `color="primary"`.
+- **`cdkPortalEnd` Outlet Parity in Farmer Mode**:
+  - `module-home.component.html` (.tool-header) previously only outletted `headerContent()` (`cdkPortalCenter`), omitting `cdkPortalEnd`.
+  - Adding `public headerEndContent = computed(() => this.componentsService.headerOptions().cdkPortalEnd)` and rendering `<ng-template [cdkPortalOutlet]="headerEndContent()"></ng-template>` in the right-aligned header slot ensures end-slot controls (such as the table image Share button in #784) render consistently in both standalone and farmer modes.
+- **`@picsa/shared/features` Barrel Import Trap in Specs**:
+  - The `@picsa/shared/features` barrel exports chart components which load `c3`. In Jest/JSDOM environments without full SVG/DOM globals, importing from `@picsa/shared/features` throws `TypeError: Cannot read properties of undefined (reading 'prototype')` during C3 initialization.
+  - Deep-import feature modules directly (e.g. `import { PhotoListComponent } from '@picsa/shared/features/photo'`) to avoid loading C3 in unrelated component test suites.

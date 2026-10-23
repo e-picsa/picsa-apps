@@ -17,10 +17,45 @@ header {
   -moz-transition: background-color 0.5s ease;
   -o-transition: background-color 0.5s ease;
   transition: background-color 0.5s ease;
+
+  // Header surface tokens for projected controls (pills, chips, outlined buttons)
+  --header-fg: white;
+  --header-surface-bg: rgba(255, 255, 255, 0.18);
+  --header-surface-bg-hover: rgba(255, 255, 255, 0.28);
+  --header-surface-border: rgba(255, 255, 255, 0.75);
+
+  // Angular Material button/icon color inheritance
+  --mat-button-text-label-text-color: currentColor;
+  --mat-button-outlined-label-text-color: currentColor;
+  --mat-button-outlined-outline-color: var(--header-surface-border);
+  --mat-icon-color: currentColor;
+  --mat-icon-button-state-layer-color: currentColor;
+  --mat-button-state-layer-color: currentColor;
+
+  button.mat-mdc-button-base:not(:disabled) {
+    color: inherit;
+
+    .mat-icon {
+      color: inherit;
+    }
+    .mdc-button__label {
+      color: inherit;
+    }
+  }
 }
 header[data-style='inverted'] {
   color: var(--color-primary);
   background-color: white;
+
+  --header-fg: var(--color-primary);
+  --header-surface-bg: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  --header-surface-bg-hover: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  --header-surface-border: color-mix(in srgb, var(--color-primary) 35%, transparent);
+
+  --mat-button-text-label-text-color: currentColor;
+  --mat-button-outlined-label-text-color: currentColor;
+  --mat-button-outlined-outline-color: var(--header-surface-border);
+  --mat-icon-color: currentColor;
 }
 
 .start-content {
