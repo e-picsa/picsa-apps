@@ -51,6 +51,7 @@
 <ng-template #customToolbar>
   <div id="toolbarViewer">
     <div id="toolbarViewerLeft">
+      <ng-content select="[start], [slot=start], picsa-back-button"></ng-content>
       <ng-content></ng-content>
       <div class="toolbarButtonSpacer"></div>
 
@@ -67,6 +68,7 @@
     }
     <div id="toolbarViewerRight">
       <pdf-paging-area> </pdf-paging-area>
+      <ng-content select="[end], [slot=end], resource-share"></ng-content>
     </div>
   </div>
 </ng-template>

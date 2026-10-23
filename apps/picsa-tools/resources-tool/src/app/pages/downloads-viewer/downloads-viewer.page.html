@@ -2,8 +2,8 @@
   @if (doc(); as doc) { @if (pdfSrc(); as src) {
   <!-- PDF renders full-bleed, with controls projected into the viewer toolbar -->
   <picsa-pdf-viewer class="min-h-0 flex-1" [src]="src">
-    <picsa-back-button variant="primary"></picsa-back-button>
-    <resource-share [doc]="doc"></resource-share>
+    <picsa-back-button variant="primary" start></picsa-back-button>
+    <resource-share [doc]="doc" end></resource-share>
   </picsa-pdf-viewer>
   } @else {
   <div class="flex items-center gap-2 border-b px-2">
