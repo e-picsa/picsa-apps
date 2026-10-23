@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { LOCALES_DATA_HASHMAP } from '@picsa/data';
+import { LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -8,6 +8,7 @@ import download from 'downloadjs';
 import JSZip from 'jszip';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
+import { TranslationsXlsxExportService } from './services/translations-xlsx-export.service';
 
 type ITranslationDB = Database['public']['Tables']['translations'];
 export type ITranslationRow = ITranslationDB['Row'];
@@ -17,6 +18,7 @@ export type ITranslationInsert = ITranslationDB['Insert'];
 export class TranslationDashboardService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
+  private xlsxExportService = inject(TranslationsXlsxExportService);
 
   public translations = signal<ITranslationRow[]>([]);
 
@@ -69,7 +71,6 @@ export class TranslationDashboardService extends PicsaAsyncService {
 
     // If no data is returned, it might be a no-op update caught by a trigger.
     // Fallback to our existing local copy.
-    // If no data is returned, it might be a no-op update caught by a trigger.
     // We only update the local state and signal if new data was actually returned.
     if (data) {
       this.translationsHashmap[id] = data;
@@ -116,6 +117,18 @@ export class TranslationDashboardService extends PicsaAsyncService {
     const parts =
       country_code && country_code !== 'global' ? [country_code, tool, context, text] : [tool, context, text];
     return parts.map((t) => t?.toLowerCase().replace(/[^a-z0-9]/g, '')).join('-');
+  }
+
+  /** Export translations for the active country or specified country code as an enhanced XLSX */
+  public async exportXlsx(countryCode?: string) {
+    const code = countryCode || this.deploymentService.activeDeploymentCountry() || 'global';
+    const translations = this.translations().filter((v) => !v.archived);
+    const locales = LOCALES_DATA.filter((v) => v.country_code === code && !v.language_code.includes('en'));
+    await this.xlsxExportService.exportTranslations({
+      countryCode: code,
+      translations,
+      locales,
+    });
   }
 
   /** Export a single zip file containing all translations for use in the app */

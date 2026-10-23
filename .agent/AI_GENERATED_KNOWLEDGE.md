@@ -22,6 +22,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - `tools/scripts/dev-serve.mjs` wraps `yarn start` and `yarn start:dashboard`. It executes cross-platform dual-stack probes (`127.0.0.1`, `0.0.0.0`, `::1`) with `exclusive: true` and auto-allocates the next available sequential port if base ports are busy.
   - Supabase `additional_redirect_urls` in `apps/picsa-server/supabase/config.toml` includes wildcard redirects (`http://localhost:*`, `http://127.0.0.1:*`) so local auth and magic links operate smoothly across non-4200 parallel worktree ports.
   - Dev servers write ephemeral `.serve-info.json` to the worktree root (unlinked on exit) and expose `yarn open` to launch or inspect the active worktree server.
+- **Nx Socket Length on macOS Worktrees (`NX_SOCKET_DIR`)**: Deeply nested worktree paths (e.g. `/Users/.../.t3/worktrees/...`) exceed the 104-byte Unix domain socket length on macOS, crashing `nx` commands with `Attempted to open socket that exceeds the maximum socket length`. `tools/ai/_shared.mjs` sets `NX_SOCKET_DIR: process.env.NX_SOCKET_DIR || '/tmp'` so all agent lint/test scripts operate safely across deep parallel worktrees.
 
 ---
 
@@ -59,10 +60,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   static_files = [ "./functions/dashboard/**/*.html" ]
   ```
 
-### Heavy Document Export Isolation (DOCX/PDF)
+### Heavy Document Export Isolation (DOCX/PDF/XLSX)
 
-- Client-side export libraries (e.g., `docx`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
+- Client-side export libraries (e.g., `docx`, `exceljs`, `downloadjs`) must be imported strictly within dashboard module services (`apps/picsa-apps/dashboard/src/app/modules/.../services/`). Never import them into shared libraries (`libs/`) to prevent bloat in the mobile Capacitor app bundle.
 - In `docx` table generation, vertically merged cells spanning multiple columns in row 1 must maintain `columnSpan: N` and `verticalMerge: VerticalMergeType.CONTINUE` in subsequent rows so OpenXML table grids align properly.
+- **ExcelJS Conditional Formatting for Missing Translations**: To highlight blanks in OpenXML spreadsheets using ExcelJS, configure rules using `{ type: 'containsText', operator: 'containsBlanks', style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFC7CE' }, fgColor: { argb: 'FFFFC7CE' } }, font: { color: { argb: 'FF9C0006' } } } }`. This serializes both OpenXML blank rule metadata and formula `<formula>LEN(TRIM(cell))=0</formula>`, ensuring cross-compatibility across Microsoft Excel, Google Sheets, and LibreOffice Calc.
 
 ### TSX tsconfig-paths Resolution in Monorepos
 
