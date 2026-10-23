@@ -35,9 +35,9 @@
             "output": "/assets/resources"
           },
           {
-            "glob": "{*.min.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
+            "glob": "{*.min.mjs,cmaps/*,images/*,locale/en-US/*,locale/locale.json,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-            "ignore": ["**/*-es5.min.js"],
+            "ignore": ["**/*-es5.min.mjs"],
             "output": "/assets/pdf-viewer"
           }
         ],
