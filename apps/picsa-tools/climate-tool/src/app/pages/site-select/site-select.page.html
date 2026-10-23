@@ -36,63 +36,19 @@
         }
       </div>
 
-      <!-- Section 2: Selected Station & Nearby Options -->
+      <!-- Section 2: Selected Station & Nearby Options (Desktop & Mobile List View) -->
       @if (isCalculatingProximity() && !displayedStation()) {
       <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
         <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
         <div class="text-sm font-medium">{{ strings.findingStations | translate }}...</div>
       </div>
       } @else if (displayedStation(); as displayed) {
-      <div class="recommendation-card border border-gray-200 bg-white rounded-xl p-4 shadow-sm">
-        <div class="flex items-center gap-2 mb-2">
-          <mat-icon svgIcon="climate_station" class="text-primary"></mat-icon>
-          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500"
-            >{{ strings.climateStation | translate }}</span
-          >
-        </div>
-
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div class="text-xl font-bold text-gray-900">{{ displayed.station.name }}</div>
-          </div>
-
-          <button
-            matButton="filled"
-            color="primary"
-            class="!h-10 !px-5 whitespace-nowrap"
-            (click)="confirmAndNavigate(displayed.station)"
-          >
-            <span>{{ strings.view | translate }}</span>
-            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-          </button>
-        </div>
-
-        <!-- Nearby Stations (closest station first and selected) -->
-        @if (nearbyStations().length > 0) {
-        <div class="mt-4 pt-3 border-t border-gray-200">
-          <div class="text-xs font-medium text-gray-500 mb-1.5">{{ strings.nearby | translate }}</div>
-          <div class="flex flex-wrap gap-2">
-            @for (alt of nearbyStations(); track alt.station.id) {
-            <button
-              matButton="outlined"
-              class="!h-auto !py-1.5 !px-3 transition-colors"
-              [ngClass]="{
-                '!border-primary !bg-primary/10 !text-primary font-semibold': displayedStation()?.station?.id === alt.station.id
-              }"
-              (click)="selectAlternateStation(alt)"
-            >
-              <span class="flex flex-col items-start text-left leading-tight">
-                <span class="text-xs">
-                  @if (alt.mapNumber) {<span>{{ alt.mapNumber }}. </span>}{{ alt.station.name }}
-                </span>
-                <span class="text-[11px] font-normal text-gray-400">{{ alt.distanceKm }} km</span>
-              </span>
-            </button>
-            }
-          </div>
-        </div>
-        }
-      </div>
+      <climate-station-card
+        [displayedStation]="displayed"
+        [nearbyStations]="nearbyStations()"
+        (confirm)="confirmAndNavigate($event)"
+        (selectAlternate)="selectAlternateStation($event)"
+      ></climate-station-card>
       }
 
       <!-- Section 3: Optional Browse All Stations Expander -->
@@ -134,22 +90,15 @@
       }
     </div>
 
-    <!-- Floating Bottom Station Card with Proceed Button (Mobile) -->
-    @if (activeStation(); as station) {
-    <div class="absolute left-3 right-3 bottom-4 z-20 rounded-xl shadow-md px-4 py-3 md:hidden bg-white">
-      <div class="flex items-center justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider mb-0.5">
-            <mat-icon svgIcon="climate_station" class="text-primary"></mat-icon>
-            <span>{{ strings.climateStation | translate }}</span>
-          </div>
-          <div class="font-bold text-base text-gray-900 truncate">{{ station.name }}</div>
-        </div>
-        <button matButton="filled" color="primary" class="!h-9 !px-4 shrink-0" (click)="confirmAndNavigate(station)">
-          <span>{{ strings.view | translate }}</span>
-          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-        </button>
-      </div>
+    <!-- Floating Bottom Station Card with Nearby Options (Mobile Map View) -->
+    @if (displayedStation(); as displayed) {
+    <div class="absolute left-3 right-3 bottom-4 z-20 md:hidden">
+      <climate-station-card
+        [displayedStation]="displayed"
+        [nearbyStations]="nearbyStations()"
+        (confirm)="confirmAndNavigate($event)"
+        (selectAlternate)="selectAlternateStation($event)"
+      ></climate-station-card>
     </div>
     }
 
