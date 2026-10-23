@@ -99,6 +99,7 @@ describe('SentryService and initSentry', () => {
 
       // Offline network dropouts should be filtered out
       expect(beforeSend({ message: 'TypeError: Failed to fetch' })).toBeNull();
+      expect(beforeSend({ message: 'net::ERR_INTERNET_DISCONNECTED' })).toBeNull();
       expect(
         beforeSend({
           exception: {
@@ -148,8 +149,22 @@ describe('SentryService and initSentry', () => {
       service.setExtra('extra-key', { foo: 'bar' });
       expect(Sentry.setExtra).toHaveBeenCalledWith('extra-key', { foo: 'bar' });
 
-      service.addBreadcrumb({ message: 'clicked button' });
-      expect(Sentry.addBreadcrumb).toHaveBeenCalledWith({ message: 'clicked button' });
+      service.addBreadcrumb({ message: 'crumb' });
+      expect(Sentry.addBreadcrumb).toHaveBeenCalledWith({ message: 'crumb' });
+    });
+
+    it('no-ops setUser, setTag, setExtra, addBreadcrumb when disabled', () => {
+      (Sentry.isEnabled as jest.Mock).mockReturnValue(false);
+
+      service.setUser({ id: 'user-123' });
+      service.setTag('test-tag', 'val');
+      service.setExtra('extra-key', { foo: 'bar' });
+      service.addBreadcrumb({ message: 'crumb' });
+
+      expect(Sentry.setUser).not.toHaveBeenCalled();
+      expect(Sentry.setTag).not.toHaveBeenCalled();
+      expect(Sentry.setExtra).not.toHaveBeenCalled();
+      expect(Sentry.addBreadcrumb).not.toHaveBeenCalled();
     });
   });
 });

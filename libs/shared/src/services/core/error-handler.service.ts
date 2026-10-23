@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/angular';
 import { fromError as getStacktraceFromError } from 'stacktrace-js';
 
 import { CrashlyticsService } from './crashlytics.service';
+import { isIgnoredErrorMessage } from './sentry.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,8 +32,12 @@ export class ErrorHandlerService extends ErrorHandler {
       Sentry.captureException(extractedError);
     }
 
-    // Send to Firebase Crashlytics if running on native platform
-    if (Capacitor.isNativePlatform() && extractedError instanceof Error) {
+    // Send to Firebase Crashlytics if running on native platform (excluding ignored client network drops)
+    if (
+      Capacitor.isNativePlatform() &&
+      extractedError instanceof Error &&
+      !isIgnoredErrorMessage(extractedError.message)
+    ) {
       try {
         await this.crashlyticsService.ready();
         await this.logToCrashlytics(extractedError);
@@ -49,7 +54,7 @@ export class ErrorHandlerService extends ErrorHandler {
     if (error && typeof error === 'object' && 'message' in error) {
       const candidate = error as { message?: unknown; name?: unknown };
       if (typeof candidate.message === 'string' && candidate.message.length > 0) {
-        const normalized = new Error(candidate.message);
+        const normalized = new Error(candidate.message, { cause: error });
         if (typeof candidate.name === 'string' && candidate.name.length > 0) {
           normalized.name = candidate.name;
         }

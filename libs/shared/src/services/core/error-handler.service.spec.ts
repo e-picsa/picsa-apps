@@ -80,14 +80,14 @@ describe('ErrorHandlerService', () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(originalError);
   });
 
-  it('normalizes non-Error objects with a message property into Error instances', async () => {
+  it('normalizes non-Error objects with a message property into Error instances and preserves cause', async () => {
     (Sentry.isEnabled as jest.Mock).mockReturnValue(true);
     (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
 
     const httpErrorLike = {
       name: 'HttpErrorResponse',
-      message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
-      status: 0,
+      message: 'Http failure response for https://example.com/video.mp4: 404 Not Found',
+      status: 404,
       ok: false,
     };
 
@@ -96,16 +96,34 @@ describe('ErrorHandlerService', () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'HttpErrorResponse',
-        message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+        message: 'Http failure response for https://example.com/video.mp4: 404 Not Found',
       }),
     );
     const capturedArg = (Sentry.captureException as jest.Mock).mock.calls[0][0];
     expect(capturedArg).toBeInstanceOf(Error);
+    expect(capturedArg.cause).toBe(httpErrorLike);
     expect(mockCrashlyticsService.recordException).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+        message: 'Http failure response for https://example.com/video.mp4: 404 Not Found',
       }),
     );
+  });
+
+  it('skips Crashlytics logging for ignored offline network drop errors on native platform', async () => {
+    (Sentry.isEnabled as jest.Mock).mockReturnValue(true);
+    (Capacitor.isNativePlatform as jest.Mock).mockReturnValue(true);
+
+    const offlineError = {
+      name: 'HttpErrorResponse',
+      message: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error',
+      status: 0,
+      ok: false,
+    };
+
+    await service.handleError(offlineError);
+
+    expect(Sentry.captureException).toHaveBeenCalled();
+    expect(mockCrashlyticsService.recordException).not.toHaveBeenCalled();
   });
 
   it('logs to Crashlytics on native platform in addition to Sentry', async () => {

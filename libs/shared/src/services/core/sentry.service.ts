@@ -9,14 +9,24 @@ import * as Sentry from '@sentry/angular';
  * Known client-side network drop and DevTools message patterns that are
  * environmental noise rather than actionable application bugs.
  */
-const IGNORED_ERROR_MESSAGES = [
+export const IGNORED_ERROR_MESSAGES = [
   'Angular DevTools',
   'Angular debugging APIs',
   'Failed to fetch',
   'NetworkError when attempting to fetch resource',
   'Load failed',
   ': 0 Unknown Error',
+  'ERR_INTERNET_DISCONNECTED',
 ];
+
+/**
+ * Returns true if the error message matches known client-side network drop
+ * or browser DevTools noise that should not be reported as an application bug.
+ */
+export function isIgnoredErrorMessage(message?: string): boolean {
+  if (!message) return false;
+  return IGNORED_ERROR_MESSAGES.some((pattern) => message.includes(pattern));
+}
 
 /**
  * Initializes Sentry for Angular (PWA and Capacitor webview).
@@ -51,7 +61,7 @@ export function initSentry(): void {
       }
 
       const message = event.message || event.exception?.values?.[0]?.value || '';
-      if (IGNORED_ERROR_MESSAGES.some((pattern) => message.includes(pattern))) {
+      if (isIgnoredErrorMessage(message)) {
         return null;
       }
 
@@ -108,7 +118,7 @@ export class SentryService {
   }
 
   /**
-   * Sets the user context for error tracking.
+   * Sets user context for Sentry events.
    */
   public setUser(user: Sentry.User | null): void {
     if (Sentry.isEnabled()) {
@@ -117,7 +127,7 @@ export class SentryService {
   }
 
   /**
-   * Sets a custom tag for error context.
+   * Sets a tag on the current scope.
    */
   public setTag(key: string, value: string): void {
     if (Sentry.isEnabled()) {
@@ -126,7 +136,7 @@ export class SentryService {
   }
 
   /**
-   * Sets custom extra data for error context.
+   * Sets extra context data on the current scope.
    */
   public setExtra(key: string, extra: unknown): void {
     if (Sentry.isEnabled()) {
@@ -135,7 +145,7 @@ export class SentryService {
   }
 
   /**
-   * Records a manual breadcrumb.
+   * Adds a breadcrumb for debugging context.
    */
   public addBreadcrumb(breadcrumb: Sentry.Breadcrumb): void {
     if (Sentry.isEnabled()) {
