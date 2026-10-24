@@ -335,6 +335,11 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         dragRotate,
       });
 
+      // Collapse the attribution control synchronously (same task, before first
+      // paint) so it never flashes expanded. MapLibre initialises it open and
+      // re-expands on sourcedata unless the `compact` class is already present.
+      this.collapseAttribution(container);
+
       // Defensive guard against MapLibre GL race condition where _stop() deletes _onEaseFrame
       // while another frame callback in the render queue executes during rapid gestures/station swapping
       const origRenderFrameCallback = (map as any)._renderFrameCallback;
@@ -422,12 +427,14 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Start the MapLibre attribution control collapsed (ⓘ) instead of expanded.
-   * MapLibre always initialises it open; the collapsed state is `compact`
-   * without `compact-show`/`open`, which survives later _updateCompact calls
-   * and still allows manual expand via the toggle.
+   * MapLibre always initialises it open and re-expands on sourcedata/styledata
+   * unless the `compact` class is present — so ensure `compact` while stripping
+   * `compact-show`/`open`. Later _updateCompact calls then no-op, and manual
+   * expand via the toggle still works.
    */
   private collapseAttribution(container: HTMLElement) {
     const el = container.querySelector('details.maplibregl-ctrl-attrib');
+    el?.classList.add('maplibregl-compact');
     el?.classList.remove('maplibregl-compact-show');
     el?.removeAttribute('open');
   }
