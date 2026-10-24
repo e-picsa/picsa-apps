@@ -6,12 +6,6 @@
       display: block;
       width: 100%;
 
-      .flex.gap-4.my-4 {
-        display: flex !important;
-        width: 100% !important;
-        margin: 0 !important;
-        gap: 0.5rem !important;
-      }
       mat-form-field {
         flex: 1 1 0px !important;
         width: 100% !important;
@@ -32,15 +26,6 @@
       .mdc-text-field--filled::before,
       .mdc-text-field--filled::after {
         display: none !important;
-      }
-      .mat-mdc-form-field-infix {
-        padding: 4px 0 !important;
-        min-height: 42px !important;
-        width: 100% !important;
-      }
-      .mat-mdc-select-trigger {
-        font-size: 14px;
-        font-weight: 500;
       }
     }
   }
