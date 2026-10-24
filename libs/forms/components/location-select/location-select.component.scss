@@ -1,3 +1,9 @@
 :host {
   display: block;
+
+  // Revert global override
+  mat-select.mat-mdc-select {
+    --mat-select-trigger-text-size: 1rem;
+    --mat-select-trigger-text-line-height: 1.25rem;
+  }
 }

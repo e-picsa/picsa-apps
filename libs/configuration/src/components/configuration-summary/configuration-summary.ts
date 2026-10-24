@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { COUNTRIES_DATA_HASHMAP, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 
 import { ConfigurationService } from '../../provider';
@@ -20,6 +20,7 @@ export class PicsaConfigurationSummaryComponent {
 
   public label = signal('');
   public image = signal('');
+  public dialogConfig: MatDialogConfig = { panelClass: 'no-padding' };
   constructor() {
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();
