@@ -1,5 +1,13 @@
+import type { ICountryCode } from '../deployments';
+import { getGeoLocationData } from './index';
 import type { IGeolocationData } from './types';
-import { getDeepestLocations, getLocationLabel, isLocationComplete } from './utils';
+import {
+  getDeepestAdminLevel,
+  getDeepestLocations,
+  getLocationLabel,
+  isLocationComplete,
+  topoJsonToGeoJson,
+} from './utils';
 
 const baseData = {
   topoJson: async () => ({}) as never,
@@ -13,20 +21,26 @@ const baseData = {
 } as IGeolocationData;
 
 describe('getDeepestLocations', () => {
-  it('should resolve parent ids and labels for tiered countries', () => {
+  it('should resolve parent ids, labels, and topoName for tiered countries', () => {
     const data: IGeolocationData = {
       ...baseData,
       admin_5: {
         label: 'District',
         locations: [
           { id: 'chipata', label: 'Chipata', admin_4: 'eastern' },
-          { id: 'kabwe', label: 'Kabwe', admin_4: 'central' },
+          { id: 'senga', label: 'Senga', admin_4: 'central', topoName: 'Senga Hill District' },
         ],
       },
     };
     expect(getDeepestLocations(data)).toEqual([
       { id: 'chipata', label: 'Chipata', parentId: 'eastern', parentLabel: 'Eastern' },
-      { id: 'kabwe', label: 'Kabwe', parentId: 'central', parentLabel: 'Central' },
+      {
+        id: 'senga',
+        label: 'Senga',
+        parentId: 'central',
+        parentLabel: 'Central',
+        topoName: 'Senga Hill District',
+      },
     ]);
   });
 
@@ -106,4 +120,35 @@ describe('getLocationLabel', () => {
     const location = [undefined, undefined, 'zm', undefined, 'southern', 'southern/mazabuka--kafue-polder'];
     expect(getLocationLabel(data, location)).toBe('Southern');
   });
+});
+
+describe('TopoJSON boundary alignment for all countries', () => {
+  const countries: ICountryCode[] = ['mw', 'zm', 'zw'];
+  const normalize = (s?: string) =>
+    (s ?? '')
+      .toLowerCase()
+      .replace(/\b(district|province|city|met)\b/gi, '')
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+
+  for (const country of countries) {
+    it(`resolves every deepest location in "${country}" to a valid TopoJSON feature`, async () => {
+      const data = getGeoLocationData(country);
+      const deepest = getDeepestLocations(data);
+      const adminLevel = getDeepestAdminLevel(data);
+      const topo = await data.topoJson();
+      const geojson = topoJsonToGeoJson(topo, adminLevel);
+
+      expect(deepest.length).toBeGreaterThan(0);
+      expect(geojson.features.length).toBeGreaterThan(0);
+
+      for (const loc of deepest) {
+        const candidates = [loc.label, loc.topoName, loc.id].filter((v): v is string => Boolean(v));
+        const match = geojson.features.find((f) =>
+          candidates.some((c) => normalize(f.properties?.name) === normalize(c)),
+        );
+        expect(match).toBeDefined();
+      }
+    });
+  }
 });

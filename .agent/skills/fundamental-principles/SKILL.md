@@ -28,6 +28,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 - Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`).
 - Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
+- **Minimalist, Farmer-First UI (No Over-Engineering or Visual Noise)**: Do NOT add superfluous visual elements, chips, tags, metadata badges, or metrics unprompted (e.g., "Inside District", "X km from center", "Y years of data", extra status icons). Keep interfaces clean, direct, and focused on essential actions with minimal cognitive load (e.g., "View" instead of verbose button text). Avoid adding unprompted visual noise for the sake of it.
 - **Database Exploration**: ALWAYS use the `supabase-db` MCP skill (`mcp_supabase-db_query`) when trying to introspect the Supabase database (e.g., viewing registered functions, checking schema, exploring tables). This is significantly more efficient and accurate than reading raw schema files using `grep_search` or `view_file`.
 
 ## 3. Destructive Commands (CRITICAL)

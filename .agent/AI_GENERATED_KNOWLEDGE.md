@@ -274,6 +274,28 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Avoid Deep SCSS Nesting**: Deep nesting in component `.scss` files (`.parent { .child { .subchild { ... } } }`) explodes compiled CSS bundle sizes because Angular's `ViewEncapsulation.Emulated` attaches host-scoped attribute selectors (`[_ngcontent-...]`) to every individual element selector in the chain. For example, a 700-line deeply nested SCSS file compiles to >15 kB, exceeding Angular's standard 4 kB production component style budget (`anyComponentStyle`).
 - **Tailwind First**: Follow project convention #7 by applying Tailwind utility classes directly in templates for layout, flexbox/grid, spacing, typography, and badges. Reserve component `.scss` exclusively for styles requiring pseudo-elements, complex coordinate positioning (like table `position: sticky`), or dynamic data-attribute color maps. Refactoring deeply nested SCSS to Tailwind can reduce stylesheet size by over 90% (e.g. from 15.1 kB down to 1.5 kB), keeping components comfortably within default budget limits without needing budget overrides in `project.json`.
 
+### Dynamic Header Actions via CDK Portals (`PicsaHeaderComponent`)
+
+- **Never Hack Standalone Overlay Buttons Over Header**: Do not float absolute-positioned action buttons over `<picsa-header>` using viewport hacks (e.g. `position: absolute`, `margin-top: var(--status-bar-height)`). Because page hosts frequently use `:host { display: contents }` and Angular Material MDC button CSS defaults to `position: relative`, floating buttons will either stretch across the screen as full-width bars below the header toolbar or misalign during route transitions.
+- **Portals Built into Header**: `PicsaHeaderComponent` natively provides three CDK portal outlets: `cdkPortalStart`, `cdkPortalCenter`, and `cdkPortalEnd`.
+- **Page Implementation Pattern**:
+  1. Wrap the action in `<ng-template #headerEndPortal>...</ng-template>` in the page template.
+  2. Inject `PicsaCommonComponentsService` and `ViewContainerRef` in the page component.
+  3. Query the template: `readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');`
+  4. In `ngAfterViewInit()`, mount it:
+     ```ts
+     const endPortal = this.headerEndPortal();
+     if (endPortal) {
+       this.componentsService.patchHeader({
+         cdkPortalEnd: new TemplatePortal(endPortal, this.viewContainer),
+       });
+     }
+     ```
+  5. In `ngOnDestroy()`, unmount:
+     ```ts
+     this.componentsService.patchHeader({ cdkPortalEnd: undefined });
+     ```
+
 ### Angular Material Dialog Overrides & Mobile Padding (`panelClass: 'no-padding'`)
 
 - **Global Dialog Padding**: `libs/theme/src/_overrides.scss` sets `.mat-mdc-dialog-surface { padding: 24px; }` by default.
@@ -470,6 +492,13 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Farmer Steps Are Hidden When No Variant Matches the Deployment**: `FarmerContentModuleHomeComponent.visibleSteps` filters video/videoPlaylist steps through `hasVideosForUser` (see `step-video.utils.ts`, shared with `FarmerStepVideoComponent`). This stops country-specific videos rendering as empty cards (e.g. Zambia-only videos for Malawi users) and makes the step appear automatically once variants for that country are added.
 - **Data Entry Requires Hosted Assets**: Video entries reference Supabase public URLs; the media pipeline (`yarn scripts media/process`) only writes normalised 360p files to a gitignored `output/` folder. Uploading those files to the matching bucket path (`<country>/videos/...`) is a separate manual step, and the URL filename must match the uploaded object exactly. Follow the bucket naming convention (`<NN>. <Title> - <Country>_<LANG>_360p.mp4`, with `BEM/NYA/TNG/ENG` language suffixes).
 
+### District-to-Station Proximity & Administrative Center Resolution (`location-proximity.utils`)
+
+- **Administrative Selection as Primary Entry Point**: Rather than requiring users to identify specific weather stations on map pins or search dense lists, the climate tool entry workflow begins with standard administrative selection (Province & District via `FormLocationSelectComponent` from `@picsa/forms`).
+- **Centroid & Coordinates Fallback Architecture**: District reference coordinates are retrieved via `getDistrictCenterAndBoundary`: checking `district.coordinates` first (forward-compatible with upstream `geo-data#28` OSM `admin_centre` / centroid export) and falling back to computing the bounding box center and boundary polygon from the bundled TopoJSON feature geometry.
+- **Station Ranking & Quality Gate Scoring**: Stations are ranked via `getStationRecommendations`, computing Haversine distance with an inside-district priority boost and capability weighting (stations with $\ge 30$ complete rainfall years receive an advantage over sparse records).
+- **Location State Synchronization**: User-selected administrative location is synchronized with `ConfigurationService.userSettings().location`, ensuring district selections carry across tools (`forecasts-tool`, `crop-probability-tool`, and `climate-tool`), while `ClimateSiteViewComponent` displays the district context alongside the station name.
+
 ### Angular Material Component Conventions
 
 - **Angular Material v21 Button Syntax**: Always use modern attribute directives (`<button matButton>`, `<button matButton="filled">`, `<button matIconButton>`). Never use legacy tag/attribute forms like `mat-button`, `mat-icon-button`, or `mat-flat-button`.
@@ -602,7 +631,21 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Jest Transform Ignore Patterns**: Any app using `PrintProvider` (`@picsa/shared/services/native/print`) imports `@awesome-cordova-plugins`, requiring `transformIgnorePatterns: ['node_modules/(?!.*\.mjs$|@awesome-cordova-plugins|tslib)']` in `jest.config.ts`.
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
 
+## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+- **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
+- **Root Causes**:
+  1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
+  2. Programmatic `setActiveMarker(marker)` called `this.onMarkerClick.emit(marker)`, creating an event feedback loop back into the host component.
+  3. MapLibre GL JS `TaskQueue.run()` sets `_currentlyRunning = true`. If a camera transition starts without `map.stop?.()` while another animation frame is running, it crashes and permanently disables the queue.
+  4. TopoJSON parsing on every keypress caused main thread stalls during rapid navigation.
+- **Solutions**:
+  1. Always invoke `map.stop?.()` before initiating `flyTo`, `easeTo`, or `fitBounds`.
+  2. Never emit click output events from programmatic marker selection methods (`setActiveMarker`).
+  3. Synchronize district boundary drawing, bounding box calculation, and marker highlight in a single unified resolution callback per request ID instead of fragmented competing effects.
+  4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
+
 ---
+
 
 ## 6. Climate Quality Control (QC) & Monorepo Tooling
 

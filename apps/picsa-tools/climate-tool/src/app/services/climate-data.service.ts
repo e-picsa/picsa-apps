@@ -29,7 +29,10 @@ export class ClimateDataService {
 
   /** List of all stations for current country in metadata */
   public allStations = computed(() => {
-    const { country_code } = this.configurationService.deploymentSettings();
+    const deployment = this.configurationService.deploymentSettings();
+    const userSettings = this.configurationService.userSettings();
+    const country_code =
+      (deployment.country_code !== 'global' ? deployment.country_code : userSettings.country_code) || 'mw';
     return CLIMATE_STATIONS_META[country_code] || [];
   });
 

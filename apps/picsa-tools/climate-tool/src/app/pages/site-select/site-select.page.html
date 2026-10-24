@@ -1,42 +1,96 @@
-<!-- View Toggle (hidden on md+ screen size) -->
-@let toggleIcon = view()==='map' ? 'list' : 'map'; @let toggleText = view()==='map' ? strings.showList :
-strings.showMap;
-<button matButton (click)="toggleView()" class="view-toggle">
-  <mat-icon>{{toggleIcon}}</mat-icon>
-  {{toggleText}}
-</button>
+<div class="flex flex-col md:flex-row flex-1 overflow-hidden relative z-0 h-full w-full">
+  <!-- Left panel: Location selection & Recommendations (Desktop only; on mobile all info is on the map) -->
+  <div
+    class="hidden md:flex flex-1 flex-col overflow-y-auto p-4 md:p-6 bg-white border-r border-gray-200 z-10 max-w-[600px]"
+  >
+    <div class="flex flex-col gap-4">
+      <!-- Section 1: Standard Location Select with Locate Button -->
+      <div class="bg-white p-3 md:p-4 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-primary">place</mat-icon>
+            <h2 class="text-base font-bold text-gray-800">{{ strings.location | translate }}</h2>
+          </div>
+          <button matButton="outlined" color="primary" (click)="locateUser()" [disabled]="isLocating()">
+            <mat-icon class="!w-4 !h-4 text-[16px]">my_location</mat-icon>
+            <span>{{ strings.locate | translate }}</span>
+          </button>
+        </div>
 
-<div class="flex flex-col flex-1 overflow-hidden relative z-0">
-  <!-- Split screen display -->
-  <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
-    <div class="table-container" [attr.data-view]="view()">
-      <picsa-data-table
-        [options]="tableOptions()"
-        [data]="tableData()"
-        class="flex-1"
-        (rowClick)="handleRowClick($event)"
-      ></picsa-data-table>
-    </div>
+        @if (userCountryCode(); as countryCode) {
+        <picsa-form-location-select
+          [countryCode]="countryCode"
+          [value]="selectedLocation()"
+          (valueChanged)="handleLocationChanged($event)"
+        ></picsa-form-location-select>
+        }
+      </div>
 
-    <div class="map-container" [attr.data-view]="view()">
-      <picsa-map
-        (onMarkerClick)="handleMarkerClick($event)"
-        [markers]="mapMarkers()"
-        (onMapReady)="mapReady.set(true)"
-        #picsaMap
-        class="flex-1"
-      >
-      </picsa-map>
+      <!-- Section 2: Selected Station & Station Options (Desktop) -->
+      @if (isCalculatingProximity() && !displayedStation()) {
+      <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200 animate-pulse">
+        <mat-icon class="animate-spin text-primary mb-2">sync</mat-icon>
+        <div class="text-sm font-medium">{{ strings.findingStations | translate }}...</div>
+      </div>
+      } @else if (displayedStation(); as displayed) {
+      <climate-station-card
+        [displayedStation]="displayed"
+        [nearbyStations]="nearbyStations()"
+        (confirm)="confirmAndNavigate($event)"
+        (selectAlternate)="selectAlternateStation($event)"
+        (openAllStations)="openAllStationsDialog()"
+      ></climate-station-card>
+      }
     </div>
   </div>
-</div>
 
-@if(selectedStation(); as station){
-<div class="site-select-container">
-  <button (click)="goToSite(station)" matButton="elevated" color="primary">
-    <span>{{ station.name }}</span>
-    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-  </button>
-</div>
+  <!-- Right panel: Interactive Station & Boundary Map (Desktop & Mobile) -->
+  <div class="flex-1 relative h-full w-full bg-slate-100 overflow-hidden block">
+    <!-- Floating Location Selector (Mobile) with Locate Button -->
+    <div
+      class="map-floating-location absolute left-3 right-3 top-10 z-20 rounded-2xl shadow-lg px-3 py-1.5 md:hidden bg-white flex items-center gap-2"
+    >
+      <div class="flex-1 min-w-0">
+        @if (userCountryCode(); as countryCode) {
+        <picsa-form-location-select
+          [countryCode]="countryCode"
+          [value]="selectedLocation()"
+          (valueChanged)="handleLocationChanged($event)"
+        ></picsa-form-location-select>
+        }
+      </div>
+      <button
+        matIconButton
+        color="primary"
+        (click)="locateUser()"
+        [disabled]="isLocating()"
+        [attr.aria-label]="strings.locate | translate"
+        [matTooltip]="strings.locate | translate"
+      >
+        <mat-icon>my_location</mat-icon>
+      </button>
+    </div>
 
-}
+    <!-- Floating Bottom Station Card with Options & All Stations Trigger (Mobile Map View) -->
+    @if (displayedStation(); as displayed) {
+    <div class="absolute left-3 right-3 bottom-4 z-20 md:hidden">
+      <climate-station-card
+        [displayedStation]="displayed"
+        [nearbyStations]="nearbyStations()"
+        (confirm)="confirmAndNavigate($event)"
+        (selectAlternate)="selectAlternateStation($event)"
+        (openAllStations)="openAllStationsDialog()"
+      ></climate-station-card>
+    </div>
+    }
+
+    <picsa-map
+      (onMarkerClick)="handleMarkerClick($event)"
+      [markers]="mapMarkers()"
+      [fitBoundsOnMarkerUpdate]="shouldFitMarkers()"
+      (onMapReady)="mapReady.set(true)"
+      #picsaMap
+      class="flex-1 w-full h-full"
+    ></picsa-map>
+  </div>
+</div>

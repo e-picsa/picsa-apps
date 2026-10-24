@@ -1,9 +1,13 @@
-<div class="flex gap-4 my-4">
-  <!-- Location Select (Admin 4 - district/province) -->
-  @if (locationData().admin_4; as data) {
+<div class="flex gap-4">
+  <!-- Parent Tier Location Select (e.g. Province in multi-tier, District in single-tier) -->
+  @if (parentLocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>
-      <mat-select #admin4 (selectionChange)="admin4Selected.set(admin4.value)" [value]="admin4Selected()">
+      <mat-select
+        #parentSelect
+        (selectionChange)="onParentSelectionChange(parentSelect.value)"
+        [value]="parentSelected()"
+      >
         @for (option of data.locations; track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
         }
@@ -11,17 +15,17 @@
     </mat-form-field>
   }
 
-  <!-- Location Select (sublocation tier, e.g. Admin 5 or 6) -->
+  <!-- Deepest Sub-location Tier Select (e.g. District in ZM or ZW) -->
   @if (sublocation(); as data) {
     <mat-form-field>
       <mat-label>{{ data.label }}</mat-label>
       <mat-select
-        [disabled]="!admin4Selected()"
-        #admin5
-        (selectionChange)="admin5Selected.set(admin5.value)"
-        [value]="admin5Selected()"
+        [disabled]="!parentSelected()"
+        #sublocationSelect
+        (selectionChange)="sublocationSelected.set(sublocationSelect.value)"
+        [value]="sublocationSelected()"
       >
-        @for (option of admin5Options(); track option.id) {
+        @for (option of sublocationOptions(); track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
         }
       </mat-select>

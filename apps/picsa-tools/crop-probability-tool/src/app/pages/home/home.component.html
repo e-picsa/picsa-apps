@@ -10,7 +10,7 @@
         [attr.aria-label]="'Change location' | translate"
       >
         <mat-icon class="!text-[20px] !w-5 !h-5 shrink-0">place</mat-icon>
-        <span class="truncate"> {{ tableStationMeta()?.label || ('Select Location' | translate) }} </span>
+        <span class="truncate"> {{ (tableStationMeta()?.label || selectedLocationLabel()) || ('Select Location' | translate) }} </span>
       </button>
     </div>
   </ng-template>
@@ -50,7 +50,7 @@
     [value]="locationSelected()"
     [locationModifier]="locationModifier"
     [subtitle]="STRINGS.SelectStation"
-    [allowCancel]="locationReady()"
+    [allowCancel]="locationReady() || hasLocation()"
     (confirmed)="handleLocationConfirmed($event)"
     (cancelled)="locationOverlayOpen.set(false)"
   ></picsa-form-location-overlay>
