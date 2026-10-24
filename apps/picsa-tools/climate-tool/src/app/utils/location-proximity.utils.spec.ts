@@ -9,6 +9,7 @@ import {
   computeFeatureBbox,
   computeFeatureBboxCenter,
   getCombinedDistrictAndStationBounds,
+  getCountryBounds,
   getDistrictCenterAndBoundary,
   getLocationCenterAndBoundary,
   getStationRecommendations,
@@ -169,6 +170,36 @@ describe('Location Proximity Utils', () => {
       expect(zmProvince).toBeDefined();
       expect(zmProvince?.feature).toBeDefined();
       expect(typeof zmProvince?.center.lat).toBe('number');
+    });
+  });
+
+  describe('getCountryBounds', () => {
+    it('resolves a bounding box containing the country for every active country', async () => {
+      const activeCountries: ICountryCode[] = ['mw', 'zm', 'zw'];
+      // Approximate country centroids the bounds must contain: [lng, lat]
+      const centroids: Record<ICountryCode, [number, number]> = {
+        mw: [34.0, -13.5],
+        zm: [28.28, -15.39],
+        zw: [29.86, -19.0],
+      } as Record<ICountryCode, [number, number]>;
+      for (const country of activeCountries) {
+        const bounds = await getCountryBounds(country);
+        expect(bounds).toBeDefined();
+        if (!bounds) continue;
+        const [[minLng, minLat], [maxLng, maxLat]] = bounds;
+        expect(minLng).toBeLessThan(maxLng);
+        expect(minLat).toBeLessThan(maxLat);
+        const [lng, lat] = centroids[country];
+        expect(minLng).toBeLessThan(lng);
+        expect(maxLng).toBeGreaterThan(lng);
+        expect(minLat).toBeLessThan(lat);
+        expect(maxLat).toBeGreaterThan(lat);
+      }
+    });
+
+    it('returns undefined for an unknown country code', async () => {
+      const bounds = await getCountryBounds('xx' as ICountryCode);
+      expect(bounds).toBeUndefined();
     });
   });
 

@@ -23,6 +23,7 @@ import {
   computeFeatureBbox,
   formatStationLabel,
   getCombinedLocationAndStationBounds,
+  getCountryBounds,
   getLocationCenterAndBoundary,
   getStationRecommendations,
   ILocationCenterResult,
@@ -113,8 +114,12 @@ export class SiteSelectPage {
 
   public readonly isCalculatingProximity = signal(false);
 
-  /** Bounding box combining the selected location feature and the recommended station */
-  public readonly shouldFitMarkers = computed(() => !this.selectedLocation()?.some(Boolean));
+  /**
+   * Fit all markers on marker updates, but only when no country is known.
+   * Once a country resolves the country-fallback effect owns the camera, so
+   * marker updates no longer pan (avoids sequential stop-and-refit jumps).
+   */
+  public readonly shouldFitMarkers = computed(() => !this.selectedLocation()?.some(Boolean) && !this.userCountryCode());
 
   /** Bounding box combining the selected location feature and the displayed or recommended station */
   public readonly locationAndStationBounds = computed(() => {
@@ -434,6 +439,47 @@ export class SiteSelectPage {
           console.warn('[SiteSelectPage] Could not load parent location boundary:', err);
         });
     });
+
+    // Effect: Fallback zoom to country extent when the map is ready and a country is
+    // known but no province/district is selected yet. Yields to deeper selections:
+    // the province/district effects take over as soon as loc[4] or a full entry exists.
+    // The per-country latch plus stale-async guards below ensure a single camera move
+    // per country (no sequential pans); PicsaMapComponent.fitBounds also calls
+    // map.stop() first, so overlapping animations cannot throw in maplibre.
+    let lastRenderedFallbackCountry: string | undefined = undefined;
+    effect(() => {
+      const countryCode = this.userCountryCode();
+      const picsaMap = this.picsaMap();
+      const mapReady = this.mapReady();
+      const loc = this.selectedLocation();
+      const hasDeeperSelection = !!loc?.[4] || this.selectedLocationEntry() !== undefined;
+
+      if (!picsaMap || !mapReady || !countryCode || hasDeeperSelection) {
+        if (!countryCode) lastRenderedFallbackCountry = undefined;
+        return;
+      }
+
+      if (lastRenderedFallbackCountry === countryCode) return;
+      lastRenderedFallbackCountry = countryCode;
+
+      getCountryBounds(countryCode as ICountryCode)
+        .then((bounds) => {
+          if (!bounds) return;
+          // Skip stale results: country changed or deeper selection made while loading
+          if (this.userCountryCode() !== countryCode) return;
+          if (this.selectedLocation()?.[4] || this.selectedLocationEntry()) return;
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          picsaMap.fitBounds(bounds, {
+            maxZoom: 7,
+            padding: isMobile
+              ? { top: 110, bottom: 145, left: 30, right: 30 }
+              : { top: 40, bottom: 40, left: 40, right: 40 },
+          });
+        })
+        .catch((err) => {
+          console.warn('[SiteSelectPage] Could not fit country bounds:', err);
+        });
+    });
   }
 
   public setView(view: 'map' | 'table') {
@@ -450,23 +496,32 @@ export class SiteSelectPage {
     this.configurationService.updateUserSettings({ location });
   }
 
+  /**
+   * Fit the camera to bounds covering both the selected location boundary and
+   * the currently displayed station, so a station outside the location is still
+   * viewed relative to it. Returns true when a fit was performed.
+   */
+  private fitToLocationAndStationBounds(): boolean {
+    const picsaMap = this.picsaMap();
+    if (!picsaMap || !this.mapReady()) return false;
+    const bounds = this.locationAndStationBounds();
+    if (!bounds) return false;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    picsaMap.fitBounds(bounds, {
+      maxZoom: 8,
+      padding: isMobile ? { top: 110, bottom: 145, left: 30, right: 30 } : { top: 40, bottom: 40, left: 40, right: 40 },
+    });
+    return true;
+  }
+
   public selectAlternateStation(recommendation: IStationRecommendation) {
     this.selectedStation.set(recommendation.station);
     const picsaMap = this.picsaMap();
     if (picsaMap && this.mapReady()) {
       const marker = this.mapMarkers().find((m) => m.data?.id === recommendation.station.id);
+      const fitted = this.fitToLocationAndStationBounds();
       if (marker) {
-        picsaMap.setActiveMarker(marker, false, false);
-      }
-      const bounds = this.locationAndStationBounds();
-      if (bounds) {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        picsaMap.fitBounds(bounds, {
-          maxZoom: 8,
-          padding: isMobile
-            ? { top: 110, bottom: 145, left: 30, right: 30 }
-            : { top: 40, bottom: 40, left: 40, right: 40 },
-        });
+        picsaMap.setActiveMarker(marker, false, !fitted);
       }
     }
   }
@@ -487,18 +542,9 @@ export class SiteSelectPage {
         const picsaMap = this.picsaMap();
         if (picsaMap && this.mapReady()) {
           const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
+          const fitted = this.fitToLocationAndStationBounds();
           if (marker) {
-            picsaMap.setActiveMarker(marker, false, true);
-          }
-          const bounds = this.locationAndStationBounds();
-          if (bounds) {
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-            picsaMap.fitBounds(bounds, {
-              maxZoom: 8,
-              padding: isMobile
-                ? { top: 110, bottom: 145, left: 30, right: 30 }
-                : { top: 40, bottom: 40, left: 40, right: 40 },
-            });
+            picsaMap.setActiveMarker(marker, false, !fitted);
           }
         }
       }
@@ -512,8 +558,9 @@ export class SiteSelectPage {
       const picsaMap = this.picsaMap();
       if (picsaMap && this.mapReady()) {
         const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
+        const fitted = this.fitToLocationAndStationBounds();
         if (marker) {
-          picsaMap.setActiveMarker(marker, false, false);
+          picsaMap.setActiveMarker(marker, false, !fitted);
         }
       }
     }

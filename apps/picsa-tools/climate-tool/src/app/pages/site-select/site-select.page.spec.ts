@@ -276,4 +276,90 @@ describe('SiteSelectPage', () => {
       expect(map.fitBounds).toHaveBeenCalled();
     }
   });
+
+  it('should zoom map to country bounds once when country known but no province/district selected', async () => {
+    jest.clearAllMocks();
+    component.mapReady.set(true);
+    component.handleLocationChanged([undefined, undefined, 'zm', undefined, undefined, undefined]);
+    fixture.detectChanges();
+
+    // Allow async getCountryBounds (topojson parse) to resolve and effect to execute
+    const map = component.picsaMap();
+    for (let i = 0; i < 40 && (map?.fitBounds as jest.Mock).mock.calls.length === 0; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    fixture.detectChanges();
+
+    expect(map?.fitBounds).toHaveBeenCalledTimes(1);
+    expect(map?.fitBounds).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.arrayContaining([expect.any(Number), expect.any(Number)]),
+        expect.arrayContaining([expect.any(Number), expect.any(Number)]),
+      ]),
+      expect.objectContaining({ maxZoom: 7 }),
+    );
+  });
+
+  it('should fit location and station bounds when clicking an out-of-location map marker', async () => {
+    component.mapReady.set(true);
+    fixture.detectChanges();
+    for (let i = 0; i < 40 && !component.locationCenterResult(); i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    fixture.detectChanges();
+    expect(component.locationCenterResult()).toBeDefined();
+
+    jest.clearAllMocks();
+    const chipataStation = mockStations[2];
+    component.handleMarkerClick({
+      latlng: [chipataStation.latitude, chipataStation.longitude],
+      data: chipataStation,
+      _index: 0,
+    });
+
+    const map = component.picsaMap();
+    // Single camera move covering both district boundary and station
+    expect(map?.fitBounds).toHaveBeenCalledTimes(1);
+    const [[minLng, minLat], [maxLng, maxLat]] = (map?.fitBounds as jest.Mock).mock.calls[0][0];
+    expect(minLng).toBeLessThan(28);
+    expect(maxLng).toBeGreaterThanOrEqual(32.58);
+    expect(minLat).toBeLessThan(-16);
+    expect(maxLat).toBeGreaterThanOrEqual(-13.55);
+    expect(map?.setActiveMarker).toHaveBeenCalledWith(expect.objectContaining({ data: chipataStation }), false, false);
+  });
+
+  it('should fit location and station bounds without flyTo jump when selecting an out-of-location station from the list', async () => {
+    component.mapReady.set(true);
+    fixture.detectChanges();
+    for (let i = 0; i < 40 && !component.locationCenterResult(); i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    fixture.detectChanges();
+    expect(component.locationCenterResult()).toBeDefined();
+
+    jest.clearAllMocks();
+    const chipataStation = mockStations[2];
+    expect(component.selectedStation()?.id).not.toBe('chipata');
+    component.handleRowClick(chipataStation);
+
+    const map = component.picsaMap();
+    expect(component.selectedStation()?.id).toBe('chipata');
+    expect(map?.fitBounds).toHaveBeenCalledTimes(1);
+    expect(map?.setActiveMarker).toHaveBeenCalledWith(expect.objectContaining({ data: chipataStation }), false, false);
+  });
+
+  it('should not zoom map to country bounds when a deeper location is selected', async () => {
+    jest.clearAllMocks();
+    component.mapReady.set(true);
+    // Complete location already set from settings; fallback must stay out of the way
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    fixture.detectChanges();
+
+    const map = component.picsaMap();
+    const fallbackCalls = (map?.fitBounds as jest.Mock).mock.calls.filter(
+      ([, options]) => (options as { maxZoom?: number })?.maxZoom === 7,
+    );
+    expect(fallbackCalls).toHaveLength(0);
+  });
 });

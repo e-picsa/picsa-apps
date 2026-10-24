@@ -253,6 +253,46 @@ export async function getLocationCenterAndBoundary(
 export const getDistrictCenterAndBoundary = getLocationCenterAndBoundary;
 
 /**
+ * Compute the bounding box [[minLng, minLat], [maxLng, maxLat]] of a country's
+ * full boundary geometry. Used as a camera fallback when a country is known
+ * but no deeper location is selected.
+ */
+export async function getCountryBounds(
+  countryCode: ICountryCode,
+): Promise<[[number, number], [number, number]] | undefined> {
+  try {
+    const cacheKey = `${countryCode}:country`;
+    let geojson = geoJsonCache.get(cacheKey);
+    if (!geojson) {
+      const geoData = getGeoLocationData(countryCode);
+      const topojson = await geoData.topoJson();
+      geojson = topoJsonToGeoJson(topojson);
+      geoJsonCache.set(cacheKey, geojson);
+    }
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    for (const feature of geojson.features ?? []) {
+      const bbox = computeFeatureBbox(feature as IProximityFeature);
+      if (!bbox) continue;
+      if (bbox.minLng < minLng) minLng = bbox.minLng;
+      if (bbox.maxLng > maxLng) maxLng = bbox.maxLng;
+      if (bbox.minLat < minLat) minLat = bbox.minLat;
+      if (bbox.maxLat > maxLat) maxLat = bbox.maxLat;
+    }
+    if (minLng === Infinity || minLat === Infinity) return undefined;
+    return [
+      [minLng, minLat],
+      [maxLng, maxLat],
+    ];
+  } catch (err) {
+    console.warn(`[LocationProximity] Could not compute country bounds for ${countryCode}:`, err);
+    return undefined;
+  }
+}
+
+/**
  * Check whether a station is mapped to a specific administrative location (by label or id)
  */
 export function isStationInLocation(station: IStationMeta, locationLabel?: string, locationId?: string): boolean {
