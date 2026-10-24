@@ -4,61 +4,45 @@
   <!-- Top header row: Category badge (NO distance) -->
   <div class="flex items-center gap-1.5 min-w-0 mb-1.5">
     <mat-icon svgIcon="climate_station" class="text-primary !w-4 !h-4 text-[16px] shrink-0"></mat-icon>
-    <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 truncate">
+    <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 truncate mt-1">
       {{ strings.climateStation | translate }}
     </span>
   </div>
 
-  <!-- Primary station name & number -->
-  <div class="mb-2.5">
-    <div class="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate">
-      @if (displayedStation()?.mapNumber; as num) {
-        <span class="text-primary font-bold mr-1">{{ num }}.</span>
-      }
-      {{ displayedStation()?.station?.name }}
-    </div>
-  </div>
-
   <!-- Stations list & All Stations dialog trigger -->
-  @if (nearbyStations().length > 0) {
-    <div class="pt-2 border-t border-gray-100">
-      <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-        {{ strings.stations | translate }}
-      </div>
-
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
-        @for (alt of nearbyStations(); track alt.station.id) {
-          @let isSelected = displayedStation()?.station?.id === alt.station.id;
-          <button
-            matButton="outlined"
-            class="!h-auto !py-1.5 !px-3 rounded-lg transition-colors shrink-0 text-left"
-            [ngClass]="{
-              '!border-primary !bg-primary/10 !text-primary font-semibold shadow-xs': isSelected,
-              'hover:bg-gray-50 text-gray-700 border-gray-200': !isSelected,
-            }"
-            (click)="selectAlternate.emit(alt)"
-          >
-            <span class="text-xs whitespace-nowrap">
-              @if (alt.mapNumber) {
-                <span class="font-bold">{{ alt.mapNumber }}. </span>
-              }
-              {{ alt.station.name }}
-            </span>
-          </button>
-        }
-
-        <!-- Additional button after the list of 4 station options to open all stations dialog -->
+  <div class="pt-2 border-t border-gray-100">
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
+      @for (alt of nearbyStations(); track alt.station.id) {
+        @let isSelected = displayedStation()?.station?.id === alt.station.id;
         <button
           matButton="outlined"
-          class="!h-auto !py-1.5 !px-3 rounded-lg transition-colors shrink-0 text-gray-600 border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center gap-1"
-          (click)="openAllStations.emit()"
+          class="!h-auto !py-1.5 !px-3 rounded-lg transition-colors shrink-0 text-left"
+          [ngClass]="{
+            '!border-primary !bg-primary/10 !text-primary font-semibold shadow-xs': isSelected,
+            'hover:bg-gray-50 text-gray-700 border-gray-200': !isSelected,
+          }"
+          (click)="selectAlternate.emit(alt)"
         >
-          <mat-icon class="!w-3.5 !h-3.5 text-[14px]">list</mat-icon>
-          <span class="text-xs whitespace-nowrap">{{ strings.allStations | translate }}</span>
+          <span class="text-xs whitespace-nowrap">
+            @if (alt.mapNumber) {
+              <span class="font-bold">{{ alt.mapNumber }}. </span>
+            }
+            {{ alt.station.name }}
+          </span>
         </button>
-      </div>
+      }
+
+      <!-- Additional button after the list of 4 station options to open all stations dialog -->
+      <button
+        matButton="outlined"
+        class="!h-auto !py-1.5 !px-3 rounded-lg transition-colors shrink-0 text-gray-600 border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 flex items-center gap-1"
+        (click)="openAllStations.emit()"
+      >
+        <mat-icon class="!w-3.5 !h-3.5 text-[14px]">list</mat-icon>
+        <span class="text-xs whitespace-nowrap">{{ strings.allStations | translate }}</span>
+      </button>
     </div>
-  }
+  </div>
 
   <!-- View Station button below the Stations list -->
   @if (displayedStation()?.station; as station) {

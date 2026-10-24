@@ -511,7 +511,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
           tileSize: 256,
           minzoom: 0,
           maxzoom: LOCAL_MAX_NATIVE_ZOOM,
-          attribution: 'Map data © OpenStreetMap contributors',
+          attribution: '© OpenStreetMap',
         },
       },
       layers: [

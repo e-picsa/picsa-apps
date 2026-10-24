@@ -66,6 +66,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
 
+  /** Whether the user has at least one administrative location segment selected */
+  public hasLocation = computed(() => Boolean(this.locationSelected()?.some(Boolean)));
+
   /** Display label for the selected district, used when no probability table matches */
   public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
@@ -91,11 +94,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public tableStationMeta = computed<IProbabilityTable | undefined>(() => {
     const countryCode = this.countryCode();
+    const location = this.locationSelected();
+    const parentId = location[4];
+    const sublocationId = location[5];
     const locationId = this.locationId();
-    if (countryCode && locationId) {
-      // Handle case where zm excludes admin_4 from param but may have additional admin_5 sublocation
-      return PROBABILITY_TABLE_DATA[countryCode]?.find((v) => v.id === locationId || v.id.endsWith(`/${locationId}`));
+
+    if (!countryCode || !locationId) return undefined;
+    const tables = PROBABILITY_TABLE_DATA[countryCode] ?? [];
+
+    // 1. Exact match on full hierarchy path (e.g. 'central/chibombo' or 'masvingo/masvingo')
+    if (parentId && sublocationId) {
+      const fullPath = `${parentId}/${sublocationId}`;
+      const exact = tables.find(
+        (v) =>
+          v.id === fullPath ||
+          v.id === sublocationId ||
+          v.id.endsWith(`/${sublocationId}`) ||
+          v.id.includes(`/${sublocationId}--`),
+      );
+      if (exact) return exact;
     }
+
+    // 2. Match on deepest segment id (or suffix)
+    const directMatch = tables.find(
+      (v) => v.id === locationId || v.id.endsWith(`/${locationId}`) || v.id.includes(`/${locationId}--`),
+    );
+    if (directMatch) return directMatch;
+
+    // 3. Fallback: if parent is selected (e.g. from climate tool with no sublocation),
+    // or if the sublocation has no specific table, fall back to the first available table under that parent
+    if (parentId) {
+      const parentMatch = tables.find((v) => v.id.startsWith(`${parentId}/`));
+      if (parentMatch) return parentMatch;
+    }
+
     return undefined;
   });
 
@@ -109,10 +141,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Auto-open location overlay if no location set, or if the shared location
-    // (e.g. carried over from the forecasts tool) has no probability table
+    // Auto-open location overlay only if no location has been selected yet
     effect(() => {
-      if (!this.locationReady() || !this.tableStationMeta()) {
+      if (!this.hasLocation()) {
         this.locationOverlayOpen.set(true);
       }
     });
@@ -161,7 +192,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** One-time import of pre-overlay saved locations into user settings */
   private importLegacyLocation() {
-    if (this.locationReady()) return;
+    if (this.locationReady() || this.hasLocation()) return;
     const { locationId } = this.route.snapshot.queryParams as IQueryParams;
     const legacyId = locationId ?? localStorage.getItem(STORED_LOCATION_FIELD) ?? undefined;
     if (!legacyId) return;

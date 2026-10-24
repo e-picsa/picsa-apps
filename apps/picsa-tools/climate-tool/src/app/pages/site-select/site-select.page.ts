@@ -179,14 +179,20 @@ export class SiteSelectPage {
     if (selected) {
       const match = numbered.find((r) => r.station.id === selected.id);
       if (match) return match;
+      const center = this.locationCenterResult()?.center;
+      const distanceKm =
+        center && selected.latitude !== null && selected.longitude !== null
+          ? Math.round(calculateHaversineDistanceKm(center.lat, center.lng, selected.latitude, selected.longitude))
+          : 0;
       return {
-        station: selected,
-        distanceKm: 0,
+        station: { ...selected, name: formatStationLabel(selected.name) },
+        distanceKm,
         isInsideLocation: false,
         isInsideDistrict: false,
         isRecommended: false,
         score: 0,
         stationNumber: this.stationNumberMap().get(selected.id),
+        mapNumber: this.stationNumberMap().get(selected.id),
       };
     }
     return numbered[0];
@@ -478,12 +484,21 @@ export class SiteSelectPage {
         this.confirmAndNavigate(station);
       } else {
         this.selectedStation.set(station);
-        this.syncLocationFromStation(station);
         const picsaMap = this.picsaMap();
         if (picsaMap && this.mapReady()) {
           const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
           if (marker) {
             picsaMap.setActiveMarker(marker, false, true);
+          }
+          const bounds = this.locationAndStationBounds();
+          if (bounds) {
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            picsaMap.fitBounds(bounds, {
+              maxZoom: 8,
+              padding: isMobile
+                ? { top: 110, bottom: 145, left: 30, right: 30 }
+                : { top: 40, bottom: 40, left: 40, right: 40 },
+            });
           }
         }
       }
@@ -491,9 +506,16 @@ export class SiteSelectPage {
   }
 
   public handleMarkerClick(e: IMapMarker) {
-    if (e?.data) {
-      this.selectedStation.set(e.data);
-      this.syncLocationFromStation(e.data);
+    const station = e?.data;
+    if (station) {
+      this.selectedStation.set(station);
+      const picsaMap = this.picsaMap();
+      if (picsaMap && this.mapReady()) {
+        const marker = this.mapMarkers().find((m) => m.data?.id === station.id);
+        if (marker) {
+          picsaMap.setActiveMarker(marker, false, false);
+        }
+      }
     }
   }
 
@@ -590,8 +612,8 @@ export class SiteSelectPage {
   }
 
   /**
-   * When a user clicks a station directly on the map or table, populate the location
-   * selector if the station maps to a known location and no location (or a different location) is selected.
+   * When geolocation resolves a user to their nearest station, populate the location
+   * selector if the station maps to a known location.
    */
   public syncLocationFromStation(station: IStationMeta) {
     const country = this.userCountryCode();

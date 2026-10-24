@@ -3,6 +3,7 @@ import { importProvidersFrom } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 
@@ -12,6 +13,7 @@ describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let componentsService: PicsaCommonComponentsService;
+  let configService: ConfigurationService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -24,6 +26,7 @@ describe('HomeComponent', () => {
       ],
     }).compileComponents();
 
+    configService = TestBed.inject(ConfigurationService);
     componentsService = TestBed.inject(PicsaCommonComponentsService);
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
@@ -51,5 +54,39 @@ describe('HomeComponent', () => {
 
     component.shareTable();
     expect(mockShare).toHaveBeenCalled();
+  });
+
+  it('should resolve tableStationMeta when location is set with parent and sublocation', () => {
+    configService.updateUserSettings({
+      country_code: 'zw',
+      location: [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge'],
+    });
+    expect(component.tableStationMeta()?.id).toBe('manicaland/chipinge');
+  });
+
+  it('should resolve tableStationMeta when location has only parent selected', () => {
+    configService.updateUserSettings({
+      country_code: 'zw',
+      location: [undefined, undefined, 'zw', undefined, 'manicaland', undefined],
+    });
+    expect(component.tableStationMeta()?.id).toBe('manicaland/chipinge');
+  });
+
+  it('should resolve tableStationMeta for Zambia multi-tier district', () => {
+    configService.updateUserSettings({
+      country_code: 'zm',
+      location: [undefined, undefined, 'zm', undefined, 'central', 'chibombo'],
+    });
+    expect(component.tableStationMeta()?.id).toBe('central/chibombo');
+  });
+
+  it('should not auto-open overlay when component initializes with existing location', () => {
+    configService.updateUserSettings({
+      country_code: 'zw',
+      location: [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge'],
+    });
+    const preseededFixture = TestBed.createComponent(HomeComponent);
+    preseededFixture.detectChanges();
+    expect(preseededFixture.componentInstance.locationOverlayOpen()).toBe(false);
   });
 });

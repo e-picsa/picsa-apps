@@ -157,11 +157,15 @@ describe('SiteSelectPage', () => {
   });
 
   it('should set preferred station and navigate when confirmAndNavigate is called', () => {
-    const targetStation = mockStations[0];
+    const initialLocation = component.selectedLocation();
+    jest.clearAllMocks();
+    const targetStation = mockStations[2];
     component.confirmAndNavigate(targetStation);
 
-    expect(dataService.setPreferredStation).toHaveBeenCalledWith('choma');
-    expect(router.navigate).toHaveBeenCalledWith(['./', 'choma'], expect.anything());
+    expect(dataService.setPreferredStation).toHaveBeenCalledWith('chipata');
+    expect(router.navigate).toHaveBeenCalledWith(['./', 'chipata'], expect.anything());
+    expect(component.selectedLocation()).toEqual(initialLocation);
+    expect(configService.updateUserSettings).not.toHaveBeenCalled();
   });
 
   it('should open AllStationsDialogComponent when openAllStationsDialog is called', () => {
@@ -223,7 +227,9 @@ describe('SiteSelectPage', () => {
     expect(component.nearbyStations()[0].station.id).toBe(mockStations[0].id);
   });
 
-  it('should populate district and selectedStation when clicking a map marker directly', () => {
+  it('should update selectedStation but maintain selectedLocation when clicking a map marker directly', () => {
+    const initialLocation = component.selectedLocation();
+    jest.clearAllMocks();
     const chipataStation = mockStations[2];
     component.handleMarkerClick({
       latlng: [chipataStation.latitude, chipataStation.longitude],
@@ -232,8 +238,22 @@ describe('SiteSelectPage', () => {
     });
 
     expect(component.selectedStation()?.id).toBe('chipata');
-    expect(component.selectedDistrict()?.id).toBe('chipata');
-    expect(component.selectedLocation()).toEqual([undefined, undefined, 'zm', undefined, 'eastern', 'chipata']);
+    expect(component.selectedDistrict()?.id).toBe('choma');
+    expect(component.selectedLocation()).toEqual(initialLocation);
+    expect(configService.updateUserSettings).not.toHaveBeenCalled();
+    expect(component.displayedStation()?.station.id).toBe('chipata');
+    expect(component.displayedStation()?.isInsideLocation).toBe(false);
+  });
+
+  it('should update selectedStation but maintain selectedLocation when selecting a station from all stations dialog', () => {
+    const initialLocation = component.selectedLocation();
+    jest.clearAllMocks();
+    const chipataStation = mockStations[2];
+    component.handleRowClick(chipataStation);
+
+    expect(component.selectedStation()?.id).toBe('chipata');
+    expect(component.selectedLocation()).toEqual(initialLocation);
+    expect(configService.updateUserSettings).not.toHaveBeenCalled();
   });
 
   it('should zoom map to parent location bounds and outline feature when parent location is selected ahead of sublocation', async () => {
