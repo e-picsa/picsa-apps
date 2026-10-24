@@ -398,6 +398,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       });
 
       map.on('load', () => {
+        this.collapseAttribution(container);
         this.ngZone.run(() => {
           this.mapReady.set(true);
           this.updateBaseStyle();
@@ -417,6 +418,18 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.reapplyGeoJsonLayers();
       });
     });
+  }
+
+  /**
+   * Start the MapLibre attribution control collapsed (ⓘ) instead of expanded.
+   * MapLibre always initialises it open; the collapsed state is `compact`
+   * without `compact-show`/`open`, which survives later _updateCompact calls
+   * and still allows manual expand via the toggle.
+   */
+  private collapseAttribution(container: HTMLElement) {
+    const el = container.querySelector('details.maplibregl-ctrl-attrib');
+    el?.classList.remove('maplibregl-compact-show');
+    el?.removeAttribute('open');
   }
 
   /**
