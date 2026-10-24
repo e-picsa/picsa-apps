@@ -322,7 +322,8 @@ export class SiteSelectPage {
               if (picsaMapInstance && this.mapReady()) {
                 const marker = this.mapMarkers().find((m) => m.data?.id === targetStation.id);
                 if (marker) {
-                  picsaMapInstance.setActiveMarker(marker, false, true);
+                  // Highlight only — the boundary effect below owns the camera framing
+                  picsaMapInstance.setActiveMarker(marker, false, false);
                 }
               }
             }
@@ -361,21 +362,12 @@ export class SiteSelectPage {
         });
       }
 
-      const bounds = this.locationAndStationBounds();
-      if (bounds) {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        picsaMap.fitBounds(bounds, {
-          maxZoom: 8,
-          padding: isMobile
-            ? { top: 110, bottom: 145, left: 30, right: 30 }
-            : { top: 40, bottom: 40, left: 40, right: 40 },
-        });
-      }
+      const fitted = this.fitToLocationAndStationBounds();
 
       if (activeStation) {
         const marker = this.mapMarkers().find((m) => m.data?.id === activeStation.id);
         if (marker) {
-          picsaMap.setActiveMarker(marker, false, true);
+          picsaMap.setActiveMarker(marker, false, !fitted);
         }
       }
     });

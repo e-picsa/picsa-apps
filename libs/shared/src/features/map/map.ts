@@ -665,10 +665,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.selected = { marker };
-    // Fly map to marker
-    const map = this.map();
-    map?.stop?.();
-    map?.flyTo({ center: toLngLat(marker.latlng), zoom: MARKER_FOCUS_ZOOM });
+    // NOTE: no camera move here — the host owns the camera and frames the
+    // selection in response to onMarkerClick (e.g. fitting combined location
+    // and station bounds). Flying here would start a transition the host
+    // immediately cancels and replaces.
     // Programatically update classnames on all markers to ensure single selection
     for (const rendered of this.renderedMarkers) {
       if (rendered.marker._index !== marker._index) {
