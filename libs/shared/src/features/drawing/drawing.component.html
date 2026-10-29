@@ -1,108 +1,128 @@
 <div class="dialog-container">
-  <!-- Toolbar Section -->
-  <div class="tool-buttons">
-    <!-- Tool Toggle Group -->
-    <mat-button-toggle-group
-      [value]="tool()"
-      (change)="tool.set($event.value)"
-      [hideSingleSelectionIndicator]="true"
-      aria-label="Annotation tools"
-    >
-      <mat-button-toggle value="pen">{{ 'Pen' | translate }}</mat-button-toggle>
-
-      <mat-button-toggle value="highlighter">{{ 'Highlighter' | translate }}</mat-button-toggle>
-
-      <mat-button-toggle value="eraser">{{ 'Eraser' | translate }}</mat-button-toggle>
-
-      <mat-button-toggle value="redaction">{{ 'Redact' | translate }}</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <!-- Grouped Shapes Menu Trigger -->
-    <button
-      matButton="outlined"
-      [matMenuTriggerFor]="shapesMenu"
-      [class.active]="shapesActive()"
-      class="shapes-trigger"
-    >
-      <span>{{ 'Shapes' | translate }}</span>
-      <mat-icon iconPositionEnd>expand_more</mat-icon>
-    </button>
-
-    <mat-menu #shapesMenu="matMenu">
-      @for (shapeTool of menuShapeTools; track shapeTool) {
-        <button mat-menu-item (click)="selectShapeTool(shapeTool)">{{ menuShapeLabels[shapeTool] | translate }}</button>
-      }
-    </mat-menu>
-
-    <!-- Color Palette Swatches -->
-    <div class="color-swatches">
-      @for (swatch of colorSwatches; track swatch) {
-        <button
-          type="button"
-          class="color-swatch"
-          [class.active]="tool() !== 'eraser' && tool() !== 'redaction' && color() === swatch"
-          [style.background-color]="swatch"
-          [disabled]="tool() === 'eraser' || tool() === 'redaction'"
-          [matTooltip]="swatch"
-          (click)="color.set(swatch)"
-        ></button>
-      }
+  <div class="toolbar-card">
+    <div class="toolbar-row">
+      <mat-button-toggle-group
+        [value]="tool()"
+        (change)="selectTool($event.value)"
+        [hideSingleSelectionIndicator]="true"
+        aria-label="Annotation tools"
+      >
+        @for (mainTool of mainTools; track mainTool) {
+          <mat-button-toggle [value]="mainTool">
+            <div class="tool-pill-content">
+              <mat-icon>{{ mainToolIcons[mainTool] }}</mat-icon>
+              <span>{{ mainToolLabels[mainTool] | translate }}</span>
+            </div>
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
 
       <button
-        type="button"
-        class="color-swatch custom-swatch"
-        [disabled]="tool() === 'eraser' || tool() === 'redaction'"
-        [matTooltip]="'Custom color' | translate"
-        (click)="customColorInput.click()"
-      ></button>
+        matButton="outlined"
+        [matMenuTriggerFor]="shapesMenu"
+        [class.active]="shapesActive()"
+        class="shapes-trigger"
+      >
+        <div class="tool-pill-content">
+          <mat-icon>category</mat-icon>
+          <span>{{ 'Shapes' | translate }}</span>
+        </div>
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </button>
 
-      <input
-        #customColorInput
-        type="color"
-        class="hidden-color-input"
-        [value]="color()"
-        (input)="color.set($any($event.target).value)"
-      />
+      <mat-menu #shapesMenu="matMenu">
+        @for (shapeTool of menuShapeTools; track shapeTool) {
+          <button mat-menu-item (click)="selectShapeTool(shapeTool)">
+            <mat-icon>{{ menuShapeIcons[shapeTool] }}</mat-icon>
+            <span>{{ menuShapeLabels[shapeTool] | translate }}</span>
+          </button>
+        }
+      </mat-menu>
     </div>
 
-    <!-- Stroke/Eraser Width Dropdown Trigger -->
-    <button
-      matButton="outlined"
-      [matMenuTriggerFor]="widthMenu"
-      [disabled]="tool() === 'redaction'"
-      class="width-trigger"
-    >
-      <span class="width-dot" [style.width.px]="strokeWidth()" [style.height.px]="strokeWidth()"></span>
-      <mat-icon iconPositionEnd>expand_more</mat-icon>
-    </button>
+    <div class="toolbar-divider"></div>
 
-    <mat-menu #widthMenu="matMenu">
-      @for (width of widthPresets; track width) {
-        <button mat-menu-item class="width-option" (click)="strokeWidth.set(width)">
-          <span class="width-dot" [style.width.px]="width" [style.height.px]="width"></span>
+    <div class="toolbar-row">
+      <div class="color-swatches">
+        @for (swatch of colorSwatches; track swatch) {
+          <button
+            type="button"
+            class="color-swatch"
+            [class.active]="tool() !== 'eraser' && tool() !== 'redaction' && color() === swatch"
+            [style.background-color]="swatch"
+            [disabled]="tool() === 'eraser' || tool() === 'redaction'"
+            [matTooltip]="swatch"
+            (click)="color.set(swatch)"
+          ></button>
+        }
+
+        <button
+          type="button"
+          class="color-swatch custom-swatch"
+          [disabled]="tool() === 'eraser' || tool() === 'redaction'"
+          [matTooltip]="'Custom color' | translate"
+          (click)="customColorInput.click()"
+        ></button>
+
+        <input
+          #customColorInput
+          type="color"
+          class="hidden-color-input"
+          [value]="color()"
+          (input)="color.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="toolbar-divider vertical"></div>
+
+      @if (tool() === 'text') {
+        <div class="font-size-picker">
+          <span class="font-size-label">{{ 'Font size' | translate }}</span>
+          <button type="button" class="size-btn" (click)="adjustFontSize(-2)">-</button>
+          <input
+            type="number"
+            class="font-size-input"
+            [value]="nextTextFontSize()"
+            min="8"
+            max="120"
+            (change)="onFontSizeInputChange($any($event.target).value)"
+          />
+          <button type="button" class="size-btn" (click)="adjustFontSize(2)">+</button>
+          <span class="unit">px</span>
+        </div>
+      } @else {
+        <button matButton="outlined" [matMenuTriggerFor]="widthMenu" [disabled]="tool() === 'redaction'" class="width-trigger">
+          <span>{{ 'Line thickness' | translate }}</span>
+          <span class="width-dot" [style.width.px]="strokeWidth()" [style.height.px]="strokeWidth()"></span>
+          <mat-icon iconPositionEnd>expand_more</mat-icon>
         </button>
+
+        <mat-menu #widthMenu="matMenu">
+          @for (width of widthPresets; track width) {
+            <button mat-menu-item class="width-option" (click)="strokeWidth.set(width)">
+              <span class="width-dot" [style.width.px]="width" [style.height.px]="width"></span>
+            </button>
+          }
+        </mat-menu>
       }
-    </mat-menu>
+
+      <div class="toolbar-actions">
+        <button matButton="outlined" [matTooltip]="'Undo' | translate" (click)="undoSvgStroke()">
+          <mat-icon>undo</mat-icon>
+        </button>
+
+        <button matButton="outlined" [matTooltip]="'Redo' | translate" (click)="redoSvgStroke()">
+          <mat-icon>redo</mat-icon>
+        </button>
+
+        <button matButton="outlined" color="warn" (click)="clearDraw()">
+          <mat-icon>delete_outline</mat-icon>
+          <span>{{ 'Clear All' | translate }}</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- Action Row -->
-  <div class="edit-buttons">
-    <button matButton="outlined" (click)="undoSvgStroke()">
-      <mat-icon>undo</mat-icon>
-      <span>{{ 'Undo' | translate }}</span>
-    </button>
-
-    <button matButton="outlined" (click)="redoSvgStroke()">
-      <mat-icon>redo</mat-icon>
-      <span>{{ 'Redo' | translate }}</span>
-    </button>
-
-    <button matButton="outlined" color="warn" class="margin-left-auto" (click)="clearDraw()">
-      <span>{{ 'Clear All' | translate }}</span>
-    </button>
-  </div>
-
-  <!-- SVG Drawing Canvas Container -->
   <div class="svg-container" [style.width.px]="size()" [style.height.px]="size()" [style.cursor]="canvasCursor()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -112,127 +132,176 @@
       #svgElement
       (pointerdown)="handlePointerDown($event)"
       (pointermove)="handlePointerMove($event)"
-      (mouseup)="handlePointerUp()"
       (pointerup)="handlePointerUp()"
     >
       <defs>
-        @for (arrow of arrows; track arrow.id) {
+        @for (arrow of arrowMarkers(); track arrow.id) {
           <marker [attr.id]="'arrowhead-' + arrow.id" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
             <path d="M0,0 L10,5 L0,10 Z" [attr.fill]="arrow.color" />
           </marker>
         }
-        @if (activeArrow) {
-          <marker
-            [attr.id]="'arrowhead-' + activeArrow.id"
-            markerWidth="10"
-            markerHeight="10"
-            refX="8"
-            refY="5"
-            orient="auto"
-          >
-            <path d="M0,0 L10,5 L0,10 Z" [attr.fill]="activeArrow.color" />
-          </marker>
-        }
       </defs>
 
-      <!-- Previously rendered segments -->
-      @for (segment of segments; track segment.id) {
-        <path
-          [attr.d]="segment.path()"
-          [id]="segment.id"
-          [attr.fill]="segment.color"
-          [attr.opacity]="segment.tool === 'highlighter' ? 0.4 : 1"
-          [style.mix-blend-mode]="segment.tool === 'highlighter' ? 'multiply' : null"
-        />
-      }
-
-      <!-- Active segment -->
-      @if (activeSegment.path()) {
-        <path
-          [attr.d]="activeSegment.path()"
-          [id]="activeSegment.id"
-          [attr.fill]="activeSegment.color"
-          [attr.opacity]="activeSegment.tool === 'highlighter' ? 0.4 : 1"
-          [style.mix-blend-mode]="activeSegment.tool === 'highlighter' ? 'multiply' : null"
-        />
-      }
-
-      <!-- Shapes: saved plus the one currently being dragged out -->
-      @for (shape of displayShapes(); track shape.id) {
-        @switch (shape.tool) {
-          @case ('redaction') {
-            <rect
-              [attr.x]="shape.rect().x"
-              [attr.y]="shape.rect().y"
-              [attr.width]="shape.rect().width"
-              [attr.height]="shape.rect().height"
-              fill="black"
+      @for (entry of displayItems(); track entry.item.id) {
+        @switch (entry.kind) {
+          @case ('segment') {
+            <path
+              [attr.d]="entry.item.path()"
+              [id]="entry.item.id"
+              [attr.fill]="entry.item.color"
+              [attr.opacity]="entry.item.tool === 'highlighter' ? 0.4 : 1"
+              [style.mix-blend-mode]="entry.item.tool === 'highlighter' ? 'multiply' : null"
             />
           }
-          @case ('circle') {
-            <ellipse
-              [attr.cx]="shape.rect().x + shape.rect().width / 2"
-              [attr.cy]="shape.rect().y + shape.rect().height / 2"
-              [attr.rx]="shape.rect().width / 2"
-              [attr.ry]="shape.rect().height / 2"
-              fill="none"
-              [attr.stroke]="shape.color"
-              [attr.stroke-width]="shape.strokeWidth"
+          @case ('shape') {
+            @switch (entry.item.tool) {
+              @case ('redaction') {
+                <rect
+                  [attr.x]="entry.item.rect().x"
+                  [attr.y]="entry.item.rect().y"
+                  [attr.width]="entry.item.rect().width"
+                  [attr.height]="entry.item.rect().height"
+                  fill="black"
+                />
+              }
+              @case ('circle') {
+                <ellipse
+                  [attr.cx]="entry.item.rect().x + entry.item.rect().width / 2"
+                  [attr.cy]="entry.item.rect().y + entry.item.rect().height / 2"
+                  [attr.rx]="entry.item.rect().width / 2"
+                  [attr.ry]="entry.item.rect().height / 2"
+                  fill="none"
+                  [attr.stroke]="entry.item.color"
+                  [attr.stroke-width]="entry.item.strokeWidth"
+                />
+              }
+              @case ('triangle') {
+                <polygon
+                  [attr.points]="trianglePoints(entry.item.rect())"
+                  fill="none"
+                  [attr.stroke]="entry.item.color"
+                  [attr.stroke-width]="entry.item.strokeWidth"
+                />
+              }
+              @default {
+                <rect
+                  [attr.x]="entry.item.rect().x"
+                  [attr.y]="entry.item.rect().y"
+                  [attr.width]="entry.item.rect().width"
+                  [attr.height]="entry.item.rect().height"
+                  fill="none"
+                  [attr.stroke]="entry.item.color"
+                  [attr.stroke-width]="entry.item.strokeWidth"
+                />
+              }
+            }
+          }
+          @case ('arrow') {
+            <line
+              [attr.x1]="entry.item.line().x1"
+              [attr.y1]="entry.item.line().y1"
+              [attr.x2]="entry.item.line().x2"
+              [attr.y2]="entry.item.line().y2"
+              [attr.stroke]="entry.item.color"
+              [attr.stroke-width]="entry.item.strokeWidth"
+              stroke-linecap="round"
+              [attr.marker-end]="entry.item.tool === 'arrow' ? 'url(#arrowhead-' + entry.item.id + ')' : null"
             />
           }
-          @case ('triangle') {
-            <polygon
-              [attr.points]="trianglePoints(shape.rect())"
-              fill="none"
-              [attr.stroke]="shape.color"
-              [attr.stroke-width]="shape.strokeWidth"
-            />
+          @case ('text') {
+            <text
+              [attr.id]="entry.item.id"
+              [attr.x]="entry.item.x"
+              [attr.y]="entry.item.y + entry.item.fontSize * 0.8"
+              [attr.fill]="entry.item.color"
+              [attr.font-size]="entry.item.fontSize"
+              font-family="sans-serif"
+            >
+              @for (line of wrappedTextLines(entry.item); track $index) {
+                <tspan [attr.x]="entry.item.x" [attr.dy]="$index === 0 ? 0 : entry.item.fontSize * 1.2">{{
+                  line
+                }}</tspan>
+              }
+            </text>
           }
-          @default {
-            <rect
-              [attr.x]="shape.rect().x"
-              [attr.y]="shape.rect().y"
-              [attr.width]="shape.rect().width"
-              [attr.height]="shape.rect().height"
-              fill="none"
-              [attr.stroke]="shape.color"
-              [attr.stroke-width]="shape.strokeWidth"
-            />
+          @case ('highlight') {
+            @for (r of highlightRects(entry.item); track $index) {
+              <rect
+                [attr.x]="r.x - 2"
+                [attr.y]="r.y"
+                [attr.width]="r.width + 4"
+                [attr.height]="r.height"
+                rx="3"
+                [attr.fill]="entry.item.color"
+                opacity="0.4"
+                style="mix-blend-mode: multiply"
+              />
+            }
           }
         }
       }
 
-      <!-- Previously drawn arrows -->
-      @for (arrow of arrows; track arrow.id) {
-        <line
-          [attr.x1]="arrow.line().x1"
-          [attr.y1]="arrow.line().y1"
-          [attr.x2]="arrow.line().x2"
-          [attr.y2]="arrow.line().y2"
-          [attr.stroke]="arrow.color"
-          [attr.stroke-width]="arrow.strokeWidth"
-          stroke-linecap="round"
-          [attr.marker-end]="'url(#arrowhead-' + arrow.id + ')'"
-        />
-      }
-
-      <!-- Active arrow being dragged out -->
-      @if (activeArrow) {
-        <line
-          [attr.x1]="activeArrow.line().x1"
-          [attr.y1]="activeArrow.line().y1"
-          [attr.x2]="activeArrow.line().x2"
-          [attr.y2]="activeArrow.line().y2"
-          [attr.stroke]="activeArrow.color"
-          [attr.stroke-width]="activeArrow.strokeWidth"
-          stroke-linecap="round"
-          [attr.marker-end]="'url(#arrowhead-' + activeArrow.id + ')'"
-        />
+      @if (selectedItemOverlay(); as active) {
+        @if (active.kind === 'shape') {
+          <rect
+            [attr.x]="active.bounds.x - 2"
+            [attr.y]="active.bounds.y - 2"
+            [attr.width]="active.bounds.width + 4"
+            [attr.height]="active.bounds.height + 4"
+            class="selection-outline"
+          />
+          <circle
+            [attr.cx]="active.bounds.x + active.bounds.width"
+            [attr.cy]="active.bounds.y + active.bounds.height"
+            r="6"
+            class="handle-node"
+          />
+        }
+        @if (active.kind === 'arrow') {
+          <circle [attr.cx]="active.line.x1" [attr.cy]="active.line.y1" r="6" class="handle-node" />
+          <circle [attr.cx]="active.line.x2" [attr.cy]="active.line.y2" r="6" class="handle-node" />
+        }
+        @if (active.kind === 'text') {
+          <rect
+            [attr.x]="active.bounds.x - 4"
+            [attr.y]="active.bounds.y - 2"
+            [attr.width]="active.bounds.width + 8"
+            [attr.height]="active.bounds.height + 4"
+            class="selection-outline"
+          />
+          <circle
+            [attr.cx]="active.bounds.x + active.bounds.width + 4"
+            [attr.cy]="active.bounds.y + active.bounds.height / 2"
+            r="6"
+            class="handle-node"
+          />
+        }
       }
     </svg>
 
-    <!-- Draw Prompt Overlay -->
-    @if (segments.length === 0 && shapes.length === 0 && arrows.length === 0 && !activeSegment.path()) {
+    <!-- A textarea, not an input, so long sentences can wrap/break onto multiple lines instead of
+         overflowing the canvas -->
+    @if (textDraft) {
+      <textarea
+        #textInputEl
+        class="text-input"
+        rows="1"
+        [style.left.px]="textDraft.x"
+        [style.top.px]="textDraft.y"
+        [style.color]="textDraft.color"
+        [style.font-size.px]="textDraft.fontSize"
+        [style.max-width.px]="size() - textDraft.x"
+        autofocus
+        (focus)="textInputEl.select(); onTextDraftInput(textInputEl)"
+        (input)="onTextDraftInput(textInputEl)"
+        (blur)="commitTextEdit(textInputEl.value)"
+        (keydown.enter)="($any($event).ctrlKey || $any($event).metaKey) && textInputEl.blur()"
+        (keydown.escape)="cancelTextEdit(); textInputEl.blur()"
+        >{{ textDraft.value }}</textarea
+      >
+    }
+
+    @if (items.length === 0 && !activeSegment.path()) {
       <div class="draw-logo">
         <mat-icon>draw</mat-icon>
         <div>{{ 'Draw Here' | translate }}</div>
