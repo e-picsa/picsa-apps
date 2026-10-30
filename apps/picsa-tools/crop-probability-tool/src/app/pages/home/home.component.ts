@@ -1,6 +1,7 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -19,16 +20,17 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, getLocationLabel, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { PicsaTourButton, TourService } from '@picsa/shared/services/core/tour';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { CropProbabilityTableComponent } from '../../components/crop-probability-table/crop-probability-table.component';
 import { PROBABILITY_TABLE_DATA } from '../../data';
 import { CROP_PROBABILITY_SELECT_TOUR, CROP_PROBABILITY_TABLE_TOUR } from '../../data/tour';
 import { IProbabilityTable, IStationCropData } from '../../models';
+import { filterLocationsToProbabilityTables } from '../../utils/location-filter.utils';
 
 interface IQueryParams {
   /** id of active selected station */
@@ -46,14 +48,8 @@ const STRINGS = {
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [
-    PicsaFormsModule,
-    CropProbabilityTableComponent,
-    MatButtonModule,
-    MatIcon,
-    PicsaTranslateModule,
-    PicsaTourButton,
-  ],
+  imports: [PicsaFormsModule, CropProbabilityTableComponent, MatButtonModule, MatIcon, PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -64,19 +60,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private viewContainer = inject(ViewContainerRef);
 
   private readonly headerCenterPortal = viewChild<TemplateRef<unknown>>('headerCenterPortal');
+  private readonly headerEndPortal = viewChild<TemplateRef<unknown>>('headerEndPortal');
+  public readonly tableComponent = viewChild(CropProbabilityTableComponent);
 
   public countryCode = computed(() => this.configService.userSettings().country_code);
   public locationSelected = computed(() => this.configService.userSettings().location, { equal: isEqual });
 
-  public locationReady = computed(() => {
-    const location = this.locationSelected();
+  /** Whether the user has at least one administrative location segment selected */
+  public hasLocation = computed(() => Boolean(this.locationSelected()?.some(Boolean)));
+
+  /** Display label for the selected district, used when no probability table matches */
+  public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
-    if (!country || !location) return false;
-    const geoData = getGeoLocationData(country as ICountryCode);
-    if (geoData.admin_5) {
-      return !!location[4] && !!location[5];
-    }
-    return !!location[4];
+    if (!country) return undefined;
+    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+  });
+
+  public locationReady = computed(() => {
+    const country = this.countryCode();
+    if (!country) return false;
+    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
   });
 
   /** Deepest selected location segment, used to match probability tables */
@@ -91,11 +94,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public tableStationMeta = computed<IProbabilityTable | undefined>(() => {
     const countryCode = this.countryCode();
+    const location = this.locationSelected();
+    const parentId = location[4];
+    const sublocationId = location[5];
     const locationId = this.locationId();
-    if (countryCode && locationId) {
-      // Handle case where zm excludes admin_4 from param but may have additional admin_5 sublocation
-      return PROBABILITY_TABLE_DATA[countryCode]?.find((v) => v.id === locationId || v.id.endsWith(`/${locationId}`));
+
+    if (!countryCode || !locationId) return undefined;
+    const tables = PROBABILITY_TABLE_DATA[countryCode] ?? [];
+
+    // 1. Exact match on full hierarchy path (e.g. 'central/chibombo' or 'masvingo/masvingo')
+    if (parentId && sublocationId) {
+      const fullPath = `${parentId}/${sublocationId}`;
+      const exact = tables.find(
+        (v) =>
+          v.id === fullPath ||
+          v.id === sublocationId ||
+          v.id.endsWith(`/${sublocationId}`) ||
+          v.id.includes(`/${sublocationId}--`),
+      );
+      if (exact) return exact;
     }
+
+    // 2. Match on deepest segment id (or suffix)
+    const directMatch = tables.find(
+      (v) => v.id === locationId || v.id.endsWith(`/${locationId}`) || v.id.includes(`/${locationId}--`),
+    );
+    if (directMatch) return directMatch;
+
+    // 3. Fallback: if parent is selected (e.g. from climate tool with no sublocation),
+    // or if the sublocation has no specific table, fall back to the first available table under that parent
+    if (parentId) {
+      const parentMatch = tables.find((v) => v.id.startsWith(`${parentId}/`));
+      if (parentMatch) return parentMatch;
+    }
+
     return undefined;
   });
 
@@ -109,9 +141,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Auto-open location overlay if location is not set when entering tool
+    // Auto-open location overlay only if no location has been selected yet
     effect(() => {
-      if (!this.locationReady()) {
+      if (!this.hasLocation()) {
         this.locationOverlayOpen.set(true);
       }
     });
@@ -124,16 +156,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const portal = this.headerCenterPortal();
-    if (portal) {
-      this.componentsService.patchHeader({
-        cdkPortalCenter: new TemplatePortal(portal, this.viewContainer),
-      });
-    }
+    const centerPortal = this.headerCenterPortal();
+    const endPortal = this.headerEndPortal();
+    this.componentsService.patchHeader({
+      cdkPortalCenter: centerPortal ? new TemplatePortal(centerPortal, this.viewContainer) : undefined,
+      cdkPortalEnd: endPortal ? new TemplatePortal(endPortal, this.viewContainer) : undefined,
+    });
   }
 
   ngOnDestroy() {
-    this.componentsService.patchHeader({ cdkPortalCenter: undefined });
+    this.componentsService.patchHeader({
+      cdkPortalCenter: undefined,
+      cdkPortalEnd: undefined,
+    });
+  }
+
+  public shareTable() {
+    return this.tableComponent()?.sharePicture();
   }
 
   public handleLocationConfirmed(location: (string | undefined)[]) {
@@ -141,50 +180,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.locationOverlayOpen.set(false);
   }
 
-  /** Modify locations to only include values that have probability data */
+  /**
+   * Modify locations to only include values that have probability data.
+   * Pure delegation - the shared per-country geo data must never be mutated as the
+   * filter re-runs every time the location overlay is opened.
+   */
   public locationModifier(data: IGeolocationData, country_code: string): IGeolocationData {
     const allData: IProbabilityTable[] = PROBABILITY_TABLE_DATA[country_code] || [];
-    // track locations of existing probability tables, which have id in format admin_4/admin_5
-    const availableLocations = { admin_4: [] as string[], admin_5: [] as string[] };
-    for (const entry of allData) {
-      const [admin_4, admin_5] = entry.id.split('/');
-      availableLocations.admin_4.push(admin_4);
-      availableLocations.admin_5.push(admin_5);
-    }
-
-    // filter admin_4 to only include those with child probability tables available
-    data.admin_4.locations = data.admin_4.locations.filter((v) => availableLocations.admin_4.includes(v.id));
-
-    // filter admin_5 to only include those with child probability tables available
-    if (data.admin_5) {
-      data.admin_5.locations = data.admin_5.locations.filter((v) => availableLocations.admin_5.includes(v.id));
-
-      // HACK - zm data has multiple tables in same admin_5, e.g.
-      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
-      allData.forEach((entry) => {
-        const [admin_4, admin_5_with_sublocation] = entry.id.split('/');
-        const [admin_5, sublocation] = admin_5_with_sublocation.split('--');
-        if (sublocation) {
-          data.admin_5?.locations.push({ id: entry.id, label: entry.label, admin_4 });
-        }
-      });
-    }
-
-    // HACK - mw data does not track admin_5 but crop probability tables include multiple per
-    // district so create entries to use in filter
-    else {
-      const additionalLocations = allData.map(({ id, label }) => {
-        const [admin_4, admin_5] = id.split('/');
-        return { id: admin_5, admin_4, label };
-      });
-      data.admin_5 = { label: 'Location', locations: additionalLocations };
-    }
-    return data;
+    return filterLocationsToProbabilityTables(data, allData);
   }
 
   /** One-time import of pre-overlay saved locations into user settings */
   private importLegacyLocation() {
-    if (this.locationReady()) return;
+    if (this.locationReady() || this.hasLocation()) return;
     const { locationId } = this.route.snapshot.queryParams as IQueryParams;
     const legacyId = locationId ?? localStorage.getItem(STORED_LOCATION_FIELD) ?? undefined;
     if (!legacyId) return;

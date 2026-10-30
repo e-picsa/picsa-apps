@@ -6,6 +6,17 @@ import { FormLocationSelectComponent } from './location-select/location-select.c
 import { FormWeatherSelectComponent } from './weather-select/weather-select.component';
 import { FormWeatherSelectMultipleComponent } from './weather-select/weather-select-multiple.component';
 
+export {
+  FormCropActivitySelectComponent,
+  FormCropActivitySelectMultipleComponent,
+  FormCropSelectMultipleComponent,
+  FormCropSelectSingleComponent,
+  FormLocationOverlayComponent,
+  FormLocationSelectComponent,
+  FormWeatherSelectComponent,
+  FormWeatherSelectMultipleComponent,
+};
+
 export const PICSA_FORM_COMPONENTS = [
   FormCropActivitySelectComponent,
   FormCropActivitySelectMultipleComponent,

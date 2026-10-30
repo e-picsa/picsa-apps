@@ -5,13 +5,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
+import { ResourcesMaterialModule } from '../../../material.module';
 import { IResourceLink } from '../../../schemas';
 
 @Component({
   selector: 'resource-item-link',
   templateUrl: 'link.html',
   styleUrls: ['link.scss'],
-  imports: [MatCardModule, MatIconModule, PicsaTranslateModule],
+  imports: [ResourcesMaterialModule, MatCardModule, MatIconModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceItemLinkComponent {

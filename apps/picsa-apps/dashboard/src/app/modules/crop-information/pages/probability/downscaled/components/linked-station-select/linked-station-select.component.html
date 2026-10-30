@@ -36,15 +36,31 @@
           />
         </div>
 
-        @for (station of filteredStations(); track station.station_id) {
+        @for (station of filteredStations(); track station.id) {
+          @let probCount = getStationProbabilityCount(station.id);
           <mat-option [value]="station.id">
-            <div class="flex justify-between items-center w-full gap-x-6">
-              <span class="truncate">{{ station.station_name }}</span>
-              @if (station.district) {
-                <span class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full shrink-0 ml-auto">{{
-                  station.district
-                }}</span>
-              }
+            <div class="flex justify-between items-center w-full gap-x-4">
+              <span class="truncate font-medium">{{ station.station_name }}</span>
+              <div class="flex items-center gap-1.5 shrink-0 ml-auto">
+                @if (probCount > 0) {
+                  <mat-icon
+                    class="!w-4 !h-4 !text-[1rem] leading-none text-green-600"
+                    matTooltip="Probabilities available"
+                  >
+                    check_circle
+                  </mat-icon>
+                } @else {
+                  <mat-icon
+                    class="!w-4 !h-4 !text-[1rem] leading-none text-amber-500"
+                    matTooltip="No probabilities available"
+                  >
+                    warning
+                  </mat-icon>
+                }
+                @if (station.district) {
+                  <span class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{{ station.district }}</span>
+                }
+              </div>
             </div>
           </mat-option>
         } @empty {
@@ -52,6 +68,34 @@
         }
       </mat-select>
     </mat-form-field>
+
+    <!-- Selected Station Probabilities Status Banner -->
+    @if (selectedStation(); as station) {
+      @let probCount = getStationProbabilityCount(station.id);
+      @if (probCount > 0) {
+        <div
+          class="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800"
+        >
+          <mat-icon class="!w-4 !h-4 !text-[1rem] leading-none text-emerald-600 mt-0.5 shrink-0">check_circle</mat-icon>
+          <div>
+            <span class="font-semibold">{{ station.station_name }}</span> has crop probability records available.
+          </div>
+        </div>
+      } @else {
+        <div class="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+          <mat-icon class="!w-4 !h-4 !text-[1rem] leading-none text-amber-600 mt-0.5 shrink-0">warning</mat-icon>
+          <div>
+            <span class="font-semibold">{{ station.station_name }}</span> has no crop probability records. Downscaled
+            probability tables will not be generated for this location.
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="flex items-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600">
+        <mat-icon class="!w-4 !h-4 !text-[1rem] leading-none text-gray-400 mt-0.5 shrink-0">link_off</mat-icon>
+        <div>No climate station is currently linked to this location.</div>
+      </div>
+    }
 
     <div class="flex items-center gap-3 mt-2">
       <button

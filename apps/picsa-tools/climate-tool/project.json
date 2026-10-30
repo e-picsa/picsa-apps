@@ -28,12 +28,17 @@
             "input": "libs/data/climate/climate-icons",
             "output": "assets/climate-icons"
           },
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/images",
+            "output": "assets/images"
+          },
           "apps/picsa-tools/climate-tool/src/assets"
         ],
         "styles": [
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          "node_modules/leaflet/dist/leaflet.css"
+          "node_modules/maplibre-gl/dist/maplibre-gl.css"
         ],
         "scripts": []
       },

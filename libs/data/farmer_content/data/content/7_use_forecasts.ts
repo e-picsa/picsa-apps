@@ -16,6 +16,11 @@ const steps: IFarmerContent['steps'] = [
     video: PICSA_FARMER_VIDEOS_HASHMAP.short_term_forecast,
     title: translateMarker('Short Term Forecast'),
   },
+  {
+    type: 'video',
+    video: PICSA_FARMER_VIDEOS_HASHMAP.el_nino,
+    title: translateMarker('El Niño and La Niña'),
+  },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {

@@ -1,0 +1,126 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "ETG-M401",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [495],
+        "probabilities": [0.5, 0.6, 0.4, 0.2]
+      },
+      {
+        "variety": "ZM-451",
+        "days": "110 - 120",
+        "days_lower": 110,
+        "days_upper": 120,
+        "water": [525],
+        "probabilities": [0.6, 0.5, 0.3, 0.1]
+      },
+      {
+        "variety": "KAM-602",
+        "days": "120 - 125",
+        "days_lower": 120,
+        "days_upper": 125,
+        "water": [545],
+        "probabilities": [0.6, 0.4, 0.3, 0.1]
+      },
+      {
+        "variety": "PAN-53, ETG-M-601",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [560],
+        "probabilities": [0.5, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "ZMS-606",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [590],
+        "probabilities": [0.4, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "GV637, ZM-621, SY-6250, PAN7M-83",
+        "days": "125 - 135",
+        "days_lower": 125,
+        "days_upper": 135,
+        "water": [590],
+        "probabilities": [0.4, 0.3, 0.1, 0]
+      },
+      {
+        "variety": "SC-657",
+        "days": "130 - 140",
+        "days_lower": 130,
+        "days_upper": 140,
+        "water": [610],
+        "probabilities": [0.3, 0.2, 0.1, 0]
+      },
+      {
+        "variety": "KAM-601",
+        "days": "135 - 145",
+        "days_lower": 135,
+        "days_upper": 145,
+        "water": [615],
+        "probabilities": [0.3, 0.2, 0.1, 0]
+      }
+    ]
+  },
+  {
+    "crop": "beans",
+    "data": [
+      {
+        "variety": "KABULANGETI",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [390],
+        "probabilities": [0.2, 0.5, 0.7, 0.6]
+      },
+      {
+        "variety": "MBERESHI",
+        "days": "80 - 85",
+        "days_lower": 80,
+        "days_upper": 85,
+        "water": [410],
+        "probabilities": [0.3, 0.6, 0.6, 0.5]
+      },
+      {
+        "variety": "LUSAKA, LUNGWE-BUNGWE",
+        "days": "85 - 90",
+        "days_lower": 85,
+        "days_upper": 90,
+        "water": [425],
+        "probabilities": [0.4, 0.6, 0.6, 0.4]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "MGV4, CHALIMBANA",
+        "days": "130 - 140",
+        "days_lower": 130,
+        "days_upper": 140,
+        "water": [625],
+        "probabilities": [0.3, 0.2, 0.1, 0]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "MABUTILA",
+        "days": "110 - 125",
+        "days_lower": 110,
+        "days_upper": 125,
+        "water": [410],
+        "probabilities": [0.7, 0.6, 0.3, 0.2]
+      }
+    ]
+  }
+]

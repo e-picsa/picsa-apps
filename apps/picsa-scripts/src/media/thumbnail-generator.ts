@@ -1,3 +1,17 @@
+/**
+ * Video Thumbnail Generator
+ *
+ * Extracts still thumbnails from every video in ./input (frames sampled across the
+ * first 60 seconds) and writes them to ./thumbnails. Sampling interval, duration,
+ * format and quality are configured in code below, not via CLI args.
+ *
+ * Usage:
+ *   yarn scripts media/thumbnail-generator
+ *
+ * Args: none (configure sampling in the VideoThumbnailGenerator options below)
+ *
+ * Requires: ffmpeg installed and available in PATH
+ */
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';

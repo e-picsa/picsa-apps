@@ -5,6 +5,7 @@
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner",
     "dbaeumer.vscode-eslint",
-    "mpotthoff.vscode-android-webview-debug"
+    "mpotthoff.vscode-android-webview-debug",
+    "denoland.vscode-deno"
   ]
 }

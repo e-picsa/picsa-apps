@@ -17,7 +17,7 @@ import { SupabaseAuthService } from './services/supabase-auth.service';
 import { SupabaseFunctionsService } from './services/supabase-functions.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
 import { TableWithLive, tableWithLive } from './utils/query.utils';
-import { checkBackendAvailability } from './utils/supabase.stubs';
+import { checkBackendAvailability, createOfflineSupabaseClient } from './utils/supabase.stubs';
 
 /**
  * Main entrypoint for interacting with Supabase backend
@@ -45,7 +45,19 @@ export class SupabaseService extends PicsaAsyncService {
     this.isAvailable.set(isServerAvailable);
     if (isServerAvailable) {
       this.createClients();
+    } else {
+      this.createOfflineClients();
     }
+  }
+
+  private createOfflineClients() {
+    this.supabase = createOfflineSupabaseClient();
+    this.db = {
+      table: (relation) => tableWithLive(this.injector, this.supabase, relation),
+    };
+    this.storage.registerSupabaseClient(this.supabase);
+    this.auth.registerSupabaseClient(this.supabase);
+    this.functions.registerSupabaseClient(this.supabase);
   }
 
   private createClients() {

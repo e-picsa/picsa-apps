@@ -121,7 +121,7 @@
             "output": "assets"
           },
           {
-            "glob": "{*.min.mjs,images/*,locale/en-GB/*,locale/locale.json,standard_fonts/**}",
+            "glob": "{*.min.mjs,images/*,locale/en-US/*,locale/locale.json,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
             "ignore": ["**/*-es5.min.mjs"],
             "output": "/assets/pdf-viewer"
@@ -133,7 +133,6 @@
           }
         ],
         "styles": [
-          "node_modules/leaflet/dist/leaflet.css",
           "node_modules/maplibre-gl/dist/maplibre-gl.css",
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "apps/picsa-tools/budget-tool/src/styles.scss",

@@ -1,0 +1,242 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "ZMS-301",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [
+          425
+        ],
+        "probabilities": [
+          0.4,
+          0.6,
+          0.6
+        ]
+      },
+      {
+        "variety": "SC-303",
+        "days": "90 - 100",
+        "days_lower": 90,
+        "days_upper": 100,
+        "water": [
+          510
+        ],
+        "probabilities": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "variety": "ZMS-405",
+        "days": "100 - 105",
+        "days_lower": 100,
+        "days_upper": 105,
+        "water": [
+          315
+        ],
+        "probabilities": [
+          0.9,
+          0.7,
+          0.5
+        ]
+      },
+      {
+        "variety": "PAN-413",
+        "days": "110 - 115",
+        "days_lower": 110,
+        "days_upper": 115,
+        "water": [
+          510
+        ],
+        "probabilities": [
+          0.6,
+          0.5,
+          0.4
+        ]
+      },
+      {
+        "variety": "ZMS-520",
+        "days": "120 - 125",
+        "days_lower": 120,
+        "days_upper": 125,
+        "water": [
+          430
+        ],
+        "probabilities": [
+          0.6,
+          0.5,
+          0.3
+        ]
+      },
+      {
+        "variety": "SC-419",
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [
+          375
+        ],
+        "probabilities": [
+          0.6,
+          0.4,
+          0.3
+        ]
+      },
+      {
+        "variety": "PAN-53, SC-513",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          510
+        ],
+        "probabilities": [
+          0.5,
+          0.4,
+          0.2
+        ]
+      },
+      {
+        "variety": "ZMS-606",
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [
+          490
+        ],
+        "probabilities": [
+          0.5,
+          0.4,
+          0.2
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "KUYUMA, KAFWAMBA",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [
+          385
+        ],
+        "probabilities": [
+          0.8,
+          0.7,
+          0.5
+        ]
+      },
+      {
+        "variety": "ZSV-36R",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [
+          390
+        ],
+        "probabilities": [
+          0.8,
+          0.7,
+          0.5
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "data": [
+      {
+        "variety": "MILIKA",
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [
+          590
+        ],
+        "probabilities": [
+          0.4,
+          0.4,
+          0.4
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "BUBEBE",
+        "days": "63 - 70",
+        "days_lower": 63,
+        "days_upper": 70,
+        "water": [
+          235
+        ],
+        "probabilities": [
+          0.7,
+          0.8,
+          0.8
+        ]
+      },
+      {
+        "variety": "LUTEMBWE",
+        "days": "110 - 115",
+        "days_lower": 110,
+        "days_upper": 115,
+        "water": [
+          255
+        ],
+        "probabilities": [
+          0.8,
+          0.6,
+          0.4
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "CDT-II",
+        "days": "140 - 160",
+        "days_lower": 140,
+        "days_upper": 160,
+        "water": [
+          580
+        ],
+        "probabilities": [
+          0.4,
+          0.2,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "LOCAL",
+        "days": "110 - 125",
+        "days_lower": 110,
+        "days_upper": 125,
+        "water": [
+          380
+        ],
+        "probabilities": [
+          0.7,
+          0.5,
+          0.3
+        ]
+      }
+    ]
+  }
+]

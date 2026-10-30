@@ -4,6 +4,7 @@ import { IPicsaDataWithIcons } from '../models';
 
 const CROPS_DATA_BASE = {
   avocado: { label: translateMarker('Avocado'), icon: 'assets/svgs/crops/avocado.svg' },
+  bambaranuts: { label: translateMarker('Bambara nuts'), icon: 'assets/svgs/crops/bambaranuts.svg' },
   beans: { label: translateMarker('Beans'), icon: 'assets/svgs/crops/beans.svg' },
   cassava: { label: translateMarker('Cassava'), icon: 'assets/svgs/crops/cassava.svg' },
   cotton: { label: translateMarker('Cotton'), icon: 'assets/svgs/crops/cotton.svg' },
@@ -11,6 +12,7 @@ const CROPS_DATA_BASE = {
   groundnuts: { label: translateMarker('Groundnuts'), icon: 'assets/svgs/crops/groundnuts.svg' },
   maize: { label: translateMarker('Maize'), icon: 'assets/svgs/crops/maize.svg' },
   mangoes: { label: translateMarker('Mangoes'), icon: 'assets/svgs/crops/mangoes.svg' },
+  millet: { label: translateMarker('Millet'), icon: 'assets/svgs/crops/millet.svg' },
   onions: { label: translateMarker('Onions'), icon: 'assets/svgs/crops/onions.svg' },
   paprika: { label: translateMarker('Paprika'), icon: 'assets/svgs/crops/paprika.svg' },
   'pearl-millet': { label: translateMarker('Pearl Millet'), icon: 'assets/svgs/crops/pearl-millet.svg' },

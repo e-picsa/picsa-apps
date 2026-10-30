@@ -28,6 +28,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 - Do NOT leave internal monologue, questions, or reasoning in code comments (e.g., `// Wait, actually...`).
 - Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
+- **Minimalist, Farmer-First UI (No Over-Engineering or Visual Noise)**: Do NOT add superfluous visual elements, chips, tags, metadata badges, or metrics unprompted (e.g., "Inside District", "X km from center", "Y years of data", extra status icons). Keep interfaces clean, direct, and focused on essential actions with minimal cognitive load (e.g., "View" instead of verbose button text). Avoid adding unprompted visual noise for the sake of it.
 - **Database Exploration**: ALWAYS use the `supabase-db` MCP skill (`mcp_supabase-db_query`) when trying to introspect the Supabase database (e.g., viewing registered functions, checking schema, exploring tables). This is significantly more efficient and accurate than reading raw schema files using `grep_search` or `view_file`.
 
 ## 3. Destructive Commands (CRITICAL)
@@ -38,6 +39,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 ## 4. Verification Workflow (No Redundant Builds or Broad Test Suites)
 
 - **Strict Build Prohibition**: **NEVER** run full application builds (`yarn build`, `yarn nx build`) after editing code. Builds compile assets, run full AOT passes, and bundle native wrappers, which wastes tokens and minutes.
+- **Typechecking (ALWAYS via `yarn ai:typecheck`)**: After modifying TypeScript or Angular HTML template files, run `yarn ai:typecheck` with no args (auto-detects changed files vs `HEAD`, maps changed libs/apps to affected Nx projects, and verifies types + Angular templates via `ngc --noEmit` in 1-2 seconds without running heavy production builds).
 - **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
 - **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.
 

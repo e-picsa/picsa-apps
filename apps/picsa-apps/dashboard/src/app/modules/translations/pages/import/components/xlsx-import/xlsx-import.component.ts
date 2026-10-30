@@ -15,7 +15,7 @@ import { ILocaleDataEntry, LOCALES_DATA } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
-import { jsonToXLSX, xlsxToJson } from '@picsa/utils/xlsx';
+import { xlsxToJson } from '@picsa/utils/xlsx';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 
@@ -50,53 +50,71 @@ export class TranslationsXLSXImportComponent {
   private service = inject(TranslationDashboardService);
   private deploymentService = inject(DeploymentDashboardService);
 
+  private dragDropRef = viewChild<ElementRef<HTMLDivElement>>('dragDrop');
+
+  private uppy: Uppy;
+
+  /** Imported translation rows straight from parsed XLSX */
+  public importTranslationData = signal<ImportTranslationEntry[]>([]);
+
+  /** List of language options that can be imported based on data columns */
   public importLocaleOptions = signal<ILocaleDataEntry[]>([]);
-  public importLocaleSelected = signal<ILocaleDataEntry | undefined>(undefined);
-  private importTranslationData = signal<ImportTranslationEntry[] | undefined>(undefined);
+  public importLocaleSelected = signal<ILocaleDataEntry | null>(null);
 
-  public importSummary = signal<ImportSummary[] | undefined>(undefined);
+  /** Processed translation data matching selected locale */
+  public importProcessedData = computed(() => {
+    const data = this.importTranslationData();
+    const locale = this.importLocaleSelected();
+    if (!data || !locale) return null;
+    return this.prepareImportData(data, locale);
+  });
 
-  /** Generate table summaries to display import actions alongside data */
+  /** Summary of changes to be applied if import proceeds */
+  public importSummary = computed(() => {
+    const importData = this.importProcessedData();
+    if (!importData) return null;
+    return this.calculateImportSummary(importData);
+  });
+
   public summaryTables = computed(() => {
     const summary = this.importSummary();
     if (!summary) return [];
-    // Track new or updated translations based on before value (not db entry)
-    const newSummary = summary.filter((v) => !v.before);
-    const updatedSummary = summary.filter((v) => v.before);
     return [
-      { key: 'new', label: `New (${newSummary.length})`, data: newSummary },
-      { key: 'updated', label: `Updated (${updatedSummary.length})`, data: updatedSummary },
+      { key: 'all', label: 'All', data: summary },
+      { key: 'update', label: 'Updated', data: summary.filter((v) => v.update) },
+      { key: 'insert', label: 'Inserted', data: summary.filter((v) => v.insert) },
+      { key: 'unchanged', label: 'Unchanged', data: summary.filter((v) => !v.update && !v.insert) },
     ];
   });
-  public tableOptions: IDataTableOptions = { displayColumns: ['context', 'tool', 'text', 'before', 'after'] };
 
-  /** Track db update operations (peformed sequentially as no bulk method available when updating different values) */
-  public importTotal = computed(() => {
-    return this.importSummary()?.length || 0;
-  });
+  public tableOptions: IDataTableOptions = {
+    displayColumns: ['tool', 'context', 'text', 'before', 'after'],
+    formatHeader: (key: string) => {
+      const headers: Record<string, string> = {
+        text: 'English',
+      };
+      return headers[key] || key;
+    },
+  };
 
+  /** Maintain a count of imported translations to show progress */
   public importCounter = signal(0);
-
-  private uppy: Uppy;
-  private dropEl = viewChild<unknown, ElementRef<HTMLDivElement>>('dragDrop', { read: ElementRef });
+  public importTotal = computed(() => {
+    const summary = this.importSummary();
+    if (!summary) return 0;
+    return summary.filter((v) => v.update || v.insert).length;
+  });
 
   constructor() {
     effect(() => {
-      const el = this.dropEl();
+      const el = this.dragDropRef()?.nativeElement;
       if (el) {
-        this.setupDropZone(el.nativeElement);
-        // eagerly initialise service in case not previously (ensured during process)
-        this.service.ready();
+        this.setupDropZone(el);
       }
     });
-    // When file dropped and language selected process action list for import operations
+    // When selected locale changes, reset counter
     effect(() => {
-      const data = this.importTranslationData();
-      const locale = this.importLocaleSelected();
-      if (locale && data) {
-        const importRows = this.prepareImportData(data, locale);
-        const summary = this.generateImportSummaries(importRows, locale);
-        this.importSummary.set(summary);
+      if (this.importLocaleSelected()) {
         this.importCounter.set(0);
       }
     });
@@ -114,27 +132,6 @@ export class TranslationsXLSXImportComponent {
       this.importCounter.update((v) => v + 1);
     }
     await this.service.listTranslations();
-  }
-
-  public exportTemplate() {
-    const translations = this.service.translations().filter((v) => !v.archived);
-    const countryCode = this.deploymentService.activeDeploymentCountry();
-    const countryLocales = LOCALES_DATA.filter(
-      (v) => v.country_code === countryCode && !v.language_code.includes('en'),
-    );
-    const exportRows: ImportTranslationEntry[] = [];
-    // Prepare columns for xlsx export - including label columns for country locales
-    for (const translation of translations) {
-      const { context, tool, text: English } = translation;
-      const baseRow: ImportTranslationEntry = { context: context as string, tool, English };
-      for (const { id, language_label } of countryLocales) {
-        baseRow[language_label] = translation[id];
-      }
-      exportRows.push(baseRow);
-    }
-    // Convert to XLSX and download
-    const downloadFileName = `PICSA-Translations-${countryCode}-${new Date().toISOString().substring(0, 10)}.xlsx`;
-    jsonToXLSX(exportRows, `${countryCode}`, downloadFileName);
   }
 
   private setupDropZone(target: HTMLDivElement) {
@@ -188,34 +185,60 @@ export class TranslationsXLSXImportComponent {
       const rowBase: ITranslation['Insert'] = { tool, context, text: English, id: '' };
       rowBase.id = this.service.generateTranslationID(rowBase);
       const translation = languageEntries[locale.language_label];
-      // trim whitespace and remove any accidental duplicate spaces (2 or more)
-      rowBase[`${locale.id}`] = translation?.trim().replace(/ {2,}/gi, ' ');
-      rows.push(rowBase);
+
+      // Note - empty string translations ignored, null values will retain existing
+      if (translation) {
+        rows.push({
+          ...rowBase,
+          [locale.id]: translation,
+        });
+      }
     }
     return rows;
   }
 
-  /** Compare data for import against current server data and provide summary of actions */
-  private generateImportSummaries(rows: ITranslation['Insert'][], locale: ILocaleDataEntry) {
-    const serverHashmap = arrayToHashmap(this.service.translations(), 'id');
-    const summaries: ImportSummary[] = [];
-    for (const row of rows) {
-      const serverRow: ITranslation['Row'] = serverHashmap[row.id];
-      if (serverRow) {
-        const { text, tool, context, id } = serverRow;
-        const before = serverRow[locale.id];
-        const after = row[locale.id];
-        if (before !== after) {
-          const update: ITranslation['Update'] = { id, [locale.id]: after };
-          summaries.push({ context: context as string, tool, text, before, after, update });
-        }
-      } else {
-        const { text, tool, context } = row;
-        const after = row[locale.id];
-        const insert: ITranslation['Insert'] = row;
-        summaries.push({ context: context as string, tool, text, before: '', after, insert });
+  /** Compare imported data to existing database translations and calculate summary */
+  private calculateImportSummary(importRows: ITranslation['Insert'][]) {
+    const existingTranslations = arrayToHashmap(this.service.translations(), 'id');
+    const targetLocale = this.importLocaleSelected();
+    if (!targetLocale) return [];
+
+    const summary: ImportSummary[] = [];
+
+    for (const row of importRows) {
+      const existing = existingTranslations[row.id as string];
+      // Insert
+      if (!existing) {
+        summary.push({
+          tool: row.tool,
+          context: row.context as string,
+          text: row.text,
+          after: row[targetLocale.id],
+          insert: row,
+        });
+      }
+      // Update
+      else if (existing[targetLocale.id] !== row[targetLocale.id]) {
+        summary.push({
+          tool: row.tool,
+          context: row.context as string,
+          text: row.text,
+          before: existing[targetLocale.id] as string,
+          after: row[targetLocale.id],
+          update: { id: existing.id, [targetLocale.id]: row[targetLocale.id] },
+        });
+      }
+      // No change
+      else {
+        summary.push({
+          tool: row.tool,
+          context: row.context as string,
+          text: row.text,
+          before: existing[targetLocale.id] as string,
+          after: row[targetLocale.id],
+        });
       }
     }
-    return summaries;
+    return summary;
   }
 }

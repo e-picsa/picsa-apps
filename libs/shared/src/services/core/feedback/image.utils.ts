@@ -8,7 +8,7 @@ export const MAX_IMAGE_BYTES = 3 * 1024 * 1024; // 3MB
 /** Detect image MIME type from base64 magic bytes. Falls back to 'image/png'. */
 export function detectImageMimeType(base64: string): string {
   try {
-    const raw = atob(base64.substring(0, 12));
+    const raw = atob(base64.substring(0, 16));
     // PNG magic: 89 50 4E 47
     if (
       raw.codePointAt(0) === 0x89 &&

@@ -30,8 +30,8 @@
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">
         @if(downloaded){
-        <button matIconButton>
-          <mat-icon>download_done</mat-icon>
+        <button matIconButton (click)="openResource(row, $event)" [attr.aria-label]="'Open' | translate">
+          <mat-icon>visibility</mat-icon>
         </button>
         } @else {
         <resource-download [resource]="row" (click)="$event.stopImmediatePropagation()"></resource-download>

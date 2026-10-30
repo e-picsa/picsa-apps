@@ -1,27 +1,15 @@
-import { inject,Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
+import { Injectable } from '@angular/core';
 import { FirebasePerformance } from '@capacitor-firebase/performance';
-import { FirebasePerformance as IFirebasePerformance, getPerformance } from '@firebase/performance';
-import { ENVIRONMENT } from '@picsa/environments';
 
-import { PicsaFirebaseService } from './firebase.service';
-
-@Injectable({ providedIn: 'root' })
 /**
- * Monitor app performance via firebase performance monitoring
- * https://firebase.google.com/docs/perf-mon/get-started-android
- * https://www.npmjs.com/package/@capacitor-firebase/performanceF
- * */
+ * Monitor app performance via firebase performance monitoring.
+ * Calls are delegated to the native Capacitor plugin, which is the supported
+ * integration for native builds.
+ * https://firebase.google.com/docs/perf/get-started
+ * https://www.npmjs.com/package/@capacitor-firebase/performance
+ */
+@Injectable({ providedIn: 'root' })
 export class PerformanceService {
-  private firebaseService = inject(PicsaFirebaseService);
-
-  private performance: IFirebasePerformance;
-
-  public init() {
-    if (Capacitor.isNativePlatform() && ENVIRONMENT.production) {
-      this.performance = getPerformance(this.firebaseService.app);
-    }
-  }
   public startTrace = FirebasePerformance.startTrace;
 
   public stopTrace = async (traceName: string) => {

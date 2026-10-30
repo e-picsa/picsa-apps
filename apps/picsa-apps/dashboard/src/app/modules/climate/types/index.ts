@@ -10,6 +10,9 @@ export type IAnnualRainfallSummariesMetadata = schemas['AnnualRainfallSummariesM
 export type IAnnualTemperatureSummariesData = schemas['AnnualTempartureSummariesdata'];
 export type IAnnualTemperatureSummariesMetadata = schemas['TemperatureSummariesMetadata'];
 
+export type IMonthlyRainfallSummariesData = schemas['MonthlyRainfallSummariesdata'];
+export type IMonthlyRainfallSummariesMetadata = schemas['MonthlyRainfallSummariesMetadata'];
+
 export type IAPICountryCode = schemas['StationDataResponce']['country_code'];
 
 export type ICropSuccessEntry = schemas['CropSuccessProbabilitiesdata'];

@@ -10,7 +10,6 @@ import { AnalyticsService } from '@picsa/shared/services/core/analytics.service'
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
-import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 import { SafeAreaService } from '@picsa/shared/services/native/safe-area';
@@ -28,7 +27,6 @@ import { AppLayoutComponent } from './components/layout';
 export class AppComponent implements OnInit {
   private analyticsService = inject(AnalyticsService);
   private router = inject(Router);
-  private performanceService = inject(PerformanceService);
   private crashlyticsService = inject(CrashlyticsService);
   private resourcesService = inject(ResourcesToolService);
   private migrationService = inject(PicsaMigrationService);
@@ -94,12 +92,6 @@ export class AppComponent implements OnInit {
         this.appUpdateService.checkForUpdates().catch((err) => this.errorService.handleError(err)),
       ];
       await Promise.allSettled(ops);
-      // regular init
-      try {
-        this.performanceService.init();
-      } catch (error) {
-        this.errorService.handleError(error as any);
-      }
     }
   }
 

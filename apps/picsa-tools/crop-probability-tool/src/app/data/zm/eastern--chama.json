@@ -3,178 +3,148 @@
     "crop": "maize",
     "data": [
       {
-        "days": "90 - 110",
         "variety": "SEEDCO-303",
-        "probabilities": [1, 1, 1, 0.9],
-        "water": [325]
+        "days": "90 - 110",
+        "days_lower": 90,
+        "days_upper": 110,
+        "water": [325],
+        "probabilities": [1, 1, 0.9, 0.8]
       },
       {
-        "days": "100 - 105",
         "variety": "ZMS-405",
-        "probabilities": [1, 1, 0.9, 0.8],
-        "water": [360]
+        "days": "100 - 105",
+        "days_lower": 100,
+        "days_upper": 105,
+        "water": [360],
+        "probabilities": [1, 1, 0.9, 0.8]
       },
       {
-        "days": "110 - 115",
         "variety": "DKC80-33",
-        "probabilities": [1, 1, 0.9, 0.6],
-        "water": [385]
+        "days": "110 - 115",
+        "days_lower": 110,
+        "days_upper": 115,
+        "water": [385],
+        "probabilities": [1, 1, 0.9, 0.6]
       },
       {
-        "days": "115 - 120",
         "variety": "DK777",
-        "probabilities": [1, 0.9, 0.8, 0.4],
-        "water": [390]
+        "days": "115 - 120",
+        "days_lower": 115,
+        "days_upper": 120,
+        "water": [390],
+        "probabilities": [1, 0.9, 0.8, 0.5]
       },
       {
-        "days": "125 - 127",
         "variety": "SEEDCO-403",
-        "probabilities": [1, 0.9, 0.8, 0.4],
-        "water": [430]
+        "days": "125 - 127",
+        "days_lower": 125,
+        "days_upper": 127,
+        "water": [430],
+        "probabilities": [1, 0.9, 0.6, 0.3]
       },
       {
-        "days": "125 - 128",
         "variety": "SEEDCO-419",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [420]
+        "days": "125 - 128",
+        "days_lower": 125,
+        "days_upper": 128,
+        "water": [420],
+        "probabilities": [1, 0.9, 0.6, 0.3]
       },
       {
+        "variety": "PAN-53, ETG-601, ZMS-638, SEEDCO-513, SEEDCO-555, PIONEER-2809-W",
         "days": "125 - 130",
-        "variety": "ETG-601",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [425],
+        "probabilities": [1, 0.9, 0.6, 0.2]
       },
       {
-        "days": "125 - 130",
-        "variety": "PAN-53",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
-      },
-      {
-        "days": "125 - 130",
         "variety": "ZMS-606",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [405]
-      },
-      {
         "days": "125 - 130",
-        "variety": "ZMS-638",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [405],
+        "probabilities": [1, 0.9, 0.6, 0.2]
       },
       {
-        "days": "128",
-        "variety": "PIONEER-2809-W",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [425]
-      },
-      {
-        "days": "127 - 130",
-        "variety": "SEEDCO-513",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
-      },
-      {
-        "days": "127 - 130",
-        "variety": "SEEDCO-555",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
-      },
-      {
-        "days": "125 - 135",
         "variety": "P3506W",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [445]
+        "days": "125 - 135",
+        "days_lower": 125,
+        "days_upper": 135,
+        "water": [445],
+        "probabilities": [1, 0.9, 0.5, 0.2]
       },
       {
-        "days": "130",
         "variety": "PIONEER-30G19",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [430]
+        "days": "130",
+        "days_lower": 130,
+        "days_upper": 130,
+        "water": [430],
+        "probabilities": [1, 0.9, 0.5, 0.2]
       },
       {
-        "days": "130 - 135",
         "variety": "AMAC-614",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [480]
-      },
-      {
         "days": "130 - 135",
-        "variety": "MRI-624",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [480],
+        "probabilities": [0.9, 0.8, 0.5, 0.1]
       },
       {
+        "variety": "MRI-624, SY-6444, SEEDCO-633, SEEDCO-637, SEEDCO-647, SEEDCO-657",
         "days": "130 - 135",
-        "variety": "SEEDCO-647",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [440],
+        "probabilities": [0.9, 0.8, 0.5, 0.1]
       },
       {
-        "days": "130 - 135",
-        "variety": "SY-6444",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
-      },
-      {
-        "days": "130 - 136",
-        "variety": "SEEDCO-633",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
-      },
-      {
-        "days": "130 - 136",
-        "variety": "SEEDCO-637",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
-      },
-      {
-        "days": "130 - 136",
-        "variety": "SEEDCO-657",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [440]
-      },
-      {
-        "days": "140",
         "variety": "AMAC-612",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [460]
+        "days": "140",
+        "days_lower": 140,
+        "days_upper": 140,
+        "water": [460],
+        "probabilities": [0.9, 0.7, 0.3, 0]
       },
       {
-        "days": "140 - 145",
         "variety": "SEEDCO-719",
-        "probabilities": [0.9, 0.6, 0.2, 0],
-        "water": [470]
+        "days": "140 - 145",
+        "days_lower": 140,
+        "days_upper": 145,
+        "water": [470],
+        "probabilities": [0.9, 0.6, 0.2, 0]
       },
       {
+        "variety": "ZMS-721, AMAC-616",
         "days": "140 - 150",
-        "variety": "ZMS-721",
-        "probabilities": [0.9, 0.6, 0.2, 0],
-        "water": [480]
+        "days_lower": 140,
+        "days_upper": 150,
+        "water": [480],
+        "probabilities": [0.9, 0.5, 0.2, 0]
       },
       {
-        "days": "145",
-        "variety": "AMAC-616",
-        "probabilities": [0.8, 0.4, 0.1, 0],
-        "water": [480]
-      },
-      {
-        "days": "140 - 155",
         "variety": "GANKANTA",
-        "probabilities": [0.9, 0.6, 0.2, 0],
-        "water": [490]
+        "days": "140 - 155",
+        "days_lower": 140,
+        "days_upper": 155,
+        "water": [490],
+        "probabilities": [0.9, 0.5, 0.2, 0]
       },
       {
-        "days": "145 - 150",
         "variety": "SEEDCO-733",
-        "probabilities": [0.8, 0.4, 0.1, 0],
-        "water": [490]
+        "days": "145 - 150",
+        "days_lower": 145,
+        "days_upper": 150,
+        "water": [490],
+        "probabilities": [0.8, 0.5, 0.1, 0]
       },
       {
-        "days": "148 - 150",
         "variety": "SEEDCO-727",
-        "probabilities": [0.8, 0.4, 0.1, 0],
-        "water": [490]
+        "days": "148 - 150",
+        "days_lower": 148,
+        "days_upper": 150,
+        "water": [490],
+        "probabilities": [0.8, 0.4, 0.1, 0]
       }
     ]
   },
@@ -182,28 +152,28 @@
     "crop": "beans",
     "data": [
       {
-        "days": "75 - 80",
         "variety": "KABULANGETI",
-        "probabilities": [1, 1, 1, 1],
-        "water": [260]
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [260],
+        "probabilities": [1, 1, 1, 1]
       },
       {
+        "variety": "MBERESHI, CHAMBISHI",
         "days": "80 - 85",
-        "variety": "CHAMBISHI",
-        "probabilities": [1, 1, 1, 1],
-        "water": [280]
+        "days_lower": 80,
+        "days_upper": 85,
+        "water": [280],
+        "probabilities": [1, 1, 1, 1]
       },
       {
-        "days": "80 - 85",
-        "variety": "MBERESHI",
-        "probabilities": [1, 1, 1, 1],
-        "water": [280]
-      },
-      {
-        "days": "85 - 90",
         "variety": "LUNGWE-BUNGWE",
-        "probabilities": [1, 1, 1, 0.9],
-        "water": [295]
+        "days": "85 - 90",
+        "days_lower": 85,
+        "days_upper": 90,
+        "water": [295],
+        "probabilities": [1, 1, 1, 0.9]
       }
     ]
   },
@@ -211,22 +181,28 @@
     "crop": "groundnuts",
     "data": [
       {
-        "days": "120 - 130",
         "variety": "MGV8",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [425]
+        "days": "120 - 130",
+        "days_lower": 120,
+        "days_upper": 130,
+        "water": [425],
+        "probabilities": [1, 0.9, 0.7, 0.3]
       },
       {
-        "days": "125 - 130",
         "variety": "MGV5",
-        "probabilities": [1, 0.9, 0.6, 0.2],
-        "water": [435]
+        "days": "125 - 130",
+        "days_lower": 125,
+        "days_upper": 130,
+        "water": [435],
+        "probabilities": [1, 0.9, 0.6, 0.2]
       },
       {
-        "days": "130 - 140",
         "variety": "MGV4",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [460]
+        "days": "130 - 140",
+        "days_lower": 130,
+        "days_upper": 140,
+        "water": [460],
+        "probabilities": [0.9, 0.8, 0.4, 0.1]
       }
     ]
   },
@@ -234,16 +210,20 @@
     "crop": "soya-beans",
     "data": [
       {
-        "days": "90 - 120",
         "variety": "KAFUE",
-        "probabilities": [1, 1, 0.9, 0.7],
-        "water": [360]
+        "days": "90 - 120",
+        "days_lower": 90,
+        "days_upper": 120,
+        "water": [360],
+        "probabilities": [1, 1, 0.9, 0.7]
       },
       {
-        "days": "130 - 136",
         "variety": "LUKANGA",
-        "probabilities": [0.9, 0.8, 0.4, 0.1],
-        "water": [455]
+        "days": "130 - 135",
+        "days_lower": 130,
+        "days_upper": 135,
+        "water": [455],
+        "probabilities": [0.9, 0.8, 0.5, 0.1]
       }
     ]
   },
@@ -251,10 +231,12 @@
     "crop": "sunflower",
     "data": [
       {
-        "days": "100 - 110",
         "variety": "MILIKA",
-        "probabilities": [1, 1, 0.9, 0.8],
-        "water": [350]
+        "days": "100 - 110",
+        "days_lower": 100,
+        "days_upper": 110,
+        "water": [350],
+        "probabilities": [1, 1, 0.9, 0.8]
       }
     ]
   }

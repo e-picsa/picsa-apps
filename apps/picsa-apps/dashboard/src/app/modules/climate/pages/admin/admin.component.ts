@@ -1,55 +1,73 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, WritableSignal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IStationData } from '@picsa/models';
+import { ClimateQcFailure, ClimateQcWarning, IStationData } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { allSettledInBatches, arrayToHashmap } from '@picsa/utils';
+import { evaluateStationQualityGates, QC_FAILURE_LABELS } from '@picsa/utils';
 import download from 'downloadjs';
-import JSZip from 'jszip';
 import { unparse } from 'papaparse';
+import { filter, lastValueFrom, map, switchMap } from 'rxjs';
 
-import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { ClimateService, IDataRefreshStatus } from '../../climate.service';
-import { hackConvertStationDataForDisplay } from '../../climate.utils';
+import { ClimateService } from '../../climate.service';
+import { extractStationGenerationMetadata, hackConvertStationDataForDisplay } from '../../climate.utils';
 import { IStationDiffSummary, StationDiffStatus } from '../../climate-diff.types';
 import { CLIMATE_PRODUCTS, compareStationDatasets } from '../../climate-diff.utils';
-import type { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
+import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
+import { StationDetailsDialogComponent } from './components/station-details-dialog/station-details-dialog.component';
 import { StationDiffDialogComponent } from './components/station-diff-dialog/station-diff-dialog.component';
 
-// variables used in quality-control checking data
-const QC_RECENT_YEARS_THRESHOLD = 10;
-const QC_MIN_TOTAL_YEARS_DATA = 30;
-const QC_MIN_RECENT_YEARS_DATA = 7;
-
-interface IStatusUpdate {
-  statuses: IDataRefreshStatus[];
-  started: boolean;
-  completed: boolean;
+function exportCsv(filename: string, data: any[]) {
+  if (!data || data.length === 0) return;
+  const columns = Object.keys(data[0]);
+  const csv = unparse(data, { columns });
+  download(csv, filename, 'text/csv');
 }
 
-type IProductSummary = { id: string; available: boolean };
+export interface IProductSummary {
+  id: string;
+  available: boolean;
+  generation_timestamp?: string;
+  generation_id?: string;
+}
 
 export interface IStationAdminSummary {
   name: string;
   station: IStationRow;
   updated_at?: string;
+  generation_timestamp?: string;
+  generation_id?: string;
   rainfall_data?: IAnnualRainfallSummariesData[];
+  rainfall_year_range?: string;
   rainfall_start_year?: number;
   rainfall_end_year?: number;
   rainfall_total_years?: number;
   rainfall_last_ten_years?: number;
+  rainfall_last_thirty_years?: number;
+  season_discrepancies?: number;
+  season_discrepancies_details?: string;
+  qc_score?: number;
+  qc_passed?: boolean;
+  qc_failures?: ClimateQcFailure[];
+  qc_warnings?: ClimateQcWarning[];
+  qc_warning_reasons?: string[];
+  qc_season_warning?: string;
+  qc_reasons?: string[];
   products: IProductSummary[];
+  monthly_data?: {
+    has_temp: boolean;
+    has_rain: boolean;
+  };
   updateSignal: WritableSignal<IStatusUpdate>;
   /** rainfall csv data for download */
   rainfall_export_data?: IStationData[];
-  rainfall_issues?: number;
-  rainfall_issues_details?: string[];
 }
 
 export interface IStationAppSummary {
@@ -60,6 +78,27 @@ export interface IStationAppSummary {
   total_years: number;
   products: string[];
   app_data: IStationData[];
+  qc_score?: number;
+  qc_passed?: boolean;
+  qc_failures?: ClimateQcFailure[];
+  qc_reasons?: string[];
+}
+
+export interface IProductDiffLine {
+  label: string;
+  summary: string;
+}
+
+export interface IGroupDiffSummary {
+  headlinePercent: number;
+  headlinePercentFormatted: string;
+  diffValuesCount: number;
+  totalValuesCount: number;
+  hasData: boolean;
+  isInSync: boolean;
+  isAppOnly: boolean;
+  isDbOnly: boolean;
+  productLines: IProductDiffLine[];
 }
 
 export interface IStationDiffRow {
@@ -69,24 +108,36 @@ export interface IStationDiffRow {
   diff: IStationDiffSummary;
   app_years_count: number;
   db_years_count: number;
-  years_added: number;
-  years_removed: number;
-  values_changed: number;
-  affected_products_summary: string;
+  updated_at?: string;
+  generation_timestamp?: string;
+  generation_id?: string;
+  season_diff_percent: number;
+  season_diff: number;
+  season_summary: IGroupDiffSummary;
+  temp_diff_percent: number;
+  temp_diff: number;
+  temp_summary: IGroupDiffSummary;
 }
 
-const REFRESH_BATCH_SIZE = 1; // TODO - increase batch size when api more consistent
+interface IStatusUpdate {
+  started: boolean;
+  statuses?: { id: string; status: string }[];
+}
+
+const SEASON_PRODUCT_IDS = ['rainfall', 'start', 'end', 'length'];
+const TEMP_PRODUCT_IDS = ['temp_min', 'temp_max'];
 
 const DB_DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   'name',
-  'updated_at',
-  'rainfall_start_year',
-  'rainfall_end_year',
+  'qc_score',
+  'rainfall_year_range',
   'rainfall_total_years',
+  'rainfall_last_thirty_years',
   'rainfall_last_ten_years',
-  'rainfall_issues',
+  'qc_warnings',
   'products',
-  'rainfall_export_data',
+  'monthly_data',
+  'generation_timestamp',
 ];
 
 const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
@@ -101,12 +152,13 @@ const APP_DISPLAY_COLUMNS: (keyof IStationAppSummary | 'actions')[] = [
 const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
   'name',
   'diff_status',
+  'updated_at',
   'app_years_count',
   'db_years_count',
-  'years_added',
-  'years_removed',
-  'values_changed',
-  'affected_products_summary',
+  'season_diff_percent',
+  'season_diff',
+  'temp_diff_percent',
+  'temp_diff',
   'actions',
 ];
 
@@ -117,7 +169,9 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
     DatePipe,
     MatButtonModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     MatTabsModule,
     MatTooltipModule,
     PicsaDataTableComponent,
@@ -127,52 +181,163 @@ const DIFF_DISPLAY_COLUMNS: (keyof IStationDiffRow | 'actions')[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateAdminPageComponent {
-  private service = inject(ClimateService);
-  private deploymentService = inject(DeploymentDashboardService);
+  public service = inject(ClimateService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
 
-  public showOnlyDiffs = signal(false);
   public refreshCount = signal(-1);
+  public isRefreshingAll = computed(() => this.refreshCount() > -1);
+  public showOnlyDiffs = signal(false);
 
-  private allStationData = signal<IClimateStationData['Row'][]>([]);
-  private allStationDataHashmap = computed(() => arrayToHashmap(this.allStationData(), 'station_id'));
-  private allStationAppData = signal<Record<string, IStationData[]>>({});
+  public allStationData = toSignal(
+    toObservable(this.service.stations).pipe(
+      filter((stations) => stations.length > 0),
+      switchMap((stations) => {
+        const countryCode = this.service.apiCountryCode || (stations[0]?.country_code as any);
+        return this.service.getAllStationData(countryCode);
+      }),
+      map(({ data }) => data || []),
+    ),
+  );
+
+  public isDbLoading = computed(() => {
+    const stations = this.service.stations();
+    return stations.length > 0 && this.allStationData() === undefined;
+  });
+
+  private allStationDataHashmap = computed(() => {
+    const list = this.allStationData() || [];
+    const stations = this.service.stations();
+    const stationIdToSlug = new Map<string, string>();
+    for (const s of stations) {
+      if (s.id && s.station_id) {
+        stationIdToSlug.set(s.id, s.station_id);
+      }
+    }
+    const map: Record<string, IClimateStationData['Row']> = {};
+    for (const row of list) {
+      if (row.station_id) {
+        map[row.station_id] = row;
+        const slug = stationIdToSlug.get(row.station_id);
+        if (slug) {
+          map[slug] = row;
+        }
+      }
+    }
+    return map;
+  });
+
+  /** Bundled CSV app data loaded on deployment/country change */
+  public allStationAppData = toSignal(
+    toObservable(this.service.stations).pipe(
+      filter((stations) => stations.length > 0),
+      switchMap((stations) => {
+        const countryCode = this.service.apiCountryCode || (stations[0]?.country_code as any);
+        return this.service.getAllStationsAppData(countryCode, stations);
+      }),
+    ),
+  );
+
+  public isAppLoading = computed(() => {
+    const stations = this.service.stations();
+    return stations.length > 0 && this.allStationAppData() === undefined;
+  });
+
+  public isDiffLoading = computed(() => this.isDbLoading() || this.isAppLoading());
 
   /** Keep reference to generated row update signals to prevent recreation on data load */
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
 
-  // 1. Database Table Data & Options
-  public dbTableData = computed(() => {
+  // 1. Database Table Data & Options (Consolidated with QC Status & Details)
+  public dbQcFilter = signal<'all' | 'passed' | 'failed'>('all');
+
+  public allDbTableData = computed(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
     return this.generateDbSummaryData(stations, allStationDataHashmap);
   });
 
+  public dbStats = computed(() => {
+    const rows = this.allDbTableData();
+    let passed = 0;
+    let failed = 0;
+    for (const r of rows) {
+      if (r.qc_passed) passed++;
+      else failed++;
+    }
+    return {
+      total: rows.length,
+      passed,
+      failed,
+    };
+  });
+
+  public dbTableData = computed(() => {
+    const rows = this.allDbTableData();
+    const filterMode = this.dbQcFilter();
+    if (filterMode === 'passed') return rows.filter((r) => r.qc_passed);
+    if (filterMode === 'failed') return rows.filter((r) => !r.qc_passed);
+    return rows;
+  });
+
+  public setDbQcFilter(mode: 'all' | 'passed' | 'failed'): void {
+    if (this.dbQcFilter() === mode) {
+      this.dbQcFilter.set('all');
+    } else {
+      this.dbQcFilter.set(mode);
+    }
+  }
+
+  public openStationDetailsDialog(station: IStationRow): void {
+    const allStationDataHashmap = this.allStationDataHashmap();
+    const stationData =
+      (station.id ? allStationDataHashmap[station.id] : undefined) ||
+      (station.station_id ? allStationDataHashmap[station.station_id] : undefined) ||
+      null;
+
+    this.dialog.open(StationDetailsDialogComponent, {
+      data: { station, stationData },
+      width: '92vw',
+      maxWidth: '1280px',
+      height: '90vh',
+      maxHeight: '90vh',
+      panelClass: 'no-padding',
+    });
+  }
+
   public dbTableOptions: IDataTableOptions = {
     displayColumns: DB_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationAdminSummary) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    sort: { id: 'name', start: 'asc' },
+    handleRowClick: ({ station }: IStationAdminSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
-      if (v === 'station') return '';
+      if (v === 'name') return 'Station';
+      if (v === 'qc_score' || v === 'qc_passed') return 'QC Status';
+      if (v === 'rainfall_year_range') return 'Years Range';
+      if (v === 'rainfall_total_years') return 'Total Years';
+      if (v === 'rainfall_last_thirty_years') return 'Past 30 Years';
+      if (v === 'rainfall_last_ten_years') return 'Past 10 Years';
+      if (v === 'qc_warnings') return 'Warnings';
+      if (v === 'products') return 'Products 🌧  🌡  🌾';
+      if (v === 'monthly_data') return 'Monthly 🌧  🌡';
+      if (v === 'generation_timestamp' || v === 'updated_at') return 'Data Generated';
       return formatHeaderDefault(v);
     },
   };
 
   // 2. App Bundled Table Data & Options
-  public appTableData = computed(() => {
+  public appTableData = computed<IStationAppSummary[]>(() => {
     const stations = this.service.stations();
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
     return this.generateAppSummaryData(stations, allStationAppData);
   });
 
   public appTableOptions: IDataTableOptions = {
     displayColumns: APP_DISPLAY_COLUMNS,
-    handleRowClick: ({ station }: IStationAppSummary) =>
-      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    handleRowClick: ({ station }: IStationAppSummary) => this.openStationDetailsDialog(station),
     formatHeader: (v) => {
-      if (v === 'has_bundled_data') return 'Bundled CSV';
+      if (v === 'name') return 'Station';
+      if (v === 'has_bundled_data') return 'Bundled Status';
       if (v === 'year_range') return 'Year Range';
       if (v === 'total_years') return 'Total Years';
       if (v === 'products') return 'Available Products';
@@ -181,39 +346,14 @@ export class ClimateAdminPageComponent {
     },
   };
 
-  // 3. Diff Table Data & Options
-  private allDiffRows = computed(() => {
+  // 3. Data Comparison (Diff) Table Data & Options
+  private allDiffRows = computed<IStationDiffRow[]>(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
-    const allStationAppData = this.allStationAppData();
+    const allStationAppData = this.allStationAppData() || {};
     return this.generateDiffSummaryData(stations, allStationDataHashmap, allStationAppData);
   });
 
-  public diffTableData = computed(() => {
-    const rows = this.allDiffRows();
-    if (this.showOnlyDiffs()) {
-      return rows.filter((r) => r.diff_status === 'diff');
-    }
-    return rows;
-  });
-
-  public diffTableOptions: IDataTableOptions = {
-    displayColumns: DIFF_DISPLAY_COLUMNS,
-    handleRowClick: (row: IStationDiffRow) => this.openStationDiffDialog(row.station),
-    formatHeader: (v) => {
-      if (v === 'diff_status') return 'Status';
-      if (v === 'app_years_count') return 'App Years';
-      if (v === 'db_years_count') return 'Data System Years';
-      if (v === 'years_added') return 'Data System Added (+Y)';
-      if (v === 'years_removed') return 'Data System Missing (-Y)';
-      if (v === 'values_changed') return 'Value Diffs (~Z)';
-      if (v === 'affected_products_summary') return 'Divergent Products';
-      if (v === 'actions') return 'Action';
-      return formatHeaderDefault(v);
-    },
-  };
-
-  // Diff KPI Stats
   public diffStats = computed(() => {
     const rows = this.allDiffRows();
     let inSync = 0;
@@ -238,157 +378,144 @@ export class ClimateAdminPageComponent {
     };
   });
 
-  constructor() {
-    effect(async () => {
-      const country_code = this.deploymentService.activeDeployment()?.country_code;
-      const stations = this.service.stations();
-      if (country_code) {
-        await this.updateAllStationsData(country_code, stations);
+  public diffFilter = signal<'all' | 'in_sync' | 'diff' | 'db_only' | 'app_only'>('all');
+
+  public setDiffFilter(mode: 'all' | 'in_sync' | 'diff' | 'db_only' | 'app_only'): void {
+    const next = this.diffFilter() === mode ? 'all' : mode;
+    this.diffFilter.set(next);
+    this.showOnlyDiffs.set(next === 'diff');
+  }
+
+  public diffTableData = computed<IStationDiffRow[]>(() => {
+    const rows = this.allDiffRows();
+    const filterMode = this.diffFilter();
+    if (filterMode === 'all') {
+      if (this.showOnlyDiffs()) {
+        return rows.filter((r) => r.diff_status === 'diff');
       }
-    });
+      return rows;
+    }
+    return rows.filter((r) => r.diff_status === filterMode);
+  });
+
+  public diffTableOptions: IDataTableOptions = {
+    displayColumns: DIFF_DISPLAY_COLUMNS,
+    handleRowClick: (row: IStationDiffRow) => this.openStationDiffDialog(row.station),
+    formatHeader: (v) => {
+      if (v === 'name') return 'Station';
+      if (v === 'diff_status') return 'Status';
+      if (v === 'updated_at') return 'Data System Generated';
+      if (v === 'app_years_count') return 'App Years';
+      if (v === 'db_years_count') return 'Data System Years';
+      if (v === 'season_diff_percent') return 'Season Change %';
+      if (v === 'season_diff') return 'Season Change';
+      if (v === 'temp_diff_percent') return 'Temp Change %';
+      if (v === 'temp_diff') return 'Temp Change';
+      if (v === 'actions') return 'Action';
+      return formatHeaderDefault(v);
+    },
+  };
+
+  public getQcScoreColorClass(rowOrScore?: IStationAdminSummary | number): string {
+    const score = typeof rowOrScore === 'number' ? rowOrScore : rowOrScore?.qc_score;
+    // Failures (< 0) - ordered by failure severity with lighter/paler shades
+    if (score === undefined || score <= -3) return 'text-rose-700';
+    if (score === -2) return 'text-rose-500';
+    if (score === -1) return 'text-amber-500';
+
+    // Passes (>= 30) - strictly tiered by score so rows remain cleanly grouped without alternating
+    if (score < 40) return 'text-teal-500';
+    if (score < 60) return 'text-emerald-500';
+    return 'text-emerald-600';
   }
 
-  // --- Actions ---
-
-  public async downloadAllStationsCSV() {
-    const zip = new JSZip();
-    for (const entry of this.dbTableData()) {
-      const { rainfall_export_data } = entry;
-      if (rainfall_export_data && rainfall_export_data.length > 0) {
-        const columns = Object.keys(rainfall_export_data[0]);
-        const csv = unparse(rainfall_export_data, { columns });
-        zip.file(`${entry.station.station_id}.csv`, csv);
-      }
+  public getQcStatusTooltip(row: IStationAdminSummary): string {
+    const score = row.qc_score ?? (row.qc_passed ? 30 : -3);
+    if (score < 0) {
+      const count = Math.abs(score);
+      const failWord = count === 1 ? 'check' : 'checks';
+      const reasons =
+        row.qc_reasons && row.qc_reasons.length > 0 ? row.qc_reasons : ['Quality control criteria not met'];
+      return [`Quality Control: Failed (${count} ${failWord} failed)`, ...reasons.map((r) => `✕ ${r}`)].join('\n');
     }
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const country_code = this.deploymentService.activeDeployment()?.country_code;
-    download(blob, `${country_code}_rainfall_summaries.zip`);
+    const lines = [
+      `Quality Control: Passed (${score} years recorded)`,
+      '✓ Total rainfall record ≥ 30 years',
+      '✓ Past 30 years record ≥ 10 years',
+      '✓ Recent data in past 10 years present',
+    ];
+    if (row.qc_warning_reasons && row.qc_warning_reasons.length > 0) {
+      lines.push('Warnings:');
+      lines.push(...row.qc_warning_reasons.map((w) => `⚠ ${w}`));
+    }
+    return lines.join('\n');
   }
 
-  public downloadStationCSV(summary: IStationAdminSummary, e: Event) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    const rainfall_export_data = summary.rainfall_export_data;
-    if (rainfall_export_data && rainfall_export_data.length > 0) {
-      const station_id = summary.station.station_id;
-      const columns = Object.keys(rainfall_export_data[0]);
-      const csv = unparse(rainfall_export_data, { columns });
-      download(csv, `${station_id}.csv`, 'text/csv');
+  public getWarningLines(row: IStationAdminSummary): string[] {
+    if (row.qc_warning_reasons && row.qc_warning_reasons.length > 0) {
+      return row.qc_warning_reasons;
     }
+    if (row.qc_season_warning) {
+      return row.qc_season_warning.split(', ').filter(Boolean);
+    }
+    return [];
   }
 
-  public async downloadAllAppStationsCSV() {
-    const zip = new JSZip();
-    const appDataHashmap = this.allStationAppData();
-    for (const station of this.service.stations()) {
-      const data = appDataHashmap[station.station_id];
-      if (data && data.length > 0) {
-        const columns = Object.keys(data[0]);
-        const csv = unparse(data, { columns });
-        zip.file(`${station.station_id}.csv`, csv);
-      }
-    }
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const country_code = this.deploymentService.activeDeployment()?.country_code;
-    download(blob, `${country_code}_bundled_app_summaries.zip`);
+  public getQcFailureLabel(failure: ClimateQcFailure): string {
+    return QC_FAILURE_LABELS[failure] || failure;
   }
 
-  public downloadAppStationCSV(row: IStationAppSummary, e: Event) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (row.app_data && row.app_data.length > 0) {
-      const columns = Object.keys(row.app_data[0]);
-      const csv = unparse(row.app_data, { columns });
-      download(csv, `${row.station.station_id}.csv`, 'text/csv');
+  public getProductTooltip(product: IProductSummary): string {
+    if (!product.available) {
+      return `${product.id} (No data / Error - click to refresh)`;
     }
-  }
-
-  /** Trigger station refresh and subscribe to changes, updating individual station signal to track in UI */
-  public refreshStation(summary: IStationAdminSummary, e?: Event) {
-    if (e) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    }
-    const { station, updateSignal } = summary;
-    updateSignal.update((v) => ({ ...v, started: true }));
-
-    return new Promise<void>((resolve, reject) => {
-      this.service.updateStationDataFromApi(station).subscribe({
-        next: (status) => {
-          updateSignal.update(({ statuses, ...rest }) => {
-            statuses[status.index] = status;
-            return { ...rest, statuses: [...statuses] };
-          });
-        },
-        error: (err) => {
-          console.error(err);
-          reject(err);
-        },
-        complete: async () => {
-          updateSignal.update((v) => ({ ...v, completed: true }));
-          if (e) {
-            await this.updateAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
-          }
-          resolve();
-        },
+    let tip = product.id;
+    if (product.generation_timestamp) {
+      const formattedDate = new Date(product.generation_timestamp).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
       });
-    });
+      tip += ` (Generated: ${formattedDate}`;
+      if (product.generation_id) {
+        tip += ` • ID: ${product.generation_id}`;
+      }
+      tip += ')';
+    } else if (product.generation_id) {
+      tip += ` (ID: ${product.generation_id})`;
+    }
+    return tip;
   }
 
-  /** Trigger data refresh for all stations */
-  public async refreshAllStations() {
-    this.refreshCount.set(0);
+  public getMonthlyTooltip(monthly?: { has_temp: boolean; has_rain: boolean }): string {
+    return [
+      `Monthly Rainfall: ${monthly?.has_rain ? 'Available' : 'Missing'}`,
+      `Monthly Temperature: ${monthly?.has_temp ? 'Available' : 'Missing'}`,
+    ].join('\n');
+  }
 
-    const promises: (() => Promise<any>)[] = [];
-    for (const summary of this.dbTableData()) {
-      summary.updateSignal.update((v) => ({ ...v, started: true }));
-      promises.push(async () => {
-        try {
-          await this.refreshStation(summary);
-        } catch (error) {
-          console.error(`[${summary.station.station_id}]`, (error as any).message);
-        } finally {
-          this.refreshCount.update((v) => v + 1);
-        }
+  public getGenerationTooltip(timestamp?: string, id?: string, syncedAt?: string): string {
+    const lines: string[] = [];
+    if (timestamp) {
+      const formattedDate = new Date(timestamp).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
       });
+      lines.push(`Generated: ${formattedDate}`);
     }
-    await allSettledInBatches(promises, REFRESH_BATCH_SIZE);
-    await this.updateAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
-    this.refreshCount.set(-1);
-  }
-
-  public handleSummaryClick(e: Event, row: IStationAdminSummary, updateStatus: IDataRefreshStatus) {
-    e.stopImmediatePropagation();
-    if (updateStatus.status === 'rejected') {
-      return this.refreshStation(row);
+    if (id) {
+      lines.push(`Generation ID: ${id}`);
     }
-    return;
-  }
-
-  /** Open Station Diff and Chart Comparison Preview Dialog */
-  public openStationDiffDialog(station: IStationRow, e?: Event) {
-    if (e) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
+    if (syncedAt) {
+      const syncedDate = new Date(syncedAt).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      lines.push(`Last Synced: ${syncedDate}`);
     }
-    const stationId = station.station_id;
-    const appData = this.allStationAppData()[stationId] || [];
-    const stationData = this.allStationDataHashmap()[station.id as string];
-    const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
-    const diffSummary = compareStationDatasets(stationId, appData, dbData);
-
-    this.dialog.open(StationDiffDialogComponent, {
-      data: {
-        station,
-        diffSummary,
-        appData,
-        dbData,
-      },
-      panelClass: 'no-padding',
-      autoFocus: false,
-      width: '950px',
-      maxWidth: '95vw',
-    });
+    return lines.join('\n');
   }
 
   public getDiffTooltip(diff?: IStationDiffSummary): string {
@@ -425,67 +552,190 @@ export class ClimateAdminPageComponent {
     );
   }
 
-  // --- Data Generator Helpers ---
+  public handleSummaryClick(e: Event, row: IStationAdminSummary, updateStatus: any): void {
+    e.stopImmediatePropagation();
+    if (updateStatus.status === 'rejected') {
+      void this.refreshStation(row);
+    }
+  }
 
-  private generateDbSummaryData(
-    stations: IStationRow[],
-    allStationDataHashmap: Record<string, IClimateStationData['Row']>,
-  ): IStationAdminSummary[] {
-    return stations.map((station) => {
-      let summary: IStationAdminSummary = {
+  public openStationDiffDialog(station: IStationRow, event?: MouseEvent | Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+
+    const stationId = station.station_id;
+    const allStationDataHashmap = this.allStationDataHashmap();
+    const allStationAppData = this.allStationAppData() || {};
+
+    const stationData =
+      (station.id ? allStationDataHashmap[station.id] : undefined) ||
+      (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
+    const dbData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
+    const appData = allStationAppData[stationId] || [];
+    const diffSummary = compareStationDatasets(stationId, appData, dbData);
+
+    this.dialog.open(StationDiffDialogComponent, {
+      data: {
         station,
-        name: station.station_name as string,
-        updateSignal: this.getRowUpdateSignal(station),
-        products: [],
-      };
-      const stationData = allStationDataHashmap[station.id as string];
-      if (stationData) {
-        summary.updated_at = stationData.updated_at;
-        summary.products = this.generateProductSummary(stationData);
-        summary = { ...summary, ...this.generateRainfallSummary(stationData) };
-      }
-      return summary;
+        diffSummary,
+        appData,
+        dbData,
+        stationData,
+      },
+      panelClass: 'no-padding',
+      autoFocus: false,
+      width: '950px',
+      maxWidth: '95vw',
     });
   }
 
-  private generateAppSummaryData(
-    stations: IStationRow[],
-    allStationAppData: Record<string, IStationData[]>,
-  ): IStationAppSummary[] {
-    return stations.map((station) => {
-      const appData = allStationAppData[station.station_id] || [];
-      const has_bundled_data = appData.length > 0;
-      const years = appData
-        .map((d) => d.Year)
-        .filter((y): y is number => typeof y === 'number' && !Number.isNaN(y))
-        .sort((a, b) => a - b);
+  public async refreshStation(summary: IStationAdminSummary, event?: MouseEvent) {
+    if (event) event.stopPropagation();
+    summary.updateSignal.update((signal) => ({ ...signal, started: true }));
+    for (const product of summary.products) {
+      product.available = false;
+    }
+    await lastValueFrom(this.service.updateStationDataFromApi(summary.station));
+    const { data } = await this.service.getStationData(summary.station.id as string);
+    if (data) {
+      const rainfallSummary = this.generateRainfallSummary(data);
+      Object.assign(summary, rainfallSummary);
+      summary.products = this.generateProductSummary(data);
+      summary.monthly_data = this.generateMonthlySummary(data);
+      summary.updated_at = data.updated_at || undefined;
+      const { generation_timestamp, generation_id } = extractStationGenerationMetadata(data);
+      summary.generation_timestamp = generation_timestamp;
+      summary.generation_id = generation_id;
+    }
+    summary.updateSignal.update((signal) => ({ ...signal, started: false }));
+  }
 
-      const year_range = years.length > 0 ? `${years[0]} - ${years[years.length - 1]}` : '-';
-      const total_years = years.length;
+  public async refreshAllStations() {
+    this.refreshCount.set(0);
+    const stations = this.service.stations();
+    await stations.reduce(async (prevPromise, station) => {
+      await prevPromise;
+      await lastValueFrom(this.service.updateStationDataFromApi(station));
+      this.refreshCount.update((count) => count + 1);
+    }, Promise.resolve());
+    this.refreshCount.set(-1);
+  }
 
-      const productsFound: string[] = [];
-      for (const p of CLIMATE_PRODUCTS) {
-        const hasData = appData.some((row) =>
-          p.keys.some((k) => {
-            const val = row[k];
-            return typeof val === 'number' && !Number.isNaN(val);
-          }),
-        );
-        if (hasData) {
-          productsFound.push(p.label);
-        }
+  public downloadStationCSV(row: IStationAdminSummary | IStationAppSummary, event?: MouseEvent) {
+    if (event) event.stopPropagation();
+    let data;
+    if ('rainfall_export_data' in row) {
+      data = row.rainfall_export_data;
+    } else if ('app_data' in row) {
+      data = row.app_data;
+    }
+
+    if (!data || data.length === 0) return;
+    const filename = `${row.station.station_id}.csv`;
+    exportCsv(filename, data);
+  }
+
+  public downloadAllAppStationsCSV() {
+    const allStationAppData = this.allStationAppData() || {};
+    for (const station of this.service.stations()) {
+      const data = allStationAppData[station.station_id];
+      if (data && data.length > 0) {
+        exportCsv(`${station.station_id}.csv`, data);
+      }
+    }
+  }
+
+  private calculateGroupDiffSummary(diff: IStationDiffSummary, productIds: string[]): IGroupDiffSummary {
+    const productLines: IProductDiffLine[] = [];
+    let hasData = false;
+    let anyOutOfSync = false;
+    let hasAppDataInGroup = false;
+    let hasDbDataInGroup = false;
+    let groupDiffValuesCount = 0;
+    let groupTotalValuesCount = 0;
+
+    for (const pid of productIds) {
+      const prodSummary = diff.products[pid];
+      if (!prodSummary || !prodSummary.hasData) {
+        continue;
+      }
+      hasData = true;
+      if (prodSummary.appYearSpan !== null) {
+        hasAppDataInGroup = true;
+      }
+      if (prodSummary.dbYearSpan !== null) {
+        hasDbDataInGroup = true;
       }
 
-      return {
-        station,
-        name: station.station_name as string,
-        has_bundled_data,
-        year_range,
-        total_years,
-        products: productsFound,
-        app_data: appData,
-      };
-    });
+      const totalProdValues =
+        prodSummary.totalValuesCount ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupTotalValuesCount += totalProdValues;
+
+      const prodDiffCount =
+        prodSummary.changes?.length ??
+        prodSummary.yearsAdded.length + prodSummary.yearsRemoved.length + prodSummary.changedCount;
+      groupDiffValuesCount += prodDiffCount;
+
+      if (!prodSummary.isInSync) {
+        anyOutOfSync = true;
+        const parts: string[] = [];
+        if (prodSummary.yearsAdded.length > 0) parts.push(`+${prodSummary.yearsAdded.length}`);
+        if (prodSummary.yearsRemoved.length > 0) parts.push(`-${prodSummary.yearsRemoved.length}`);
+        if (prodSummary.changedCount > 0) parts.push(`~${prodSummary.changedCount}`);
+
+        productLines.push({
+          label: prodSummary.label,
+          summary: parts.join(', '),
+        });
+      }
+    }
+
+    if (groupTotalValuesCount === 0 && groupDiffValuesCount > 0) {
+      groupTotalValuesCount = groupDiffValuesCount;
+    }
+
+    const isAppOnly = (hasAppDataInGroup && !hasDbDataInGroup) || diff.status === 'app_only';
+    const isDbOnly = (!hasAppDataInGroup && hasDbDataInGroup) || diff.status === 'db_only';
+
+    // For app-only, we do not propose any changes to the app, so suppress breakdowns
+    const finalProductLines = isAppOnly ? [] : productLines;
+
+    const isInSync = hasData && !anyOutOfSync;
+
+    // Suppress 100% headline calculation for db_only and app_only
+    let headlinePercent = 0;
+    let headlinePercentFormatted = '';
+
+    if (!isAppOnly && !isDbOnly && groupTotalValuesCount > 0) {
+      headlinePercent = (groupDiffValuesCount / groupTotalValuesCount) * 100;
+      headlinePercentFormatted = this.formatHeadlinePercent(headlinePercent, groupDiffValuesCount);
+    }
+
+    return {
+      headlinePercent,
+      headlinePercentFormatted,
+      diffValuesCount: groupDiffValuesCount,
+      totalValuesCount: groupTotalValuesCount,
+      hasData,
+      isInSync,
+      isAppOnly,
+      isDbOnly,
+      productLines: finalProductLines,
+    };
+  }
+
+  private formatHeadlinePercent(percent: number, diffCount: number): string {
+    if (diffCount === 0 || percent === 0) {
+      return '0%';
+    }
+    const rounded = Number(percent.toFixed(1));
+    if (rounded === 0) {
+      return '<0.1%';
+    }
+    return `${rounded}%`;
   }
 
   private generateDiffSummaryData(
@@ -496,28 +746,22 @@ export class ClimateAdminPageComponent {
     return stations.map((station) => {
       const stationId = station.station_id;
       const appData = allStationAppData[stationId] || [];
-      const stationData = allStationDataHashmap[station.id as string];
+      const stationData =
+        (station.id ? allStationDataHashmap[station.id] : undefined) ||
+        (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
       const dbDisplayData = stationData ? hackConvertStationDataForDisplay(stationData) : [];
       const diff = compareStationDatasets(stationId, appData, dbDisplayData);
 
-      const affected: string[] = [];
-      for (const p of CLIMATE_PRODUCTS) {
-        const prodSummary = diff.products[p.id];
-        if (prodSummary && !prodSummary.isInSync && prodSummary.hasData) {
-          const parts: string[] = [];
-          if (prodSummary.yearsAdded.length > 0) parts.push(`+${prodSummary.yearsAdded.length}`);
-          if (prodSummary.yearsRemoved.length > 0) parts.push(`-${prodSummary.yearsRemoved.length}`);
-          if (prodSummary.changedCount > 0) parts.push(`~${prodSummary.changedCount}`);
-          affected.push(`${p.label} (${parts.join(', ')})`);
-        }
-      }
-
-      const affected_products_summary = affected.length > 0 ? affected.join('; ') : '-';
+      const season_summary = this.calculateGroupDiffSummary(diff, SEASON_PRODUCT_IDS);
+      const temp_summary = this.calculateGroupDiffSummary(diff, TEMP_PRODUCT_IDS);
 
       const appYears = appData.map((d) => d.Year).filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
       const dbYears = dbDisplayData
         .map((d) => d.Year)
         .filter((y): y is number => typeof y === 'number' && !Number.isNaN(y));
+
+      const { generation_timestamp: genTimestamp, generation_id: genId } =
+        extractStationGenerationMetadata(stationData);
 
       return {
         name: station.station_name as string,
@@ -526,89 +770,223 @@ export class ClimateAdminPageComponent {
         diff,
         app_years_count: appYears.length,
         db_years_count: dbYears.length,
-        years_added: diff.totalYearsAddedCount,
-        years_removed: diff.totalYearsRemovedCount,
-        values_changed: diff.totalChangedValuesCount,
-        affected_products_summary,
+        updated_at: stationData?.updated_at,
+        generation_timestamp: genTimestamp,
+        generation_id: genId,
+        season_diff_percent: season_summary.headlinePercent,
+        season_diff: season_summary.diffValuesCount,
+        season_summary,
+        temp_diff_percent: temp_summary.headlinePercent,
+        temp_diff: temp_summary.diffValuesCount,
+        temp_summary,
       };
     });
   }
 
-  /** Generate summaries of rainfall-related products */
-  private generateRainfallSummary(stationData: IClimateStationData['Row']): Partial<IStationAdminSummary> {
+  private generateDbSummaryData(
+    stations: IStationRow[],
+    allStationDataHashmap: Record<string, IClimateStationData['Row']>,
+  ): IStationAdminSummary[] {
+    return stations.map((station) => {
+      const stationData =
+        (station.id ? allStationDataHashmap[station.id] : undefined) ||
+        (station.station_id ? allStationDataHashmap[station.station_id] : undefined);
+      const rainfallSummary = this.generateRainfallSummary(stationData);
+      const updateSignal = this.getOrCreateRowUpdateSignal(station);
+      const { generation_timestamp, generation_id } = extractStationGenerationMetadata(stationData);
+      return {
+        name: station.station_name as string,
+        station,
+        updated_at: stationData?.updated_at || undefined,
+        generation_timestamp,
+        generation_id,
+        products: this.generateProductSummary(stationData),
+        monthly_data: this.generateMonthlySummary(stationData),
+        updateSignal,
+        ...rainfallSummary,
+      };
+    });
+  }
+
+  private generateProductSummary(stationData: IClimateStationData['Row'] | undefined): IProductSummary[] {
+    if (!stationData) {
+      return this.defaultProductSummaries();
+    }
+    return [
+      this.createProductSummary(
+        'Annual Rainfall',
+        stationData.annual_rainfall_data,
+        stationData.annual_rainfall_metadata,
+      ),
+      this.createProductSummary(
+        'Annual Temperature',
+        stationData.annual_temperature_data,
+        stationData.annual_temperature_metadata,
+      ),
+      this.createProductSummary(
+        'Crop Probabilities',
+        stationData.crop_probability_data,
+        stationData.crop_probability_metadata,
+      ),
+    ];
+  }
+
+  private defaultProductSummaries(): IProductSummary[] {
+    return [
+      { id: 'Annual Rainfall', available: false },
+      { id: 'Annual Temperature', available: false },
+      { id: 'Crop Probabilities', available: false },
+    ];
+  }
+
+  private generateMonthlySummary(stationData: IClimateStationData['Row'] | undefined): {
+    has_temp: boolean;
+    has_rain: boolean;
+  } {
+    return {
+      has_temp: this.hasProductData(stationData?.monthly_temperature_data),
+      has_rain: this.hasProductData(stationData?.monthly_rainfall_data),
+    };
+  }
+
+  private createProductSummary(id: string, data: unknown, metadata?: unknown): IProductSummary {
+    const available = this.hasProductData(data);
+    const meta = metadata as { generation_timestamp?: string; generation_id?: string } | null | undefined;
+    const generation_timestamp = meta?.generation_timestamp;
+    const generation_id = meta?.generation_id;
+
+    return {
+      id,
+      available,
+      generation_timestamp,
+      generation_id,
+    };
+  }
+
+  private detectAppProducts(appData: IStationData[]): string[] {
+    const products: string[] = [];
+    if (appData.some((row) => row.Rainfall !== undefined && row.Rainfall !== null)) {
+      products.push('Rainfall');
+    }
+    if (
+      appData.some(
+        (row) =>
+          (row.mean_tmin !== undefined && row.mean_tmin !== null) ||
+          (row.mean_tmax !== undefined && row.mean_tmax !== null),
+      )
+    ) {
+      products.push('Temperature');
+    }
+    if (
+      appData.some(
+        (row) =>
+          (row.Start !== undefined && row.Start !== null) ||
+          (row.End !== undefined && row.End !== null) ||
+          (row.Length !== undefined && row.Length !== null),
+      )
+    ) {
+      products.push('Crop');
+    }
+    return products;
+  }
+
+  private generateAppSummaryData(
+    stations: IStationRow[],
+    allStationAppData: Record<string, IStationData[]>,
+  ): IStationAppSummary[] {
+    return stations.map((station) => {
+      const appData = allStationAppData[station.station_id] || [];
+      const has_bundled_data = appData.length > 0;
+      const years = appData.map((d) => d.Year).filter((y): y is number => typeof y === 'number' && !isNaN(y));
+      const year_range = years.length > 0 ? `${Math.min(...years)} - ${Math.max(...years)}` : '';
+      const total_years = years.length;
+      const products = this.detectAppProducts(appData);
+
+      return {
+        name: station.station_name as string,
+        station,
+        has_bundled_data,
+        year_range,
+        total_years,
+        products,
+        app_data: appData,
+      };
+    });
+  }
+
+  private generateRainfallSummary(stationData: IClimateStationData['Row'] | undefined): Partial<IStationAdminSummary> {
+    if (!stationData) {
+      const qc = evaluateStationQualityGates([]);
+      return {
+        rainfall_data: [],
+        rainfall_year_range: '—',
+        rainfall_total_years: 0,
+        rainfall_last_ten_years: 0,
+        rainfall_last_thirty_years: 0,
+        season_discrepancies: 0,
+        qc_score: qc.qc_score,
+        qc_passed: qc.passed,
+        qc_failures: qc.failures,
+        qc_reasons: qc.reasons,
+      };
+    }
     const { annual_rainfall_data } = stationData;
     if (annual_rainfall_data) {
       const rainfall_data = annual_rainfall_data as IAnnualRainfallSummariesData[];
       const rainfall_export_data = hackConvertStationDataForDisplay(stationData).sort((a, b) => a.Year - b.Year);
-      const completeEntries = rainfall_export_data.filter((v) => v.Start && v.End && v.Length && v.Rainfall);
-      const recentYear = new Date().getFullYear() - QC_RECENT_YEARS_THRESHOLD;
-      const rainfall_total_years = completeEntries.length;
-      const rainfall_last_ten_years = completeEntries.filter((v) => v.Year >= recentYear).length;
-
-      const issues: string[] = [];
-      if (rainfall_total_years < QC_MIN_TOTAL_YEARS_DATA) {
-        if (rainfall_total_years === 0) {
-          issues.push(`No Complete Data`);
-        } else {
-          issues.push(`Only ${rainfall_total_years} Years Complete Data`);
-        }
-      }
-      if (rainfall_last_ten_years < QC_MIN_RECENT_YEARS_DATA) {
-        if (rainfall_last_ten_years === 0) {
-          issues.push(`No Recent Data`);
-        } else {
-          issues.push(`Only ${rainfall_last_ten_years} Years Recent Data`);
-        }
-      }
+      const qc = evaluateStationQualityGates(rainfall_export_data);
+      const rainfall_start_year = qc.rainfallStartYear;
+      const rainfall_end_year = qc.rainfallEndYear;
+      const rainfall_year_range =
+        rainfall_start_year && rainfall_end_year ? `${rainfall_start_year} – ${rainfall_end_year}` : '—';
 
       return {
         rainfall_data,
-        rainfall_start_year: rainfall_export_data[0]?.Year,
-        rainfall_end_year: rainfall_export_data[rainfall_export_data.length - 1]?.Year,
-        rainfall_total_years,
-        rainfall_last_ten_years,
+        rainfall_year_range,
+        rainfall_start_year,
+        rainfall_end_year,
+        rainfall_total_years: qc.totalRainfallYears,
+        rainfall_last_ten_years: qc.recentTenYearsCount,
+        rainfall_last_thirty_years: qc.recentThirtyYearsCount,
+        season_discrepancies: qc.seasonDiscrepanciesCount,
+        season_discrepancies_details: qc.seasonDiscrepancySummary,
+        qc_score: qc.qc_score,
+        qc_passed: qc.passed,
+        qc_failures: qc.failures,
+        qc_warnings: qc.warnings,
+        qc_warning_reasons: qc.warningReasons,
+        qc_season_warning: qc.seasonDiscrepancySummary,
+        qc_reasons: qc.reasons,
         rainfall_export_data,
-        rainfall_issues_details: issues,
-        rainfall_issues: issues.length,
       };
     }
-    return {};
+    const qc = evaluateStationQualityGates([]);
+    return {
+      rainfall_data: [],
+      rainfall_year_range: '—',
+      rainfall_total_years: 0,
+      rainfall_last_ten_years: 0,
+      rainfall_last_thirty_years: 0,
+      season_discrepancies: 0,
+      qc_score: qc.qc_score,
+      qc_passed: qc.passed,
+      qc_failures: qc.failures,
+      qc_reasons: qc.reasons,
+    };
   }
 
-  private generateProductSummary(stationData: IClimateStationData['Row']) {
-    const { annual_rainfall_data, annual_temperature_data, crop_probability_data, monthly_temperature_data } =
-      stationData;
-    const productSummaries: IProductSummary[] = [
-      { id: 'Annual Rainfall', available: annual_rainfall_data !== null },
-      { id: 'Crop Probabilities', available: crop_probability_data !== null },
-      { id: 'Annual Temperatures', available: annual_temperature_data !== null },
-      { id: 'Monthly Temperatures', available: monthly_temperature_data !== null },
-    ];
-    return productSummaries;
+  private getOrCreateRowUpdateSignal(station: IStationRow): WritableSignal<IStatusUpdate> {
+    const existing = this.rowUpdateSignals.get(station.station_id);
+    if (existing) return existing;
+    const initialSignal = signal<IStatusUpdate>({ started: false });
+    this.rowUpdateSignals.set(station.station_id, initialSignal);
+    return initialSignal;
   }
 
-  /** create or reuse signal to provide live data refresh updates */
-  private getRowUpdateSignal(station: IStationRow) {
-    const { station_id } = station;
-    const existingSignal = this.rowUpdateSignals.get(station_id);
-    if (existingSignal) return existingSignal;
-    else {
-      const createdSignal = signal({ statuses: [], started: false, completed: false });
-      this.rowUpdateSignals.set(station_id, createdSignal);
-      return createdSignal;
-    }
-  }
-
-  private async updateAllStationsData(countryCode: string, stations?: IStationRow[]) {
-    const targetStations = stations || this.service.stations();
-    const { data, error } = await this.service.getAllStationData(countryCode);
-    if (error) {
-      console.error(error);
-    }
-    if (data) {
-      this.allStationData.set(data);
-    }
-    const appData = await this.service.getAllStationsAppData(countryCode, targetStations);
-    this.allStationAppData.set(appData);
+  private hasProductData(data: unknown): boolean {
+    if (!data) return false;
+    if (Array.isArray(data)) return data.length > 0;
+    if (typeof data === 'object') return Object.keys(data).length > 0;
+    return true;
   }
 }

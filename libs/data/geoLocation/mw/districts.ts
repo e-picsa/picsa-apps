@@ -18,7 +18,7 @@ const MW_DISTRICTS = [
   { id: 'mzimba', label: 'Mzimba' },
   { id: 'nkhata_bay', label: 'Nkhata Bay' },
   { id: 'nkhotakota', label: 'Nkhotakota' },
-  { id: 'nneno', label: 'Nneno' },
+  { id: 'nneno', label: 'Nneno', topoName: 'Neno' },
   { id: 'nsanje', label: 'Nsanje' },
   { id: 'ntcheu', label: 'Ntcheu' },
   { id: 'ntchisi', label: 'Ntchisi' },

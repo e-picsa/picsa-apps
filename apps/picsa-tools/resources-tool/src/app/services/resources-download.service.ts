@@ -1,6 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaTranslateService } from '@picsa/i18n';
 import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
+import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { FileService } from '@picsa/shared/services/core/file.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { isIgnoredErrorMessage } from '@picsa/shared/services/core/sentry.service';
 import { _wait } from '@picsa/utils';
 import PQueue from 'p-queue';
 import { RxAttachment, RxDocument } from 'rxdb';
@@ -11,6 +16,15 @@ import { IDownloadStatus } from './resources-tool.service';
 
 export type DownloadId = string;
 
+const STRINGS = {
+  DownloadFailed: translateMarker('Download Failed'),
+  CheckConnection: translateMarker('Check internet connection and try again'),
+};
+
+export interface IDownloadOptions {
+  suppressNotification?: boolean;
+}
+
 export interface DownloadEntry {
   _doc: RxDocument<IResourceFile>;
 
@@ -20,8 +34,8 @@ export interface DownloadEntry {
   attachment: ReturnType<typeof signal<RxAttachment<IResourceFile> | null>>;
 
   // Action
-  /** Download will return doc with file attachment included */
-  download: () => Promise<RxDocument<IResourceFile>>;
+  /** Download will return doc with file attachment included, or null if download failed */
+  download: (options?: IDownloadOptions) => Promise<RxDocument<IResourceFile> | null>;
   cancel: () => void;
   /**
    * @param convertFileSrc
@@ -41,6 +55,9 @@ export class ResourcesDownloadService {
 
   private fileService = inject(FileService);
   private attachmentService = inject(PicsaDatabaseAttachmentService);
+  private errorHandler = inject(ErrorHandlerService);
+  private notificationService = inject(PicsaNotificationService);
+  private translateService = inject(PicsaTranslateService, { optional: true });
 
   public async register(doc: RxDocument<IResourceFile>) {
     const existing = this.map.get(doc.id);
@@ -56,7 +73,7 @@ export class ResourcesDownloadService {
       status: signal(status),
       progress: signal(progress),
       attachment: signal<RxAttachment<IResourceFile> | null>(attachment),
-      download: () => this.download(doc),
+      download: (options?: IDownloadOptions) => this.download(doc, options),
       cancel: () => this.cancel(doc.id),
       uri: (convertNativeSrc = false) => this.getUri(doc.id, convertNativeSrc),
     };
@@ -66,6 +83,7 @@ export class ResourcesDownloadService {
 
   public async queueMultiple(docs: RxDocument<IResourceFile>[], concurrency = 1) {
     const queue = new PQueue({ concurrency, autoStart: true });
+    let hasNotifiedError = false;
     for (const doc of docs) {
       const entry = await this.register(doc);
       // set all entries to pending status while queing
@@ -73,7 +91,12 @@ export class ResourcesDownloadService {
       queue.add(async () => {
         // only download if hasn't been manually cancelled
         if (entry.status() === 'pending') {
-          return entry.download();
+          const result = await entry.download({ suppressNotification: true });
+          if (!result && entry.status() === 'error' && !hasNotifiedError) {
+            hasNotifiedError = true;
+            this.showDownloadErrorNotification();
+          }
+          return result;
         }
         return doc;
       });
@@ -97,7 +120,10 @@ export class ResourcesDownloadService {
   }
 
   /** Start download */
-  private async download(doc: RxDocument<IResourceFile>): Promise<RxDocument<IResourceFile>> {
+  private async download(
+    doc: RxDocument<IResourceFile>,
+    options: IDownloadOptions = {},
+  ): Promise<RxDocument<IResourceFile> | null> {
     const entry = await this.register(doc);
 
     const { progress, status } = entry;
@@ -113,7 +139,7 @@ export class ResourcesDownloadService {
       entry.subscription = undefined;
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let downloadData: Blob | null = null;
       updates$.subscribe({
         next: ({ progress: dlProgress, data }) => {
@@ -123,9 +149,16 @@ export class ResourcesDownloadService {
         error: (error) => {
           cleanUpSubscriptions();
           status.set('error');
-          console.error(error);
-
-          reject(error);
+          if (this.isConnectionError(error)) {
+            console.warn('[ResourcesDownload] Download failed due to connection', doc.url, error);
+          } else {
+            // Forward invalid storage links (e.g. 404/403/500) to ErrorHandler / Sentry
+            void this.errorHandler.handleError(error);
+          }
+          if (!options.suppressNotification) {
+            this.showDownloadErrorNotification();
+          }
+          resolve(null);
         },
         complete: async () => {
           try {
@@ -146,7 +179,11 @@ export class ResourcesDownloadService {
             resolve(updatedDoc);
           } catch (error) {
             status.set('error');
-            reject(error);
+            void this.errorHandler.handleError(error);
+            if (!options.suppressNotification) {
+              this.showDownloadErrorNotification();
+            }
+            resolve(null);
           } finally {
             // Drop strong refs so GC can reclaim Blob
             downloadData = null;
@@ -155,6 +192,19 @@ export class ResourcesDownloadService {
         },
       });
     });
+  }
+
+  private isConnectionError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+    const candidate = error as { status?: number; message?: string };
+    if (candidate.status === 0) return true;
+    return isIgnoredErrorMessage(candidate.message);
+  }
+
+  private showDownloadErrorNotification() {
+    const title = this.translateService?.instant(STRINGS.DownloadFailed) ?? STRINGS.DownloadFailed;
+    const detail = this.translateService?.instant(STRINGS.CheckConnection) ?? STRINGS.CheckConnection;
+    this.notificationService.showErrorNotification(`${title}. ${detail}`);
   }
 
   /** Cancel ongoing download */

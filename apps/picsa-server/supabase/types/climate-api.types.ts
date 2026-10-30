@@ -4,59 +4,84 @@
  */
 
 export interface paths {
-  '/v1/status/': {
+  '/v2/status/': {
     /**
      * Get Status
-     * @description Check server up
+     * @description Health check endpoint for v2.
      */
-    get: operations['get_status_v1_status__get'];
+    get: operations['get_status_v2_status__get'];
   };
-  '/v1/annual_rainfall_summaries/': {
-    /** Get Annual Rainfall Summaries */
-    post: operations['get_annual_rainfall_summaries_v1_annual_rainfall_summaries__post'];
+  '/v2/annual_rainfall_summaries/': {
+    /**
+     * Get Annual Rainfall Summaries
+     * @description Retrieve annual rainfall summaries from PostgreSQL.
+     */
+    post: operations['get_annual_rainfall_summaries_v2_annual_rainfall_summaries__post'];
   };
-  '/v1/annual_temperature_summaries/': {
-    /** Get Annual Temperature Summaries */
-    post: operations['get_annual_temperature_summaries_v1_annual_temperature_summaries__post'];
+  '/v2/monthly_rainfall_summaries/': {
+    /**
+     * Get Monthly Rainfall Summaries
+     * @description Retrieve monthly rainfall summaries from PostgreSQL.
+     */
+    post: operations['get_monthly_rainfall_summaries_v2_monthly_rainfall_summaries__post'];
   };
-  '/v1/crop_success_probabilities/': {
-    /** Get Crop Success Probabilities */
-    post: operations['get_crop_success_probabilities_v1_crop_success_probabilities__post'];
+  '/v2/annual_temperature_summaries/': {
+    /**
+     * Get Annual Temperature Summaries
+     * @description Retrieve annual temperature summaries from PostgreSQL.
+     */
+    post: operations['get_annual_temperature_summaries_v2_annual_temperature_summaries__post'];
   };
-  '/v1/monthly_temperature_summaries/': {
-    /** Get Monthly Temperature Summaries */
-    post: operations['get_monthly_temperature_summaries_v1_monthly_temperature_summaries__post'];
+  '/v2/crop_success_probabilities/': {
+    /**
+     * Get Crop Success Probabilities
+     * @description Retrieve full crop success probabilities lookup table from PostgreSQL.
+     */
+    post: operations['get_crop_success_probabilities_v2_crop_success_probabilities__post'];
   };
-  '/v1/season_start_probabilities/': {
-    /** Get Season Start Probabilities */
-    post: operations['get_season_start_probabilities_v1_season_start_probabilities__post'];
+  '/v2/monthly_temperature_summaries/': {
+    /**
+     * Get Monthly Temperature Summaries
+     * @description Retrieve monthly temperature summaries from PostgreSQL.
+     */
+    post: operations['get_monthly_temperature_summaries_v2_monthly_temperature_summaries__post'];
   };
-  '/v1/extremes_summaries/': {
-    /** Get Extremes Summaries */
-    post: operations['get_extremes_summaries_v1_extremes_summaries__post'];
+  '/v2/station/{country}': {
+    /**
+     * Read Stations
+     * @description Retrieve all stations for a given country code.
+     */
+    get: operations['read_stations_v2_station__country__get'];
   };
-  '/v1/station/{country}': {
-    /** Read Stations */
-    get: operations['read_stations_v1_station__country__get'];
+  '/v2/station/{country}/{station_id}': {
+    /**
+     * Read Station Detail
+     * @description Retrieve station metadata and climate definitions for a station.
+     */
+    get: operations['read_station_detail_v2_station__country___station_id__get'];
   };
-  '/v1/station/{country}/{station_id}': {
-    /** Read Stations */
-    get: operations['read_stations_v1_station__country___station_id__get'];
+  '/v2/select_query/': {
+    /** Run Select Query */
+    post: operations['run_select_query_v2_select_query__post'];
   };
-  '/v1/documents/{country}': {
+  '/v2/documents/{country}': {
     /** Get Documents */
-    get: operations['get_documents_v1_documents__country__get'];
+    get: operations['get_documents_v2_documents__country__get'];
   };
-  '/v1/documents/{country}/{filepath}': {
+  '/v2/documents/{country}/{filepath}': {
     /**
      * Download Document
      * @description Download a specific document
      */
-    get: operations['download_document_v1_documents__country___filepath__get'];
+    get: operations['download_document_v2_documents__country___filepath__get'];
   };
-  '/v1/select_query/': {
-    /** Run Select Query */
-    post: operations['run_select_query_v1_select_query__post'];
+  '/v2/manifest/{country}': {
+    /**
+     * Get Manifest
+     * @description Retrieve discovery manifest of data generations for a country or station.
+     * Supports fast change detection and delta sync via since_timestamp and since_generation_id.
+     */
+    get: operations['get_manifest_v2_manifest__country__get'];
   };
 }
 
@@ -101,7 +126,17 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
       /**
        * Station Id
        * @default Kasungu
@@ -127,6 +162,13 @@ export interface components {
     };
     /** AnnualRainfallSummariesResponce */
     AnnualRainfallSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['AnnualRainfallSummariesMetadata'];
       /** Data */
       data: components['schemas']['AnnualRainfallSummariesdata'][];
@@ -192,7 +234,17 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
       /**
        * Station Id
        * @default Kasungu
@@ -218,9 +270,48 @@ export interface components {
     };
     /** AnnualTemperatureSummariesResponce */
     AnnualTemperatureSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['TemperatureSummariesMetadata'];
       /** Data */
       data: components['schemas']['AnnualTempartureSummariesdata'][];
+    };
+    /**
+     * CountryManifestResponse
+     * @description Manifest response representing climate data generation inventory for a country.
+     */
+    CountryManifestResponse: {
+      /**
+       * Country Code
+       * @description Country code (e.g. zm, mw, zw)
+       */
+      country_code: string;
+      /**
+       * Has Updates
+       * @description True if any station has an update available
+       */
+      has_updates: boolean;
+      /**
+       * Latest Timestamp
+       * Format: date-time
+       * @description Latest generation timestamp across all stations in the country
+       */
+      latest_timestamp?: string;
+      /**
+       * Station Count
+       * @description Number of stations returned in this manifest
+       */
+      station_count: number;
+      /**
+       * Stations
+       * @description List of station manifest entries
+       */
+      stations: components['schemas']['StationManifestEntry'][];
     };
     /** CropSuccessProbabilitiesMetadata */
     CropSuccessProbabilitiesMetadata: {
@@ -232,35 +323,72 @@ export interface components {
     CropSuccessProbabilitiesParameters: {
       /**
        * Country
-       * @default internal_tests
+       * @description Two-letter country code (e.g. 'zm', 'zw', 'mw')
+       * @default mw_test
        * @enum {string}
        */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
       /**
        * Station Id
-       * @default Tamale
+       * @description Target station identifier
+       * @default Kasungu
        */
       station_id?: string;
     };
     /** CropSuccessProbabilitiesResponce */
     CropSuccessProbabilitiesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['CropSuccessProbabilitiesMetadata'];
       /** Data */
       data: components['schemas']['CropSuccessProbabilitiesdata'][];
     };
     /** CropSuccessProbabilitiesdata */
     CropSuccessProbabilitiesdata: {
-      /** Station */
+      /**
+       * Station
+       * @description Station identifier
+       */
       station: string;
-      /** Total Rain */
+      /**
+       * Total Rain
+       * @description Crop water requirement threshold in mm (e.g. 200 to 1200 mm)
+       */
       total_rain: number;
-      /** Plant Day */
+      /**
+       * Plant Day
+       * @description Planting day relative to season start July 1 (e.g. 123=31-Oct, 138=15-Nov, 153=30-Nov, 168=15-Dec, 183=30-Dec)
+       */
       plant_day: number;
-      /** Plant Length */
+      /**
+       * Plant Length
+       * @description Crop growth cycle / duration in days (e.g. 60 to 150 days)
+       */
       plant_length: number;
-      /** Prop Success With Start */
+      /**
+       * Prop Success With Start
+       * @description Probability of crop success (0.0-1.0) when planting only after rainy season start criteria are satisfied
+       */
       prop_success_with_start: number;
-      /** Prop Success No Start */
+      /**
+       * Prop Success No Start
+       * @description Probability of crop success (0.0-1.0) when planting on the calendar day regardless of rainy season start condition
+       */
       prop_success_no_start: number;
     };
     /** CropsSuccess */
@@ -308,7 +436,7 @@ export interface components {
       /** End Day */
       end_day?: number;
       /** Output */
-      output?: string;
+      output?: string | string[];
       /** Min Rainfall */
       min_rainfall?: number;
       /** Interval Length */
@@ -333,38 +461,102 @@ export interface components {
       /** S Start Doy */
       s_start_doy?: number;
     };
-    /** ExtremesSummariesParameters */
-    ExtremesSummariesParameters: {
+    /**
+     * GenerationMetricInfo
+     * @description Metadata about a specific climate metric generation for a station.
+     */
+    GenerationMetricInfo: {
       /**
-       * Country
-       * @default mw_test
+       * Available
+       * @description Whether this metric has data available for this station
+       */
+      available: boolean;
+      /**
+       * Status
+       * @description Availability or update status relative to query parameters
        * @enum {string}
        */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      status: 'no_data' | 'up_to_date' | 'update_available';
+      /**
+       * Generation Id
+       * @description Latest batch definition/generation ID
+       */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       * @description Timestamp of the generation
+       */
+      generation_timestamp?: string;
+    };
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components['schemas']['ValidationError'][];
+    };
+    /** MonthlyRainfallSummariesMetadata */
+    MonthlyRainfallSummariesMetadata: {
+      monthly_rain?: components['schemas']['AnnualRain'];
+    };
+    /** MonthlyRainfallSummariesParameters */
+    MonthlyRainfallSummariesParameters: {
+      /**
+       * Country
+       * @default zm
+       * @enum {string}
+       */
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
       /**
        * Station Id
-       * @default Kasungu
+       * @default MAGOYE AGROMET
        */
       station_id?: string;
       /**
        * Summaries
        * @default [
-       *   "extremes_rain",
-       *   "extremes_tmin",
-       *   "extremes_tmax"
+       *   "monthly_rain"
        * ]
        */
-      summaries?: ('extremes_rain' | 'extremes_tmin' | 'extremes_tmax')[];
+      summaries?: ('monthly_rain' | 'total_rain')[];
       /**
        * Override
        * @default false
        */
       override?: boolean;
     };
-    /** HTTPValidationError */
-    HTTPValidationError: {
-      /** Detail */
-      detail?: components['schemas']['ValidationError'][];
+    /** MonthlyRainfallSummariesResponce */
+    MonthlyRainfallSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
+      metadata: components['schemas']['MonthlyRainfallSummariesMetadata'];
+      /** Data */
+      data: components['schemas']['MonthlyRainfallSummariesdata'][];
+    };
+    /** MonthlyRainfallSummariesdata */
+    MonthlyRainfallSummariesdata: {
+      /** Station */
+      station: string;
+      /** Year */
+      year: number;
+      /** Month */
+      month: number;
+      /** Monthly Rain */
+      monthly_rain?: number;
     };
     /** MonthlyTempartureSummariesdata */
     MonthlyTempartureSummariesdata: {
@@ -394,7 +586,17 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country?:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
       /**
        * Station Id
        * @default Kasungu
@@ -420,6 +622,13 @@ export interface components {
     };
     /** MonthlyTemperatureSummariesResponce */
     MonthlyTemperatureSummariesResponce: {
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
       metadata: components['schemas']['TemperatureSummariesMetadata'];
       /** Data */
       data: components['schemas']['MonthlyTempartureSummariesdata'][];
@@ -432,57 +641,6 @@ export interface components {
         | {
             [key: string]: number;
           };
-    };
-    /** SeasonStartProbabilitiesMetadata */
-    SeasonStartProbabilitiesMetadata: {
-      start_rains?: components['schemas']['StartRains'];
-      season_start_probabilities?: components['schemas']['SeasonStartProbabilities'];
-    };
-    /** SeasonStartProbabilitiesParameters */
-    SeasonStartProbabilitiesParameters: {
-      /**
-       * Country
-       * @default mw_test
-       * @enum {string}
-       */
-      country?: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
-      /**
-       * Station Id
-       * @default Kasungu
-       */
-      station_id?: string;
-      /**
-       * Start Dates
-       * @default [
-       *   200,
-       *   220,
-       *   250,
-       *   270,
-       *   300,
-       *   320
-       * ]
-       */
-      start_dates?: number[];
-      /**
-       * Override
-       * @default false
-       */
-      override?: boolean;
-    };
-    /** SeasonStartProbabilitiesResponce */
-    SeasonStartProbabilitiesResponce: {
-      metadata: components['schemas']['SeasonStartProbabilitiesMetadata'];
-      /** Data */
-      data: components['schemas']['SeasonStartProbabilitiesdata'][];
-    };
-    /** SeasonStartProbabilitiesdata */
-    SeasonStartProbabilitiesdata: {
-      /** Station */
-      station: string;
-      /** Day */
-      day: number;
-      /** Proportion */
-      proportion: number;
     };
     /** SeasonalLength */
     SeasonalLength: {
@@ -543,6 +701,11 @@ export interface components {
        * @default 100
        */
       max_rows?: number;
+      /**
+       * Generation Id
+       * @description Optional generation/definition identifier to filter by.
+       */
+      generation_id?: string;
     };
     /** SelectQueryResponse */
     SelectQueryResponse: {
@@ -552,6 +715,13 @@ export interface components {
       row_count: number;
       /** Rows */
       rows: Record<string, never>[];
+      /** Generation Id */
+      generation_id?: string;
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
     };
     /** StartRains */
     StartRains: {
@@ -612,7 +782,24 @@ export interface components {
        * Country Code
        * @enum {string}
        */
-      country_code: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country_code:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
+      /** Generation Id */
+      generation_id?: string;
       /** Definitions Id */
       definitions_id: unknown[];
       /** Climsoft List */
@@ -637,7 +824,22 @@ export interface components {
        * Country Code
        * @enum {string}
        */
-      country_code: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+      country_code:
+        | 'zm'
+        | 'mw'
+        | 'zw'
+        | 'zm_test'
+        | 'mw_test'
+        | 'zw_test'
+        | 'zm_workshops'
+        | 'mw_workshops'
+        | 'zw_workshops'
+        | 'internal_tests';
+      /**
+       * Generation Timestamp
+       * Format: date-time
+       */
+      generation_timestamp?: string;
     };
     /** StationDefinitionDataResponce */
     StationDefinitionDataResponce: {
@@ -661,6 +863,40 @@ export interface components {
     StationListResponce: {
       /** Data */
       data: components['schemas']['StationDataResponce'][];
+    };
+    /**
+     * StationManifestEntry
+     * @description Manifest entry for a single station showing generation statuses across all metrics.
+     */
+    StationManifestEntry: {
+      /**
+       * Station Id
+       * @description Station identifier
+       */
+      station_id: string;
+      /**
+       * Station Name
+       * @description Station human-readable name
+       */
+      station_name: string;
+      /**
+       * Has Updates
+       * @description True if any metric has an update available
+       */
+      has_updates: boolean;
+      /**
+       * Latest Timestamp
+       * Format: date-time
+       * @description Latest timestamp across all metrics for this station
+       */
+      latest_timestamp?: string;
+      /**
+       * Generations
+       * @description Map of climate metric keys (annual_rain, monthly_rain, annual_temperature, monthly_temperature, crops, season_start_probabilities) to their generation info
+       */
+      generations: {
+        [key: string]: components['schemas']['GenerationMetricInfo'];
+      };
     };
     /** Temp */
     Temp: {
@@ -697,6 +933,251 @@ export interface components {
       /** Error Type */
       type: string;
     };
+    /**
+     * CropRecord
+     * @description Schema representing a record in the 'crop' table.
+     * Contains agricultural crop success and rainfall metrics for a station and season.
+     */
+    CropRecord: {
+      /**
+       * Station Id
+       * @description Station identifier
+       */
+      station_id?: string;
+      /**
+       * Year
+       * @description Year or agricultural season identifier
+       */
+      year?: string;
+      /**
+       * Plant Day
+       * @description Planting day of year (day number)
+       */
+      plant_day?: number;
+      /**
+       * Plant Length
+       * @description Length of crop growing period in days
+       */
+      plant_length?: number;
+      /**
+       * Rain Total
+       * @description Total rainfall during crop growing period (mm)
+       */
+      rain_total?: number;
+      /**
+       * Include Start Condition
+       * @description Whether start-of-season conditions were applied
+       */
+      include_start_condition?: boolean;
+      /**
+       * Summary Type
+       * @description Type of summary (e.g. crop_success)
+       */
+      summary_type?: string;
+      /**
+       * Summary Element
+       * @description Climate element summarized
+       */
+      summary_element?: string;
+      /**
+       * Summary Value
+       * @description Statistical summary result value
+       */
+      summary_value?: string;
+      /**
+       * Definition Id
+       * @description Associated statistical definition ID
+       */
+      definition_id?: string;
+      /**
+       * Status
+       * @description Record validation or processing status
+       */
+      status?: string;
+      /**
+       * Time Stamp
+       * Format: date-time
+       * @description Timestamp of record creation or last update
+       */
+      time_stamp?: string;
+    };
+    /**
+     * DefinitionRecord
+     * @description Schema representing a record in the 'definition' table.
+     * Defines statistical criteria, parameters, and metadata for climate summaries.
+     */
+    DefinitionRecord: {
+      /**
+       * Definition Id
+       * @description Unique definition identifier (NOT NULL in DB)
+       */
+      definition_id?: string;
+      /**
+       * Time Stamp
+       * Format: date-time
+       * @description Timestamp of definition creation/update (NOT NULL in DB)
+       */
+      time_stamp?: string;
+      /**
+       * Summary Element
+       * @description Summarized element (e.g. rainfall, temperature)
+       */
+      summary_element?: string;
+      /**
+       * Summary Type
+       * @description Type of statistical summary
+       */
+      summary_type?: string;
+      /**
+       * Definition Value
+       * @description JSON object containing definition parameters and thresholds
+       */
+      definition_value?: Record<string, never>;
+      /**
+       * Accreditation
+       * @description Authoritative source or accreditation body
+       */
+      accreditation?: string;
+    };
+    /**
+     * StationRecord
+     * @description Schema representing a record in the 'station' table.
+     * Contains geospatial metadata and status for meteorological stations.
+     */
+    StationRecord: {
+      /**
+       * Station Id
+       * @description Unique meteorological station identifier (NOT NULL in DB)
+       */
+      station_id?: string;
+      /**
+       * Station Name
+       * @description Human-readable station name
+       */
+      station_name?: string;
+      /**
+       * Latitude
+       * @description Geographic latitude in decimal degrees
+       */
+      latitude?: number;
+      /**
+       * Longitude
+       * @description Geographic longitude in decimal degrees
+       */
+      longitude?: number;
+      /**
+       * Elevation
+       * @description Station elevation above sea level in meters
+       */
+      elevation?: number;
+      /**
+       * District
+       * @description Administrative district name
+       */
+      district?: string;
+      /**
+       * Country Code
+       * @description Country code (e.g. zm, mw, zw)
+       */
+      country_code?: string;
+      /**
+       * Time Stamp
+       * Format: date-time
+       * @description Timestamp of record creation or update
+       */
+      time_stamp?: string;
+      /**
+       * Status
+       * @description Operational status of the station
+       */
+      status?: string;
+    };
+    /**
+     * SummaryRecord
+     * @description Schema representing a record in the 'summary' table.
+     * Contains precomputed climate and weather statistics across time dimensions.
+     */
+    SummaryRecord: {
+      /**
+       * Station Id
+       * @description Station identifier (NOT NULL in DB)
+       */
+      station_id?: string;
+      /**
+       * Definition Id
+       * @description Definition identifier (NOT NULL in DB)
+       */
+      definition_id?: string;
+      /**
+       * Time Type
+       * @description Time dimension type (e.g. annual, monthly)
+       */
+      time_type?: string;
+      /**
+       * Time Value
+       * @description Time dimension value (e.g. year '2024')
+       */
+      time_value?: string;
+      /**
+       * Summary Type
+       * @description Summary calculation type
+       */
+      summary_type?: string;
+      /**
+       * Summary Element
+       * @description Climate element (e.g. rain, temp)
+       */
+      summary_element?: string;
+      /**
+       * Summary Name
+       * @description Name of specific summary metric
+       */
+      summary_name?: string;
+      /**
+       * Summary Value
+       * @description Calculated summary metric value
+       */
+      summary_value?: string;
+      /**
+       * Time Stamp
+       * Format: date-time
+       * @description Timestamp of calculation (NOT NULL in DB)
+       */
+      time_stamp?: string;
+      /**
+       * Status
+       * @description Processing status (NOT NULL in DB)
+       */
+      status?: string;
+    };
+    /**
+     * SummaryStationMetadataRecord
+     * @description Schema representing a record in the 'summary_station_metadata' table.
+     * Indexes which summary types and definitions are available for a given station.
+     */
+    SummaryStationMetadataRecord: {
+      /**
+       * Station Id
+       * @description Station identifier (NOT NULL in DB)
+       */
+      station_id?: string;
+      /**
+       * Summary Type
+       * @description Summary type available for this station
+       */
+      summary_type?: string;
+      /**
+       * Definition Id
+       * @description Definition identifier
+       */
+      definition_id?: string;
+      /**
+       * Time Stamp
+       * Format: date-time
+       * @description Record timestamp (NOT NULL in DB)
+       */
+      time_stamp?: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -712,20 +1193,23 @@ export type external = Record<string, never>;
 export interface operations {
   /**
    * Get Status
-   * @description Check server up
+   * @description Health check endpoint for v2.
    */
-  get_status_v1_status__get: {
+  get_status_v2_status__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          'application/json': unknown;
+          'application/json': string;
         };
       };
     };
   };
-  /** Get Annual Rainfall Summaries */
-  get_annual_rainfall_summaries_v1_annual_rainfall_summaries__post: {
+  /**
+   * Get Annual Rainfall Summaries
+   * @description Retrieve annual rainfall summaries from PostgreSQL.
+   */
+  get_annual_rainfall_summaries_v2_annual_rainfall_summaries__post: {
     requestBody: {
       content: {
         'application/json': components['schemas']['AnnualRainfallSummariesParameters'];
@@ -746,8 +1230,36 @@ export interface operations {
       };
     };
   };
-  /** Get Annual Temperature Summaries */
-  get_annual_temperature_summaries_v1_annual_temperature_summaries__post: {
+  /**
+   * Get Monthly Rainfall Summaries
+   * @description Retrieve monthly rainfall summaries from PostgreSQL.
+   */
+  get_monthly_rainfall_summaries_v2_monthly_rainfall_summaries__post: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MonthlyRainfallSummariesParameters'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          'application/json': components['schemas']['MonthlyRainfallSummariesResponce'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  /**
+   * Get Annual Temperature Summaries
+   * @description Retrieve annual temperature summaries from PostgreSQL.
+   */
+  get_annual_temperature_summaries_v2_annual_temperature_summaries__post: {
     requestBody: {
       content: {
         'application/json': components['schemas']['AnnualTemperatureSummariesParameters'];
@@ -768,8 +1280,11 @@ export interface operations {
       };
     };
   };
-  /** Get Crop Success Probabilities */
-  get_crop_success_probabilities_v1_crop_success_probabilities__post: {
+  /**
+   * Get Crop Success Probabilities
+   * @description Retrieve full crop success probabilities lookup table from PostgreSQL.
+   */
+  get_crop_success_probabilities_v2_crop_success_probabilities__post: {
     requestBody: {
       content: {
         'application/json': components['schemas']['CropSuccessProbabilitiesParameters'];
@@ -790,8 +1305,11 @@ export interface operations {
       };
     };
   };
-  /** Get Monthly Temperature Summaries */
-  get_monthly_temperature_summaries_v1_monthly_temperature_summaries__post: {
+  /**
+   * Get Monthly Temperature Summaries
+   * @description Retrieve monthly temperature summaries from PostgreSQL.
+   */
+  get_monthly_temperature_summaries_v2_monthly_temperature_summaries__post: {
     requestBody: {
       content: {
         'application/json': components['schemas']['MonthlyTemperatureSummariesParameters'];
@@ -812,55 +1330,24 @@ export interface operations {
       };
     };
   };
-  /** Get Season Start Probabilities */
-  get_season_start_probabilities_v1_season_start_probabilities__post: {
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SeasonStartProbabilitiesParameters'];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          'application/json': components['schemas']['SeasonStartProbabilitiesResponce'];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  /** Get Extremes Summaries */
-  get_extremes_summaries_v1_extremes_summaries__post: {
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ExtremesSummariesParameters'];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          'application/json': Record<string, never>;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  /** Read Stations */
-  read_stations_v1_station__country__get: {
+  /**
+   * Read Stations
+   * @description Retrieve all stations for a given country code.
+   */
+  read_stations_v2_station__country__get: {
     parameters: {
       path: {
-        country: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
       };
     };
     responses: {
@@ -878,11 +1365,24 @@ export interface operations {
       };
     };
   };
-  /** Read Stations */
-  read_stations_v1_station__country___station_id__get: {
+  /**
+   * Read Station Detail
+   * @description Retrieve station metadata and climate definitions for a station.
+   */
+  read_station_detail_v2_station__country___station_id__get: {
     parameters: {
       path: {
-        country: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
         station_id: string;
       };
     };
@@ -901,8 +1401,30 @@ export interface operations {
       };
     };
   };
+  /** Run Select Query */
+  run_select_query_v2_select_query__post: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SelectQueryRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          'application/json': components['schemas']['SelectQueryResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   /** Get Documents */
-  get_documents_v1_documents__country__get: {
+  get_documents_v2_documents__country__get: {
     parameters: {
       query?: {
         prefix?: string;
@@ -910,7 +1432,17 @@ export interface operations {
         match_glob?: string;
       };
       path: {
-        country: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
       };
     };
     responses: {
@@ -932,10 +1464,20 @@ export interface operations {
    * Download Document
    * @description Download a specific document
    */
-  download_document_v1_documents__country___filepath__get: {
+  download_document_v2_documents__country___filepath__get: {
     parameters: {
       path: {
-        country: 'zm' | 'mw' | 'zm_test' | 'mw_test' | 'zm_workshops' | 'mw_workshops' | 'internal_tests';
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
         filepath: string;
       };
     };
@@ -954,18 +1496,43 @@ export interface operations {
       };
     };
   };
-  /** Run Select Query */
-  run_select_query_v1_select_query__post: {
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SelectQueryRequest'];
+  /**
+   * Get Manifest
+   * @description Retrieve discovery manifest of data generations for a country or station.
+   * Supports fast change detection and delta sync via since_timestamp and since_generation_id.
+   */
+  get_manifest_v2_manifest__country__get: {
+    parameters: {
+      query?: {
+        /** @description Optional station identifier to filter to a single station */
+        station_id?: string;
+        /** @description Only return stations and metrics with updates newer than this ISO-8601 timestamp */
+        since_timestamp?: string;
+        /** @description Only return stations and metrics with updates newer than this generation definition ID */
+        since_generation_id?: string;
+        /** @description Whether to include stations and metrics that are already up to date when using since_timestamp or since_generation_id */
+        include_up_to_date?: boolean;
+      };
+      path: {
+        /** @description Two-letter country code (e.g. zm, mw, zw) */
+        country:
+          | 'zm'
+          | 'mw'
+          | 'zw'
+          | 'zm_test'
+          | 'mw_test'
+          | 'zw_test'
+          | 'zm_workshops'
+          | 'mw_workshops'
+          | 'zw_workshops'
+          | 'internal_tests';
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          'application/json': components['schemas']['SelectQueryResponse'];
+          'application/json': components['schemas']['CountryManifestResponse'];
         };
       };
       /** @description Validation Error */

@@ -41,7 +41,7 @@ export const ROUTES_COMMON: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/site-select/site-select.page').then((mod) => mod.SiteSelectPage),
-    title: translateMarker('Select a site'),
+    title: translateMarker('Location'),
     canActivate: [shouldShowSiteSelect],
   },
   {

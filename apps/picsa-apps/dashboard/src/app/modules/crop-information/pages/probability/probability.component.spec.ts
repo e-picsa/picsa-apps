@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { CropProbabilityComponent } from './probability.component';
 
@@ -9,6 +10,7 @@ describe('CropProbabilityComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CropProbabilityComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CropProbabilityComponent);

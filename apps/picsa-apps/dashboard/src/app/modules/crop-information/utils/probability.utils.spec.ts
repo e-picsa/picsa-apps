@@ -5,6 +5,8 @@ import {
 } from '@picsa/crop-probability/src/app/utils/probability-table.utils';
 
 import {
+  calcSeasonStartProbabilities,
+  computeExpectedProbabilityTable,
   findSurroundingKeys,
   getCropSuccessProbability,
   interpolateValue,
@@ -221,6 +223,28 @@ describe('probability.utils', () => {
       const result = groupAndSortCropDataItems(input);
       expect(result.map((r) => r.variety)).toEqual(['Early Variety', 'Medium Variety', 'Late Variety']);
       expect(result.map((r) => r.days)).toEqual(['90', '110', '130 - 135']);
+    });
+  });
+
+  describe('calcSeasonStartProbabilities null handling', () => {
+    it('should return empty array for null or non-array inputs instead of throwing', () => {
+      expect(calcSeasonStartProbabilities(null as never, [])).toEqual([]);
+      expect(calcSeasonStartProbabilities([], null as never)).toEqual([]);
+      expect(calcSeasonStartProbabilities(null as never, null as never)).toEqual([]);
+    });
+  });
+
+  describe('computeExpectedProbabilityTable null handling', () => {
+    it('should return null when station data columns are null instead of throwing', () => {
+      const base = {
+        cropDataHashmap: {},
+        waterRequirements: { maize: { TEST: 400 } },
+        rainfallData: [{ start_rains_doy: 300 }],
+        cropProbabilityData: [{ plant_day: 300 }],
+      } as never;
+      expect(computeExpectedProbabilityTable({ ...base, rainfallData: null })).toBeNull();
+      expect(computeExpectedProbabilityTable({ ...base, cropProbabilityData: null })).toBeNull();
+      expect(computeExpectedProbabilityTable({ ...base, waterRequirements: {} })).toBeNull();
     });
   });
 });

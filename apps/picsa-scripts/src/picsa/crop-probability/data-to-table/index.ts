@@ -1,3 +1,16 @@
+/**
+ * Crop Probability CSV-to-Table Converter (one-off)
+ *
+ * Converts input/input.csv into per-station JSON tables in output/ (emptied first)
+ * for the crop-probability tool. Place the source CSV at input/input.csv first.
+ *
+ * Usage:
+ *   yarn scripts picsa/crop-probability/data-to-table/index
+ *
+ * Args: none (input/output paths are hardcoded below)
+ *
+ * NOTE: one-off data preparation - verify output carefully before committing changes.
+ */
 import { resolve } from 'path';
 import { arrayToHashmapArray, loadCSV } from '@picsa/utils/data';
 import { readFile, writeFile } from 'fs/promises';

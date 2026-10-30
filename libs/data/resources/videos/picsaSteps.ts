@@ -10,7 +10,8 @@ type IPicsaFarmerVideoId =
   | 'options'
   | 'participatory_budget'
   | 'seasonal_forecast'
-  | 'short_term_forecast';
+  | 'short_term_forecast'
+  | 'el_nino';
 
 const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData, 'id'>> = {
   ram: {
@@ -725,6 +726,44 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         resolution: '360p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/14.%20Short%20Term%20Forecast%20-%20Zambia_TNG_360p.mp4',
+      },
+    ],
+  },
+  // Supplementary explainer shown alongside the forecasts step (Zambia only)
+  el_nino: {
+    title: translateMarker('El Niño and La Niña'),
+    children: [
+      {
+        id: '',
+        locale_codes: ['zm_en'],
+        size_kb: 21579,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/15.%20El%20Nino%20and%20La%20Nina%20-%20Zambia_ENG_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 24417,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/15.%20El%20Nino%20and%20La%20Nina%20-%20Zambia_NYA_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_bem'],
+        size_kb: 19959,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/15.%20El%20Nino%20and%20La%20Nina%20-%20Zambia_BEM_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_toi'],
+        size_kb: 20808,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/15.%20El%20Nino%20and%20La%20Nina%20-%20Zambia_TNG_360p.mp4',
       },
     ],
   },

@@ -25,7 +25,12 @@ export function gitOutput(args, cwd = REPO_ROOT) {
 }
 
 function splitLines(output) {
-  return output ? output.split('\n').map((line) => line.trim()).filter(Boolean) : [];
+  return output
+    ? output
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+    : [];
 }
 
 /**
@@ -46,6 +51,7 @@ export function detectChangedFiles({ stagedOnly = false } = {}) {
 export function runCommand(cmd, args, { cwd = REPO_ROOT, dryRun = false } = {}) {
   console.log(`\n$ ${cmd} ${args.join(' ')}`);
   if (dryRun) return 0;
-  const result = spawnSync(cmd, args, { cwd, stdio: 'inherit' });
+  const env = { ...process.env, NX_SOCKET_DIR: process.env.NX_SOCKET_DIR || '/tmp' };
+  const result = spawnSync(cmd, args, { cwd, stdio: 'inherit', env });
   return result.status ?? 1;
 }

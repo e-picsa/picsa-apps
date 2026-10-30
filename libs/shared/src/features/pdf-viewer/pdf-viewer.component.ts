@@ -21,8 +21,30 @@ export class PdfViewerComponent implements AfterViewInit {
   service = inject(PicsaPDFViewerService);
 
   sidebarOpen = false;
-  // additional locales are currently excluded from main build
-  locale = 'en-GB';
+
+  /**
+   * PDF.js localization (`GenericL10n`) hardcodes "en-us" as the root fallback language in
+   * `DOMLocalization` generator: `langs = [requestedLang, baseLang, 'en-us']`.
+   *
+   * When `locale = 'en-GB'` was used, PDF.js fetched `en-GB/viewer.ftl` and then immediately
+   * attempted to fetch fallback `en-US/viewer.ftl`. Because only `locale/en-GB/*` was bundled in
+   * `project.json`, the secondary fetch 404'd. On Capacitor Android WebView (`http://localhost/...`),
+   * 404 responses have `ok: false` and `statusText: "OK"`, throwing an unhandled `Error: OK`.
+   *
+   * Why `en-US` is selected:
+   * - Matching `requestedLang` to PDF.js's root fallback (`en-us`) reduces the lookup chain to
+   *   `['en-us']`, executing only 1 HTTP fetch (`en-US/viewer.ftl`) with 0 404s.
+   * - `en-US` and `en-GB` are 98% identical (~275 Fluent strings). The few spelling differences
+   *   (e.g., Colour vs Color) belong to toolbar/editor buttons hidden by PICSA's custom toolbar.
+   *
+   * Alternatives considered:
+   * 1. Bundle both `en-GB` and `en-US`: Increases bundle size (~42 KB) and makes 2 network requests per PDF view.
+   * 2. Rely on PDF.js's inline `#yo` English bundle without any external locale files: Saves ~21 KB of assets,
+   *    but causes a caught 404 request to `locale.json` during initialization.
+   * 3. Option A (Selected): Use `locale = 'en-US'` and bundle only `locale/en-US/*`. Minimal bundle size,
+   *    single HTTP fetch, and zero 404 errors.
+   */
+  locale = 'en-US';
   public isNative = Capacitor.isNativePlatform();
   @Input() page?: number;
   @Input() src: string | Blob | Uint8Array;

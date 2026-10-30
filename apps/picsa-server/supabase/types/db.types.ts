@@ -264,6 +264,8 @@ export type Database = {
           crop_probability_metadata: Json | null;
           extremes_data: Json[] | null;
           extremes_metadata: Json | null;
+          monthly_rainfall_data: Json[] | null;
+          monthly_rainfall_metadata: Json | null;
           monthly_temperature_data: Json[] | null;
           monthly_temperature_metadata: Json | null;
           season_start_data: Json[] | null;
@@ -282,6 +284,8 @@ export type Database = {
           crop_probability_metadata?: Json | null;
           extremes_data?: Json[] | null;
           extremes_metadata?: Json | null;
+          monthly_rainfall_data?: Json[] | null;
+          monthly_rainfall_metadata?: Json | null;
           monthly_temperature_data?: Json[] | null;
           monthly_temperature_metadata?: Json | null;
           season_start_data?: Json[] | null;
@@ -300,6 +304,8 @@ export type Database = {
           crop_probability_metadata?: Json | null;
           extremes_data?: Json[] | null;
           extremes_metadata?: Json | null;
+          monthly_rainfall_data?: Json[] | null;
+          monthly_rainfall_metadata?: Json | null;
           monthly_temperature_data?: Json[] | null;
           monthly_temperature_metadata?: Json | null;
           season_start_data?: Json[] | null;

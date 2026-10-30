@@ -6,6 +6,14 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/i18n"],
+      "options": {
+        "jestConfig": "libs/i18n/jest.config.ts",
+        "tsConfig": "libs/i18n/tsconfig.spec.json"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     }

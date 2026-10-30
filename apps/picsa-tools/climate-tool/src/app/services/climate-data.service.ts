@@ -29,7 +29,10 @@ export class ClimateDataService {
 
   /** List of all stations for current country in metadata */
   public allStations = computed(() => {
-    const { country_code } = this.configurationService.deploymentSettings();
+    const deployment = this.configurationService.deploymentSettings();
+    const userSettings = this.configurationService.userSettings();
+    const country_code =
+      (deployment.country_code !== 'global' ? deployment.country_code : userSettings.country_code) || 'mw';
     return CLIMATE_STATIONS_META[country_code] || [];
   });
 
@@ -38,11 +41,12 @@ export class ClimateDataService {
     const { climateTool } = this.configurationService.deploymentSettings();
     const stations = this.allStations();
     const filterFn = climateTool?.station_filter;
-    if (filterFn) {
-      return stations.filter((station) => filterFn(station));
-    } else {
-      return stations.filter((station) => !station.draft && hasStationClimateData(station));
-    }
+    return stations.filter((station) => {
+      if (station.draft || !hasStationClimateData(station)) {
+        return false;
+      }
+      return filterFn ? filterFn(station) : true;
+    });
   });
 
   private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));

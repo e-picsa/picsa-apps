@@ -70,6 +70,12 @@ export interface IMonthlyStationData {
   max_tmin?: number | null;
 }
 
+/** Automated quality control breaking failure codes */
+export type ClimateQcFailure = 'insufficient_total_years' | 'no_recent_data' | 'sparse_recent_data';
+
+/** Non-breaking quality control warning codes */
+export type ClimateQcWarning = 'season_start_no_end' | 'season_end_no_start' | 'season_discrepancies';
+
 /**
  * Station capability and data availability descriptor.
  * Enables synchronous chart filtering and UI badge generation without parsing data files.
@@ -83,12 +89,20 @@ export interface IStationCapabilities {
   schemaVersion: number;
   /** Earliest and latest historical years with data, e.g. [1946, 2024], or [] if no data available */
   years?: [number, number] | [];
-  /** Total count of missing years within the historical range */
-  totalMissingYears?: number;
+  /** Total count of years spanned by the historical range (lastYear - firstYear + 1) */
+  totalYears?: number;
+  /** Count of years with complete annual rainfall and season data (Start, End, Length, Rainfall) */
+  completeRainYears?: number;
+  /** Count of years with complete annual temperature data (min_tmin, mean_tmin, max_tmax, mean_tmax) */
+  completeTempYears?: number;
   /** Available annual chart types */
   annual?: IChartId[];
   /** Available monthly chart types (e.g. ['rainfall', 'temp_min', 'temp_max']) */
   monthly?: IChartId[];
+  /** Automated quality control failure codes. Empty array indicates station passed QC. */
+  qcFailures?: ClimateQcFailure[];
+  /** Non-breaking quality control warning codes */
+  qcWarnings?: ClimateQcWarning[];
 }
 
 /**
@@ -99,11 +113,7 @@ export function hasStationClimateData(station?: IStationMeta | null): boolean {
     return false;
   }
   const { years, annual, monthly } = station.capabilities;
-  return Boolean(
-    (years && years.length > 0) ||
-    (annual && annual.length > 0) ||
-    (monthly && monthly.length > 0)
-  );
+  return Boolean((years && years.length > 0) || (annual && annual.length > 0) || (monthly && monthly.length > 0));
 }
 
 /**
@@ -271,9 +281,15 @@ export interface ISanityViolation {
 /** Summary of an individual station's data status and temporal range */
 export interface IStationAuditSummary {
   id: string;
+  country?: string;
   status: 'NEW' | 'UPDATED' | 'UNCHANGED';
-  years?: readonly [start: number, end: number] | [number, number];
-  totalMissingYears?: number;
+  years?: readonly [start: number, end: number] | [number, number] | [];
+  totalYears?: number;
+  completeRainYears?: number;
+  completeTempYears?: number;
+  diffTotalYears?: number;
+  diffCompleteRainYears?: number;
+  diffCompleteTempYears?: number;
   annual?: IChartId[];
   monthly?: IChartId[];
   hasRainfall?: boolean;
@@ -289,10 +305,21 @@ export interface IMissingnessRegression {
   previousValue: number;
 }
 
+/** Structured warning emitted during climate data synchronization */
+export interface IClimateAuditWarning {
+  /** The warning description or category */
+  message: string;
+  /** Country code (e.g. 'MW', 'ZM', 'ZW') */
+  country?: string;
+  /** Station ID or slug if warning applies to a specific station */
+  stationId?: string;
+}
+
 /** Summary of automated change detection and data health inspection */
 export interface IClimateAuditReport {
   timestamp: string;
   totalStationsProcessed: number;
+  warnings?: Array<string | IClimateAuditWarning>;
   stationsSummary: IStationAuditSummary[];
   historicalRevisions: IHistoricalRevision[];
   missingnessRegressions: IMissingnessRegression[];

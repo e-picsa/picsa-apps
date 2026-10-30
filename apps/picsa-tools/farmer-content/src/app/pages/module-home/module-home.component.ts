@@ -6,16 +6,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { DataIconRegistry } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent, PhotoService } from '@picsa/shared/features/photo';
 import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
 import { filter, map } from 'rxjs';
 
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
+import { hasVideosForUser } from './components/step-video/step-video.utils';
 
 @Component({
   selector: 'farmer-content-module-home',
@@ -43,6 +45,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dataIconRegistry = inject(DataIconRegistry);
+  private configurationService = inject(ConfigurationService);
   componentsService = inject(PicsaCommonComponentsService);
   photoService = inject(PhotoService);
 
@@ -57,6 +60,31 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   );
 
   public toolStep = computed(() => this.content()?.steps.find((v) => v.type === 'tool'));
+
+  /**
+   * Steps to display to the active user. Video steps without a variant matching
+   * the user's country/language are hidden (e.g. Zambia-only videos for Malawi
+   * users), and appear automatically once videos are produced for a country.
+   */
+  public visibleSteps = computed(() => {
+    const content = this.content();
+    if (!content) return [];
+    const { country, language } = this.videoUserPrefs();
+    return content.steps.filter((step) => {
+      if (step.type === 'video') return hasVideosForUser([step.video], country, language);
+      if (step.type === 'videoPlaylist') return hasVideosForUser(step.videos, country, language);
+      return true;
+    });
+  });
+
+  /** Country and language used to match video variants to the active user */
+  private videoUserPrefs = computed(() => {
+    const userSettings = this.configurationService.userSettings();
+    const country = userSettings?.country_code || 'global';
+    const languageCode = userSettings?.language_code || 'global_en';
+    const [, language = 'en'] = languageCode.split('_');
+    return { country, language };
+  });
 
   /** Route segments of nested tool router */
   public toolRouteSegments = computed(() => this.calcToolRouteSegments(this.url(), this.toolStep()?.tool.url), {
@@ -91,6 +119,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   public fadeInContent = signal(true);
 
   public headerContent = computed(() => this.componentsService.headerOptions().cdkPortalCenter);
+  public headerEndContent = computed(() => this.componentsService.headerOptions().cdkPortalEnd);
 
   private slug = toSignal(this.route.params.pipe(map((params) => params.slug)));
 

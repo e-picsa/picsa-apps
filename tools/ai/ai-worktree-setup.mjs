@@ -31,6 +31,7 @@ const FINGERPRINT_VERSION = 1;
 // Git-ignored local files required to build/run, copied from the main checkout.
 // Each is only copied when it exists in the source checkout.
 const FILES_FROM_MAIN = [
+  '.env.local',
   'apps/picsa-apps/app-native/android/app/google-services.json',
   'apps/picsa-scripts/.env',
   'apps/picsa-server/.env.local',

@@ -1,15 +1,20 @@
 import { CLIMATE_CHART_DEFINITIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMeta } from '@picsa/models';
-/** Draft Stations (pending data validation)
-
-Chiradzulu: remove the high value (2015-16) and keep
-Luwazi: I would suggest we keep and start at 1968 as all the 0s are before that date
-Kamuona: last year is very low and this is often as the data are incomplete. I think remove the last year please
-Kasiya: there is a very high value 2015-16 that we should remove if possible please
-Mtakataka: same as above but start from 1947-48
-Mzandu: I would remove the last year
-Nalunga: I would remove the last year
-
+/**
+ * Malawi Station Metadata & Overrides
+ *
+ * Provides verified coordinates, localized administrative districts across 28 districts,
+ * and data quality notes to correct upstream omissions.
+ * @see ../CLIMATE_API_ANOMALIES.md for documented upstream anomalies and future override refactoring.
+ *
+ * Draft Stations (pending data validation):
+ * Chiradzulu: remove the high value (2015-16) and keep
+ * Luwazi: I would suggest we keep and start at 1968 as all the 0s are before that date
+ * Kamuona: last year is very low and this is often as the data are incomplete. I think remove the last year please
+ * Kasiya: there is a very high value 2015-16 that we should remove if possible please
+ * Mtakataka: same as above but start from 1947-48
+ * Mzandu: I would remove the last year
+ * Nalunga: I would remove the last year
  */
 
 const stations: IStationMeta[] = [
@@ -41,12 +46,12 @@ const stations: IStationMeta[] = [
     name: 'Chiradzulu',
     latitude: -15.7,
     longitude: 35.18,
-    location: [],
+    location: ['Chiradzulu'],
     draft: true,
   },
   {
     id: 'dowa_agr',
-    name: 'Dowa_agr',
+    name: 'Dowa Agriculture',
     latitude: -13.65,
     longitude: 33.93,
     location: ['Dowa'],
@@ -63,7 +68,7 @@ const stations: IStationMeta[] = [
     name: 'Kasiya',
     latitude: -13.77,
     longitude: 33.53,
-    location: [],
+    location: ['Lilongwe'],
     draft: true,
   },
   {
@@ -92,7 +97,7 @@ const stations: IStationMeta[] = [
     name: 'Luwazi',
     latitude: -11.5,
     longitude: 34.2,
-    location: [],
+    location: ['Nkhata Bay'],
     draft: true,
   },
   {
@@ -100,7 +105,7 @@ const stations: IStationMeta[] = [
     name: 'Mtakataka',
     latitude: -14.23,
     longitude: 34.52,
-    location: [],
+    location: ['Dedza'],
     draft: true,
   },
   {
@@ -129,7 +134,7 @@ const stations: IStationMeta[] = [
     name: 'Kamuona',
     latitude: -13.5,
     longitude: 34.3,
-    location: [],
+    location: ['Salima'],
     draft: true,
   },
   {
@@ -137,7 +142,7 @@ const stations: IStationMeta[] = [
     name: 'Mzandu',
     latitude: -13.5,
     longitude: 34.5,
-    location: [],
+    location: ['Nkhotakota'],
     draft: true,
   },
   {
@@ -145,7 +150,7 @@ const stations: IStationMeta[] = [
     name: 'Nalunga',
     latitude: -13.633,
     longitude: 34.066,
-    location: [],
+    location: ['Dowa'],
     draft: true,
   },
   {
@@ -217,7 +222,7 @@ const stations: IStationMeta[] = [
     name: 'Ntaja',
     latitude: -14.87,
     longitude: 35.53,
-    location: ['Mahinga'],
+    location: ['Machinga'],
   },
   {
     id: 'chitedze',

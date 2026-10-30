@@ -1,0 +1,173 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "variety": "SC-401, SC-403",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [400],
+        "probabilities": [0.1, 0.2, 0.2, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "RED-COB",
+        "days": "90 - 100",
+        "days_lower": 90,
+        "days_upper": 100,
+        "water": [400],
+        "probabilities": [0.2, 0.2, 0.3, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "SC-513",
+        "days": "120",
+        "days_lower": 120,
+        "days_upper": 120,
+        "water": [550],
+        "probabilities": [0.1, 0.1, 0.1, 0.1, 0, 0]
+      },
+      {
+        "variety": "PAN-413",
+        "days": "120 - 135",
+        "days_lower": 120,
+        "days_upper": 135,
+        "water": [400],
+        "probabilities": [0.4, 0.4, 0.3, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "sorghum",
+    "data": [
+      {
+        "variety": "SILA, HWEDZA",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [350],
+        "probabilities": [0.2, 0.3, 0.3, 0.3, 0.2, 0.2]
+      },
+      {
+        "variety": "MACIA",
+        "days": "110",
+        "days_lower": 110,
+        "days_upper": 110,
+        "water": [250],
+        "probabilities": [0.6, 0.6, 0.6, 0.4, 0.2, 0.1]
+      },
+      {
+        "variety": "MANDENDE",
+        "days": "120",
+        "days_lower": 120,
+        "days_upper": 120,
+        "water": [500],
+        "probabilities": [0.2, 0.2, 0.2, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "variety": "NATAL-COMMON",
+        "days": "85 - 105",
+        "days_lower": 85,
+        "days_upper": 105,
+        "water": [400],
+        "probabilities": [0.2, 0.2, 0.3, 0.2, 0.2, 0.1]
+      },
+      {
+        "variety": "NYANDA",
+        "days": "130",
+        "days_lower": 130,
+        "days_upper": 130,
+        "water": [270],
+        "probabilities": [0.6, 0.5, 0.4, 0.1, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "variety": "CBC-2",
+        "days": "75 - 80",
+        "days_lower": 75,
+        "days_upper": 80,
+        "water": [300],
+        "probabilities": [0.1, 0.3, 0.3, 0.3, 0.3, 0.3]
+      },
+      {
+        "variety": "NYEMBA-YOKUTANDA",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [400],
+        "probabilities": [0.1, 0.2, 0.2, 0.3, 0.2, 0.1]
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "data": [
+      {
+        "variety": "JAGUAR, MAHYCO",
+        "days": "90 - 105",
+        "days_lower": 90,
+        "days_upper": 105,
+        "water": [350],
+        "probabilities": [0.3, 0.4, 0.4, 0.3, 0.2, 0.1]
+      },
+      {
+        "variety": "QM-301",
+        "days": "120",
+        "days_lower": 120,
+        "days_upper": 120,
+        "water": [700],
+        "probabilities": [0, 0.1, 0, 0, 0, 0]
+      },
+      {
+        "variety": "QM-302",
+        "days": "150",
+        "days_lower": 150,
+        "days_upper": 150,
+        "water": [600],
+        "probabilities": [0.1, 0.1, 0, 0, 0, 0]
+      }
+    ]
+  },
+  {
+    "crop": "millet",
+    "data": [
+      {
+        "variety": "PMV-3, OKASHANA-1",
+        "days": "75",
+        "days_lower": 75,
+        "days_upper": 75,
+        "water": [350],
+        "probabilities": [0.1, 0.2, 0.2, 0.2, 0.2, 0.2]
+      },
+      {
+        "variety": "MUSWEWESHOKO",
+        "days": "90",
+        "days_lower": 90,
+        "days_upper": 90,
+        "water": [350],
+        "probabilities": [0.2, 0.3, 0.3, 0.3, 0.2, 0.2]
+      }
+    ]
+  },
+  {
+    "crop": "bambaranuts",
+    "data": [
+      {
+        "variety": "MISODZI, NYIMO-TSVUKU",
+        "days": "90 - 100",
+        "days_lower": 90,
+        "days_upper": 100,
+        "water": [400],
+        "probabilities": [0.2, 0.2, 0.3, 0.3, 0.2, 0.1]
+      }
+    ]
+  }
+]

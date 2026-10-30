@@ -288,10 +288,40 @@ export function generateTable(params: {
   return entries.sort(sortByPriorityCrops);
 }
 
+export interface IExpectedProbabilityTable {
+  table: IStationCropData[];
+  startProbabilities: ISeasonStartProbability[];
+}
+
+/**
+ * Single shared pipeline that builds the app probability table a location
+ * should currently have, from live data-system records. Returns null when the
+ * inputs are insufficient to generate a table (no rainfall data, no qualifying
+ * plant dates). Used by both the app data export and the app-vs-database diff.
+ */
+export function computeExpectedProbabilityTable(params: {
+  cropDataHashmap: Record<string, ICropData['Row']>;
+  waterRequirements: ICropDataDownscaledWaterRequirements;
+  rainfallData: IAnnualRainfallSummariesData[];
+  cropProbabilityData: ICropSuccessEntry[];
+}): IExpectedProbabilityTable | null {
+  const { cropDataHashmap, waterRequirements, rainfallData, cropProbabilityData } = params;
+  if (Object.keys(waterRequirements ?? {}).length === 0) return null;
+  // Station data columns are nullable in the database
+  if (!Array.isArray(rainfallData) || rainfallData.length === 0) return null;
+  if (!Array.isArray(cropProbabilityData) || cropProbabilityData.length === 0) return null;
+  const startProbabilities = calcSeasonStartProbabilities(rainfallData, cropProbabilityData);
+  if (startProbabilities.length === 0) return null;
+  const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
+  const table = generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
+  return { table, startProbabilities };
+}
+
 export function calcSeasonStartProbabilities(
   rainfallData: IAnnualRainfallSummariesData[],
   probabilityData: ICropSuccessEntry[],
 ): ISeasonStartProbability[] {
+  if (!Array.isArray(rainfallData) || !Array.isArray(probabilityData)) return [];
   const allStartDates = rainfallData.map((d) => d.start_rains_doy).filter((v) => typeof v === 'number') as number[];
   if (allStartDates.length === 0) return [];
   const uniquePlantDates = [...new Set(probabilityData.map((v) => v.plant_day))];

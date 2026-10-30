@@ -9,7 +9,7 @@
 Related issues: #688, #691
 
 - [x] **Clean & Ingest Production Monthly Data (Zambia)**: Successfully mapped 5 stations (`chipata_met`, `lundazi_met`, `mfuwe_met`, `msekera_agromet`, `petauke_met`), transformed 20,988 raw records into canonical wide monthly CSVs with 6 temperature metrics.
-- [x] **Run CLI Audit (Zambia)**: Executed `sync-climate-data.ts --compute-existing --country=zm`, generating final SHA-256 hashes, updated capabilities with `monthly: ['temp_min', 'temp_max']`, and verified 0 regressions.
+- [x] **Run CLI Audit (Zambia)**: Executed `sync-climate-data.ts --no-pull --country=zm`, generating final SHA-256 hashes, updated capabilities with `monthly: ['temp_min', 'temp_max']`, and verified 0 regressions.
 - [x] **Ingest Remaining Production Monthly Data (Malawi, Zimbabwe)**: Ingest other country datasets as they become available.
 - [ ] **Audit Legacy `override_data`**: Check and clean up `override_data` references in the climate tool (legacy override mechanism that is no longer needed with the typed capabilities architecture).
 - [ ] **Sync Date Visibility**: Display clear indicators in the dashboard UI showing the exact date of data currently synced/bundled in the app per station and per country (`lastUpdated: YYYY-MM-DD`).

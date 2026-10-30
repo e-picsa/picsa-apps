@@ -58,7 +58,7 @@ describe('SentryService and initSentry', () => {
       expect(Sentry.setUser).toHaveBeenCalledWith({ id: 'test-device-uuid' });
     });
 
-    it('filters out extension errors in beforeSend', () => {
+    it('filters out extension and network drop errors in beforeSend', () => {
       initSentry();
       const initCall = (Sentry.init as jest.Mock).mock.calls[0][0];
       const beforeSend = initCall.beforeSend;
@@ -96,6 +96,17 @@ describe('SentryService and initSentry', () => {
         message: 'Angular DevTools hook failed',
       };
       expect(beforeSend(devToolsEvent)).toBeNull();
+
+      // Offline network dropouts should be filtered out
+      expect(beforeSend({ message: 'TypeError: Failed to fetch' })).toBeNull();
+      expect(beforeSend({ message: 'net::ERR_INTERNET_DISCONNECTED' })).toBeNull();
+      expect(
+        beforeSend({
+          exception: {
+            values: [{ value: 'Http failure response for https://example.com/video.mp4: 0 Unknown Error' }],
+          },
+        }),
+      ).toBeNull();
     });
   });
 
@@ -138,8 +149,22 @@ describe('SentryService and initSentry', () => {
       service.setExtra('extra-key', { foo: 'bar' });
       expect(Sentry.setExtra).toHaveBeenCalledWith('extra-key', { foo: 'bar' });
 
-      service.addBreadcrumb({ message: 'clicked button' });
-      expect(Sentry.addBreadcrumb).toHaveBeenCalledWith({ message: 'clicked button' });
+      service.addBreadcrumb({ message: 'crumb' });
+      expect(Sentry.addBreadcrumb).toHaveBeenCalledWith({ message: 'crumb' });
+    });
+
+    it('no-ops setUser, setTag, setExtra, addBreadcrumb when disabled', () => {
+      (Sentry.isEnabled as jest.Mock).mockReturnValue(false);
+
+      service.setUser({ id: 'user-123' });
+      service.setTag('test-tag', 'val');
+      service.setExtra('extra-key', { foo: 'bar' });
+      service.addBreadcrumb({ message: 'crumb' });
+
+      expect(Sentry.setUser).not.toHaveBeenCalled();
+      expect(Sentry.setTag).not.toHaveBeenCalled();
+      expect(Sentry.setExtra).not.toHaveBeenCalled();
+      expect(Sentry.addBreadcrumb).not.toHaveBeenCalled();
     });
   });
 });

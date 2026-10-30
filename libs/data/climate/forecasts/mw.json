@@ -1,0 +1,336 @@
+{
+  "seasonal": [
+    {
+      "id": "2026/seasonal/mw_en",
+      "forecast_type": "seasonal",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_en",
+      "storage_file": "mw/forecasts/seasonal/2026/mw_en.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027 Outlook",
+      "downscaled_location": null
+    },
+    {
+      "id": "2026/seasonal_summary/mw_en",
+      "forecast_type": "seasonal",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_en",
+      "storage_file": "mw/forecasts/seasonal/2026/summary.mw_en.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027 Summary",
+      "downscaled_location": null
+    }
+  ],
+  "downscaled": [
+    {
+      "id": "2026/downscaled/balaka/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/balaka.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "balaka"
+    },
+    {
+      "id": "2026/downscaled/blantyre/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/blantyre.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "blantyre"
+    },
+    {
+      "id": "2026/downscaled/chikwawa/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/chikwawa.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "chikwawa"
+    },
+    {
+      "id": "2026/downscaled/chiradzulu/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/chiradzulu.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "chiradzulu"
+    },
+    {
+      "id": "2026/downscaled/chitipa/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/chitipa.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "chitipa"
+    },
+    {
+      "id": "2026/downscaled/dedza/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/dedza.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "dedza"
+    },
+    {
+      "id": "2026/downscaled/dowa/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/dowa.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "dowa"
+    },
+    {
+      "id": "2026/downscaled/karonga/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/karonga.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "karonga"
+    },
+    {
+      "id": "2026/downscaled/kasungu/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/kasungu.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "kasungu"
+    },
+    {
+      "id": "2026/downscaled/likoma/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/likoma.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "likoma"
+    },
+    {
+      "id": "2026/downscaled/lilongwe/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/lilongwe.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "lilongwe"
+    },
+    {
+      "id": "2026/downscaled/machinga/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/machinga.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "machinga"
+    },
+    {
+      "id": "2026/downscaled/mangochi/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/mangochi.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "mangochi"
+    },
+    {
+      "id": "2026/downscaled/mchinji/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/mchinji.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "mchinji"
+    },
+    {
+      "id": "2026/downscaled/mulanje/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/mulanje.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "mulanje"
+    },
+    {
+      "id": "2026/downscaled/mwanza/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/mwanza.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "mwanza"
+    },
+    {
+      "id": "2026/downscaled/mzimba/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/mzimba.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "mzimba"
+    },
+    {
+      "id": "2026/downscaled/nkhata_bay/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/nkhata_bay.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "nkhata_bay"
+    },
+    {
+      "id": "2026/downscaled/nkhotakota/mw_en",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_en",
+      "storage_file": "mw/forecasts/downscaled/2026/nkhotakota.mw_en.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "nkhotakota"
+    },
+    {
+      "id": "2026/downscaled/nneno/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/nneno.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "nneno"
+    },
+    {
+      "id": "2026/downscaled/nsanje/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/nsanje.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "nsanje"
+    },
+    {
+      "id": "2026/downscaled/ntcheu/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/ntcheu.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "ntcheu"
+    },
+    {
+      "id": "2026/downscaled/ntchisi/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/ntchisi.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "ntchisi"
+    },
+    {
+      "id": "2026/downscaled/phalombe/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/phalombe.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "phalombe"
+    },
+    {
+      "id": "2026/downscaled/rumphi/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/rumphi.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "rumphi"
+    },
+    {
+      "id": "2026/downscaled/salima/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/salima.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "salima"
+    },
+    {
+      "id": "2026/downscaled/thyolo/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/thyolo.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "thyolo"
+    },
+    {
+      "id": "2026/downscaled/zomba/mw_ny",
+      "forecast_type": "downscaled",
+      "location": [],
+      "country_code": "mw",
+      "language_code": "mw_ny",
+      "storage_file": "mw/forecasts/downscaled/2026/zomba.mw_ny.pdf",
+      "mimetype": "application/pdf",
+      "label": "2026 - 2027",
+      "downscaled_location": "zomba"
+    }
+  ]
+}

@@ -1,20 +1,34 @@
 <div class="page-content">
-  <!-- Language Select -->
-  <mat-form-field>
-    <mat-label>Language</mat-label>
-    <mat-select [(ngModel)]="locale">
-      @for(locale of localeOptions(); track locale.id){
-      <mat-option [value]="locale.id">{{locale.language_label}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <!-- Language Select & Actions -->
+  <div class="flex items-center gap-4">
+    <mat-form-field>
+      <mat-label>Language</mat-label>
+      <mat-select [(ngModel)]="locale">
+        @for(locale of localeOptions(); track locale.id){
+        <mat-option [value]="locale.id">{{locale.language_label}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-  <!-- Progress -->
-  <div style="display: flex; justify-content: center; align-items: center; gap: 8px">
-    <mat-progress-bar mode="determinate" [value]="translationProgress()" style="flex: 1"></mat-progress-bar>
-    <div>{{countTranslated}} / {{countTotal}}</div>
-    <mat-checkbox [(ngModel)]="includeTranslated">Show All</mat-checkbox>
+    <button matButton="outlined" (click)="service.exportXlsx()">Download Template</button>
   </div>
+
+  <!-- Headline filter chips -->
+  <!-- Default to 'all' as single-select listbox allows deselecting the active chip (emits undefined) -->
+  <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
+    <mat-chip-option value="all" [selected]="tableFilter() === 'all'">
+      <mat-icon matChipAvatar>list</mat-icon>
+      Total: {{ countTotal }}
+    </mat-chip-option>
+    <mat-chip-option value="translated" [selected]="tableFilter() === 'translated'" class="chip-translated">
+      <mat-icon matChipAvatar>check_circle</mat-icon>
+      Translated: {{ countTranslated }}
+    </mat-chip-option>
+    <mat-chip-option value="pending" [selected]="tableFilter() === 'pending'" class="chip-pending">
+      <mat-icon matChipAvatar>translate</mat-icon>
+      Needs Translation: {{ countPending }}
+    </mat-chip-option>
+  </mat-chip-listbox>
 
   <!-- Table -->
   @if(tableOptions() && countTotal>0){
@@ -24,9 +38,4 @@
   } @else {
   <picsa-loading style="margin: auto"></picsa-loading>
   }
-
-  <!-- JSON Export -->
-  <button style="margin-top: 2rem; max-width: 200px" matButton (click)="service.exportJson(locale(),true)">
-    Export JSON
-  </button>
 </div>

@@ -15,4 +15,5 @@ apps/picsa-apps/app-native
 apps/picsa-server/supabase/types/index.ts
 # Generated files
 apps/picsa-apps/dashboard/src/app/modules/climate/types/api.d.ts
+libs/i18n/assets
 *.topo.json

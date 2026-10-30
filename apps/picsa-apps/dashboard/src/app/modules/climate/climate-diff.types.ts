@@ -42,6 +42,7 @@ export interface IProductDiffSummary {
   dbYearSpan: [number, number] | null;
   hasData: boolean;
   isInSync: boolean;
+  totalValuesCount: number;
 }
 
 export type StationDiffStatus = 'in_sync' | 'diff' | 'app_only' | 'db_only' | 'no_data';

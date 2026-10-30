@@ -1,14 +1,16 @@
+import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 
 import { DashboardMaterialModule } from '../../../../../../material.module';
-import { hackConvertStationDataForDisplay } from '../../../../climate.utils';
+import { extractStationGenerationMetadata, hackConvertStationDataForDisplay } from '../../../../climate.utils';
 import { IClimateStationData, IStationRow } from '../../../../types';
 
 @Component({
   selector: 'dashboard-climate-data-summary',
   templateUrl: './data-summary.html',
-  imports: [PicsaDataTableComponent, DashboardMaterialModule],
+  imports: [CommonModule, DatePipe, MatTooltipModule, PicsaDataTableComponent, DashboardMaterialModule],
   styleUrl: './data-summary.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -16,6 +18,17 @@ export class DataSummaryComponent {
   public station = input.required<IStationRow>();
 
   public data = input<IClimateStationData['Row'] | null>();
+
+  public generationMetadata = computed(() => {
+    const data = this.data();
+    if (!data) return undefined;
+    const { generation_timestamp, generation_id } = extractStationGenerationMetadata(data);
+    return {
+      generation_timestamp,
+      generation_id,
+      updated_at: data.updated_at,
+    };
+  });
 
   public tableData = computed(() => {
     const data = this.data();

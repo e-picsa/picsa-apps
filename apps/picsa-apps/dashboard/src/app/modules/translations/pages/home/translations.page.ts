@@ -39,8 +39,8 @@ export class TranslationsPageComponent {
     return this.generateTableOptions(locale);
   });
 
-  /** Specify whether to show all translations or just missing */
-  public includeTranslated = signal(false);
+  /** Table filter selected via headline chips (default shows all) */
+  public tableFilter = signal<'all' | 'translated' | 'pending'>('all');
 
   /** List of available locales for deployment country */
   public localeOptions = signal<ILocaleDataEntry[]>([]);
@@ -55,7 +55,7 @@ export class TranslationsPageComponent {
   public tableData = computed(() => {
     const translations = this.translations();
     const locale = this.locale();
-    const data = this.generateTableData(locale, translations, this.includeTranslated());
+    const data = this.generateTableData(locale, translations, this.tableFilter());
     return data;
   });
 
@@ -64,8 +64,6 @@ export class TranslationsPageComponent {
     const locale = this.locale();
     return this.translations().filter((entry) => !entry[locale]);
   });
-
-  public translationProgress = computed(() => (100 * this.countTranslated) / this.countTotal);
 
   public get countTotal() {
     return this.translations().length;
@@ -78,16 +76,19 @@ export class TranslationsPageComponent {
   }
 
   /** */
-  private generateTableData(localeId: string, entries: ITranslationRow[], includeTranslated = false) {
+  private generateTableData(
+    localeId: string,
+    entries: ITranslationRow[],
+    filter: 'all' | 'translated' | 'pending' = 'all',
+  ) {
     // HACK - ignore list when default translations set
     if (localeId === LOCALES_DATA_HASHMAP.global_en.id) return [];
-    // Filter entries to only include those not already translated or archived
+    // Filter entries by chip selection (archived always excluded)
     return entries
       .filter((entry) => {
         if (entry.archived) return false;
-        if (!includeTranslated) {
-          return entry[localeId] ? false : true;
-        }
+        if (filter === 'translated') return Boolean(entry[localeId]);
+        if (filter === 'pending') return !entry[localeId];
         return true;
       })
       .sort((a, b) => (a.id > b.id ? 1 : -1));
