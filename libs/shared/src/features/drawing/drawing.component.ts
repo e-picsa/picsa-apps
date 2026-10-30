@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   input,
@@ -20,6 +21,7 @@ import { PicsaTranslateModule } from '@picsa/i18n';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
 
 import { generateID } from '../../services/core/db/db.service';
+import { base64ToBlob, loadImage, parseDataUri } from '../../services/core/feedback/image.utils';
 
 type StrokeTool = 'pen' | 'highlighter';
 type BoxTool = 'rectangle' | 'square' | 'circle' | 'triangle' | 'redaction';
@@ -117,8 +119,7 @@ type Segment = {
 
 type Rect = { x: number; y: number; width: number; height: number };
 
-/** Only applies to a redaction box's own covering rect - word redaction is always a real blackout */
-type RedactStyle = 'blackout' | 'blur' | 'pixelate';
+type RedactStyle = 'blackout' | 'blur';
 
 type Shape = {
   id: string;
@@ -148,19 +149,10 @@ type TextAnnotation = {
   fontSize: number;
 };
 
-/** A highlight (or real redaction, when redact is set) over a run of words in one text annotation */
-type TextHighlight = { id: string; textId: string; from: number; to: number; color: string; redact?: boolean };
+/** A highlight over a run of words (inclusive word indices) in one text annotation */
+type TextHighlight = { id: string; textId: string; from: number; to: number; color: string };
 
-type WordBox = {
-  index: number;
-  line: number;
-  text: string;
-  x: number;
-  y: number;
-  baseline: number;
-  width: number;
-  height: number;
-};
+type WordBox = { index: number; line: number; x: number; y: number; width: number; height: number };
 
 type HistoryEntry =
   | { kind: 'segment'; item: Segment }
@@ -188,7 +180,24 @@ export class PicsaDrawingComponent {
   dialog = inject(MatDialog);
 
   size = input(384);
-  viewbox = computed(() => `0 0 ${this.size()} ${this.size()}`);
+  backgroundImage = input<string | Blob | null>(null);
+
+  public backgroundImageSrc = signal<string | null>(null);
+  private naturalImageSize = signal<{ width: number; height: number } | null>(null);
+
+  public canvasSize = computed(() => {
+    const natural = this.naturalImageSize();
+    if (!natural) return { width: this.size(), height: this.size() };
+    const scale = Math.min(this.size() / natural.width, this.size() / natural.height);
+    return { width: Math.round(natural.width * scale), height: Math.round(natural.height * scale) };
+  });
+  public canvasWidth = computed(() => this.canvasSize().width);
+  public canvasHeight = computed(() => this.canvasSize().height);
+
+  viewbox = computed(() => `0 0 ${this.canvasWidth()} ${this.canvasHeight()}`);
+
+  /** Only affects exportImage() - onChange always emits the live SVG string, regardless of this */
+  outputFormat = input<'svg' | 'png' | 'jpeg'>('svg');
 
   public onChange = output<string>();
 
@@ -286,6 +295,30 @@ export class PicsaDrawingComponent {
   };
 
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
+
+  constructor() {
+    // Blobs are converted to data URLs (not object URLs) so the resolved src stays valid for as
+    // long as the saved SVG itself does, instead of breaking once an object URL is revoked
+    effect((onCleanup) => {
+      const bg = this.backgroundImage();
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      if (!bg) {
+        this.backgroundImageSrc.set(null);
+        this.naturalImageSize.set(null);
+        return;
+      }
+      resolveImageSrc(bg).then((src) => {
+        if (cancelled) return;
+        this.backgroundImageSrc.set(src);
+        loadImage(src).then((img) => {
+          if (!cancelled) this.naturalImageSize.set({ width: img.naturalWidth, height: img.naturalHeight });
+        });
+      });
+    });
+  }
 
   /**
    * Active selection overlay details for blue nodes. A plain method (not computed()) like
@@ -418,7 +451,7 @@ export class PicsaDrawingComponent {
       }
     }
 
-    if (BOX_TOOLS.includes(tool as BoxTool) && tool !== 'redaction') {
+    if (BOX_TOOLS.includes(tool as BoxTool)) {
       const existingShape = this.findAnyShapeAtPoint(x, y);
       if (existingShape) {
         this.selectedItemId.set(existingShape.shape.id);
@@ -438,18 +471,16 @@ export class PicsaDrawingComponent {
 
     this.selectedItemId.set(null);
 
-    // Highlighter/redaction pressed on a word -> word highlight/redaction instead of a freehand stroke
-    if (tool === 'highlighter' || tool === 'redaction') {
+    // Highlighter pressed on a word -> word highlight instead of a freehand stroke
+    if (tool === 'highlighter') {
       const hit = this.findWordAtPoint(x, y);
       if (hit) {
-        const redact = tool === 'redaction';
         this.activeHighlight = {
           id: generateID(5),
           textId: hit.text.id,
           from: hit.index,
           to: hit.index,
-          color: redact ? 'black' : this.color(),
-          redact,
+          color: this.color(),
         };
         return;
       }
@@ -577,30 +608,24 @@ export class PicsaDrawingComponent {
       const rect = this.activeShape.rect();
       if (rect.width > 2 && rect.height > 2) {
         this.finaliseActiveShape();
-        if (this.activeShape.tool === 'redaction') {
-          this.redactWordsUnder(rect);
-        } else {
-          this.selectedItemId.set(this.activeShape.id);
-        }
+        this.selectedItemId.set(this.activeShape.id);
       }
       this.activeShape = null;
       this.shapeDragOrigin = null;
     } else if (this.activeHighlight) {
       const h = this.activeHighlight;
       const isTap = h.from === h.to;
-      // tapping an already highlighted word removes that highlight; redactions are permanent, no tap-to-remove
-      const covering =
-        isTap && !h.redact
-          ? this.items.filter(
-              (e) =>
-                e.kind === 'highlight' &&
-                !e.item.redact &&
-                e.item.textId === h.textId &&
-                h.from >= Math.min(e.item.from, e.item.to) &&
-                h.from <= Math.max(e.item.from, e.item.to),
-            )
-          : [];
+      const covering = isTap
+        ? this.items.filter(
+            (e) =>
+              e.kind === 'highlight' &&
+              e.item.textId === h.textId &&
+              h.from >= Math.min(e.item.from, e.item.to) &&
+              h.from <= Math.max(e.item.from, e.item.to),
+          )
+        : [];
       if (covering.length > 0) {
+        // tapping an already highlighted word removes that highlight
         this.items = this.items.filter((e) => !covering.includes(e));
       } else {
         this.items.push({ kind: 'highlight', item: h });
@@ -615,12 +640,7 @@ export class PicsaDrawingComponent {
       this.activeArrow = null;
     } else if (this.textEditOrigin) {
       // released without crossing the move threshold -> treat as a tap, open it for editing
-      // (unless it has redacted words - opening the editor would reveal them again)
-      if (
-        !this.textEditOrigin.moved &&
-        this.textEditOrigin.mode === 'move' &&
-        !this.hasRedactedWords(this.textEditOrigin.text.id)
-      ) {
+      if (!this.textEditOrigin.moved && this.textEditOrigin.mode === 'move') {
         const text = this.textEditOrigin.text;
         this.textDraft = {
           x: text.x,
@@ -696,12 +716,51 @@ export class PicsaDrawingComponent {
   }
 
   private sanitizeOutputSVG() {
-    const svgEl = this.svgElement.nativeElement.outerHTML;
-    return svgEl
-      .replace(/_ngcontent(\S)* /gi, '')
-      .replace(/class="[^"]*"/gi, '')
-      .replace(/<!--(.*?)-->/gi, '')
-      .replace('style="touch-action: none;"', '');
+    // backgroundImage is a live tracing aid only - never baked into the saved/exported output
+    const clone = this.svgElement.nativeElement.cloneNode(true) as SVGElement;
+    clone.querySelector('image')?.remove();
+    const svgEl = clone.outerHTML;
+    return (
+      svgEl
+        // matches the full _ngcontent-xxx="..." attribute (including its quotes) rather than any
+        // run of non-whitespace chars - the old pattern could run straight through a `>` into the
+        // next tag's name whenever _ngcontent was the last/only attribute before it (e.g. <defs>
+        // immediately followed by <filter>), corrupting the markup
+        .replace(/\s*_ngcontent-[\w-]+="[^"]*"/gi, '')
+        .replace(/class="[^"]*"/gi, '')
+        .replace(/<!--(.*?)-->/gi, '')
+        .replace('style="touch-action: none;"', '')
+    );
+  }
+
+  /**
+   * Flattens the drawing to outputFormat(). Call this on demand (e.g. a host's "Save" button) -
+   * not wired to onChange, since rasterizing on every stroke would be wasted work mid-edit.
+   */
+  public async exportImage(): Promise<{ base64: string; type: string; blob: Blob }> {
+    const svg = this.sanitizeOutputSVG();
+    const format = this.outputFormat();
+    if (format === 'svg') {
+      return { base64: toBase64(svg), type: 'image/svg+xml', blob: new Blob([svg], { type: 'image/svg+xml' }) };
+    }
+
+    const mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+    const img = await loadImage(`data:image/svg+xml;base64,${toBase64(svg)}`);
+    const canvas = document.createElement('canvas');
+    canvas.width = this.canvasWidth();
+    canvas.height = this.canvasHeight();
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas 2D context unavailable');
+    if (mime === 'image/jpeg') {
+      // jpeg has no alpha channel - without this, transparent areas would turn black
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const parsed = parseDataUri(canvas.toDataURL(mime));
+    if (!parsed) throw new Error('Failed to encode image');
+    return { base64: parsed.base64, type: parsed.type, blob: base64ToBlob(parsed.base64, parsed.type) };
   }
 
   private createNewSegment() {
@@ -787,7 +846,7 @@ export class PicsaDrawingComponent {
 
   /** Wrapped lines for a text label, capped to the canvas width remaining from its x position */
   public wrappedTextLines(text: TextAnnotation): string[] {
-    const maxWidth = Math.max(this.size() - text.x, 60);
+    const maxWidth = Math.max(this.canvasWidth() - text.x, 60);
     return wrapTextLines(text.text, text.fontSize, maxWidth);
   }
 
@@ -808,38 +867,6 @@ export class PicsaDrawingComponent {
       }
     }
     return rects;
-  }
-
-  /** Words still shown for a text; redacted words are left out of the SVG entirely so they can't be recovered */
-  public visibleWords(text: TextAnnotation): WordBox[] {
-    const redactions = this.items
-      .filter(
-        (e): e is { kind: 'highlight'; item: TextHighlight } =>
-          e.kind === 'highlight' && !!e.item.redact && e.item.textId === text.id,
-      )
-      .map((e) => e.item);
-    return this.wordBoxes(text).filter(
-      (w) => !redactions.some((r) => w.index >= Math.min(r.from, r.to) && w.index <= Math.max(r.from, r.to)),
-    );
-  }
-
-  private hasRedactedWords(textId: string): boolean {
-    return this.items.some((e) => e.kind === 'highlight' && !!e.item.redact && e.item.textId === textId);
-  }
-
-  private redactWordsUnder(area: Rect) {
-    for (const entry of [...this.items]) {
-      if (entry.kind !== 'text') continue;
-      const indices = this.wordBoxes(entry.item)
-        .filter((w) => rectsIntersect(w, area))
-        .map((w) => w.index);
-      for (const [from, to] of toRanges(indices)) {
-        this.items.push({
-          kind: 'highlight',
-          item: { id: generateID(5), textId: entry.item.id, from, to, color: 'black', redact: true },
-        });
-      }
-    }
   }
 
   public finaliseActiveArrow() {
@@ -916,15 +943,12 @@ export class PicsaDrawingComponent {
     return this.activeArrow?.tool === 'arrow' ? [...arrows, this.activeArrow] : arrows;
   }
 
-  /** Redaction boxes drawn with a blur/pixelate style - rendered as a filtered copy of the canvas, clipped to the box */
+  /** Redaction boxes drawn with the blur style - rendered as a filtered copy of the canvas, clipped to the box */
   public styledRedactions(): Shape[] {
     return this.displayItems()
       .filter(
         (e): e is { kind: 'shape'; item: Shape } =>
-          e.kind === 'shape' &&
-          e.item.tool === 'redaction' &&
-          !!e.item.redactStyle &&
-          e.item.redactStyle !== 'blackout',
+          e.kind === 'shape' && e.item.tool === 'redaction' && e.item.redactStyle === 'blur',
       )
       .map((e) => e.item);
   }
@@ -941,9 +965,6 @@ export class PicsaDrawingComponent {
   private findWordAtPoint(x: number, y: number): { text: TextAnnotation; index: number } | undefined {
     for (let i = this.items.length - 1; i >= 0; i--) {
       const entry = this.items[i];
-      if (entry.kind === 'shape' && entry.item.tool === 'redaction' && rectContains(entry.item.rect(), x, y)) {
-        return undefined; // can't highlight redacted words
-      }
       if (entry.kind !== 'text') continue;
       const hit = this.wordBoxes(entry.item).find((w) =>
         rectContains({ x: w.x - 6, y: w.y - 4, width: w.width + 12, height: w.height + 8 }, x, y),
@@ -974,11 +995,6 @@ export class PicsaDrawingComponent {
     const padding = 6;
     for (let i = this.items.length - 1; i >= 0; i--) {
       const entry = this.items[i];
-      if (entry.kind === 'shape' && entry.item.tool === 'redaction' && rectContains(entry.item.rect(), x, y)) {
-        // a redaction box drawn over this point blocks clicking through to whatever's underneath -
-        // otherwise "redacted" content would still be editable just by clicking where it used to be
-        return undefined;
-      }
       if (entry.kind !== 'text') continue;
       const el = this.svgElement.nativeElement.querySelector(`#${CSS.escape(entry.item.id)}`);
       let box: { x: number; y: number; width: number; height: number } = {
@@ -988,13 +1004,6 @@ export class PicsaDrawingComponent {
       };
       if (el instanceof SVGTextElement) {
         box = el.getBBox();
-      }
-      // a redaction box overlapping this text even partly locks it from editing entirely - otherwise
-      // tapping below/beside a box that only covers part of the text would still reveal everything
-      if (
-        this.items.some((e) => e.kind === 'shape' && e.item.tool === 'redaction' && rectsIntersect(e.item.rect(), box))
-      ) {
-        continue;
       }
       if (Math.hypot(x - (box.x + box.width + 4), y - (box.y + box.height / 2)) <= handleRadius) {
         return { text: entry.item, mode: 'resize' };
@@ -1010,7 +1019,7 @@ export class PicsaDrawingComponent {
     const handleRadius = 14;
     for (let i = this.items.length - 1; i >= 0; i--) {
       const entry = this.items[i];
-      if (entry.kind !== 'shape' || entry.item.tool === 'redaction') continue;
+      if (entry.kind !== 'shape') continue;
       const rect = entry.item.rect();
       if (Math.hypot(x - (rect.x + rect.width), y - (rect.y + rect.height)) <= handleRadius) {
         return { shape: entry.item, mode: 'resize' };
@@ -1048,23 +1057,31 @@ function estimateTextBoxSize(text: string, fontSize: number): { width: number; h
   return { width: longestLine * (fontSize * 0.6), height: lines.length * fontSize * 1.2 };
 }
 
+/** btoa() throws on characters outside Latin1 (e.g. accented letters in a text annotation) */
+function toBase64(value: string): string {
+  return btoa(unescape(encodeURIComponent(value)));
+}
+
+/**
+ * Always resolves to a self-contained data URL, never a plain URL reference - once this ends up
+ * inside sanitizeOutputSVG()'s output and gets re-encoded as its own data URL for persistence, a
+ * relative/remote URL reference nested inside has nothing to resolve against and fails to decode.
+ */
+async function resolveImageSrc(image: string | Blob): Promise<string> {
+  if (typeof image === 'string') {
+    if (image.startsWith('data:')) return image;
+    image = await fetch(image).then((res) => res.blob());
+  }
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(image as Blob);
+  });
+}
+
 function rectContains(rect: Rect, x: number, y: number): boolean {
   return x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
-}
-
-function rectsIntersect(a: Rect, b: Rect): boolean {
-  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-}
-
-/** [3,4,5,8] -> [[3,5],[8,8]] */
-function toRanges(indices: number[]): [number, number][] {
-  const ranges: [number, number][] = [];
-  for (const i of indices) {
-    const last = ranges[ranges.length - 1];
-    if (last && i === last[1] + 1) last[1] = i;
-    else ranges.push([i, i]);
-  }
-  return ranges;
 }
 
 function wrapTextLines(text: string, fontSize: number, maxWidth: number): string[] {
@@ -1110,10 +1127,8 @@ function layoutWords(text: TextAnnotation, lines: string[]): WordBox[] {
         boxes.push({
           index: index++,
           line: lineIdx,
-          text: word,
           x: text.x + measureTextWidth(line.slice(0, offset), text.fontSize),
           y: text.y + lineIdx * lineHeight - text.fontSize * 0.1,
-          baseline: text.y + text.fontSize * 0.8 + lineIdx * lineHeight,
           width: measureTextWidth(word, text.fontSize),
           height: lineHeight,
         });

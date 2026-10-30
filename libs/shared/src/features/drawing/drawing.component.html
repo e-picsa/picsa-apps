@@ -98,7 +98,6 @@
         >
           <mat-button-toggle value="blackout">{{ 'Blackout' | translate }}</mat-button-toggle>
           <mat-button-toggle value="blur">{{ 'Blur' | translate }}</mat-button-toggle>
-          <mat-button-toggle value="pixelate">{{ 'Pixelate' | translate }}</mat-button-toggle>
         </mat-button-toggle-group>
       } @else {
         <button matButton="outlined" [matMenuTriggerFor]="widthMenu" [disabled]="tool() === 'redaction'" class="width-trigger">
@@ -133,17 +132,21 @@
     </div>
   </div>
 
-  <div class="svg-container" [style.width.px]="size()" [style.height.px]="size()" [style.cursor]="canvasCursor()">
+  <div class="svg-container" [style.width.px]="canvasWidth()" [style.height.px]="canvasHeight()" [style.cursor]="canvasCursor()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       [attr.viewBox]="viewbox()"
-      [attr.height]="size()"
-      [attr.width]="size()"
+      [attr.height]="canvasHeight()"
+      [attr.width]="canvasWidth()"
       #svgElement
       (pointerdown)="handlePointerDown($event)"
       (pointermove)="handlePointerMove($event)"
       (pointerup)="handlePointerUp()"
     >
+      @if (backgroundImageSrc(); as bgSrc) {
+        <image [attr.href]="bgSrc" x="0" y="0" [attr.width]="canvasWidth()" [attr.height]="canvasHeight()" style="pointer-events: none" />
+      }
+
       <defs>
         @for (arrow of arrowMarkers(); track arrow.id) {
           <marker [attr.id]="'arrowhead-' + arrow.id" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
@@ -151,16 +154,8 @@
           </marker>
         }
 
-        <filter [attr.id]="uid + '-blur'" filterUnits="userSpaceOnUse" x="0" y="0" [attr.width]="size()" [attr.height]="size()">
+        <filter [attr.id]="uid + '-blur'" filterUnits="userSpaceOnUse" x="0" y="0" [attr.width]="canvasWidth()" [attr.height]="canvasHeight()">
           <feGaussianBlur stdDeviation="6" />
-        </filter>
-
-        <filter [attr.id]="uid + '-pixelate'" filterUnits="userSpaceOnUse" x="0" y="0" [attr.width]="size()" [attr.height]="size()">
-          <feFlood x="4" y="4" width="2" height="2" />
-          <feComposite width="10" height="10" />
-          <feTile result="grid" />
-          <feComposite in="SourceGraphic" in2="grid" operator="in" />
-          <feMorphology operator="dilate" radius="5" />
         </filter>
       </defs>
 
@@ -188,7 +183,7 @@
                       fill="black"
                     />
                   }
-                  <!-- blur/pixelate styles are rendered in the overlay layer below, over the full content -->
+                  <!-- the blur style is rendered in the overlay layer below, over the full content -->
                 }
                 @case ('circle') {
                   <ellipse
@@ -237,12 +232,16 @@
             @case ('text') {
               <text
                 [attr.id]="entry.item.id"
+                [attr.x]="entry.item.x"
+                [attr.y]="entry.item.y + entry.item.fontSize * 0.8"
                 [attr.fill]="entry.item.color"
                 [attr.font-size]="entry.item.fontSize"
                 font-family="sans-serif"
               >
-                @for (w of visibleWords(entry.item); track w.index) {
-                  <tspan [attr.x]="w.x" [attr.y]="w.baseline">{{ w.text }}</tspan>
+                @for (line of wrappedTextLines(entry.item); track $index) {
+                  <tspan [attr.x]="entry.item.x" [attr.dy]="$index === 0 ? 0 : entry.item.fontSize * 1.2">{{
+                    line
+                  }}</tspan>
                 }
               </text>
             }
@@ -254,9 +253,9 @@
                   [attr.width]="r.width + 4"
                   [attr.height]="r.height"
                   rx="3"
-                  [attr.fill]="entry.item.redact ? 'black' : entry.item.color"
-                  [attr.opacity]="entry.item.redact ? 1 : 0.4"
-                  [style.mix-blend-mode]="entry.item.redact ? null : 'multiply'"
+                  [attr.fill]="entry.item.color"
+                  opacity="0.4"
+                  style="mix-blend-mode: multiply"
                 />
               }
             }
@@ -329,7 +328,7 @@
         [style.top.px]="textDraft.y"
         [style.color]="textDraft.color"
         [style.font-size.px]="textDraft.fontSize"
-        [style.max-width.px]="size() - textDraft.x"
+        [style.max-width.px]="canvasWidth() - textDraft.x"
         autofocus
         (focus)="textInputEl.select(); onTextDraftInput(textInputEl)"
         (input)="onTextDraftInput(textInputEl)"
@@ -340,7 +339,7 @@
       >
     }
 
-    @if (items.length === 0 && !activeSegment.path()) {
+    @if (items.length === 0 && !activeSegment.path() && !backgroundImageSrc()) {
       <div class="draw-logo">
         <mat-icon>draw</mat-icon>
         <div>{{ 'Draw Here' | translate }}</div>
