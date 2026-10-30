@@ -90,6 +90,16 @@
           <button type="button" class="size-btn" (click)="adjustFontSize(2)">+</button>
           <span class="unit">px</span>
         </div>
+      } @else if (tool() === 'redaction') {
+        <mat-button-toggle-group
+          [value]="redactStyle()"
+          (change)="redactStyle.set($event.value)"
+          [hideSingleSelectionIndicator]="true"
+        >
+          <mat-button-toggle value="blackout">{{ 'Blackout' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="blur">{{ 'Blur' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="pixelate">{{ 'Pixelate' | translate }}</mat-button-toggle>
+        </mat-button-toggle-group>
       } @else {
         <button matButton="outlined" [matMenuTriggerFor]="widthMenu" [disabled]="tool() === 'redaction'" class="width-trigger">
           <span>{{ 'Line thickness' | translate }}</span>
@@ -140,105 +150,134 @@
             <path d="M0,0 L10,5 L0,10 Z" [attr.fill]="arrow.color" />
           </marker>
         }
+
+        <filter [attr.id]="uid + '-blur'" filterUnits="userSpaceOnUse" x="0" y="0" [attr.width]="size()" [attr.height]="size()">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+
+        <filter [attr.id]="uid + '-pixelate'" filterUnits="userSpaceOnUse" x="0" y="0" [attr.width]="size()" [attr.height]="size()">
+          <feFlood x="4" y="4" width="2" height="2" />
+          <feComposite width="10" height="10" />
+          <feTile result="grid" />
+          <feComposite in="SourceGraphic" in2="grid" operator="in" />
+          <feMorphology operator="dilate" radius="5" />
+        </filter>
       </defs>
 
-      @for (entry of displayItems(); track entry.item.id) {
-        @switch (entry.kind) {
-          @case ('segment') {
-            <path
-              [attr.d]="entry.item.path()"
-              [id]="entry.item.id"
-              [attr.fill]="entry.item.color"
-              [attr.opacity]="entry.item.tool === 'highlighter' ? 0.4 : 1"
-              [style.mix-blend-mode]="entry.item.tool === 'highlighter' ? 'multiply' : null"
-            />
-          }
-          @case ('shape') {
-            @switch (entry.item.tool) {
-              @case ('redaction') {
-                <rect
-                  [attr.x]="entry.item.rect().x"
-                  [attr.y]="entry.item.rect().y"
-                  [attr.width]="entry.item.rect().width"
-                  [attr.height]="entry.item.rect().height"
-                  fill="black"
-                />
-              }
-              @case ('circle') {
-                <ellipse
-                  [attr.cx]="entry.item.rect().x + entry.item.rect().width / 2"
-                  [attr.cy]="entry.item.rect().y + entry.item.rect().height / 2"
-                  [attr.rx]="entry.item.rect().width / 2"
-                  [attr.ry]="entry.item.rect().height / 2"
-                  fill="none"
-                  [attr.stroke]="entry.item.color"
-                  [attr.stroke-width]="entry.item.strokeWidth"
-                />
-              }
-              @case ('triangle') {
-                <polygon
-                  [attr.points]="trianglePoints(entry.item.rect())"
-                  fill="none"
-                  [attr.stroke]="entry.item.color"
-                  [attr.stroke-width]="entry.item.strokeWidth"
-                />
-              }
-              @default {
-                <rect
-                  [attr.x]="entry.item.rect().x"
-                  [attr.y]="entry.item.rect().y"
-                  [attr.width]="entry.item.rect().width"
-                  [attr.height]="entry.item.rect().height"
-                  fill="none"
-                  [attr.stroke]="entry.item.color"
-                  [attr.stroke-width]="entry.item.strokeWidth"
-                />
+      <g [attr.id]="uid + '-content'">
+        @for (entry of displayItems(); track entry.item.id) {
+          @switch (entry.kind) {
+            @case ('segment') {
+              <path
+                [attr.d]="entry.item.path()"
+                [id]="entry.item.id"
+                [attr.fill]="entry.item.color"
+                [attr.opacity]="entry.item.tool === 'highlighter' ? 0.4 : 1"
+                [style.mix-blend-mode]="entry.item.tool === 'highlighter' ? 'multiply' : null"
+              />
+            }
+            @case ('shape') {
+              @switch (entry.item.tool) {
+                @case ('redaction') {
+                  @if (!entry.item.redactStyle || entry.item.redactStyle === 'blackout') {
+                    <rect
+                      [attr.x]="entry.item.rect().x"
+                      [attr.y]="entry.item.rect().y"
+                      [attr.width]="entry.item.rect().width"
+                      [attr.height]="entry.item.rect().height"
+                      fill="black"
+                    />
+                  }
+                  <!-- blur/pixelate styles are rendered in the overlay layer below, over the full content -->
+                }
+                @case ('circle') {
+                  <ellipse
+                    [attr.cx]="entry.item.rect().x + entry.item.rect().width / 2"
+                    [attr.cy]="entry.item.rect().y + entry.item.rect().height / 2"
+                    [attr.rx]="entry.item.rect().width / 2"
+                    [attr.ry]="entry.item.rect().height / 2"
+                    fill="none"
+                    [attr.stroke]="entry.item.color"
+                    [attr.stroke-width]="entry.item.strokeWidth"
+                  />
+                }
+                @case ('triangle') {
+                  <polygon
+                    [attr.points]="trianglePoints(entry.item.rect())"
+                    fill="none"
+                    [attr.stroke]="entry.item.color"
+                    [attr.stroke-width]="entry.item.strokeWidth"
+                  />
+                }
+                @default {
+                  <rect
+                    [attr.x]="entry.item.rect().x"
+                    [attr.y]="entry.item.rect().y"
+                    [attr.width]="entry.item.rect().width"
+                    [attr.height]="entry.item.rect().height"
+                    fill="none"
+                    [attr.stroke]="entry.item.color"
+                    [attr.stroke-width]="entry.item.strokeWidth"
+                  />
+                }
               }
             }
-          }
-          @case ('arrow') {
-            <line
-              [attr.x1]="entry.item.line().x1"
-              [attr.y1]="entry.item.line().y1"
-              [attr.x2]="entry.item.line().x2"
-              [attr.y2]="entry.item.line().y2"
-              [attr.stroke]="entry.item.color"
-              [attr.stroke-width]="entry.item.strokeWidth"
-              stroke-linecap="round"
-              [attr.marker-end]="entry.item.tool === 'arrow' ? 'url(#arrowhead-' + entry.item.id + ')' : null"
-            />
-          }
-          @case ('text') {
-            <text
-              [attr.id]="entry.item.id"
-              [attr.x]="entry.item.x"
-              [attr.y]="entry.item.y + entry.item.fontSize * 0.8"
-              [attr.fill]="entry.item.color"
-              [attr.font-size]="entry.item.fontSize"
-              font-family="sans-serif"
-            >
-              @for (line of wrappedTextLines(entry.item); track $index) {
-                <tspan [attr.x]="entry.item.x" [attr.dy]="$index === 0 ? 0 : entry.item.fontSize * 1.2">{{
-                  line
-                }}</tspan>
-              }
-            </text>
-          }
-          @case ('highlight') {
-            @for (r of highlightRects(entry.item); track $index) {
-              <rect
-                [attr.x]="r.x - 2"
-                [attr.y]="r.y"
-                [attr.width]="r.width + 4"
-                [attr.height]="r.height"
-                rx="3"
-                [attr.fill]="entry.item.color"
-                opacity="0.4"
-                style="mix-blend-mode: multiply"
+            @case ('arrow') {
+              <line
+                [attr.x1]="entry.item.line().x1"
+                [attr.y1]="entry.item.line().y1"
+                [attr.x2]="entry.item.line().x2"
+                [attr.y2]="entry.item.line().y2"
+                [attr.stroke]="entry.item.color"
+                [attr.stroke-width]="entry.item.strokeWidth"
+                stroke-linecap="round"
+                [attr.marker-end]="entry.item.tool === 'arrow' ? 'url(#arrowhead-' + entry.item.id + ')' : null"
               />
+            }
+            @case ('text') {
+              <text
+                [attr.id]="entry.item.id"
+                [attr.fill]="entry.item.color"
+                [attr.font-size]="entry.item.fontSize"
+                font-family="sans-serif"
+              >
+                @for (w of visibleWords(entry.item); track w.index) {
+                  <tspan [attr.x]="w.x" [attr.y]="w.baseline">{{ w.text }}</tspan>
+                }
+              </text>
+            }
+            @case ('highlight') {
+              @for (r of highlightRects(entry.item); track $index) {
+                <rect
+                  [attr.x]="r.x - 2"
+                  [attr.y]="r.y"
+                  [attr.width]="r.width + 4"
+                  [attr.height]="r.height"
+                  rx="3"
+                  [attr.fill]="entry.item.redact ? 'black' : entry.item.color"
+                  [attr.opacity]="entry.item.redact ? 1 : 0.4"
+                  [style.mix-blend-mode]="entry.item.redact ? null : 'multiply'"
+                />
+              }
             }
           }
         }
+      </g>
+
+      @for (r of styledRedactions(); track r.id) {
+        <clipPath [attr.id]="uid + '-clip-' + r.id">
+          <rect [attr.x]="r.rect().x" [attr.y]="r.rect().y" [attr.width]="r.rect().width" [attr.height]="r.rect().height" />
+        </clipPath>
+        <g [attr.clip-path]="'url(#' + uid + '-clip-' + r.id + ')'">
+          <rect
+            [attr.x]="r.rect().x"
+            [attr.y]="r.rect().y"
+            [attr.width]="r.rect().width"
+            [attr.height]="r.rect().height"
+            fill="white"
+          />
+          <use [attr.href]="'#' + uid + '-content'" [attr.filter]="'url(#' + uid + '-' + r.redactStyle + ')'" />
+        </g>
       }
 
       @if (selectedItemOverlay(); as active) {
