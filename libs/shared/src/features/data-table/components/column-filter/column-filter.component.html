@@ -23,6 +23,7 @@
         placeholder="Search..."
         [value]="searchQuery()"
         (input)="setSearch(filterSearchInput.value)"
+        class="search-input"
       />
       @if (searchQuery()) {
         <button
@@ -38,7 +39,7 @@
     </mat-form-field>
   </div>
 
-  <div class="max-h-48 overflow-y-auto">
+  <div class="max-h-64 overflow-y-auto">
     <button mat-menu-item (click)="selectOption('')" [class.font-semibold]="!value()" [class.text-primary]="!value()">
       (Select All)
     </button>
