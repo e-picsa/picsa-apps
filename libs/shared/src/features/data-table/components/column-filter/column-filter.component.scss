@@ -30,3 +30,8 @@ input.search-input {
     padding: 0 !important;
   }
 }
+
+.filter-option[data-selected] {
+  --mat-menu-item-label-text-weight: 600;
+  --mat-menu-item-label-text-color: var(--color-primary);
+}

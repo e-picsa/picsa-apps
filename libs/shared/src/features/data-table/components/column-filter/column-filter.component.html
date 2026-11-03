@@ -46,9 +46,9 @@
     @for (option of filteredOptions(); track option.value) {
       <button
         mat-menu-item
+        class="filter-option"
         (click)="selectOption(option.value)"
-        [class.font-semibold]="value() === option.value"
-        [class.text-primary]="value() === option.value"
+        [attr.data-selected]="value() === option.value ? true : null"
       >
         {{ option.label }}
       </button>
