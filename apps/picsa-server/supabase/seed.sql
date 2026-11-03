@@ -102,7 +102,7 @@ INSERT INTO auth.identities (
 );
 
 -- Basic User
-  INSERT INTO
+INSERT INTO
   auth.users (
     id,
     instance_id,
@@ -131,7 +131,14 @@ VALUES
     'authenticated',
     'user@picsa.app',
     '{"provider":"email","providers":["email"]}',
-    '{}',
+    jsonb_build_object(
+      'sub', '10000000-0000-0000-0000-000000000000',
+      'email', 'user@picsa.app',
+      'email_verified', true,
+      'full_name', 'PICSA User',
+      'organisation', 'E-PICSA',
+      'country_code', 'global'
+    ),
     FALSE,
     crypt('user@picsa.app', gen_salt('bf')),
     NOW(),
@@ -144,3 +151,102 @@ VALUES
     '',
     ''
   );
+
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider,
+    provider_id,
+    last_sign_in_at,
+    created_at,
+    updated_at
+) VALUES (
+    '10000000-0000-0000-0000-000000000000',
+    '10000000-0000-0000-0000-000000000000',
+    jsonb_build_object(
+        'sub', '10000000-0000-0000-0000-000000000000',
+        'email', 'user@picsa.app',
+        'email_verified', true
+    ),
+    'email',
+    '10000000-0000-0000-0000-000000000000',
+    NOW(),
+    NOW(),
+    NOW()
+);
+
+-- Editor User (holds all *.editor roles across deployments for testing)
+INSERT INTO
+  auth.users (
+    id,
+    instance_id,
+    ROLE,
+    aud,
+    email,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    is_super_admin,
+    encrypted_password,
+    created_at,
+    updated_at,
+    last_sign_in_at,
+    email_confirmed_at,
+    confirmation_sent_at,
+    confirmation_token,
+    recovery_token,
+    email_change_token_new,
+    email_change
+  )
+VALUES
+  (
+    '20000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'editor@picsa.app',
+    '{"provider":"email","providers":["email"]}',
+    jsonb_build_object(
+      'sub', '20000000-0000-0000-0000-000000000000',
+      'email', 'editor@picsa.app',
+      'email_verified', true,
+      'full_name', 'PICSA Editor',
+      'organisation', 'E-PICSA',
+      'country_code', 'global'
+    ),
+    FALSE,
+    crypt('editor@picsa.app', gen_salt('bf')),
+    NOW(),
+    NOW(),
+    NOW(),
+    NOW(),
+    NOW(),
+    '',
+    '',
+    '',
+    ''
+  );
+
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider,
+    provider_id,
+    last_sign_in_at,
+    created_at,
+    updated_at
+) VALUES (
+    '20000000-0000-0000-0000-000000000000',
+    '20000000-0000-0000-0000-000000000000',
+    jsonb_build_object(
+        'sub', '20000000-0000-0000-0000-000000000000',
+        'email', 'editor@picsa.app',
+        'email_verified', true
+    ),
+    'email',
+    '20000000-0000-0000-0000-000000000000',
+    NOW(),
+    NOW(),
+    NOW()
+);
