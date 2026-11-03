@@ -5,6 +5,7 @@ import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from 
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow } from '../../types';
 
@@ -28,11 +29,11 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
   selector: 'dashboard-resource-collections',
   imports: [
     CommonModule,
-    CommonModule,
     DashboardMaterialModule,
     PicsaDataTableComponent,
     RouterModule,
     StoragePathPipe,
+    AuthRoleRequiredDirective,
   ],
   templateUrl: './resource-collections.component.html',
   styleUrl: './resource-collections.component.scss',

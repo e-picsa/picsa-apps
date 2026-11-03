@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { findLocationById, formatLocationIdAsLabel } from '@picsa/data/geoLocation';
 import { map } from 'rxjs';
 
+import { AuthRoleRequiredDirective } from '../../../../auth/directives/authRoleRequired.directive';
 import { IAnnualRainfallSummariesData, ICropSuccessEntry, IStationRow } from '../../../../climate/types';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../../services';
@@ -21,6 +22,7 @@ type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
 @Component({
   selector: 'dashboard-crop-probability-downscaled',
   imports: [
+    AuthRoleRequiredDirective,
     CropLinkedStationSelectComponent,
     CropProbabilityTableComponent,
     MatIconModule,

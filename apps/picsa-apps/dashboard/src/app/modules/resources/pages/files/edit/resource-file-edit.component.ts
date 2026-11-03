@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -13,6 +13,7 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
+import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
@@ -38,10 +39,32 @@ export class ResourceFileEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
   private dialog = inject(PicsaDialogService);
 
-  public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
+  public isCreate = signal(false);
+  private resourceOwner = signal<string | null>(null);
+
+  /**
+   * Users with `resources.admin` can edit all resources.
+   * Users with `resources.editor` can create new resources or edit resources they own.
+   * All other users have read-only access.
+   */
+  public canEdit = computed(() => {
+    if (this.authService.hasRole('resources.admin')) {
+      return true;
+    }
+    if (this.authService.hasRole('resources.editor')) {
+      if (this.isCreate()) return true;
+      const owner = this.resourceOwner();
+      const userId = this.authService.authUserId();
+      return Boolean(owner && userId && owner === userId);
+    }
+    return false;
+  });
+
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
   /** List of languages used in deployment available for resources */
   public languagesAvailable = computed(() => {
@@ -71,6 +94,16 @@ export class ResourceFileEditComponent implements OnInit {
     id: new FormControl(),
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
+
+  constructor() {
+    effect(() => {
+      if (this.canEdit()) {
+        this.form.enable({ emitEvent: false });
+      } else {
+        this.form.disable({ emitEvent: false });
+      }
+    });
+  }
 
   public get formValidationMessage(): string {
     if (this.form.pristine) {
@@ -116,16 +149,17 @@ export class ResourceFileEditComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.service.ready();
     const { id } = this.route.snapshot.params;
-    if (id) {
-      if (id === 'create') return;
-      this.populateResource(id);
+    this.isCreate.set(!id || id === 'create');
+    await this.service.ready();
+    if (id && id !== 'create') {
+      await this.populateResource(id);
     }
   }
 
   // TODO - handle success/error messages
   public async saveResource() {
+    if (!this.canEdit()) return;
     this.form.disable();
     const values = this.form.getRawValue() as any;
     // Remove id entry if not populated
@@ -153,6 +187,7 @@ export class ResourceFileEditComponent implements OnInit {
   }
 
   public async promptDelete() {
+    if (!this.canEdit()) return;
     const dialog = await this.dialog.open('delete');
     dialog.afterClosed().subscribe(async (v) => {
       if (v) {
@@ -177,6 +212,7 @@ export class ResourceFileEditComponent implements OnInit {
     const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
     const resource = data?.[0];
     if (resource) {
+      this.resourceOwner.set(resource.owner);
       this.form.patchValue(resource);
     } else {
       // navigate back to list page if resource not found

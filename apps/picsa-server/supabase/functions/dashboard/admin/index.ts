@@ -51,6 +51,11 @@ export const admin = async (req: Request) => {
     }
 
     case 'list-user-roles': {
+      const roleRequired: AppRole = 'deployments.admin';
+      const hasPermission = hasAuthRole(req, deploymentId, roleRequired);
+      if (!hasPermission) {
+        return ErrorResponse(`[${roleRequired}] permission required to list user roles`, 401);
+      }
       return listUserRoles(deploymentId);
     }
 

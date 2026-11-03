@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { ProbabilityDownscaledComponent } from './probability-downscaled.component';
 
@@ -9,6 +10,7 @@ describe('ProbabilityDownscaledComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProbabilityDownscaledComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProbabilityDownscaledComponent);

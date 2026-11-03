@@ -5,6 +5,7 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceLinkRow } from '../../types';
 
@@ -22,11 +23,11 @@ const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
   selector: 'dashboard-resource-links',
   imports: [
     CommonModule,
-    CommonModule,
     DashboardMaterialModule,
     PicsaDataTableComponent,
     RouterModule,
     StoragePathPipe,
+    AuthRoleRequiredDirective,
   ],
   templateUrl: './resource-links.component.html',
   styleUrl: './resource-links.component.scss',

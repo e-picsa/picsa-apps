@@ -20,11 +20,12 @@ export const TranslationsFeature = defineFeature({
       path: 'import',
       loadComponent: () =>
         import('./pages/import/translations-import.component').then((mod) => mod.TranslationsImportComponent),
-      roleRequired: 'translations.admin',
+      roleRequired: 'translations.editor',
     },
     {
       path: 'edit/:id',
       loadComponent: () => import('./pages/edit/translations-edit.component').then((m) => m.TranslationsEditComponent),
+      roleRequired: 'translations.editor',
     },
   ],
 });

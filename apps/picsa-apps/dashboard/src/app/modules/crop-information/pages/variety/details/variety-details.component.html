@@ -13,7 +13,7 @@
         #variety
       ></dashboard-crop-variety-form>
       @let formDisabled = variety.form.pristine || !variety.form.valid;
-      <div class="flex mb-8">
+      <div *roleRequired="'crop.editor'" class="flex mb-8">
         @if (editMode()) {
           @if (!isNewEntry()) {
             <button matButton="elevated" color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>

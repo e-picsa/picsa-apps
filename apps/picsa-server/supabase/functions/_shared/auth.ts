@@ -29,11 +29,14 @@ export function getRequestDeploymentId(req: Request) {
 }
 
 /** Return all auth roles stored for the current user making request */
-function getAuthRoles(req: Request) {
-  const authHeader = req.headers.get('Authorization')!;
+export function getAuthRoles(req: Request) {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) {
+    return { userRoles: {} as { [deployment_id: string]: AppRole[] }, coreRole: 'anon' };
+  }
   const token = authHeader.replace('Bearer ', '');
 
-  const [header, payload, signature] = decode(token);
+  const [, payload] = decode(token);
   // NOTE - no need to verify jwt as already handled by supabase
   const { picsa_roles = {}, role: coreRole } = payload as SupabaseAuthJWT;
   const userRoles = picsa_roles as { [deployment_id: string]: AppRole[] };
@@ -41,10 +44,12 @@ function getAuthRoles(req: Request) {
 }
 
 /** Check whether the request user has specific user role on deployment */
-export function hasAuthRole(req: Request, deployment_id: string, role: AppRole) {
+export function hasAuthRole(req: Request, deployment_id: string | null | undefined, role: AppRole) {
   const { userRoles, coreRole } = getAuthRoles(req);
   // allow api using service token role
   if (coreRole === 'service_role') return true;
+
+  if (!deployment_id) return false;
 
   const deploymentRoles = userRoles[deployment_id] || [];
 

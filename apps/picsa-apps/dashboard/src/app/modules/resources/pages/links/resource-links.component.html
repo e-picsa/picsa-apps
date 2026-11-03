@@ -1,7 +1,13 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2>Resource Links</h2>
-    <button matButton="outlined" color="primary" routerLink="create" style="margin-top: 1rem; margin-left: auto">
+    <button
+      *roleRequired="'resources.editor'"
+      matButton="outlined"
+      color="primary"
+      routerLink="create"
+      style="margin-top: 1rem; margin-left: auto"
+    >
       <mat-icon>add</mat-icon>
       Add Link
     </button>

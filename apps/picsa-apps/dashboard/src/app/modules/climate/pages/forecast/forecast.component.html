@@ -5,7 +5,7 @@
     <button
       matButton="outlined"
       color="primary"
-      *roleRequired="'climate.admin'"
+      *roleRequired="'climate.editor'"
       class="ml-auto"
       (click)="addForecast()"
     >
@@ -13,6 +13,7 @@
       <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
     </button>
     <picsa-refresh-spinner
+      *roleRequired="'climate.editor'"
       [spin]="refreshPending()"
       [disabled]="refreshPending()"
       (click)="handleRefreshClick()"
@@ -36,7 +37,7 @@
 <ng-template #created_at let-value> {{ value | date }} </ng-template>
 <ng-template #storage_file let-value let-row="row">
   @let status = activeDownloads()[row.id];
-  <button matIconButton [disabled]="status === 'pending'">
+  <button matIconButton [disabled]="status === 'pending' || (!value && status !== 'complete' && !canEdit())">
     @if (value || status === 'complete') {
       <mat-icon>open_in_new</mat-icon>
     } @else if (status === 'pending') {

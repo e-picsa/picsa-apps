@@ -14,12 +14,9 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   ...CropFeature.NAV_LINKS,
   ...TranslationsFeature.NAV_LINKS,
   ...ResourcesFeature.NAV_LINKS,
+  ...StatsFeature.NAV_LINKS,
 ];
 
-export const ADMIN_NAV_LINKS: INavLink[] = [
-  ...StatsFeature.NAV_LINKS,
-  ...DeploymentFeature.NAV_LINKS,
-  ...MapFeature.NAV_LINKS,
-];
+export const ADMIN_NAV_LINKS: INavLink[] = [...DeploymentFeature.NAV_LINKS, ...MapFeature.NAV_LINKS];
 
 export const PUBLIC_PAGES = ['privacy-policy', 'terms-of-service', 'profile/password-reset'];

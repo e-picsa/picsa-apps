@@ -11,6 +11,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../auth';
+import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import { ForecastType, IForecastRow } from '../../types';
@@ -45,7 +46,10 @@ export class ClimateForecastPageComponent {
   private service = inject(ClimateService);
   private supabase = inject(SupabaseService);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
+
+  public canEdit = computed(() => this.authService.hasRole('climate.editor'));
 
   public forecasts = this.db.liveSignal({
     filter: {
@@ -131,11 +135,14 @@ export class ClimateForecastPageComponent {
       const memo = this.apiQueryMemo();
       await this.service.ready();
       await this.loadDBData();
-      await this.handleRefreshClick();
+      if (this.canEdit()) {
+        await this.handleRefreshClick();
+      }
     });
   }
 
   public async handleRefreshClick() {
+    if (!this.canEdit()) return;
     this.refreshPending.set(true);
     await this.refreshAPIData();
     this.refreshPending.set(false);
@@ -144,9 +151,11 @@ export class ClimateForecastPageComponent {
   public async handleStorageClick(row: IForecastRow) {
     let { storage_file } = row;
     // handle download if storage file doesn't exist or hasn't been downloaded
-    if (!storage_file && this.activeDownloads[row.id] !== 'complete') {
+    if (!storage_file && this.activeDownloads()[row.id] !== 'complete') {
+      if (!this.canEdit()) return;
       storage_file = await this.downloadStorageFile(row);
     }
+    if (!storage_file) return;
     // handle open
     const [bucket, ...path] = (storage_file as string).split('/');
     const publicLink = this.supabase.storage.getPublicLink(bucket, path.join('/'));
@@ -158,13 +167,15 @@ export class ClimateForecastPageComponent {
   }
 
   public async addForecast() {
+    if (!this.canEdit()) return;
     const data: IForecastDialogData = { country_code: this.countryCode(), forecast_type: this.activeForecastType() };
     this.dialog.open(ForecastFormComponent, { data });
     // dialog will handle save, data will auto-reload from liveSignal subscription
   }
 
   private async loadDBData() {
-    const { country_code } = this.deploymentService.activeDeployment();
+    const country_code = this.deploymentService.activeDeployment()?.country_code;
+    if (!country_code) return [];
     // Load data stored in supabase db if available. Otherwise load from api
     const { data, error } = await this.db
       .select<'*', IForecastRow>('*')

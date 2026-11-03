@@ -176,14 +176,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Dev Users & Storage Seeding**:
   `supabase/seed.sql` creates local dev users (`admin@picsa.app`, `user@picsa.app`) automatically on `supabase db reset`. In extended mode, `db-seed-export.ts` directly seeds local storage objects and baseline configurations post-import so local logins work out of the box.
 
-### User Role Authorization Architecture
+### User Role Authorization Architecture & App RLS Safety
 
-- **Database**: Roles are stored in `user_roles` (deployment_id, user_id, roles[]).
-- **JWT Claim**: `custom_access_token_hook` injects these roles into the JWT `picsa_roles` claim.
+- **Database & Enum**: Roles are stored in `public.user_roles` (`deployment_id`, `user_id`, `roles[]` of `public.app_role`). Feature `.editor` roles (`climate.editor`, `crop.editor`, `resources.editor`, `translations.editor`) are implicitly granted by corresponding `.admin` roles (`*.admin`, `deployments.admin`, `admin`) via `APP_ROLES_MAP` (`libs/server-utils` / `supabase/utils/auth.utils.ts`) and SQL helpers `public.user_has_role(deployment_id, role)` / `public.user_has_country_role(country_code, role)`.
+- **JWT Claim**: `custom_access_token_hook` injects deployment-keyed roles into the JWT `picsa_roles` claim.
 - **Client Authorization**:
   - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
-  - Route protection uses the functional `authRoleGuard` in `dashboard/src/app/modules/auth/guards`.
-  - Template protection uses `AuthRoleRequiredDirective` (`*authRoleRequired="..."`).
+  - Route protection uses the functional `authRoleGuard` (`roleRequired` in `defineFeature`).
+  - Template protection uses `AuthRoleRequiredDirective` whose selector is `[roleRequired]` (use `*roleRequired="'crop.editor'"`, **not** `*authRoleRequired`).
+- **Resources Ownership Rule**: `resources.editor` can create new resources and edit/delete **only** rows where `owner = auth.uid()`; `resources.admin` can edit/delete any resource in the deployment.
+- **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
+  - Web app users do not sign in and query Supabase using the `anon` Postgres role.
+  - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
+  - Therefore, on public content tables (`climate_stations`, `climate_station_data`, `forecasts`, `crop_data`, `crop_data_downscaled`, `resource_*`, `translations`, `geo.boundaries`), **never** revoke `SELECT` from `anon` (breaks web app) and **never** use permissive `FOR ALL TO authenticated USING (true)` policies (allows any mobile app user to mutate/delete DB records). Always grant `SELECT` to `anon, authenticated` and gate `INSERT`/`UPDATE`/`DELETE` policies with `public.user_has_country_role(...)` or `public.user_has_role(...)`.
 
 ### User-Submitted Feedback & Storage Isolation
 
@@ -632,6 +637,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
 
 ## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+
 - **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
 - **Root Causes**:
   1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
@@ -645,7 +651,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
 
 ---
-
 
 ## 6. Climate Quality Control (QC) & Monorepo Tooling
 

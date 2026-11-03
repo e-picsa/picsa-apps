@@ -1,4 +1,5 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { JSONResponse, ErrorResponse } from '../../_shared/response.ts';
 import type { IDBClimateForecastRow } from '../types.ts';
 
@@ -19,6 +20,11 @@ export const forecastCleanup = async (req: Request) => {
   // this is just for testing purposes for now
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405, headers: { Allow: 'POST' } });
+  }
+
+  const deploymentId = getRequestDeploymentId(req);
+  if (!hasAuthRole(req, deploymentId, 'climate.admin')) {
+    return ErrorResponse('[climate.admin] permission required to cleanup forecasts', 401);
   }
 
   const supabaseClient = getServiceRoleClient();
