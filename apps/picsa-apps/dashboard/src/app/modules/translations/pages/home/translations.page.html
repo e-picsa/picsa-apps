@@ -31,8 +31,13 @@
   </mat-chip-listbox>
 
   <!-- Table -->
-  @if(tableOptions() && countTotal>0){
-  <picsa-data-table [data]="tableData()" [options]="tableOptions()" [valueTemplates]="{created_at}">
+  @if(tableOptions() && hasTranslations()){
+  <picsa-data-table
+    [data]="tableData()"
+    [options]="tableOptions()"
+    [valueTemplates]="{created_at}"
+    [(columnFilters)]="columnFilters"
+  >
     <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
   </picsa-data-table>
   } @else {

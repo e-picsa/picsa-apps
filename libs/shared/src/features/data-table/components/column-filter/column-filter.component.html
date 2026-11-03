@@ -1,0 +1,59 @@
+<button
+  matIconButton
+  type="button"
+  class="header-filter-btn"
+  [class.is-active]="value()"
+  [color]="value() ? 'primary' : undefined"
+  [matMenuTriggerFor]="filterMenu"
+  (click)="$event.stopPropagation()"
+  (mousedown)="$event.stopPropagation()"
+  [attr.aria-label]="'Filter by ' + config().label"
+>
+  <mat-icon>{{ value() ? 'filter_alt' : 'filter_list' }}</mat-icon>
+</button>
+
+<mat-menu #filterMenu="matMenu" class="table-column-filter-menu" (closed)="onMenuClosed()">
+  <div class="p-2" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        #filterSearchInput
+        matInput
+        type="text"
+        placeholder="Search..."
+        [value]="searchQuery()"
+        (input)="setSearch(filterSearchInput.value)"
+        class="search-input"
+      />
+      @if (searchQuery()) {
+        <button
+          matIconButton
+          matSuffix
+          type="button"
+          (click)="setSearch(''); filterSearchInput.focus()"
+          aria-label="Clear filter search"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="max-h-64 overflow-y-auto">
+    <button mat-menu-item (click)="selectOption('')" [class.font-semibold]="!value()" [class.text-primary]="!value()">
+      (Select All)
+    </button>
+    @for (option of filteredOptions(); track option.value) {
+      <button
+        mat-menu-item
+        class="filter-option"
+        (click)="selectOption(option.value)"
+        [attr.data-selected]="value() === option.value ? true : null"
+      >
+        {{ option.label }}
+      </button>
+    } @empty {
+      <div class="p-4 text-center text-sm text-gray-500">No matches</div>
+    }
+  </div>
+</mat-menu>

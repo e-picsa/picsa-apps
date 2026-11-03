@@ -15,3 +15,8 @@ th.mat-mdc-header-cell {
   background: var(--color-primary-50);
   font-weight: bold;
 }
+.header-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}

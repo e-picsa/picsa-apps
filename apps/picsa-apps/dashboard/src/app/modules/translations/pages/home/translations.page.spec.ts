@@ -31,4 +31,27 @@ describe('TranslationsPageComponent', () => {
     downloadBtn.click();
     expect(exportSpy).toHaveBeenCalled();
   });
+
+  it('should configure tool column filter and scope chip counts by active columnFilters', () => {
+    component.locale.set('mw_ny');
+    component.service.translations.set([
+      { id: '1', tool: 'budget', text: 'A', mw_ny: 'A_ny', archived: null } as any,
+      { id: '2', tool: 'budget', text: 'B', mw_ny: null, archived: null } as any,
+      { id: '3', tool: 'climate', text: 'C', mw_ny: 'C_ny', archived: null } as any,
+    ]);
+    fixture.detectChanges();
+
+    expect(component.tableOptions().filterColumns).toEqual(['tool']);
+    expect(component.countTotal).toBe(3);
+    expect(component.countTranslated).toBe(2);
+    expect(component.countPending).toBe(1);
+
+    component.columnFilters.set({ tool: 'budget' });
+    fixture.detectChanges();
+
+    expect(component.countTotal).toBe(2);
+    expect(component.countTranslated).toBe(1);
+    expect(component.countPending).toBe(1);
+    expect(component.hasTranslations()).toBe(true);
+  });
 });
