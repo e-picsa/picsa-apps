@@ -133,17 +133,25 @@ export class ClimateForecastPageComponent {
     effect(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const memo = this.apiQueryMemo();
-      const editable = this.canEdit();
-      void this.initForecastData(editable);
+      void this.initForecastData().catch((err) => console.error('[forecast] init failed', err));
+    });
+    effect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const memo = this.apiQueryMemo();
+      if (this.canEdit()) {
+        void this.refreshForecastOnReady().catch((err) => console.error('[forecast] refresh failed', err));
+      }
     });
   }
 
-  private async initForecastData(editable: boolean) {
+  private async initForecastData() {
     await this.service.ready();
     await this.loadDBData();
-    if (editable) {
-      await this.handleRefreshClick();
-    }
+  }
+
+  private async refreshForecastOnReady() {
+    await this.service.ready();
+    await this.handleRefreshClick();
   }
 
   public async handleRefreshClick() {

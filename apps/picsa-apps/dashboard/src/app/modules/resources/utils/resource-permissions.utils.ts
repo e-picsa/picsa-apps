@@ -1,5 +1,6 @@
-import { computed, effect, signal } from '@angular/core';
+import { computed, effect, inject, signal } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { DashboardAuthService } from '../../auth/services/auth.service';
 
@@ -10,7 +11,9 @@ import { DashboardAuthService } from '../../auth/services/auth.service';
  * - Automatically enables/disables the bound form control as `canEdit` changes.
  */
 export function createResourceEditPermissionState(authService: DashboardAuthService, form: AbstractControl) {
-  const isCreate = signal(false);
+  const route = inject(ActivatedRoute, { optional: true });
+  const initialId = route?.snapshot.params['id'];
+  const isCreate = signal(!initialId || initialId === 'create');
   const resourceOwner = signal<string | null>(null);
 
   const canEdit = computed(() => {
