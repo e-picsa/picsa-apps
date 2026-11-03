@@ -35,66 +35,11 @@
         <span class="header-cell-content">
           <span>{{ column | formatValue: opts.formatHeader }}</span>
           @if (filterMap[column]; as filterConfig) {
-            <button
-              matIconButton
-              type="button"
-              class="header-filter-btn"
-              [class.is-active]="activeFilters[column]"
-              [matMenuTriggerFor]="filterMenu"
-              (click)="$event.stopPropagation()"
-              (mousedown)="$event.stopPropagation()"
-              [attr.aria-label]="'Filter by ' + filterConfig.label"
-            >
-              <mat-icon>{{ activeFilters[column] ? 'filter_alt' : 'filter_list' }}</mat-icon>
-            </button>
-            <mat-menu #filterMenu="matMenu" class="table-column-filter-menu" (closed)="setFilterSearch(column, '')">
-              <div class="filter-menu-header" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-                <div class="filter-search-box">
-                  <mat-icon class="filter-search-icon">search</mat-icon>
-                  <input
-                    #filterSearchInput
-                    type="text"
-                    placeholder="Search..."
-                    [value]="filterSearchTerms()[column] || ''"
-                    (input)="setFilterSearch(column, filterSearchInput.value)"
-                    class="filter-search-input"
-                  />
-                  @if (filterSearchTerms()[column]) {
-                    <button
-                      type="button"
-                      class="filter-search-clear"
-                      (click)="setFilterSearch(column, ''); filterSearchInput.focus()"
-                      aria-label="Clear filter search"
-                    >
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  }
-                </div>
-              </div>
-              <div class="filter-menu-options">
-                <button
-                  mat-menu-item
-                  (click)="setColumnFilter(column, '')"
-                  [class.active-filter-option]="!activeFilters[column]"
-                >
-                  (Select All)
-                </button>
-                @for (
-                  option of getFilteredColumnOptions(filterConfig, filterSearchTerms()[column]);
-                  track option.value
-                ) {
-                  <button
-                    mat-menu-item
-                    (click)="setColumnFilter(column, option.value)"
-                    [class.active-filter-option]="activeFilters[column] === option.value"
-                  >
-                    {{ option.label }}
-                  </button>
-                } @empty {
-                  <div class="filter-no-matches">No matches</div>
-                }
-              </div>
-            </mat-menu>
+            <picsa-data-table-column-filter
+              [config]="filterConfig"
+              [value]="activeFilters[column] || ''"
+              (valueChange)="setColumnFilter(column, $event)"
+            />
           }
         </span>
       </th>

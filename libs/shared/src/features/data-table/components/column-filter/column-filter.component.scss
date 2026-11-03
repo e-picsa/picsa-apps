@@ -1,0 +1,26 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-filter-btn {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
+
+::ng-deep .table-column-filter-menu.mat-mdc-menu-panel {
+  min-width: 240px !important;
+  max-height: 260px !important;
+
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+}

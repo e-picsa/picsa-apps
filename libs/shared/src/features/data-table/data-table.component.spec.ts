@@ -113,24 +113,4 @@ describe('PicsaDataTableComponent', () => {
     const textTh = fixture.nativeElement.querySelector('th.mat-column-text');
     expect(textTh.querySelector('.header-filter-btn')).toBeNull();
   });
-
-  it('should filter dropdown options based on filter search query', () => {
-    fixture.componentRef.setInput('data', MOCK_DATA);
-    fixture.componentRef.setInput('options', {
-      filterColumns: ['tool'],
-    });
-    fixture.detectChanges();
-
-    const config = component.columnFilterConfigs()[0];
-    expect(component.getFilteredColumnOptions(config, '')).toHaveLength(3);
-
-    expect(component.getFilteredColumnOptions(config, 'sea')).toEqual([
-      { value: 'seasonal-calendar', label: 'Seasonal Calendar' },
-    ]);
-
-    expect(component.getFilteredColumnOptions(config, 'xyz')).toHaveLength(0);
-
-    component.setFilterSearch('tool', 'clim');
-    expect(component.filterSearchTerms()).toEqual({ tool: 'clim' });
-  });
 });

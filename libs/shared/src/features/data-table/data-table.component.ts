@@ -19,13 +19,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortable, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { capitalise } from '@picsa/utils/data';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
+
+import { PicsaDataTableColumnFilterComponent } from './components/column-filter/column-filter.component';
 
 export interface IDataTableFilterColumn {
   column: string;
@@ -127,10 +128,10 @@ export class FormatValuePipe implements PipeTransform {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatMenuModule,
     MatSortModule,
     MatTableModule,
     MatPaginatorModule,
+    PicsaDataTableColumnFilterComponent,
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
@@ -297,29 +298,6 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
       }
       return next;
     });
-  }
-
-  /** Per-column search terms entered in the header filter dropdown */
-  public readonly filterSearchTerms = signal<Record<string, string>>({});
-
-  public setFilterSearch(column: string, term: string) {
-    this.filterSearchTerms.update((prev) => ({
-      ...prev,
-      [column]: term,
-    }));
-  }
-
-  public getFilteredColumnOptions(
-    filterConfig: IDataTableFilterColumn,
-    searchTerm?: string,
-  ): { label: string; value: string }[] {
-    if (!searchTerm?.trim()) {
-      return filterConfig.options;
-    }
-    const term = searchTerm.trim().toLowerCase();
-    return filterConfig.options.filter(
-      (opt) => opt.label.toLowerCase().includes(term) || opt.value.toLowerCase().includes(term),
-    );
   }
 
   public handleExport() {
