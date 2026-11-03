@@ -8,6 +8,14 @@ export type { CountryCode, CountryCodeLegacy, LocaleCode, LocaleCodeLegacy };
 export type AppRole = Database['public']['Enums']['app_role'];
 export type IAppUser = Database['public']['Tables']['app_users'];
 
+// Translations table types & database column parity assertions
+export type {
+  ITranslationInsert,
+  ITranslationRow,
+  ITranslationUpdate,
+  TranslationLocaleColumn,
+} from './translations.types.ts';
+
 import type { FunctionResponses } from './functions.types.ts';
 export type { FunctionResponses };
 
