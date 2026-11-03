@@ -8,10 +8,8 @@ export interface IOrganisation {
 
 export const GLOBAL_ORGANISATIONS: IOrganisation[] = [
   { id: 'UOR', label: 'University of Reading' },
-  { id: 'GIZ', label: 'Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ)' },
   { id: 'IDEMS', label: 'IDEMS' },
   { id: 'C2DEV', label: 'C2Dev' },
-  { id: 'WFP', label: 'World Food Programme (WFP)' },
   { id: 'OTHER', label: 'Other' },
 ];
 
@@ -19,24 +17,30 @@ export const COUNTRY_SPECIFIC_ORGANISATIONS: Partial<Record<ICountryCode | strin
   mw: [
     { id: 'DCCMS', label: 'Department of Climate Change and Meteorological Services (DCCMS)' },
     { id: 'MOA_MW', label: 'Ministry of Agriculture' },
+    { id: 'GIZ', label: 'Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ)' },
   ],
   zm: [
     { id: 'ZMD', label: 'Zambia Meteorological Department (ZMD)' },
     { id: 'MOA_ZM', label: 'Ministry of Agriculture' },
+    { id: 'GIZ', label: 'Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ)' },
   ],
   zw: [
     { id: 'ARDAS', label: 'Agricultural and Rural Development Advisory Services (ARDAS)' },
     { id: 'MSD', label: 'Meteorological Services Department Of Zimbabwe (MSD)' },
+    { id: 'WFP', label: 'World Food Programme (WFP)' },
   ],
 };
 
 /**
  * Get list of organisations for a specific country.
- * If country-specific organisations exist, returns them (with Other option).
+ * Country-specific organisations come first (to prioritise ordering),
+ * followed by global organisations (excluding any already listed for the country).
  * Otherwise returns the global list.
  */
 export function getOrganisationsForCountry(countryCode: string): IOrganisation[] {
   const countryOrgs = COUNTRY_SPECIFIC_ORGANISATIONS[countryCode] || [];
+  const countryOrgIds = new Set(countryOrgs.map(({ id }) => id));
+  const filteredGlobalOrgs = GLOBAL_ORGANISATIONS.filter(({ id }) => !countryOrgIds.has(id));
 
-  return [...countryOrgs, ...GLOBAL_ORGANISATIONS];
+  return [...countryOrgs, ...filteredGlobalOrgs];
 }
