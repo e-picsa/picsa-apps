@@ -320,6 +320,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Cordova/Native Providers Mocking in Angular TestBed**: Services using `NativeStorageService` inject `FileOpener` from `@awesome-cordova-plugins/file-opener/ngx`. In component unit tests where native features are transitively instantiated, provide `{ provide: FileOpener, useValue: {} }` or mock the high-level service (`ResourcesToolService`) directly to prevent `NG0201: No provider found for FileOpener` runtime errors.
 - **Async `ngOnInit` in Zoneless TestBed**: `await fixture.whenStable()` resolves before an async `ngOnInit` load chain completes, so signal assertions read initial values. After `fixture.detectChanges()`, await a macrotask (`await new Promise((resolve) => setTimeout(resolve))`) to drain the pending microtasks before asserting.
 
+### `MatTableDataSource` Empty-Filter Short-Circuit & `PicsaDataTableComponent` Column Filtering
+
+- **Empty `filter` Bypasses `filterPredicate`**: Angular Material's `MatTableDataSource._filterData()` short-circuits and skips invoking `filterPredicate` entirely whenever `dataSource.filter` is `''` or `null`. When combining free-text search with structured column filters (`filterColumns` / `columnFilters` model in `PicsaDataTableComponent`), `dataSource.filter` must be set to a non-empty serialized string (e.g. `JSON.stringify({ search, activeColumnFilters })`) whenever _either_ search text or any column filter is active, and `''` only when neither is active.
+- **Scoping External Summary Counters Without Feedback Loops**: When a parent page pre-filters `[data]` via status chips before passing it into `<picsa-data-table>` (e.g. `TranslationsPageComponent` filtering by `all | translated | pending`), never drive the parent's chip counters from `dataSource.filteredData`—clicking a chip removes the other buckets' rows from `[data]` and zeroes out their counts. Instead, two-way bind `[(columnFilters)]` on `<picsa-data-table>` and scope the parent's summary counters by `columnFilters()` prior to applying the status chip filter.
+
 ---
 
 ## 5. Charts & SVG Visualizations (C3 / D3)
@@ -632,6 +637,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
 
 ## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+
 - **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
 - **Root Causes**:
   1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
@@ -645,7 +651,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
 
 ---
-
 
 ## 6. Climate Quality Control (QC) & Monorepo Tooling
 
