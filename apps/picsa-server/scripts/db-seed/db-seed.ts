@@ -229,8 +229,18 @@ export class SupabaseSeed {
     await this.emptyDBTables(tableNames);
 
     // Retrieve existing storage paths to satisfy foreign keys for tables declaring mirrorStorage
-    const { data: storageObjectRows } = await this.client.schema('public').from('storage_objects').select('path');
-    const validStoragePaths = new Set<string>((storageObjectRows || []).map((r: any) => r.path));
+    const { data: storageObjectRows, error: storageLookupError } = await this.client
+      .schema('public')
+      .from('storage_objects')
+      .select('path');
+    if (storageLookupError) {
+      console.error(
+        '[storage_objects] failed to load valid paths, aborting seed to avoid false nulls',
+        storageLookupError,
+      );
+      process.exit(1);
+    }
+    const validStoragePaths = new Set<string>((storageObjectRows ?? []).map((r: any) => r.path));
 
     const results: any[] = [];
     console.log('\nImport Order: ', tableNames);
@@ -263,17 +273,6 @@ export class SupabaseSeed {
         }
         if (nulledCount > 0) {
           console.log(`[${tableName}] nulled ${nulledCount} storage reference(s) not present in local storage`);
-        }
-      }
-
-      if (tableName === 'deployments') {
-        for (const row of parsedRows) {
-          if (row.icon_path && !validStoragePaths.has(row.icon_path)) {
-            console.warn(
-              `⚠️ Deployment "${row.id}": icon_path "${row.icon_path}" not in local storage. Setting to null to satisfy foreign key.`,
-            );
-            row.icon_path = null;
-          }
         }
       }
       const { schema = 'public' } = seedConfig;

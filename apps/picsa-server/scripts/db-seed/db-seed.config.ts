@@ -84,6 +84,7 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
   },
   deployments: {
     priority: 1,
+    mirrorStorage: ['icon_path'],
   },
   // NOTE: no columnMappings here by design. A previous storage_file override
   // (sample PDF) silently rewrote every mirrored row's file path on import,
