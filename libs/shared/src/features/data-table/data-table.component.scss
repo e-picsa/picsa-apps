@@ -15,3 +15,139 @@ th.mat-mdc-header-cell {
   background: var(--color-primary-50);
   font-weight: bold;
 }
+.header-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.header-filter-btn {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  margin-left: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.65;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.is-active {
+    color: var(--color-primary-700, #0369a1);
+    opacity: 1;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
+}
+.active-filter-option {
+  font-weight: 600;
+  color: var(--color-primary-700, #0369a1);
+}
+
+::ng-deep .table-column-filter-menu.mat-mdc-menu-panel {
+  max-height: 250px !important;
+  min-width: 210px !important;
+
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    max-height: 250px;
+  }
+
+  .mat-mdc-menu-item {
+    min-height: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
+  }
+}
+
+.filter-menu-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.filter-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-search-icon {
+  position: absolute;
+  left: 6px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.filter-search-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 4px 22px 4px 24px;
+  font-size: 13px;
+  line-height: 18px;
+  outline: none;
+  background: #f8fafc;
+  color: #1e293b;
+
+  &:focus {
+    border-color: var(--color-primary-600, #0284c7);
+    background: white;
+  }
+}
+
+.filter-search-clear {
+  position: absolute;
+  right: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+
+  &:hover {
+    color: #475569;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+  }
+}
+
+.filter-menu-options {
+  overflow-y: auto;
+  max-height: 195px;
+  padding: 4px 0;
+}
+
+.filter-no-matches {
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+}

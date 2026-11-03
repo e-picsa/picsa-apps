@@ -19,8 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortable, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { capitalise } from '@picsa/utils/data';
@@ -127,7 +127,7 @@ export class FormatValuePipe implements PipeTransform {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatSelectModule,
+    MatMenuModule,
     MatSortModule,
     MatTableModule,
     MatPaginatorModule,
@@ -211,6 +211,15 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
     });
   });
 
+  /** Fast column-keyed map of filter configurations for header template rendering */
+  public readonly columnFilterConfigsMap = computed<Record<string, IDataTableFilterColumn>>(() => {
+    const map: Record<string, IDataTableFilterColumn> = {};
+    for (const config of this.columnFilterConfigs()) {
+      map[config.column] = config;
+    }
+    return map;
+  });
+
   public readonly dataSource = new MatTableDataSource<T>([]);
 
   constructor() {
@@ -288,6 +297,29 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
       }
       return next;
     });
+  }
+
+  /** Per-column search terms entered in the header filter dropdown */
+  public readonly filterSearchTerms = signal<Record<string, string>>({});
+
+  public setFilterSearch(column: string, term: string) {
+    this.filterSearchTerms.update((prev) => ({
+      ...prev,
+      [column]: term,
+    }));
+  }
+
+  public getFilteredColumnOptions(
+    filterConfig: IDataTableFilterColumn,
+    searchTerm?: string,
+  ): { label: string; value: string }[] {
+    if (!searchTerm?.trim()) {
+      return filterConfig.options;
+    }
+    const term = searchTerm.trim().toLowerCase();
+    return filterConfig.options.filter(
+      (opt) => opt.label.toLowerCase().includes(term) || opt.value.toLowerCase().includes(term),
+    );
   }
 
   public handleExport() {

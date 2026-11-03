@@ -94,4 +94,43 @@ describe('PicsaDataTableComponent', () => {
     expect(component.dataSource.filteredData.length).toBe(0);
     expect(component.columnFilterConfigs()[0].options.map((o) => o.value)).toEqual(['budget', 'climate']);
   });
+
+  it('should render header filter button in th for configured filterColumns', () => {
+    fixture.componentRef.setInput('data', MOCK_DATA);
+    fixture.componentRef.setInput('options', {
+      displayColumns: ['tool', 'text'],
+      filterColumns: ['tool'],
+    });
+    fixture.detectChanges();
+
+    const toolTh = fixture.nativeElement.querySelector('th.mat-column-tool');
+    expect(toolTh).toBeTruthy();
+    const filterBtn = toolTh.querySelector('.header-filter-btn');
+    expect(filterBtn).toBeTruthy();
+    expect(filterBtn.getAttribute('aria-label')).toBe('Filter by Tool');
+
+    // Text column does not have filter
+    const textTh = fixture.nativeElement.querySelector('th.mat-column-text');
+    expect(textTh.querySelector('.header-filter-btn')).toBeNull();
+  });
+
+  it('should filter dropdown options based on filter search query', () => {
+    fixture.componentRef.setInput('data', MOCK_DATA);
+    fixture.componentRef.setInput('options', {
+      filterColumns: ['tool'],
+    });
+    fixture.detectChanges();
+
+    const config = component.columnFilterConfigs()[0];
+    expect(component.getFilteredColumnOptions(config, '')).toHaveLength(3);
+
+    expect(component.getFilteredColumnOptions(config, 'sea')).toEqual([
+      { value: 'seasonal-calendar', label: 'Seasonal Calendar' },
+    ]);
+
+    expect(component.getFilteredColumnOptions(config, 'xyz')).toHaveLength(0);
+
+    component.setFilterSearch('tool', 'clim');
+    expect(component.filterSearchTerms()).toEqual({ tool: 'clim' });
+  });
 });

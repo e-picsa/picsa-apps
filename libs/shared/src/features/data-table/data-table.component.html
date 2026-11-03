@@ -1,5 +1,8 @@
 @let opts = tableOptions();
 @let templates = valueTemplates();
+@let filterMap = columnFilterConfigsMap();
+@let activeFilters = columnFilters();
+
 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
   <!-- Data Search -->
   @if (opts.search) {
@@ -7,21 +10,6 @@
       <mat-label>Search Data</mat-label>
       <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
       <mat-icon matPrefix>search</mat-icon>
-    </mat-form-field>
-  }
-  <!-- Column Filters -->
-  @for (filterConfig of columnFilterConfigs(); track filterConfig.column) {
-    <mat-form-field class="filter-field">
-      <mat-label>{{ filterConfig.label }}</mat-label>
-      <mat-select
-        [value]="columnFilters()[filterConfig.column] || ''"
-        (selectionChange)="setColumnFilter(filterConfig.column, $event.value)"
-      >
-        <mat-option value="">All</mat-option>
-        @for (option of filterConfig.options; track option.value) {
-          <mat-option [value]="option.value">{{ option.label }}</mat-option>
-        }
-      </mat-select>
     </mat-form-field>
   }
   <!-- Data Export -->
@@ -43,7 +31,73 @@
 >
   @for (column of opts.displayColumns; track column; let index = $index) {
     <ng-container [matColumnDef]="column">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column | formatValue: opts.formatHeader }}</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <span class="header-cell-content">
+          <span>{{ column | formatValue: opts.formatHeader }}</span>
+          @if (filterMap[column]; as filterConfig) {
+            <button
+              matIconButton
+              type="button"
+              class="header-filter-btn"
+              [class.is-active]="activeFilters[column]"
+              [matMenuTriggerFor]="filterMenu"
+              (click)="$event.stopPropagation()"
+              (mousedown)="$event.stopPropagation()"
+              [attr.aria-label]="'Filter by ' + filterConfig.label"
+            >
+              <mat-icon>{{ activeFilters[column] ? 'filter_alt' : 'filter_list' }}</mat-icon>
+            </button>
+            <mat-menu #filterMenu="matMenu" class="table-column-filter-menu" (closed)="setFilterSearch(column, '')">
+              <div class="filter-menu-header" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                <div class="filter-search-box">
+                  <mat-icon class="filter-search-icon">search</mat-icon>
+                  <input
+                    #filterSearchInput
+                    type="text"
+                    placeholder="Search..."
+                    [value]="filterSearchTerms()[column] || ''"
+                    (input)="setFilterSearch(column, filterSearchInput.value)"
+                    class="filter-search-input"
+                  />
+                  @if (filterSearchTerms()[column]) {
+                    <button
+                      type="button"
+                      class="filter-search-clear"
+                      (click)="setFilterSearch(column, ''); filterSearchInput.focus()"
+                      aria-label="Clear filter search"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+              <div class="filter-menu-options">
+                <button
+                  mat-menu-item
+                  (click)="setColumnFilter(column, '')"
+                  [class.active-filter-option]="!activeFilters[column]"
+                >
+                  (Select All)
+                </button>
+                @for (
+                  option of getFilteredColumnOptions(filterConfig, filterSearchTerms()[column]);
+                  track option.value
+                ) {
+                  <button
+                    mat-menu-item
+                    (click)="setColumnFilter(column, option.value)"
+                    [class.active-filter-option]="activeFilters[column] === option.value"
+                  >
+                    {{ option.label }}
+                  </button>
+                } @empty {
+                  <div class="filter-no-matches">No matches</div>
+                }
+              </div>
+            </mat-menu>
+          }
+        </span>
+      </th>
 
       <td mat-cell *matCellDef="let row">
         @if (templates[column]) {
