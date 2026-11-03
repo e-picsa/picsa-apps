@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,6 +9,7 @@ import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceLinkRow } from '../../../types';
+import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
@@ -24,22 +25,6 @@ export class ResourceLinkEditComponent implements OnInit {
   private deploymentService = inject(DeploymentDashboardService);
   private authService = inject(DashboardAuthService);
 
-  public isCreate = signal(false);
-  private resourceOwner = signal<string | null>(null);
-
-  public canEdit = computed(() => {
-    if (this.authService.hasRole('resources.admin')) {
-      return true;
-    }
-    if (this.authService.hasRole('resources.editor')) {
-      if (this.isCreate()) return true;
-      const owner = this.resourceOwner();
-      const userId = this.authService.authUserId();
-      return Boolean(owner && userId && owner === userId);
-    }
-    return false;
-  });
-
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
     type: ['link'],
@@ -47,15 +32,10 @@ export class ResourceLinkEditComponent implements OnInit {
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
-  constructor() {
-    effect(() => {
-      if (this.canEdit()) {
-        this.form.enable({ emitEvent: false });
-      } else {
-        this.form.disable({ emitEvent: false });
-      }
-    });
-  }
+  private permissions = createResourceEditPermissionState(this.authService, this.form);
+  public isCreate = this.permissions.isCreate;
+  private resourceOwner = this.permissions.resourceOwner;
+  public canEdit = this.permissions.canEdit;
 
   async ngOnInit() {
     const { id } = this.route.snapshot.params;

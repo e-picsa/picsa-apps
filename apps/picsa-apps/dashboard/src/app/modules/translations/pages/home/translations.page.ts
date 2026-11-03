@@ -151,7 +151,11 @@ export class TranslationsPageComponent {
         return formatHeaderDefault(v);
       },
       paginatorSizes: [10, 50, 100],
-      handleRowClick: (row) => this.showEditDialog(row),
+      handleRowClick: (row) => {
+        if (this.authService.hasRole('translations.editor')) {
+          this.showEditDialog(row);
+        }
+      },
       displayColumns: ['tool', 'context', 'text', locale, 'created_at'],
     };
   }

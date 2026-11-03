@@ -130,15 +130,20 @@ export class ClimateForecastPageComponent {
   private dialog = inject(MatDialog);
 
   constructor() {
-    effect(async () => {
+    effect(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const memo = this.apiQueryMemo();
-      await this.service.ready();
-      await this.loadDBData();
-      if (this.canEdit()) {
-        await this.handleRefreshClick();
-      }
+      const editable = this.canEdit();
+      void this.initForecastData(editable);
     });
+  }
+
+  private async initForecastData(editable: boolean) {
+    await this.service.ready();
+    await this.loadDBData();
+    if (editable) {
+      await this.handleRefreshClick();
+    }
   }
 
   public async handleRefreshClick() {

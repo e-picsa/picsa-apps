@@ -26,7 +26,7 @@ export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_EN
 export const forecastDB = async (req: Request) => {
   let { country_code, query_prefix } = await getJsonData(req);
 
-  const deploymentId = getRequestDeploymentId(req) || country_code;
+  const deploymentId = getRequestDeploymentId(req);
   if (!hasAuthRole(req, deploymentId, 'climate.editor')) {
     return ErrorResponse('[climate.editor] permission required to sync forecasts', 401);
   }

@@ -151,7 +151,9 @@ $$;
 
 -- Helper for tables keyed by `country_code` rather than `deployment_id`.
 -- Evaluates whether the current user holds `p_role` (or its escalated admin role)
--- on any deployment matching `p_country_code` (or any deployment when `p_country_code = 'global'`).
+-- on any deployment matching `p_country_code` (or any deployment when `p_country_code`
+-- is NULL or `'global'`, which is used for shared cross-country taxonomy such as
+-- `resource_collections` and shared base `translations` rows).
 CREATE OR REPLACE FUNCTION public.user_has_country_role(
   p_country_code text,
   p_role public.app_role
@@ -170,11 +172,11 @@ BEGIN
     WHERE ur.user_id = auth.uid()
       AND (
         'admin' = ANY(ur.roles)
-        OR 'deployments.admin' = ANY(ur.roles)
         OR (
           (p_country_code IS NULL OR p_country_code = 'global' OR d.country_code::text = p_country_code)
           AND (
-            p_role = ANY(ur.roles)
+            'deployments.admin' = ANY(ur.roles)
+            OR p_role = ANY(ur.roles)
             OR (
               p_role::text LIKE '%.editor'
               AND (split_part(p_role::text, '.', 1) || '.admin') = ANY(ur.roles::text[])

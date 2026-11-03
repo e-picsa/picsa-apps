@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -18,6 +18,7 @@ import { DeploymentDashboardService } from '../../../../deployment/deployment.se
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceFileRow } from '../../../types';
+import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
   selector: 'dashboard-resource-file-edit',
@@ -42,27 +43,6 @@ export class ResourceFileEditComponent implements OnInit {
   private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
   private dialog = inject(PicsaDialogService);
-
-  public isCreate = signal(false);
-  private resourceOwner = signal<string | null>(null);
-
-  /**
-   * Users with `resources.admin` can edit all resources.
-   * Users with `resources.editor` can create new resources or edit resources they own.
-   * All other users have read-only access.
-   */
-  public canEdit = computed(() => {
-    if (this.authService.hasRole('resources.admin')) {
-      return true;
-    }
-    if (this.authService.hasRole('resources.editor')) {
-      if (this.isCreate()) return true;
-      const owner = this.resourceOwner();
-      const userId = this.authService.authUserId();
-      return Boolean(owner && userId && owner === userId);
-    }
-    return false;
-  });
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
@@ -95,15 +75,10 @@ export class ResourceFileEditComponent implements OnInit {
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
-  constructor() {
-    effect(() => {
-      if (this.canEdit()) {
-        this.form.enable({ emitEvent: false });
-      } else {
-        this.form.disable({ emitEvent: false });
-      }
-    });
-  }
+  private permissions = createResourceEditPermissionState(this.authService, this.form);
+  public isCreate = this.permissions.isCreate;
+  private resourceOwner = this.permissions.resourceOwner;
+  public canEdit = this.permissions.canEdit;
 
   public get formValidationMessage(): string {
     if (this.form.pristine) {

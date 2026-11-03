@@ -77,8 +77,7 @@ export const climate = async (req: Request) => {
   // Enforce role permissions:
   // - 'update-stations' requires 'climate.admin'
   // - station summary actions and 'forecast-file' require 'climate.editor'
-  const deploymentId =
-    getRequestDeploymentId(req) || country_code || station?.country_code || payload?.row?.country_code;
+  const deploymentId = getRequestDeploymentId(req);
   const roleRequired: AppRole = action === 'update-stations' ? 'climate.admin' : 'climate.editor';
   if (!hasAuthRole(req, deploymentId, roleRequired)) {
     return ErrorResponse(`[${roleRequired}] permission required for climate action: ${action}`, 401);
