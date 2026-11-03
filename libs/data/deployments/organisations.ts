@@ -11,6 +11,7 @@ export const GLOBAL_ORGANISATIONS: IOrganisation[] = [
   { id: 'GIZ', label: 'Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ)' },
   { id: 'IDEMS', label: 'IDEMS' },
   { id: 'C2DEV', label: 'C2Dev' },
+  { id: 'WFP', label: 'World Food Programme (WFP)' },
   { id: 'OTHER', label: 'Other' },
 ];
 
@@ -22,6 +23,10 @@ export const COUNTRY_SPECIFIC_ORGANISATIONS: Partial<Record<ICountryCode | strin
   zm: [
     { id: 'ZMD', label: 'Zambia Meteorological Department (ZMD)' },
     { id: 'MOA_ZM', label: 'Ministry of Agriculture' },
+  ],
+  zw: [
+    { id: 'ARDAS', label: 'Agricultural and Rural Development Advisory Services (ARDAS)' },
+    { id: 'MSD', label: 'Meteorological Services Department Of Zimbabwe (MSD)' },
   ],
 };
 

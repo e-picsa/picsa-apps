@@ -232,6 +232,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Upstream API 500 Fault Tolerance**: Upstream third-party Climate API endpoints periodically return 500 errors or failures on specific stations/actions (e.g. crop success probabilities). Synchronization scripts (`apps/picsa-scripts/src/climate/sync-climate-data.ts`) must record individual station request failures as operational warnings in `auditReport.warnings` rather than immediately aborting the entire country sync. Only fail catastrophically if all requests fail (indicating complete service outage or invalid credentials), allowing valid station data to be pulled and committed.
 - **Upstream Station Identifier Format**: Upstream `/v2/*_summaries/` endpoints expect the display `station_name` (e.g. `MAGOYE AGROMET`), not the canonical slug (`magoye_agromet`). The slug silently returns an empty result rather than a 4xx, so `refreshUpstreamDataForCountry` validates `climate_stations.station_name` and skips malformed rows instead of falling back to the slug. New dashboard/climate actions (e.g. `monthly-rainfall`) also require redeploying the edge function; a stale deployment returns `Invalid climate action: <action>`.
 
+### Translation Column & Locale Schema Parity
+
+- **Wide Column Design**: `public.translations` stores non-English strings as dedicated columns using legacy identifiers (`[country]_[lang]`, e.g. `zw_sn`, `zw_nd`). English source text lives in the `text` column.
+- **Single Source of Truth Parity Assertion**: `apps/picsa-server/supabase/types/index.ts` statically asserts `Exclude<TranslationLocaleColumn, keyof ITranslationRow>` resolves to `never`. If a new locale is added to `db-derived.types.ts` without its matching DB column in `db.types.ts`, `yarn ai:typecheck` and CI builds fail immediately at compile time. Downstream files need no duplicate checks.
+- **Target Library Compatibility (`Object.prototype.hasOwnProperty.call`)**: Files referenced in shared types or cross-runtime boundaries must avoid ES2022-only builtins like `Object.hasOwn` when libraries use lower `lib` targets (`es2015`/`es2017`). Prefer `Object.prototype.hasOwnProperty.call(...)`.
+
 ---
 
 ## 4. Angular 21, Signals & Reactive Architecture
@@ -632,6 +638,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **`PicsaFormsModule` SVG Asset Traps in Unit Tests**: Importing `PicsaFormsModule` runs `DataIconRegistry.registerMatIcons()`, which asynchronously fetches SVG assets via `HttpClient` and throws uncaught `Failed to retrieve icon` errors in JSDOM. In component unit tests, provide `{ provide: DataIconRegistry, useValue: { registerMatIcons: jest.fn() } }` to stub icon registration.
 
 ## MapLibre TaskQueue Collisions & Angular Signal Camera Synchronization (2026-10-14)
+
 - **Problem**: When rapidly changing geographic areas (e.g. keyboard arrow navigation between districts), MapLibre threw `Error: Attempting to run(), but is already running.` and froze camera transitions/boundary rendering.
 - **Root Causes**:
   1. Competing Angular signal effects: One effect called `fitBounds(bounds)` while another effect responded to `selectedStation` changes by calling `flyTo(...)`.
@@ -645,7 +652,6 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   4. Cache converted GeoJSON features in-memory by `${countryCode}:${adminLevel}` to make arrow-key navigation synchronous and lightweight.
 
 ---
-
 
 ## 6. Climate Quality Control (QC) & Monorepo Tooling
 
