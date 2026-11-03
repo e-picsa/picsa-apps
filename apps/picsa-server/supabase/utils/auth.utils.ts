@@ -6,11 +6,11 @@ import type { AppRole } from '../types/index.ts';
  */
 const APP_ROLES_MAP: Record<AppRole, boolean> = {
   admin: true,
-  'deployments.admin': true,
   'climate.admin': true,
   'climate.editor': true,
   'crop.admin': true,
   'crop.editor': true,
+  'deployments.admin': true,
   'resources.admin': true,
   'resources.editor': true,
   'translations.admin': true,

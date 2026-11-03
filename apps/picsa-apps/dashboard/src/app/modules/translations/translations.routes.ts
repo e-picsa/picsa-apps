@@ -20,7 +20,7 @@ export const TranslationsFeature = defineFeature({
       path: 'import',
       loadComponent: () =>
         import('./pages/import/translations-import.component').then((mod) => mod.TranslationsImportComponent),
-      roleRequired: 'translations.editor',
+      roleRequired: 'translations.admin',
     },
     {
       path: 'edit/:id',
