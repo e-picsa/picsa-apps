@@ -59,5 +59,5 @@ export type StationSummaryAction = keyof typeof STATION_SUMMARY_CONFIGS;
 export type ClimateAction = StationSummaryAction | 'update-stations' | 'forecast-file';
 
 export const isStationSummaryAction = (action: string): action is StationSummaryAction => {
-  return Object.hasOwn(STATION_SUMMARY_CONFIGS, action);
+  return Object.prototype.hasOwnProperty.call(STATION_SUMMARY_CONFIGS, action);
 };
