@@ -44,6 +44,9 @@ export class TranslationsPageComponent {
   /** Table filter selected via headline chips (default shows all) */
   public tableFilter = signal<'all' | 'translated' | 'pending'>('all');
 
+  /** Active column filters synced from picsa-data-table */
+  public columnFilters = signal<Record<string, string>>({});
+
   /** List of available locales for deployment country */
   public localeOptions = signal<ILocaleDataEntry[]>([]);
 
@@ -52,6 +55,18 @@ export class TranslationsPageComponent {
 
   /** Use subset of service translations to include non-archived */
   private translations = computed(() => this.service.translations().filter((entry) => !entry.archived));
+
+  public hasTranslations = computed(() => this.translations().length > 0);
+
+  /** Non-archived translations scoped by active table column filters for chip counters */
+  private scopedTranslations = computed(() => {
+    const entries = this.translations();
+    const activeFilters = Object.entries(this.columnFilters()).filter(([, v]) => Boolean(v));
+    if (activeFilters.length === 0) return entries;
+    return entries.filter((entry) =>
+      activeFilters.every(([col, val]) => String((entry as Record<string, unknown>)[col] ?? '') === val),
+    );
+  });
 
   /** Generated list of table entries */
   public tableData = computed(() => {
@@ -64,11 +79,11 @@ export class TranslationsPageComponent {
   /** List of entries pending translation */
   public pendingEntries = computed(() => {
     const locale = this.locale();
-    return this.translations().filter((entry) => !entry[locale]);
+    return this.scopedTranslations().filter((entry) => !entry[locale]);
   });
 
   public get countTotal() {
-    return this.translations().length;
+    return this.scopedTranslations().length;
   }
   public get countPending() {
     return this.pendingEntries().length;
@@ -157,6 +172,7 @@ export class TranslationsPageComponent {
         }
       },
       displayColumns: ['tool', 'context', 'text', locale, 'created_at'],
+      filterColumns: ['tool'],
     };
   }
 

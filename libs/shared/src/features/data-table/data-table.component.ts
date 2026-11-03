@@ -3,14 +3,17 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
+  effect,
   inject,
-  Input,
-  OnChanges,
+  input,
+  model,
   output,
   Pipe,
   PipeTransform,
+  signal,
   TemplateRef,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,11 +26,21 @@ import { capitalise } from '@picsa/utils/data';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 
+import { PicsaDataTableColumnFilterComponent } from './components/column-filter/column-filter.component';
+
+export interface IDataTableFilterColumn {
+  column: string;
+  label: string;
+  options: { label: string; value: string }[];
+}
+
 export interface IDataTableOptions {
   /** Optional list of columns to display (default selects first keys from first data entry) */
   displayColumns?: string[];
   /** Alternate list of columns to hide if not specifying displayColumns */
   hideColumns?: string[];
+  /** Optional list of columns to expose dropdown filters for */
+  filterColumns?: string[];
   /** Provide filename to export data as csv. If omitted export option will not be presented */
   exportFilename?: string;
   /** Specify size options to show in page paginator, e.g. [5,10,25] or just [25] (no paginator if left blank) */
@@ -47,8 +60,21 @@ export interface IDataTableOptions {
   rowTrackBy?: (_: number, row: any) => any;
 }
 
-/** Default header formatter. Splits '_' column names and capitalises each word */
-export const formatHeaderDefault = (v: string) => v.split('_').map(capitalise).join(' ');
+/** Default header formatter. Splits '_' and '-' column names and capitalises each word */
+export const formatHeaderDefault = (v: string) => v.split(/[_-]+/).map(capitalise).join(' ');
+
+const DEFAULT_TABLE_OPTIONS: Required<IDataTableOptions> = {
+  displayColumns: [],
+  hideColumns: [],
+  filterColumns: [],
+  exportFilename: '',
+  paginatorSizes: [],
+  search: true,
+  sort: true,
+  handleRowClick: () => null,
+  formatHeader: formatHeaderDefault,
+  rowTrackBy: (_, row) => row?.id ?? row,
+};
 
 /**
  * Simple pipe that allows providing a custom formatter function,
@@ -105,98 +131,178 @@ export class FormatValuePipe implements PipeTransform {
     MatSortModule,
     MatTableModule,
     MatPaginatorModule,
+    PicsaDataTableColumnFilterComponent,
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicsaDataTableComponent<T = Record<string, any>> implements OnChanges {
+export class PicsaDataTableComponent<T = Record<string, any>> {
   private cdr = inject(ChangeDetectorRef);
 
-  @Input() data: T[] = [];
+  readonly data = input<T[]>([]);
 
   /** User option overrides */
-  @Input() options: IDataTableOptions = {};
+  readonly options = input<IDataTableOptions>({});
 
   /**
    * Optional <ng-template> references to display specific column values in a custom template,
    * indexed by column name. E.g. `{colA: myCustomTemplate}`
    * https://angular.io/guide/content-projection#conditional-content-projection
    */
-  @Input() valueTemplates: Record<string, TemplateRef<{ $implicit: any }>> = {};
+  readonly valueTemplates = input<Record<string, TemplateRef<{ $implicit: any }>>>({});
+
+  /** Active column filter selections indexed by column name */
+  readonly columnFilters = model<Record<string, string>>({});
 
   /** Event output emitted on table row click */
-  rowClick = output<T>();
+  readonly rowClick = output<T>();
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  readonly paginator = viewChild(MatPaginator);
+  readonly sort = viewChild(MatSort);
 
-  public tableOptions: Required<IDataTableOptions> = {
-    displayColumns: [],
-    hideColumns: [],
-    exportFilename: '',
-    paginatorSizes: [],
-    search: true,
-    sort: true,
-    handleRowClick: () => null,
-    formatHeader: formatHeaderDefault,
-    rowTrackBy: (_, row) => row?.id ?? row,
-  };
+  public readonly searchQuery = signal('');
 
-  public dataSource: MatTableDataSource<any>;
+  public readonly tableOptions = computed<Required<IDataTableOptions>>(() => {
+    const data = this.data() || [];
+    const overrides = this.options() || {};
+    const defaultColumns = overrides.displayColumns || Object.keys(data[0] || {});
+    const displayColumns = defaultColumns.filter((v) => !overrides.hideColumns?.includes(v));
+    return {
+      ...DEFAULT_TABLE_OPTIONS,
+      ...overrides,
+      displayColumns,
+    };
+  });
 
-  private searchText = '';
+  /** Calculated filter dropdown definitions and unique options for configured `filterColumns` */
+  public readonly columnFilterConfigs = computed<IDataTableFilterColumn[]>(() => {
+    const data = this.data() || [];
+    const { filterColumns, formatHeader } = this.tableOptions();
+    const activeFilters = this.columnFilters();
 
-  // Load data when inputs updated (prefer changes over input setters to avoid duplicate load)
-  ngOnChanges(): void {
-    this.loadData(this.data, this.options);
-    this.applyFilter(this.searchText);
+    if (!filterColumns?.length) return [];
+
+    return filterColumns.map((column) => {
+      const valueSet = new Set<string>();
+      for (const row of data) {
+        const raw = (row as Record<string, unknown>)?.[column];
+        if (raw !== undefined && raw !== null && raw !== '') {
+          valueSet.add(String(raw));
+        }
+      }
+      // Retain any currently selected value even if the current data slice has 0 matching rows
+      const activeValue = activeFilters[column];
+      if (activeValue) {
+        valueSet.add(activeValue);
+      }
+
+      const options = Array.from(valueSet)
+        .sort((a, b) => a.localeCompare(b))
+        .map((value) => ({
+          value,
+          label: formatHeaderDefault(value),
+        }));
+
+      return {
+        column,
+        label: formatHeader(column),
+        options,
+      };
+    });
+  });
+
+  /** Fast column-keyed map of filter configurations for header template rendering */
+  public readonly columnFilterConfigsMap = computed<Record<string, IDataTableFilterColumn>>(() => {
+    const map: Record<string, IDataTableFilterColumn> = {};
+    for (const config of this.columnFilterConfigs()) {
+      map[config.column] = config;
+    }
+    return map;
+  });
+
+  public readonly dataSource = new MatTableDataSource<T>([]);
+
+  constructor() {
+    this.dataSource.filterPredicate = (row: T) => {
+      const search = this.searchQuery().trim().toLowerCase();
+      const filters = this.columnFilters();
+
+      for (const [col, filterVal] of Object.entries(filters)) {
+        if (filterVal && String((row as Record<string, unknown>)?.[col] ?? '') !== filterVal) {
+          return false;
+        }
+      }
+
+      if (search) {
+        const dataStr = Object.keys(row as Record<string, unknown>)
+          .reduce((acc, key) => acc + String((row as Record<string, unknown>)[key] ?? '') + '◬', '')
+          .toLowerCase();
+        return dataStr.includes(search);
+      }
+
+      return true;
+    };
+
+    // Sync data, sort, and paginator with MatTableDataSource
+    effect(() => {
+      const data = this.data() || [];
+      const opts = this.tableOptions();
+      const paginator = this.paginator();
+      const sort = this.sort();
+
+      this.dataSource.data = data;
+      this.dataSource.paginator = opts.paginatorSizes.length > 0 ? (paginator ?? null) : null;
+      this.dataSource.sort = opts.sort ? (sort ?? null) : null;
+
+      if (sort && opts.sort && typeof opts.sort === 'object') {
+        const sortConfig = opts.sort as MatSortable;
+        if (sort.active !== sortConfig.id || sort.direction !== sortConfig.start) {
+          sort.sort(sortConfig);
+        }
+      }
+      this.cdr.markForCheck();
+    });
+
+    // Sync search query and column filters to trigger MatTableDataSource filtering
+    effect(() => {
+      const search = this.searchQuery().trim().toLowerCase();
+      const filters = this.columnFilters();
+      const activeColumnFilters = Object.entries(filters).filter(([, v]) => Boolean(v));
+      const hasFilter = Boolean(search) || activeColumnFilters.length > 0;
+
+      this.dataSource.filter = hasFilter ? JSON.stringify({ search, activeColumnFilters }) : '';
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   public handleRowClick(row: T, e: Event) {
-    // call passed click option
-    this.tableOptions.handleRowClick(row, e);
-    // call passed function
+    this.tableOptions().handleRowClick(row, e);
     this.rowClick.emit(row);
   }
 
   public applyFilter(value: string) {
-    this.searchText = value;
-    this.dataSource.filter = value.trim().toLowerCase();
+    this.searchQuery.set(value);
+  }
+
+  public setColumnFilter(column: string, value: string) {
+    this.columnFilters.update((prev) => {
+      const next = { ...prev };
+      if (value) {
+        next[column] = value;
+      } else {
+        delete next[column];
+      }
+      return next;
+    });
   }
 
   public handleExport() {
-    const { displayColumns, exportFilename } = this.tableOptions;
-    const csv = unparse(this.dataSource.filteredData, { columns: displayColumns });
+    const { displayColumns, exportFilename } = this.tableOptions();
+    const csv = unparse(this.dataSource.filteredData as any[], { columns: displayColumns });
     download(csv, exportFilename, 'text/csv');
-  }
-
-  private loadData<T>(data: T[] = [], overrides: IDataTableOptions = {}) {
-    // Assign default columns from first data entry if not specified
-    const defaultColumns = overrides.displayColumns || Object.keys(data[0] || {});
-    const displayColumns = defaultColumns.filter((v) => !overrides.hideColumns?.includes(v));
-
-    // Merge default options with generated and user overrides
-    const mergedOptions = { ...this.tableOptions, displayColumns, ...overrides };
-    this.tableOptions = mergedOptions;
-
-    this.dataSource = new MatTableDataSource(data);
-
-    // HACK - detect datasource changes first to enable pagination and sort options
-    // https://stackoverflow.com/a/55021197
-
-    this.cdr.detectChanges();
-
-    // apply data sort and paginate if enabled
-    if (mergedOptions.paginatorSizes.length > 0) {
-      this.dataSource.paginator = this.paginator;
-    }
-    // sort will be disabled in html template if not included
-    this.dataSource.sort = this.sort;
-    // update default sort settings if included
-    if (this.tableOptions.sort && typeof this.tableOptions.sort === 'object') {
-      this.dataSource.sort.sort(this.tableOptions.sort as MatSortable);
-    }
-    this.cdr.markForCheck();
   }
 }

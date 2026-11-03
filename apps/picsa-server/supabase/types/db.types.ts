@@ -1044,6 +1044,8 @@ export type Database = {
           zm_lun: string | null;
           zm_ny: string | null;
           zm_toi: string | null;
+          zw_nd: string | null;
+          zw_sn: string | null;
         };
         Insert: {
           archived?: boolean | null;
@@ -1065,6 +1067,8 @@ export type Database = {
           zm_lun?: string | null;
           zm_ny?: string | null;
           zm_toi?: string | null;
+          zw_nd?: string | null;
+          zw_sn?: string | null;
         };
         Update: {
           archived?: boolean | null;
@@ -1086,6 +1090,8 @@ export type Database = {
           zm_lun?: string | null;
           zm_ny?: string | null;
           zm_toi?: string | null;
+          zw_nd?: string | null;
+          zw_sn?: string | null;
         };
         Relationships: [];
       };
@@ -1215,7 +1221,10 @@ export type Database = {
         | 'zm_kqn'
         | 'zm_lue'
         | 'zm_en'
-        | 'mw_en';
+        | 'mw_en'
+        | 'zw_en'
+        | 'zw_sn'
+        | 'zw_nd';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -1919,6 +1928,9 @@ export const Constants = {
         'zm_lue',
         'zm_en',
         'mw_en',
+        'zw_en',
+        'zw_sn',
+        'zw_nd',
       ],
       resource_link_type: ['app', 'social', 'web'],
     },

@@ -253,6 +253,20 @@ export class SupabaseSeed {
     // Empty tables in reverse dependency order before seeding to satisfy foreign key constraints
     await this.emptyDBTables(tableNames);
 
+    // Retrieve existing storage paths to satisfy foreign keys for tables declaring mirrorStorage
+    const { data: storageObjectRows, error: storageLookupError } = await this.client
+      .schema('public')
+      .from('storage_objects')
+      .select('path');
+    if (storageLookupError) {
+      console.error(
+        '[storage_objects] failed to load valid paths, aborting seed to avoid false nulls',
+        storageLookupError,
+      );
+      process.exit(1);
+    }
+    const validStoragePaths = new Set<string>((storageObjectRows ?? []).map((r: any) => r.path));
+
     const results: any[] = [];
     console.log('\nImport Order: ', tableNames);
     for (const tableName of tableNames) {
@@ -267,6 +281,24 @@ export class SupabaseSeed {
       if (parsedRows.length === 0) {
         results.push({ table: tableName, rows: 0 });
         continue;
+      }
+
+      // Safe foreign-key protection for tables referencing storage_objects:
+      // Null mirrorStorage references not present in local storage so foreign
+      // key constraints (e.g. forecasts_storage_file_fkey) are satisfied offline
+      if (seedConfig.mirrorStorage?.length) {
+        let nulledCount = 0;
+        for (const row of parsedRows) {
+          for (const col of seedConfig.mirrorStorage) {
+            if (row[col] && !validStoragePaths.has(row[col])) {
+              row[col] = null;
+              nulledCount++;
+            }
+          }
+        }
+        if (nulledCount > 0) {
+          console.log(`[${tableName}] nulled ${nulledCount} storage reference(s) not present in local storage`);
+        }
       }
       const { schema = 'public' } = seedConfig;
       const { error, data, status, statusText } = await this.client
