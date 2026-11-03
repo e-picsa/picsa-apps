@@ -9,9 +9,15 @@ import type { LocaleCodeLegacy } from '@picsa/server-types';
 // NOTE - country_codes restricted by database enum
 export type ILocaleCode = LocaleCodeLegacy;
 
+/**
+ * Non-English locales that must exist as dedicated column names in public.translations.
+ * (All English locales resolve to the base 'text' column).
+ */
+export type ITranslationLocaleCode = Exclude<ILocaleCode, `${string}_en`>;
+
 // NOTE - 'language' commonly used where 'locale' would be more accurate
 export interface ILocaleDataEntry {
-  id: string;
+  id: ILocaleCode;
   language_code: string;
   language_label: string;
   country_code: ICountryCode;
