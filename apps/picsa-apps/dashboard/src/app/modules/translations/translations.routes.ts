@@ -25,6 +25,7 @@ export const TranslationsFeature = defineFeature({
     {
       path: 'edit/:id',
       loadComponent: () => import('./pages/edit/translations-edit.component').then((m) => m.TranslationsEditComponent),
+      roleRequired: 'translations.editor',
     },
   ],
 });

@@ -1,6 +1,7 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { getJsonData } from '../../_shared/request.ts';
-import { JSONResponse } from '../../_shared/response.ts';
+import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import { apiClient } from './forecast-db.ts';
 import { IDBClimateForecastRow } from '../types.ts';
 
@@ -17,6 +18,10 @@ interface IReqParams {
  * Checks DB for any entries without storage files and attempts to update
  */
 export const forecastStorage = async (req: Request) => {
+  const deploymentId = getRequestDeploymentId(req);
+  if (!hasAuthRole(req, deploymentId, 'climate.editor')) {
+    return ErrorResponse('[climate.editor] permission required to populate forecast storage', 401);
+  }
   // ensure api up and running before sending batched requests
   await apiClient.GET('/v2/status/');
   const params = await getJsonData<IReqParams>(req);

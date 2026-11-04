@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
 
+import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceLinkRow } from '../../../types';
+import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
@@ -21,6 +23,7 @@ export class ResourceLinkEditComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
 
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
@@ -28,13 +31,21 @@ export class ResourceLinkEditComponent implements OnInit {
     url: ['', PICSAFormValidators.isUrl],
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
+
+  private permissions = createResourceEditPermissionState(this.authService, this.form);
+  public isCreate = this.permissions.isCreate;
+  private resourceOwner = this.permissions.resourceOwner;
+  public canEdit = this.permissions.canEdit;
+
   async ngOnInit() {
-    await this.service.ready();
     const { id } = this.route.snapshot.params;
-    if (id) {
+    this.isCreate.set(!id || id === 'create');
+    await this.service.ready();
+    if (id && id !== 'create') {
       const { data } = await this.service.tables.links.select<'*', IResourceLinkRow>('*').eq('id', id);
       const resource = data?.[0];
       if (resource) {
+        this.resourceOwner.set(resource.owner);
         this.populateResource(resource);
       }
     }
@@ -42,6 +53,7 @@ export class ResourceLinkEditComponent implements OnInit {
 
   // TODO - handle success/error messages
   public async saveResource() {
+    if (!this.canEdit()) return;
     const values = this.form.getRawValue() as any;
     // Remove id entry if not populated
     if (values.id === null) {

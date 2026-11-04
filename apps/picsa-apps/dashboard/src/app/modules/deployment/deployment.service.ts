@@ -37,7 +37,7 @@ export class DeploymentDashboardService {
   public readonly activeDeploymentId = computed(() => this.activeDeployment()?.id);
 
   /** Country code for active deployment */
-  public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
+  public activeDeploymentCountry = computed(() => this.activeDeployment()?.country_code);
 
   /** Geolocation data for active deployment */
   public activeDeploymentLocationData = computed(() => {

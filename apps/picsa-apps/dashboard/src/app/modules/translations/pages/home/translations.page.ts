@@ -10,6 +10,7 @@ import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { TranslationDashboardService } from '../../translations.service';
 import { TranslationsEditComponent } from '../edit/translations-edit.component';
@@ -32,6 +33,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
 export class TranslationsPageComponent {
   service = inject(TranslationDashboardService);
   dialog = inject(MatDialog);
+  private authService = inject(DashboardAuthService);
 
   /** Table options specific to active deployment (display columns vary depending on country) */
   public tableOptions = computed<IDataTableOptions>(() => {
@@ -127,6 +129,7 @@ export class TranslationsPageComponent {
   }
 
   public showEditDialog(row: ITranslationRow) {
+    if (!this.authService.hasRole('translations.editor')) return;
     this.dialog.open(TranslationsEditComponent, { data: { row, locale: this.locale() } });
   }
 
@@ -163,7 +166,11 @@ export class TranslationsPageComponent {
         return formatHeaderDefault(v);
       },
       paginatorSizes: [10, 50, 100],
-      handleRowClick: (row) => this.showEditDialog(row),
+      handleRowClick: (row) => {
+        if (this.authService.hasRole('translations.editor')) {
+          this.showEditDialog(row);
+        }
+      },
       displayColumns: ['tool', 'context', 'text', locale, 'created_at'],
       filterColumns: ['tool'],
     };

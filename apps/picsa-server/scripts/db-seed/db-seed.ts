@@ -77,21 +77,37 @@ export class SupabaseSeed {
   }
 
   /**
-   * Ensure local dev users and deployment admin permissions are configured
+   * Ensure local dev users and deployment admin/editor permissions are configured
    */
   public async seedDevUsersAndPermissions() {
-    console.log('\n👤 Ensuring dev users and admin permissions on all deployments...');
+    console.log('\n👤 Ensuring dev users and admin/editor permissions on all deployments...');
 
     // 1. Ensure dev user profiles exist
     await this.client
       .schema('public')
       .from('user_profiles')
       .upsert([
-        { id: '00000000-0000-0000-0000-000000000000', email: 'admin@picsa.app', name: 'Admin User' },
-        { id: '10000000-0000-0000-0000-000000000000', email: 'user@picsa.app', name: 'Standard User' },
+        {
+          user_id: '00000000-0000-0000-0000-000000000000',
+          full_name: 'PICSA Admin',
+          organisation: 'E-PICSA',
+          country_code: 'global',
+        },
+        {
+          user_id: '10000000-0000-0000-0000-000000000000',
+          full_name: 'PICSA User',
+          organisation: 'E-PICSA',
+          country_code: 'global',
+        },
+        {
+          user_id: '20000000-0000-0000-0000-000000000000',
+          full_name: 'PICSA Editor',
+          organisation: 'E-PICSA',
+          country_code: 'global',
+        },
       ]);
 
-    // 2. Query all deployments and ensure admin user has full admin roles on every deployment
+    // 2. Query all deployments and ensure admin & editor dev users have their roles on every deployment
     const { data: allDeployments, error: depError } = await this.client
       .schema('public')
       .from('deployments')
@@ -103,16 +119,25 @@ export class SupabaseSeed {
     }
 
     if (allDeployments && allDeployments.length > 0) {
-      const adminRoles = allDeployments.map((d: any) => ({
-        deployment_id: d.id,
-        user_id: '00000000-0000-0000-0000-000000000000',
-        roles: ['admin', 'deployments.admin'],
-      }));
-      const { error: rolesError } = await this.client.schema('public').from('user_roles').upsert(adminRoles);
+      const devRoles = allDeployments.flatMap((d: any) => [
+        {
+          deployment_id: d.id,
+          user_id: '00000000-0000-0000-0000-000000000000',
+          roles: ['admin', 'deployments.admin'],
+        },
+        {
+          deployment_id: d.id,
+          user_id: '20000000-0000-0000-0000-000000000000',
+          roles: ['climate.editor', 'crop.editor', 'resources.editor', 'translations.editor'],
+        },
+      ]);
+      const { error: rolesError } = await this.client.schema('public').from('user_roles').upsert(devRoles);
       if (rolesError) {
-        console.warn('⚠️ Could not upsert admin user_roles:', rolesError);
+        console.warn('⚠️ Could not upsert dev user_roles:', rolesError);
       } else {
-        console.log(`   Granted admin permissions for admin@picsa.app across ${allDeployments.length} deployments.`);
+        console.log(
+          `   Granted admin (admin@picsa.app) and editor (editor@picsa.app) permissions across ${allDeployments.length} deployments.`,
+        );
       }
     }
   }

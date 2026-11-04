@@ -1,5 +1,5 @@
 <div class="page-content">
-  <h2>Edit Resource</h2>
+  <h2>{{ canEdit() ? (isCreate() ? 'Create Resource' : 'Edit Resource') : 'View Resource' }}</h2>
 
   <form [formGroup]="form">
     <!-- <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start"> -->
@@ -25,14 +25,16 @@
               <label>Resource</label>
               @if (form.value.storage_file) {
                 <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
-                <button
-                  matIconButton
-                  class="file-remove"
-                  (click)="handleStorageFileSelected(undefined, 'storage_file')"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              } @else {
+                @if (canEdit()) {
+                  <button
+                    matIconButton
+                    class="file-remove"
+                    (click)="handleStorageFileSelected(undefined, 'storage_file')"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                }
+              } @else if (canEdit()) {
                 <picsa-supabase-upload
                   [fileTypes]="allowedFileTypes"
                   [fileDropHeight]="128"
@@ -65,11 +67,13 @@
                 [id]="form.value.cover_image"
                 displayStyle="button"
               ></dashboard-storage-link>
-              <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
-                <mat-icon>close</mat-icon>
-              </button>
+              @if (canEdit()) {
+                <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
               <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
-            } @else {
+            } @else if (canEdit()) {
               <picsa-supabase-upload
                 [fileTypes]="allowedCoverTypes"
                 [fileDropHeight]="128"
@@ -117,20 +121,22 @@
       <!-- </mat-tab> -->
     }
     <!-- </mat-tab-group>  -->
-    <div style="margin-top: 2rem; display: flex; align-items: center">
-      <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
-        <mat-icon>done</mat-icon>
-        Save Resource
-      </button>
-      @if (!form.valid || form.pristine) {
-        <span class="validation-message">{{ formValidationMessage }}</span>
-      }
-      @if (form.valid) {
-        <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
-          <mat-icon>delete</mat-icon>
-          Delete Resource
+    @if (canEdit()) {
+      <div style="margin-top: 2rem; display: flex; align-items: center">
+        <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
+          <mat-icon>done</mat-icon>
+          Save Resource
         </button>
-      }
-    </div>
+        @if (!form.valid || form.pristine) {
+          <span class="validation-message">{{ formValidationMessage }}</span>
+        }
+        @if (form.valid && !isCreate()) {
+          <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
+            <mat-icon>delete</mat-icon>
+            Delete Resource
+          </button>
+        }
+      </div>
+    }
   </form>
 </div>

@@ -1,4 +1,5 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { getJsonData } from '../../_shared/request.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 
@@ -24,6 +25,11 @@ export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_EN
  */
 export const forecastDB = async (req: Request) => {
   let { country_code, query_prefix } = await getJsonData(req);
+
+  const deploymentId = getRequestDeploymentId(req);
+  if (!hasAuthRole(req, deploymentId, 'climate.editor')) {
+    return ErrorResponse('[climate.editor] permission required to sync forecasts', 401);
+  }
 
   // Retrieve single country if specified, default all
   const country_codes = country_code ? [country_code] : ALL_COUNTRY_CODES;

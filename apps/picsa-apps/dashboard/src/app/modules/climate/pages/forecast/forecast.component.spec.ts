@@ -1,17 +1,42 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
-import { ForecastComponent } from './forecast.component';
+import { ClimateForecastPageComponent } from './forecast.component';
 
-describe('ForecastComponent', () => {
-  let component: ForecastComponent;
-  let fixture: ComponentFixture<ForecastComponent>;
+describe('ClimateForecastPageComponent', () => {
+  let component: ClimateForecastPageComponent;
+  let fixture: ComponentFixture<ClimateForecastPageComponent>;
 
   beforeEach(async () => {
+    const mockSupabaseService = {
+      ready: () => Promise.resolve(),
+      db: {
+        table: () => ({
+          liveSignal: () => signal([]),
+          select: () => ({
+            eq: () => ({
+              like: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
+        }),
+      },
+      storage: {
+        getPublicLink: () => '',
+      },
+      functions: {
+        setHeaders: () => null,
+      },
+      invokeFunction: () => Promise.resolve({}),
+    };
+
     await TestBed.configureTestingModule({
-      imports: [ForecastComponent],
+      imports: [ClimateForecastPageComponent],
+      providers: [provideRouter([]), { provide: SupabaseService, useValue: mockSupabaseService }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ForecastComponent);
+    fixture = TestBed.createComponent(ClimateForecastPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

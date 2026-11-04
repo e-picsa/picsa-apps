@@ -16,6 +16,8 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../../../../auth/directives/authRoleRequired.directive';
+import { DashboardAuthService } from '../../../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataMerged } from '../../../../../services';
 
@@ -28,7 +30,7 @@ interface IWaterRequirementTableData {
 
 @Component({
   selector: 'dashboard-crop-water-requirements',
-  imports: [DashboardMaterialModule, PicsaDataTableComponent, PicsaFormsModule],
+  imports: [AuthRoleRequiredDirective, DashboardMaterialModule, PicsaDataTableComponent, PicsaFormsModule],
   templateUrl: './water-requirements.component.html',
   styleUrl: './water-requirements.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +39,7 @@ export class DashboardCropWaterRequirementsComponent {
   dialog = inject(MatDialog);
   private service = inject(CropInformationService);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
 
   public data = input.required<ICropDataMerged>();
@@ -57,6 +60,7 @@ export class DashboardCropWaterRequirementsComponent {
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
 
   public async save(waterRequirementInput: string) {
+    if (!this.authService.hasRole('crop.editor')) return;
     const { crop, variety } = this.data();
     const entry = this.selectedEntry();
     if (entry) {
@@ -100,6 +104,7 @@ export class DashboardCropWaterRequirementsComponent {
   }
 
   public editWaterRequirement(entry?: IWaterRequirementTableData) {
+    if (!this.authService.hasRole('crop.editor')) return;
     entry ??= { location_id: '', water_requirement: '' as any };
     this.selectedEntry.set(entry);
     const template = this.dialogTemplate();

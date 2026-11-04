@@ -1,8 +1,10 @@
 import { getServiceRoleClient } from '../../_shared/client.ts';
+import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import createClient from 'openapi-fetch';
 import type * as ClimateApi from '../../../types/climate-api.types.ts';
 import type { Database } from '../../../types/db.types.ts';
+import type { AppRole } from '../../../types/index.ts';
 import {
   STATION_SUMMARY_CONFIGS,
   isStationSummaryAction,
@@ -71,6 +73,15 @@ export const climate = async (req: Request) => {
 
   // Common payload destructuring, mostly used across endpoints
   const { station, country_code } = payload;
+
+  // Enforce role permissions:
+  // - 'update-stations' requires 'climate.admin'
+  // - station summary actions and 'forecast-file' require 'climate.editor'
+  const deploymentId = getRequestDeploymentId(req);
+  const roleRequired: AppRole = action === 'update-stations' ? 'climate.admin' : 'climate.editor';
+  if (!hasAuthRole(req, deploymentId, roleRequired)) {
+    return ErrorResponse(`[${roleRequired}] permission required for climate action: ${action}`, 401);
+  }
 
   try {
     if (isStationSummaryAction(action)) {

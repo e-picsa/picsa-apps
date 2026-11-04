@@ -7,6 +7,7 @@ import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { IDeploymentRow } from '../../../deployment/types';
 import { ResourcesDashboardService } from '../../resources.service';
@@ -33,7 +34,15 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
 
 @Component({
   selector: 'dashboard-resource-files',
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule, StoragePathPipe, SizeMBPipe],
+  imports: [
+    CommonModule,
+    DashboardMaterialModule,
+    PicsaDataTableComponent,
+    RouterModule,
+    StoragePathPipe,
+    SizeMBPipe,
+    AuthRoleRequiredDirective,
+  ],
   templateUrl: './resource-files.component.html',
   styleUrl: './resource-files.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

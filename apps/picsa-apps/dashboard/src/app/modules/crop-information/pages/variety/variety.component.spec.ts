@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { CropVarietyComponent } from './variety.component';
 
@@ -9,6 +10,7 @@ describe('CropVarietyComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CropVarietyComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CropVarietyComponent);

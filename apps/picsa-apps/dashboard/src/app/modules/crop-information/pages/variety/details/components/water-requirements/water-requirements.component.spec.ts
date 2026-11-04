@@ -12,6 +12,7 @@ describe('WaterRequirementsComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardCropWaterRequirementsComponent);
+    fixture.componentRef.setInput('data', { id: '1', crop: 'maize', variety: 'SC403', downscaled: [] });
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

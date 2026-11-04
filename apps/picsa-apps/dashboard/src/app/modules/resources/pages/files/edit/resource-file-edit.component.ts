@@ -13,10 +13,12 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
+import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceFileRow } from '../../../types';
+import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
   selector: 'dashboard-resource-file-edit',
@@ -38,10 +40,11 @@ export class ResourceFileEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private deploymentService = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
   private dialog = inject(PicsaDialogService);
 
-  public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
   /** List of languages used in deployment available for resources */
   public languagesAvailable = computed(() => {
@@ -71,6 +74,11 @@ export class ResourceFileEditComponent implements OnInit {
     id: new FormControl(),
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
+
+  private permissions = createResourceEditPermissionState(this.authService, this.form);
+  public isCreate = this.permissions.isCreate;
+  private resourceOwner = this.permissions.resourceOwner;
+  public canEdit = this.permissions.canEdit;
 
   public get formValidationMessage(): string {
     if (this.form.pristine) {
@@ -116,16 +124,17 @@ export class ResourceFileEditComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.service.ready();
     const { id } = this.route.snapshot.params;
-    if (id) {
-      if (id === 'create') return;
-      this.populateResource(id);
+    this.isCreate.set(!id || id === 'create');
+    await this.service.ready();
+    if (id && id !== 'create') {
+      await this.populateResource(id);
     }
   }
 
   // TODO - handle success/error messages
   public async saveResource() {
+    if (!this.canEdit()) return;
     this.form.disable();
     const values = this.form.getRawValue() as any;
     // Remove id entry if not populated
@@ -153,6 +162,7 @@ export class ResourceFileEditComponent implements OnInit {
   }
 
   public async promptDelete() {
+    if (!this.canEdit()) return;
     const dialog = await this.dialog.open('delete');
     dialog.afterClosed().subscribe(async (v) => {
       if (v) {
@@ -177,6 +187,7 @@ export class ResourceFileEditComponent implements OnInit {
     const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
     const resource = data?.[0];
     if (resource) {
+      this.resourceOwner.set(resource.owner);
       this.form.patchValue(resource);
     } else {
       // navigate back to list page if resource not found

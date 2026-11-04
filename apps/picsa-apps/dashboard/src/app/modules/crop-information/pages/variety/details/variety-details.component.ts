@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../../auth/directives/authRoleRequired.directive';
 import { CropInformationService, ICropData, ICropDataMerged } from '../../../services';
 import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
 import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
@@ -14,6 +15,7 @@ type RouteParams = { id: string };
 @Component({
   selector: 'dashboard-crop-variety-details',
   imports: [
+    AuthRoleRequiredDirective,
     DashboardCropVarietyFormComponent,
     DashboardCropWaterRequirementsComponent,
     DashboardMaterialModule,

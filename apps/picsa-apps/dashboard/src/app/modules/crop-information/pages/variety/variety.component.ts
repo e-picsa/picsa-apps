@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth/directives/authRoleRequired.directive';
 import { CropInformationService, ICropDataMerged } from '../../services';
 
 const displayColumns: (keyof ITableDataRow)[] = [
@@ -20,7 +21,7 @@ interface ITableDataRow extends ICropDataMerged {
 
 @Component({
   selector: 'dashboard-crop-variety',
-  imports: [DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
+  imports: [AuthRoleRequiredDirective, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
   templateUrl: './variety.component.html',
   styleUrl: './variety.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

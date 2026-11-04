@@ -1172,6 +1172,13 @@ export type Database = {
           organisation: string;
         }[];
       };
+      user_has_country_role: {
+        Args: {
+          p_country_code: string;
+          p_role: Database['public']['Enums']['app_role'];
+        };
+        Returns: boolean;
+      };
       user_has_role: {
         Args: {
           p_deployment_id: string;
@@ -1189,12 +1196,13 @@ export type Database = {
     Enums: {
       app_role:
         | 'admin'
+        | 'deployments.admin'
         | 'climate.admin'
+        | 'climate.editor'
         | 'crop.admin'
-        | 'monitoring.admin'
+        | 'crop.editor'
         | 'resources.admin'
         | 'resources.editor'
-        | 'deployments.admin'
         | 'translations.admin'
         | 'translations.editor'
         | 'app.admin';
@@ -1893,12 +1901,13 @@ export const Constants = {
     Enums: {
       app_role: [
         'admin',
+        'deployments.admin',
         'climate.admin',
+        'climate.editor',
         'crop.admin',
-        'monitoring.admin',
+        'crop.editor',
         'resources.admin',
         'resources.editor',
-        'deployments.admin',
         'translations.admin',
         'translations.editor',
         'app.admin',

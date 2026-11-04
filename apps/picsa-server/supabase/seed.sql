@@ -25,122 +25,50 @@ insert into storage.buckets (id, name, public) values
   ('zm', 'zm', true);
 
 
--- Add initial seed auth users
+-- Add initial seed auth users (admin@picsa.app, user@picsa.app, editor@picsa.app; password matches email)
 -- https://github.com/orgs/supabase/discussions/5248
-
--- Admin User
-INSERT INTO
-  auth.users (
-    id,
-    instance_id,
-    ROLE,
-    aud,
-    email,
-    raw_app_meta_data,
-    raw_user_meta_data,
-    is_super_admin,
-    encrypted_password,
-    created_at,
-    updated_at,
-    last_sign_in_at,
-    email_confirmed_at,
-    confirmation_sent_at,
-    confirmation_token,
-    recovery_token,
-    email_change_token_new,
-    email_change
+WITH seed_users (id, email, full_name) AS (
+  VALUES
+    ('00000000-0000-0000-0000-000000000000'::uuid, 'admin@picsa.app', 'PICSA Admin'),
+    ('10000000-0000-0000-0000-000000000000'::uuid, 'user@picsa.app', 'PICSA User'),
+    ('20000000-0000-0000-0000-000000000000'::uuid, 'editor@picsa.app', 'PICSA Editor')
+),
+inserted_users AS (
+  INSERT INTO auth.users (
+    id, instance_id, role, aud, email, raw_app_meta_data, raw_user_meta_data,
+    is_super_admin, encrypted_password, created_at, updated_at, last_sign_in_at,
+    email_confirmed_at, confirmation_sent_at, confirmation_token, recovery_token,
+    email_change_token_new, email_change
   )
-VALUES
-  (
-    '00000000-0000-0000-0000-000000000000',
-    '00000000-0000-0000-0000-000000000000',
+  SELECT
+    u.id,
+    '00000000-0000-0000-0000-000000000000'::uuid,
     'authenticated',
     'authenticated',
-    'admin@picsa.app',
-    '{"provider":"email","providers":["email"]}',
+    u.email,
+    '{"provider":"email","providers":["email"]}'::jsonb,
     jsonb_build_object(
-      'sub', '00000000-0000-0000-0000-000000000000',
-      'email', 'admin@picsa.app',
-      'email_verified', true
+      'sub', u.id::text,
+      'email', u.email,
+      'email_verified', true,
+      'full_name', u.full_name,
+      'organisation', 'E-PICSA',
+      'country_code', 'global'
     ),
-    FALSE,
-    crypt('admin@picsa.app', gen_salt('bf')),
-    NOW(),
-    NOW(),
-    NOW(),
-    NOW(),
-    NOW(),
-    '',
-    '',
-    '',
-    ''
-  );
-
--- Add identity for email provider
+    false,
+    crypt(u.email, gen_salt('bf')),
+    now(), now(), now(), now(), now(), '', '', '', ''
+  FROM seed_users u
+  RETURNING id, email
+)
 INSERT INTO auth.identities (
-    id,
-    user_id,
-    identity_data,
-    provider,
-    provider_id,
-    last_sign_in_at,
-    created_at,
-    updated_at
-) VALUES (
-    '00000000-0000-0000-0000-000000000000',
-    '00000000-0000-0000-0000-000000000000',
-    jsonb_build_object(
-        'sub', '00000000-0000-0000-0000-000000000000',
-        'email', 'admin@picsa.app',
-        'email_verified', true
-    ),
-    'email',
-    '00000000-0000-0000-0000-000000000000',
-    NOW(),
-    NOW(),
-    NOW()
-);
-
--- Basic User
-  INSERT INTO
-  auth.users (
-    id,
-    instance_id,
-    ROLE,
-    aud,
-    email,
-    raw_app_meta_data,
-    raw_user_meta_data,
-    is_super_admin,
-    encrypted_password,
-    created_at,
-    updated_at,
-    last_sign_in_at,
-    email_confirmed_at,
-    confirmation_sent_at,
-    confirmation_token,
-    recovery_token,
-    email_change_token_new,
-    email_change
-  )
-VALUES
-  (
-    '10000000-0000-0000-0000-000000000000',
-    '00000000-0000-0000-0000-000000000000',
-    'authenticated',
-    'authenticated',
-    'user@picsa.app',
-    '{"provider":"email","providers":["email"]}',
-    '{}',
-    FALSE,
-    crypt('user@picsa.app', gen_salt('bf')),
-    NOW(),
-    NOW(),
-    NOW(),
-    NOW(),
-    NOW(),
-    '',
-    '',
-    '',
-    ''
-  );
+  id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+)
+SELECT
+  u.id,
+  u.id,
+  jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true),
+  'email',
+  u.id::text,
+  now(), now(), now()
+FROM inserted_users u;

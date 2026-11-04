@@ -22,13 +22,12 @@ export const ResourcesFeature = defineFeature({
       nav: { hidden: true },
       loadComponent: () =>
         import('./pages/files/edit/resource-file-edit.component').then((m) => m.ResourceFileEditComponent),
-      roleRequired: 'resources.admin',
+      roleRequired: 'resources.editor',
     },
     {
       path: 'files/:id',
       loadComponent: () =>
         import('./pages/files/edit/resource-file-edit.component').then((m) => m.ResourceFileEditComponent),
-      roleRequired: 'resources.admin',
     },
     {
       path: 'links',
@@ -40,13 +39,12 @@ export const ResourcesFeature = defineFeature({
       nav: { hidden: true },
       loadComponent: () =>
         import('./pages/links/edit/resource-link-edit.component').then((m) => m.ResourceLinkEditComponent),
-      roleRequired: 'resources.admin',
+      roleRequired: 'resources.editor',
     },
     {
       path: 'links/:id',
       loadComponent: () =>
         import('./pages/links/edit/resource-link-edit.component').then((m) => m.ResourceLinkEditComponent),
-      roleRequired: 'resources.admin',
     },
     {
       path: 'collections',
@@ -61,7 +59,7 @@ export const ResourcesFeature = defineFeature({
         import('./pages/collections/edit/resource-collection-edit.component').then(
           (m) => m.ResourceCollectionEditComponent,
         ),
-      roleRequired: 'resources.admin',
+      roleRequired: 'resources.editor',
     },
     {
       path: 'collections/:id',
@@ -69,7 +67,6 @@ export const ResourcesFeature = defineFeature({
         import('./pages/collections/edit/resource-collection-edit.component').then(
           (m) => m.ResourceCollectionEditComponent,
         ),
-      roleRequired: 'resources.admin',
     },
     {
       path: 'farmer-videos',

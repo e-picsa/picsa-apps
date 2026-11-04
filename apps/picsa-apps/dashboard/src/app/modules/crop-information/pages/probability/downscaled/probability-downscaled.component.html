@@ -14,7 +14,7 @@
             <mat-icon>table_rows</mat-icon>
             Climate Data
           </button>
-          <button class="ml-auto" matButton (click)="showLinkedStationSelect.set(true)">
+          <button *roleRequired="'crop.editor'" class="ml-auto" matButton (click)="showLinkedStationSelect.set(true)">
             <mat-icon>edit</mat-icon>
             Change Station
           </button>
@@ -36,7 +36,11 @@
       }
       <!-- Station Select -->
       @else {
+        @if (!downscaled.station) {
+          <p>No climate station linked for this location.</p>
+        }
         <dashboard-crop-linked-station-select
+          *roleRequired="'crop.editor'"
           [locationId]="locationId()"
           [downscaledData]="downscaled"
           (stationSelected)="updateLinkedStation($event)"

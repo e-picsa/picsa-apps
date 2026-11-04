@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, effect, inject,signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth/directives/authRoleRequired.directive';
+import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { ClimateService, IDataRefreshStatus } from '../../climate.service';
 import { IClimateStationData, IStationRow } from '../../types';
 import { ChartSummaryComponent } from './components/chart-summary/chart-summary.component';
@@ -13,6 +15,7 @@ import { LocationSummaryComponent } from './components/location-summary/location
 @Component({
   selector: 'dashboard-station-details',
   imports: [
+    AuthRoleRequiredDirective,
     DashboardMaterialModule,
     DataSummaryComponent,
     ChartSummaryComponent,
@@ -26,6 +29,7 @@ import { LocationSummaryComponent } from './components/location-summary/location
 export class StationDetailsPageComponent {
   service = inject(ClimateService);
   private dialog = inject(MatDialog);
+  private authService = inject(DashboardAuthService);
 
   public dataFetchUpdates = signal<IDataRefreshStatus[]>([]);
 
@@ -49,8 +53,8 @@ export class StationDetailsPageComponent {
     if (data) {
       this.stationData.set(data);
     } else {
-      // if no data available try to load first time from api
-      if (this.isFirstDataLoad) {
+      // if no data available try to load first time from api (editors only)
+      if (this.isFirstDataLoad && this.authService.hasRole('climate.editor')) {
         this.isFirstDataLoad = false;
         await this.refreshData(station);
       }
@@ -62,6 +66,7 @@ export class StationDetailsPageComponent {
    * Subscribe to combined updates and update summary signal on change
    */
   public async refreshData(station: IStationRow) {
+    if (!this.authService.hasRole('climate.editor')) return;
     const dialog = this.dialog.open(this.updatesDialog());
     const status$ = this.service.updateStationDataFromApi(station);
     status$.subscribe({
