@@ -115,7 +115,3 @@ function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: s
     label: v.metadata?.subject || null,
   }));
 }
-
-// Forecast type mapping lives in forecast-type.ts (pure, unit-tested).
-// NOTE - forecast-db only inserts new ids, so already-synced misclassified
-// rows must be corrected with a manual db update (see forecasts table).
