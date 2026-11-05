@@ -57,6 +57,12 @@ export class DeploymentDashboardService {
   /** List of pending access requests for the current user */
   public readonly pendingRequests = signal<string[]>([]);
 
+  /** Guard against concurrent background checks for approved access requests */
+  private isCheckingAccess = false;
+
+  /** Interval used to poll for approved access requests while any request is pending */
+  private pendingCheckInterval?: ReturnType<typeof setInterval>;
+
   constructor() {
     // Update list of available deployments when user signs in
     effect(async () => {
@@ -66,8 +72,16 @@ export class DeploymentDashboardService {
         this.loadStoredDeployment();
         this.isDeploymentChecked.set(true);
         // Load pending requests
-        this.loadAccessRequests();
+        await this.loadAccessRequests();
+      } else {
+        this.pendingRequests.set([]);
       }
+    });
+    // Start/stop background polling whenever pending requests change
+    effect(() => {
+      // track signal to re-run on change
+      this.pendingRequests();
+      this.updatePendingPolling();
     });
     // Ensure child services kept up-to-date with deployment id changes
     effect(() => {
@@ -178,6 +192,44 @@ export class DeploymentDashboardService {
       throw error;
     }
     this.allDeployments.set(data);
+  }
+
+  /**
+   * Check for approved access requests without requiring a page reload.
+   * Refreshes JWT roles (which carry deployment access) and reloads pending list.
+   * If a pending request was approved and no deployment is active, auto-select it.
+   * Safe to call repeatedly - concurrent calls are ignored.
+   */
+  private async checkForApprovedRequests() {
+    if (this.pendingRequests().length === 0 || this.isCheckingAccess) return;
+    this.isCheckingAccess = true;
+    try {
+      const before = [...this.pendingRequests()];
+      await this.authService.reloadPermissions({ hardReloadOnFailure: false });
+      await this.loadAccessRequests();
+      const granted = before.filter(
+        (id) => !this.pendingRequests().includes(id) && this.userDeployments().some((d) => d.id === id),
+      );
+      if (granted.length > 0 && !this.activeDeployment()) {
+        await this.setActiveDeployment(granted[0], { forceReload: false });
+      }
+    } catch (error) {
+      console.warn('[Deployment] Failed to check for approved requests', error);
+    } finally {
+      this.isCheckingAccess = false;
+    }
+  }
+
+  /** Start background polling while requests pending, stop when none remain */
+  private updatePendingPolling() {
+    if (typeof window === 'undefined') return;
+    const shouldPoll = this.pendingRequests().length > 0;
+    if (shouldPoll && !this.pendingCheckInterval) {
+      this.pendingCheckInterval = setInterval(() => void this.checkForApprovedRequests(), 10000);
+    } else if (!shouldPoll && this.pendingCheckInterval) {
+      clearInterval(this.pendingCheckInterval);
+      this.pendingCheckInterval = undefined;
+    }
   }
 
   private async loadAccessRequests() {
