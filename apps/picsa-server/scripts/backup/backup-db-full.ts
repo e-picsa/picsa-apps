@@ -141,7 +141,13 @@ function encodeDbUrl(dbUrl: string): string {
     process.exit(1);
   }
   if (parsed.password) {
-    parsed.password = encodeURIComponent(decodeURIComponent(parsed.password));
+    // Tolerate raw pasted passwords: a literal % outside a valid escape makes
+    // decodeURIComponent throw, so fall back to encoding the raw value as-is.
+    try {
+      parsed.password = encodeURIComponent(decodeURIComponent(parsed.password));
+    } catch {
+      parsed.password = encodeURIComponent(parsed.password);
+    }
   }
   return parsed.toString();
 }
@@ -163,5 +169,5 @@ function isPoolerHost(dbUrl: string): boolean {
 }
 
 if (require.main === module) {
-  backupDatabaseFull();
+  void backupDatabaseFull();
 }
