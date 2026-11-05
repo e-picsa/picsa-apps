@@ -48,9 +48,13 @@ export async function backupDatabaseFull() {
     process.exit(1);
   }
 
-  const excludeTables = process.env.SUPABASE_FULL_EXCLUDE_TABLES
-    ? process.env.SUPABASE_FULL_EXCLUDE_TABLES.split(',').map((t) => t.trim())
-    : DEFAULT_EXCLUDE_TABLES;
+  // Explicit empty string means "no exclusions"; unset falls back to defaults.
+  const excludeTables =
+    process.env.SUPABASE_FULL_EXCLUDE_TABLES === undefined
+      ? DEFAULT_EXCLUDE_TABLES
+      : process.env.SUPABASE_FULL_EXCLUDE_TABLES.split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
   const outDir = path.join(backupDir, `db_full_${timestamp}`);
@@ -107,6 +111,7 @@ export async function backupDatabaseFull() {
     }
   } catch (error: any) {
     console.error('\n❌ Full database backup failed:', error?.message || error);
+    console.error(`\n⚠️  Warning: partial backup files may remain in ${outDir} - do not restore from them.`);
     console.error('\n💡 Troubleshooting: verify the Direct connection string, DB password, and network access.');
     console.error('  The password in --db-url must be percent-encoded (handled automatically from SUPABASE_DB_URL).');
     console.error('  Dashboard backups (Project Settings → Backups) remain the primary disaster-recovery path.\n');
