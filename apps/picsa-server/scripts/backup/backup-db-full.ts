@@ -2,7 +2,7 @@ import execa from 'execa';
 import fs from 'fs';
 import path from 'path';
 
-import { loadEnvLocal, loadEnvServer } from '../utils/supabase.utils';
+import { loadEnv, loadEnvLocal, loadEnvServer } from '../utils/supabase.utils';
 
 const backupDir = path.resolve(__dirname, './backups');
 
@@ -15,6 +15,7 @@ const backupDir = path.resolve(__dirname, './backups');
 const DEFAULT_EXCLUDE_TABLES = ['storage.buckets_vectors', 'storage.vector_indexes'];
 
 export async function backupDatabaseFull() {
+  loadEnv();
   loadEnvServer();
   loadEnvLocal();
 
