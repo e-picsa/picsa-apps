@@ -1,3 +1,21 @@
+/**
+ * Full remote database backup (Supabase CLI docs recipe: roles + schema + data
+ * + migration history) into `scripts/backup/backups/db_full_<timestamp>/`.
+ *
+ * Invoke:
+ *   yarn nx run picsa-server:backup-db-full
+ *
+ * Requires:
+ *   SUPABASE_DB_URL  Direct connection string (port 5432, NOT the :6543
+ *                    transaction pooler). Via shell export or
+ *                    apps/picsa-server/.env.server - see .env.server.example.
+ *   Docker running   The v2 CLI runs dumps inside Docker.
+ *
+ * Optional:
+ *   SUPABASE_FULL_EXCLUDE_TABLES  Comma-separated schema.tables to skip in the
+ *                    data dump (default: storage.buckets_vectors,
+ *                    storage.vector_indexes). Set to "" to exclude nothing.
+ */
 import execa from 'execa';
 import fs from 'fs';
 import path from 'path';
