@@ -3,14 +3,16 @@
     @let summary = overview();
     <div class="flex flex-wrap gap-x-8 gap-y-4">
       <div class="min-w-48">
+        <div class="font-medium">Daily</div>
         <div class="text-sm">
-          Daily: {{ summary.selected.dailyLive }}
+          {{ summary.selected.dailyLive }}
           @if (summary.selected.dailyPending > 0) {
             <span class="text-orange-600">({{ summary.selected.dailyPending }} pending)</span>
           }
         </div>
+        <div class="mt-2 font-medium">Weekly</div>
         <div class="text-sm">
-          Weekly: {{ summary.selected.weeklyLive }}
+          {{ summary.selected.weeklyLive }}
           @if (summary.selected.weeklyPending > 0) {
             <span class="text-orange-600">({{ summary.selected.weeklyPending }} pending)</span>
           }

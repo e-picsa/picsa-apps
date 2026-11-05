@@ -2,20 +2,16 @@
   <div style="display: flex; align-items: center">
     <h2 class="mr-2">Forecasts</h2>
     <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
-    @if (canAddForecast()) {
-      <button
-        matButton="outlined"
-        color="primary"
-        *roleRequired="'climate.editor'"
-        class="ml-auto"
-        (click)="addForecast()"
-      >
-        <mat-icon>add</mat-icon>
-        <span class="capitalize">Add {{ activeFilter() }} Forecast</span>
-      </button>
-    } @else {
-      <span class="ml-auto"></span>
-    }
+    <button
+      matButton="outlined"
+      color="primary"
+      *roleRequired="'climate.editor'"
+      class="ml-auto"
+      (click)="addForecast()"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Add Forecast</span>
+    </button>
     <picsa-refresh-spinner
       *roleRequired="'climate.editor'"
       [spin]="refreshPending()"

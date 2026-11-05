@@ -1,6 +1,10 @@
-<h2 mat-dialog-title class="capitalize">{{ forecastType }} Forecast</h2>
+<h2 mat-dialog-title class="capitalize">{{ forecastType() }} Forecast</h2>
 <mat-dialog-content>
   <form [formGroup]="form" class="flex flex-col gap-4 p-4">
+    <mat-radio-group [value]="forecastType()" (change)="forecastType.set($event.value)" class="flex gap-4">
+      <mat-radio-button value="seasonal">Seasonal</mat-radio-button>
+      <mat-radio-button value="downscaled">Downscaled</mat-radio-button>
+    </mat-radio-group>
     <picsa-supabase-upload
       #uploader
       [fileDropHeight]="130"
@@ -13,7 +17,7 @@
       <mat-label>Label</mat-label>
       <input matInput formControlName="label" />
     </mat-form-field>
-    @if (forecastType === 'downscaled') {
+    @if (forecastType() === 'downscaled') {
       <mat-form-field appearance="outline">
         <mat-label>Downscaled Location</mat-label>
         <mat-select formControlName="downscaled_location">
