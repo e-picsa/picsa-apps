@@ -58,10 +58,18 @@ export class ClimateForecastPageComponent {
     orderBy: { column: 'created_at', ascending: false },
   });
 
-  public dailyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'daily'));
-  public weeklyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'weekly'));
-  public downscaledForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'downscaled'));
-  public seasonalForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'seasonal'));
+  public dailyForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'daily'));
+  public weeklyForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'weekly'));
+  public downscaledForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'downscaled'));
+  public seasonalForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'seasonal'));
+
+  /** Rows for the currently selected month (ids carry a YYYYMMDD prefix).
+   * The month picker previously only scoped the api sync - without this the
+   * tabs listed every month at once */
+  private monthForecasts = computed(() => {
+    const prefix = this.apiQueryPrefix();
+    return this.forecasts().filter((v) => v.id.startsWith(prefix));
+  });
 
   // Single source of truth for tabs
   public forecastTabs: IForecastTab[] = [

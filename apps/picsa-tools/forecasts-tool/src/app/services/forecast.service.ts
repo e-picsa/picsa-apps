@@ -107,8 +107,10 @@ export class ForecastService extends PicsaAsyncService {
     // excluded client-side via isLiveForecast (no count limits so translations are never dropped)
     { type: 'seasonal', signal: this.seasonalForecastDocs, includeStorage: true },
     { type: 'downscaled', signal: this.downscaledForecastDocs },
+    // Daily keeps a rolling week so delayed or misclassified upstream
+    // files never leave the tab empty; weekly keeps the latest only
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
-    { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
+    { type: 'daily', signal: this.dailyForecastDocs, limit: 7, includeStorage: true },
   ];
 
   private get dbCollection() {
