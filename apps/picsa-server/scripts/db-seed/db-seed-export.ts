@@ -294,7 +294,10 @@ export class SupabaseSeedExport {
           await this.mirrorStorageFiles(rows, config.mirrorStorage, validStoragePaths);
         }
 
-        const omitColumns = [...SEED_METADATA_COLUMNS, ...(config.omitColumns ?? [])];
+        // Extended seeding preserves remote timestamps (created_at/updated_at are
+        // kept in the payload so rows mirror the server). CSV exports still
+        // strip them via SEED_METADATA_COLUMNS to keep committed files diff-stable
+        const omitColumns = [...(config.omitColumns ?? [])];
         await this.upsertLocalRows(table, schema, rows, config, omitColumns, validStoragePaths);
         console.log(`✅ Seeded ${schema}.${table}: ${rows.length} rows upserted to local DB`);
         results.push({ table, rows: rows.length, schema, destination: 'local db' });

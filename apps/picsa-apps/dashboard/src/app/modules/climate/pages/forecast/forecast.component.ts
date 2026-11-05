@@ -89,6 +89,8 @@ export class ClimateForecastPageComponent {
   public tableOptions = computed((): IDataTableOptions => {
     return {
       displayColumns: this.columnsByFilter[this.activeFilter()],
+      // Newest rows first by default (matches the live query order below)
+      sort: { id: 'created_at', start: 'desc' },
       handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
       formatHeader: (v) => {
         if (v === 'language_code') return 'Language';
@@ -179,7 +181,8 @@ export class ClimateForecastPageComponent {
     const { data, error } = await this.db
       .select<'*', IForecastRow>('*')
       .eq('country_code', country_code)
-      .like('id', `${this.apiQueryPrefix()}%`);
+      .like('id', `${this.apiQueryPrefix()}%`)
+      .order('created_at', { ascending: false });
     if (error) throw error;
 
     return data;
