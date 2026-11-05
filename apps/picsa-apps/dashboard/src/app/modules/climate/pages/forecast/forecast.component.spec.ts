@@ -49,4 +49,16 @@ describe('ClimateForecastPageComponent', () => {
     const chips = fixture.nativeElement.querySelectorAll('mat-chip-option');
     expect(chips.length).toBe(5);
   });
+
+  it('restricts manual adds to seasonal and downscaled types', () => {
+    expect(component.canAddForecast()).toBe(false);
+    for (const filter of ['daily', 'weekly', 'all'] as const) {
+      component.activeFilter.set(filter);
+      expect(component.canAddForecast()).toBe(false);
+    }
+    for (const filter of ['seasonal', 'downscaled'] as const) {
+      component.activeFilter.set(filter);
+      expect(component.canAddForecast()).toBe(true);
+    }
+  });
 });

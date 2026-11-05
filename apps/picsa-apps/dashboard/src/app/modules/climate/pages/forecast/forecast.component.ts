@@ -166,15 +166,19 @@ export class ClimateForecastPageComponent {
   }
 
   public async addForecast() {
-    if (!this.canEdit()) return;
-    const filter = this.activeFilter();
+    // Manual adds are restricted to seasonal/downscaled - daily and weekly
+    // rows are owned by the automated climate api sync, never individuals
+    if (!this.canEdit() || !this.canAddForecast()) return;
     const data: IForecastDialogData = {
       country_code: this.countryCode(),
-      forecast_type: filter === 'all' ? 'daily' : filter,
+      forecast_type: this.activeFilter() as ForecastType,
     };
     this.dialog.open(ForecastFormComponent, { data });
     // dialog will handle save, data will auto-reload from liveSignal subscription
   }
+
+  /** Manual forecast creation is limited to seasonal/downscaled types */
+  public canAddForecast = computed(() => this.activeFilter() === 'seasonal' || this.activeFilter() === 'downscaled');
 
   private async loadDBData() {
     const country_code = this.deploymentService.activeDeployment()?.country_code;
