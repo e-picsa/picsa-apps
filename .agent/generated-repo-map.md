@@ -35,7 +35,7 @@
 | `@picsa/utils` | `libs/utils/index.ts` |
 | `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (540 files scanned)
+## Codebase Symbol Index (541 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -151,9 +151,9 @@
   - `Interface` **IForecastOverview**
   - `Function` **buildForecastOverview**
 - **[forecast.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts`)
-  - `Component` **ClimateForecastPageComponent** (methods: [handleRefreshClick, handleStorageClick, handleTabChange, addForecast])
+  - `Component` **ClimateForecastPageComponent** (methods: [handleRefreshClick, handleStorageClick, addForecast])
 - **[month-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts`)
-  - `Component` **DashboardClimateMonthSelectComponent** (methods: [setMonthAndYear])
+  - `Component` **DashboardClimateMonthSelectComponent** (methods: [stepMonth, setMonthAndYear])
 - **[station.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts`)
   - `Component` **ClimateStationPageComponent** (methods: [handleMarkerClick])
 - **[chart-summary.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts`)
@@ -420,6 +420,7 @@
   - `Interface` **IStorageObjectMeta**
 - **[supabase.utils.ts](../apps/picsa-server/scripts/utils/supabase.utils.ts)** (`apps/picsa-server/scripts/utils/supabase.utils.ts`)
   - `Interface` **ILinkStatus**
+  - `Function` **loadEnv**
   - `Function` **getSupabaseClient**
   - `Function` **loadEnvServer**
   - `Function` **loadEnvLocal**
@@ -428,7 +429,6 @@
   - `Function` **getExportSupabaseClient**
   - `Function` **checkSupabaseLinkStatus**
   - `Function` **getAppSchemas**
-  - `Function` **getExcludedTables**
 
 ### `apps/picsa-server/supabase/functions`
 
@@ -1604,4 +1604,6 @@
   - `Migration` **20261102213500_add_zw_translation_columns.sql**
 - **[20261103160000_role_and_rls_permissions.sql](../apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql)** (`apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql`)
   - `SQLFunctions` **3 function(s)** ([public.user_is_admin, public.user_has_role, public.user_has_country_role])
+- **[20261105120000_enable_pg_net.sql](../apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql)** (`apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql`)
+  - `Migration` **20261105120000_enable_pg_net.sql**
 

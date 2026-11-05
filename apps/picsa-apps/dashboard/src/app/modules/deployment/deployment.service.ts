@@ -225,7 +225,7 @@ export class DeploymentDashboardService {
     if (typeof window === 'undefined') return;
     const shouldPoll = this.pendingRequests().length > 0;
     if (shouldPoll && !this.pendingCheckInterval) {
-      this.pendingCheckInterval = setInterval(() => void this.checkForApprovedRequests(), 30000);
+      this.pendingCheckInterval = setInterval(() => void this.checkForApprovedRequests(), 10000);
     } else if (!shouldPoll && this.pendingCheckInterval) {
       clearInterval(this.pendingCheckInterval);
       this.pendingCheckInterval = undefined;
