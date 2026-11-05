@@ -1,4 +1,4 @@
-import { AppRole } from '../../types/index.ts';
+import type { AppRole } from '../../types/index.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { getRequestDeploymentId, hasAuthRole } from '../_shared/auth.ts';
 import { adminBoundaries } from './admin-boundaries.ts';
