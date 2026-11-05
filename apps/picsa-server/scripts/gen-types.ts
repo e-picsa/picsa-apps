@@ -1,10 +1,11 @@
 import { writeFileSync } from 'fs';
+import { resolve } from 'path';
 import { Project, SyntaxKind } from 'ts-morph';
 
 import { getSupabaseClient } from './utils/supabase.utils';
 
-const DB_TYPES_PATH = 'supabase/types/db.types.ts';
-const DERIVED_TYPES_PATH = 'supabase/types/db-derived.types.ts';
+const DB_TYPES_PATH = resolve(__dirname, '../supabase/types/db.types.ts');
+const DERIVED_TYPES_PATH = resolve(__dirname, '../supabase/types/db-derived.types.ts');
 
 /**
  * Custom type gen for geo data
@@ -100,15 +101,18 @@ async function patchCountryCodeTypes() {
     public: 'CountryCodeLegacy',
   };
 
+  const stripQuotes = (name: string) => name.replace(/^["']|["']$/g, '');
+  let patchedCount = 0;
+
   for (const [schemaName, replacementType] of Object.entries(schemaMap)) {
-    const schemaProp = dbTypeLiteral.getProperty(schemaName);
+    const schemaProp = dbTypeLiteral.getProperties().find((p) => stripQuotes(p.getName()) === schemaName);
     if (!schemaProp) continue;
 
     // Find all `country_code` properties anywhere within this schema
     const allProperties = schemaProp.getDescendantsOfKind(SyntaxKind.PropertySignature);
 
     for (const prop of allProperties) {
-      if (prop.getName() !== 'country_code') continue;
+      if (stripQuotes(prop.getName()) !== 'country_code') continue;
 
       const typeNode = prop.getTypeNode();
       if (!typeNode) continue;
@@ -118,12 +122,18 @@ async function patchCountryCodeTypes() {
       // Replace `string` with the derived type, preserving `| null`
       if (typeText === 'string') {
         prop.setType(replacementType);
+        patchedCount++;
       } else if (typeText === 'string | null') {
         prop.setType(`${replacementType} | null`);
+        patchedCount++;
       }
     }
   }
 
+  if (patchedCount === 0) {
+    throw new Error(`Expected to patch country_code properties in ${DB_TYPES_PATH}, but patched 0`);
+  }
+
   sourceFile.saveSync();
-  console.log(`Patched ${DB_TYPES_PATH} using ts-morph`);
+  console.log(`Patched ${patchedCount} country_code definitions in ${DB_TYPES_PATH} using ts-morph`);
 }
