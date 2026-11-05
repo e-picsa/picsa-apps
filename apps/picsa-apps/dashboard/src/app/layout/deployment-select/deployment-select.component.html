@@ -50,6 +50,16 @@
         }
       }
     </section>
+    @if (hasPendingRequests()) {
+      <div class="flex items-center justify-center gap-2 mt-4 text-sm text-slate-500">
+        @if (service.isCheckingAccess()) {
+          <span>Checking for approval…</span>
+        } @else {
+          <span>Waiting for approval</span>
+          <button matButton (click)="onManualCheck()">Check again</button>
+        }
+      </div>
+    }
   </div>
 </div>
 

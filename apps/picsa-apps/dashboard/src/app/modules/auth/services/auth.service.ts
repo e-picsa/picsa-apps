@@ -44,7 +44,7 @@ export class DashboardAuthService {
     return deploymentRoles.includes(requiredRole);
   }
 
-  public async reloadPermissions() {
-    return this.supabaseAuthService.reloadUserPermissions();
+  public async reloadPermissions(opts?: { hardReloadOnFailure: boolean }) {
+    return this.supabaseAuthService.reloadUserPermissions(opts);
   }
 }

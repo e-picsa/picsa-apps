@@ -94,13 +94,18 @@ export class SupabaseAuthService extends SupabaseDeferredClient {
     return { data, error };
   }
 
-  public async reloadUserPermissions() {
+  public async reloadUserPermissions(opts = { hardReloadOnFailure: true }): Promise<boolean> {
     const { auth } = await this.getClient;
     const { error } = await auth.refreshSession();
     if (error) {
-      // force hard reload if not possible to reload user permission
-      location.reload();
+      console.error('[SUPABASE AUTH] Failed to refresh session', error);
+      if (opts.hardReloadOnFailure) {
+        // force hard reload if not possible to reload user permission
+        location.reload();
+      }
+      return false;
     }
+    return true;
   }
 
   public async resetEmailPassword(email: string) {
