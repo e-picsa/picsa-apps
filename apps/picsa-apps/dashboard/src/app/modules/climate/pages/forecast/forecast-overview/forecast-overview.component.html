@@ -17,16 +17,9 @@
             <span class="text-orange-600">({{ summary.selected.weeklyPending }} pending)</span>
           }
         </div>
-        <div class="text-xs text-gray-500">
-          @if (summary.selected.lastSync) {
-            Updated {{ summary.selected.lastSync | date: 'medium' }}
-          } @else {
-            No data
-          }
-          @if (summary.selected.stale) {
-            <span class="text-red-600">- no recent sync</span>
-          }
-        </div>
+        @if (summary.selected.stale) {
+          <div class="mt-2 text-xs text-red-600">No recent sync</div>
+        }
       </div>
       <div class="min-w-48">
         <div class="font-medium">Seasonal</div>
@@ -35,10 +28,10 @@
         <div class="text-sm">{{ summary.downscaledLocations }} locations</div>
       </div>
       <div class="min-w-48">
-        <div class="font-medium">Pipeline</div>
-        <div class="text-xs text-gray-500">
+        <div class="font-medium">Updated At</div>
+        <div class="text-sm">
           @if (summary.lastSync) {
-            Last sync {{ summary.lastSync | date: 'medium' }}
+            {{ summary.lastSync | date: 'medium' }}
           } @else {
             Never synced
           }
