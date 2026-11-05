@@ -1,5 +1,11 @@
-<div style="position: relative">
+<div style="display: flex; align-items: center">
+  <button matIconButton (click)="stepMonth(-1)" [disabled]="!canPrevious()" aria-label="Previous month">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
   <button matButton="outlined" (click)="picker.open()">{{ dateSelected() | date: 'MMM yyyy' }}</button>
+  <button matIconButton (click)="stepMonth(1)" [disabled]="!canNext()" aria-label="Next month">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
   <!-- Use hidden form field to handle input control. Picker overlay will still display -->
   <mat-form-field (click)="picker.open()" style="visibility: hidden; position: absolute; left: 0; top: -32px">
     <input matInput [matDatepicker]="picker" [min]="minDate" [max]="maxDate" />

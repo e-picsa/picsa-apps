@@ -1,0 +1,42 @@
+<mat-card class="mb-4">
+  <mat-card-content>
+    @let summary = overview();
+    <div class="flex flex-wrap gap-x-8 gap-y-4">
+      <div class="min-w-48">
+        <div class="font-medium">Daily</div>
+        <div class="text-sm">
+          {{ summary.selected.dailyLive }}
+          @if (summary.selected.dailyPending > 0) {
+            <span class="text-orange-600">({{ summary.selected.dailyPending }} pending)</span>
+          }
+        </div>
+        <div class="mt-2 font-medium">Weekly</div>
+        <div class="text-sm">
+          {{ summary.selected.weeklyLive }}
+          @if (summary.selected.weeklyPending > 0) {
+            <span class="text-orange-600">({{ summary.selected.weeklyPending }} pending)</span>
+          }
+        </div>
+        @if (summary.selected.stale) {
+          <div class="mt-2 text-xs text-red-600">No new data</div>
+        }
+      </div>
+      <div class="min-w-48">
+        <div class="font-medium">Seasonal</div>
+        <div class="text-sm">{{ summary.seasonalLatest || 'None available' }}</div>
+        <div class="mt-2 font-medium">Downscaled</div>
+        <div class="text-sm">{{ summary.downscaledLocations }} locations</div>
+      </div>
+      <div class="min-w-48">
+        <div class="font-medium">Most Recent Forecast</div>
+        <div class="text-sm">
+          @if (summary.lastSync) {
+            {{ summary.lastSync | date: 'medium' }}
+          } @else {
+            Never synced
+          }
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
