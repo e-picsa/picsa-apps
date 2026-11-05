@@ -58,7 +58,7 @@ export class DeploymentDashboardService {
   public readonly pendingRequests = signal<string[]>([]);
 
   /** Guard against concurrent background checks for approved access requests */
-  private readonly isCheckingAccess = signal(false);
+  private isCheckingAccess = false;
 
   /** Interval used to poll for approved access requests while any request is pending */
   private pendingCheckInterval?: ReturnType<typeof setInterval>;
@@ -200,9 +200,9 @@ export class DeploymentDashboardService {
    * If a pending request was approved and no deployment is active, auto-select it.
    * Safe to call repeatedly - concurrent calls are ignored.
    */
-  public async checkForApprovedRequests() {
-    if (this.pendingRequests().length === 0 || this.isCheckingAccess()) return;
-    this.isCheckingAccess.set(true);
+  private async checkForApprovedRequests() {
+    if (this.pendingRequests().length === 0 || this.isCheckingAccess) return;
+    this.isCheckingAccess = true;
     try {
       const before = [...this.pendingRequests()];
       await this.authService.reloadPermissions({ hardReloadOnFailure: false });
@@ -216,7 +216,7 @@ export class DeploymentDashboardService {
     } catch (error) {
       console.warn('[Deployment] Failed to check for approved requests', error);
     } finally {
-      this.isCheckingAccess.set(false);
+      this.isCheckingAccess = false;
     }
   }
 
