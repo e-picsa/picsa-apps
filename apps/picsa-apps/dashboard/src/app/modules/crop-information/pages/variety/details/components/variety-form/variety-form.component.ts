@@ -6,7 +6,7 @@ import { PICSAFormValidators } from '@picsa/forms';
 
 import { DashboardMaterialModule } from '../../../../../../../material.module';
 import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
-import { ICropData } from '../../../../../services';
+import type { ICropData, ICropDataMerged } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-variety-form',
@@ -20,7 +20,7 @@ export class DashboardCropVarietyFormComponent {
   private deploymentService = inject(DeploymentDashboardService);
 
   public editable = input(false);
-  public initialValue = input<ICropData['Insert'] | undefined>(undefined);
+  public initialValue = input<ICropDataMerged | undefined>(undefined);
 
   public form = this.formBuilder.nonNullable.group({
     id: new FormControl(), // populated by server or on edit

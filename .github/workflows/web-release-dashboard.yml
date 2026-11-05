@@ -80,9 +80,9 @@ jobs:
           # quota is routinely already exhausted and the deploy fails with
           # "toomanyrequests: Data limit exceeded" while pulling the edge-runtime image.
           # GHCR has no such shared-IP quota, so this removes the failure mode.
-          # FUTURE: bump the pinned `supabase` CLI to >= 2.109.1 (see package.json), which falls
-          # back ECR -> GHCR -> Docker Hub automatically on rate limits. Then this env var can be
-          # removed (or the CLI upgrade can be validated as the sole fix).
+          # NOTE: The pinned `supabase` CLI is bumped to 2.122.0, which has built-in rate-limit
+          # fallback (ECR -> GHCR -> Docker Hub). We keep SUPABASE_INTERNAL_IMAGE_REGISTRY: ghcr.io
+          # as the primary registry to skip the initial ECR rate-limit roundtrip.
           SUPABASE_INTERNAL_IMAGE_REGISTRY: ghcr.io
           # Manual kill-switch for CLI debug logs (stderr). Set vars.SUPABASE_DEBUG=true
           # in repo/environment settings to diagnose deploy failures without code changes.
