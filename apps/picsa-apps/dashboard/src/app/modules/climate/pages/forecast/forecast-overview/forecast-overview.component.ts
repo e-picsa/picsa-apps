@@ -19,6 +19,7 @@ import { buildForecastOverview } from './forecast-overview.utils';
 })
 export class DashboardClimateForecastOverviewComponent {
   public rows = input<IForecastRow[]>([]);
+  public refDate = input(new Date());
 
-  protected overview = computed(() => buildForecastOverview(this.rows()));
+  protected overview = computed(() => buildForecastOverview(this.rows(), this.refDate()));
 }

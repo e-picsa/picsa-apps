@@ -2,7 +2,7 @@
   <mat-card-content>
     @let summary = overview();
     <div class="flex flex-wrap gap-x-8 gap-y-4">
-      @for (month of [summary.current, summary.previous]; track month.prefix) {
+      @for (month of [summary.selected, summary.previous]; track month.prefix) {
         <div class="min-w-48">
           <div class="font-medium">
             {{ month.label }}

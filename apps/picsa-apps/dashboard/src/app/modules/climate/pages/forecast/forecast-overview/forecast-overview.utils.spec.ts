@@ -14,8 +14,9 @@ const row = (partial: Partial<IForecastRow>): IForecastRow =>
     ...partial,
   }) as IForecastRow;
 
-// Fixed reference date so month buckets are deterministic: Nov 2026
+// Fixed reference dates so month buckets are deterministic (Nov 2026 selected)
 const REF = new Date('2026-11-15T12:00:00Z');
+const NOW = new Date('2026-11-20T12:00:00Z');
 
 describe('buildForecastOverview', () => {
   it('counts live and pending daily/weekly rows for current and previous month', () => {
@@ -27,11 +28,11 @@ describe('buildForecastOverview', () => {
       row({ id: '20261030/e.html', forecast_type: 'weekly' }),
     ];
     const overview = buildForecastOverview(rows, REF);
-    expect(overview.current.prefix).toBe('202611');
-    expect(overview.current.dailyLive).toBe(1);
-    expect(overview.current.dailyPending).toBe(1);
-    expect(overview.current.weeklyLive).toBe(0);
-    expect(overview.current.weeklyPending).toBe(1);
+    expect(overview.selected.prefix).toBe('202611');
+    expect(overview.selected.dailyLive).toBe(1);
+    expect(overview.selected.dailyPending).toBe(1);
+    expect(overview.selected.weeklyLive).toBe(0);
+    expect(overview.selected.weeklyPending).toBe(1);
     expect(overview.previous.prefix).toBe('202610');
     expect(overview.previous.dailyLive).toBe(1);
     expect(overview.previous.weeklyLive).toBe(1);
@@ -40,17 +41,24 @@ describe('buildForecastOverview', () => {
   it('ignores rows from other months', () => {
     const rows = [row({ id: '20260901/a.html', forecast_type: 'daily' })];
     const overview = buildForecastOverview(rows, REF);
-    expect(overview.current.dailyLive).toBe(0);
+    expect(overview.selected.dailyLive).toBe(0);
     expect(overview.previous.dailyLive).toBe(0);
     expect(overview.lastSync).toBe('2026-11-01T08:35:00+00:00');
   });
 
-  it('flags the current month as stale when nothing synced recently', () => {
+  it('flags the selected month as stale when nothing synced recently', () => {
     const old = row({ id: '20261101/a.html', forecast_type: 'daily', updated_at: '2026-11-01T08:35:00+00:00' });
-    expect(buildForecastOverview([old], REF).current.stale).toBe(true);
+    expect(buildForecastOverview([old], REF, NOW).selected.stale).toBe(true);
 
-    const fresh = row({ id: '20261115/a.html', forecast_type: 'daily', updated_at: new Date().toISOString() });
-    expect(buildForecastOverview([fresh], REF).current.stale).toBe(false);
+    const fresh = row({ id: '20261115/a.html', forecast_type: 'daily', updated_at: NOW.toISOString() });
+    expect(buildForecastOverview([fresh], REF, NOW).selected.stale).toBe(false);
+  });
+
+  it('never flags past months as stale', () => {
+    const old = row({ id: '20261001/a.html', forecast_type: 'daily', updated_at: '2026-10-01T08:35:00+00:00' });
+    const overview = buildForecastOverview([old], new Date('2026-10-15T12:00:00Z'), NOW);
+    expect(overview.selected.prefix).toBe('202610');
+    expect(overview.selected.stale).toBe(false);
   });
 
   it('reports latest live seasonal label and downscaled location coverage', () => {
@@ -74,10 +82,10 @@ describe('buildForecastOverview', () => {
   });
 
   it('handles empty input', () => {
-    const overview = buildForecastOverview([], REF);
-    expect(overview.current.dailyLive).toBe(0);
-    expect(overview.current.lastSync).toBeNull();
-    expect(overview.current.stale).toBe(true);
+    const overview = buildForecastOverview([], REF, NOW);
+    expect(overview.selected.dailyLive).toBe(0);
+    expect(overview.selected.lastSync).toBeNull();
+    expect(overview.selected.stale).toBe(true);
     expect(overview.seasonalLatest).toBeNull();
     expect(overview.downscaledLocations).toBe(0);
     expect(overview.lastSync).toBeNull();

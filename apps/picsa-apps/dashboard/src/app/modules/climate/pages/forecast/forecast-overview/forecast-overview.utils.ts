@@ -14,12 +14,15 @@ export interface IForecastMonthSummary {
   weeklyPending: number;
   /** Most recent row update in the month, null when empty */
   lastSync: string | null;
-  /** Current month only: true when nothing synced within the stale window */
+  /** Current month only: true when nothing synced within the stale window.
+   * Past months always report false - staleness is only meaningful going forward */
   stale: boolean;
 }
 
 export interface IForecastOverview {
-  current: IForecastMonthSummary;
+  /** Selected month (follows the dashboard month picker) */
+  selected: IForecastMonthSummary;
+  /** Month before the selected month, for comparison */
   previous: IForecastMonthSummary;
   /** Label of the latest live seasonal forecast, null when none */
   seasonalLatest: string | null;
@@ -72,8 +75,12 @@ function summariseMonth(
 /**
  * Build dashboard overview stats from forecast db rows.
  * Pure function over row data so it can be unit tested without supabase.
+ * Summaries follow refDate (the dashboard month picker); staleness is only
+ * evaluated when the selected month is the current calendar month.
  */
-export function buildForecastOverview(rows: IForecastRow[], refDate = new Date()): IForecastOverview {
+export function buildForecastOverview(rows: IForecastRow[], refDate = new Date(), now = new Date()): IForecastOverview {
+  const selectedMeta = monthMeta(refDate, 0);
+  const isCurrentMonth = selectedMeta.prefix === monthMeta(now, 0).prefix;
   const liveSeasonal = rows
     .filter((row) => row.forecast_type === 'seasonal' && isLive(row))
     .sort((a, b) => (a.id < b.id ? 1 : -1));
@@ -83,7 +90,7 @@ export function buildForecastOverview(rows: IForecastRow[], refDate = new Date()
       .map((row) => row.downscaled_location),
   );
   return {
-    current: summariseMonth(rows, monthMeta(refDate, 0), true),
+    selected: summariseMonth(rows, selectedMeta, isCurrentMonth),
     previous: summariseMonth(rows, monthMeta(refDate, -1), false),
     seasonalLatest: liveSeasonal[0]?.label || null,
     downscaledLocations: downscaledLocations.size,

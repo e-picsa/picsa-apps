@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { RefreshSpinnerComponent } from '@picsa/components/refresh-spinner/refresh-spinner.component';
@@ -21,12 +21,7 @@ import { DashboardClimateMonthSelectComponent } from './month-select/month-selec
 
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
-type IForecastTab = {
-  type: ForecastType;
-  label: string;
-  data: Signal<IForecastRow[]>;
-  columns: (keyof IForecastRow)[];
-};
+type ForecastFilter = 'all' | ForecastType;
 
 @Component({
   selector: 'dashboard-climate-forecast',
@@ -60,55 +55,40 @@ export class ClimateForecastPageComponent {
     orderBy: { column: 'created_at', ascending: false },
   });
 
-  public dailyForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'daily'));
-  public weeklyForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'weekly'));
-  public downscaledForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'downscaled'));
-  public seasonalForecasts = computed(() => this.monthForecasts().filter((v) => v.forecast_type === 'seasonal'));
+  public activeFilter = signal<ForecastFilter>('all');
 
-  /** Rows for the currently selected month (ids carry a YYYYMMDD prefix).
-   * The month picker previously only scoped the api sync - without this the
-   * tabs listed every month at once */
+  public filterOptions: { value: ForecastFilter; label: string }[] = [
+    { value: 'all', label: 'All' },
+    { value: 'seasonal', label: 'Seasonal' },
+    { value: 'downscaled', label: 'Downscaled' },
+    { value: 'weekly', label: 'Weekly' },
+    { value: 'daily', label: 'Daily' },
+  ];
+
+  private columnsByFilter: Record<ForecastFilter, (keyof IForecastRow)[]> = {
+    all: ['created_at', 'forecast_type', 'label', 'storage_file'],
+    seasonal: ['created_at', 'label', 'language_code', 'storage_file'],
+    downscaled: ['created_at', 'label', 'downscaled_location', 'language_code', 'storage_file'],
+    weekly: ['created_at', 'label', 'storage_file'],
+    daily: ['created_at', 'label', 'storage_file'],
+  };
+
+  /** Rows for the selected filter, already scoped to the selected month */
+  public filteredForecasts = computed(() => {
+    const rows = this.monthForecasts();
+    const filter = this.activeFilter();
+    return filter === 'all' ? rows : rows.filter((v) => v.forecast_type === filter);
+  });
+
+  /** Rows for the currently selected month (ids carry a YYYYMMDD prefix) */
   private monthForecasts = computed(() => {
     const prefix = this.apiQueryPrefix();
     return this.forecasts().filter((v) => v.id.startsWith(prefix));
   });
 
-  // Single source of truth for tabs
-  public forecastTabs: IForecastTab[] = [
-    {
-      type: 'seasonal',
-      label: 'Seasonal',
-      data: this.seasonalForecasts,
-      columns: ['created_at', 'label', 'language_code', 'storage_file'],
-    },
-    {
-      type: 'downscaled',
-      label: 'Downscaled',
-      data: this.downscaledForecasts,
-      columns: ['created_at', 'label', 'downscaled_location', 'language_code', 'storage_file'],
-    },
-    {
-      type: 'weekly',
-      label: 'Weekly',
-      data: this.weeklyForecasts,
-      columns: ['created_at', 'label', 'storage_file'],
-    },
-    {
-      type: 'daily',
-      label: 'Daily',
-      data: this.dailyForecasts,
-      columns: ['created_at', 'label', 'storage_file'],
-    },
-  ];
-
-  private activeForecastTabIndex = signal(0);
-
-  public activeForecastType = computed(() => this.forecastTabs[this.activeForecastTabIndex()].type);
-
   public tableOptions = computed((): IDataTableOptions => {
-    const { columns } = this.forecastTabs[this.activeForecastTabIndex()] as IForecastTab;
     return {
-      displayColumns: columns,
+      displayColumns: this.columnsByFilter[this.activeFilter()],
       handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
       formatHeader: (v) => {
         if (v === 'language_code') return 'Language';
@@ -185,13 +165,13 @@ export class ClimateForecastPageComponent {
     open(publicLink, '_blank');
   }
 
-  public handleTabChange(index: number) {
-    this.activeForecastTabIndex.set(index);
-  }
-
   public async addForecast() {
     if (!this.canEdit()) return;
-    const data: IForecastDialogData = { country_code: this.countryCode(), forecast_type: this.activeForecastType() };
+    const filter = this.activeFilter();
+    const data: IForecastDialogData = {
+      country_code: this.countryCode(),
+      forecast_type: filter === 'all' ? 'daily' : filter,
+    };
     this.dialog.open(ForecastFormComponent, { data });
     // dialog will handle save, data will auto-reload from liveSignal subscription
   }
