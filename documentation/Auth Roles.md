@@ -31,8 +31,7 @@ When combined with a feature the user role may be spefied as:
 
 ```json
 {
-  "resources": "author",
-  "monitoring": "admin"
+  "resources": "author"
 }
 ```
 

@@ -500,12 +500,6 @@
   - `Function` **mergeScreenPath**
 - **[admin-boundaries.ts](../apps/picsa-server/supabase/functions/geo/admin-boundaries.ts)** (`apps/picsa-server/supabase/functions/geo/admin-boundaries.ts`)
   - `Type` **AdminBoundariesSchema**
-- **[kobo-utils.ts](../apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts)** (`apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts`)
-  - `Function` **createKoboSubmission**
-  - `Function` **upsertKoboSubmission**
-  - `Function` **getKoboSubmission**
-  - `Function` **deleteKoboSubmissionByUUID**
-  - `Function` **extractSubmissionXML**
 - **[test-utils.ts](../apps/picsa-server/supabase/functions/tests/test-utils.ts)** (`apps/picsa-server/supabase/functions/tests/test-utils.ts`)
   - `Function` **setupTestEnv**
   - `Function` **invokeSupabaseFunctionFetch**
@@ -1604,6 +1598,8 @@
   - `Migration` **20261102213500_add_zw_translation_columns.sql**
 - **[20261103160000_role_and_rls_permissions.sql](../apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql)** (`apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql`)
   - `SQLFunctions` **3 function(s)** ([public.user_is_admin, public.user_has_role, public.user_has_country_role])
+- **[20261105000000_drop_monitoring_kobo.sql](../apps/picsa-server/supabase/migrations/20261105000000_drop_monitoring_kobo.sql)** (`apps/picsa-server/supabase/migrations/20261105000000_drop_monitoring_kobo.sql`)
+  - `Migration` **20261105000000_drop_monitoring_kobo.sql**
 - **[20261105120000_enable_pg_net.sql](../apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql)** (`apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql`)
   - `Migration` **20261105120000_enable_pg_net.sql**
 
