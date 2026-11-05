@@ -1,42 +1,42 @@
 // Auto-generated — do not edit manually
 // Run: npx tsx scripts/gen-types.ts
 
-export type CountryCode = 'MW' | 'ZM' | 'ZW' | 'TJ' | 'ZZ' | 'XX';
+export type CountryCode = 'MW' | 'TJ' | 'XX' | 'ZM' | 'ZW' | 'ZZ';
 
-export type CountryCodeLegacy = 'mw' | 'zm' | 'zw' | 'tj' | 'global';
+export type CountryCodeLegacy = 'mw' | 'tj' | 'zm' | 'zw' | 'global';
 
 export type LocaleCode =
+  | 'bem-ZM'
   | 'en'
   | 'en-MW'
-  | 'ny-MW'
-  | 'tum-MW'
   | 'en-ZM'
-  | 'ny-ZM'
-  | 'bem-ZM'
-  | 'toi-ZM'
-  | 'loz-ZM'
-  | 'lun-ZM'
-  | 'kqn-ZM'
-  | 'lue-ZM'
   | 'en-ZW'
-  | 'sn-ZW'
+  | 'kqn-ZM'
+  | 'loz-ZM'
+  | 'lue-ZM'
+  | 'lun-ZM'
   | 'nd-ZW'
-  | 'tg-TJ';
+  | 'ny-MW'
+  | 'ny-ZM'
+  | 'sn-ZW'
+  | 'tg-TJ'
+  | 'toi-ZM'
+  | 'tum-MW';
 
 export type LocaleCodeLegacy =
+  | 'zm_bem'
   | 'global_en'
   | 'mw_en'
-  | 'mw_ny'
-  | 'mw_tum'
   | 'zm_en'
-  | 'zm_ny'
-  | 'zm_bem'
-  | 'zm_toi'
-  | 'zm_loz'
-  | 'zm_lun'
-  | 'zm_kqn'
-  | 'zm_lue'
   | 'zw_en'
-  | 'zw_sn'
+  | 'zm_kqn'
+  | 'zm_loz'
+  | 'zm_lue'
+  | 'zm_lun'
   | 'zw_nd'
-  | 'tj_tg';
+  | 'mw_ny'
+  | 'zm_ny'
+  | 'zw_sn'
+  | 'tj_tg'
+  | 'zm_toi'
+  | 'mw_tum';
