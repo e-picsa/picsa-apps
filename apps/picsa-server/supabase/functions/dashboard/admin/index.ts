@@ -5,7 +5,7 @@ import { listUserRoles } from './list-user-roles.ts';
 import { addUser } from './add-user.ts';
 import { removeUser } from './remove-user.ts';
 import { updateUserRoles } from './update-user-roles.ts';
-import { AppRole } from '../../../types/index.ts';
+import type { AppRole } from '../../../types/index.ts';
 
 /**
  * Handle admin operations. These are posted to endpoints with deployment prefix

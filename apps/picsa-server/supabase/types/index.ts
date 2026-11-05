@@ -9,12 +9,12 @@ export type AppRole = Database['public']['Enums']['app_role'];
 export type IAppUser = Database['public']['Tables']['app_users'];
 
 // Translations table types & database column parity assertions
-export type {
-  ITranslationInsert,
-  ITranslationRow,
-  ITranslationUpdate,
-  TranslationLocaleColumn,
-} from './translations.types.ts';
+// NOTE: single-line import + export (not multiline `export ... from`).
+// The pinned Supabase CLI (2.69.0) only bind-mounts files referenced by
+// single-line `import ... from` statements into the edge-runtime container,
+// so multiline references resolve locally but are missing at serve time.
+import type { ITranslationInsert, ITranslationRow, ITranslationUpdate, TranslationLocaleColumn } from './translations.types.ts';
+export type { ITranslationInsert, ITranslationRow, ITranslationUpdate, TranslationLocaleColumn };
 
 import type { FunctionResponses } from './functions.types.ts';
 export type { FunctionResponses };
