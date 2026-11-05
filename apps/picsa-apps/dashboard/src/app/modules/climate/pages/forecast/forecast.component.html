@@ -19,6 +19,7 @@
       (click)="handleRefreshClick()"
     ></picsa-refresh-spinner>
   </div>
+  <dashboard-climate-forecast-overview [rows]="forecasts()" />
   <mat-tab-group #tabGroup (selectedIndexChange)="handleTabChange($event)">
     @for (tab of forecastTabs; track tab.type) {
       <mat-tab [label]="tab.label">

@@ -16,6 +16,7 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { ClimateService } from '../../climate.service';
 import { ForecastType, IForecastRow } from '../../types';
 import { ForecastFormComponent, IForecastDialogData } from './forecast-form/forecast-form.component';
+import { DashboardClimateForecastOverviewComponent } from './forecast-overview/forecast-overview.component';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
@@ -32,6 +33,7 @@ type IForecastTab = {
   imports: [
     CommonModule,
     DashboardClimateMonthSelectComponent,
+    DashboardClimateForecastOverviewComponent,
     RouterModule,
     PicsaDataTableComponent,
     DashboardMaterialModule,

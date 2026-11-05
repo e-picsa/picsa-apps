@@ -1,0 +1,52 @@
+<mat-card class="mb-4">
+  <mat-card-content>
+    @let summary = overview();
+    <div class="flex flex-wrap gap-x-8 gap-y-4">
+      @for (month of [summary.current, summary.previous]; track month.prefix) {
+        <div class="min-w-48">
+          <div class="font-medium">
+            {{ month.label }}
+            @if (month.stale) {
+              <span class="ml-2 text-xs font-normal text-red-600">no recent sync</span>
+            }
+          </div>
+          <div class="text-sm">
+            Daily: {{ month.dailyLive }}
+            @if (month.dailyPending > 0) {
+              <span class="text-orange-600">({{ month.dailyPending }} pending)</span>
+            }
+          </div>
+          <div class="text-sm">
+            Weekly: {{ month.weeklyLive }}
+            @if (month.weeklyPending > 0) {
+              <span class="text-orange-600">({{ month.weeklyPending }} pending)</span>
+            }
+          </div>
+          <div class="text-xs text-gray-500">
+            @if (month.lastSync) {
+              Updated {{ month.lastSync | date: 'medium' }}
+            } @else {
+              No data
+            }
+          </div>
+        </div>
+      }
+      <div class="min-w-48">
+        <div class="font-medium">Seasonal</div>
+        <div class="text-sm">{{ summary.seasonalLatest || 'None available' }}</div>
+        <div class="mt-2 font-medium">Downscaled</div>
+        <div class="text-sm">{{ summary.downscaledLocations }} locations</div>
+      </div>
+      <div class="min-w-48">
+        <div class="font-medium">Pipeline</div>
+        <div class="text-xs text-gray-500">
+          @if (summary.lastSync) {
+            Last sync {{ summary.lastSync | date: 'medium' }}
+          } @else {
+            Never synced
+          }
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
