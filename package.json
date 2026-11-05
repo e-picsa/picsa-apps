@@ -213,7 +213,7 @@
     "puppeteer": "^15.5.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-visualizer": "^5.8.3",
-    "supabase": "2.69.0",
+    "supabase": "2.122.0",
     "tailwindcss": "^3.4.13",
     "ts-jest": "29.4.6",
     "ts-morph": "^27.0.2",
@@ -225,11 +225,6 @@
     "node": ">=22"
   },
   "packageManager": "yarn@4.14.1",
-  "dependenciesMeta": {
-    "supabase": {
-      "built": true
-    }
-  },
   "lint-staged": {
     "*.ts": "eslint --cache --fix",
     "*.{ts,scss}": "prettier --write"

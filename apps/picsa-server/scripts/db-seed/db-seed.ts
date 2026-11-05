@@ -24,13 +24,16 @@ const SUPABASE_ENV_ASSET = resolve(ROOT_DIR, 'libs/environments/src/supabase/sup
  */
 interface ISupabaseStatus {
   ANON_KEY: string;
-  API_URL: 'http://127.0.0.1:54321';
-  DB_URL: 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
-  GRAPHQL_URL: 'http://127.0.0.1:54321/graphql/v1';
-  INBUCKET_URL: 'http://127.0.0.1:54324';
+  API_URL: string;
+  DB_URL: string;
+  GRAPHQL_URL?: string;
+  INBUCKET_URL?: string;
+  MAILPIT_URL?: string;
   JWT_SECRET: string;
   SERVICE_ROLE_KEY: string;
-  STUDIO_URL: 'http://127.0.0.1:54323';
+  STUDIO_URL?: string;
+  PUBLISHABLE_KEY?: string;
+  SECRET_KEY?: string;
 }
 
 /**

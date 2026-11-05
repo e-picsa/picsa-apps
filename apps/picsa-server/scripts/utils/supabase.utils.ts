@@ -12,8 +12,22 @@ let localSupabase: SupabaseClient<Database>;
 /**
  * Retrieve service-role supabase client using stored env credentials for local Docker development
  */
+/**
+ * Ensures .env is loaded if present in apps/picsa-server
+ */
+export function loadEnv() {
+  const serverDir = path.resolve(__dirname, '../../');
+  const envPath = path.resolve(serverDir, '.env');
+  if (fs.existsSync(envPath)) {
+    const dotenv = require('dotenv');
+    dotenv.config({ path: envPath });
+  }
+}
+
 export function getSupabaseClient() {
   if (supabase) return supabase;
+  loadEnv();
+  loadEnvLocal();
   const { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL } = process.env;
   if (!SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error('SUPABASE_SERVICE_ROLE_KEY missing from .env');
