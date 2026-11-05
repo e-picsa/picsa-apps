@@ -57,8 +57,8 @@ export class DeploymentDashboardService {
   /** List of pending access requests for the current user */
   public readonly pendingRequests = signal<string[]>([]);
 
-  /** Track background check for approved access requests (avoids concurrent refreshes) */
-  public readonly isCheckingAccess = signal(false);
+  /** Guard against concurrent background checks for approved access requests */
+  private readonly isCheckingAccess = signal(false);
 
   /** Interval used to poll for approved access requests while any request is pending */
   private pendingCheckInterval?: ReturnType<typeof setInterval>;
@@ -73,10 +73,8 @@ export class DeploymentDashboardService {
         this.isDeploymentChecked.set(true);
         // Load pending requests
         await this.loadAccessRequests();
-        this.updatePendingPolling();
       } else {
         this.pendingRequests.set([]);
-        this.updatePendingPolling();
       }
     });
     // Start/stop background polling whenever pending requests change
@@ -227,26 +225,12 @@ export class DeploymentDashboardService {
     if (typeof window === 'undefined') return;
     const shouldPoll = this.pendingRequests().length > 0;
     if (shouldPoll && !this.pendingCheckInterval) {
-      this.pendingCheckInterval = setInterval(() => this.checkForApprovedRequests(), 15000);
-      window.addEventListener('focus', this.handleWindowFocus);
-      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+      this.pendingCheckInterval = setInterval(() => void this.checkForApprovedRequests(), 30000);
     } else if (!shouldPoll && this.pendingCheckInterval) {
       clearInterval(this.pendingCheckInterval);
       this.pendingCheckInterval = undefined;
-      window.removeEventListener('focus', this.handleWindowFocus);
-      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     }
   }
-
-  private handleWindowFocus = () => {
-    this.checkForApprovedRequests();
-  };
-
-  private handleVisibilityChange = () => {
-    if (document.visibilityState === 'visible') {
-      this.checkForApprovedRequests();
-    }
-  };
 
   private async loadAccessRequests() {
     const user = this.authService.authUser();

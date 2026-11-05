@@ -34,8 +34,6 @@ export class DeploymentSelectLayoutComponent {
 
   public joinPublicRequestPending = signal(false);
 
-  public hasPendingRequests = computed(() => this.service.pendingRequests().length > 0);
-
   public availableDeployments = computed(() => {
     const all = this.service.allDeployments();
     const user = this.service.userDeployments();
@@ -78,9 +76,5 @@ export class DeploymentSelectLayoutComponent {
     } finally {
       this.joinPublicRequestPending.set(false);
     }
-  }
-
-  public onManualCheck() {
-    this.service.checkForApprovedRequests();
   }
 }
