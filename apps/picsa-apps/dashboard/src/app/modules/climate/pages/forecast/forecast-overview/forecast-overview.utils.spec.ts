@@ -19,30 +19,25 @@ const REF = new Date('2026-11-15T12:00:00Z');
 const NOW = new Date('2026-11-20T12:00:00Z');
 
 describe('buildForecastOverview', () => {
-  it('counts live and pending daily/weekly rows for current and previous month', () => {
+  it('counts live and pending daily/weekly rows for the selected month', () => {
     const rows = [
       row({ id: '20261101/a.html', forecast_type: 'daily' }),
       row({ id: '20261102/b.html', forecast_type: 'daily', storage_file: null }),
       row({ id: '20261102/c.html', forecast_type: 'weekly', storage_file: null }),
       row({ id: '20261030/d.html', forecast_type: 'daily' }),
-      row({ id: '20261030/e.html', forecast_type: 'weekly' }),
     ];
-    const overview = buildForecastOverview(rows, REF);
+    const overview = buildForecastOverview(rows, REF, NOW);
     expect(overview.selected.prefix).toBe('202611');
     expect(overview.selected.dailyLive).toBe(1);
     expect(overview.selected.dailyPending).toBe(1);
     expect(overview.selected.weeklyLive).toBe(0);
     expect(overview.selected.weeklyPending).toBe(1);
-    expect(overview.previous.prefix).toBe('202610');
-    expect(overview.previous.dailyLive).toBe(1);
-    expect(overview.previous.weeklyLive).toBe(1);
   });
 
   it('ignores rows from other months', () => {
     const rows = [row({ id: '20260901/a.html', forecast_type: 'daily' })];
-    const overview = buildForecastOverview(rows, REF);
+    const overview = buildForecastOverview(rows, REF, NOW);
     expect(overview.selected.dailyLive).toBe(0);
-    expect(overview.previous.dailyLive).toBe(0);
     expect(overview.lastSync).toBe('2026-11-01T08:35:00+00:00');
   });
 
