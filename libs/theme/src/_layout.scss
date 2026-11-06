@@ -74,9 +74,15 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
   padding: var(--page-padding);
-  // Ensure page bottom also includes size if using fixed navbar
-  // padding-bottom: calc(var(--page-padding) + $navBarSize) !important;
+  padding-bottom: calc(max(var(--page-padding), 1rem) + var(--nav-bar-height));
+  padding-left: max(var(--page-padding), var(--safe-area-left));
+  padding-right: max(var(--page-padding), var(--safe-area-right));
+
+  .sticky-footer {
+    margin-bottom: 0;
+  }
 }
 
 .no-padding {
