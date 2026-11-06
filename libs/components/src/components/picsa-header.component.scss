@@ -94,7 +94,7 @@ header[data-style='inverted'] {
 // in normal flow so projected controls remain interactive and truncatable.
 header[data-center='title'] .central-content {
   position: absolute;
-  top: 0;
+  top: var(--status-bar-height);
   bottom: 0;
   left: 4rem;
   right: 4rem;

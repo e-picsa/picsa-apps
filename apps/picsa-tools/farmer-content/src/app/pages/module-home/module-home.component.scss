@@ -58,3 +58,7 @@ header,
 mat-icon.tool-icon {
   @apply h-16 w-16;
 }
+
+.custom-footer {
+  margin-bottom: calc(1.5rem + var(--nav-bar-height));
+}

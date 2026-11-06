@@ -32,7 +32,8 @@
     "ai:lint": "node tools/ai/ai-lint.mjs",
     "ai:test": "node tools/ai/ai-test.mjs",
     "ai:typecheck": "node tools/ai/ai-typecheck.mjs",
-    "ai:triage": "node tools/ai/ai-error-triage.mjs"
+    "ai:triage": "node tools/ai/ai-error-triage.mjs",
+    "ai:worktree:audit": "node tools/ai/ai-worktree-audit.mjs"
   },
   "private": true,
   "dependencies": {

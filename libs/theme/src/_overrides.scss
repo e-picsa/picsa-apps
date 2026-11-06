@@ -53,15 +53,23 @@ mat-card-content.mat-mdc-card-content {
 
 // Ensure dialog setup to fill screen with safe padding
 .cdk-overlay-pane.mat-mdc-dialog-panel {
-  max-height: 100vh;
-  // Respect top, bottom, left, and right safe areas with fallback defaults
-  padding-top: max(8px, env(safe-area-inset-top)) !important;
-  padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
-  padding-left: max(8px, env(safe-area-inset-left)) !important;
-  padding-right: max(8px, env(safe-area-inset-right)) !important;
+  --dialog-safe-top: max(8px, var(--safe-area-top));
+  --dialog-safe-bottom: max(8px, var(--safe-area-bottom));
+  --dialog-safe-left: max(8px, var(--safe-area-left));
+  --dialog-safe-right: max(8px, var(--safe-area-right));
+
+  max-height: calc(100vh - var(--dialog-safe-top) - var(--dialog-safe-bottom)) !important;
+  margin-top: var(--dialog-safe-top);
+  margin-bottom: var(--dialog-safe-bottom);
+  margin-left: var(--dialog-safe-left);
+  margin-right: var(--dialog-safe-right);
 
   // Ensure the dialog content box sizing recalculates appropriately
   box-sizing: border-box;
+
+  .sticky-footer {
+    margin-bottom: 0;
+  }
 }
 // `panelClass: 'no-padding'` custom dialog
 .cdk-overlay-pane.mat-mdc-dialog-panel.no-padding {
@@ -79,10 +87,6 @@ mat-card-content.mat-mdc-card-content {
     width: 100vw;
     @apply max-w-screen-md;
 
-    // Prevent double padding if sticky footers also apply safe area margin inside the dialog
-    .sticky-footer {
-      margin-bottom: 0;
-    }
     // remove padding (can't include no-padding class)
     .mat-mdc-dialog-surface {
       padding: 0;

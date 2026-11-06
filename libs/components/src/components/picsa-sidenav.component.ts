@@ -89,13 +89,21 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         flex: 1;
       }
       .sidenav-container {
-        height: calc(100% - 16px);
-        padding-top: var(--status-bar-height);
+        box-sizing: border-box;
+        height: 100%;
+        overflow: hidden;
+        padding-left: max(1rem, var(--safe-area-left));
+        padding-right: max(1rem, var(--safe-area-right));
         padding-bottom: var(--nav-bar-height);
-        padding-left: 1rem;
+
         &[data-mobile='true'] {
-          padding-right: 1rem;
+          padding-top: var(--status-bar-height);
         }
+      }
+
+      .sidenav-content {
+        min-height: 0;
+        overflow-y: auto;
       }
 
       .sidenav-mobile-header {
