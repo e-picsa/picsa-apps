@@ -73,7 +73,7 @@
 
     <!-- Floating Bottom Station Card with Options & All Stations Trigger (Mobile Map View) -->
     @if (displayedStation(); as displayed) {
-    <div class="absolute left-3 right-3 bottom-safe z-20 md:hidden">
+    <div class="map-floating-station absolute left-3 right-3 z-20 md:hidden">
       <climate-station-card
         [displayedStation]="displayed"
         [nearbyStations]="nearbyStations()"

@@ -12,8 +12,6 @@ body {
   --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
 
   --status-bar-height: var(--safe-area-top);
-  // Deprecated fallback for backward compatibility
-  --nav-bar-height: var(--safe-area-bottom);
 
   // Add page padding for different breakpoints
   // Store as variable so can also used to calculate positioning on nested elements
@@ -24,10 +22,6 @@ body {
   @screen md {
     --page-padding: theme(spacing.4);
   }
-}
-
-.bottom-safe {
-  bottom: calc(1rem + var(--safe-area-bottom));
 }
 
 .fullscreen-overlay {
