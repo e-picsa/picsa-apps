@@ -1,9 +1,11 @@
 /**
  * Full remote database backup (Supabase CLI docs recipe: roles + schema + data
- * + migration history) into `apps/picsa-server/backups/db_full_<timestamp>/`.
+ * + migration history). Used by the unified backup.ts entry point, or
+ * standalone (produces a dated `<date>_db_full.tar.gz` archive).
  *
  * Invoke:
- *   yarn nx run picsa-server:backup-db-full
+ *   yarn nx run picsa-server:backup -- --full [--no-storage]
+ *   yarn tsx scripts/backup/backup-db-full.ts (standalone, from apps/picsa-server)
  *
  * Requires:
  *   SUPABASE_DB_URL  Direct connection string (port 5432, NOT the :6543
@@ -28,8 +30,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { loadEnv, loadEnvLocal, loadEnvServer } from '../utils/supabase.utils';
-
-const backupDir = path.resolve(__dirname, '../../backups');
+import { archiveAndClean, backupRootDir, dbArchiveName, stagingDir } from './backup.utils';
 
 /**
  * Docs-shaped backup, not byte-full: `supabase db dump` always strips platform
@@ -62,7 +63,7 @@ const DEFAULT_EXCLUDE_TABLES = [
   'auth.refresh_tokens',
 ];
 
-export async function backupDatabaseFull() {
+export async function backupDatabaseFull(outDir: string) {
   loadEnv();
   loadEnvServer();
   loadEnvLocal();
@@ -109,9 +110,9 @@ export async function backupDatabaseFull() {
           .map((t) => t.trim())
           .filter(Boolean);
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-  const outDir = path.join(backupDir, `db_full_${timestamp}`);
-  fs.mkdirSync(outDir, { recursive: true });
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
 
   const rolesFile = path.join(outDir, 'roles.sql');
   const schemaFile = path.join(outDir, 'schema.sql');
@@ -239,5 +240,12 @@ function invalidDbUrl(): never {
 }
 
 if (require.main === module) {
-  void backupDatabaseFull();
+  void backupDatabaseFullStandalone();
+}
+
+async function backupDatabaseFullStandalone() {
+  const stageDir = stagingDir('db_full');
+  fs.mkdirSync(stageDir, { recursive: true });
+  await backupDatabaseFull(stageDir);
+  await archiveAndClean(stageDir, path.join(backupRootDir, dbArchiveName(true)));
 }
