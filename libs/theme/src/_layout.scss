@@ -107,11 +107,13 @@ $footer-height: 5em;
   background: white;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 button.footer-button.mat-mdc-button-base {
   width: 60%;
-  left: 20%;
+  margin-left: auto;
+  margin-right: auto;
   height: auto;
   min-height: calc(#{$footer-height} - 10px) !important;
   .mdc-button__label {
