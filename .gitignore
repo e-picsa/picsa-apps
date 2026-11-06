@@ -97,3 +97,6 @@ apps/picsa-server/scripts/db-seed/cache
 # Agent local cache & triage state
 .agent/*.cache.json
 .agent/pr-triage-cache.json
+
+# Agent worktree audit companion report (regenerated on every run)
+tools/ai/ai-worktree-audit-report.md
