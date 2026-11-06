@@ -126,6 +126,15 @@
         "command": "yarn tsx scripts/backup/backup-storage.ts",
         "cwd": "apps/picsa-server"
       }
+    },
+    "backup-db-full": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "command": "yarn tsx scripts/backup/backup-db-full.ts",
+        "cwd": "apps/picsa-server"
+      }
     }
   }
 }
