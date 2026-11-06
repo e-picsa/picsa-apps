@@ -183,7 +183,7 @@ hr {
   }
   .editor-save {
     position: fixed;
-    bottom: calc(1em + var(--safe-area-bottom));
+    bottom: calc(1rem + var(--safe-area-bottom));
     width: calc(100vw - 4em);
   }
 }
