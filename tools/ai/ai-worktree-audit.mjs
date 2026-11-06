@@ -82,6 +82,7 @@ Options:
   --remove <path...>    Remove explicit path(s) (worktrees, orphans, or extras)
   --roots <a,b,...>     Override scan roots (per-repo dirs, or family roots with --all-repos)
   --json                Print JSON report {repos, extras, totals} and skip actions
+  --markdown            Print Markdown report and skip actions
   --dry-run             Preview destructive actions without executing
   --yes                 Confirm destructive actions non-interactively (otherwise prompts)
   -h, --help            Show this help
@@ -103,6 +104,7 @@ function parseArgs(rawArgs) {
     deleteMerged: false,
     clearNodeModules: false,
     json: false,
+    markdown: false,
     dryRun: false,
     yes: false,
     roots: null,
@@ -117,6 +119,7 @@ function parseArgs(rawArgs) {
     else if (a === '--delete-merged') opts.deleteMerged = true;
     else if (a === '--clear-node-modules') opts.clearNodeModules = true;
     else if (a === '--json') opts.json = true;
+    else if (a === '--markdown') opts.markdown = true;
     else if (a === '--dry-run') opts.dryRun = true;
     else if (a === '--yes') opts.yes = true;
     else if (a === '--roots') {
@@ -224,6 +227,14 @@ function formatSize(kb) {
   return `${kb}K`;
 }
 
+/**
+ * Progress output. Always goes to stderr so `--json` stdout stays parseable
+ * while the user still sees activity during slow scans (`du` over GB trees).
+ */
+function progress(msg) {
+  process.stderr.write(`${msg}\n`);
+}
+
 /** Audit one repo from its known on-disk checkout dirs. */
 function auditRepo(name, wtDirs) {
   const resolved = [...new Set(wtDirs.map((d) => path.resolve(d)))];
@@ -243,6 +254,7 @@ function auditRepo(name, wtDirs) {
 
   const worktrees = gitWorktrees.map((w) => {
     const branch = w.branch === '(detached)' || !w.branch ? '(detached)' : w.branch;
+    progress(`sizing ${w.path} ...`);
     const dirtyRaw = gitIn(w.path, 'status --porcelain');
     const dirty = dirtyRaw ? dirtyRaw.split('\n').filter(Boolean).length : 0;
     return {
@@ -263,6 +275,7 @@ function auditRepo(name, wtDirs) {
   const orphans = [];
   for (const [dir] of diskDirs) {
     if (gitPaths.has(dir)) continue;
+    progress(`sizing ${dir} ...`);
     const probe = gitIn(dir, 'rev-parse --abbrev-ref HEAD');
     orphans.push({
       path: dir,
@@ -345,29 +358,100 @@ function runRemove(item) {
   }
 }
 
+const SRC_LEGEND = 'SRC: M=main checkout, T=T3 worktree, G=Gemini worktree, O=OpenCode worktree';
+
+/** Single-letter source key so tables can use short names without full paths. */
+function srcKey(p, isMain) {
+  if (isMain) return 'M';
+  if (p.includes('/.t3/worktrees/')) return 'T';
+  if (p.includes('/.gemini/antigravity/worktrees/')) return 'G';
+  if (p.includes('/opencode/worktree/')) return 'O';
+  return '?';
+}
+
+/** Row builders shared by the console and markdown renderers. */
+function worktreeRow(w) {
+  return {
+    SIZE: formatSize(w.sizeKb),
+    WORKTREE: path.basename(w.path),
+    SRC: srcKey(w.path, w.isMain),
+    BRANCH: w.branch,
+    MERGED: w.isMain ? 'main' : w.merged ? 'yes' : 'no',
+    'DIRTY FILES': w.dirtyFiles > 0 ? `${w.dirtyFiles}` : '0',
+    NODE_MODULES: formatSize(w.nodeModulesKb),
+  };
+}
+
+function orphanRow(o) {
+  return {
+    SIZE: formatSize(o.sizeKb),
+    DIR: path.basename(o.path),
+    SRC: srcKey(o.path, false),
+    BRANCH: o.branch,
+    STATE: o.broken ? 'broken .git' : 'not in git',
+  };
+}
+
+function mergedRow(w) {
+  return {
+    SIZE: formatSize(w.sizeKb),
+    WORKTREE: path.basename(w.path),
+    REPO: w.repo,
+    BRANCH: w.branch,
+  };
+}
+
+/** Minimal markdown table renderer (no dependencies). */
+function mdTable(rows) {
+  if (rows.length === 0) return '(none)\n';
+  const headers = Object.keys(rows[0]);
+  const esc = (v) => String(v).replace(/\|/g, '\\|');
+  const lines = [`| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`];
+  for (const r of rows) lines.push(`| ${headers.map((h) => esc(r[h])).join(' | ')} |`);
+  return `${lines.join('\n')}\n`;
+}
+
 function printRepo(repo) {
   console.log(`\n## ${repo.name}${repo.gitAvailable ? '' : '  [git unavailable — disk only]'}`);
   if (repo.main) console.log(`   main: ${repo.main} (default: ${repo.defaultBranch})`);
-  console.log(`   git worktrees (${repo.worktrees.length}):`);
-  if (repo.worktrees.length === 0) console.log('     (none)');
-  for (const w of repo.worktrees) {
-    const flags = [
-      w.isMain ? 'main checkout' : null,
-      !w.isMain && w.merged ? 'merged' : null,
-      !w.isMain && !w.merged ? 'not-merged' : null,
-      w.dirtyFiles > 0 ? `${w.dirtyFiles} dirty` : 'clean',
-    ]
-      .filter(Boolean)
-      .join(', ');
-    console.log(`     ${formatSize(w.sizeKb).padStart(6)}  ${w.path}`);
-    console.log(`               branch=${w.branch} (${flags}) node_modules=${formatSize(w.nodeModulesKb)}`);
+  // Base paths once; tables below use short directory names.
+  const bases = [
+    ...new Set([...repo.worktrees, ...repo.orphans].filter((w) => !w.isMain).map((w) => path.dirname(w.path))),
+  ].sort();
+  if (bases.length > 0) {
+    console.log('   roots:');
+    for (const b of bases) console.log(`     - ${b}`);
+  }
+  const bySizeDesc = (a, b) => (b.sizeKb ?? -1) - (a.sizeKb ?? -1);
+  console.log(`   worktrees (${repo.worktrees.length}, sorted by size):`);
+  if (repo.worktrees.length === 0) {
+    console.log('     (none)');
+  } else {
+    console.log(`   ${SRC_LEGEND}`);
+    console.table([...repo.worktrees].sort(bySizeDesc).map(worktreeRow));
   }
   if (repo.orphans.length > 0) {
-    console.log(`   orphaned disk dirs (${repo.orphans.length}):`);
-    for (const o of repo.orphans) {
-      console.log(`     ${formatSize(o.sizeKb).padStart(6)}  ${o.path}${o.broken ? '  [broken .git]' : ''}`);
-    }
+    console.log(`   orphans (${repo.orphans.length}, sorted by size):`);
+    console.table([...repo.orphans].sort(bySizeDesc).map(orphanRow));
   }
+}
+
+function printRepoMarkdown(repo) {
+  const bySizeDesc = (a, b) => (b.sizeKb ?? -1) - (a.sizeKb ?? -1);
+  const parts = [`## ${repo.name}${repo.gitAvailable ? '' : ' (git unavailable — disk only)'}`];
+  if (repo.main) parts.push(`main: \`${repo.main}\` (default: ${repo.defaultBranch})`);
+  const bases = [
+    ...new Set([...repo.worktrees, ...repo.orphans].filter((w) => !w.isMain).map((w) => path.dirname(w.path))),
+  ].sort();
+  if (bases.length > 0) parts.push(`roots:\n${bases.map((b) => `- \`${b}\``).join('\n')}`);
+  parts.push(`_${SRC_LEGEND}_`);
+  parts.push(`### Worktrees (${repo.worktrees.length}, sorted by size)`);
+  parts.push(mdTable([...repo.worktrees].sort(bySizeDesc).map(worktreeRow)));
+  if (repo.orphans.length > 0) {
+    parts.push(`### Orphans (${repo.orphans.length}, sorted by size)`);
+    parts.push(mdTable([...repo.orphans].sort(bySizeDesc).map(orphanRow)));
+  }
+  return parts.join('\n\n');
 }
 
 async function main() {
@@ -403,6 +487,7 @@ async function main() {
     byRepo.get(key).dirs.add(abs);
   };
   if (opts.allRepos) {
+    progress('searching for worktrees across tool roots ...');
     const families = opts.roots ?? FAMILY_ROOTS;
     for (const family of families) {
       for (const repoDir of listSubdirs(family)) {
@@ -414,15 +499,16 @@ async function main() {
         for (const wt of listSubdirs(hash)) addCandidate(wt);
       }
     }
-    if (byRepo.size === 0) console.log('(no repos found under family roots)');
+    if (byRepo.size === 0) progress('no repos found under family roots');
   } else {
     // Single-repo mode: candidates are discovered by directory name, then
     // re-keyed by canonical main checkout path inside auditRepo grouping.
+    progress('searching for worktrees ...');
     const perRepoRoots = opts.roots ?? FAMILY_ROOTS.map((f) => path.join(f, REPO_NAME));
     const set = new Set([REPO_ROOT]);
     for (const r of perRepoRoots.map((x) => path.resolve(x))) {
       if (!existsSync(r)) {
-        console.log(`(scan root missing, skipping: ${r})`);
+        progress(`scan root missing, skipping: ${r}`);
         continue;
       }
       for (const wt of listSubdirs(r)) set.add(path.resolve(wt));
@@ -430,7 +516,10 @@ async function main() {
     for (const wt of set) addCandidate(wt);
   }
 
-  const repos = [...byRepo.values()].map(({ name, dirs }) => auditRepo(name, [...dirs]));
+  const repos = [...byRepo.values()].map(({ name, dirs }) => {
+    progress(`auditing ${name} (${dirs.size} checkout(s)) ...`);
+    return auditRepo(name, [...dirs]);
+  });
 
   if (opts.prune && !opts.json) {
     for (const repo of repos) {
@@ -469,7 +558,29 @@ async function main() {
     return 0;
   }
 
-  console.log(`\nai-worktree-audit: ${opts.allRepos ? 'all repos' : REPO_ROOT}`);
+  if (opts.markdown) {
+    const sections = [`# Worktree audit: ${opts.allRepos ? 'all repos' : REPO_ROOT}`];
+    for (const repo of repos) sections.push(printRepoMarkdown(repo));
+    if (extras.length > 0) {
+      sections.push(
+        `## Extras (size-only, use --remove to delete)\n${extras.map((e) => `- \`${e.path}\` (${formatSize(e.sizeKb)})`).join('\n')}`,
+      );
+    }
+    sections.push(
+      `**Totals:** ${totals.repos} repo(s), ${totals.gitWorktrees} worktree(s) + ${totals.orphans} orphan(s) = ${formatSize(totals.totalKb)} (${formatSize(totals.orphanKb)} orphaned, ${formatSize(totals.extrasKb)} extras)`,
+    );
+    if (mergedCandidates.length > 0) {
+      sections.push(
+        `## Merged candidates (${mergedCandidates.length}, sorted by size)\n${mdTable(
+          [...mergedCandidates].sort((a, b) => (b.sizeKb ?? -1) - (a.sizeKb ?? -1)).map(mergedRow),
+        )}`,
+      );
+    }
+    console.log(sections.join('\n\n'));
+    return 0;
+  }
+
+  console.log(`\nWorktree audit: ${opts.allRepos ? 'all repos' : REPO_ROOT}`);
   for (const repo of repos) printRepo(repo);
 
   if (extras.length > 0) {
@@ -480,8 +591,8 @@ async function main() {
     `\ntotals: ${totals.repos} repo(s), ${totals.gitWorktrees} worktree(s) + ${totals.orphans} orphan(s) = ${formatSize(totals.totalKb)} (${formatSize(totals.orphanKb)} orphaned, ${formatSize(totals.extrasKb)} extras)`,
   );
   if (mergedCandidates.length > 0) {
-    console.log(`merged candidates (${mergedCandidates.length}):`);
-    for (const w of mergedCandidates) console.log(`  - ${w.path} (${w.repo}/${w.branch})`);
+    console.log(`\nmerged candidates (${mergedCandidates.length}, sorted by size):`);
+    console.table([...mergedCandidates].sort((a, b) => (b.sizeKb ?? -1) - (a.sizeKb ?? -1)).map(mergedRow));
   }
 
   let failures = 0;
@@ -631,7 +742,7 @@ async function main() {
     console.log(`$ git -C ${p.cwd} worktree prune`);
     spawnSync('git', ['worktree', 'prune'], { cwd: p.cwd, stdio: 'inherit' });
   }
-  console.log(failures === 0 ? '\nai-worktree-audit: OK' : `\nai-worktree-audit: DONE with ${failures} failure(s)`);
+  console.log(failures === 0 ? '\nOK' : `\nDONE with ${failures} failure(s)`);
   return failures === 0 ? 0 : 1;
 }
 
