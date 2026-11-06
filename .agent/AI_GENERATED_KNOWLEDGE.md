@@ -844,4 +844,4 @@ To prevent recurring "whack-a-mole" layout inconsistencies across the Extension 
 
 5. **`picsa-sidenav-layout` Content Projection**:
    - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
-   - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; overflow: hidden;` when hosting full-height tables).
+   - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; min-height: 0; overflow-x: hidden; overflow-y: auto;` when hosting full-height tables).

@@ -7,7 +7,9 @@
 
 .page-content {
   height: 100%;
-  overflow: hidden;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .editor-popup {
