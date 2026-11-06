@@ -4,39 +4,32 @@
 .page {
   background: var(--color-primary);
 }
-.page-content {
-  overflow: hidden;
-  padding: 0;
-}
-.background-image {
-  position: relative;
-}
-// note - could use media breakpoints for different images
-.background-image::before {
-  background-image: url('../../../assets/images/cover.jpg');
-  background-size: cover;
-  background-position: center;
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  opacity: 0.4;
-}
-.background-image::after {
-  background-color: var(--color-primary);
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  opacity: 0.4;
+.extension-home-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  // note - could use media breakpoints for different images
+  &::before {
+    background-image: url('../../../assets/images/cover.jpg');
+    background-size: cover;
+    background-position: center;
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+  }
+
+  &::after {
+    background-color: var(--color-primary);
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+  }
 }
 h2.section-header {
   background: rgba(255, 255, 255, 0.8);
@@ -49,8 +42,7 @@ h2.section-header {
   text-align: left;
 }
 .link-container {
-  flex: 1;
-  overflow: auto;
+  width: 100%;
 }
 .link-grid {
   @apply grid gap-2 grid-cols-2  max-w-screen-lg m-auto;
