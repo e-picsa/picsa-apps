@@ -3,6 +3,7 @@ header {
   background-color: var(--color-primary);
   display: grid;
   position: relative;
+  z-index: 1;
   // Start/end size to content, center takes remaining space and truncates.
   // Plain text titles are absolute-centered (see [data-center='title'] below) so
   // short titles stay viewport-centered regardless of asymmetric side content.
