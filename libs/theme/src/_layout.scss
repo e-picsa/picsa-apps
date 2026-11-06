@@ -12,6 +12,7 @@ body {
   --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
 
   --status-bar-height: var(--safe-area-top);
+  // Deprecated fallback for backward compatibility
   --nav-bar-height: var(--safe-area-bottom);
 
   // Add page padding for different breakpoints
@@ -76,7 +77,7 @@ body {
   z-index: 1;
   box-sizing: border-box;
   padding: var(--page-padding);
-  padding-bottom: calc(max(var(--page-padding), 1rem) + var(--nav-bar-height));
+  padding-bottom: calc(max(var(--page-padding), 1rem) + var(--safe-area-bottom));
   padding-left: max(var(--page-padding), var(--safe-area-left));
   padding-right: max(var(--page-padding), var(--safe-area-right));
 
@@ -101,7 +102,7 @@ $footer-height: 5em;
   position: static;
   height: $footer-height;
   top: calc(100vh - #{$footer-height});
-  margin-bottom: var(--nav-bar-height);
+  margin-bottom: var(--safe-area-bottom);
   left: 0;
   width: 100%;
   background: white;

@@ -94,7 +94,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         overflow: hidden;
         padding-left: max(1rem, var(--safe-area-left));
         padding-right: max(1rem, var(--safe-area-right));
-        padding-bottom: var(--nav-bar-height);
+        padding-bottom: var(--safe-area-bottom);
 
         &[data-mobile='true'] {
           padding-top: var(--status-bar-height);

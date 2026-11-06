@@ -813,13 +813,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The `@picsa/shared/features` barrel exports chart components which load `c3`. In Jest/JSDOM environments without full SVG/DOM globals, importing from `@picsa/shared/features` throws `TypeError: Cannot read properties of undefined (reading 'prototype')` during C3 initialization.
   - Deep-import feature modules directly (e.g. `import { PhotoListComponent } from '@picsa/shared/features/photo'`) to avoid loading C3 in unrelated component test suites.
 
-### Page Content Wrapping with `picsa-sidenav-layout` & Bottom Nav Safe Areas
+### Page Content Wrapping with `picsa-sidenav-layout` & Safe Areas
 
 - **Universal `.page-content` Wrapper Contract**:
   - Every routed page in the application MUST wrap its root view in `<div class="page-content">` (or apply the `.page-content` class to the outer host container).
-  - `.page-content` provides standard safe area insets via `padding-bottom: calc(max(var(--page-padding), 1rem) + var(--nav-bar-height))` and landscape safe margins (`padding-left: max(var(--page-padding), var(--safe-area-left))`, `padding-right: max(var(--page-padding), var(--safe-area-right))`).
+  - `.page-content` provides standard safe area insets via `padding-bottom: calc(max(var(--page-padding), 1rem) + var(--safe-area-bottom))` and landscape safe margins (`padding-left: max(var(--page-padding), var(--safe-area-left))`, `padding-right: max(var(--page-padding), var(--safe-area-right))`).
 - **`picsa-sidenav-layout` Content Projection**:
   - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
   - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">`.
-  - Omitting the outer `.page-content` wrapper causes child tables (`<budget-table>`, etc.) to size to `100%` of `100vh` without bottom inset clearance, clipping footer summaries and balance rows behind Android system navigation bars (`var(--nav-bar-height)`).
-
+  - Omitting the outer `.page-content` wrapper causes child tables (`<budget-table>`, etc.) to size to `100%` of `100vh` without bottom inset clearance, clipping footer summaries and balance rows behind Android system navigation bars (`var(--safe-area-bottom)`).
