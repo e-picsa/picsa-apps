@@ -25,18 +25,23 @@
  *   yarn ai:worktree:audit --roots <a,b,...>       # override scan roots (per-repo dirs, or family roots with --all-repos)
  *   yarn ai:worktree:audit --json                  # machine-readable report, no actions
  *   yarn ai:worktree:audit --dry-run               # preview destructive actions
+ *   yarn ai:worktree:audit --delete-merged --yes    # confirm non-interactively
  *
  * Destructive flags compose (e.g. `--delete-orphans --clear-node-modules`).
- * `--dry-run` previews without executing. Main checkouts and the current
- * working checkout are never deleted or stripped. Extras are size-only and
- * are only ever removed via explicit `--remove`. Zero dependencies (node
- * builtins only).
+ * Every destructive run first prints each exact command (`git worktree
+ * remove`, `rm -rf`, `git worktree prune`) and requires typed `yes`
+ * confirmation — unless `--dry-run` (preview only) or `--yes` is passed.
+ * Without a terminal and without `--yes`, destructive actions are refused.
+ * Main checkouts and the current working checkout are never deleted or
+ * stripped. Extras are size-only and are only ever removed via explicit
+ * `--remove`. Zero dependencies (node builtins only).
  */
 import { execSync, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, rmSync, statSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { gitOutput, hasHelpFlag, REPO_ROOT } from './_shared.mjs';
+import readline from 'node:readline';
+import { hasHelpFlag, REPO_ROOT } from './_shared.mjs';
 
 const REPO_NAME = (() => {
   // basename(REPO_ROOT) is the worktree dir name when running inside a linked
@@ -78,7 +83,12 @@ Options:
   --roots <a,b,...>     Override scan roots (per-repo dirs, or family roots with --all-repos)
   --json                Print JSON report {repos, extras, totals} and skip actions
   --dry-run             Preview destructive actions without executing
+  --yes                 Confirm destructive actions non-interactively (otherwise prompts)
   -h, --help            Show this help
+
+Destructive actions always print every exact command first and require
+typed confirmation, unless --dry-run (preview only) or --yes is passed.
+Without a terminal and without --yes, destructive actions are refused.
 
 Orphans = directory under a repo scan root that is not listed by
 \`git worktree list\`, or whose gitlink is broken (not a git repository).
@@ -94,6 +104,7 @@ function parseArgs(rawArgs) {
     clearNodeModules: false,
     json: false,
     dryRun: false,
+    yes: false,
     roots: null,
     remove: [],
   };
@@ -107,6 +118,7 @@ function parseArgs(rawArgs) {
     else if (a === '--clear-node-modules') opts.clearNodeModules = true;
     else if (a === '--json') opts.json = true;
     else if (a === '--dry-run') opts.dryRun = true;
+    else if (a === '--yes') opts.yes = true;
     else if (a === '--roots') {
       const next = args.shift() ?? '';
       if (!next) throw new Error('--roots requires a comma-separated path argument.');
@@ -119,7 +131,7 @@ function parseArgs(rawArgs) {
       if (!next) throw new Error('--remove requires at least one path argument.');
       while (next && !next.startsWith('-')) {
         opts.remove.push(next);
-        next = args.length > 0 && !args[0].startsWith('-') ? args.shift() : null;
+        next = args.length > 0 && !args[0]?.startsWith('-') ? args.shift() : null;
       }
       if (next && next.startsWith('-')) args.unshift(next);
     } else if (a.startsWith('-')) {
@@ -193,7 +205,7 @@ function listSubdirs(root) {
 function dirSizeKb(dir) {
   try {
     const out = execSync(`du -sk ${JSON.stringify(dir)}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-    const kb = parseInt(out.split('\t')[0], 10);
+    const kb = Number.parseInt(out.split('\t')[0], 10);
     return Number.isFinite(kb) ? kb : null;
   } catch {
     return null;
@@ -267,6 +279,7 @@ function auditRepo(name, wtDirs) {
     dirs: resolved,
     main: mainEntry ? mainEntry.path : null,
     gitAvailable: probeCwd != null,
+    probeCwd,
     defaultBranch: defBranch,
     worktrees,
     orphans,
@@ -274,37 +287,60 @@ function auditRepo(name, wtDirs) {
 }
 
 /**
- * Guard: only allow destructive ops on audited git worktree paths, inside
- * audited scan dirs, or on extras (explicit --remove only). Never main
- * checkouts, and never the checkout this script runs from.
+ * Guard: only allow destructive ops on exact audited paths — a known git
+ * worktree, a known orphan, or an exact extra path. Never main checkouts,
+ * and never the checkout this script runs from. Descendants of scan dirs
+ * that were not audited are refused.
  */
 function isDeletable(target, scope) {
   const abs = path.resolve(target);
   if (abs === path.resolve(REPO_ROOT)) return false;
   if (scope.mainPaths.has(abs)) return false;
   if (scope.gitPaths.has(abs)) return true;
+  if (scope.orphanPaths.has(abs)) return true;
   if (scope.extraPaths.has(abs)) return true;
-  return scope.scanDirs.some((root) => abs.startsWith(`${path.resolve(root)}/`));
+  return false;
 }
 
-/** Remove a path, preferring `git worktree remove` when git tracks it. `repoCwd` must be inside the owning repo. */
-function removePath(target, { dryRun, repoCwd }) {
-  if (dryRun) {
-    console.log(`  (dry-run) would remove: ${target}`);
-    return true;
-  }
-  const tracked = repoCwd ? gitIn(repoCwd, 'worktree list --porcelain').includes(target) : false;
-  if (tracked) {
-    const result = spawnSync('git', ['worktree', 'remove', '--force', target], { cwd: repoCwd, stdio: 'inherit' });
+/** Prompt for typed confirmation on an interactive terminal. EOF aborts. */
+function confirmActions(count) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      rl.close();
+      resolve(value);
+    };
+    rl.question(`\nProceed with ${count} action(s)? Type 'yes' to continue: `, (answer) => {
+      done(/^(y|yes)$/i.test(answer.trim()));
+    });
+    rl.on('close', () => done(false));
+  });
+}
+
+/**
+ * Run a planned removal, preferring `git worktree remove` when git tracks the
+ * path. The exact command was already shown in the preview; it is echoed
+ * again here so the terminal log shows what ran.
+ */
+function runRemove(item) {
+  console.log(`$ ${item.command}`);
+  if (item.command.startsWith('git -C')) {
+    const result = spawnSync('git', ['worktree', 'remove', '--force', item.path], {
+      cwd: item.repoCwd,
+      stdio: 'inherit',
+    });
     if ((result.status ?? 1) === 0) return true;
-    console.warn(`  git worktree remove failed for ${target}, falling back to rm -rf`);
+    console.warn(`  git worktree remove failed for ${item.path}, falling back to rm -rf`);
   }
   try {
-    rmSync(target, { recursive: true, force: true });
-    console.log(`  removed: ${target}`);
+    rmSync(item.path, { recursive: true, force: true });
+    console.log(`  removed: ${item.path}`);
     return true;
   } catch (error) {
-    console.error(`  FAILED to remove ${target}: ${error.message}`);
+    console.error(`  FAILED to remove ${item.path}: ${error.message}`);
     return false;
   }
 }
@@ -334,7 +370,7 @@ function printRepo(repo) {
   }
 }
 
-function main() {
+async function main() {
   const rawArgs = process.argv.slice(2);
   if (hasHelpFlag(rawArgs)) {
     printHelp();
@@ -349,33 +385,39 @@ function main() {
     return 1;
   }
 
-  // Resolve which repos to audit: { name -> checkout dirs[] }. Repo identity
+  // Resolve which repos to audit, keyed by canonical main checkout path so
+  // distinct repos that share a directory basename stay separate. Identity
   // is the main checkout path (first entry of `git worktree list`), because
   // `--show-toplevel` inside a linked worktree returns the worktree itself.
   // Checkouts of the same repo across tool families merge into one entry.
   const byRepo = new Map();
-  const addCandidate = (dir, fallbackName) => {
+  const addCandidate = (dir) => {
     const abs = path.resolve(dir);
     const out = gitIn(abs, 'worktree list --porcelain');
     const first = out.split('\n').find((l) => l.startsWith('worktree '));
-    const name = first ? path.basename(first.slice('worktree '.length).trim()) : (fallbackName ?? '(unresolved)');
-    if (!byRepo.has(name)) byRepo.set(name, new Set());
-    byRepo.get(name).add(abs);
+    // Unresolvable dirs share one `(unresolved)` group; everything else keys
+    // on the canonical main checkout path so same-named repos stay separate.
+    const key = first ? first.slice('worktree '.length).trim() : 'unresolved';
+    const name = first ? path.basename(key) : '(unresolved)';
+    if (!byRepo.has(key)) byRepo.set(key, { name, dirs: new Set() });
+    byRepo.get(key).dirs.add(abs);
   };
   if (opts.allRepos) {
     const families = opts.roots ?? FAMILY_ROOTS;
     for (const family of families) {
       for (const repoDir of listSubdirs(family)) {
-        for (const wt of listSubdirs(repoDir)) addCandidate(wt, path.basename(repoDir));
+        for (const wt of listSubdirs(repoDir)) addCandidate(wt);
       }
     }
     if (!opts.roots && existsSync(OPENCODE_ROOT)) {
       for (const hash of listSubdirs(OPENCODE_ROOT)) {
-        for (const wt of listSubdirs(hash)) addCandidate(wt, null);
+        for (const wt of listSubdirs(hash)) addCandidate(wt);
       }
     }
     if (byRepo.size === 0) console.log('(no repos found under family roots)');
   } else {
+    // Single-repo mode: candidates are discovered by directory name, then
+    // re-keyed by canonical main checkout path inside auditRepo grouping.
     const perRepoRoots = opts.roots ?? FAMILY_ROOTS.map((f) => path.join(f, REPO_NAME));
     const set = new Set([REPO_ROOT]);
     for (const r of perRepoRoots.map((x) => path.resolve(x))) {
@@ -385,14 +427,14 @@ function main() {
       }
       for (const wt of listSubdirs(r)) set.add(path.resolve(wt));
     }
-    byRepo.set(REPO_NAME, set);
+    for (const wt of set) addCandidate(wt);
   }
 
-  const repos = [...byRepo.entries()].map(([name, set]) => auditRepo(name, [...set]));
+  const repos = [...byRepo.values()].map(({ name, dirs }) => auditRepo(name, [...dirs]));
 
   if (opts.prune && !opts.json) {
     for (const repo of repos) {
-      const cwd = repo.worktrees[0]?.path ?? repo.dirs[0];
+      const cwd = repo.probeCwd ?? repo.dirs[0];
       if (!repo.gitAvailable || !cwd) continue;
       console.log(`$ git worktree prune (${repo.name})`);
       if (!opts.dryRun) spawnSync('git', ['worktree', 'prune'], { cwd, stdio: 'inherit' });
@@ -453,13 +495,16 @@ function main() {
 
   const scope = {
     gitPaths: new Set(allWorktrees.map((w) => path.resolve(w.path))),
+    orphanPaths: new Set(allOrphans.map((o) => path.resolve(o.path))),
     mainPaths: new Set(repos.flatMap((r) => (r.main ? [path.resolve(r.main)] : []))),
-    scanDirs: [...repos.flatMap((r) => r.dirs), ...(opts.roots ?? []).map((r) => path.resolve(r))],
     extraPaths: new Set(extras.map((e) => path.resolve(e.path))),
   };
 
+  // Phase 1 — plan: collect every destructive action with its exact command.
+  // Nothing runs here; refusals and dirty-skips are reported, not planned.
+  const plan = [];
   if (opts.deleteOrphans) {
-    console.log(`\ndeleting ${allOrphans.length} orphan(s):`);
+    console.log(`\nplanned orphan removal (${allOrphans.length} candidate(s)):`);
     if (allOrphans.length === 0) console.log('  (none)');
     for (const o of allOrphans) {
       if (!isDeletable(o.path, scope)) {
@@ -467,12 +512,12 @@ function main() {
         failures += 1;
         continue;
       }
-      if (!removePath(o.path, { dryRun: opts.dryRun, repoCwd: o.repoCwd })) failures += 1;
+      plan.push({ kind: 'remove', path: o.path, repoCwd: o.repoCwd, sizeKb: o.sizeKb });
     }
   }
 
   if (opts.deleteMerged) {
-    console.log(`\ndeleting ${mergedCandidates.length} merged worktree(s):`);
+    console.log(`\nplanned merged-worktree removal (${mergedCandidates.length} candidate(s)):`);
     if (mergedCandidates.length === 0) console.log('  (none)');
     for (const w of mergedCandidates) {
       if (!isDeletable(w.path, scope)) {
@@ -484,32 +529,27 @@ function main() {
         console.warn(`  (skip, ${w.dirtyFiles} uncommitted file(s): ${w.path} — commit first or use --remove)`);
         continue;
       }
-      if (!removePath(w.path, { dryRun: opts.dryRun, repoCwd: w.repoCwd })) failures += 1;
+      plan.push({ kind: 'remove', path: w.path, repoCwd: w.repoCwd, sizeKb: w.sizeKb });
     }
   }
 
   if (opts.clearNodeModules) {
-    const targets = allWorktrees.filter((w) => !w.isMain && (w.nodeModulesKb ?? 0) > 0);
-    console.log(`\nclearing node_modules in ${targets.length} worktree(s) (mains excluded):`);
+    // Exclude the checkout this script runs from: inside a linked worktree
+    // it is not `isMain`, but stripping its node_modules would break the
+    // very session doing the cleanup.
+    const current = path.resolve(REPO_ROOT);
+    const targets = allWorktrees.filter(
+      (w) => !w.isMain && path.resolve(w.path) !== current && (w.nodeModulesKb ?? 0) > 0,
+    );
+    console.log(`\nplanned node_modules removal in ${targets.length} worktree(s) (mains excluded):`);
     if (targets.length === 0) console.log('  (none)');
     for (const w of targets) {
-      const nm = path.join(w.path, 'node_modules');
-      if (opts.dryRun) {
-        console.log(`  (dry-run) would remove: ${nm} (${formatSize(w.nodeModulesKb)})`);
-        continue;
-      }
-      try {
-        rmSync(nm, { recursive: true, force: true });
-        console.log(`  cleared: ${nm} (was ${formatSize(w.nodeModulesKb)})`);
-      } catch (error) {
-        console.error(`  FAILED ${nm}: ${error.message}`);
-        failures += 1;
-      }
+      plan.push({ kind: 'clear-node-modules', path: path.join(w.path, 'node_modules'), sizeKb: w.nodeModulesKb });
     }
   }
 
   if (opts.remove.length > 0) {
-    console.log(`\nremoving ${opts.remove.length} explicit path(s):`);
+    console.log(`\nplanned explicit removal (${opts.remove.length} path(s)):`);
     for (const target of opts.remove) {
       const abs = path.resolve(target);
       if (!isDeletable(abs, scope)) {
@@ -523,18 +563,76 @@ function main() {
       }
       const owner =
         allWorktrees.find((w) => path.resolve(w.path) === abs) ?? allOrphans.find((o) => path.resolve(o.path) === abs);
-      if (!removePath(abs, { dryRun: opts.dryRun, repoCwd: owner?.repoCwd ?? path.dirname(abs) })) failures += 1;
+      plan.push({ kind: 'remove', path: abs, repoCwd: owner?.repoCwd ?? path.dirname(abs), sizeKb: dirSizeKb(abs) });
     }
   }
 
-  if (!opts.dryRun) {
-    for (const repo of repos) {
-      const cwd = repo.worktrees[0]?.path ?? repo.dirs[0];
-      if (repo.gitAvailable && cwd) spawnSync('git', ['worktree', 'prune'], { cwd, stdio: 'ignore' });
+  // Resolve each removal to the exact command that will run, so the preview
+  // shows `git worktree remove` vs `rm -rf` truthfully.
+  for (const item of plan) {
+    if (item.kind === 'remove') {
+      const tracked = item.repoCwd ? gitIn(item.repoCwd, 'worktree list --porcelain').includes(item.path) : false;
+      item.command = tracked ? `git -C ${item.repoCwd} worktree remove --force ${item.path}` : `rm -rf ${item.path}`;
+    } else {
+      item.command = `rm -rf ${item.path}`;
     }
+  }
+  const pruneCwds =
+    plan.length > 0
+      ? repos
+          .filter((repo) => repo.gitAvailable)
+          .map((repo) => ({ repo: repo.name, cwd: repo.probeCwd ?? repo.dirs[0] }))
+          .filter((p) => p.cwd)
+      : [];
+  const actionCount = plan.length + pruneCwds.length;
+
+  // Phase 2 — preview: every exact command, visible before anything runs.
+  if (actionCount === 0) {
+    console.log('\nnothing to do.');
+    return failures === 0 ? 0 : 1;
+  }
+  console.log(`\nplanned actions (${plan.length} destructive + ${pruneCwds.length} prune):`);
+  for (const item of plan) console.log(`  ${formatSize(item.sizeKb).padStart(6)}  $ ${item.command}`);
+  for (const p of pruneCwds) console.log(`           $ git -C ${p.cwd} worktree prune (${p.repo})`);
+
+  // Phase 3 — confirm: typed acceptance, unless preview-only or pre-approved.
+  if (opts.dryRun) {
+    console.log('\n(dry-run) preview only — no changes made.');
+    return failures === 0 ? 0 : 1;
+  }
+  if (opts.yes) {
+    console.log('\nConfirmed non-interactively via --yes.');
+  } else if (process.stdin.isTTY !== true) {
+    console.error(
+      '\nRefusing destructive actions without an interactive terminal. Re-run with --dry-run to preview, or pass --yes to confirm non-interactively.',
+    );
+    return 1;
+  } else if (!(await confirmActions(actionCount))) {
+    console.log('Aborted — no changes made.');
+    return 1;
+  }
+
+  // Phase 4 — execute: echo each command as it runs.
+  for (const item of plan) {
+    if (item.kind === 'remove') {
+      if (!runRemove(item)) failures += 1;
+    } else {
+      console.log(`$ rm -rf ${item.path}`);
+      try {
+        rmSync(item.path, { recursive: true, force: true });
+        console.log(`  cleared: ${item.path} (was ${formatSize(item.sizeKb)})`);
+      } catch (error) {
+        console.error(`  FAILED ${item.path}: ${error.message}`);
+        failures += 1;
+      }
+    }
+  }
+  for (const p of pruneCwds) {
+    console.log(`$ git -C ${p.cwd} worktree prune`);
+    spawnSync('git', ['worktree', 'prune'], { cwd: p.cwd, stdio: 'inherit' });
   }
   console.log(failures === 0 ? '\nai-worktree-audit: OK' : `\nai-worktree-audit: DONE with ${failures} failure(s)`);
   return failures === 0 ? 0 : 1;
 }
 
-process.exit(main());
+process.exit(await main());
