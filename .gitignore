@@ -91,7 +91,7 @@ apps/picsa-server/.env.server
 # Database backups and local sync dumps
 apps/picsa-server/.cache
 apps/picsa-server/supabase/.cache
-apps/picsa-server/scripts/backup/backups
+apps/picsa-server/backups
 apps/picsa-server/scripts/db-seed/cache
 
 # Agent local cache & triage state

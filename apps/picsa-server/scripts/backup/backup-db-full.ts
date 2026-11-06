@@ -1,6 +1,6 @@
 /**
  * Full remote database backup (Supabase CLI docs recipe: roles + schema + data
- * + migration history) into `scripts/backup/backups/db_full_<timestamp>/`.
+ * + migration history) into `apps/picsa-server/backups/db_full_<timestamp>/`.
  *
  * Invoke:
  *   yarn nx run picsa-server:backup-db-full
@@ -29,7 +29,7 @@ import path from 'path';
 
 import { loadEnv, loadEnvLocal, loadEnvServer } from '../utils/supabase.utils';
 
-const backupDir = path.resolve(__dirname, './backups');
+const backupDir = path.resolve(__dirname, '../../backups');
 
 /**
  * Docs-shaped backup, not byte-full: `supabase db dump` always strips platform
