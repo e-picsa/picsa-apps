@@ -685,6 +685,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Problem**: When running Jest or Nx within Git worktrees whose directory paths exceed 104 characters, the Unix domain socket creation for Nx daemon crashes with "Attempted to open socket that exceeds the maximum socket length".
 - **Solution**: Always set "NX_SOCKET_DIR=/tmp/nx-tmp NX_DAEMON=false" in the environment when invoking tests via "node tools/ai/ai-test.mjs" or running "yarn nx test".
 
+### Agent Worktree Identity & Orphan Detection (`ai:worktree:audit`)
+
+- **`rev-parse --show-toplevel` lies inside linked worktrees**: it returns the worktree dir itself, not the main checkout, so grouping checkouts by its basename creates one bogus "repo" per worktree. Identify a checkout's repo via the first entry of `git worktree list --porcelain` (always the main checkout) instead.
+- **OpenCode nests worktrees two levels deep** (`~/.local/share/opencode/worktree/<hash>/<name>`, vs `<repo>/<name>` for T3 `~/.t3/worktrees` and Gemini `~/.gemini/antigravity/worktrees`). Discovery must descend an extra level there or those checkouts are missed.
+- **Fresh branches look merged**: a branch pointing at the same commit as the default branch appears in `git branch --merged`, so never `--delete-merged` without the dirty-tree skip and the never-delete-mains/current-checkout guard.
+
 ### Climate Quality Control (QC) Gates & Automated Station Drafting
 
 - **Standalone Engine**: Quality control criteria are defined in libs/utils/climate-qc.utils.ts under "CLIMATE_QC_GATES".
