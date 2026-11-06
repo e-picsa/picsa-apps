@@ -13,7 +13,12 @@
   <mat-form-field style="max-width: unset">
     <!-- Use dummy control to handle mat-error integration as crop-select is not a compatible mat input -->
     <input matInput [formField]="$any(form().meta.enterprises)" style="display: none" />
-    <picsa-form-crop-select-multiple [formField]="form().meta.enterprises"></picsa-form-crop-select-multiple>
+    <picsa-form-crop-select-multiple
+      [formField]="form().meta.enterprises"
+      [customOptions]="customCrops()"
+      [addCustomOption]="{ text: 'Add custom crop', matIcon: 'add' }"
+      (addCustomClicked)="addCustomCrop()"
+    ></picsa-form-crop-select-multiple>
     <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   </mat-form-field>
 

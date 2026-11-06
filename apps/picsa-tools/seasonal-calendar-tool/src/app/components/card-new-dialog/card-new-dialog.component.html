@@ -1,0 +1,8 @@
+<picsa-custom-drawing (onChange)="setDrawing($event)"></picsa-custom-drawing>
+<mat-form-field class="label-input">
+  <mat-label>{{ 'Card Label' | translate }}</mat-label>
+  <input matInput [(ngModel)]="label" />
+</mat-form-field>
+<button matButton="outlined" (click)="save()" [disabled]="!canSave" style="margin-top: 1em; width: 70%">
+  <mat-icon>check</mat-icon>{{ 'Save' | translate }}
+</button>
