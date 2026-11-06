@@ -51,7 +51,6 @@ h2.section-header {
 .link-container {
   flex: 1;
   overflow: auto;
-  padding-bottom: calc(1rem + var(--safe-area-bottom));
 }
 .link-grid {
   @apply grid gap-2 grid-cols-2  max-w-screen-lg m-auto;
