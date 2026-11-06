@@ -406,7 +406,7 @@ function runRemove(item) {
 const SRC_NAMES = { M: 'main checkout', T: 'T3 worktree', G: 'Gemini worktree', O: 'OpenCode worktree' };
 /** Legend limited to the sources actually present in a table. */
 function legendFor(rows) {
-  const present = [...new Set(rows.map((r) => r.SRC))].sort();
+  const present = [...new Set(rows.map((r) => r.SRC))].sort((a, b) => a.localeCompare(b));
   return `SRC: ${present.map((k) => `${k}=${SRC_NAMES[k] ?? '?'}`).join(', ')}`;
 }
 
@@ -467,7 +467,9 @@ function printRepo(repo) {
     console.log(`   main: ${repo.main} (default: ${repo.defaultBranch})`);
   }
   // Base paths once; tables below use short directory names.
-  const bases = [...new Set([...rest, ...repo.orphans].map((w) => path.dirname(w.path)))].sort();
+  const bases = [...new Set([...rest, ...repo.orphans].map((w) => path.dirname(w.path)))].sort((a, b) =>
+    a.localeCompare(b),
+  );
   if (bases.length > 0) {
     console.log('   roots:');
     for (const b of bases) console.log(`     - ${b}`);
@@ -516,7 +518,9 @@ function printRepoMarkdown(repo) {
   } else if (repo.main) {
     parts.push(`main: \`${repo.main}\` (default: ${repo.defaultBranch})`);
   }
-  const bases = [...new Set([...rest, ...repo.orphans].map((w) => path.dirname(w.path)))].sort();
+  const bases = [...new Set([...rest, ...repo.orphans].map((w) => path.dirname(w.path)))].sort((a, b) =>
+    a.localeCompare(b),
+  );
   if (bases.length > 0) parts.push(`roots:\n${bases.map((b) => `- \`${b}\``).join('\n')}`);
   const cleanMd = rest.filter((w) => !(w.dirtyFiles > 0)).sort(bySizeDesc);
   const dirtyMd = rest.filter((w) => w.dirtyFiles > 0).sort(bySizeDesc);
