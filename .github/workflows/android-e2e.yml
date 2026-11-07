@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Download debug APK
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build.outputs.artifact-name }}
           path: ./apk
@@ -59,7 +59,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: AVD cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: avd-cache
         with:
           path: |
@@ -92,7 +92,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots-android-${{ matrix.api-level }}
           path: apps/picsa-apps/app-native-e2e/screenshots
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all screenshots
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: screenshots
           pattern: e2e-screenshots-android-*
@@ -139,7 +139,7 @@ jobs:
           done
 
       - name: Upload Combined Screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: all-android-e2e-screenshots
           path: combined-screenshots

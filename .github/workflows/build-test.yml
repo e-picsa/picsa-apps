@@ -36,7 +36,7 @@ jobs:
       # Restores .nx/cache from the latest authoritative build on main.
       # Local hits replay directly without downloading artifacts from Nx Cloud.
       - name: Restore Nx Cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         id: nx-cache
         with:
           path: .nx/cache
@@ -74,7 +74,7 @@ jobs:
       # read a warm cache without polluting or thrashing repository cache storage.
       - name: Save Nx Cache
         if: github.ref == 'refs/heads/main'
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: .nx/cache
           key: nx-cache-${{ runner.os }}-w${{ steps.cache-epoch.outputs.week }}-${{ hashFiles('yarn.lock') }}-${{ github.sha }}

@@ -132,7 +132,7 @@ jobs:
 
       - name: Upload Debug APK
         if: env.BUILD_TYPE == 'debug'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.set-artifact-name.outputs.name }}
           path: apps/picsa-apps/app-native/android/app/build/outputs/apk/debug/*.apk
@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload Signed Release AAB
         if: env.BUILD_TYPE == 'release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.set-artifact-name.outputs.name }}
           path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
