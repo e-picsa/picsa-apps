@@ -45,7 +45,7 @@ jobs:
         || '-auto' }}
       cancel-in-progress: true
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     permissions:
       contents: read

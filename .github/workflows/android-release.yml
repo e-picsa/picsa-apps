@@ -23,7 +23,7 @@ env:
 
 jobs:
   android_release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       SENTRY_AUTH_TOKEN_AVAILABLE: ${{ secrets.SENTRY_AUTH_TOKEN != '' }}
     steps:

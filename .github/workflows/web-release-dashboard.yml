@@ -41,7 +41,7 @@ on:
 
 jobs:
   web_release_dashboard:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: dashboard
     steps:
       - uses: actions/checkout@v7

@@ -13,7 +13,7 @@ jobs:
     if: |
       ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}} &&
       (event.type == 'opened' || event.changes.title.from)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       # Checkout repo to access local templates (if updated)
       - name: checkout
