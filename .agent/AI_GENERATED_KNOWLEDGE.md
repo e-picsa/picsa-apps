@@ -818,3 +818,30 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **`@picsa/shared/features` Barrel Import Trap in Specs**:
   - The `@picsa/shared/features` barrel exports chart components which load `c3`. In Jest/JSDOM environments without full SVG/DOM globals, importing from `@picsa/shared/features` throws `TypeError: Cannot read properties of undefined (reading 'prototype')` during C3 initialization.
   - Deep-import feature modules directly (e.g. `import { PhotoListComponent } from '@picsa/shared/features/photo'`) to avoid loading C3 in unrelated component test suites.
+
+### Layout Architecture Contract & Safe Area Guidelines
+
+To prevent recurring "whack-a-mole" layout inconsistencies across the Extension app shell, Farmer app popup shell, and standalone pages, strictly adhere to the following contract:
+
+1. **Shell Viewports Are Edge-to-Edge (`padding-bottom: 0`)**:
+   - Both the main app shell (`<div class="page">` in `layout.html`) and the farmer tool modal container (`<div class="page tool-container">` in `module-home.component.html`) are viewports (100vw × 100vh) holding a header and a `<router-outlet>`.
+   - **Shells must NEVER apply bottom or horizontal safe area padding** (`padding-bottom`, `padding-left`, `padding-right` must remain `0`).
+   - The shell's header (`<picsa-header>` or `.tool-header`) is solely responsible for top status bar clearance (`padding-top: var(--status-bar-height)`).
+
+2. **Routed Pages Own Insets via `.page-content`**:
+   - Every routed page in the application MUST wrap its root view in `<div class="page-content">` (or apply the `.page-content` class to the outer host container).
+   - `.page-content` provides standard safe area insets via `padding-bottom: calc(max(var(--page-padding), 1rem) + var(--safe-area-bottom))` and landscape safe margins (`padding-left: max(var(--page-padding), var(--safe-area-left))`, `padding-right: max(var(--page-padding), var(--safe-area-right))`).
+   - Because shells apply zero bottom padding, routed pages receive exactly ONE layer of safe-area bottom clearance regardless of whether they are hosted directly in the Extension app or inside the Farmer app tool popup.
+
+3. **No Redundant Inner Insets**:
+   - Child elements inside `.page-content` (e.g. `.link-container` or `.table-container`) must NOT re-apply `padding-bottom: var(--safe-area-bottom)`.
+   - `.sticky-footer` inside `.page-content` automatically has `margin-bottom: 0` because `.page-content` already provides the necessary bottom inset clearance.
+
+4. **Fullscreen Overlays Are Autonomous Shells (`inset: 0`)**:
+   - Any fixed modal/overlay that covers the entire viewport (`position: fixed; inset: 0;`), such as `editor-popup`, `viewer-container`, or `pdf-container`, is its own shell.
+   - Overlays must handle all 4 insets (`padding-top: var(--status-bar-height); padding-bottom: var(--safe-area-bottom); padding-left: var(--safe-area-left); padding-right: var(--safe-area-right);`).
+   - Inner content inside such overlays must NOT re-apply safe-area padding.
+
+5. **`picsa-sidenav-layout` Content Projection**:
+   - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
+   - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; min-height: 0; overflow-x: hidden; overflow-y: auto;` when hosting full-height tables).

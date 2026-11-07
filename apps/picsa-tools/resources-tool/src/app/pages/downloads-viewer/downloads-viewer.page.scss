@@ -8,5 +8,5 @@
   flex-direction: column;
   background: white;
   padding-top: var(--status-bar-height, 0px);
-  padding-bottom: var(--nav-bar-height, 0px);
+  padding-bottom: var(--safe-area-bottom, 0px);
 }

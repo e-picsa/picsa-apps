@@ -1,20 +1,22 @@
-<picsa-sidenav-layout #picsaSidenav *mobxAutorun>
-  <!-- Sidenav -->
-  <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
+<div class="page-content">
+  <picsa-sidenav-layout #picsaSidenav *mobxAutorun>
+    <!-- Sidenav -->
+    <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
 
-  <!-- Main content -->
-  <ng-container content>
-    <!-- hide overflow so that editor can be stored outside bottom of page -->
-    @if (store.activeBudget) {
-    <budget-table
-      class="h-full"
-      animate.enter="fade-in-200"
-      [data]="service.budgetData()"
-      (cellClicked)="handleCellClicked($event)"
-    ></budget-table>
-    }
-  </ng-container>
-</picsa-sidenav-layout>
+    <!-- Main content -->
+    <ng-container content>
+      <!-- hide overflow so that editor can be stored outside bottom of page -->
+      @if (store.activeBudget) {
+      <budget-table
+        class="h-full"
+        animate.enter="fade-in-200"
+        [data]="service.budgetData()"
+        (cellClicked)="handleCellClicked($event)"
+      ></budget-table>
+      }
+    </ng-container>
+  </picsa-sidenav-layout>
+</div>
 @if (editorOpen() && store.activeBudget && store.activeBudget.data) {
 <div class="editor-popup" animate.enter="slide-in-up" animate.leave="slide-out-down">
   <budget-editor (nextClicked)="editorOpen.set(false)"></budget-editor>

@@ -6,8 +6,12 @@ body {
 
   // Variables populated from android code to try and be consistent across devices, source:
   // apps/picsa-apps/app-native/android/app/src/main/java/io/picsa/extension/SafeAreaPolyfill.java
-  --status-bar-height: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
-  --nav-bar-height: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-area-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --safe-area-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+
+  --status-bar-height: var(--safe-area-top);
 
   // Add page padding for different breakpoints
   // Store as variable so can also used to calculate positioning on nested elements
@@ -37,9 +41,15 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
   padding: var(--page-padding);
-  // Ensure page bottom also includes size if using fixed navbar
-  // padding-bottom: calc(var(--page-padding) + $navBarSize) !important;
+  padding-bottom: calc(max(var(--page-padding), 1rem) + var(--safe-area-bottom));
+  padding-left: max(var(--page-padding), var(--safe-area-left));
+  padding-right: max(var(--page-padding), var(--safe-area-right));
+
+  .sticky-footer {
+    margin-bottom: 0;
+  }
 }
 
 .no-padding {
@@ -58,17 +68,19 @@ $footer-height: 5em;
   position: static;
   height: $footer-height;
   top: calc(100vh - #{$footer-height});
-  margin-bottom: var(--nav-bar-height);
+  margin-bottom: var(--safe-area-bottom);
   left: 0;
   width: 100%;
   background: white;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 button.footer-button.mat-mdc-button-base {
   width: 60%;
-  left: 20%;
+  margin-left: auto;
+  margin-right: auto;
   height: auto;
   min-height: calc(#{$footer-height} - 10px) !important;
   .mdc-button__label {

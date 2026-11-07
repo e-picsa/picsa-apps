@@ -51,16 +51,18 @@
       ></budget-card-new>
       }
     </div>
-    <button
-      matStepperNext
-      color="primary"
-      matButton="elevated"
-      class="footer-button"
-      [disabled]="!budgetModel().enterprise?.id"
-    >
-      {{ 'Next' | translate }}
-      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-    </button>
+    <div class="sticky-footer">
+      <button
+        matStepperNext
+        color="primary"
+        matButton="elevated"
+        class="footer-button"
+        [disabled]="!budgetModel().enterprise?.id"
+      >
+        {{ 'Next' | translate }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </div>
   </mat-step>
 
   <!-- Step 3 - handled with form controls -->
