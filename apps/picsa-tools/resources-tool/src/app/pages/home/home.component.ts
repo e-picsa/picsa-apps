@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ResourceItemCollectionComponent } from '../../components';
-import { IResourceCollection } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
@@ -15,15 +14,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   imports: [PicsaTranslateModule, MatButtonModule, MatIconModule, ResourceItemCollectionComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   service = inject(ResourcesToolService);
-
-  public collections = signal<IResourceCollection[]>([]);
-
-  async ngOnInit() {
-    await this.service.ready();
-    const collections = await this.service.dbCollections.find({ sort: [{ priority: 'desc' }] }).exec();
-    const localised = this.service.filterLocalisedResources(collections);
-    this.collections.set(localised.filter((c) => !c._data.parentCollection).map((c) => c._data));
-  }
+  public collections = this.service.topLevelCollections;
 }

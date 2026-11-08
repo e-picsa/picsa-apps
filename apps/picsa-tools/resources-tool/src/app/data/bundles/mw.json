@@ -6,8 +6,18 @@
       "title": "Crop, Pest & Disease",
       "cover_image": "global/resources/covers/crops.svg",
       "resource_collections": [],
-      "resource_files": ["gap", "bmtm"],
-      "resource_links": ["accessAg", "plantwise", "plantix", "zaulimi", "mlimi", "daes_v2"],
+      "resource_files": [
+        "gap",
+        "bmtm"
+      ],
+      "resource_links": [
+        "accessAg",
+        "plantwise",
+        "plantix",
+        "zaulimi",
+        "mlimi",
+        "daes_v2"
+      ],
       "collection_parent": null,
       "sort_order": 7,
       "country_code": "mw",
@@ -20,7 +30,10 @@
       "cover_image": "global/resources/covers/gender-equality.svg",
       "resource_collections": [],
       "resource_files": null,
-      "resource_links": ["womenInExtension_mw", "gfrasNelk_mw"],
+      "resource_links": [
+        "womenInExtension_mw",
+        "gfrasNelk_mw"
+      ],
       "collection_parent": null,
       "sort_order": 5,
       "country_code": "mw",
@@ -33,7 +46,11 @@
       "cover_image": "global/resources/covers/weather.svg",
       "resource_collections": [],
       "resource_files": null,
-      "resource_links": ["dccms_daily_forecast", "dccms_facebook", "dccms_twitter"],
+      "resource_links": [
+        "dccms_daily_forecast",
+        "dccms_facebook",
+        "dccms_twitter"
+      ],
       "collection_parent": null,
       "sort_order": 6,
       "country_code": "mw",
@@ -108,7 +125,7 @@
     {
       "id": "bmtm",
       "description": "For Linking Producers and Processors",
-      "storage_file": null,
+      "storage_file": "mw/resources/BUSINESS MODELS TRAINING MANUAL.pdf",
       "external_url": "https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FBUSINESS%20MODELS%20TRAINING%20MANUAL.pdf?alt=media&token=e682f443-1163-4894-88a7-7ea9851512a8",
       "cover_image": "global/images/placeholder.svg",
       "title": "Business Models Training Manual",
@@ -156,7 +173,7 @@
     {
       "id": "gap",
       "description": "And Natural Resource Management in Malawi",
-      "storage_file": null,
+      "storage_file": "mw/resources/GAP_2021.pdf",
       "external_url": "https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FGAP_2021.pdf?alt=media&token=4832ad76-cf14-490f-8fba-73bd5845d440",
       "cover_image": "global/images/placeholder.svg",
       "title": "Guide to Agriculture Production",
@@ -164,7 +181,7 @@
       "country_code": "mw",
       "sort_order": 1,
       "filename": "GAP_2021.pdf",
-      "size_kb": 3646,
+      "size_kb": 3645,
       "mimetype": "application/pdf",
       "md5_checksum": "ea0e86161b3eae185ff5bbce71975057",
       "owner": null

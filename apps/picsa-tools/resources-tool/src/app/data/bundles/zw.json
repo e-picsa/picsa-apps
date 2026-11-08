@@ -7,7 +7,11 @@
       "cover_image": "global/resources/covers/crops.svg",
       "resource_collections": [],
       "resource_files": null,
-      "resource_links": ["accessAg_zw", "plantwise_zw", "plantix_zw"],
+      "resource_links": [
+        "accessAg_zw",
+        "plantwise_zw",
+        "plantix_zw"
+      ],
       "collection_parent": null,
       "sort_order": 7,
       "country_code": "zw",
@@ -20,7 +24,10 @@
       "cover_image": "global/resources/covers/gender-equality.svg",
       "resource_collections": [],
       "resource_files": null,
-      "resource_links": ["womenInExtension_zw", "gfrasNelk_zw"],
+      "resource_links": [
+        "womenInExtension_zw",
+        "gfrasNelk_zw"
+      ],
       "collection_parent": null,
       "sort_order": 5,
       "country_code": "zw",

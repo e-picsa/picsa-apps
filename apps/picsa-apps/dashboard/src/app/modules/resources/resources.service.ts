@@ -124,20 +124,33 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     const filesToDelete: { bucket: string; path: string }[] = [];
 
     if (resource.storage_file) {
-      const isShared = this.files().some((f) => f.id !== resource.id && f.storage_file === resource.storage_file);
-      if (!isShared) {
-        const [bucket, ...rest] = resource.storage_file.split('/');
-        filesToDelete.push({ bucket, path: rest.join('/') });
+      const [bucket, ...rest] = resource.storage_file.split('/');
+      // Never delete assets located in the global bucket or root placeholder
+      if (bucket !== 'global') {
+        const { count, error } = await this.tables.files
+          .select('id', { count: 'exact', head: true })
+          .neq('id', resource.id)
+          .eq('storage_file', resource.storage_file);
+        if (!error && (count ?? 0) === 0) {
+          filesToDelete.push({ bucket, path: rest.join('/') });
+        }
       }
     }
 
-    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
-      const isCoverShared =
-        this.files().some((f) => f.id !== resource.id && f.cover_image === resource.cover_image) ||
-        this.links().some((l) => l.cover_image === resource.cover_image);
-      if (!isCoverShared) {
-        const [bucket, ...rest] = resource.cover_image.split('/');
-        filesToDelete.push({ bucket, path: rest.join('/') });
+    if (resource.cover_image && !resource.cover_image.startsWith('global/')) {
+      const [bucket, ...rest] = resource.cover_image.split('/');
+      if (bucket !== 'global') {
+        const [filesRes, linksRes] = await Promise.all([
+          this.tables.files
+            .select('id', { count: 'exact', head: true })
+            .neq('id', resource.id)
+            .eq('cover_image', resource.cover_image),
+          this.tables.links.select('id', { count: 'exact', head: true }).eq('cover_image', resource.cover_image),
+        ]);
+        const sharedCount = (filesRes.count ?? 0) + (linksRes.count ?? 0);
+        if (sharedCount === 0) {
+          filesToDelete.push({ bucket, path: rest.join('/') });
+        }
       }
     }
 
@@ -154,7 +167,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
 
   /**
    * Delete a resource link and clean up any uploaded cover image from Supabase Storage.
-   * Deletes database row first and verifies the cover image is not shared by other resources.
+   * Deletes database row first and verifies the cover image is not shared by other resources across any country.
    */
   public async deleteResourceLink(resource: IResourceLinkRow) {
     const res = await this.tables.links.delete().eq('id', resource.id);
@@ -162,16 +175,23 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       throw new Error(res.error.message);
     }
 
-    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
-      const isCoverShared =
-        this.links().some((l) => l.id !== resource.id && l.cover_image === resource.cover_image) ||
-        this.files().some((f) => f.cover_image === resource.cover_image);
-      if (!isCoverShared) {
-        const [bucket, ...rest] = resource.cover_image.split('/');
-        try {
-          await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
-        } catch (err) {
-          console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
+    if (resource.cover_image && !resource.cover_image.startsWith('global/')) {
+      const [bucket, ...rest] = resource.cover_image.split('/');
+      if (bucket !== 'global') {
+        const [linksRes, filesRes] = await Promise.all([
+          this.tables.links
+            .select('id', { count: 'exact', head: true })
+            .neq('id', resource.id)
+            .eq('cover_image', resource.cover_image),
+          this.tables.files.select('id', { count: 'exact', head: true }).eq('cover_image', resource.cover_image),
+        ]);
+        const sharedCount = (linksRes.count ?? 0) + (filesRes.count ?? 0);
+        if (sharedCount === 0) {
+          try {
+            await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
+          } catch (err) {
+            console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
+          }
         }
       }
     }

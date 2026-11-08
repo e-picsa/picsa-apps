@@ -78,13 +78,10 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
   }
 
   private async initializeServiceData() {
-    await this.service.ready();
-    const fileDocs = await this.service.dbFiles.find().exec();
-    const linkDocs = await this.service.dbLinks.find().exec();
-    const collectionDocs = await this.service.dbCollections.find().exec();
-    const allResources = [...fileDocs, ...linkDocs, ...collectionDocs].map((doc) => doc._data);
+    const manifest = this.service.activeManifest();
+    const allResources: IResourceBase[] = [...manifest.collections, ...manifest.links, ...manifest.files];
     // TODO - add support for translations
-    this.fuse = new Fuse(allResources as IResourceBase[], this.fuseOptions);
+    this.fuse = new Fuse(allResources, this.fuseOptions);
   }
 
   private subscribeToQueryParams() {
