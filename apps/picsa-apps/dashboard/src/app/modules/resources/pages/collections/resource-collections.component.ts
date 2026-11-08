@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../auth';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow } from '../../types';
 
@@ -43,6 +44,12 @@ export class ResourceCollectionsComponent implements OnInit {
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private deploymentService = inject(DeploymentDashboardService);
+
+  public activeCountry = computed(() => {
+    const deployment = this.deploymentService.activeDeployment();
+    return deployment?.label || deployment?.country_code?.toUpperCase() || '';
+  });
 
   public collections: IMergedCollection[] = [];
   public tableOptions: IDataTableOptions = {
@@ -94,17 +101,5 @@ export class ResourceCollectionsComponent implements OnInit {
       return b.modified_at > a.modified_at ? 1 : -1;
     }
     return (b.collection_parent || '') > (a.collection_parent || '') ? -1 : 1;
-  }
-
-  private getCollectionTree(collections: IResourceCollectionRow[]) {
-    const nodes = {};
-
-    const children = {};
-    for (const { collection_parent } of collections) {
-      if (collection_parent) {
-        if (!children[collection_parent]) children[collection_parent] = [];
-        children[collection_parent].push(collections);
-      }
-    }
   }
 }

@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
+import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { ResourceFileEditComponent } from './resource-file-edit.component';
 
 describe('ResourceFileEditComponent', () => {
@@ -10,6 +11,7 @@ describe('ResourceFileEditComponent', () => {
   let fixture: ComponentFixture<ResourceFileEditComponent>;
   let mockRoles: ReturnType<typeof signal<string[]>>;
   let mockUserId: ReturnType<typeof signal<string | undefined>>;
+  const mockDeployment = signal<any>({ country_code: 'mw', label: 'Malawi' });
 
   beforeEach(async () => {
     mockRoles = signal<string[]>([]);
@@ -20,9 +22,18 @@ describe('ResourceFileEditComponent', () => {
       hasRole: (role?: string) => (role ? mockRoles().includes(role) : true),
     };
 
+    const mockDeploymentService = {
+      activeDeployment: mockDeployment,
+      activeDeploymentCountry: () => mockDeployment()?.country_code,
+    };
+
     await TestBed.configureTestingModule({
       imports: [ResourceFileEditComponent],
-      providers: [provideRouter([]), { provide: DashboardAuthService, useValue: mockAuthService }],
+      providers: [
+        provideRouter([]),
+        { provide: DashboardAuthService, useValue: mockAuthService },
+        { provide: DeploymentDashboardService, useValue: mockDeploymentService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ResourceFileEditComponent);
@@ -56,5 +67,14 @@ describe('ResourceFileEditComponent', () => {
     mockRoles.set(['resources.admin', 'resources.editor']);
     mockUserId.set('other-user');
     expect(component.canEdit()).toBe(true);
+  });
+
+  it('should filter languagesAvailable strictly to the active deployment country and exclude global_en duplicate', () => {
+    // Default mock deployment is 'mw'
+    const languages = component.languagesAvailable();
+    expect(languages.length).toBeGreaterThan(0);
+    expect(languages.every((l) => l.country_code === 'mw')).toBe(true);
+    expect(languages.some((l) => l.id === 'global_en')).toBe(false);
+    expect(languages.some((l) => l.id === 'mw_en')).toBe(true);
   });
 });

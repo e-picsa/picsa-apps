@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -51,6 +51,12 @@ export class ResourceFilesComponent implements OnInit {
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private deploymentService = inject(DeploymentDashboardService);
+
+  public activeCountry = computed(() => {
+    const deployment = this.deploymentService.activeDeployment();
+    return deployment?.label || deployment?.country_code?.toUpperCase() || '';
+  });
 
   public resources = signal<IMergedResources[]>([]);
 
@@ -68,13 +74,11 @@ export class ResourceFilesComponent implements OnInit {
     },
   };
   constructor() {
-    const deploymentService = inject(DeploymentDashboardService);
-
     effect(() => {
       const resources = this.service.files();
-      const deployment = deploymentService.activeDeployment();
+      const deployment = this.deploymentService.activeDeployment();
       if (deployment) {
-        // filter for resources targetting same country or marked as global
+        // filter for resources targetting same country
         const deploymentResources = resources.filter((r) => this.filterDeploymentResource(r, deployment));
         const merged = this.getMergedResources(deploymentResources, deployment);
         const sorted = merged.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
@@ -93,7 +97,7 @@ export class ResourceFilesComponent implements OnInit {
   }
 
   private filterDeploymentResource(r: IResourceFileRow, deployment: IDeploymentRow) {
-    return r.country_code === 'global' || r.country_code === deployment.country_code;
+    return r.country_code === deployment.country_code;
   }
 
   /** */

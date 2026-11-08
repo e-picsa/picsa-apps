@@ -2,93 +2,50 @@
   <h2>{{ canEdit() ? (isCreate() ? 'Create Resource' : 'Edit Resource') : 'View Resource' }}</h2>
 
   <form [formGroup]="form">
-    <!-- <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start"> -->
-    <!-- TODO - allow populate non global resources -->
-    @for (item of [{ code: 'global', label: 'Global' }]; track $index) {
-      <!-- <mat-tab [label]="item.label">  -->
-      <div class="form-content">
-        <div style="display: flex; flex-wrap: wrap; gap: 2em">
-          <!-- External URL -->
-          @if (form.value.external_url; as external_url) {
-            <div style="flex: 1">
-              <label>External URL</label>
-              <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
-                <mat-icon>open_in_new</mat-icon>
-                View Resource
-              </a>
-            </div>
-          }
-
-          <!-- Storage file / External Url -->
-          @if (!form.value.external_url) {
-            <div>
-              <label>Resource</label>
-              @if (form.value.storage_file) {
-                <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
-                @if (canEdit()) {
-                  <button
-                    matIconButton
-                    class="file-remove"
-                    (click)="handleStorageFileSelected(undefined, 'storage_file')"
-                  >
-                    <mat-icon>close</mat-icon>
-                  </button>
-                }
-              } @else if (canEdit()) {
-                <picsa-supabase-upload
-                  [fileTypes]="allowedFileTypes"
-                  [fileDropHeight]="128"
-                  [autoUpload]="true"
-                  [storageBucketName]="storageBucketName()"
-                  storageFolderPath="resources"
-                  (uploadComplete)="handleUploadComplete($event, 'storage_file')"
-                ></picsa-supabase-upload>
-                <button
-                  matButton
-                  color="primary"
-                  supabaseStoragePicker
-                  [storageBucketName]="storageBucketName()"
-                  storageFolderPath="resources"
-                  (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
-                  style="margin-top: 4px"
-                >
-                  <mat-icon>perm_media</mat-icon>
-                  Select existing file
-                </button>
-              }
-            </div>
-          }
-          <!-- Cover Image -->
+    <div class="form-content">
+      <div style="display: flex; flex-wrap: wrap; gap: 2em">
+        <!-- External URL -->
+        @if (form.value.external_url; as external_url) {
           <div style="flex: 1">
-            <label>Cover Image</label>
-            @if (form.value.cover_image) {
-              <dashboard-storage-link
-                #storageLink
-                [id]="form.value.cover_image"
-                displayStyle="button"
-              ></dashboard-storage-link>
+            <label>External URL</label>
+            <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
+              <mat-icon>open_in_new</mat-icon>
+              View Resource
+            </a>
+          </div>
+        }
+
+        <!-- Storage file / External Url -->
+        @if (!form.value.external_url) {
+          <div>
+            <label>Resource</label>
+            @if (form.value.storage_file) {
+              <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
               @if (canEdit()) {
-                <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
+                <button
+                  matIconButton
+                  class="file-remove"
+                  (click)="handleStorageFileSelected(undefined, 'storage_file')"
+                >
                   <mat-icon>close</mat-icon>
                 </button>
               }
-              <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
             } @else if (canEdit()) {
               <picsa-supabase-upload
-                [fileTypes]="allowedCoverTypes"
+                [fileTypes]="allowedFileTypes"
                 [fileDropHeight]="128"
                 [autoUpload]="true"
                 [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources/covers"
-                (uploadComplete)="handleUploadComplete($event, 'cover_image')"
+                storageFolderPath="resources"
+                (uploadComplete)="handleUploadComplete($event, 'storage_file')"
               ></picsa-supabase-upload>
               <button
                 matButton
                 color="primary"
                 supabaseStoragePicker
                 [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources/covers"
-                (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
+                storageFolderPath="resources"
+                (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
                 style="margin-top: 4px"
               >
                 <mat-icon>perm_media</mat-icon>
@@ -96,31 +53,67 @@
               </button>
             }
           </div>
-        </div>
-        <!-- Title -->
-        <mat-form-field style="flex-basis: 100%">
-          <mat-label>Title</mat-label>
-          <input matInput formControlName="title" />
-        </mat-form-field>
-        <!-- Description -->
-        <mat-form-field style="flex-basis: 100%">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description"></textarea>
-        </mat-form-field>
-
-        <!-- Language -->
-        <mat-form-field>
-          <mat-label>Language</mat-label>
-          <mat-select formControlName="language_code">
-            @for (language of languagesAvailable(); track language.id) {
-              <mat-option [value]="language.id">{{ language.language_label }}</mat-option>
+        }
+        <!-- Cover Image -->
+        <div style="flex: 1">
+          <label>Cover Image</label>
+          @if (form.value.cover_image) {
+            <dashboard-storage-link
+              #storageLink
+              [id]="form.value.cover_image"
+              displayStyle="button"
+            ></dashboard-storage-link>
+            @if (canEdit()) {
+              <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
+                <mat-icon>close</mat-icon>
+              </button>
             }
-          </mat-select>
-        </mat-form-field>
+            <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
+          } @else if (canEdit()) {
+            <picsa-supabase-upload
+              [fileTypes]="allowedCoverTypes"
+              [fileDropHeight]="128"
+              [autoUpload]="true"
+              [storageBucketName]="storageBucketName()"
+              storageFolderPath="resources/covers"
+              (uploadComplete)="handleUploadComplete($event, 'cover_image')"
+            ></picsa-supabase-upload>
+            <button
+              matButton
+              color="primary"
+              supabaseStoragePicker
+              [storageBucketName]="storageBucketName()"
+              storageFolderPath="resources/covers"
+              (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
+              style="margin-top: 4px"
+            >
+              <mat-icon>perm_media</mat-icon>
+              Select existing file
+            </button>
+          }
+        </div>
       </div>
-      <!-- </mat-tab> -->
-    }
-    <!-- </mat-tab-group>  -->
+      <!-- Title -->
+      <mat-form-field style="flex-basis: 100%">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+      <!-- Description -->
+      <mat-form-field style="flex-basis: 100%">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+
+      <!-- Language -->
+      <mat-form-field>
+        <mat-label>Language</mat-label>
+        <mat-select formControlName="language_code">
+          @for (language of languagesAvailable(); track language.id) {
+            <mat-option [value]="language.id">{{ language.language_label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
     @if (canEdit()) {
       <div style="margin-top: 2rem; display: flex; align-items: center">
         <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">

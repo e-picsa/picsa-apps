@@ -1,19 +1,35 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
+import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import {
+  IUploadResult,
+  SupabaseStoragePickerDirective,
+  SupabaseUploadComponent,
+} from '@picsa/shared/services/core/supabase';
+import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
+import { DashboardMaterialModule } from '../../../../../material.module';
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
+import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
-import { IResourceLinkRow } from '../../../types';
+import { IResourceLinkInsert, IResourceLinkRow } from '../../../types';
+import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
 import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    DashboardMaterialModule,
+    DashboardStorageLinkComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    SupabaseStoragePickerDirective,
+    SupabaseUploadComponent,
+  ],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,13 +38,22 @@ export class ResourceLinkEditComponent implements OnInit {
   private service = inject(ResourcesDashboardService);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private deploymentService = inject(DeploymentDashboardService);
   private authService = inject(DashboardAuthService);
+  private notificationService = inject(PicsaNotificationService);
+  private dialog = inject(PicsaDialogService);
+
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
+  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
 
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
-    type: ['link'],
-    url: ['', PICSAFormValidators.isUrl],
+    title: ['', Validators.required],
+    description: [''],
+    type: ['web', Validators.required],
+    url: ['', [Validators.required, PICSAFormValidators.isUrl]],
+    cover_image: [''],
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
@@ -36,6 +61,10 @@ export class ResourceLinkEditComponent implements OnInit {
   public isCreate = this.permissions.isCreate;
   private resourceOwner = this.permissions.resourceOwner;
   public canEdit = this.permissions.canEdit;
+
+  public get formValidationMessage(): string {
+    return getResourceFormValidationMessage(this.form);
+  }
 
   async ngOnInit() {
     const { id } = this.route.snapshot.params;
@@ -51,30 +80,74 @@ export class ResourceLinkEditComponent implements OnInit {
     }
   }
 
-  // TODO - handle success/error messages
   public async saveResource() {
     if (!this.canEdit()) return;
-    const values = this.form.getRawValue() as any;
-    // Remove id entry if not populated
-    if (values.id === null) {
-      delete values.id;
+    this.form.disable();
+    const rawValues = this.form.getRawValue();
+    const values: IResourceLinkInsert = {
+      title: rawValues.title,
+      description: rawValues.description,
+      type: (rawValues.type || 'web') as IResourceLinkInsert['type'],
+      url: rawValues.url || '',
+      cover_image: rawValues.cover_image || null,
+      country_code: (rawValues.country_code || null) as IResourceLinkInsert['country_code'],
+      ...(rawValues.id ? { id: rawValues.id } : {}),
+    };
+    const { data, error } = await this.service.tables.links.upsert(values).select<'*', IResourceLinkRow>();
+    if (data && data.length > 0) {
+      this.notificationService.showSuccessNotification('Resource Link Saved');
+      await this.service.refresh();
+      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
     }
-    const { data, error } = await this.service.tables.files.upsert(values);
-    console.log({ data, error });
+    if (error) {
+      this.form.enable();
+      this.notificationService.showErrorNotification(error.message);
+    }
   }
 
-  private populateResource(resource: any) {
-    // this.resourceType = resource.type as any;
-    // console.log('populate resource', resource);
-    // switch (resource.type) {
-    //   case 'file':
-    //     this.fileForm.patchValue(resource);
-    //     break;
-    //   case 'link':
-    //     this.linkForm.patchValue(resource);
-    //     break;
-    //   default:
-    //     console.warn('Resource type not supported', resource.type);
-    // }
+  public async promptDelete() {
+    if (!this.canEdit()) return;
+    const dialog = await this.dialog.open('delete');
+    dialog.afterClosed().subscribe(async (confirmed) => {
+      if (confirmed) {
+        this.form.disable();
+        const currentLink = this.form.getRawValue() as unknown as IResourceLinkRow;
+        try {
+          await this.service.deleteResourceLink(currentLink);
+          this.notificationService.showSuccessNotification('Resource link deleted successfully');
+          this.router.navigate(['../'], { relativeTo: this.route });
+        } catch (err: unknown) {
+          this.form.enable();
+          const message = err instanceof Error ? err.message : 'Failed to delete resource link';
+          this.notificationService.showErrorNotification(message);
+        }
+      }
+    });
+  }
+
+  public handleStorageFileSelected(entry: IStorageEntry | undefined) {
+    const storagePath = entry ? `${entry.bucket_id}/${entry.name}` : '';
+    this.form.patchValue({ cover_image: storagePath });
+    this.form.markAsDirty();
+  }
+
+  public async handleUploadComplete(res: IUploadResult[]) {
+    if (res.length === 0) return;
+    const [{ meta }] = res;
+    const storagePath = `${meta.bucketName}/${meta.objectName}`;
+    this.form.patchValue({ cover_image: storagePath });
+    this.form.markAsDirty();
+  }
+
+  private populateResource(resource: IResourceLinkRow) {
+    this.form.patchValue({
+      id: resource.id,
+      title: resource.title || '',
+      description: resource.description || '',
+      type: resource.type || 'web',
+      url: resource.url || '',
+      cover_image: resource.cover_image || '',
+      country_code: resource.country_code || this.deploymentService.activeDeploymentCountry(),
+    });
   }
 }

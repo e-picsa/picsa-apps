@@ -1,12 +1,104 @@
 <div class="page-content">
-  <h2>{{ canEdit() ? (isCreate() ? 'Create Resource' : 'Edit Resource') : 'View Resource' }}</h2>
+  <h2>{{ canEdit() ? (isCreate() ? 'Create Resource Link' : 'Edit Resource Link') : 'View Resource Link' }}</h2>
+
   <form [formGroup]="form">
-    <mat-form-field>
-      <mat-label>URL</mat-label>
-      <input matInput type="text" formControlName="url" placeholder="https://..." />
-    </mat-form-field>
-    @if (form.controls.url.errors) {
-      <mat-error>Please enter a valid url</mat-error>
+    <div class="form-content" style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px">
+      <!-- Cover Image -->
+      <div>
+        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem">Cover Image</label>
+        @if (form.value.cover_image) {
+          <dashboard-storage-link
+            #storageLink
+            [id]="form.value.cover_image"
+            displayStyle="button"
+          ></dashboard-storage-link>
+          @if (canEdit()) {
+            <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          <img
+            class="cover-preview"
+            [src]="storageLink.entry()?.publicUrl"
+            style="margin-top: 8px; max-height: 120px; display: block; border-radius: 4px"
+          />
+        } @else if (canEdit()) {
+          <picsa-supabase-upload
+            [fileTypes]="allowedCoverTypes"
+            [fileDropHeight]="100"
+            [autoUpload]="true"
+            [storageBucketName]="storageBucketName()"
+            storageFolderPath="resources/covers"
+            (uploadComplete)="handleUploadComplete($event)"
+          ></picsa-supabase-upload>
+          <button
+            matButton
+            color="primary"
+            supabaseStoragePicker
+            [storageBucketName]="storageBucketName()"
+            storageFolderPath="resources/covers"
+            (storageFileSelected)="handleStorageFileSelected($event)"
+            style="margin-top: 4px"
+          >
+            <mat-icon>perm_media</mat-icon>
+            Select existing file
+          </button>
+        }
+      </div>
+
+      <!-- Title -->
+      <mat-form-field style="width: 100%">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+        @if (form.controls.title.errors?.['required']) {
+          <mat-error>Title is required</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- URL -->
+      <mat-form-field style="width: 100%">
+        <mat-label>URL</mat-label>
+        <input matInput type="text" formControlName="url" placeholder="https://..." />
+        @if (form.controls.url.errors) {
+          <mat-error>Please enter a valid URL</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Type -->
+      <mat-form-field style="width: 100%">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="web">Website</mat-option>
+          <mat-option value="app">Mobile App</mat-option>
+          <mat-option value="social">Social Media</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field style="width: 100%">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    @if (canEdit()) {
+      <div style="margin-top: 2rem; display: flex; align-items: center; max-width: 600px">
+        <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
+          <mat-icon>done</mat-icon>
+          Save Resource
+        </button>
+        @if (!form.valid || form.pristine) {
+          <span class="validation-message" style="margin-left: 1rem; color: #666; font-size: 0.875rem">{{
+            formValidationMessage
+          }}</span>
+        }
+        @if (form.valid && !isCreate()) {
+          <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
+            <mat-icon>delete</mat-icon>
+            Delete Resource
+          </button>
+        }
+      </div>
     }
   </form>
 </div>

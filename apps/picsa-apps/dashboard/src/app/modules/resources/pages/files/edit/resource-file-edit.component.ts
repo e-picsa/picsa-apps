@@ -10,14 +10,14 @@ import {
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
-import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
-import { IResourceFileRow } from '../../../types';
+import { IResourceFileInsert, IResourceFileRow } from '../../../types';
+import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
 import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
@@ -50,10 +50,7 @@ export class ResourceFileEditComponent implements OnInit {
   public languagesAvailable = computed(() => {
     const deployment = this.deploymentService.activeDeployment();
     if (deployment) {
-      const languages = LOCALES_DATA.filter(
-        (l) => l.country_code === deployment.country_code || l.country_code === 'global',
-      );
-      return languages;
+      return LOCALES_DATA.filter((l) => l.country_code === deployment.country_code);
     }
     return [];
   });
@@ -81,46 +78,7 @@ export class ResourceFileEditComponent implements OnInit {
   public canEdit = this.permissions.canEdit;
 
   public get formValidationMessage(): string {
-    if (this.form.pristine) {
-      return 'No changes to save';
-    }
-    if (this.form.valid) {
-      return '';
-    }
-
-    const errors: string[] = [];
-    const controls = this.form.controls;
-
-    Object.keys(controls).forEach((key) => {
-      // access the control safely although we know it exists from the keys
-      const control = this.form.get(key);
-      if (control?.errors?.['required']) {
-        // Convert snake_case to Capitalized Words
-        const fieldName = key.split('_').map(capitalise).join(' ');
-        errors.push(fieldName);
-      }
-    });
-
-    if (errors.length > 0) {
-      return `Missing required fields: ${errors.join(', ')}`;
-    }
-    return 'Form is invalid';
-  }
-
-  // HACK - temporary lookup to compare form values with db entry
-  private get mergedValue() {
-    const formValues = this.form.getRawValue();
-    const value: IResourceFileRow = {
-      created_at: '',
-      md5_checksum: '',
-      modified_at: '',
-      updated_at: '',
-      owner: '',
-      sort_order: 1,
-      ...formValues,
-      country_code: formValues.country_code as any,
-    };
-    return value;
+    return getResourceFormValidationMessage(this.form);
   }
 
   async ngOnInit() {
@@ -136,11 +94,21 @@ export class ResourceFileEditComponent implements OnInit {
   public async saveResource() {
     if (!this.canEdit()) return;
     this.form.disable();
-    const values = this.form.getRawValue() as any;
-    // Remove id entry if not populated
-    if (values.id === null) {
-      delete values.id;
-    }
+    const rawValues = this.form.getRawValue();
+    const values: IResourceFileInsert = {
+      title: rawValues.title,
+      description: rawValues.description,
+      language_code: rawValues.language_code || null,
+      storage_file: rawValues.storage_file || null,
+      cover_image: rawValues.cover_image || null,
+      external_url: rawValues.external_url || null,
+      filename: rawValues.filename || null,
+      mimetype: rawValues.mimetype || null,
+      size_kb: rawValues.size_kb ?? 0,
+      country_code: (rawValues.country_code ||
+        this.deploymentService.activeDeploymentCountry()) as IResourceFileInsert['country_code'],
+      ...(rawValues.id ? { id: rawValues.id } : {}),
+    };
     const { data, error } = await this.service.tables.files.upsert(values).select<'*', IResourceFileRow>();
     if (data && data.length > 0) {
       this.notificationService.showSuccessNotification('Resource Saved');
@@ -167,18 +135,16 @@ export class ResourceFileEditComponent implements OnInit {
     dialog.afterClosed().subscribe(async (v) => {
       if (v) {
         this.form.disable();
-        const res = await this.service.tables.files.delete().eq('id', this.form.value.id);
-        if (res.error) {
-          throw new Error(res.error.message);
-          this.form.enable();
-        } else {
-          this.notificationService.showSuccessNotification('Resource deleted successfully');
+        const currentResource = this.form.getRawValue() as unknown as IResourceFileRow;
+        try {
+          await this.service.deleteResourceFile(currentResource);
+          this.notificationService.showSuccessNotification('Resource and associated files deleted successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
-          // HACK - re-init service to populate list without deleted resource
-          // TODO - make more efficient
-          await this.service.refresh();
+        } catch (err: unknown) {
+          this.form.enable();
+          const message = err instanceof Error ? err.message : 'Failed to delete resource';
+          this.notificationService.showErrorNotification(message);
         }
-        //
       }
     });
   }
@@ -188,7 +154,12 @@ export class ResourceFileEditComponent implements OnInit {
     const resource = data?.[0];
     if (resource) {
       this.resourceOwner.set(resource.owner);
-      this.form.patchValue(resource);
+      const countryCode = resource.country_code || (this.deploymentService.activeDeploymentCountry() as string);
+      let language_code = resource.language_code;
+      if (language_code === 'global_en' || !language_code) {
+        language_code = `${countryCode}_en`;
+      }
+      this.form.patchValue({ ...resource, language_code });
     } else {
       // navigate back to list page if resource not found
       // TODO - show better message
