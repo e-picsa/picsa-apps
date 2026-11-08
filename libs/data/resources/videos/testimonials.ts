@@ -56,6 +56,15 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/Jackline%20Nkoma_TUM_360p.mp4',
       },
+      {
+        id: '',
+        // Reuse Malawi content for Zimbabwe until dedicated content produced
+        locale_codes: ['zw_en'],
+        resolution: '360p',
+        size_kb: 9890,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/Jackline%20Nkhoma_360p.mp4',
+      },
     ],
   },
 
@@ -77,6 +86,15 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         size_kb: 12570,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/Dani%20Chambwe_TUM_360p.mp4',
+      },
+      {
+        id: '',
+        // Reuse Malawi content for Zimbabwe until dedicated content produced
+        locale_codes: ['zw_en'],
+        resolution: '360p',
+        size_kb: 13300,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/Dani%20Chambwe_360p.mp4',
       },
     ],
   },
@@ -140,6 +158,15 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/John%20Tembo_TON_360p.mp4',
       },
+      {
+        id: '',
+        // Reuse Zambia content for Zimbabwe until dedicated content produced
+        locale_codes: ['zw_en'],
+        resolution: '360p',
+        size_kb: 20670,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/John%20Tembo_360p.mp4',
+      },
     ],
   },
   victoria_ngombe: {
@@ -200,6 +227,15 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         size_kb: 7710,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/Victoria%20Ngombe_TON_360p.mp4',
+      },
+      {
+        id: '',
+        // Reuse Zambia content for Zimbabwe until dedicated content produced
+        locale_codes: ['zw_en'],
+        resolution: '360p',
+        size_kb: 8600,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/Victoria%20Ngombe_360p.mp4',
       },
     ],
   },
