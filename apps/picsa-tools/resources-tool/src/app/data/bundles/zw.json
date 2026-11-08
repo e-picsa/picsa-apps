@@ -1,5 +1,101 @@
 {
-  "collections": [],
+  "collections": [
+    {
+      "id": "cropResources_zw",
+      "description": "Resources to help care for crops",
+      "title": "Crop, Pest & Disease",
+      "cover_image": "global/resources/covers/crops.svg",
+      "resource_collections": [],
+      "resource_files": null,
+      "resource_links": ["accessAg_zw", "plantwise_zw", "plantix_zw"],
+      "collection_parent": null,
+      "sort_order": 7,
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "genderCollection_zw",
+      "description": "Materials to help incorporate gender within extension services",
+      "title": "Gender",
+      "cover_image": "global/resources/covers/gender-equality.svg",
+      "resource_collections": [],
+      "resource_files": null,
+      "resource_links": ["womenInExtension_zw", "gfrasNelk_zw"],
+      "collection_parent": null,
+      "sort_order": 5,
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "weatherResources_zw",
+      "description": "Local forecasts and meteorological services",
+      "title": "Weather Resources",
+      "cover_image": "global/resources/covers/weather.svg",
+      "resource_collections": [],
+      "resource_files": null,
+      "resource_links": null,
+      "collection_parent": null,
+      "sort_order": 6,
+      "country_code": "zw",
+      "owner": null
+    }
+  ],
   "files": [],
-  "links": []
+  "links": [
+    {
+      "id": "accessAg_zw",
+      "description": "Agricultural training videos in local languages",
+      "cover_image": "global/resources/covers/access-ag.jpg",
+      "title": "Access Agriculture",
+      "sort_order": 1,
+      "type": "web",
+      "url": "https://www.accessagriculture.org",
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "gfrasNelk_zw",
+      "description": "Online learning modules",
+      "cover_image": "global/resources/covers/gras-nelk.jpg",
+      "title": "GRAFS - New Extensionist Learning Kit NELK",
+      "sort_order": 2,
+      "type": "web",
+      "url": "https://www.g-fras.org/en/knowledge/new-extensionist-learning-kit-nelk.html#thematic-1-gender-in-advisory-services",
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "plantix_zw",
+      "description": "Crop diagnosis and information",
+      "cover_image": "global/resources/covers/plantix.webp",
+      "title": "Plantix",
+      "sort_order": 1,
+      "type": "app",
+      "url": "https://play.google.com/store/apps/details?id=com.peat.GartenBank",
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "plantwise_zw",
+      "description": "Library of clear, practical and safe advice for tackling crop problems",
+      "cover_image": "global/resources/covers/plantwise.webp",
+      "title": "Plantwise Factsheets Library",
+      "sort_order": 1,
+      "type": "app",
+      "url": "https://play.google.com/store/apps/details?id=org.cabi.pfff",
+      "country_code": "zw",
+      "owner": null
+    },
+    {
+      "id": "womenInExtension_zw",
+      "description": "Access Agriculture Video",
+      "cover_image": "global/resources/covers/access-ag.jpg",
+      "title": "Women in Extension",
+      "sort_order": 1,
+      "type": "web",
+      "url": "https://www.accessagriculture.org/women-extension",
+      "country_code": "zw",
+      "owner": null
+    }
+  ]
 }

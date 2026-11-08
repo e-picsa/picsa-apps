@@ -38,7 +38,9 @@
   >
     <!-- cover image -->
     <ng-template #coverImageTemplate let-cover_image>
-      <img class="collection-cover" [src]="cover_image | storagePath" />
+      @if (cover_image) {
+        <img class="cover-image" [src]="cover_image | storagePath" />
+      }
     </ng-template>
 
     <!-- size in MB -->

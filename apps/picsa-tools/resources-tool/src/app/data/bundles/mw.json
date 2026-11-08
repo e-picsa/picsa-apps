@@ -14,6 +14,19 @@
       "owner": null
     },
     {
+      "id": "genderCollection_mw",
+      "description": "Materials to help incorporate gender within extension services",
+      "title": "Gender",
+      "cover_image": "global/resources/covers/gender-equality.svg",
+      "resource_collections": [],
+      "resource_files": null,
+      "resource_links": ["womenInExtension_mw", "gfrasNelk_mw"],
+      "collection_parent": null,
+      "sort_order": 5,
+      "country_code": "mw",
+      "owner": null
+    },
+    {
       "id": "weatherResources_mw",
       "description": "Local forecasts and meteorological services",
       "title": "Weather Resources",
@@ -31,9 +44,9 @@
     {
       "id": "232bf481-2a00-4dd4-ba41-c5cf56f1ff1e",
       "description": "Nyengo ya El-Nino ikudzayi",
-      "storage_file": null,
+      "storage_file": "mw/resources/Kukonzekera_Elnino_preparedness_brief-June_2026_Chichewa_1800.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/El nino_chichewa.PNG",
       "title": "Kukonzekera_Elnino_mwachidule_June_2026_Chichewa_1800",
       "language_code": "mw_ny",
       "country_code": "mw",
@@ -42,46 +55,46 @@
       "size_kb": 331,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": "9fc92f06-8c98-4c95-9f01-14a76e5e7898"
     },
     {
       "id": "29be07fe-cc1b-41c9-8689-26e6ec4718f0",
       "description": "SOURCE OF FOOD",
-      "storage_file": null,
+      "storage_file": "mw/resources/Guide to Maize Production _ Final @@ With Cover.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/Cover Image.jpg",
       "title": "MAIZE PRODUCTION",
-      "language_code": "global_en",
+      "language_code": "mw_en",
       "country_code": "mw",
       "sort_order": -1,
       "filename": "Guide to Maize Production _ Final @@ With Cover.pdf",
       "size_kb": 2376,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "726e18b4-cfcd-4fb8-afb2-391c29d0c019",
       "description": "",
-      "storage_file": null,
+      "storage_file": "mw/resources/FAW Mangement for maize.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/FAW image.jpg",
       "title": "Management of FAW in Maize ",
-      "language_code": "global_en",
+      "language_code": "mw_en",
       "country_code": "mw",
       "sort_order": -1,
       "filename": "FAW Mangement for maize.pdf",
       "size_kb": 2420,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "9c0dc5d2-2f6b-4ae5-8d0f-5c5149d659df",
       "description": "The summary of the coming El Nino Season",
-      "storage_file": null,
+      "storage_file": "mw/resources/elnino_preparedness_brief_-June_2026.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/El-Nino.PNG",
       "title": "Elnino_preparedness_brief_June_2026",
       "language_code": "mw_en",
       "country_code": "mw",
@@ -90,7 +103,7 @@
       "size_kb": 257,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": "9fc92f06-8c98-4c95-9f01-14a76e5e7898"
     },
     {
       "id": "bmtm",
@@ -99,37 +112,37 @@
       "external_url": "https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FBUSINESS%20MODELS%20TRAINING%20MANUAL.pdf?alt=media&token=e682f443-1163-4894-88a7-7ea9851512a8",
       "cover_image": "global/images/placeholder.svg",
       "title": "Business Models Training Manual",
-      "language_code": null,
+      "language_code": "mw_en",
       "country_code": "mw",
       "sort_order": 1,
       "filename": "BUSINESS MODELS TRAINING MANUAL.pdf",
       "size_kb": 1425,
       "mimetype": "application/pdf",
       "md5_checksum": "16fd9bf6d037d9b05607e562de090a82",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "cd7f0043-b6d7-4da3-8ad3-edaa36bb9da6",
       "description": "This resource provides detailed steps in understanding a seasonal forecast as presented by DCCMS",
-      "storage_file": null,
+      "storage_file": "mw/resources/Understanding a seasonal rainfall forecast.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/cover.jpg",
       "title": "Understanding a seasonal forecast",
-      "language_code": "global_en",
+      "language_code": "mw_en",
       "country_code": "mw",
       "sort_order": -1,
       "filename": "Understanding a seasonal rainfall forecast.pdf",
       "size_kb": 731,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "ea67ca5b-021e-4c4b-bde4-e512aa96970f",
       "description": "Strong El nino impacts",
-      "storage_file": null,
+      "storage_file": "mw/resources/El_Nino_Impacts_over_Malawi-30_May_2026.pdf",
       "external_url": "",
-      "cover_image": "global/images/placeholder.svg",
+      "cover_image": "mw/resources/covers/EL nino impacts.PNG",
       "title": "El_Nino_Impacts_over_Malawi-30_May_2026",
       "language_code": "mw_en",
       "country_code": "mw",
@@ -138,7 +151,7 @@
       "size_kb": 354,
       "mimetype": "application/pdf",
       "md5_checksum": null,
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": "9fc92f06-8c98-4c95-9f01-14a76e5e7898"
     },
     {
       "id": "gap",
@@ -147,14 +160,14 @@
       "external_url": "https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FGAP_2021.pdf?alt=media&token=4832ad76-cf14-490f-8fba-73bd5845d440",
       "cover_image": "global/images/placeholder.svg",
       "title": "Guide to Agriculture Production",
-      "language_code": null,
+      "language_code": "mw_en",
       "country_code": "mw",
       "sort_order": 1,
       "filename": "GAP_2021.pdf",
       "size_kb": 3646,
       "mimetype": "application/pdf",
       "md5_checksum": "ea0e86161b3eae185ff5bbce71975057",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     }
   ],
   "links": [
@@ -167,7 +180,7 @@
       "type": "web",
       "url": "https://www.accessagriculture.org",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "daes_v2",
@@ -178,7 +191,7 @@
       "type": "app",
       "url": "https://play.google.com/store/apps/details?id=com.zengonet.app",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "dccms_daily_forecast",
@@ -189,7 +202,7 @@
       "type": "web",
       "url": "https://www.metmalawi.gov.mw/dccms_weather.php",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "dccms_facebook",
@@ -200,7 +213,7 @@
       "type": "social",
       "url": "https://www.facebook.com/MALAWIWEATHERUPDATE",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "dccms_twitter",
@@ -211,7 +224,18 @@
       "type": "social",
       "url": "https://twitter.com/DccmsM",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
+    },
+    {
+      "id": "gfrasNelk_mw",
+      "description": "Online learning modules",
+      "cover_image": "global/resources/covers/gras-nelk.jpg",
+      "title": "GRAFS - New Extensionist Learning Kit NELK",
+      "sort_order": 2,
+      "type": "web",
+      "url": "https://www.g-fras.org/en/knowledge/new-extensionist-learning-kit-nelk.html#thematic-1-gender-in-advisory-services",
+      "country_code": "mw",
+      "owner": null
     },
     {
       "id": "mlimi",
@@ -222,7 +246,7 @@
       "type": "app",
       "url": "https://play.google.com/store/apps/details?id=org.farmradiomw.mlimi",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "plantix",
@@ -233,7 +257,7 @@
       "type": "app",
       "url": "https://play.google.com/store/apps/details?id=com.peat.GartenBank",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     },
     {
       "id": "plantwise",
@@ -244,7 +268,18 @@
       "type": "app",
       "url": "https://play.google.com/store/apps/details?id=org.cabi.pfff",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
+    },
+    {
+      "id": "womenInExtension_mw",
+      "description": "Access Agriculture Video",
+      "cover_image": "global/resources/covers/access-ag.jpg",
+      "title": "Women in Extension",
+      "sort_order": 1,
+      "type": "web",
+      "url": "https://www.accessagriculture.org/women-extension",
+      "country_code": "mw",
+      "owner": null
     },
     {
       "id": "zaulimi",
@@ -255,7 +290,7 @@
       "type": "app",
       "url": "https://play.google.com/store/apps/details?id=mw.glide.zaulimi",
       "country_code": "mw",
-      "owner": "00000000-0000-0000-0000-000000000000"
+      "owner": null
     }
   ]
 }

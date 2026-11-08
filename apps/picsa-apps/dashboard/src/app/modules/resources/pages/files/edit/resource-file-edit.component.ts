@@ -50,10 +50,7 @@ export class ResourceFileEditComponent implements OnInit {
   public languagesAvailable = computed(() => {
     const deployment = this.deploymentService.activeDeployment();
     if (deployment) {
-      const languages = LOCALES_DATA.filter(
-        (l) => l.country_code === deployment.country_code || l.country_code === 'global',
-      );
-      return languages;
+      return LOCALES_DATA.filter((l) => l.country_code === deployment.country_code);
     }
     return [];
   });
@@ -157,7 +154,12 @@ export class ResourceFileEditComponent implements OnInit {
     const resource = data?.[0];
     if (resource) {
       this.resourceOwner.set(resource.owner);
-      this.form.patchValue(resource);
+      const countryCode = resource.country_code || (this.deploymentService.activeDeploymentCountry() as string);
+      let language_code = resource.language_code;
+      if (language_code === 'global_en' || !language_code) {
+        language_code = `${countryCode}_en`;
+      }
+      this.form.patchValue({ ...resource, language_code });
     } else {
       // navigate back to list page if resource not found
       // TODO - show better message
