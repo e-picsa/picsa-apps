@@ -6,7 +6,13 @@ import { arrayToHashmap, arrayToHashmapArray } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { DashboardStorageService } from '../storage';
-import { IResourceCollectionRow, IResourceFileChildRow, IResourceFileRow, IResourceLinkRow } from './types';
+import {
+  ICountryCode,
+  IResourceCollectionRow,
+  IResourceFileChildRow,
+  IResourceFileRow,
+  IResourceLinkRow,
+} from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {
@@ -85,10 +91,12 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       links: [] as IResourceLinkRow[],
     };
     const promises = Object.entries(this.tables).map(async ([name, table]) => {
-      const { data, error } = await table
+      // Strictly scope all resources (collections, files, links, child files) to active deployment country
+      const query = table
         .select('*')
-        .in('country_code', [countryCode as any, 'global'])
+        .eq('country_code', countryCode as ICountryCode)
         .order('created_at');
+      const { data, error } = await query;
       if (error) {
         throw new Error(error.message);
       }
@@ -100,6 +108,57 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     this.files_child.set(serverData.files_child);
     this.collections.set(serverData.collections);
     this.links.set(serverData.links);
+  }
+
+  /**
+   * Delete a resource file and clean up underlying storage files from Supabase Storage.
+   */
+  public async deleteResourceFile(resource: IResourceFileRow) {
+    const filesToDelete: { bucket: string; path: string }[] = [];
+
+    if (resource.storage_file) {
+      const [bucket, ...rest] = resource.storage_file.split('/');
+      filesToDelete.push({ bucket, path: rest.join('/') });
+    }
+
+    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
+      const [bucket, ...rest] = resource.cover_image.split('/');
+      filesToDelete.push({ bucket, path: rest.join('/') });
+    }
+
+    for (const { bucket, path } of filesToDelete) {
+      try {
+        await this.supabaseService.storage.deleteFile(bucket, path);
+      } catch (err) {
+        console.warn(`[ResourcesDashboardService] Could not delete storage file ${bucket}/${path}:`, err);
+      }
+    }
+
+    const res = await this.tables.files.delete().eq('id', resource.id);
+    if (res.error) {
+      throw new Error(res.error.message);
+    }
+    await this.refresh();
+  }
+
+  /**
+   * Delete a resource link and clean up any uploaded cover image from Supabase Storage.
+   */
+  public async deleteResourceLink(resource: IResourceLinkRow) {
+    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
+      const [bucket, ...rest] = resource.cover_image.split('/');
+      try {
+        await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
+      } catch (err) {
+        console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
+      }
+    }
+
+    const res = await this.tables.links.delete().eq('id', resource.id);
+    if (res.error) {
+      throw new Error(res.error.message);
+    }
+    await this.refresh();
   }
 
   /** Iterate over all collections and create list of resource ids and the collection ids they are members of */

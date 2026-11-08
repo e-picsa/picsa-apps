@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../auth';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceLinkRow } from '../../types';
 
@@ -37,6 +38,12 @@ export class ResourceLinksComponent implements OnInit {
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private deploymentService = inject(DeploymentDashboardService);
+
+  public activeCountry = computed(() => {
+    const deployment = this.deploymentService.activeDeployment();
+    return deployment?.label || deployment?.country_code?.toUpperCase() || '';
+  });
 
   public links = signal<IResourceLinkRow[]>([]);
   public tableOptions: IDataTableOptions = {

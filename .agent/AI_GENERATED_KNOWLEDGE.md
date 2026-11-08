@@ -186,6 +186,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Route protection uses the functional `authRoleGuard` (`roleRequired` in `defineFeature`).
   - Template protection uses `AuthRoleRequiredDirective` whose selector is `[roleRequired]` (use `*roleRequired="'crop.editor'"`, **not** `*authRoleRequired`).
 - **Resources Ownership Rule**: `resources.editor` can create new resources and edit/delete **only** rows where `owner = auth.uid()`; `resources.admin` can edit/delete any resource in the deployment.
+- **Resources Architecture & App Sync**:
+  - The farmer mobile app (`apps/picsa-tools/resources-tool`) currently reads static bundled assets loaded into local RxDB collections (`resources_tool_collections`, `resources_tool_files`, `resources_tool_links`) via `populateHardcodedResources()`.
+  - There is currently no generic Supabase-to-mobile sync engine for `resource_*` tables (sync service `PicsaDatabaseSyncService` is single-direction push only for offline user data). Supabase resources tables exclusively power the dashboard and backend reference data.
+  - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
   - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
@@ -357,6 +361,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - `c3.generate()` invokes `config.onrendered` synchronously before returning the new chart instance.
 - Any wrapper component managing C3 lifecycle must ensure `onrendered` fires with the chart instance reference fully assigned to prevent downstream consumers from seeing `undefined`.
+
+---
+
+## 6. Resources & Storage Management
+
+### Physical Storage Cleanup on Resource Deletion
+
+- **Foreign Key Trap**: In Supabase, foreign keys between database tables (`resource_files`, `resource_links`) and `storage.objects` (or `public.storage_objects`) are typically configured with `ON DELETE SET NULL`. Deleting a database record does **NOT** cascade or remove the physical file from the Supabase Storage bucket.
+- **Physical Removal**: Services that manage files or cover images must explicitly remove physical assets using `this.supabaseService.storage.deleteFile(bucketId, objectPath)` (or `storage.from(bucket).remove([path])`) prior to or alongside table record deletion to prevent orphaned binary storage bloat.
+
+### Strict Country Scoping for Dashboard Resources
+
+- **No Global Resource Bleed**: Resources uploaded within country deployments must be strictly scoped to `country_code` (`.eq('country_code', countryCode)`). Avoid falling back to `'global'` for downloadable files or external links unless explicitly designed as universal cross-border fixtures, ensuring clear tenant isolation and accurate deployment context badges.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 

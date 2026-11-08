@@ -1,12 +1,17 @@
 <div class="page-content">
-  <div style="display: flex; align-items: center">
-    <h2>File Resources</h2>
+  <div style="display: flex; align-items: center; gap: 0.75rem">
+    <h2 style="margin: 0">File Resources</h2>
+    @if (activeCountry()) {
+      <mat-chip-set>
+        <mat-chip>{{ activeCountry() }}</mat-chip>
+      </mat-chip-set>
+    }
     <button
       *roleRequired="'resources.editor'"
       matButton="outlined"
       color="primary"
       routerLink="create"
-      style="margin-top: 1rem; margin-left: auto"
+      style="margin-left: auto"
     >
       <mat-icon>add</mat-icon>
       Add Resource
