@@ -25,8 +25,8 @@ export class ResourceItemLinkComponent {
     const { url, subtype } = this.resource();
     // ignore internal links
     if (subtype === 'internal') return '';
-    // add play store url prefix
-    if (subtype === 'play_store') return `https://play.google.com/store/apps/details?id=${url}`;
+    // resolve play store url
+    if (subtype === 'play_store') return this.resolvePlayStoreUrl(url);
     return url as string;
   });
 
@@ -78,9 +78,16 @@ export class ResourceItemLinkComponent {
     return this.router.navigateByUrl(url);
   }
 
-  /** Resource url only stores appId so update for fully qualified play path and open with default browser */
-  private goToApp(appId: string) {
-    const url = `https://play.google.com/store/apps/details?id=${appId}`;
+  public resolvePlayStoreUrl(appIdOrUrl: string): string {
+    if (appIdOrUrl.startsWith('http://') || appIdOrUrl.startsWith('https://')) {
+      return appIdOrUrl;
+    }
+    return `https://play.google.com/store/apps/details?id=${appIdOrUrl}`;
+  }
+
+  /** Open play store url with default browser */
+  private goToApp(appIdOrUrl: string) {
+    const url = this.resolvePlayStoreUrl(appIdOrUrl);
     return Browser.open({ url });
   }
 

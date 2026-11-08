@@ -44,4 +44,13 @@ describe('ResourceItemLinkComponent', () => {
     expect(addSvgIconSpy).toHaveBeenCalledWith('resources_tool', 'play_store', expect.anything());
     expect(component.shareUrl()).toBe('https://play.google.com/store/apps/details?id=io.picsa.extension');
   });
+
+  it('should not double-prefix when url is already a full Play Store URL', () => {
+    fixture.componentRef.setInput('resource', {
+      ...mockResource,
+      url: 'https://play.google.com/store/apps/details?id=com.peat.GartenBank',
+    });
+    fixture.detectChanges();
+    expect(component.shareUrl()).toBe('https://play.google.com/store/apps/details?id=com.peat.GartenBank');
+  });
 });

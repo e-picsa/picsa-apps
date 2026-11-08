@@ -12,11 +12,38 @@
           {{ 'Manage Downloads' | translate }}
         </button>
       </div>
-      <div class="list-container">
-        @for (collection of collections(); track collection.id) {
-          <resource-item-collection [collection]="collection"> </resource-item-collection>
-        }
-      </div>
+
+      @if (collections().length > 0) {
+        <div class="list-container">
+          @for (collection of collections(); track collection.id) {
+            <resource-item-collection [collection]="collection"> </resource-item-collection>
+          }
+        </div>
+      }
+
+      <!-- Unassigned Files -->
+      @if (unassignedFiles().length > 0) {
+        <div style="margin-top: 2.5rem">
+          <h2 style="font-size: 20px; margin-bottom: 1rem">{{ 'Additional Files' | translate }}</h2>
+          <div class="list-container">
+            @for (resource of unassignedFiles(); track resource.id) {
+              <resource-item-file [resource]="resource" style="margin-bottom: 8px"> </resource-item-file>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Unassigned Links -->
+      @if (unassignedLinks().length > 0) {
+        <div style="margin-top: 2.5rem">
+          <h2 style="font-size: 20px; margin-bottom: 1rem">{{ 'Additional Links' | translate }}</h2>
+          <div class="list-container">
+            @for (resource of unassignedLinks(); track resource.id) {
+              <resource-item-link [resource]="resource" style="margin-bottom: 8px"> </resource-item-link>
+            }
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

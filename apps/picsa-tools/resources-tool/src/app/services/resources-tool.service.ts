@@ -61,11 +61,43 @@ export class ResourcesToolService extends PicsaAsyncService {
     );
   });
 
-  /** Active country top-level collections (sorted by priority descending) */
+  /** Helper to determine if a collection contains any visible child collections, files, or links */
+  public isCollectionNonEmpty(col: schemas.IResourceCollection): boolean {
+    const { collections, files, links } = col.childResources;
+    return (collections?.length ?? 0) > 0 || (files?.length ?? 0) > 0 || (links?.length ?? 0) > 0;
+  }
+
+  /** Active country top-level collections (hiding empty collections for the deployment) */
   public topLevelCollections = computed<schemas.IResourceCollection[]>(() => {
     return this.activeManifest()
-      .collections.filter((c) => !c.parentCollection)
+      .collections.filter((c) => !c.parentCollection && this.isCollectionNonEmpty(c))
       .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  });
+
+  /** Unassigned resources (files and links not assigned to any collection in the active manifest) */
+  public unassignedResources = computed<{ files: schemas.IResourceFile[]; links: schemas.IResourceLink[] }>(() => {
+    const manifest = this.activeManifest();
+    const assignedFileIds = new Set<string>();
+    const assignedLinkIds = new Set<string>();
+
+    for (const col of manifest.collections) {
+      for (const fileId of col.childResources?.files || []) {
+        assignedFileIds.add(fileId);
+      }
+      for (const linkId of col.childResources?.links || []) {
+        assignedLinkIds.add(linkId);
+      }
+    }
+
+    const files = manifest.files
+      .filter((f) => !assignedFileIds.has(f.id))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    const links = manifest.links
+      .filter((l) => !assignedLinkIds.has(l.id))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    return { files, links };
   });
 
   /** Retrieve a collection by ID across active country manifest or fallback to any known country bundle */

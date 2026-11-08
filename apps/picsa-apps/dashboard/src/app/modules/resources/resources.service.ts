@@ -121,45 +121,12 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       throw new Error(res.error.message);
     }
 
-    const filesToDelete: { bucket: string; path: string }[] = [];
-
+    // Database row deleted first; now safely clean up storage assets if unreferenced
     if (resource.storage_file) {
-      const [bucket, ...rest] = resource.storage_file.split('/');
-      // Never delete assets located in the global bucket or root placeholder
-      if (bucket !== 'global') {
-        const { count, error } = await this.tables.files
-          .select('id', { count: 'exact', head: true })
-          .neq('id', resource.id)
-          .eq('storage_file', resource.storage_file);
-        if (!error && (count ?? 0) === 0) {
-          filesToDelete.push({ bucket, path: rest.join('/') });
-        }
-      }
+      await this.deleteStorageFileIfUnreferenced(resource.storage_file);
     }
-
-    if (resource.cover_image && !resource.cover_image.startsWith('global/')) {
-      const [bucket, ...rest] = resource.cover_image.split('/');
-      if (bucket !== 'global') {
-        const [filesRes, linksRes] = await Promise.all([
-          this.tables.files
-            .select('id', { count: 'exact', head: true })
-            .neq('id', resource.id)
-            .eq('cover_image', resource.cover_image),
-          this.tables.links.select('id', { count: 'exact', head: true }).eq('cover_image', resource.cover_image),
-        ]);
-        const sharedCount = (filesRes.count ?? 0) + (linksRes.count ?? 0);
-        if (sharedCount === 0) {
-          filesToDelete.push({ bucket, path: rest.join('/') });
-        }
-      }
-    }
-
-    for (const { bucket, path } of filesToDelete) {
-      try {
-        await this.supabaseService.storage.deleteFile(bucket, path);
-      } catch (err) {
-        console.warn(`[ResourcesDashboardService] Could not delete storage file ${bucket}/${path}:`, err);
-      }
+    if (resource.cover_image) {
+      await this.deleteCoverIfUnreferenced(resource.cover_image);
     }
 
     await this.refresh();
@@ -175,28 +142,54 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       throw new Error(res.error.message);
     }
 
-    if (resource.cover_image && !resource.cover_image.startsWith('global/')) {
-      const [bucket, ...rest] = resource.cover_image.split('/');
-      if (bucket !== 'global') {
-        const [linksRes, filesRes] = await Promise.all([
-          this.tables.links
-            .select('id', { count: 'exact', head: true })
-            .neq('id', resource.id)
-            .eq('cover_image', resource.cover_image),
-          this.tables.files.select('id', { count: 'exact', head: true }).eq('cover_image', resource.cover_image),
-        ]);
-        const sharedCount = (linksRes.count ?? 0) + (filesRes.count ?? 0);
-        if (sharedCount === 0) {
-          try {
-            await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
-          } catch (err) {
-            console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
-          }
-        }
-      }
+    if (resource.cover_image) {
+      await this.deleteCoverIfUnreferenced(resource.cover_image);
     }
 
     await this.refresh();
+  }
+
+  /** Delete a storage file only if no other resource files reference it and it is not in the global bucket */
+  private async deleteStorageFileIfUnreferenced(storageFile: string) {
+    const [bucket, ...rest] = storageFile.split('/');
+    if (bucket === 'global') return;
+
+    const { count, error } = await this.tables.files
+      .select('id', { count: 'exact', head: true })
+      .eq('storage_file', storageFile);
+
+    // If query failed or references remain, preserve the storage object
+    if (error || (count ?? 0) > 0) return;
+
+    try {
+      await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
+    } catch (err) {
+      console.warn(`[ResourcesDashboardService] Could not delete storage file ${storageFile}:`, err);
+    }
+  }
+
+  /** Delete a cover image only if no files, links, or collections reference it and it is not in the global bucket */
+  private async deleteCoverIfUnreferenced(coverImage: string) {
+    if (coverImage.startsWith('global/')) return;
+    const [bucket, ...rest] = coverImage.split('/');
+    if (bucket === 'global') return;
+
+    const [filesRes, linksRes, collectionsRes] = await Promise.all([
+      this.tables.files.select('id', { count: 'exact', head: true }).eq('cover_image', coverImage),
+      this.tables.links.select('id', { count: 'exact', head: true }).eq('cover_image', coverImage),
+      this.tables.collections.select('id', { count: 'exact', head: true }).eq('cover_image', coverImage),
+    ]);
+
+    // If any count query failed or any references remain, preserve the storage object
+    if (filesRes.error || linksRes.error || collectionsRes.error) return;
+    const totalRefs = (filesRes.count ?? 0) + (linksRes.count ?? 0) + (collectionsRes.count ?? 0);
+    if (totalRefs > 0) return;
+
+    try {
+      await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
+    } catch (err) {
+      console.warn(`[ResourcesDashboardService] Could not delete storage cover ${coverImage}:`, err);
+    }
   }
 
   /** Iterate over all collections and create list of resource ids and the collection ids they are members of */

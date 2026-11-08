@@ -1,3 +1,4 @@
+import type { ICountryCode, ILocaleCode } from '@picsa/data/deployments';
 import type { Database } from '@picsa/server-types';
 
 import type { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
@@ -74,7 +75,7 @@ export function mapBundleCollectionToApp(row: IResourceCollectionBundleRow): IRe
       image: resolveCoverImage(row.cover_image),
       imageFit: 'contain',
     },
-    filter: row.country_code ? { countries: [row.country_code as any] } : undefined,
+    filter: row.country_code ? { countries: [row.country_code as ICountryCode] } : undefined,
     childResources: {
       collections: (row.resource_collections as string[]) || [],
       files: (row.resource_files as string[]) || [],
@@ -96,7 +97,7 @@ export function mapBundleLinkToApp(row: IResourceLinkBundleRow): IResourceLink {
       image: resolveCoverImage(row.cover_image),
       imageFit: 'contain',
     },
-    filter: row.country_code ? { countries: [row.country_code as any] } : undefined,
+    filter: row.country_code ? { countries: [row.country_code as ICountryCode] } : undefined,
   };
 }
 
@@ -108,8 +109,8 @@ export function mapBundleFileToApp(row: IResourceFileBundleRow): IResourceFile {
     title: row.title || '',
     description: row.description || '',
     filename: row.filename || `${row.id}.pdf`,
-    language: (row.language_code as any) || undefined,
-    mimetype: (row.mimetype as any) || 'application/pdf',
+    language: (row.language_code as ILocaleCode) || undefined,
+    mimetype: (row.mimetype as IResourceFile['mimetype']) || 'application/pdf',
     size_kb: row.size_kb || 0,
     md5Checksum: row.md5_checksum || '',
     priority: row.sort_order ?? 1,
@@ -118,7 +119,7 @@ export function mapBundleFileToApp(row: IResourceFileBundleRow): IResourceFile {
       image: resolveCoverImage(row.cover_image),
       imageFit: 'contain',
     },
-    filter: row.country_code ? { countries: [row.country_code as any] } : undefined,
+    filter: row.country_code ? { countries: [row.country_code as ICountryCode] } : undefined,
   };
 }
 
