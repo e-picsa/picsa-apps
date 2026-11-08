@@ -15,7 +15,12 @@
         (click)="handleFileLinkClick()"
         class="file-card-link"
       >
-        <div card-action class="file-action-container" (click)="$event.stopImmediatePropagation()">
+        <div
+          card-action
+          class="file-action-container"
+          [class.is-downloaded]="dl.downloadStatus() === 'complete'"
+          (click)="handleActionClick($event, dl.downloadStatus())"
+        >
           <resource-download
             #dl
             [resource]="resource()"

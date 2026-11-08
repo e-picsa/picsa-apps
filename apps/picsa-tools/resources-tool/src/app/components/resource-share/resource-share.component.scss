@@ -1,3 +1,24 @@
 :host {
   display: block;
 }
+
+.share-button {
+  width: 32px;
+  height: 32px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  &:hover {
+    color: var(--color-primary, #0284c7);
+    background: rgba(0, 0, 0, 0.05);
+  }
+}

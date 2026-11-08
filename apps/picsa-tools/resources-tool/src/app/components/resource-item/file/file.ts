@@ -77,6 +77,12 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
     }
   }
 
+  public handleActionClick(e: Event, status?: string) {
+    if (status !== 'complete') {
+      e.stopImmediatePropagation();
+    }
+  }
+
   public async handleDownloadStatusChange(dl: ResourceDownloadComponent) {
     if (dl.downloadStatus() === 'complete') {
       const uri = await dl.uri(false);
