@@ -10,7 +10,6 @@ import {
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
-import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
@@ -18,6 +17,7 @@ import { DeploymentDashboardService } from '../../../../deployment/deployment.se
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceLinkInsert, IResourceLinkRow } from '../../../types';
+import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
 import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
 @Component({
@@ -63,28 +63,7 @@ export class ResourceLinkEditComponent implements OnInit {
   public canEdit = this.permissions.canEdit;
 
   public get formValidationMessage(): string {
-    if (this.form.pristine) {
-      return 'No changes to save';
-    }
-    if (this.form.valid) {
-      return '';
-    }
-
-    const errors: string[] = [];
-    const controls = this.form.controls;
-
-    Object.keys(controls).forEach((key) => {
-      const control = this.form.get(key);
-      if (control?.errors?.['required']) {
-        const fieldName = key.split('_').map(capitalise).join(' ');
-        errors.push(fieldName);
-      }
-    });
-
-    if (errors.length > 0) {
-      return `Missing required fields: ${errors.join(', ')}`;
-    }
-    return 'Form is invalid';
+    return getResourceFormValidationMessage(this.form);
   }
 
   async ngOnInit() {

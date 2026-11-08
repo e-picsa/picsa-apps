@@ -112,18 +112,33 @@ export class ResourcesDashboardService extends PicsaAsyncService {
 
   /**
    * Delete a resource file and clean up underlying storage files from Supabase Storage.
+   * Deletes database row first to prevent orphaned records if RLS/DB fails, and guards
+   * against deleting storage assets shared with other resources.
    */
   public async deleteResourceFile(resource: IResourceFileRow) {
+    const res = await this.tables.files.delete().eq('id', resource.id);
+    if (res.error) {
+      throw new Error(res.error.message);
+    }
+
     const filesToDelete: { bucket: string; path: string }[] = [];
 
     if (resource.storage_file) {
-      const [bucket, ...rest] = resource.storage_file.split('/');
-      filesToDelete.push({ bucket, path: rest.join('/') });
+      const isShared = this.files().some((f) => f.id !== resource.id && f.storage_file === resource.storage_file);
+      if (!isShared) {
+        const [bucket, ...rest] = resource.storage_file.split('/');
+        filesToDelete.push({ bucket, path: rest.join('/') });
+      }
     }
 
     if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
-      const [bucket, ...rest] = resource.cover_image.split('/');
-      filesToDelete.push({ bucket, path: rest.join('/') });
+      const isCoverShared =
+        this.files().some((f) => f.id !== resource.id && f.cover_image === resource.cover_image) ||
+        this.links().some((l) => l.cover_image === resource.cover_image);
+      if (!isCoverShared) {
+        const [bucket, ...rest] = resource.cover_image.split('/');
+        filesToDelete.push({ bucket, path: rest.join('/') });
+      }
     }
 
     for (const { bucket, path } of filesToDelete) {
@@ -134,30 +149,33 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       }
     }
 
-    const res = await this.tables.files.delete().eq('id', resource.id);
-    if (res.error) {
-      throw new Error(res.error.message);
-    }
     await this.refresh();
   }
 
   /**
    * Delete a resource link and clean up any uploaded cover image from Supabase Storage.
+   * Deletes database row first and verifies the cover image is not shared by other resources.
    */
   public async deleteResourceLink(resource: IResourceLinkRow) {
-    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
-      const [bucket, ...rest] = resource.cover_image.split('/');
-      try {
-        await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
-      } catch (err) {
-        console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
-      }
-    }
-
     const res = await this.tables.links.delete().eq('id', resource.id);
     if (res.error) {
       throw new Error(res.error.message);
     }
+
+    if (resource.cover_image && !resource.cover_image.startsWith('global/images/placeholder')) {
+      const isCoverShared =
+        this.links().some((l) => l.id !== resource.id && l.cover_image === resource.cover_image) ||
+        this.files().some((f) => f.cover_image === resource.cover_image);
+      if (!isCoverShared) {
+        const [bucket, ...rest] = resource.cover_image.split('/');
+        try {
+          await this.supabaseService.storage.deleteFile(bucket, rest.join('/'));
+        } catch (err) {
+          console.warn(`[ResourcesDashboardService] Could not delete storage cover ${resource.cover_image}:`, err);
+        }
+      }
+    }
+
     await this.refresh();
   }
 
