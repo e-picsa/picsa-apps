@@ -1,4 +1,8 @@
-import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
+import {
+  PICSA_FARMER_VIDEOS_HASHMAP,
+  PICSA_INTRO_VIDEOS_HASHMAP,
+  PICSA_VIDEO_TESTIMONIAL_DATA,
+} from '@picsa/data/resources';
 
 import { getRankedChildVideos, hasVideosForUser } from './step-video.utils';
 
@@ -6,6 +10,7 @@ describe('step-video.utils', () => {
   // El Niño is currently Zambia-only, RAM is available for all countries
   const elNino = PICSA_FARMER_VIDEOS_HASHMAP.el_nino;
   const ram = PICSA_FARMER_VIDEOS_HASHMAP.ram;
+  const intro = PICSA_INTRO_VIDEOS_HASHMAP.intro;
 
   describe('getRankedChildVideos', () => {
     it('ranks the matching country/language variant first', () => {
@@ -34,6 +39,25 @@ describe('step-video.utils', () => {
 
     it('is true when any video in a playlist matches the user', () => {
       expect(hasVideosForUser([elNino, ram], 'mw', 'ny')).toBe(true);
+    });
+  });
+
+  describe('Zimbabwe fallback content (reused Zambia/Malawi videos)', () => {
+    it('provides the Zambia intro video to Zimbabwe users', () => {
+      const ranked = getRankedChildVideos(intro, 'zw', 'en');
+      expect(ranked.length).toBeGreaterThan(0);
+      expect(ranked[0].locale_codes[0]).toBe('zw_en');
+    });
+
+    it('provides testimonials from both Zambia and Malawi to Zimbabwe users', () => {
+      for (const testimonial of PICSA_VIDEO_TESTIMONIAL_DATA) {
+        expect(hasVideosForUser([testimonial], 'zw', 'en')).toBe(true);
+      }
+    });
+
+    it('provides fallback content to Shona and Ndebele speakers', () => {
+      expect(hasVideosForUser([intro], 'zw', 'sn')).toBe(true);
+      expect(hasVideosForUser(PICSA_VIDEO_TESTIMONIAL_DATA, 'zw', 'nd')).toBe(true);
     });
   });
 });
