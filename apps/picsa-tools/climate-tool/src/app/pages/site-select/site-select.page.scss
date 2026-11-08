@@ -30,3 +30,7 @@
     }
   }
 }
+
+.map-floating-station {
+  bottom: calc(1rem + var(--safe-area-bottom));
+}

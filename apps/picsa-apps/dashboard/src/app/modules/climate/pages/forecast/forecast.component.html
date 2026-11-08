@@ -10,7 +10,7 @@
       (click)="addForecast()"
     >
       <mat-icon>add</mat-icon>
-      <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
+      <span>Add Forecast</span>
     </button>
     <picsa-refresh-spinner
       *roleRequired="'climate.editor'"
@@ -19,18 +19,20 @@
       (click)="handleRefreshClick()"
     ></picsa-refresh-spinner>
   </div>
-  <mat-tab-group #tabGroup (selectedIndexChange)="handleTabChange($event)">
-    @for (tab of forecastTabs; track tab.type) {
-      <mat-tab [label]="tab.label">
-        <picsa-data-table
-          [data]="tab.data()"
-          [options]="tableOptions()"
-          [valueTemplates]="{ created_at, storage_file, language_code }"
-        >
-        </picsa-data-table>
-      </mat-tab>
+  <dashboard-climate-forecast-overview [rows]="forecasts()" [refDate]="apiStartDate()" />
+  <mat-chip-listbox class="mb-2">
+    @for (option of filterOptions; track option.value) {
+      <mat-chip-option [selected]="activeFilter() === option.value" (click)="activeFilter.set(option.value)">
+        {{ option.label }}
+      </mat-chip-option>
     }
-  </mat-tab-group>
+  </mat-chip-listbox>
+  <picsa-data-table
+    [data]="filteredForecasts()"
+    [options]="tableOptions()"
+    [valueTemplates]="{ created_at, storage_file, language_code }"
+  >
+  </picsa-data-table>
 </div>
 
 <!-- Table templates -->

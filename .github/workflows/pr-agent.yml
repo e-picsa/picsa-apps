@@ -79,7 +79,7 @@ jobs:
       # continue-on-error lets the next step write a job summary before
       # the run is marked failed.
       - name: PR Agent Action
-        uses: the-pr-agent/pr-agent@1d01f24f455bb879c1d9c557ad7de3d72dcc7975 # v0.46.0
+        uses: the-pr-agent/pr-agent@e673a02076ce09a4726c3d0c3cc85780e59ca52b # v0.50.0
         id: pragent
         continue-on-error: true
         env:

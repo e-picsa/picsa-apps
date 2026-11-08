@@ -136,7 +136,8 @@ export class DeploymentUserPermissionsComponent implements OnInit {
     }
   }
 
-  public async addUser(user: IAuthUser) {
+  public async addUser(user: Pick<IAuthUser, 'id'>, shouldRefresh = true) {
+    // NOTE - default roles assigned server-side (see dashboard/admin/add-user)
     const entry: Database['public']['Tables']['user_roles']['Insert'] = {
       deployment_id: this.deploymentId,
       user_id: user.id,
@@ -144,19 +145,20 @@ export class DeploymentUserPermissionsComponent implements OnInit {
     await this.supabase.invokeFunction<any>(`dashboard/admin/add-user`, {
       body: entry,
     });
-    this.refreshData();
+    if (shouldRefresh) {
+      this.refreshData();
+    }
   }
 
   public async approveRequest(request: IAccessRequest, responseMessage?: string) {
     try {
+      // Add user first so a failed insert leaves the request pending (retryable).
+      // Only deployments.admin can reach this page (route guard + RLS + add-user
+      // function check), and that role implies all others, so the default
+      // resources.editor/translations.editor assignment cannot fail on permissions.
+      // Skip intermediate refresh - single refresh below covers both writes.
+      await this.addUser({ id: request.user_id }, false);
       await this.service.updateAccessRequestStatus(request.id, 'approved', responseMessage);
-      const entry: Database['public']['Tables']['user_roles']['Insert'] = {
-        deployment_id: this.deploymentId,
-        user_id: request.user_id,
-      };
-      await this.supabase.invokeFunction<any>(`dashboard/admin/add-user`, {
-        body: entry,
-      });
       this.refreshData();
     } catch (err) {
       console.error('Failed to approve request:', err);

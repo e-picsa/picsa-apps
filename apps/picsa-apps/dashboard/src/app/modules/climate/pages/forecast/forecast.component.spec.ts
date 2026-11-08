@@ -44,4 +44,9 @@ describe('ClimateForecastPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('renders a filter chip for each forecast type', () => {
+    const chips = fixture.nativeElement.querySelectorAll('mat-chip-option');
+    expect(chips.length).toBe(5);
+  });
 });

@@ -4,11 +4,15 @@ import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import { hasAuthRole } from '../../_shared/auth.ts';
 import type { AppRole } from '../../../types/index.ts';
 
-/** List all available authentication users */
+/** Add user to deployment, defaulting to resource and translation edit permissions */
 export const addUser = async (req: Request, params: { user_id: string; deployment_id: string; roles?: AppRole[] }) => {
   const adminClient = getServiceRoleClient();
 
-  const { user_id, deployment_id, roles = [] } = params;
+  const { user_id, deployment_id } = params;
+  // Default new users to resource and translation edit permissions,
+  // as admins almost always add these manually afterwards
+  const DEFAULT_NEW_USER_ROLES: AppRole[] = ['resources.editor', 'translations.editor'];
+  const roles = params.roles && params.roles.length > 0 ? params.roles : DEFAULT_NEW_USER_ROLES;
 
   // Validate that the caller has the roles they are trying to assign
   for (const role of roles) {

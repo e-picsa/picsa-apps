@@ -1,8 +1,9 @@
-<div class="h-full bg-[white]">
+<div class="flex flex-1 flex-col min-h-0 h-full bg-[white]">
   @if (serviceReady()) {
     @if (isCompatible()) {
       <!-- PDF Viewer -->
       <ngx-extended-pdf-viewer
+        class="flex flex-1 flex-col min-h-0 h-full"
         [src]="src"
         [page]="page ? page : 1"
         [height]="'100%'"

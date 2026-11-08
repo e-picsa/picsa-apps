@@ -12,7 +12,8 @@ import { ForecastType, IForecastInsert } from '../../../types';
 
 export type IForecastDialogData = {
   country_code: CountryCodeLegacy;
-  forecast_type: ForecastType;
+  /** Initial type; the form lets editors pick seasonal or downscaled */
+  forecast_type?: ForecastType;
 };
 // id will be populated on upload, location is deprecated (use downscaled_location)
 type ForecastFormValue = Omit<IForecastInsert, 'id' | 'location'>;
@@ -59,7 +60,10 @@ export class ForecastFormComponent {
   private pendingFileUpload = signal<FileDropFile | undefined>(undefined);
 
   public countryCode = this.initialValues.country_code;
-  public forecastType = this.initialValues.forecast_type;
+  /** Manual adds are limited to seasonal/downscaled (daily/weekly come from the api sync) */
+  public forecastType = signal<'seasonal' | 'downscaled'>(
+    this.initialValues.forecast_type === 'downscaled' ? 'downscaled' : 'seasonal',
+  );
 
   public languageOptions = computed(() =>
     LOCALES_DATA.filter((v) => v.country_code === this.initialValues.country_code),
@@ -93,8 +97,20 @@ export class ForecastFormComponent {
   }
 
   constructor() {
-    this.setLocationValidators(this.forecastType);
     this.form.patchValue(this.initialValues);
+
+    // Keep validators, stale values and the (disabled) type control in sync
+    // whenever the picked type changes
+    effect(() => {
+      const forecastType = this.forecastType();
+      this.setLocationValidators(forecastType);
+      if (this.form.controls.forecast_type.value !== forecastType) {
+        this.form.controls.forecast_type.patchValue(forecastType);
+      }
+      if (forecastType !== 'downscaled' && this.form.value.downscaled_location) {
+        this.form.patchValue({ downscaled_location: null });
+      }
+    });
 
     // Optimistically set storage path for file uploads
     effect(() => {
@@ -112,7 +128,7 @@ export class ForecastFormComponent {
     // Attempt to populate downscaled location on file upload
     effect(() => {
       const file = this.pendingFileUpload();
-      if (this.forecastType === 'downscaled') {
+      if (this.forecastType() === 'downscaled') {
         this.populateDownscaledLocation(file);
       }
       this.populateLabel(file);
@@ -130,7 +146,7 @@ export class ForecastFormComponent {
           validatedValue.storage_file = uploadPath;
           validatedValue.mimetype = 'application/pdf';
           // populate id and upload to db
-          validatedValue.id = FORECAST_ID_MAPPING[this.forecastType](pendingUpload, validatedValue);
+          validatedValue.id = FORECAST_ID_MAPPING[this.forecastType()](pendingUpload, validatedValue);
           const { error } = await this.supabaseService.db.table('forecasts').insert(validatedValue);
           if (error) {
             await this.supabaseService.storage.deleteFile(this.countryCode, uploadPath);
@@ -155,8 +171,8 @@ export class ForecastFormComponent {
     formValue: ForecastFormValue,
   ) {
     // map pending upload file to correct folder and filename
-    const storageFolderPath = FORECAST_FOLDER_SEGMENT_MAPPING[this.forecastType]().join('/');
-    const storageFileName = FORECAST_FILE_NAME_MAPPING[this.forecastType](file, formValue);
+    const storageFolderPath = FORECAST_FOLDER_SEGMENT_MAPPING[this.forecastType()]().join('/');
+    const storageFileName = FORECAST_FILE_NAME_MAPPING[this.forecastType()](file, formValue);
     const bucketName = this.countryCode;
     ref.storageBucketName = bucketName;
     ref.storageFolderPath = storageFolderPath;
@@ -187,11 +203,7 @@ export class ForecastFormComponent {
   }
   private populateLabel(file?: FileDropFile) {
     if (file) {
-      // Default label
-      let label = `${YEAR()} - ${YEAR() + 1}`;
-      if (this.forecastType === 'weekly' || this.forecastType === 'daily') {
-        label = `${this.forecastType} Forecast: ${YEAR()}-${MONTH()}-${DAY()}`;
-      }
+      const label = `${YEAR()} - ${YEAR() + 1}`;
       if (this.form.value.label !== label) {
         this.form.patchValue({ label });
       }
@@ -213,6 +225,9 @@ export class ForecastFormComponent {
     const downscaledLocationControl = this.form.controls.downscaled_location;
     if (forecastType === 'downscaled') {
       downscaledLocationControl.setValidators(Validators.required);
+    } else {
+      downscaledLocationControl.clearValidators();
     }
+    downscaledLocationControl.updateValueAndValidity();
   }
 }

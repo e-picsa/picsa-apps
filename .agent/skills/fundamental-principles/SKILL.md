@@ -42,6 +42,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 - **Typechecking (ALWAYS via `yarn ai:typecheck`)**: After modifying TypeScript or Angular HTML template files, run `yarn ai:typecheck` with no args (auto-detects changed files vs `HEAD`, maps changed libs/apps to affected Nx projects, and verifies types + Angular templates via `ngc --noEmit` in 1-2 seconds without running heavy production builds).
 - **Linting (ALWAYS via `yarn ai:lint`)**: After modifying files, run `yarn ai:lint` with no args (auto-detects changed files vs `HEAD`, no staging required, applies `prettier --write` + `eslint --fix`). Never run `yarn nx lint`, bare `eslint`/`prettier`, or `lint-staged` directly.
 - **Testing (ALWAYS via `yarn ai:test`)**: When verifying logic, run `yarn ai:test` with no args (auto-detects changed files, maps to colocated `*.spec.ts`, runs the owning Nx project). Never run broad test suites or `yarn nx test` directly.
+- **Worktree Hygiene (via `yarn ai:worktree:audit`)**: When accumulating git worktrees across agent tools (T3, Gemini, OpenCode), audit with `yarn ai:worktree:audit` (`--all-repos` for every repo). Destructive flags (`--delete-orphans`, `--delete-merged`, `--clear-node-modules`, `--remove`) require explicit user approval per section 3 — never run them unprompted.
 
 ## 5. Pull Request Creation & PR Template Compliance
 

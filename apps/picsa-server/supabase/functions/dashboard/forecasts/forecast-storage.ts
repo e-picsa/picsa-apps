@@ -3,7 +3,7 @@ import { getRequestDeploymentId, hasAuthRole } from '../../_shared/auth.ts';
 import { getJsonData } from '../../_shared/request.ts';
 import { ErrorResponse, JSONResponse } from '../../_shared/response.ts';
 import { apiClient } from './forecast-db.ts';
-import { IDBClimateForecastRow } from '../types.ts';
+import type { IDBClimateForecastRow } from '../types.ts';
 
 interface IReqParams {
   /**

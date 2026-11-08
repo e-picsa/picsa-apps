@@ -4,38 +4,38 @@
 
 ## TypeScript Path Aliases (`@picsa/*`)
 
-| Alias                        | Target Path                                 |
-| :--------------------------- | :------------------------------------------ |
-| `@picsa/*`                   | `libs/*`                                    |
-| `@picsa/budget/*`            | `apps/picsa-tools/budget-tool/*`            |
-| `@picsa/climate/*`           | `apps/picsa-tools/climate-tool/*`           |
-| `@picsa/components`          | `libs/components/src/index.ts`              |
-| `@picsa/components/*`        | `libs/components/src/components/*`          |
-| `@picsa/configuration`       | `libs/configuration/src/index.ts`           |
-| `@picsa/crop-probability/*`  | `apps/picsa-tools/crop-probability-tool/*`  |
-| `@picsa/dashboard/*`         | `apps/sites/dashboard/*`                    |
-| `@picsa/data`                | `libs/data/index.ts`                        |
-| `@picsa/environments`        | `libs/environments/src/index.ts`            |
-| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*`      |
-| `@picsa/farmer-content/*`    | `apps/picsa-tools/farmer-content/*`         |
-| `@picsa/forecasts/*`         | `apps/picsa-tools/forecasts-tool/src/app/*` |
-| `@picsa/forms`               | `libs/forms`                                |
-| `@picsa/i18n`                | `libs/i18n/src/index.ts`                    |
-| `@picsa/i18n/*`              | `libs/i18n/src/*`                           |
-| `@picsa/manual/*`            | `apps/picsa-tools/manual-tool/*`            |
-| `@picsa/migrations`          | `libs/migrations/index.ts`                  |
-| `@picsa/models`              | `libs/models/index.ts`                      |
-| `@picsa/option/*`            | `apps/picsa-tools/option-tool/*`            |
-| `@picsa/resources/*`         | `apps/picsa-tools/resources-tool/src/app/*` |
+| Alias | Target Path |
+| :--- | :--- |
+| `@picsa/*` | `libs/*` |
+| `@picsa/budget/*` | `apps/picsa-tools/budget-tool/*` |
+| `@picsa/climate/*` | `apps/picsa-tools/climate-tool/*` |
+| `@picsa/components` | `libs/components/src/index.ts` |
+| `@picsa/components/*` | `libs/components/src/components/*` |
+| `@picsa/configuration` | `libs/configuration/src/index.ts` |
+| `@picsa/crop-probability/*` | `apps/picsa-tools/crop-probability-tool/*` |
+| `@picsa/dashboard/*` | `apps/sites/dashboard/*` |
+| `@picsa/data` | `libs/data/index.ts` |
+| `@picsa/environments` | `libs/environments/src/index.ts` |
+| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*` |
+| `@picsa/farmer-content/*` | `apps/picsa-tools/farmer-content/*` |
+| `@picsa/forecasts/*` | `apps/picsa-tools/forecasts-tool/src/app/*` |
+| `@picsa/forms` | `libs/forms` |
+| `@picsa/i18n` | `libs/i18n/src/index.ts` |
+| `@picsa/i18n/*` | `libs/i18n/src/*` |
+| `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
+| `@picsa/migrations` | `libs/migrations/index.ts` |
+| `@picsa/models` | `libs/models/index.ts` |
+| `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
+| `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
 | `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
-| `@picsa/server-types`        | `apps/picsa-server/supabase/types/index.ts` |
-| `@picsa/server-utils`        | `apps/picsa-server/supabase/utils/index.ts` |
-| `@picsa/shared/*`            | `libs/shared/src/*`                         |
-| `@picsa/theme`               | `libs/theme/src/index.ts`                   |
-| `@picsa/utils`               | `libs/utils/index.ts`                       |
-| `@picsa/utils/*`             | `libs/utils/*`                              |
+| `@picsa/server-types` | `apps/picsa-server/supabase/types/index.ts` |
+| `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
+| `@picsa/shared/*` | `libs/shared/src/*` |
+| `@picsa/theme` | `libs/theme/src/index.ts` |
+| `@picsa/utils` | `libs/utils/index.ts` |
+| `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (527 files scanned)
+## Codebase Symbol Index (541 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -144,10 +144,16 @@
 - **[forecast-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-form/forecast-form.component.ts`)
   - `Component` **ForecastFormComponent** (methods: [save, handleFileDropped])
   - `Type` **IForecastDialogData**
+- **[forecast-overview.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-overview/forecast-overview.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-overview/forecast-overview.component.ts`)
+  - `Component` **DashboardClimateForecastOverviewComponent**
+- **[forecast-overview.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-overview/forecast-overview.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast-overview/forecast-overview.utils.ts`)
+  - `Interface` **IForecastMonthSummary**
+  - `Interface` **IForecastOverview**
+  - `Function` **buildForecastOverview**
 - **[forecast.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/forecast.component.ts`)
-  - `Component` **ClimateForecastPageComponent** (methods: [handleRefreshClick, handleStorageClick, handleTabChange, addForecast])
+  - `Component` **ClimateForecastPageComponent** (methods: [handleRefreshClick, handleStorageClick, addForecast])
 - **[month-select.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/forecast/month-select/month-select.component.ts`)
-  - `Component` **DashboardClimateMonthSelectComponent** (methods: [setMonthAndYear])
+  - `Component` **DashboardClimateMonthSelectComponent** (methods: [stepMonth, setMonthAndYear])
 - **[station.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station/station.component.ts`)
   - `Component` **ClimateStationPageComponent** (methods: [handleMarkerClick])
 - **[chart-summary.component.ts](../apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/climate/pages/station-details/components/chart-summary/chart-summary.component.ts`)
@@ -343,6 +349,8 @@
   - `Type` **IResourceFileRow**
   - `Type` **IResourceFileChildRow**
   - `Type` **IResourceLinkRow**
+- **[resource-permissions.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts`)
+  - `Function` **createResourceEditPermissionState**
 - **[resources.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts`)
   - `Function` **getCollectionHierarchy**
   - `Function` **wipAnalyzeCollections**
@@ -365,9 +373,13 @@
 - **[json-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/json-import/json-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/json-import/json-import.component.ts`)
   - `Component` **TranslationsJSONImportComponent** (methods: [processImport])
 - **[xlsx-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/xlsx-import/xlsx-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/components/xlsx-import/xlsx-import.component.ts`)
-  - `Component` **TranslationsXLSXImportComponent** (methods: [processImport, exportTemplate])
+  - `Component` **TranslationsXLSXImportComponent** (methods: [processImport])
 - **[translations-import.component.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/translations-import.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/pages/import/translations-import.component.ts`)
   - `Component` **TranslationsImportComponent**
+- **[translations-xlsx-export.service.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/services/translations-xlsx-export.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/services/translations-xlsx-export.service.ts`)
+  - `Service` **TranslationsXlsxExportService** (methods: [createTranslationsWorkbook, generateTranslationsBuffer, generateTranslationsBlob, exportTranslations])
+  - `Interface` **IExportTranslationsOptions**
+  - `Function` **getExcelColumnLetter**
 - **[translations.module.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/translations.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/translations.module.ts`)
   - `Class` **TranslationsPageModule**
 - **[translations.service.ts](../apps/picsa-apps/dashboard/src/app/modules/translations/translations.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/translations/translations.service.ts`)
@@ -408,6 +420,7 @@
   - `Interface` **IStorageObjectMeta**
 - **[supabase.utils.ts](../apps/picsa-server/scripts/utils/supabase.utils.ts)** (`apps/picsa-server/scripts/utils/supabase.utils.ts`)
   - `Interface` **ILinkStatus**
+  - `Function` **loadEnv**
   - `Function` **getSupabaseClient**
   - `Function` **loadEnvServer**
   - `Function` **loadEnvLocal**
@@ -416,12 +429,12 @@
   - `Function` **getExportSupabaseClient**
   - `Function` **checkSupabaseLinkStatus**
   - `Function` **getAppSchemas**
-  - `Function` **getExcludedTables**
 
 ### `apps/picsa-server/supabase/functions`
 
 - **[auth.ts](../apps/picsa-server/supabase/functions/_shared/auth.ts)** (`apps/picsa-server/supabase/functions/_shared/auth.ts`)
   - `Function` **getRequestDeploymentId**
+  - `Function` **getAuthRoles**
   - `Function` **hasAuthRole**
 - **[debug.ts](../apps/picsa-server/supabase/functions/_shared/debug.ts)** (`apps/picsa-server/supabase/functions/_shared/debug.ts`)
   - `Function` **writeDebugLog**
@@ -460,6 +473,9 @@
   - `Type` **ListFeedbackInput**
   - `Type` **UpdateFeedbackInput**
   - `Type` **SignedUrlInput**
+- **[forecast-type.ts](../apps/picsa-server/supabase/functions/dashboard/forecasts/forecast-type.ts)** (`apps/picsa-server/supabase/functions/dashboard/forecasts/forecast-type.ts`)
+  - `Function` **decodeMimeSubject**
+  - `Function` **mapForecastType**
 - **[types.ts](../apps/picsa-server/supabase/functions/dashboard/types.ts)** (`apps/picsa-server/supabase/functions/dashboard/types.ts`)
   - `Type` **climateApiPaths**
   - `Type` **climateApiComponents**
@@ -484,12 +500,6 @@
   - `Function` **mergeScreenPath**
 - **[admin-boundaries.ts](../apps/picsa-server/supabase/functions/geo/admin-boundaries.ts)** (`apps/picsa-server/supabase/functions/geo/admin-boundaries.ts`)
   - `Type` **AdminBoundariesSchema**
-- **[kobo-utils.ts](../apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts)** (`apps/picsa-server/supabase/functions/kobo-sync/kobo-utils.ts`)
-  - `Function` **createKoboSubmission**
-  - `Function` **upsertKoboSubmission**
-  - `Function` **getKoboSubmission**
-  - `Function` **deleteKoboSubmissionByUUID**
-  - `Function` **extractSubmissionXML**
 - **[test-utils.ts](../apps/picsa-server/supabase/functions/tests/test-utils.ts)** (`apps/picsa-server/supabase/functions/tests/test-utils.ts`)
   - `Function` **setupTestEnv**
   - `Function` **invokeSupabaseFunctionFetch**
@@ -523,6 +533,11 @@
 - **[index.ts](../apps/picsa-server/supabase/types/index.ts)** (`apps/picsa-server/supabase/types/index.ts`)
   - `Type` **AppRole**
   - `Type` **IAppUser**
+- **[translations.types.ts](../apps/picsa-server/supabase/types/translations.types.ts)** (`apps/picsa-server/supabase/types/translations.types.ts`)
+  - `Type` **ITranslationRow**
+  - `Type` **ITranslationInsert**
+  - `Type` **ITranslationUpdate**
+  - `Type` **TranslationLocaleColumn**
 
 ### `apps/picsa-server/supabase/utils`
 
@@ -678,8 +693,15 @@
 - **[report.models.ts](../apps/picsa-tools/climate-tool/src/app/models/report.models.ts)** (`apps/picsa-tools/climate-tool/src/app/models/report.models.ts`)
   - `Interface` **IReportMeta**
   - `Type` **IReportType**
+- **[all-stations-dialog.component.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-select/components/all-stations-dialog/all-stations-dialog.component.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-select/components/all-stations-dialog/all-stations-dialog.component.ts`)
+  - `Component` **AllStationsDialogComponent** (methods: [onRowClick])
+  - `Interface` **IAllStationsDialogData**
+- **[station-card.component.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-select/components/station-card/station-card.component.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-select/components/station-card/station-card.component.ts`)
+  - `Component` **StationCardComponent**
+  - `Interface` **IStationCardDisplayed**
+  - `Type` **IStationCardNearby**
 - **[site-select.page.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-select/site-select.page.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-select/site-select.page.ts`)
-  - `Component` **SiteSelectPage** (methods: [toggleView, goToSite, handleRowClick, handleMarkerClick])
+  - `Component` **SiteSelectPage** (methods: [setView, handleLocationChanged, selectAlternateStation, confirmAndNavigate, handleRowClick])
 - **[site-view.page.ts](../apps/picsa-tools/climate-tool/src/app/pages/site-view/site-view.page.ts)** (`apps/picsa-tools/climate-tool/src/app/pages/site-view/site-view.page.ts`)
   - `Component` **ClimateSiteViewComponent** (methods: [ngAfterViewInit, ngOnDestroy, handleStationSelect, goToSiteSelect])
 - **[climate-chart.service.ts](../apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts)** (`apps/picsa-tools/climate-tool/src/app/services/climate-chart.service.ts`)
@@ -709,6 +731,17 @@
   - `Function` **generateChartConfig**
   - `Function` **calculateDataRanges**
   - `Function` **formatYValue**
+- **[location-proximity.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/location-proximity.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/location-proximity.utils.ts`)
+  - `Interface` **IStationRecommendation**
+  - `Interface` **IProximityFeature**
+  - `Interface` **ILocationCenterResult**
+  - `Type` **IDistrictCenterResult**
+  - `Function` **clearGeoJsonCache**
+  - `Function` **calculateHaversineDistanceKm**
+  - `Function` **normalizeLocationName**
+  - `Function` **computeFeatureBbox**
+  - `Function` **computeFeatureBboxCenter**
+  - `Function` **getCombinedLocationAndStationBounds**
 - **[statistics.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts`)
   - `Interface` **ITrendlineFit**
   - `Interface` **ISignificanceResult**
@@ -892,6 +925,7 @@
   - `Interface` **IResourceLink**
 - **[resources-download.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-download.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-download.service.ts`)
   - `Service` **ResourcesDownloadService** (methods: [register, queueMultiple, unregister])
+  - `Interface` **IDownloadOptions**
   - `Interface` **DownloadEntry**
   - `Type` **DownloadId**
 - **[resources-tool.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts`)
@@ -936,13 +970,15 @@
 - **[picsa-header.component.ts](../libs/components/src/components/picsa-header.component.ts)** (`libs/components/src/components/picsa-header.component.ts`)
   - `Component` **PicsaHeaderComponent** (methods: [ngOnInit, ngOnDestroy])
 - **[picsa-sidenav.component.ts](../libs/components/src/components/picsa-sidenav.component.ts)** (`libs/components/src/components/picsa-sidenav.component.ts`)
-  - `Component` **PicsaSidenavComponent** (methods: [ngOnInit, ngOnDestroy, toggle, close, handleSidenavChange])
+  - `Component` **PicsaSidenavComponent** (methods: [ngOnInit, ngOnDestroy, toggle, close, handleSwipeDismiss])
 - **[refresh-spinner.component.ts](../libs/components/src/components/refresh-spinner/refresh-spinner.component.ts)** (`libs/components/src/components/refresh-spinner/refresh-spinner.component.ts`)
   - `Component` **RefreshSpinnerComponent**
 - **[version-debug-dialog.component.ts](../libs/components/src/components/version-debug/version-debug-dialog.component.ts)** (`libs/components/src/components/version-debug/version-debug-dialog.component.ts`)
   - `Component` **PicsaVersionDebugDialogComponent** (methods: [ngOnInit, refreshDiagnostics, onToggleTester, onToggleTranslationDebug, copyDebugJson])
 - **[version-debug.component.ts](../libs/components/src/components/version-debug/version-debug.component.ts)** (`libs/components/src/components/version-debug/version-debug.component.ts`)
   - `Component` **PicsaVersionDebugComponent** (methods: [openDialog])
+- **[swipe-dismiss.directive.ts](../libs/components/src/directives/swipe-dismiss.directive.ts)** (`libs/components/src/directives/swipe-dismiss.directive.ts`)
+  - `Directive` **PicsaSwipeDismissDirective** (methods: [ngOnInit])
 - **[module.ts](../libs/components/src/module.ts)** (`libs/components/src/module.ts`)
   - `Class` **PicsaCommonComponentsModule**
 - **[components.service.ts](../libs/components/src/services/components.service.ts)** (`libs/components/src/services/components.service.ts`)
@@ -1001,6 +1037,7 @@
 - **[locales.ts](../libs/data/deployments/locales.ts)** (`libs/data/deployments/locales.ts`)
   - `Interface` **ILocaleDataEntry**
   - `Type` **ILocaleCode**
+  - `Type` **ITranslationLocaleCode**
 - **[organisations.ts](../libs/data/deployments/organisations.ts)** (`libs/data/deployments/organisations.ts`)
   - `Interface` **IOrganisation**
   - `Function` **getOrganisationsForCountry**
@@ -1017,10 +1054,11 @@
 - **[types.ts](../libs/data/geoLocation/types.ts)** (`libs/data/geoLocation/types.ts`)
   - `Interface` **IGeolocationAdmin5Location**
   - `Interface` **IGeolocationAdmin6Location**
-  - `Interface` **IGeolocationAdmin6Location**
   - `Interface` **IDeepestLocation**
   - `Interface` **IGeolocationData**
   - `Interface` **IGeoJsonData**
+  - `Interface` **ITopoJsonFeatureProperties**
+  - `Interface` **ITopoJsonObject**
   - `Type` **IBoundaryData**
   - `Type` **ITopoJson**
 - **[utils.ts](../libs/data/geoLocation/utils.ts)** (`libs/data/geoLocation/utils.ts`)
@@ -1070,7 +1108,7 @@
   - `Component` **FormLocationOverlayComponent** (methods: [handleTempLocationUpdate, handleCancel, handleConfirm])
   - `Type` **ILocationArray**
 - **[location-select.component.ts](../libs/forms/components/location-select/location-select.component.ts)** (`libs/forms/components/location-select/location-select.component.ts`)
-  - `Component` **FormLocationSelectComponent**
+  - `Component` **FormLocationSelectComponent** (methods: [onParentSelectionChange])
 - **[weather-select-multiple.component.ts](../libs/forms/components/weather-select/weather-select-multiple.component.ts)** (`libs/forms/components/weather-select/weather-select-multiple.component.ts`)
   - `Component` **FormWeatherSelectMultipleComponent**
 - **[weather-select.component.ts](../libs/forms/components/weather-select/weather-select.component.ts)** (`libs/forms/components/weather-select/weather-select.component.ts`)
@@ -1096,8 +1134,8 @@
 - **[translate-debug.service.ts](../libs/i18n/src/translate-debug.service.ts)** (`libs/i18n/src/translate-debug.service.ts`)
   - `Service` **PicsaTranslateDebugService** (methods: [setEnabled])
 - **[translate.module.ts](../libs/i18n/src/translate.module.ts)** (`libs/i18n/src/translate.module.ts`)
-  - `Class` **\_PicsaTranslateRootModule**
-  - `Class` **\_PicsaTranslateChildModule**
+  - `Class` **_PicsaTranslateRootModule**
+  - `Class` **_PicsaTranslateChildModule**
   - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
   - `Function` **HttpLoaderFactory**
 - **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
@@ -1170,9 +1208,12 @@
   - `Component` **PicsaChartComponent** (methods: [rerender])
   - `Type` **c3ChartAPI**
   - `Type` **c3ChartConfiguration**
+- **[column-filter.component.ts](../libs/shared/src/features/data-table/components/column-filter/column-filter.component.ts)** (`libs/shared/src/features/data-table/components/column-filter/column-filter.component.ts`)
+  - `Component` **PicsaDataTableColumnFilterComponent** (methods: [setSearch, selectOption, onMenuClosed])
 - **[data-table.component.ts](../libs/shared/src/features/data-table/data-table.component.ts)** (`libs/shared/src/features/data-table/data-table.component.ts`)
   - `Pipe` **FormatValuePipe** (methods: [transform])
-  - `Component` **PicsaDataTableComponent** (methods: [ngOnChanges, handleRowClick, applyFilter, handleExport])
+  - `Component` **PicsaDataTableComponent** (methods: [handleRowClick, applyFilter, setColumnFilter, handleExport])
+  - `Interface` **IDataTableFilterColumn**
   - `Interface` **IDataTableOptions**
 - **[TEMPLATES.ts](../libs/shared/src/features/dialog/components/TEMPLATES.ts)** (`libs/shared/src/features/dialog/components/TEMPLATES.ts`)
   - `Type` **ICustomTemplate**
@@ -1197,11 +1238,12 @@
   - `Component` **PicsaLoadingComponent** (methods: [ngOnInit])
   - `Type` **IPicsaLoaders**
 - **[map.ts](../libs/shared/src/features/map/map.ts)** (`libs/shared/src/features/map/map.ts`)
-  - `Component` **PicsaMapComponent** (methods: [ngAfterViewInit, ngOnDestroy, setActiveMarker, setLocationMarker, setLocation])
+  - `Component` **PicsaMapComponent** (methods: [ngAfterViewInit, ngOnDestroy, setActiveMarker, clearActiveMarker, zoomToMarker])
   - `Interface` **IMapMarker**
   - `Interface` **IMapOptions**
   - `Interface` **IGeoJsonLayerOptions**
   - `Type` **GeoJsonData**
+  - `Type` **IGeoJsonData**
 - **[pdf-viewer.component.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts`)
   - `Component` **PdfViewerComponent** (methods: [ngAfterViewInit, restartApp])
 - **[pdf-viewer.service.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts`)
@@ -1268,9 +1310,9 @@
   - `Service` **AppUserService** (methods: [setFcmToken, toggleInternalTester, setInternalTester])
 - **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
   - `Service` **CrashlyticsService** (methods: [init])
-- **[\_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
+- **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
   - `Service` **DBCacheService** (methods: [getCollection, getDoc, getDocs, setDoc, setDocs])
-- **[\_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
+- **[_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
   - `Service` **DBServerService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
   - `Interface` **IServerWriteBatchEntry**
 - **[abstract.db.ts](../libs/shared/src/services/core/db/abstract.db.ts)** (`libs/shared/src/services/core/db/abstract.db.ts`)
@@ -1343,6 +1385,7 @@
   - `Service` **PicsaPushNotificationService** (methods: [initializePushNotifications, requestNotificationPermissions])
 - **[sentry.service.ts](../libs/shared/src/services/core/sentry.service.ts)** (`libs/shared/src/services/core/sentry.service.ts`)
   - `Service` **SentryService** (methods: [captureException, captureMessage, setUser, setTag, setExtra])
+  - `Function` **isIgnoredErrorMessage**
   - `Function` **initSentry**
 - **[share.service.ts](../libs/shared/src/services/core/share.service.ts)** (`libs/shared/src/services/core/share.service.ts`)
   - `Service` **ShareService** (methods: [shareFromAttachments])
@@ -1415,7 +1458,7 @@
 - **[async.utils.ts](../libs/utils/async.utils.ts)** (`libs/utils/async.utils.ts`)
   - `Function` **allSettledInBatches**
 - **[browser.utils.ts](../libs/utils/browser.utils.ts)** (`libs/utils/browser.utils.ts`)
-  - `Function` **\_wait**
+  - `Function` **_wait**
 - **[climate-qc.utils.ts](../libs/utils/climate-qc.utils.ts)** (`libs/utils/climate-qc.utils.ts`)
   - `Interface` **IClimateQcGates**
   - `Interface` **ISeasonDiscrepancyRecord**
@@ -1551,3 +1594,12 @@
   - `Migration` **20261012000001_retire_2025_forecasts.sql**
 - **[20261019120000_add_monthly_rainfall_to_climate_station_data.sql](../apps/picsa-server/supabase/migrations/20261019120000_add_monthly_rainfall_to_climate_station_data.sql)** (`apps/picsa-server/supabase/migrations/20261019120000_add_monthly_rainfall_to_climate_station_data.sql`)
   - `Migration` **20261019120000_add_monthly_rainfall_to_climate_station_data.sql**
+- **[20261102213500_add_zw_translation_columns.sql](../apps/picsa-server/supabase/migrations/20261102213500_add_zw_translation_columns.sql)** (`apps/picsa-server/supabase/migrations/20261102213500_add_zw_translation_columns.sql`)
+  - `Migration` **20261102213500_add_zw_translation_columns.sql**
+- **[20261103160000_role_and_rls_permissions.sql](../apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql)** (`apps/picsa-server/supabase/migrations/20261103160000_role_and_rls_permissions.sql`)
+  - `SQLFunctions` **3 function(s)** ([public.user_is_admin, public.user_has_role, public.user_has_country_role])
+- **[20261105120000_enable_pg_net.sql](../apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql)** (`apps/picsa-server/supabase/migrations/20261105120000_enable_pg_net.sql`)
+  - `Migration` **20261105120000_enable_pg_net.sql**
+- **[20261106000000_drop_monitoring_kobo.sql](../apps/picsa-server/supabase/migrations/20261106000000_drop_monitoring_kobo.sql)** (`apps/picsa-server/supabase/migrations/20261106000000_drop_monitoring_kobo.sql`)
+  - `Migration` **20261106000000_drop_monitoring_kobo.sql**
+

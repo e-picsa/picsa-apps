@@ -208,6 +208,19 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Release Workflows**: Deploy all functions during release via bare `yarn nx run picsa-server:supabase functions deploy --project-ref $SUPABASE_PROJECT_ID`. This is atomic and zero-downtime on Supabase's Edge Runtime (Deno). Keep `supabase/functions/` free of demo scaffolds — every subdirectory with an `index.ts` deploys as a live production endpoint (a leftover `test-fn` echo scaffold was deleted for this reason). Helper-only dirs without an `index.ts` (e.g. `tests/test-utils.ts`) are skipped by the CLI.
 - **ECR Public Shared-IP Quota Trap**: The CLI's Docker bundling path pulls `public.ecr.aws/supabase/edge-runtime:<tag>` (tag baked into the pinned CLI's `pkg/config/templates/Dockerfile`). ECR Public caps anonymous pulls at **500GB/month per source IP**, and GitHub-hosted runners share egress IPs across all repos on the runner pool, so CI fails with `failed to pull docker image: toomanyrequests: Data limit exceeded`. This is not transient — retries on the same IP hit the same quota. Fix: set `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` (the CLI rewrites the image to `ghcr.io/supabase/<image>`, which has no shared-IP quota; this is also what `supabase/setup-cli@v1` does on GHA). Permanent fix: CLI >= 2.109.1 falls back ECR -> GHCR -> Docker Hub automatically on rate limits.
 
+### Supabase CLI Upgrade & Version Quirks (2.122.0)
+
+- **`edge-runtime:v1.69.28` NPM VFS Panic (`os error 2`)**:
+  In Supabase CLI 2.69.0, bundling edge functions in CI runner environments frequently crashed with `Error: No such file or directory (os error 2)` in `deno_facade::eszip::vfs::build_npm_vfs`. When a function with 0 npm dependencies (e.g. `kobo-sync`) was bundled first in random Go map iteration order on a fresh volume alongside functions using npm packages (e.g. `zod@4`), the bundler failed to resolve the virtual filesystem path. Fixed in `edge-runtime:v1.77.8` (PR `#687`, checks `graph.npm_packages.is_empty()`) and alphabetical bundling order in CLI `2.122.0`.
+- **`gen-types.ts` Quoted AST Identifiers**:
+  Supabase CLI `>= 2.117.0` formats schema properties and column names in `db.types.ts` with explicit double quotes (`"geo": { ... }`, `"country_code": CountryCode`). AST transforms in `scripts/gen-types.ts` using `ts-morph` must strip surrounding quotes (`stripQuotes = (n) => n.replace(/^["']|["']$/g, '')`) when searching schema nodes and property identifiers; otherwise `getProperty('geo')` and `prop.getName() === 'country_code'` fail silently.
+- **`[inbucket]` to `[local_smtp]` Configuration Key**:
+  In `supabase/config.toml`, CLI `2.122.0` deprecates `[inbucket]` in favor of `[local_smtp]` (backed by Mailpit). Use `[local_smtp]` to eliminate CLI warnings and maintain forward compatibility with CLI v3.
+- **Local Dev Volume Migration on CLI Upgrades**:
+  Upgrades that bump bundled Postgres images (e.g. `17.6.1` to `17.11.0`) can trigger ICU/Debian collation version mismatch errors (`153.120` vs `153.121`) in existing local Docker storage volumes (`supabase_storage_picsa-server`). Always restart with `yarn supabase stop --no-backup --workdir apps/picsa-server && yarn supabase start --workdir apps/picsa-server` when bumping local CLI binaries.
+- **Deferral of v3.0.0 Migration**:
+  Supabase CLI `v3.0.0` introduces breaking operational mutations: requiring `--yes` for non-interactive CI commands, replacing `--linked`/`--project-ref` with `--remote`, and dropping several v2 config flags. Pinned `2.122.0` represents the final stable `v2` line, avoiding these breaking mutations until a dedicated v3 migration cycle.
+
 ### Edge Runtime Phantom CORS Masking on Uncaught Exceptions
 
 - **Uncaught Exception Behavior**: When an Edge Function throws an uncaught exception, times out, or crashes, Supabase's Edge Runtime gateway emits a plain-text `HTTP 500 Internal Server Error` with `sb-error-code: EDGE_FUNCTION_ERROR`. Because this gateway-level error page contains no `Access-Control-Allow-Origin` header, the browser's `fetch()` rejects with a misleading CORS policy error (`No 'Access-Control-Allow-Origin' header is present`).
@@ -689,6 +702,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Problem**: When running Jest or Nx within Git worktrees whose directory paths exceed 104 characters, the Unix domain socket creation for Nx daemon crashes with "Attempted to open socket that exceeds the maximum socket length".
 - **Solution**: Always set "NX_SOCKET_DIR=/tmp/nx-tmp NX_DAEMON=false" in the environment when invoking tests via "node tools/ai/ai-test.mjs" or running "yarn nx test".
 
+### Agent Worktree Identity & Orphan Detection (`ai:worktree:audit`)
+
+- **`rev-parse --show-toplevel` lies inside linked worktrees**: it returns the worktree dir itself, not the main checkout, so grouping checkouts by its basename creates one bogus "repo" per worktree. Identify a checkout's repo via the first entry of `git worktree list --porcelain` (always the main checkout) instead.
+- **OpenCode nests worktrees two levels deep** (`~/.local/share/opencode/worktree/<hash>/<name>`, vs `<repo>/<name>` for T3 `~/.t3/worktrees` and Gemini `~/.gemini/antigravity/worktrees`). Discovery must descend an extra level there or those checkouts are missed.
+- **Fresh branches look merged**: a branch pointing at the same commit as the default branch appears in `git branch --merged`, so never `--delete-merged` without the dirty-tree skip and the never-delete-mains/current-checkout guard.
+
 ### Climate Quality Control (QC) Gates & Automated Station Drafting
 
 - **Standalone Engine**: Quality control criteria are defined in libs/utils/climate-qc.utils.ts under "CLIMATE_QC_GATES".
@@ -816,3 +835,30 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **`@picsa/shared/features` Barrel Import Trap in Specs**:
   - The `@picsa/shared/features` barrel exports chart components which load `c3`. In Jest/JSDOM environments without full SVG/DOM globals, importing from `@picsa/shared/features` throws `TypeError: Cannot read properties of undefined (reading 'prototype')` during C3 initialization.
   - Deep-import feature modules directly (e.g. `import { PhotoListComponent } from '@picsa/shared/features/photo'`) to avoid loading C3 in unrelated component test suites.
+
+### Layout Architecture Contract & Safe Area Guidelines
+
+To prevent recurring "whack-a-mole" layout inconsistencies across the Extension app shell, Farmer app popup shell, and standalone pages, strictly adhere to the following contract:
+
+1. **Shell Viewports Are Edge-to-Edge (`padding-bottom: 0`)**:
+   - Both the main app shell (`<div class="page">` in `layout.html`) and the farmer tool modal container (`<div class="page tool-container">` in `module-home.component.html`) are viewports (100vw × 100vh) holding a header and a `<router-outlet>`.
+   - **Shells must NEVER apply bottom or horizontal safe area padding** (`padding-bottom`, `padding-left`, `padding-right` must remain `0`).
+   - The shell's header (`<picsa-header>` or `.tool-header`) is solely responsible for top status bar clearance (`padding-top: var(--status-bar-height)`).
+
+2. **Routed Pages Own Insets via `.page-content`**:
+   - Every routed page in the application MUST wrap its root view in `<div class="page-content">` (or apply the `.page-content` class to the outer host container).
+   - `.page-content` provides standard safe area insets via `padding-bottom: calc(max(var(--page-padding), 1rem) + var(--safe-area-bottom))` and landscape safe margins (`padding-left: max(var(--page-padding), var(--safe-area-left))`, `padding-right: max(var(--page-padding), var(--safe-area-right))`).
+   - Because shells apply zero bottom padding, routed pages receive exactly ONE layer of safe-area bottom clearance regardless of whether they are hosted directly in the Extension app or inside the Farmer app tool popup.
+
+3. **No Redundant Inner Insets**:
+   - Child elements inside `.page-content` (e.g. `.link-container` or `.table-container`) must NOT re-apply `padding-bottom: var(--safe-area-bottom)`.
+   - `.sticky-footer` inside `.page-content` automatically has `margin-bottom: 0` because `.page-content` already provides the necessary bottom inset clearance.
+
+4. **Fullscreen Overlays Are Autonomous Shells (`inset: 0`)**:
+   - Any fixed modal/overlay that covers the entire viewport (`position: fixed; inset: 0;`), such as `editor-popup`, `viewer-container`, or `pdf-container`, is its own shell.
+   - Overlays must handle all 4 insets (`padding-top: var(--status-bar-height); padding-bottom: var(--safe-area-bottom); padding-left: var(--safe-area-left); padding-right: var(--safe-area-right);`).
+   - Inner content inside such overlays must NOT re-apply safe-area padding.
+
+5. **`picsa-sidenav-layout` Content Projection**:
+   - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
+   - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; min-height: 0; overflow-x: hidden; overflow-y: auto;` when hosting full-height tables).

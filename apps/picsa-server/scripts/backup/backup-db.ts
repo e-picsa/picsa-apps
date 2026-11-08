@@ -1,13 +1,35 @@
+/**
+ * App-scoped database backup (schema + data, no platform schemas) into
+ * `db_schema.sql` and `db_data.sql`. For a portable full backup instead, see
+ * backup-db-full.ts. Used by the unified backup.ts entry point, or standalone
+ * (produces a dated `<date>_db.tar.gz` archive).
+ *
+ * Invoke:
+ *   yarn nx run picsa-server:backup [-- --no-storage]
+ *   yarn tsx scripts/backup/backup-db.ts (standalone, from apps/picsa-server)
+ *
+ * Requires:
+ *   Linked Supabase CLI (`npx supabase link --project-ref <REF>` from
+ *   apps/picsa-server), or SUPABASE_DB_URL / SUPABASE_PROJECT_ID.
+ *
+ * Optional:
+ *   SUPABASE_BACKUP_SCHEMAS  Comma-separated schemas (default: discovered
+ *                    from config.toml and migrations).
+ *   SUPABASE_EXCLUDE_TABLES  Comma-separated schema.tables to skip in the
+ *                    data dump (default: public.app_users,
+ *                    public.user_profiles, public.forecasts,
+ *                    public.climate_station_data).
+ */
 import execa from 'execa';
 import fs from 'fs';
 import path from 'path';
 
 import { checkSupabaseLinkStatus, getAppSchemas, getExcludedTables } from '../utils/supabase.utils';
+import { archiveAndClean, backupRootDir, dbArchiveName, stagingDir } from './backup.utils';
 
-const backupDir = path.resolve(__dirname, './backups');
 const serverRootDir = path.resolve(__dirname, '../..');
 
-export async function backupDatabase() {
+export async function backupDatabase(outDir: string) {
   console.log('Checking Supabase connection status...');
   const linkStatus = checkSupabaseLinkStatus();
 
@@ -31,13 +53,12 @@ export async function backupDatabase() {
     console.log(`Tables excluded from data dump: ${excludedTables.join(', ')}`);
   }
 
-  if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir, { recursive: true });
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
   }
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-  const schemaFile = path.join(backupDir, `db_schema_${timestamp}.sql`);
-  const dataFile = path.join(backupDir, `db_data_${timestamp}.sql`);
+  const schemaFile = path.join(outDir, 'db_schema.sql');
+  const dataFile = path.join(outDir, 'db_data.sql');
 
   const baseArgs = linkStatus.dbUrl ? ['--db-url', linkStatus.dbUrl] : ['--linked'];
   const schemaArgs = ['-s', appSchemas.join(',')];
@@ -96,5 +117,12 @@ function formatErrorGuidance(errorMessage: string) {
 }
 
 if (require.main === module) {
-  backupDatabase();
+  void backupDatabaseStandalone();
+}
+
+async function backupDatabaseStandalone() {
+  const stageDir = stagingDir('db');
+  fs.mkdirSync(stageDir, { recursive: true });
+  await backupDatabase(stageDir);
+  await archiveAndClean(stageDir, path.join(backupRootDir, dbArchiveName(false)));
 }

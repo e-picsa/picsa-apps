@@ -50,10 +50,7 @@ td.mdc-data-table__cell {
 .editor-popup {
   position: fixed;
   z-index: 2;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
+  inset: 0;
   display: flex;
 }
 .editor-content {
@@ -62,8 +59,10 @@ td.mdc-data-table__cell {
   justify-content: center;
   display: flex;
   height: 100%;
+  width: 100%;
   overflow: auto;
   margin: auto;
+  box-sizing: border-box;
   @apply max-w-screen-md;
   @apply sm:my-4 sm:p-2;
   z-index: 2;

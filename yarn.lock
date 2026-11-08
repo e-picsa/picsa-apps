@@ -3525,6 +3525,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ecies/ciphers@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "@ecies/ciphers@npm:0.2.6"
+  peerDependencies:
+    "@noble/ciphers": ^1.0.0
+  checksum: 10c0/31cbfbaedae690e12344e49eb1b7fd0697f36cf4d03100df52b925e1f19d02a6f445834938ecdd1cd74154496a74fa9147cdda6209255512220e45eb9c693ca0
+  languageName: node
+  linkType: hard
+
 "@emnapi/core@npm:^1.1.0, @emnapi/core@npm:^1.4.3, @emnapi/core@npm:^1.5.0":
   version: 1.10.0
   resolution: "@emnapi/core@npm:1.10.0"
@@ -8459,10 +8468,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ciphers@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@noble/ciphers@npm:1.3.0"
+  checksum: 10c0/3ba6da645ce45e2f35e3b2e5c87ceba86b21dfa62b9466ede9edfb397f8116dae284f06652c0cd81d99445a2262b606632e868103d54ecc99fd946ae1af8cd37
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.9.7":
+  version: 1.9.7
+  resolution: "@noble/curves@npm:1.9.7"
+  dependencies:
+    "@noble/hashes": "npm:1.8.0"
+  checksum: 10c0/150014751ebe8ca06a8654ca2525108452ea9ee0be23430332769f06808cddabfe84f248b6dbf836916bc869c27c2092957eec62c7506d68a1ed0a624017c2a3
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:1.4.0":
   version: 1.4.0
   resolution: "@noble/hashes@npm:1.4.0"
   checksum: 10c0/8c3f005ee72e7b8f9cff756dfae1241485187254e3f743873e22073d63906863df5d4f13d441b7530ea614b7a093f0d889309f28b59850f33b66cb26a779a4a5
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@noble/hashes@npm:1.8.0"
+  checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
   languageName: node
   linkType: hard
 
@@ -12925,6 +12957,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@supabase/cli-darwin-arm64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-darwin-arm64@npm:2.122.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-darwin-x64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-darwin-x64@npm:2.122.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-linux-arm64-musl@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-linux-arm64-musl@npm:2.122.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-linux-arm64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-linux-arm64@npm:2.122.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-linux-x64-musl@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-linux-x64-musl@npm:2.122.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-linux-x64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-linux-x64@npm:2.122.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-windows-arm64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-windows-arm64@npm:2.122.0"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@supabase/cli-windows-x64@npm:2.122.0":
+  version: 2.122.0
+  resolution: "@supabase/cli-windows-x64@npm:2.122.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@supabase/functions-js@npm:2.104.0":
   version: 2.104.0
   resolution: "@supabase/functions-js@npm:2.104.0"
@@ -16854,19 +16942,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bin-links@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "bin-links@npm:6.0.0"
-  dependencies:
-    cmd-shim: "npm:^8.0.0"
-    npm-normalize-package-bin: "npm:^5.0.0"
-    proc-log: "npm:^6.0.0"
-    read-cmd-shim: "npm:^6.0.0"
-    write-file-atomic: "npm:^7.0.0"
-  checksum: 10c0/aa7244ca1f2b69bf038b21dad0b914e22a5d6fcc25b54e783a92eb36a66ea60d0641fd9e6638597edf4806c24c24f3790665ab1105f08104bff48f65072c1232
-  languageName: node
-  linkType: hard
-
 "binary-decision-diagram@npm:2.0.1":
   version: 2.0.1
   resolution: "binary-decision-diagram@npm:2.0.1"
@@ -17362,13 +17437,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:@picsa/capacitor-video-player@8.0.1":
-  version: 8.0.1
-  resolution: "@picsa/capacitor-video-player@npm:8.0.1"
+"capacitor-video-player@npm:@picsa/capacitor-video-player@8.0.2":
+  version: 8.0.2
+  resolution: "@picsa/capacitor-video-player@npm:8.0.2"
   peerDependencies:
     "@capacitor/core": ">=8.0.0"
     hls.js: ^1.4.0
-  checksum: 10c0/7cafe16c8bb9694805baaea39359b2a8b614342c4006ade7b9e8d7799b16ca3fd759be8017d86800de49d58a0d82c774bdfe4d76167aa4fc507aa9f57316ef2a
+  checksum: 10c0/cb07ab17ce1176c101fbfc970dcca0ab7617331d8cf2601f6e7a8a59584d51de675b6d43d238eced5f0d36acf597264ae19a7da842276f083cf7a682debb37cf
   languageName: node
   linkType: hard
 
@@ -17719,13 +17794,6 @@ __metadata:
   version: 2.1.2
   resolution: "clone@npm:2.1.2"
   checksum: 10c0/ed0601cd0b1606bc7d82ee7175b97e68d1dd9b91fd1250a3617b38d34a095f8ee0431d40a1a611122dcccb4f93295b4fdb94942aa763392b5fe44effa50c2d5e
-  languageName: node
-  linkType: hard
-
-"cmd-shim@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "cmd-shim@npm:8.0.0"
-  checksum: 10c0/63b86934aa62cfeac78675034944041ef8ed526a21d9b2a945571a3075e89a1b99ac55c6bd24f357be9c96c819a37d856eaff3f18b343dfdcfa5118a2d19282b
   languageName: node
   linkType: hard
 
@@ -19888,6 +19956,18 @@ __metadata:
     jsbn: "npm:~0.1.0"
     safer-buffer: "npm:^2.1.0"
   checksum: 10c0/6cf168bae1e2dad2e46561d9af9cbabfbf5ff592176ad4e9f0f41eaaf5fe5e10bb58147fe0a804de62b1ee9dad42c28810c88d652b21b6013c47ba8efa274ca1
+  languageName: node
+  linkType: hard
+
+"eciesjs@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "eciesjs@npm:0.5.0"
+  dependencies:
+    "@ecies/ciphers": "npm:^0.2.6"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:^1.9.7"
+    "@noble/hashes": "npm:^1.8.0"
+  checksum: 10c0/a80ee11f20f03df522ddb53d19c8cb36b957b471c5a515315d94dadc2ed00672354c339250ded8fb9bd39f6b66961ab86e4463597cbb03023bfc5a606ac5e242
   languageName: node
   linkType: hard
 
@@ -25107,6 +25187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.2.10":
+  version: 6.2.14
+  resolution: "jose@npm:6.2.14"
+  checksum: 10c0/3db121220793e391c24803edae1ede848e7a67e2c3d37f9864f3e3e245c4b2d318f176d17f0f8ab02be07e210a3db5453612c8d5716af2deeaaa4e5d50e70641
+  languageName: node
+  linkType: hard
+
 "js-base64@npm:3.7.5":
   version: 3.7.5
   resolution: "js-base64@npm:3.7.5"
@@ -28934,7 +29021,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "npm:@picsa/capacitor-video-player@8.0.1"
+    capacitor-video-player: "npm:@picsa/capacitor-video-player@8.0.2"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
@@ -29005,7 +29092,7 @@ __metadata:
     sharp: "npm:^0.31.3"
     simple-statistics: "npm:^7.11.0"
     stacktrace-js: "npm:^2.0.2"
-    supabase: "npm:2.69.0"
+    supabase: "npm:2.122.0"
     tailwindcss: "npm:^3.4.13"
     topojson-client: "npm:^3.1.0"
     ts-jest: "npm:29.4.6"
@@ -29019,9 +29106,6 @@ __metadata:
     zod: "npm:^4.1.5"
     zone.js: "npm:0.16.0"
     zxcvbn: "npm:^4.4.2"
-  dependenciesMeta:
-    supabase:
-      built: true
   languageName: unknown
   linkType: soft
 
@@ -30239,13 +30323,6 @@ __metadata:
   dependencies:
     pify: "npm:^2.3.0"
   checksum: 10c0/90cb2750213c7dd7c80cb420654344a311fdec12944e81eb912cd82f1bc92aea21885fa6ce442e3336d9fccd663b8a7a19c46d9698e6ca55620848ab932da814
-  languageName: node
-  linkType: hard
-
-"read-cmd-shim@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "read-cmd-shim@npm:6.0.0"
-  checksum: 10c0/0cebe92efe184a1d2ce9e9f69f2e07d222c6cdf8a23b62f0fddc284bc40634a143756b79f34f0693f29e76ff948a974d689f573726629dde1865240d7728ec1c
   languageName: node
   linkType: hard
 
@@ -33027,17 +33104,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:2.69.0":
-  version: 2.69.0
-  resolution: "supabase@npm:2.69.0"
+"supabase@npm:2.122.0":
+  version: 2.122.0
+  resolution: "supabase@npm:2.122.0"
   dependencies:
-    bin-links: "npm:^6.0.0"
-    https-proxy-agent: "npm:^7.0.2"
-    node-fetch: "npm:^3.3.2"
-    tar: "npm:7.5.2"
+    "@supabase/cli-darwin-arm64": "npm:2.122.0"
+    "@supabase/cli-darwin-x64": "npm:2.122.0"
+    "@supabase/cli-linux-arm64": "npm:2.122.0"
+    "@supabase/cli-linux-arm64-musl": "npm:2.122.0"
+    "@supabase/cli-linux-x64": "npm:2.122.0"
+    "@supabase/cli-linux-x64-musl": "npm:2.122.0"
+    "@supabase/cli-windows-arm64": "npm:2.122.0"
+    "@supabase/cli-windows-x64": "npm:2.122.0"
+    eciesjs: "npm:^0.5.0"
+    jose: "npm:^6.2.10"
+  dependenciesMeta:
+    "@supabase/cli-darwin-arm64":
+      optional: true
+    "@supabase/cli-darwin-x64":
+      optional: true
+    "@supabase/cli-linux-arm64":
+      optional: true
+    "@supabase/cli-linux-arm64-musl":
+      optional: true
+    "@supabase/cli-linux-x64":
+      optional: true
+    "@supabase/cli-linux-x64-musl":
+      optional: true
+    "@supabase/cli-windows-arm64":
+      optional: true
+    "@supabase/cli-windows-x64":
+      optional: true
   bin:
-    supabase: bin/supabase
-  checksum: 10c0/0b817939c52a4147a4e60cab94d814ffadef71aa292589452fa015e992ec4e6f01c020fdc3f60fa1d85296e9305e294bbca14e415b89a53d22884bbedb266a2b
+    supabase: dist/supabase.js
+  checksum: 10c0/9ecc03cc0c15d3c10a42e09bb0820d6f765f1202e0cc976bdf1c0454a8aed1df1d19185b7c48a19bb28a8d187f2b0ab6919c127b9ce084ba06686f3e665bb811
   languageName: node
   linkType: hard
 
@@ -33262,19 +33362,6 @@ __metadata:
     fast-fifo: "npm:^1.2.0"
     streamx: "npm:^2.15.0"
   checksum: 10c0/c4bf369de2302fcf30218d091167a5372ee79b69a1b5bb493ddb7714193ca805719558966334bab1f2775c8142826865f24e25459ff1c5f0a096bc3a3d5c5ce2
-  languageName: node
-  linkType: hard
-
-"tar@npm:7.5.2":
-  version: 7.5.2
-  resolution: "tar@npm:7.5.2"
-  dependencies:
-    "@isaacs/fs-minipass": "npm:^4.0.0"
-    chownr: "npm:^3.0.0"
-    minipass: "npm:^7.1.2"
-    minizlib: "npm:^3.1.0"
-    yallist: "npm:^5.0.0"
-  checksum: 10c0/a7d8b801139b52f93a7e34830db0de54c5aa45487c7cb551f6f3d44a112c67f1cb8ffdae856b05fd4f17b1749911f1c26f1e3a23bbe0279e17fd96077f13f467
   languageName: node
   linkType: hard
 
@@ -35465,15 +35552,6 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/e8c850a8e3e74eeadadb8ad23c9d9d63e4e792bd10f4836ed74189ef6e996763959f1249c5650e232f3c77c11169d239cbfc8342fc70f3fe401407d23810505d
-  languageName: node
-  linkType: hard
-
-"write-file-atomic@npm:^7.0.0":
-  version: 7.0.1
-  resolution: "write-file-atomic@npm:7.0.1"
-  dependencies:
-    signal-exit: "npm:^4.0.1"
-  checksum: 10c0/69cebb64945e22928a24ae7e2a55bf54438c92d6f657c1fa5e96b7c7a50f6c022e7454ab5c259079bb35f60296242f3a21234c79320d64a8ad57675b56a2098d
   languageName: node
   linkType: hard
 

@@ -1,8 +1,24 @@
+/**
+ * Storage backup: syncs all remote buckets to a local cache, then archives
+ * the cache. Used by the unified backup.ts entry point, or standalone
+ * (produces a dated `<date>_files.tar.gz` archive). Skips the `apk-releases`
+ * bucket and `forecasts/` folders (see omitBuckets/omitDirs below).
+ *
+ * Invoke:
+ *   yarn nx run picsa-server:backup [-- --no-db]
+ *   yarn tsx scripts/backup/backup-storage.ts (standalone, from apps/picsa-server)
+ *
+ * Requires:
+ *   SUPABASE_REMOTE_ANON_KEY in apps/picsa-server/.env.local, plus the
+ *   remote URL via linked project ref (SUPABASE_PROJECT_ID) or
+ *   SUPABASE_REMOTE_URL. See getRemoteSupabaseClient in ../utils.
+ */
 import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
 import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
 import { zipFolderContents } from '../utils/file.utils';
+import { backupRootDir, filesArchiveName } from './backup.utils';
 import { getRemoteSupabaseClient } from '../utils/supabase.utils';
 
 interface IFileMeta extends FileObject {
@@ -12,7 +28,6 @@ interface IFileMeta extends FileObject {
 }
 
 const localDir = path.resolve(__dirname, './cache');
-const backupDir = path.resolve(__dirname, './backups');
 
 /** List of folders to exclude from local backup */
 const omitDirs = ['forecasts'];
@@ -20,8 +35,8 @@ const omitDirs = ['forecasts'];
 /** List of buckets to exclude from local backup */
 const omitBuckets: string[] = ['apk-releases'];
 
-/** Export all supabase storage files to local cache and store as timestamped archive */
-export async function backupStorage() {
+/** Sync all supabase storage files to local cache and archive it to archivePath */
+export async function backupStorage(archivePath: string) {
   console.log('Starting sync process...');
 
   // Create local directory if it doesn't exist
@@ -41,10 +56,8 @@ export async function backupStorage() {
     removeOrphaned(bucketName, bucketFiles);
   }
 
-  const outputName = new Date().toISOString().substring(0, 10);
-  const outputPath = resolve(backupDir, `${outputName}.tar`);
-  await zipFolderContents(localDir, outputPath);
-  console.log(`Backup complete`, outputPath);
+  await zipFolderContents(localDir, archivePath);
+  console.log(`Backup complete`, archivePath);
 }
 
 async function syncFiles(remoteFiles: IFileMeta[]) {
@@ -259,5 +272,9 @@ async function listFiles(bucketName: string, prefix = '') {
 }
 
 if (require.main === module) {
-  backupStorage();
+  void backupStorageStandalone();
+}
+
+async function backupStorageStandalone() {
+  await backupStorage(path.join(backupRootDir, filesArchiveName()));
 }
