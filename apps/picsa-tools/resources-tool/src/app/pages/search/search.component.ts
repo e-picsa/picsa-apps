@@ -69,17 +69,18 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
   /** Store total number of results across types */
   public totalResults?: number;
 
-  async ngOnInit() {
-    await this.initializeServiceData();
+  ngOnInit() {
+    this.initializeServiceData();
     this.subscribeToQueryParams();
   }
-  async ngOnDestroy() {
+  ngOnDestroy() {
     this.componentDestroyed$.next(true);
   }
 
-  private async initializeServiceData() {
+  private initializeServiceData() {
     const manifest = this.service.activeManifest();
-    const allResources: IResourceBase[] = [...manifest.collections, ...manifest.links, ...manifest.files];
+    const nonEmptyCollections = manifest.collections.filter((c) => this.service.isCollectionNonEmpty(c));
+    const allResources: IResourceBase[] = [...nonEmptyCollections, ...manifest.links, ...manifest.files];
     // TODO - add support for translations
     this.fuse = new Fuse(allResources, this.fuseOptions);
   }

@@ -9,24 +9,26 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RxDocument } from 'rxdb';
 
-import { IResourceFile, IResourceLink } from '../../../schemas';
+import { IResourceFile } from '../../../schemas';
 import { ResourcesToolService } from '../../../services/resources-tool.service';
 import { ResourceDownloadComponent } from '../../resource-download/resource-download.component';
 import { ResourceShareComponent } from '../../resource-share/resource-share.component';
 import { ResourceItemLinkComponent } from '../link/link';
-import { ResourceItemVideoComponent } from '../video';
 
 @Component({
   selector: 'resource-item-file',
   templateUrl: 'file.html',
   styleUrls: ['file.scss'],
-  imports: [ResourceShareComponent, ResourceDownloadComponent, ResourceItemLinkComponent, ResourceItemVideoComponent],
+  imports: [ResourceShareComponent, ResourceDownloadComponent, ResourceItemLinkComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   private service = inject(ResourcesToolService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   readonly resource = input.required<IResourceFile>();
 
@@ -71,16 +73,24 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
       if (doc) this.dbDoc.set(doc);
     }
     if (uri && doc) {
-      this.service.openFileResource(uri, doc.type, this.resource().id);
+      if (doc.subtype === 'video' || doc.mimetype === 'video/mp4') {
+        return this.openInViewer(doc.id);
+      }
+      this.service.openFileResource(uri, doc.mimetype, this.resource().id);
     } else {
       this.downloader()?.download(new Event('click'));
     }
+    return;
   }
 
-  public handleActionClick(e: Event, status?: string) {
-    if (status !== 'complete') {
-      e.stopImmediatePropagation();
+  private openInViewer(id: string) {
+    if (this.route.snapshot.paramMap.get('collectionId')) {
+      return this.router.navigate(['../../', 'downloads', id], { relativeTo: this.route });
     }
+    if (this.route.snapshot.routeConfig?.path?.endsWith('search')) {
+      return this.router.navigate(['../', 'downloads', id], { relativeTo: this.route });
+    }
+    return this.router.navigate(['downloads', id], { relativeTo: this.route });
   }
 
   public async handleDownloadStatusChange(dl: ResourceDownloadComponent) {

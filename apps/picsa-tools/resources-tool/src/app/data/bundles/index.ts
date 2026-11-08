@@ -54,10 +54,15 @@ export function resolveCoverImage(coverPath?: string | null): string {
  * Prefers Supabase storage URL if storage_file is set, otherwise falls back to external_url.
  */
 export function resolveFileUrl(file: IResourceFileBundleRow): string {
-  if (file.storage_file) {
-    return `${SUPABASE_STORAGE_PUBLIC_BASE}/${file.storage_file}`;
+  const rawUrl = file.storage_file
+    ? `${SUPABASE_STORAGE_PUBLIC_BASE}/${file.storage_file}`
+    : file.external_url || '';
+  if (!rawUrl) return '';
+  try {
+    return encodeURI(decodeURI(rawUrl));
+  } catch {
+    return rawUrl;
   }
-  return file.external_url || '';
 }
 
 /** Map database link type to app link subtype */

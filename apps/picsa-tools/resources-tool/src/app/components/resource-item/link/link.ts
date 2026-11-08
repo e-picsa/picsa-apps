@@ -7,7 +7,6 @@ import { ILocaleCode, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data/dep
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ResourcesMaterialModule } from '../../../material.module';
-import { IResourceLink } from '../../../schemas';
 
 export function getLanguageLabel(code?: string): string {
   if (!code) return '';
