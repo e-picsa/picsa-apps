@@ -53,4 +53,33 @@ describe('ResourceItemLinkComponent', () => {
     fixture.detectChanges();
     expect(component.shareUrl()).toBe('https://play.google.com/store/apps/details?id=com.peat.GartenBank');
   });
+
+  it('resolves language codes to human-readable language labels', () => {
+    fixture.componentRef.setInput('resource', {
+      ...mockResource,
+      language: 'mw_ny',
+    });
+    fixture.detectChanges();
+    expect(component.languageLabel()).toBe('Chichewa');
+
+    fixture.componentRef.setInput('resource', {
+      ...mockResource,
+      language: 'mw_en',
+    });
+    fixture.detectChanges();
+    expect(component.languageLabel()).toBe('English');
+  });
+
+  it('determines fallback cover type and format file sizes correctly', () => {
+    fixture.componentRef.setInput('resource', {
+      id: 'test-file',
+      type: 'file',
+      subtype: 'pdf',
+      title: 'Manual PDF',
+      size_kb: 2400,
+    });
+    fixture.detectChanges();
+    expect(component.fallbackInfo().badge).toBe('PDF');
+    expect(component.fileSizeText()).toBe('2.3 MB');
+  });
 });

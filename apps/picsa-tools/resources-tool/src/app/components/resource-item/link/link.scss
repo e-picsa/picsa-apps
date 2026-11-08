@@ -1,57 +1,188 @@
 :host {
   display: block;
-}
-.card-layout {
-  display: flex;
-  position: relative;
   height: 100%;
 }
 
 .resource-card {
-  padding: 0;
-  min-height: 100px;
-  position: relative;
   height: 100%;
-}
+  min-height: 104px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  background: white;
+  padding: 0;
 
-.central-content {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  mat-card-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.15);
   }
 }
 
-.background-image {
-  width: 100px;
-  min-width: 100px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.background-image[data-fit='cover'] {
-  background-size: cover;
+.card-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: stretch;
 }
 
-.language-code {
-  background: var(--color-secondary);
-  padding: 4px;
-  color: white;
+.cover-wrapper {
+  width: 90px;
+  min-width: 90px;
+  height: 100%;
+  min-height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  &[data-fit='contain'] {
+    object-fit: contain;
+    padding: 6px;
+  }
+}
+
+.fallback-cover {
+  width: 100%;
+  height: 100%;
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+
+  .fallback-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+  }
+
+  .fallback-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+  }
+
+  &.pdf-fallback { background: #fef2f2; color: #dc2626; }
+  &.video-fallback { background: #eff6ff; color: #2563eb; }
+  &.document-fallback { background: #f0fdf4; color: #16a34a; }
+  &.collection-fallback { background: #f5f3ff; color: #7c3aed; }
+  &.app-fallback { background: #faf5ff; color: #9333ea; }
+  &.link-fallback { background: #f1f5f9; color: #475569; }
+}
+
+.central-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 12px;
+  overflow: hidden;
+}
+
+.content-top {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.resource-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #1e293b;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.resource-description {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #64748b;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.resource-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.language-chip {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.size-chip {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.action-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.action-icon {
+  color: #94a3b8;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .action-button {
-  margin: auto 8px;
+  margin: auto 4px;
 }
+
 .action-button[data-type='play_store'] {
   padding: 0;
-  margin: auto 0 0 0;
-  height: 48px;
+  height: 40px;
   mat-icon {
     margin: 0;
-    height: 48px;
-    width: 100%;
+    height: 40px;
+    width: 40px;
   }
 }

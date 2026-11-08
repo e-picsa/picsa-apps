@@ -1,8 +1,13 @@
 :host {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .download-progress {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 button.download-cancel {
   position: absolute;
@@ -12,6 +17,9 @@ button.download-cancel {
   border-radius: 50%;
   mat-icon {
     margin-right: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 

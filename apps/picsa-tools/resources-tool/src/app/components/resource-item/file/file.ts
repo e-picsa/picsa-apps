@@ -33,7 +33,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   public dbDoc = signal<RxDocument<IResourceFile> | null>(null);
   public fileUri = signal<string | null>(null);
 
-  private downloader = viewChild.required(ResourceDownloadComponent);
+  private downloader = viewChild(ResourceDownloadComponent);
 
   async ngOnInit() {
     await this.service.ready();
@@ -50,19 +50,30 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Display file in resource link format */
-  readonly resourceLink = computed<IResourceLink>(() => ({
+  /** Display file in resource link format with full file metadata preserved */
+  readonly resourceLink = computed<any>(() => ({
     ...this.resource(),
+    rawType: 'file',
     subtype: 'internal',
     type: 'link',
+    fileSubtype: this.resource().subtype,
+    size_kb: this.resource().size_kb,
+    mimetype: this.resource().mimetype,
   }));
 
-  /** Generic file opener */
+  /** Generic file opener or download trigger */
   public async handleFileLinkClick() {
-    const uri = await this.downloader().uri();
-    const doc = this.dbDoc();
+    const uri = await this.downloader()?.uri();
+    let doc = this.dbDoc();
+    if (!doc) {
+      await this.service.ready();
+      doc = await this.service.dbFiles.findOne(this.resource().id).exec();
+      if (doc) this.dbDoc.set(doc);
+    }
     if (uri && doc) {
       this.service.openFileResource(uri, doc.type, this.resource().id);
+    } else {
+      this.downloader()?.download(new Event('click'));
     }
   }
 

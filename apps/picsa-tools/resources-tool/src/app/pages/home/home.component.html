@@ -27,7 +27,7 @@
           <h2 style="font-size: 20px; margin-bottom: 1rem">{{ 'Additional Files' | translate }}</h2>
           <div class="list-container">
             @for (resource of unassignedFiles(); track resource.id) {
-              <resource-item-file [resource]="resource" style="margin-bottom: 8px"> </resource-item-file>
+              <resource-item-file [resource]="resource"> </resource-item-file>
             }
           </div>
         </div>
@@ -39,7 +39,7 @@
           <h2 style="font-size: 20px; margin-bottom: 1rem">{{ 'Additional Links' | translate }}</h2>
           <div class="list-container">
             @for (resource of unassignedLinks(); track resource.id) {
-              <resource-item-link [resource]="resource" style="margin-bottom: 8px"> </resource-item-link>
+              <resource-item-link [resource]="resource"> </resource-item-link>
             }
           </div>
         </div>

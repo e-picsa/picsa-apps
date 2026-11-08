@@ -1,12 +1,14 @@
 @if (downloadStatus(); as status) {
   @if (status === 'ready' || status === 'error') {
-    <button matIconButton (click)="download($event)" [attr.data-style-variant]="styleVariant">
-      <div class="download-button-inner">
-        <mat-icon style="font-size: 30px; width: 30px">download</mat-icon>
-        @if (showSize) {
+    <button matIconButton (click)="download($event)" [attr.data-style-variant]="styleVariant" [attr.aria-label]="'Download' | translate">
+      @if (showSize) {
+        <div class="download-button-inner">
+          <mat-icon style="font-size: 30px; width: 30px">download</mat-icon>
           <span class="resource-size"> {{ resource().size_kb | sizeMB }} MB </span>
-        }
-      </div>
+        </div>
+      } @else {
+        <mat-icon color="primary">download</mat-icon>
+      }
     </button>
   }
   <!-- Pending -->
@@ -45,8 +47,8 @@
 
   <!-- Complete -->
   @if (status === 'complete') {
-    <button matIconButton [attr.data-style-variant]="styleVariant">
-      <mat-icon>download_done</mat-icon>
+    <button matIconButton [attr.data-style-variant]="styleVariant" [attr.aria-label]="'Downloaded' | translate">
+      <mat-icon style="color: #059669">check_circle</mat-icon>
     </button>
   }
 }

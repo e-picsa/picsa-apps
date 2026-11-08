@@ -30,13 +30,23 @@ export const SUPABASE_STORAGE_PUBLIC_BASE = 'https://wpctacqpzxfzlucblowh.supaba
  * Remote storage paths resolve to Supabase storage public URL.
  */
 export function resolveCoverImage(coverPath?: string | null): string {
-  if (!coverPath) return '';
+  if (!coverPath || coverPath.includes('placeholder')) return '';
   if (coverPath.startsWith('assets/')) return coverPath;
-  if (coverPath.startsWith('http://') || coverPath.startsWith('https://')) return coverPath;
+  if (coverPath.startsWith('http://') || coverPath.startsWith('https://')) {
+    try {
+      return encodeURI(decodeURI(coverPath));
+    } catch {
+      return coverPath;
+    }
+  }
   if (coverPath.startsWith('global/resources/covers/')) {
     return coverPath.replace('global/resources/covers/', 'assets/resources/covers/');
   }
-  return `${SUPABASE_STORAGE_PUBLIC_BASE}/${coverPath}`;
+  try {
+    return encodeURI(decodeURI(`${SUPABASE_STORAGE_PUBLIC_BASE}/${coverPath}`));
+  } catch {
+    return `${SUPABASE_STORAGE_PUBLIC_BASE}/${coverPath}`;
+  }
 }
 
 /**
