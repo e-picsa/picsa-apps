@@ -34,11 +34,11 @@ export class ResourceCollectionComponent {
   /** Resource collection id to load */
   public id = input.required<string>();
 
-  /** Output emitter to notify colleciton loaded */
+  /** Output emitter to notify collection loaded */
   public collectionLoaded = output<IResourceCollection>();
 
   /** Loaded collection */
-  public collection = signal<any>(undefined);
+  public collection = signal<IResourceCollection | undefined>(undefined);
 
   public showcollectionNotFound = signal(false);
 
@@ -55,14 +55,13 @@ export class ResourceCollectionComponent {
   }
 
   private async loadCollection(id: string) {
-    await this.service.ready();
-    const foundCollection = await this.service.dbCollections.findOne(id).exec();
+    const foundCollection = this.service.getCollection(id);
 
-    this.showcollectionNotFound.set(foundCollection ? false : true);
+    this.showcollectionNotFound.set(!foundCollection);
     if (foundCollection) {
-      this.collection.set(foundCollection._data);
-      this.collectionLoaded.emit(foundCollection._data);
-      await this.loadCollectionResources(foundCollection._data);
+      this.collection.set(foundCollection);
+      this.collectionLoaded.emit(foundCollection);
+      await this.loadCollectionResources(foundCollection);
     } else {
       console.warn('Collection not found', id);
     }
@@ -70,18 +69,22 @@ export class ResourceCollectionComponent {
 
   private async loadCollectionResources(collection: IResourceCollection) {
     const { collections, files, links } = collection.childResources;
-    const linkDocs = await this.service.dbLinks.findByIds(links).sort('priority').exec();
-    this.links.set(this.processDocs(linkDocs));
-    const collectionDocs = await this.service.dbCollections.findByIds(collections).sort('priority').exec();
-    this.collections.set(this.processDocs(collectionDocs));
-    // manually process fileDocs to also allow storing to fileDocs signal
-    const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
-    const filtered = this.service.filterLocalisedResources([...fileDocs.values()]);
-    this.pendingDownloads.set(filtered.filter((f) => f.allAttachments().length === 0));
-    this.files.set(filtered.map((d) => d._data));
-  }
-  private processDocs(docs: Map<string, RxDocument<any>>) {
-    const entries = [...docs.values()];
-    return this.service.filterLocalisedResources(entries).map((d) => d._data);
+    this.links.set(this.service.getLinks(links));
+    this.collections.set(this.service.getCollections(collections));
+
+    // Files are retrieved from manifest and cross-referenced with dbFiles for offline attachments
+    const fileEntries = this.service.getFiles(files);
+    this.files.set(fileEntries);
+
+    await this.service.ready();
+    const fileDocs = await this.service.dbFiles.findByIds(files).exec();
+    const pending: RxDocument<IResourceFile>[] = [];
+    for (const f of fileEntries) {
+      const doc = fileDocs.get(f.id);
+      if (doc && doc.allAttachments().length === 0) {
+        pending.push(doc);
+      }
+    }
+    this.pendingDownloads.set(pending);
   }
 }

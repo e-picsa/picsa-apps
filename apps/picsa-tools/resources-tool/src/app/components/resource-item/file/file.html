@@ -1,39 +1,28 @@
-<!-- TODO - should remove overlay and css from component to use in parent instead -->
-
-<!-- TODO - should be able to refactor video item to be included here -->
-<div style="position: relative; max-width: 854px; margin: auto; width: 100%">
-  @if(dbDoc(); as doc){
-  <!-- File share -->
-  @if(fileUri(); as uri){
-  <resource-share class="share-link" [doc]="doc"></resource-share>
+<div class="resource-file-card-wrapper">
+  @if (fileUri(); as uri) {
+    @if (dbDoc(); as doc) {
+      <resource-share class="share-link" [doc]="doc"></resource-share>
+    }
   }
 
-  <!-- Download overlay -->
-  <div
-    class="download-overlay"
-    [style.visibility]="dl.downloadStatus()==='complete' ? 'hidden' : 'visible'"
-    [attr.data-file-type]="doc.subtype || null"
+  <resource-item-link
+    [resource]="resourceLink()"
+    (click)="handleFileLinkClick()"
+    class="file-card-link"
   >
-    <div class="mat-elevation-z8; border-radius: 8px;">
+    <div
+      card-action
+      class="file-action-container"
+      [class.is-downloaded]="dl.downloadStatus() === 'complete'"
+    >
       <resource-download
         #dl
         [resource]="resource()"
-        class="download-button"
-        styleVariant="white"
-        [size]="36"
-        [showSize]="true"
+        [size]="32"
+        [showSize]="false"
+        styleVariant="primary"
         (downloadStatusChange)="handleDownloadStatusChange(dl)"
       ></resource-download>
     </div>
-  </div>
-
-  <!-- send online video Url -->
-  @switch (resource().subtype) { @case ('video') {
-  <resource-item-video [resource]="resource()" [fileURI]="fileUri()"></resource-item-video>
-
-  } @default {
-  <resource-item-link [resource]="resourceLink()" (click)="handleFileLinkClick()" style="height: 100%">
   </resource-item-link>
-
-  } } }
 </div>

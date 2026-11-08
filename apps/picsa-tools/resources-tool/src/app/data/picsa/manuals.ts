@@ -1,4 +1,4 @@
-import { IResourceCollection, IResourceFile } from '../../schemas';
+import { IResourceFile } from '../../schemas';
 
 type IFarmerManualId_ZM =
   | 'picsa_manual_farmer_zm_bem'
@@ -204,22 +204,4 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   },
 };
 
-const picsa_manuals: IResourceCollection = {
-  id: 'picsaManual',
-  type: 'collection',
-  priority: 10.1,
-  title: 'PICSA Manual',
-  description: 'PICSA training manuals available in a variety of languages',
-  cover: {
-    image: 'assets/resources/covers/picsa-field-manual.jpg',
-    imageFit: 'cover',
-  },
-
-  childResources: {
-    collections: [],
-    files: Object.keys(PICSA_MANUAL_RESOURCES),
-    links: [],
-  },
-};
-
-export default { ...PICSA_MANUAL_RESOURCES, picsa_manuals };
+export default { ...PICSA_MANUAL_RESOURCES };

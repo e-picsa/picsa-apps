@@ -1,12 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
+import { ILocaleCode, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { ResourcesMaterialModule } from '../../../material.module';
-import { IResourceLink } from '../../../schemas';
+
+export function getLanguageLabel(code?: string): string {
+  if (!code) return '';
+  const lower = code.toLowerCase();
+  if (LOCALES_DATA_HASHMAP[lower as ILocaleCode]) {
+    return LOCALES_DATA_HASHMAP[lower as ILocaleCode].language_label;
+  }
+  const match = LOCALES_DATA.find((l) => l.language_code === lower || l.id === lower);
+  if (match) {
+    return match.language_label;
+  }
+  return code.toUpperCase();
+}
 
 @Component({
   selector: 'resource-item-link',
@@ -19,31 +32,122 @@ export class ResourceItemLinkComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  resource = input.required<IResourceLink>();
+  resource = input.required<any>();
+
+  public imageFailed = signal(false);
 
   shareUrl = computed<string>(() => {
     const { url, subtype } = this.resource();
     // ignore internal links
     if (subtype === 'internal') return '';
-    // add play store url prefix
-    if (subtype === 'play_store') return `https://play.google.com/store/apps/details?id=${url}`;
+    // resolve play store url
+    if (subtype === 'play_store') return this.resolvePlayStoreUrl(url);
     return url as string;
   });
 
   description = computed<string>(() => {
     return this.resource().description || '';
   });
+
   language = computed<string>(() => {
-    return this.resource().language || '';
+    return this.resource().language || this.resource().language_code || '';
   });
+
+  languageLabel = computed<string>(() => {
+    return getLanguageLabel(this.language());
+  });
+
+  fileSizeText = computed<string>(() => {
+    const sizeKb = this.resource().size_kb;
+    if (!sizeKb) return '';
+    if (sizeKb >= 1024) {
+      return `${(sizeKb / 1024).toFixed(1)} MB`;
+    }
+    return `${sizeKb} KB`;
+  });
+
+  coverImage = computed<string>(() => {
+    const raw = this.resource().cover?.image;
+    if (!raw) return '';
+    try {
+      return encodeURI(decodeURI(raw));
+    } catch {
+      return raw;
+    }
+  });
+
+  fallbackInfo = computed<{
+    badge: string;
+    matIcon?: string;
+    svgIcon?: string;
+    colorClass: string;
+  }>(() => {
+    const res = this.resource();
+    const type = res.rawType || res.type;
+    const subtype = res.fileSubtype || res.subtype;
+    const mimetype = res.mimetype;
+
+    if (type === 'collection') {
+      return {
+        badge: 'Collection',
+        matIcon: 'folder',
+        colorClass: 'collection-fallback',
+      };
+    }
+
+    if (subtype === 'video' || mimetype === 'video/mp4') {
+      return {
+        badge: 'Video',
+        svgIcon: 'resources_tool:filetype_video',
+        matIcon: 'movie',
+        colorClass: 'video-fallback',
+      };
+    }
+
+    if (subtype === 'pdf' || mimetype === 'application/pdf') {
+      return {
+        badge: 'PDF',
+        svgIcon: 'resources_tool:filetype_pdf',
+        matIcon: 'picture_as_pdf',
+        colorClass: 'pdf-fallback',
+      };
+    }
+
+    if (subtype === 'play_store') {
+      return {
+        badge: 'App',
+        svgIcon: 'resources_tool:play_store',
+        matIcon: 'apps',
+        colorClass: 'app-fallback',
+      };
+    }
+
+    if (type === 'file') {
+      return {
+        badge: 'Doc',
+        svgIcon: 'resources_tool:filetype_document',
+        matIcon: 'description',
+        colorClass: 'document-fallback',
+      };
+    }
+
+    return {
+      badge: 'Link',
+      matIcon: 'language',
+      colorClass: 'link-fallback',
+    };
+  });
+
+  onImageError() {
+    this.imageFailed.set(true);
+  }
 
   /** Check if any existing click handlers already bound to element to use as override */
   // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() click: EventEmitter<any> = new EventEmitter<any>();
 
   /** Specific icons to use as action buttons below link. Used when main image not fully indicative of link type */
-  public actionButtons: { [type in IResourceLink['subtype']]: { matIcon?: string; svgIcon?: string } | null } = {
-    /** Facebook links usually have facebook logo in main image so ignore action button */
+  public actionButtons: { [type: string]: { matIcon?: string; svgIcon?: string } | null } = {
     facebook: null,
     internal: null,
     play_store: { svgIcon: 'resources_tool:play_store' },
@@ -78,9 +182,16 @@ export class ResourceItemLinkComponent {
     return this.router.navigateByUrl(url);
   }
 
-  /** Resource url only stores appId so update for fully qualified play path and open with default browser */
-  private goToApp(appId: string) {
-    const url = `https://play.google.com/store/apps/details?id=${appId}`;
+  public resolvePlayStoreUrl(appIdOrUrl: string): string {
+    if (appIdOrUrl.startsWith('http://') || appIdOrUrl.startsWith('https://')) {
+      return appIdOrUrl;
+    }
+    return `https://play.google.com/store/apps/details?id=${appIdOrUrl}`;
+  }
+
+  /** Open play store url with default browser */
+  private goToApp(appIdOrUrl: string) {
+    const url = this.resolvePlayStoreUrl(appIdOrUrl);
     return Browser.open({ url });
   }
 

@@ -1,31 +1,31 @@
 import * as schemas from '../schemas';
-import { IResourceBase } from '../schemas/base';
-import CROPS from './crops';
-import { GENDER_RESOURCES } from './gender';
+import { mapBundleFileToApp, RESOURCE_BUNDLES } from './bundles';
 import PICSA_RESOURCES from './picsa';
 
-const byId: Record<string, IResourceBase> = {
-  ...CROPS,
-  ...GENDER_RESOURCES,
-  ...PICSA_RESOURCES,
-};
+// Collect all files across all bundles (mw, zm, zw, tj)
+const bundleFiles: schemas.IResourceFile[] = [];
+const seenFileIds = new Set<string>();
 
-const typeExports: {
-  collection: schemas.IResourceCollection[];
-  file: schemas.IResourceFile[];
-  link: schemas.IResourceLink[];
-} = {
-  collection: [],
-  file: [],
-  link: [],
-};
-
-// order by types
-for (const resource of Object.values(byId)) {
-  typeExports[resource.type].push(resource as any);
+for (const bundle of Object.values(RESOURCE_BUNDLES)) {
+  for (const fileRow of bundle.files || []) {
+    if (!seenFileIds.has(fileRow.id)) {
+      seenFileIds.add(fileRow.id);
+      bundleFiles.push(mapBundleFileToApp(fileRow));
+    }
+  }
 }
 
-export const DB_COLLECTION_ENTRIES = typeExports.collection;
-export const DB_FILE_ENTRIES = typeExports.file;
-export const DB_LINK_ENTRIES = typeExports.link;
+// Collect PICSA files (manuals + farmer videos) needed by manual-tool and farmer-content
+const picsaFiles: schemas.IResourceFile[] = [];
+for (const [id, resource] of Object.entries(PICSA_RESOURCES)) {
+  if (resource.type === 'file' && !seenFileIds.has(id)) {
+    seenFileIds.add(id);
+    picsaFiles.push(resource as schemas.IResourceFile);
+  }
+}
+
+export const DB_FILE_ENTRIES: schemas.IResourceFile[] = [...bundleFiles, ...picsaFiles];
+export const DB_COLLECTION_ENTRIES: schemas.IResourceCollection[] = [];
+export const DB_LINK_ENTRIES: schemas.IResourceLink[] = [];
+
 export * from './bundles';

@@ -1,3 +1,3 @@
-<button class="share-button" matIconButton (click)="service.shareFile(doc())">
+<button class="share-button" matIconButton (click)="handleShare($event)" [attr.aria-label]="'Share' | translate">
   <mat-icon>share</mat-icon>
 </button>

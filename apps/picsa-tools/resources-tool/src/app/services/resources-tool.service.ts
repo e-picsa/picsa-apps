@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
@@ -21,7 +21,13 @@ import { arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
 import { lastValueFrom } from 'rxjs';
 
-import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
+import {
+  DB_COLLECTION_ENTRIES,
+  DB_FILE_ENTRIES,
+  DB_LINK_ENTRIES,
+  IResourceCountryManifest,
+  RESOURCE_MANIFESTS,
+} from '../data';
 import * as schemas from '../schemas';
 
 export type IDownloadStatus = 'loading' | 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
@@ -39,6 +45,96 @@ export class ResourcesToolService extends PicsaAsyncService {
   private shareService = inject(ShareService);
 
   private canShare: boolean;
+
+  /** Active country manifest derived reactively from current deployment settings */
+  public activeManifest = computed<IResourceCountryManifest>(() => {
+    const { country_code } = this.configurationService.deploymentSettings();
+    return (
+      RESOURCE_MANIFESTS[country_code] || {
+        collections: [],
+        files: [],
+        links: [],
+        collectionsById: {},
+        filesById: {},
+        linksById: {},
+      }
+    );
+  });
+
+  /** Helper to determine if a collection contains any visible child collections, files, or links */
+  public isCollectionNonEmpty(col: schemas.IResourceCollection): boolean {
+    const { collections, files, links } = col.childResources;
+    return (collections?.length ?? 0) > 0 || (files?.length ?? 0) > 0 || (links?.length ?? 0) > 0;
+  }
+
+  /** Active country top-level collections (hiding empty collections for the deployment) */
+  public topLevelCollections = computed<schemas.IResourceCollection[]>(() => {
+    return this.activeManifest()
+      .collections.filter((c) => !c.parentCollection && this.isCollectionNonEmpty(c))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  });
+
+  /** Unassigned resources (files and links not assigned to any collection in the active manifest) */
+  public unassignedResources = computed<{ files: schemas.IResourceFile[]; links: schemas.IResourceLink[] }>(() => {
+    const manifest = this.activeManifest();
+    const assignedFileIds = new Set<string>();
+    const assignedLinkIds = new Set<string>();
+
+    for (const col of manifest.collections) {
+      for (const fileId of col.childResources?.files || []) {
+        assignedFileIds.add(fileId);
+      }
+      for (const linkId of col.childResources?.links || []) {
+        assignedLinkIds.add(linkId);
+      }
+    }
+
+    const files = manifest.files
+      .filter((f) => !assignedFileIds.has(f.id))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    const links = manifest.links
+      .filter((l) => !assignedLinkIds.has(l.id))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    return { files, links };
+  });
+
+  /** Retrieve a collection by ID across active country manifest or fallback to any known country bundle */
+  public getCollection(id: string): schemas.IResourceCollection | undefined {
+    const active = this.activeManifest().collectionsById[id];
+    if (active) return active;
+    for (const manifest of Object.values(RESOURCE_MANIFESTS)) {
+      if (manifest.collectionsById[id]) return manifest.collectionsById[id];
+    }
+    return undefined;
+  }
+
+  /** Retrieve links by an array of link IDs */
+  public getLinks(ids: string[]): schemas.IResourceLink[] {
+    const manifest = this.activeManifest();
+    return ids
+      .map((id) => manifest.linksById[id])
+      .filter((link): link is schemas.IResourceLink => Boolean(link))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  }
+
+  /** Retrieve child collections by an array of collection IDs */
+  public getCollections(ids: string[]): schemas.IResourceCollection[] {
+    return ids
+      .map((id) => this.getCollection(id))
+      .filter((col): col is schemas.IResourceCollection => Boolean(col))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  }
+
+  /** Retrieve files for the active country by an array of file IDs */
+  public getFiles(ids: string[]): schemas.IResourceFile[] {
+    const manifest = this.activeManifest();
+    return ids
+      .map((id) => manifest.filesById[id])
+      .filter((f): f is schemas.IResourceFile => Boolean(f))
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  }
 
   /**
    * Initialisation method automatically called on instantiation

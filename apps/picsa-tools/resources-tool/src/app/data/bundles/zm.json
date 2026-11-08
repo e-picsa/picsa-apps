@@ -6,8 +6,14 @@
       "title": "Crop, Pest & Disease",
       "cover_image": "global/resources/covers/crops.svg",
       "resource_collections": [],
-      "resource_files": ["fb48f321-09ba-4205-9e6a-f52de5a55c3d"],
-      "resource_links": ["accessAg_zm", "plantwise_zm", "plantix_zm"],
+      "resource_files": [
+        "fb48f321-09ba-4205-9e6a-f52de5a55c3d"
+      ],
+      "resource_links": [
+        "accessAg_zm",
+        "plantwise_zm",
+        "plantix_zm"
+      ],
       "collection_parent": null,
       "sort_order": 7,
       "country_code": "zm",
@@ -20,7 +26,10 @@
       "cover_image": "global/resources/covers/gender-equality.svg",
       "resource_collections": [],
       "resource_files": null,
-      "resource_links": ["womenInExtension_zm", "gfrasNelk_zm"],
+      "resource_links": [
+        "womenInExtension_zm",
+        "gfrasNelk_zm"
+      ],
       "collection_parent": null,
       "sort_order": 5,
       "country_code": "zm",

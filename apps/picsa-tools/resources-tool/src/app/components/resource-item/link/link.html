@@ -1,39 +1,66 @@
 <!-- Base resource display -->
-<mat-card appearance="raised" class="resource-card link" (click)="handleClick()">
+<mat-card appearance="outlined" class="resource-card link" (click)="handleClick()">
   <div class="card-layout">
-    <!-- Side Image -->
-    @if(resource().cover?.image){
-    <div
-      class="background-image"
-      [style.background-image]="'url(' + resource().cover?.image + ')'"
-      [attr.data-fit]="resource().cover?.imageFit"
-    ></div>
-    }
+    <!-- Side Image / Fallback Cover -->
+    <div class="cover-wrapper">
+      @if (coverImage() && !imageFailed()) {
+        <img
+          [src]="coverImage()"
+          [alt]="resource().title"
+          (error)="onImageError()"
+          class="cover-image"
+          [attr.data-fit]="resource().cover?.imageFit || 'cover'"
+        />
+      } @else {
+        <div class="fallback-cover" [class]="fallbackInfo().colorClass">
+          @if (fallbackInfo().svgIcon) {
+            <mat-icon [svgIcon]="fallbackInfo().svgIcon!" class="fallback-icon"></mat-icon>
+          } @else {
+            <mat-icon class="fallback-icon">{{ fallbackInfo().matIcon }}</mat-icon>
+          }
+          <span class="fallback-badge">{{ fallbackInfo().badge | translate }}</span>
+        </div>
+      }
+    </div>
+
     <!-- Main content -->
     <div class="central-content">
-      <mat-card-header>
-        <mat-card-title style="margin-top: 12px">{{ resource().title | translate }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        @if(description()){
-        <p>{{ description() | translate }}</p>
+      <div class="content-top">
+        <h3 class="resource-title" [title]="resource().title">{{ resource().title | translate }}</h3>
+        @if (description()) {
+          <p class="resource-description" [title]="description()">{{ description() | translate }}</p>
         }
-        <!-- Child Content -->
-        <ng-content></ng-content>
-        @if(actionButtons[resource().subtype]; as actionButton){
+      </div>
+
+      <div class="resource-meta">
+        @if (languageLabel(); as lang) {
+          <span class="meta-chip language-chip">{{ lang }}</span>
+        }
+        @if (fileSizeText(); as size) {
+          <span class="meta-chip size-chip">{{ size }}</span>
+        }
+        <ng-content select="[card-meta]"></ng-content>
+      </div>
+    </div>
+
+    <!-- Right Action Slot -->
+    <div class="action-column">
+      <ng-content select="[card-action]"></ng-content>
+
+      @if (actionButtons[resource().subtype]; as actionButton) {
         <div class="action-button" [attr.data-type]="resource().subtype">
-          @if(actionButton.svgIcon){
-          <mat-icon [svgIcon]="actionButton.svgIcon"></mat-icon>
-          } @if(actionButton.matIcon){
-          <mat-icon>{{actionButton.matIcon}}</mat-icon>
+          @if (actionButton.svgIcon) {
+            <mat-icon [svgIcon]="actionButton.svgIcon"></mat-icon>
+          } @else if (actionButton.matIcon) {
+            <mat-icon>{{ actionButton.matIcon }}</mat-icon>
           }
         </div>
-        } @if(language()){
-        <div style="margin-top: 2em">
-          <span class="language-code">{{language().toUpperCase() }}</span>
-        </div>
-        }
-      </mat-card-content>
+      }
+      @if (resource().type === 'collection') {
+        <mat-icon class="action-icon collection-chevron">chevron_right</mat-icon>
+      } @else if (resource().subtype === 'website' || resource().subtype === 'facebook' || resource().subtype === 'whatsapp' || resource().subtype === 'youtube') {
+        <mat-icon class="action-icon external-icon">open_in_new</mat-icon>
+      }
     </div>
   </div>
 </mat-card>
