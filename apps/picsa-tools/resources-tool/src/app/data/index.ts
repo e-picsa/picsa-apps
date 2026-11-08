@@ -28,3 +28,4 @@ for (const resource of Object.values(byId)) {
 export const DB_COLLECTION_ENTRIES = typeExports.collection;
 export const DB_FILE_ENTRIES = typeExports.file;
 export const DB_LINK_ENTRIES = typeExports.link;
+export * from './bundles';

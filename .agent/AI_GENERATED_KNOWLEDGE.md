@@ -188,7 +188,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Resources Ownership Rule**: `resources.editor` can create new resources and edit/delete **only** rows where `owner = auth.uid()`; `resources.admin` can edit/delete any resource in the deployment.
 - **Resources Architecture & App Sync**:
   - The farmer mobile app (`apps/picsa-tools/resources-tool`) currently reads static bundled assets loaded into local RxDB collections (`resources_tool_collections`, `resources_tool_files`, `resources_tool_links`) via `populateHardcodedResources()`.
-  - There is currently no generic Supabase-to-mobile sync engine for `resource_*` tables (sync service `PicsaDatabaseSyncService` is single-direction push only for offline user data). Supabase resources tables exclusively power the dashboard and backend reference data.
+  - Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`, which queries `resource_collections`, `resource_files`, and `resource_links`, strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
   - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
