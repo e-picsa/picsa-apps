@@ -1,6 +1,9 @@
 <!-- Dashboard dropzone -->
 @if (uppy) {
   <uppy-dashboard [uppy]="uppy" [props]="dashboardOptions" />
+  @if (maxFileSizeMB) {
+    <p class="upload-hint">Maximum file size: {{ maxFileSizeMB }} MB</p>
+  }
 }
 
 <!-- Storage path editor -->
