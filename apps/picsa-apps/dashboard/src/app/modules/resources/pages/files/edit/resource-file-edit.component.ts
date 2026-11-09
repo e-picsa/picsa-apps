@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaFallbackImageComponent } from '@picsa/components';
@@ -28,6 +29,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
     DashboardMaterialModule,
     DashboardStorageLinkComponent,
     FormsModule,
+    NgTemplateOutlet,
     PicsaFallbackImageComponent,
     ReactiveFormsModule,
     SupabaseStoragePickerDirective,
@@ -47,6 +49,7 @@ export class ResourceFileEditComponent implements OnInit {
   private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
   private dialog = inject(PicsaDialogService);
+  private cdr = inject(ChangeDetectorRef);
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
@@ -61,6 +64,16 @@ export class ResourceFileEditComponent implements OnInit {
 
   public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
+
+  /** Extracted filename for cover image */
+  public get coverFilename(): string {
+    return this.form.value.cover_image?.split('/')?.pop() || '';
+  }
+
+  /** Extracted filename for resource file */
+  public get resourceFilename(): string {
+    return this.form.value.filename || this.form.value.storage_file?.split('/')?.pop() || '';
+  }
 
   public form = this.formBuilder.group({
     language_code: ['', Validators.required],
@@ -181,17 +194,25 @@ export class ResourceFileEditComponent implements OnInit {
     if (controlName === 'storage_file') {
       const { size, type: mimetype, name: filename } = data as File;
       // TODO - get md5 checksum (or use supabase etag)
-      this.form.patchValue({
+      const patchValues: Record<string, any> = {
         storage_file: storagePath,
         size_kb: Math.round(size / 1024),
         mimetype,
         filename,
-      });
+      };
+      // If resource is an image and no custom cover is currently set, use as default cover
+      if (mimetype?.startsWith('image/') && !this.form.value.cover_image) {
+        patchValues['cover_image'] = storagePath;
+        this.form.controls.cover_image.markAsDirty();
+      }
+      this.form.patchValue(patchValues);
     } else {
       this.form.patchValue({ cover_image: storagePath });
     }
     this.form.controls[controlName].markAsDirty();
     this.form.markAsDirty();
+    // Reactive patchValue does not notify OnPush views - ensure template re-reads form.value
+    this.cdr.markForCheck();
   }
 
   public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'cover_image') {
@@ -201,12 +222,17 @@ export class ResourceFileEditComponent implements OnInit {
       if (controlName === 'storage_file') {
         const { metadata } = entry;
         const { mimetype, size } = metadata;
-        this.form.patchValue({
+        const patchValues: Record<string, any> = {
           storage_file: storagePath,
           size_kb: Math.round(size / 1024),
           filename: storagePath.split('/').pop(),
           mimetype,
-        });
+        };
+        if (mimetype?.startsWith('image/') && !this.form.value.cover_image) {
+          patchValues['cover_image'] = storagePath;
+          this.form.controls.cover_image.markAsDirty();
+        }
+        this.form.patchValue(patchValues);
       } else {
         this.form.patchValue({ cover_image: storagePath });
       }
@@ -215,5 +241,7 @@ export class ResourceFileEditComponent implements OnInit {
     }
     this.form.controls[controlName].markAsDirty();
     this.form.markAsDirty();
+    // Reactive patchValue does not notify OnPush views - ensure template re-reads form.value
+    this.cdr.markForCheck();
   }
 }

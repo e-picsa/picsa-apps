@@ -19,4 +19,17 @@ describe('SupabaseUploadComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should reflect input signals in dashboard options', () => {
+    fixture.componentRef.setInput('fileDropHeight', 200);
+    fixture.componentRef.setInput('disabled', true);
+    expect(component.dashboardOptions().height).toBe(200);
+    expect(component.dashboardOptions().disabled).toBe(true);
+  });
+
+  it('should default to unrestricted file types with 50MB limit', () => {
+    expect(component.fileTypes()).toBeUndefined();
+    expect(component.maxFileSizeMB()).toBe(50);
+    expect(component.storageBucketName()).toBe('global');
+  });
 });

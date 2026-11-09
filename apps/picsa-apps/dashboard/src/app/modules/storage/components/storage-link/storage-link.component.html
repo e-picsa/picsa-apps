@@ -6,10 +6,13 @@
         class="chip-button filetype-icon"
         matButton
         [attr.data-icon]="fileTypeIcon"
+        [title]="entryName()"
         (click)="handleLinkClick(e.publicUrl)"
       >
         <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
-        <div class="chip-text filename">{{ entryName() }}</div>
+        <div class="chip-text filename">
+          <span>{{ entryName() }}</span>
+        </div>
       </button>
     }
     <!-- link style -->
