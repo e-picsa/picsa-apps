@@ -35,11 +35,13 @@
   >
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
-      <img class="cover-image" [src]="coverImage | storagePath" />
+      @if (coverImage) {
+        <img class="cover-image" [src]="coverImage | storagePath" />
+      }
     </ng-template>
     <!-- parent collection -->
     <ng-template #collectionParentTemplate let-collection>
-      @if (collection) {
+      @if (collection?.cover_image) {
         <img
           class="cover-image color-on-hover"
           [src]="collection.cover_image | storagePath"

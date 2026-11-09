@@ -52,7 +52,9 @@
     </ng-template>
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
-      <img class="cover-image" [src]="coverImage | storagePath" />
+      @if (coverImage) {
+        <img class="cover-image" [src]="coverImage | storagePath" />
+      }
     </ng-template>
     <!-- externalUrl -->
     <ng-template #urlTemplate let-url>

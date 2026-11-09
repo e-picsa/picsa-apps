@@ -15,9 +15,15 @@ import { SupabaseStorageService } from '../services/supabase-storage.service';
 export class StoragePathPipe implements PipeTransform {
   private storageService = inject(SupabaseStorageService);
 
-  transform(path: string): string {
+  transform(path: string | null | undefined): string {
+    if (!path) return '';
     const [bucketId, ...pathSegments] = path.split('/');
+    if (!bucketId) return '';
     const objectPath = pathSegments.join('/');
-    return this.storageService.getPublicLink(bucketId, objectPath);
+    try {
+      return this.storageService.getPublicLink(bucketId, objectPath);
+    } catch {
+      return '';
+    }
   }
 }
