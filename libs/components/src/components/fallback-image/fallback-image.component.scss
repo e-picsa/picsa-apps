@@ -1,5 +1,10 @@
 :host {
   display: block;
+
+  &[data-size='fill'] {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .fallback-image-wrapper {
@@ -46,6 +51,15 @@
     height: 100%;
     border: none;
     border-radius: 0;
+
+    .fallback-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+    .fallback-badge {
+      font-size: 10px;
+    }
   }
 }
 
@@ -60,6 +74,8 @@
 
   &[data-fit='contain'] {
     object-fit: contain;
+    padding: 6px;
+    box-sizing: border-box;
   }
 }
 

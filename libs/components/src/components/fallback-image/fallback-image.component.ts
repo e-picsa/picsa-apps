@@ -9,6 +9,9 @@ import { FALLBACK_IMAGE_CONFIGS, FallbackImageType, IFallbackImageConfig } from 
   templateUrl: './fallback-image.component.html',
   styleUrl: './fallback-image.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-size]': 'size()',
+  },
 })
 export class PicsaFallbackImageComponent {
   /** Target image URL (or null/undefined) */
