@@ -78,7 +78,9 @@
             [matTooltip]="collection.title"
             (click)="handleCollectionClick($event, collection)"
           >
-            <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+            @if (collection.cover_image) {
+              <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+            }
           </div>
         }
       </div>
