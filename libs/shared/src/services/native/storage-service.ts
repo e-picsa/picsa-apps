@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
+import { safeDecodeURIComponent } from '@picsa/utils';
 import write_blob from 'capacitor-blob-writer';
 
 import { PicsaAsyncService } from '../asyncService.service';
@@ -81,8 +82,10 @@ export class NativeStorageService extends PicsaAsyncService {
   public async copyFileToCache(uri: string, targetFilename: string) {
     // determine the relative filepath (with subfolders) as written to data directory
     const fileDirectory = await Filesystem.getUri({ directory: Directory.Data, path: '' });
-    const relativePath = uri.replace(fileDirectory.uri, '');
-    const to = targetFilename || (uri.split('/').pop() as string);
+    const rawRelativePath = uri.replace(fileDirectory.uri, '').replace(/^\/+/, '');
+    const relativePath = safeDecodeURIComponent(rawRelativePath);
+    const rawTo = targetFilename || (uri.split('/').pop() as string);
+    const to = safeDecodeURIComponent(rawTo);
     // copy file to cache, ignoring nested folder structures (just keep flat)
     const { uri: cacheFileUri } = await Filesystem.copy({
       from: relativePath,
