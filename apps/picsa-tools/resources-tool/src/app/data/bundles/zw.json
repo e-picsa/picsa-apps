@@ -78,7 +78,7 @@
       "description": "Description of terminologies used in forecasting",
       "storage_file": "zw/resources/Forecast Terminology_Draft.pdf",
       "external_url": null,
-      "cover_image": "global/resources/covers/document.svg",
+      "cover_image": null,
       "title": "Forecast Terminology",
       "language_code": "zw_en",
       "country_code": "zw",
@@ -105,7 +105,7 @@
     {
       "id": "ece9ab3b-1fa7-49ac-936f-dc43354cb526",
       "description": "The website link",
-      "cover_image": null,
+      "cover_image": "zw/resources/covers/msd_logo.original.jpg",
       "title": "MSD Website",
       "sort_order": -1,
       "type": "web",
