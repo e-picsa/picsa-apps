@@ -8,7 +8,7 @@ import type { IStationCapabilities } from '@picsa/models';
 export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   beitbridge_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '75966bfabbe77c61900a5287bb527616cde70efaaf56c4134908b89cd2280c19',
     years: [1922, 2026],
     totalYears: 105,
@@ -21,7 +21,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   buffalo_range_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: 'dc3e71cba26342c7e4162333af2221a76df32f90a06e754fcbe3f620977936c2',
     years: [1965, 2026],
     totalYears: 62,
@@ -34,7 +34,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   buhera_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '85736b80e8896720f16aac4c4704eda6905c4d692c40f570e3ed70597b5fe322',
     years: [1951, 2026],
     totalYears: 76,
@@ -47,7 +47,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   chipinge_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '2b30b941017fdc383c233b945943f279e4927021638a07f311ab6889cd383683',
     years: [1951, 2026],
     totalYears: 76,
@@ -60,7 +60,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   chisengu_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '72bf1163e8ac5b7659434e047c4c2a711d8bdaffb035ad12df7da9b0d9eb2bcc',
     years: [1955, 2026],
     totalYears: 72,
@@ -73,7 +73,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   chisumbanje_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '9a124d29ad41d0c5982b749bc35ad1fa62c0d247445e2449a659acbcdd1fb2cd',
     years: [1953, 2026],
     totalYears: 74,
@@ -86,7 +86,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   kezi_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '82c381be7cc5cb85f09e55764e553b8840f150e53818d39bbc8b63f2cbb849e6',
     years: [1962, 2026],
     totalYears: 65,
@@ -99,7 +99,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   makoholi_exp_station_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: 'efed1f46a243078da00964f68d46f0a98e6288447352d7d9fd57c4f586d1c48d',
     years: [1942, 2026],
     totalYears: 85,
@@ -112,7 +112,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   masvingo_airport_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: 'e4da6fd39683cf14f911d9cdb4e9bfce8b3a50b6a80e7680db656f3e94f3313c',
     years: [1951, 2026],
     totalYears: 76,
@@ -125,7 +125,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   matopos_res_stn_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: 'f7bc9bbc5dc34a616c79644f937d746802a032a6ae578b14f15842e24b0b5287',
     years: [1951, 2026],
     totalYears: 76,
@@ -148,7 +148,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   nyanga_exp_stn_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '04079e634a06e7cb92b72c852a4b23f762d1f7ba1b0f4234aa11982930c2c8ba',
     years: [1951, 2026],
     totalYears: 76,
@@ -161,7 +161,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   plumtree_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: 'f945392139e4ac64c7ceb0a0d5581a368609d6d57654f98b7b47e535bfc2de70',
     years: [1962, 2026],
     totalYears: 65,
@@ -174,7 +174,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   rupike_irrigation_scheme_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '35cc20a3524b03ee8fa63df6ec9e23c8036feecc3c27de3fe2bc77f6c47af092',
     years: [1990, 2026],
     totalYears: 37,
@@ -187,7 +187,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   rusape_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '2246e18190e7a91f48f76d9b860a15f5cc281c4c40886d28cb345ed0bfe03217',
     years: [1909, 2026],
     totalYears: 118,
@@ -200,7 +200,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   west_nicholson_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '2cb503623620e26a6b0c8d3675fb22fc7cdcc1d01fb198b97e706efed491dfc5',
     years: [1952, 2026],
     totalYears: 75,
@@ -213,7 +213,7 @@ export const ZW_STATION_CAPABILITIES: Record<string, IStationCapabilities> = {
   },
   zaka_met: {
     schemaVersion: 1,
-    lastUpdated: '2026-10-07',
+    lastUpdated: '2026-11-09',
     contentHash: '4420b4f577e34a39a3d7ec805b50133d61c8f804b10a416d12c0e580f616ab63',
     years: [1923, 2026],
     totalYears: 104,
