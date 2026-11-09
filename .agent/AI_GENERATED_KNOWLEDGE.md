@@ -862,3 +862,11 @@ To prevent recurring "whack-a-mole" layout inconsistencies across the Extension 
 5. **`picsa-sidenav-layout` Content Projection**:
    - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
    - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; min-height: 0; overflow-x: hidden; overflow-y: auto;` when hosting full-height tables).
+
+### Native File Sharing vs. File Opening (`@capacitor/filesystem` Percent-Encoded URIs)
+
+- **Why `FileOpener` Succeeds While `ShareService` Fails on Filenames with Spaces**:
+  - When `NativeStorageService.writeFile` saves an attachment to `Directory.Data`, `write_blob` writes the file using the raw unencoded `relativePath` (e.g. `picsa_extension/resources_tool_files/FAW Mangement for maize.pdf`), whereas `Filesystem.stat` returns a percent-encoded `file://` URI (`.../FAW%20Mangement%20for%20maize.pdf`) stored in `attachments._data.uri`.
+  - Opening the file via `cordova-plugin-file-opener2` (`FileOpener2.java`) works directly from `Directory.Data` because `android.net.Uri.parse(fileArg).getPath()` automatically URL-decodes `%20` and `@` before constructing `new File(fileName)`.
+  - Conversely, `@capacitor/share` requires copying the file to `Directory.Cache` via `NativeStorageService.copyFileToCache`. Because `Filesystem.copy({ from, directory: Directory.Data, to, toDirectory: Directory.Cache })` treats `from` and `to` as literal filesystem paths (not URIs), passing raw URI substrings with `%20` or leading slashes causes `Filesystem.copy` to fail with file-not-found.
+  - Always `decodeURIComponent` and strip leading slashes from `relativePath` and `targetFilename` in `NativeStorageService.copyFileToCache` and `ShareService.shareFromAttachmentsNative`. Because this decodes the stored URI at share time, it works retroactively for all already-downloaded files on user devices without requiring re-downloads or DB migrations.

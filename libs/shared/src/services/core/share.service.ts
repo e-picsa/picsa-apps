@@ -44,8 +44,8 @@ export class ShareService {
     for (const doc of docs) {
       const { uri, type } = doc._data;
       if (type && uri) {
-        // Ensure file extension included
-        let targetFilename = uri.split('/').pop() as string;
+        // Ensure file extension included (decode percent-encoded URI segments such as spaces)
+        let targetFilename = this.decodeFilename(uri.split('/').pop() as string);
         const targetExt = getExtensionForMime(type);
         if (!targetExt) {
           console.warn('Could not determine file extension for mime type, skipping file', { type, uri });
@@ -73,7 +73,7 @@ export class ShareService {
     }
 
     const files = shareable.map(({ cacheUri }) => cacheUri);
-    const title = opts.title || shareable.length === 1 ? shareable[0].title : `${shareable.length} Files`;
+    const title = opts.title || (shareable.length === 1 ? shareable[0].title : `${shareable.length} Files`);
     await Share.share({ ...SHARE_OPTION_DEFAULTS, ...opts, title, files });
 
     // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
@@ -117,5 +117,13 @@ export class ShareService {
       throw new Error('File sharing not supported');
     }
     return navigator.share({ ...SHARE_OPTION_DEFAULTS, ...opts, files });
+  }
+
+  private decodeFilename(value: string): string {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
   }
 }

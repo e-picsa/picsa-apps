@@ -81,8 +81,10 @@ export class NativeStorageService extends PicsaAsyncService {
   public async copyFileToCache(uri: string, targetFilename: string) {
     // determine the relative filepath (with subfolders) as written to data directory
     const fileDirectory = await Filesystem.getUri({ directory: Directory.Data, path: '' });
-    const relativePath = uri.replace(fileDirectory.uri, '');
-    const to = targetFilename || (uri.split('/').pop() as string);
+    const rawRelativePath = uri.replace(fileDirectory.uri, '').replace(/^\/+/, '');
+    const relativePath = this.decodeUriPath(rawRelativePath);
+    const rawTo = targetFilename || (uri.split('/').pop() as string);
+    const to = this.decodeUriPath(rawTo);
     // copy file to cache, ignoring nested folder structures (just keep flat)
     const { uri: cacheFileUri } = await Filesystem.copy({
       from: relativePath,
@@ -91,6 +93,14 @@ export class NativeStorageService extends PicsaAsyncService {
       toDirectory: Directory.Cache,
     });
     return cacheFileUri;
+  }
+
+  private decodeUriPath(value: string): string {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
   }
 
   public async deleteFile(relativePath: string) {
