@@ -8,7 +8,7 @@ export interface ISeedDataConfiguration {
    * Default behaviour prioritises tables with shorter names before longer
    * */
   priority?: 1;
-  /** Batch size for paginated export (default: 250). Override per table if needed. */
+  /** Batch size for paginated export and local upsert chunks. Override per table if needed. */
   batchSize?: number;
   /** Database schema (default: 'public') */
   schema?: keyof Database;
