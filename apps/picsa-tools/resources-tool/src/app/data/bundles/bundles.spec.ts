@@ -20,8 +20,8 @@ describe('RESOURCE_BUNDLES and RESOURCE_MANIFESTS', () => {
 
     const zwManifest = RESOURCE_MANIFESTS['zw'];
     expect(zwManifest.collections.length).toBe(3);
-    expect(zwManifest.links.length).toBe(5);
-    expect(zwManifest.files.length).toBe(0);
+    expect(zwManifest.links.length).toBe(6);
+    expect(zwManifest.files.length).toBe(3);
 
     const mwManifest = RESOURCE_MANIFESTS['mw'];
     expect(mwManifest.collections.length).toBe(3);
