@@ -5,7 +5,7 @@
     <div class="form-content">
       <div style="display: flex; flex-wrap: wrap; gap: 2rem">
         <!-- External URL -->
-        @if (form.value.external_url; as external_url) {
+        @if (externalUrl(); as external_url) {
           <div style="flex: 1">
             <label>External URL</label>
             <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
@@ -16,12 +16,12 @@
         }
 
         <!-- Storage file / External Url -->
-        @if (!form.value.external_url) {
+        @if (!externalUrl()) {
           <div style="flex: 0 1 280px; min-width: 240px; display: flex; flex-direction: column">
             <label>Resource File</label>
             <div class="file-card resource-card">
-              @if (form.value.storage_file) {
-                <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
+              @if (storageFile()) {
+                <dashboard-storage-link [id]="storageFile() ?? ''" displayStyle="button"></dashboard-storage-link>
                 @if (canEdit()) {
                   <button
                     type="button"
@@ -59,8 +59,8 @@
           <div class="cover-layout">
             @if (canEdit()) {
               <div class="file-card cover-card">
-                @if (form.value.cover_image) {
-                  <dashboard-storage-link [id]="form.value.cover_image" displayStyle="button"></dashboard-storage-link>
+                @if (coverImage()) {
+                  <dashboard-storage-link [id]="coverImage() ?? ''" displayStyle="button"></dashboard-storage-link>
                   <button
                     type="button"
                     matButton="outlined"
@@ -89,22 +89,17 @@
               </div>
             }
             <div class="cover-preview-col">
-              @if (form.value.cover_image) {
-                <dashboard-storage-link
-                  #storageLink
-                  [id]="form.value.cover_image"
-                  style="display: none"
-                ></dashboard-storage-link>
+              @if (coverImage(); as coverImagePath) {
                 <picsa-fallback-image
-                  [src]="storageLink.entry()?.publicUrl"
-                  [fallbackType]="getFileFallbackType(form.value.mimetype)"
+                  [src]="coverImagePath | storagePath"
+                  [fallbackType]="getFileFallbackType(mimetype())"
                   size="md"
                 />
-                <span class="cover-label-text is-custom" [title]="coverFilename">
-                  {{ coverFilename }}
+                <span class="cover-label-text is-custom" [title]="coverFilename()">
+                  {{ coverFilename() }}
                 </span>
               } @else {
-                <picsa-fallback-image [fallbackType]="getFileFallbackType(form.value.mimetype)" size="md" />
+                <picsa-fallback-image [fallbackType]="getFileFallbackType(mimetype())" size="md" />
                 <span class="cover-label-text">Default Cover</span>
               }
             </div>

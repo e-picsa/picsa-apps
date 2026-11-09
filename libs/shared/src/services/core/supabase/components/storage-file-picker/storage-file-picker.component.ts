@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PicsaFallbackImageComponent } from '@picsa/components/fallback-image/fallback-image.component';
-import { FallbackImageType } from '@picsa/components/fallback-image/fallback-image.types';
+import { FallbackImageType, getFallbackTypeForFilename } from '@picsa/components/fallback-image/fallback-image.types';
 
 import { IStorageEntry } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
@@ -24,27 +24,6 @@ import { SupabaseService } from '../../supabase.service';
 export interface IStoragePickerData {
   storageBucketName?: string;
   storageFolderPath?: string;
-}
-
-const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'gif'];
-
-/** Map a storage filename to the closest fallback image preset */
-export function getEntryFallbackType(name?: string | null): FallbackImageType {
-  const ext = name?.split('.').pop()?.toLowerCase();
-  switch (ext) {
-    case 'pdf':
-      return 'pdf';
-    case 'mp4':
-    case 'mov':
-    case 'webm':
-      return 'video';
-    case 'mp3':
-    case 'wav':
-    case 'ogg':
-      return 'audio';
-    default:
-      return ext && IMAGE_EXTENSIONS.includes(ext) ? 'image' : 'document';
-  }
 }
 
 /**
@@ -108,14 +87,17 @@ export class SupabaseStorageFilePickerComponent {
   /** Direct image preview for image files, otherwise the fallback preset renders */
   readonly previewSrc = computed(() => {
     const entry = this.previewEntry();
-    if (!entry || !entry.name || !IMAGE_EXTENSIONS.includes(entry.name.split('.').pop()?.toLowerCase() ?? '')) {
+    const name = entry?.name ?? '';
+    if (!entry || getFallbackTypeForFilename(name) !== 'image') {
       return undefined;
     }
-    return this.storage.getPublicLink(entry.bucket_id as string, entry.name);
+    return this.storage.getPublicLink(entry.bucket_id as string, name);
   });
 
   /** Fallback preset derived from the selected entry filename */
-  readonly previewFallbackType = computed<FallbackImageType>(() => getEntryFallbackType(this.previewEntry()?.name));
+  readonly previewFallbackType = computed<FallbackImageType>(() =>
+    getFallbackTypeForFilename(this.previewEntry()?.name),
+  );
 
   private get storage() {
     return this.supabaseService.storage;

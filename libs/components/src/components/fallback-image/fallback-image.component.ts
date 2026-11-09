@@ -20,7 +20,18 @@ export class PicsaFallbackImageComponent {
   /** Standard fallback preset */
   readonly fallbackType = input<FallbackImageType>('document');
 
-  /** Optional custom override for the text label */
+  /**
+   * Optional custom SVG icon ID (registered via MatIconRegistry).
+   * Rendered in place of the preset Material icon when provided.
+   */
+  readonly svgIcon = input<string | undefined>(undefined);
+
+  /**
+   * Optional custom override for the text label.
+   * Consumers must pass pre-translated text: the component renders labels verbatim
+   * and applies no translation itself, so translating here would double-translate
+   * labels that callers already ran through the translate pipe.
+   */
   readonly label = input<string | undefined>(undefined);
 
   /** Display size */

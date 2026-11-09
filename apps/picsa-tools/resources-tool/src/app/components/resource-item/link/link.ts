@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  EventEmitter,
-  inject,
-  input,
-  Output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -43,8 +34,6 @@ export class ResourceItemLinkComponent {
   private route = inject(ActivatedRoute);
 
   resource = input.required<any>();
-
-  public imageFailed = signal(false);
 
   shareUrl = computed<string>(() => {
     const { url, subtype } = this.resource();
@@ -90,6 +79,7 @@ export class ResourceItemLinkComponent {
     badge: string;
     type: FallbackImageType;
     label?: string;
+    svgIcon?: string;
   }>(() => {
     const res = this.resource();
     const type = res.rawType || res.type;
@@ -108,6 +98,7 @@ export class ResourceItemLinkComponent {
       return {
         badge: 'Video',
         type: 'video',
+        svgIcon: 'resources_tool:filetype_video',
       };
     }
 
@@ -115,6 +106,7 @@ export class ResourceItemLinkComponent {
       return {
         badge: 'PDF',
         type: 'pdf',
+        svgIcon: 'resources_tool:filetype_pdf',
       };
     }
 
@@ -122,6 +114,7 @@ export class ResourceItemLinkComponent {
       return {
         badge: 'App',
         type: 'app',
+        svgIcon: 'resources_tool:play_store',
       };
     }
 
@@ -129,6 +122,7 @@ export class ResourceItemLinkComponent {
       return {
         badge: 'Doc',
         type: 'document',
+        svgIcon: 'resources_tool:filetype_document',
       };
     }
 
@@ -137,10 +131,6 @@ export class ResourceItemLinkComponent {
       type: 'link',
     };
   });
-
-  onImageError() {
-    this.imageFailed.set(true);
-  }
 
   /** Check if any existing click handlers already bound to element to use as override */
   // eslint-disable-next-line @angular-eslint/no-output-native

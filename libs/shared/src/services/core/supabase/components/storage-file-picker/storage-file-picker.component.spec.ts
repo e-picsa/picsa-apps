@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { getFallbackTypeForFilename } from '@picsa/components/fallback-image/fallback-image.types';
 
 import { IStorageEntry } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
-import {
-  getEntryFallbackType,
-  SupabaseStorageFilePickerComponent,
-  SupabaseStoragePickerDirective,
-} from './storage-file-picker.component';
+import { SupabaseStorageFilePickerComponent, SupabaseStoragePickerDirective } from './storage-file-picker.component';
 
 @Component({
   imports: [SupabaseStoragePickerDirective],
@@ -77,12 +74,12 @@ describe('SupabaseStorageFilePickerComponent', () => {
   });
 
   it('should map filenames to fallback presets', () => {
-    expect(getEntryFallbackType('doc.pdf')).toBe('pdf');
-    expect(getEntryFallbackType('clip.mp4')).toBe('video');
-    expect(getEntryFallbackType('sound.mp3')).toBe('audio');
-    expect(getEntryFallbackType('photo.jpg')).toBe('image');
-    expect(getEntryFallbackType('notes.txt')).toBe('document');
-    expect(getEntryFallbackType(undefined)).toBe('document');
+    expect(getFallbackTypeForFilename('doc.pdf')).toBe('pdf');
+    expect(getFallbackTypeForFilename('clip.mp4')).toBe('video');
+    expect(getFallbackTypeForFilename('sound.mp3')).toBe('audio');
+    expect(getFallbackTypeForFilename('photo.jpg')).toBe('image');
+    expect(getFallbackTypeForFilename('notes.txt')).toBe('document');
+    expect(getFallbackTypeForFilename(undefined)).toBe('document');
   });
 
   it('should preview direct image only for image files', () => {

@@ -6,6 +6,7 @@
       <picsa-fallback-image
         [src]="coverImage()"
         [fallbackType]="fallbackInfo().type"
+        [svgIcon]="fallbackInfo().svgIcon"
         [label]="(fallbackInfo().label || fallbackInfo().badge) | translate"
         [fit]="resource().cover?.imageFit || 'cover'"
         [alt]="resource().title"

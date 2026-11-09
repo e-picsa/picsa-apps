@@ -6,12 +6,8 @@
       <!-- Cover Image -->
       <div>
         <label style="display: block; font-weight: 500; margin-bottom: 0.5rem">Cover Image</label>
-        @if (form.value.cover_image) {
-          <dashboard-storage-link
-            #storageLink
-            [id]="form.value.cover_image"
-            displayStyle="button"
-          ></dashboard-storage-link>
+        @if (coverImage(); as coverImagePath) {
+          <dashboard-storage-link [id]="coverImagePath ?? ''" displayStyle="button"></dashboard-storage-link>
           @if (canEdit()) {
             <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined)">
               <mat-icon>close</mat-icon>
@@ -19,7 +15,7 @@
           }
           <img
             class="cover-preview"
-            [src]="storageLink.entry()?.publicUrl"
+            [src]="coverImagePath | storagePath"
             style="margin-top: 8px; max-height: 120px; display: block; border-radius: 4px"
           />
         } @else if (canEdit()) {

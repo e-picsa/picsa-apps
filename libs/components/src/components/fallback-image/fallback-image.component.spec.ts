@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { PicsaFallbackImageComponent } from './fallback-image.component';
 
@@ -9,7 +8,7 @@ describe('PicsaFallbackImageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PicsaFallbackImageComponent, PicsaTranslateModule.forRoot()],
+      imports: [PicsaFallbackImageComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PicsaFallbackImageComponent);

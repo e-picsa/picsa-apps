@@ -236,8 +236,8 @@ export class SupabaseUploadComponent {
     storagePath += `/${file.name}`;
     const storageFile = await this.storageService.getFile(storagePath);
     if (storageFile) {
-      throw new Error(`Resource with name ${file.name} already exists`);
       this.uppy()?.removeFile(file.id);
+      throw new Error(`Resource with name ${file.name} already exists`);
     }
   }
 }

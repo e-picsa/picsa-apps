@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
@@ -6,6 +7,7 @@ import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import {
   IUploadResult,
+  StoragePathPipe,
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
@@ -27,6 +29,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
     DashboardStorageLinkComponent,
     FormsModule,
     ReactiveFormsModule,
+    StoragePathPipe,
     SupabaseStoragePickerDirective,
     SupabaseUploadComponent,
   ],
@@ -61,6 +64,11 @@ export class ResourceLinkEditComponent implements OnInit {
   public isCreate = this.permissions.isCreate;
   private resourceOwner = this.permissions.resourceOwner;
   public canEdit = this.permissions.canEdit;
+
+  /** Signal read of cover state for OnPush templates (patchValue emits through valueChanges) */
+  public coverImage = toSignal(this.form.controls.cover_image.valueChanges, {
+    initialValue: this.form.controls.cover_image.value,
+  });
 
   public get formValidationMessage(): string {
     return getResourceFormValidationMessage(this.form);

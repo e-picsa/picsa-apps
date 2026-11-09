@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaFallbackImageComponent } from '@picsa/components';
@@ -8,6 +9,7 @@ import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import {
   IUploadResult,
+  StoragePathPipe,
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
@@ -32,6 +34,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
     NgTemplateOutlet,
     PicsaFallbackImageComponent,
     ReactiveFormsModule,
+    StoragePathPipe,
     SupabaseStoragePickerDirective,
     SupabaseUploadComponent,
   ],
@@ -49,7 +52,6 @@ export class ResourceFileEditComponent implements OnInit {
   private authService = inject(DashboardAuthService);
   private notificationService = inject(PicsaNotificationService);
   private dialog = inject(PicsaDialogService);
-  private cdr = inject(ChangeDetectorRef);
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
@@ -64,16 +66,6 @@ export class ResourceFileEditComponent implements OnInit {
 
   public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
-
-  /** Extracted filename for cover image */
-  public get coverFilename(): string {
-    return this.form.value.cover_image?.split('/')?.pop() || '';
-  }
-
-  /** Extracted filename for resource file */
-  public get resourceFilename(): string {
-    return this.form.value.filename || this.form.value.storage_file?.split('/')?.pop() || '';
-  }
 
   public form = this.formBuilder.group({
     language_code: ['', Validators.required],
@@ -93,6 +85,23 @@ export class ResourceFileEditComponent implements OnInit {
   public isCreate = this.permissions.isCreate;
   private resourceOwner = this.permissions.resourceOwner;
   public canEdit = this.permissions.canEdit;
+
+  /** Signal reads of form state for OnPush templates (patchValue emits through valueChanges) */
+  public storageFile = toSignal(this.form.controls.storage_file.valueChanges, {
+    initialValue: this.form.controls.storage_file.value,
+  });
+  public coverImage = toSignal(this.form.controls.cover_image.valueChanges, {
+    initialValue: this.form.controls.cover_image.value,
+  });
+  public externalUrl = toSignal(this.form.controls.external_url.valueChanges, {
+    initialValue: this.form.controls.external_url.value,
+  });
+  public mimetype = toSignal(this.form.controls.mimetype.valueChanges, {
+    initialValue: this.form.controls.mimetype.value,
+  });
+
+  /** Extracted filename for cover image */
+  public coverFilename = computed(() => this.coverImage()?.split('/')?.pop() || '');
 
   public get formValidationMessage(): string {
     return getResourceFormValidationMessage(this.form);
@@ -194,25 +203,17 @@ export class ResourceFileEditComponent implements OnInit {
     if (controlName === 'storage_file') {
       const { size, type: mimetype, name: filename } = data as File;
       // TODO - get md5 checksum (or use supabase etag)
-      const patchValues: Record<string, any> = {
+      this.form.patchValue({
         storage_file: storagePath,
         size_kb: Math.round(size / 1024),
         mimetype,
         filename,
-      };
-      // If resource is an image and no custom cover is currently set, use as default cover
-      if (mimetype?.startsWith('image/') && !this.form.value.cover_image) {
-        patchValues['cover_image'] = storagePath;
-        this.form.controls.cover_image.markAsDirty();
-      }
-      this.form.patchValue(patchValues);
+      });
     } else {
       this.form.patchValue({ cover_image: storagePath });
     }
     this.form.controls[controlName].markAsDirty();
     this.form.markAsDirty();
-    // Reactive patchValue does not notify OnPush views - ensure template re-reads form.value
-    this.cdr.markForCheck();
   }
 
   public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'cover_image') {
@@ -222,26 +223,21 @@ export class ResourceFileEditComponent implements OnInit {
       if (controlName === 'storage_file') {
         const { metadata } = entry;
         const { mimetype, size } = metadata;
-        const patchValues: Record<string, any> = {
+        this.form.patchValue({
           storage_file: storagePath,
           size_kb: Math.round(size / 1024),
           filename: storagePath.split('/').pop(),
           mimetype,
-        };
-        if (mimetype?.startsWith('image/') && !this.form.value.cover_image) {
-          patchValues['cover_image'] = storagePath;
-          this.form.controls.cover_image.markAsDirty();
-        }
-        this.form.patchValue(patchValues);
+        });
       } else {
         this.form.patchValue({ cover_image: storagePath });
       }
+    } else if (controlName === 'storage_file') {
+      this.form.patchValue({ storage_file: '', filename: '', mimetype: '', size_kb: 0 });
     } else {
-      this.form.patchValue({ [controlName]: '' });
+      this.form.patchValue({ cover_image: '' });
     }
     this.form.controls[controlName].markAsDirty();
     this.form.markAsDirty();
-    // Reactive patchValue does not notify OnPush views - ensure template re-reads form.value
-    this.cdr.markForCheck();
   }
 }
