@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -70,6 +70,20 @@ export class SupabaseUploadComponent {
 
   @Input() hideUploadButton = false;
 
+  /**
+   * Maximum file size in MB.
+   * Must match backend storage limit (supabase `config.toml` `file_size_limit = "50MiB"`).
+   * Enforced client-side via Uppy restrictions for immediate feedback.
+   */
+  @Input() set maxFileSizeMB(value: number) {
+    this._maxFileSizeMB = value;
+    this.applyFileSizeRestriction();
+  }
+  get maxFileSizeMB(): number {
+    return this._maxFileSizeMB;
+  }
+  private _maxFileSizeMB = 50;
+
   @Input() set disabled(disabled: boolean) {
     // Update options through plugin interface for better change detection
     this.dashboardOptions = { ...this.dashboardOptions, disabled };
@@ -123,6 +137,7 @@ export class SupabaseUploadComponent {
 
   private async initUppy() {
     // Create new Uppy instance, mapping configurable props
+    this.applyFileSizeRestriction();
     this.uppy = new Uppy(this.uppyOptions);
     this.dashboardOptions.height = this.fileDropHeight;
     // Create custom upload to support upload to supabase
@@ -203,6 +218,21 @@ export class SupabaseUploadComponent {
       restrictions: {
         ...this.uppyOptions.restrictions,
         allowedFileTypes: types,
+      },
+    };
+    // Update options if uppy already initialised
+    if (this.uppy) {
+      this.uppy.setOptions(this.uppyOptions);
+    }
+  }
+
+  private applyFileSizeRestriction() {
+    const maxFileSize = this._maxFileSizeMB ? this._maxFileSizeMB * 1024 * 1024 : null;
+    this.uppyOptions = {
+      ...this.uppyOptions,
+      restrictions: {
+        ...this.uppyOptions.restrictions,
+        maxFileSize,
       },
     };
     // Update options if uppy already initialised
