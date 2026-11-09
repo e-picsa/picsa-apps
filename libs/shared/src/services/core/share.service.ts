@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share, ShareOptions } from '@capacitor/share';
+import { safeDecodeURIComponent } from '@picsa/utils';
 import { base64ToBlob } from '@picsa/utils/data';
 import { getExtensionForMime, isFilenameValidForMime } from '@picsa/utils/mimetypes';
 import { RxDocument } from 'rxdb';
@@ -45,7 +46,7 @@ export class ShareService {
       const { uri, type } = doc._data;
       if (type && uri) {
         // Ensure file extension included (decode percent-encoded URI segments such as spaces)
-        let targetFilename = this.decodeFilename(uri.split('/').pop() as string);
+        let targetFilename = safeDecodeURIComponent(uri.split('/').pop() as string);
         const targetExt = getExtensionForMime(type);
         if (!targetExt) {
           console.warn('Could not determine file extension for mime type, skipping file', { type, uri });
@@ -117,13 +118,5 @@ export class ShareService {
       throw new Error('File sharing not supported');
     }
     return navigator.share({ ...SHARE_OPTION_DEFAULTS, ...opts, files });
-  }
-
-  private decodeFilename(value: string): string {
-    try {
-      return decodeURIComponent(value);
-    } catch {
-      return value;
-    }
   }
 }
