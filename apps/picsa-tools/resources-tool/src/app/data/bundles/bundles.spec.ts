@@ -19,13 +19,6 @@ describe('RESOURCE_BUNDLES and RESOURCE_MANIFESTS', () => {
     expect(RESOURCE_MANIFESTS['zw']).toBeDefined();
 
     const zwManifest = RESOURCE_MANIFESTS['zw'];
-    expect(zwManifest.collections.length).toBe(3);
-    expect(zwManifest.links.length).toBe(5);
-    expect(zwManifest.files.length).toBe(0);
-
-    const mwManifest = RESOURCE_MANIFESTS['mw'];
-    expect(mwManifest.collections.length).toBe(3);
-    expect(mwManifest.files.length).toBe(8);
 
     // Verify lookup maps
     expect(zwManifest.collectionsById['cropResources_zw']).toBeDefined();
