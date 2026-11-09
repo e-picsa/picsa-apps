@@ -631,7 +631,8 @@ export class SupabaseSeedExport {
       return processed;
     });
 
-    const chunkSize = 500;
+    // Reuse the per-table export batch size so large-row tables stay under the local statement timeout
+    const chunkSize = config.batchSize ?? 500;
     for (let i = 0; i < parsedRows.length; i += chunkSize) {
       const chunk = parsedRows.slice(i, i + chunkSize);
       const { error } = await this.localClient.schema(schema).from(table).upsert(chunk);
