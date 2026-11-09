@@ -128,6 +128,7 @@ export class ResourceLinkEditComponent implements OnInit {
   public handleStorageFileSelected(entry: IStorageEntry | undefined) {
     const storagePath = entry ? `${entry.bucket_id}/${entry.name}` : '';
     this.form.patchValue({ cover_image: storagePath });
+    this.form.controls.cover_image.markAsDirty();
     this.form.markAsDirty();
   }
 
@@ -136,6 +137,7 @@ export class ResourceLinkEditComponent implements OnInit {
     const [{ meta }] = res;
     const storagePath = `${meta.bucketName}/${meta.objectName}`;
     this.form.patchValue({ cover_image: storagePath });
+    this.form.controls.cover_image.markAsDirty();
     this.form.markAsDirty();
   }
 

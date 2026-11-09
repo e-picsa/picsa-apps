@@ -56,7 +56,7 @@ export class ResourceFileEditComponent implements OnInit {
   });
 
   public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
-  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
+  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
 
   public form = this.formBuilder.group({
     language_code: ['', Validators.required],
@@ -186,6 +186,8 @@ export class ResourceFileEditComponent implements OnInit {
     } else {
       this.form.patchValue({ cover_image: storagePath });
     }
+    this.form.controls[controlName].markAsDirty();
+    this.form.markAsDirty();
   }
 
   public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'cover_image') {
@@ -207,5 +209,7 @@ export class ResourceFileEditComponent implements OnInit {
     } else {
       this.form.patchValue({ [controlName]: '' });
     }
+    this.form.controls[controlName].markAsDirty();
+    this.form.markAsDirty();
   }
 }

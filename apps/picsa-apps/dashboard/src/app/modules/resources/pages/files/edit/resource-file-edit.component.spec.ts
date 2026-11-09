@@ -77,4 +77,67 @@ describe('ResourceFileEditComponent', () => {
     expect(languages.some((l) => l.id === 'global_en')).toBe(false);
     expect(languages.some((l) => l.id === 'mw_en')).toBe(true);
   });
+
+  it('should mark form and cover_image control dirty when cover image upload completes', async () => {
+    expect(component.form.pristine).toBe(true);
+    expect(component.form.controls.cover_image.pristine).toBe(true);
+
+    const mockUploadResult = [
+      {
+        meta: {
+          bucketName: 'mw',
+          objectName: 'resources/covers/sample.png',
+          cacheControl: 3600,
+        },
+        data: new File(['mock'], 'sample.png', { type: 'image/png' }),
+      },
+    ];
+
+    await component.handleUploadComplete(mockUploadResult as any, 'cover_image');
+
+    expect(component.form.controls.cover_image.value).toBe('mw/resources/covers/sample.png');
+    expect(component.form.controls.cover_image.dirty).toBe(true);
+    expect(component.form.dirty).toBe(true);
+    expect(component.form.pristine).toBe(false);
+  });
+
+  it('should mark form and cover_image control dirty when selecting or clearing cover image from storage', () => {
+    expect(component.form.pristine).toBe(true);
+
+    component.handleStorageFileSelected(
+      { bucket_id: 'mw', name: 'resources/covers/existing.jpg', metadata: {} as any },
+      'cover_image',
+    );
+
+    expect(component.form.controls.cover_image.value).toBe('mw/resources/covers/existing.jpg');
+    expect(component.form.controls.cover_image.dirty).toBe(true);
+    expect(component.form.dirty).toBe(true);
+
+    // Clearing cover image
+    component.handleStorageFileSelected(undefined, 'cover_image');
+    expect(component.form.controls.cover_image.value).toBe('');
+    expect(component.form.controls.cover_image.dirty).toBe(true);
+    expect(component.form.dirty).toBe(true);
+  });
+
+  it('should mark form and storage_file control dirty when resource file upload completes', async () => {
+    expect(component.form.pristine).toBe(true);
+
+    const mockUploadResult = [
+      {
+        meta: {
+          bucketName: 'mw',
+          objectName: 'resources/manual.pdf',
+          cacheControl: 3600,
+        },
+        data: new File(['mock pdf content'], 'manual.pdf', { type: 'application/pdf' }),
+      },
+    ];
+
+    await component.handleUploadComplete(mockUploadResult as any, 'storage_file');
+
+    expect(component.form.controls.storage_file.value).toBe('mw/resources/manual.pdf');
+    expect(component.form.controls.storage_file.dirty).toBe(true);
+    expect(component.form.dirty).toBe(true);
+  });
 });
