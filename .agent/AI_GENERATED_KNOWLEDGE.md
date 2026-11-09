@@ -265,6 +265,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## 4. Angular 21, Signals & Reactive Architecture
 
+### Angular Reactive Forms Pristine Trap with `patchValue` on Async File Uploads
+
+- **The Problem**: In Angular Reactive Forms, invoking `form.patchValue(...)` updates control values and validation status synchronously, but does **NOT** toggle `pristine` to `false` or set `dirty` to `true`. Angular only marks controls as `dirty` in response to native user DOM interaction events (e.g. `input`, `change`).
+- **The Symptom**: When form save actions or validation hints are gated on `form.pristine` (e.g. `[disabled]="!form.valid || form.pristine"` or `getResourceFormValidationMessage(form)` returning `"No changes to save"`), completing an asynchronous upload (such as `<picsa-supabase-upload>` / Uppy Dashboard) or choosing a file from `<button supabaseStoragePicker>` updates the value in state, but the save button remains disabled because the form is still `pristine`.
+- **The Solution**: Any asynchronous file upload callback (`(uploadComplete)="handleUploadComplete($event, controlName)"`) or picker handler (`(storageFileSelected)="handleStorageFileSelected($event, controlName)"`) that updates the form via `patchValue` must explicitly call:
+  ```typescript
+  this.form.controls[controlName].markAsDirty();
+  this.form.markAsDirty();
+  ```
+  This marks both the individual control and parent form tree dirty, transitioning `form.pristine` to `false` and immediately enabling the form save action.
+
 ### Material CDK Overlays & OnPush Change Detection
 
 - **Issue**: Angular Material components like `mat-select` render dropdown options in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's DOM tree. Under `ChangeDetectionStrategy.OnPush`, selection events do not bubble through the component's DOM tree, leaving the UI stale.
