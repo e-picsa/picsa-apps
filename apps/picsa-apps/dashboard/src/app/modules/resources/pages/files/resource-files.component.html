@@ -73,15 +73,15 @@
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
         @for (collection of collections; track collection.id) {
-          @if (collection.cover_image) {
-            <div
-              class="collection-cover-container"
-              [matTooltip]="collection.title"
-              (click)="handleCollectionClick($event, collection)"
-            >
+          <div
+            class="collection-cover-container"
+            [matTooltip]="collection.title"
+            (click)="handleCollectionClick($event, collection)"
+          >
+            @if (collection.cover_image) {
               <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
-            </div>
-          }
+            }
+          </div>
         }
       </div>
     </ng-template>
