@@ -69,27 +69,37 @@
               </button>
             }
             <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
-          } @else if (canEdit()) {
-            <picsa-supabase-upload
-              [fileTypes]="allowedCoverTypes"
-              [fileDropHeight]="128"
-              [autoUpload]="true"
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (uploadComplete)="handleUploadComplete($event, 'cover_image')"
-            ></picsa-supabase-upload>
-            <button
-              matButton
-              color="primary"
-              supabaseStoragePicker
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
-              style="margin-top: 4px"
-            >
-              <mat-icon>perm_media</mat-icon>
-              Select existing file
-            </button>
+          } @else {
+            <div class="cover-placeholder-row">
+              @if (canEdit()) {
+                <div class="cover-upload-col">
+                  <picsa-supabase-upload
+                    [fileTypes]="allowedCoverTypes"
+                    [fileDropHeight]="128"
+                    [autoUpload]="true"
+                    [storageBucketName]="storageBucketName()"
+                    storageFolderPath="resources/covers"
+                    (uploadComplete)="handleUploadComplete($event, 'cover_image')"
+                  ></picsa-supabase-upload>
+                  <button
+                    matButton
+                    color="primary"
+                    supabaseStoragePicker
+                    [storageBucketName]="storageBucketName()"
+                    storageFolderPath="resources/covers"
+                    (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
+                    style="margin-top: 4px"
+                  >
+                    <mat-icon>perm_media</mat-icon>
+                    Select existing file
+                  </button>
+                </div>
+              }
+              <div class="cover-default-col">
+                <picsa-fallback-image [fallbackType]="getFileFallbackType(form.value.mimetype)" size="md" />
+                <span class="cover-default-hint">Default</span>
+              </div>
+            </div>
           }
         </div>
       </div>

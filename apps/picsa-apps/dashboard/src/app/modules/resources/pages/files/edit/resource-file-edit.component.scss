@@ -18,6 +18,27 @@ picsa-supabase-upload {
   width: 100%;
   max-width: 284px;
 }
+.cover-placeholder-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.cover-upload-col {
+  flex: 1;
+  min-width: 200px;
+}
+.cover-default-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.cover-default-hint {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
 dashboard-storage-link {
   display: inline-block;
 }
