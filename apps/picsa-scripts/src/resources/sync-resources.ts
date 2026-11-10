@@ -220,17 +220,12 @@ export async function fetchCountryResources(
 }
 
 export function getLocalCoverPath(storagePath: string): string {
-  const filename = path.basename(storagePath);
-  const optimized = getOptimizedFilename(filename);
-
-  if (storagePath.startsWith('global/resources/covers/')) {
-    return path.join(COVERS_DIR, optimized);
+  const assetPath = getBundledAssetCoverPath(storagePath);
+  if (assetPath?.startsWith('assets/resources/covers/')) {
+    const rel = assetPath.slice('assets/resources/covers/'.length);
+    return path.join(COVERS_DIR, rel);
   }
-  const countryMatch = COUNTRY_COVER_REGEX.exec(storagePath);
-  if (countryMatch) {
-    return path.join(COVERS_DIR, countryMatch[1], optimized);
-  }
-  return path.join(COVERS_DIR, optimized);
+  return path.join(COVERS_DIR, getOptimizedFilename(path.basename(storagePath)));
 }
 
 export function loadCoverCache(): ICoverCacheManifest {
@@ -275,7 +270,10 @@ export async function fetchRemoteCoverMetadata(
 
   const remoteMetaMap = new Map<string, IRemoteCoverMeta>();
   const bucketListPromises = [...byBucket.keys()].map(async (bucket) => {
-    const { data } = await client.storage.from(bucket).list('resources/covers', { limit: 500 });
+    const { data, error } = await client.storage.from(bucket).list('resources/covers', { limit: 500 });
+    if (error) {
+      throw new Error(`[${bucket}] Failed to list resources/covers from Supabase storage: ${error.message}`);
+    }
     for (const obj of data ?? []) {
       const fullPath = `${bucket}/resources/covers/${obj.name}`;
       remoteMetaMap.set(fullPath, {
@@ -287,20 +285,6 @@ export async function fetchRemoteCoverMetadata(
   });
   await Promise.all(bucketListPromises);
   return remoteMetaMap;
-}
-
-function isCoverFresh(
-  cachedEntry: ICoverCacheEntry | undefined,
-  remoteMeta: IRemoteCoverMeta | undefined,
-  fileExistsLocally: boolean,
-  isSvg: boolean,
-): boolean {
-  if (!fileExistsLocally) return false;
-  if (isSvg) return true;
-  if (!cachedEntry || !remoteMeta) return false;
-  const sizeMatches = remoteMeta.size == null || cachedEntry.remoteSize === remoteMeta.size;
-  const etagMatches = remoteMeta.etag == null || cachedEntry.etag === remoteMeta.etag;
-  return sizeMatches && etagMatches;
 }
 
 interface ICoverSyncResult {
@@ -344,19 +328,35 @@ export async function syncReferencedCovers(
     const fileExistsLocally = fs.existsSync(localDest);
     const isSvg = filename.toLowerCase().endsWith('.svg');
 
-    if (isCoverFresh(cachedEntry, remoteMeta, fileExistsLocally, isSvg)) {
-      if (!cachedEntry && fileExistsLocally) {
+    // Vector SVGs are static assets committed to git; never re-process if already present
+    if (isSvg && fileExistsLocally) {
+      cachedCount++;
+      return;
+    }
+
+    // Check freshness against remote metadata
+    if (fileExistsLocally && remoteMeta) {
+      if (!cachedEntry) {
+        // Seed cache from existing local file (e.g. fresh clone or cleared cache)
         const stat = fs.statSync(localDest);
         cache.covers[sp] = {
-          etag: remoteMeta?.etag,
-          remoteSize: remoteMeta?.size,
-          updatedAt: remoteMeta?.updatedAt,
+          etag: remoteMeta.etag,
+          remoteSize: remoteMeta.size,
+          updatedAt: remoteMeta.updatedAt,
           localSize: stat.size,
           compressedAt: new Date(stat.mtimeMs).toISOString(),
         };
+        cachedCount++;
+        return;
       }
-      cachedCount++;
-      return;
+
+      const isFresh =
+        (remoteMeta.size == null || cachedEntry.remoteSize === remoteMeta.size) &&
+        (remoteMeta.etag == null || cachedEntry.etag === remoteMeta.etag);
+      if (isFresh) {
+        cachedCount++;
+        return;
+      }
     }
 
     if (options.auditOnly) {
@@ -381,12 +381,6 @@ export async function syncReferencedCovers(
       fs.mkdirSync(destDir, { recursive: true });
     }
     fs.writeFileSync(localDest, optimizedBuffer);
-
-    // Clean up old uncompressed non-webp file if it exists alongside the new .webp file
-    const oldLocalPath = path.join(destDir, path.basename(objectPath));
-    if (oldLocalPath !== localDest && fs.existsSync(oldLocalPath)) {
-      fs.unlinkSync(oldLocalPath);
-    }
 
     cache.covers[sp] = {
       etag: remoteMeta?.etag,

@@ -429,7 +429,15 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Resource Cover Cache & Cross-Developer Determinism
 
 - **Repository-First Cache Seeding**: The cover sync cache (`apps/picsa-scripts/.cache/resources-covers.json`) is gitignored. When the cache is missing (e.g. after a clean checkout or deletion), `syncReferencedCovers` checks `fs.existsSync(localDest)`. If the target WebP or SVG already exists locally on disk, the script marks it fresh and seeds the local cache entry without touching the filesystem or re-running Sharp.
-- **Preserve Existing SVGs**: Vector SVG icons checked into git are strictly preserved and never re-downloaded or overwritten during sync unless `--force-covers` is passed. This guarantees multiple developers running sync never produce spurious binary diffs.
+- **Preserve Existing SVGs**: Vector SVG icons checked into git are strictly preserved and never re-downloaded or overwritten during sync unless forced. This guarantees multiple developers running sync never produce spurious binary diffs.
+
+### Grounding in Production Data & Anti-Overengineering in Tooling
+
+- **Query Real Data Before Writing Defensive Abstractions**: Always introspect the actual database tables and storage buckets before writing complex filtering, mimetype validations, or fallback transformations. Never write defensive code for hypothetical scenarios that don't exist in the data model (e.g. checking video mimetypes and file extensions on document tables that only contain PDFs, or adding string fallback escapes for legacy placeholders when zero database rows contain them).
+- **Fail-Fast Remote Integration**: In synchronization and data pipeline scripts, network or storage operations must fail fast with a descriptive error. Never swallow errors or default missing remote metadata to "treated as fresh", which causes stale local files to be permanently locked in place.
+- **Symmetric Path Resolution (Zero Drift)**: When a script downloads files to local disk and writes bundle manifest paths, always derive the local disk location directly from the canonical asset path function so disk storage and JSON manifests can never diverge.
+- **Extraction of Shared Processing Utilities**: Keep domain scripts (e.g. sync scripts, seed scripts) focused on orchestration. Heavy compute or multi-format media transforms (e.g. Sharp image resizing, format detection, human byte formatting) must be isolated in shared utility modules (`apps/picsa-scripts/src/media/image-optimizer.ts`) to maintain low cognitive complexity and enable reuse across CLI tasks.
+- **Plan Scrutiny Before Autonomous Action**: When asked "how will you fix it?" or addressing PR feedback, always present a structured, concise plan for the user to scrutinize first. Do not autonomously create branches, push commits, or open pull requests without explicit confirmation.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 

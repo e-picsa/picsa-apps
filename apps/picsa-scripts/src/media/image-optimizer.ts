@@ -19,7 +19,8 @@ export function formatBytes(bytes: number): string {
  */
 export function getOptimizedFilename(originalFilename: string): string {
   if (originalFilename.toLowerCase().endsWith('.svg')) return originalFilename;
-  return originalFilename.replace(/\.(png|jpe?g|webp)$/i, '.webp');
+  const { name } = path.parse(originalFilename);
+  return `${name}.webp`;
 }
 
 /**
