@@ -4,7 +4,7 @@
       "id": "cropResources_zm",
       "description": "Resources to help care for crops",
       "title": "Crop, Pest & Disease",
-      "cover_image": "global/resources/covers/crops.svg",
+      "cover_image": "assets/resources/covers/crops.svg",
       "resource_collections": [],
       "resource_files": [
         "fb48f321-09ba-4205-9e6a-f52de5a55c3d"
@@ -23,7 +23,7 @@
       "id": "genderCollection_zm",
       "description": "Materials to help incorporate gender within extension services",
       "title": "Gender",
-      "cover_image": "global/resources/covers/gender-equality.svg",
+      "cover_image": "assets/resources/covers/gender-equality.svg",
       "resource_collections": [],
       "resource_files": null,
       "resource_links": [
@@ -39,7 +39,7 @@
       "id": "weatherResources_zm",
       "description": "Local forecasts and meteorological services",
       "title": "Weather Resources",
-      "cover_image": "global/resources/covers/weather.svg",
+      "cover_image": "assets/resources/covers/weather.svg",
       "resource_collections": [],
       "resource_files": null,
       "resource_links": [
@@ -65,7 +65,7 @@
       "description": "Plant and Pest",
       "storage_file": "zm/resources/Plant Pests and Diseases Act.pdf",
       "external_url": "",
-      "cover_image": "zm/resources/covers/pest.jpg",
+      "cover_image": "assets/resources/covers/zm/pest.webp",
       "title": "Plant Pests & Diseases Acts",
       "language_code": "zm_en",
       "country_code": "zm",
@@ -81,7 +81,7 @@
       "description": "A study for Climate Change",
       "storage_file": "zm/resources/Impact of Minimum Tillage and Crop Rotation as Climate Change.pdf",
       "external_url": "",
-      "cover_image": "zm/resources/covers/5b49bedc56c60.png",
+      "cover_image": "assets/resources/covers/zm/5b49bedc56c60.webp",
       "title": "IMPACT OF MINIMUM TILLAGE AND CROP ROTATION",
       "language_code": "zm_en",
       "country_code": "zm",
@@ -97,7 +97,7 @@
       "description": "Cassava Brown Streak Disease",
       "storage_file": "zm/resources/Cassava-Brown-Streak-Disease-Evidence-Note-2022.pdf",
       "external_url": "",
-      "cover_image": "zm/resources/covers/download.jpeg",
+      "cover_image": "assets/resources/covers/zm/download.webp",
       "title": "Cassava Diseases",
       "language_code": "zm_en",
       "country_code": "zm",
@@ -113,7 +113,7 @@
       "description": "Crop Rotation on Organic Farms",
       "storage_file": "zm/resources/document.pdf",
       "external_url": "",
-      "cover_image": "zm/resources/covers/Crop-Rotation-926x1200.jpg",
+      "cover_image": "assets/resources/covers/zm/Crop-Rotation-926x1200.webp",
       "title": "Crop Rotation",
       "language_code": "zm_en",
       "country_code": "zm",
@@ -129,7 +129,7 @@
       "description": "Opportunities and \nChallenges ",
       "storage_file": "zm/resources/Soya_Beans_Production_in_Zambia_Opportunities_and_.pdf",
       "external_url": "",
-      "cover_image": "zm/resources/covers/PISCA1.PNG",
+      "cover_image": "assets/resources/covers/zm/PISCA1.webp",
       "title": "Soya Beans Production in Zambia",
       "language_code": "zm_en",
       "country_code": "zm",
@@ -145,7 +145,7 @@
     {
       "id": "accessAg_zm",
       "description": "Agricultural training videos in local languages",
-      "cover_image": "global/resources/covers/access-ag.jpg",
+      "cover_image": "assets/resources/covers/access-ag.webp",
       "title": "Access Agriculture",
       "sort_order": 1,
       "type": "web",
@@ -156,7 +156,7 @@
     {
       "id": "gfrasNelk_zm",
       "description": "Online learning modules",
-      "cover_image": "global/resources/covers/gras-nelk.jpg",
+      "cover_image": "assets/resources/covers/gras-nelk.webp",
       "title": "GRAFS - New Extensionist Learning Kit NELK",
       "sort_order": 2,
       "type": "web",
@@ -167,7 +167,7 @@
     {
       "id": "meteoBlue_Zambia_Chipata_7day",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "7-Day Weather",
       "sort_order": 1,
       "type": "web",
@@ -178,7 +178,7 @@
     {
       "id": "meteoBlue_Zambia_Chipata_mapWidget",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "Live Weather Map",
       "sort_order": 1,
       "type": "web",
@@ -189,7 +189,7 @@
     {
       "id": "meteoBlue_Zambia_Chipata_seasonalForecast",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "Seasonal Forecast",
       "sort_order": 1,
       "type": "web",
@@ -200,7 +200,7 @@
     {
       "id": "meteoBlue_Zambia_Petauke_7day",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "7-Day Weather",
       "sort_order": 1,
       "type": "web",
@@ -211,7 +211,7 @@
     {
       "id": "meteoBlue_Zambia_Petauke_mapWidget",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "Live Weather Map",
       "sort_order": 1,
       "type": "web",
@@ -222,7 +222,7 @@
     {
       "id": "meteoBlue_Zambia_Petauke_seasonalForecast",
       "description": null,
-      "cover_image": "global/resources/covers/meteoblue.jpg",
+      "cover_image": "assets/resources/covers/meteoblue.webp",
       "title": "Seasonal Forecast",
       "sort_order": 1,
       "type": "web",
@@ -233,7 +233,7 @@
     {
       "id": "plantix_zm",
       "description": "Crop diagnosis and information",
-      "cover_image": "global/resources/covers/plantix.webp",
+      "cover_image": "assets/resources/covers/plantix.webp",
       "title": "Plantix",
       "sort_order": 1,
       "type": "app",
@@ -244,7 +244,7 @@
     {
       "id": "plantwise_zm",
       "description": "Library of clear, practical and safe advice for tackling crop problems",
-      "cover_image": "global/resources/covers/plantwise.webp",
+      "cover_image": "assets/resources/covers/plantwise.webp",
       "title": "Plantwise Factsheets Library",
       "sort_order": 1,
       "type": "app",
@@ -255,7 +255,7 @@
     {
       "id": "wmo_Zambia_Chipata",
       "description": null,
-      "cover_image": "global/resources/covers/wmo.png",
+      "cover_image": "assets/resources/covers/wmo.webp",
       "title": "Official Forecast",
       "sort_order": 1,
       "type": "web",
@@ -266,7 +266,7 @@
     {
       "id": "womenInExtension_zm",
       "description": "Access Agriculture Video",
-      "cover_image": "global/resources/covers/access-ag.jpg",
+      "cover_image": "assets/resources/covers/access-ag.webp",
       "title": "Women in Extension",
       "sort_order": 1,
       "type": "web",
@@ -277,7 +277,7 @@
     {
       "id": "zmdFacebook",
       "description": "Facebook Group",
-      "cover_image": "global/resources/covers/facebook.svg",
+      "cover_image": "assets/resources/covers/facebook.svg",
       "title": "Zambia Meteorological Department",
       "sort_order": 1,
       "type": "social",
@@ -288,7 +288,7 @@
     {
       "id": "zmdWhatsapp",
       "description": "WhatsApp Group",
-      "cover_image": "global/resources/covers/whatsapp.svg",
+      "cover_image": "assets/resources/covers/whatsapp.svg",
       "title": "Weather Services ZM",
       "sort_order": 1,
       "type": "social",
