@@ -82,6 +82,7 @@
                         folder: 'resources/covers',
                         control: 'cover_image',
                         tip: 'Pick from images already uploaded to storage',
+                        maxFileSizeMB: 5,
                       }
                     "
                   ></ng-container>
@@ -107,11 +108,19 @@
         </div>
       </div>
       <!-- Shared upload dropzone + storage picker (single source for identical layout) -->
-      <ng-template #uploadBlock let-fileTypes="fileTypes" let-folder="folder" let-control="control" let-tip="tip">
+      <ng-template
+        #uploadBlock
+        let-fileTypes="fileTypes"
+        let-folder="folder"
+        let-control="control"
+        let-tip="tip"
+        let-maxFileSizeMB="maxFileSizeMB"
+      >
         <picsa-supabase-upload
           [fileTypes]="fileTypes"
           [fileDropHeight]="128"
           [autoUpload]="true"
+          [maxFileSizeMB]="maxFileSizeMB ?? 50"
           [storageBucketName]="storageBucketName()"
           [storageFolderPath]="folder"
           (uploadComplete)="handleUploadComplete($event, control)"
