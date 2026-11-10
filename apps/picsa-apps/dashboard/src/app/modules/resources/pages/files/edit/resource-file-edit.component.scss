@@ -14,36 +14,98 @@ label {
     margin-right: 4px;
   }
 }
-picsa-supabase-upload {
-  width: 100%;
-  max-width: 284px;
-}
-dashboard-storage-link {
-  display: inline-block;
-}
-button.file-remove {
-  display: inline;
-  padding: 0;
-  mat-icon {
-    margin-bottom: -4px;
-  }
-}
-textarea.mdc-text-field__input {
-  color: var(--color-primary) !important;
-  font-size: 20px;
-}
-img.cover-preview {
-  width: 200px;
-  max-height: 200px;
-  object-fit: contain;
-  border: 1px solid var(--color-light);
-}
 .form-content {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
-  max-width: 600px;
+  max-width: 720px;
+}
+
+/* File chips lift off tinted cards and stretch full card width */
+.resource-card > dashboard-storage-link,
+.cover-card > dashboard-storage-link {
+  display: block;
+  max-width: none;
+}
+::ng-deep .resource-card .chip-button,
+::ng-deep .cover-card .chip-button {
+  background-color: #ffffff;
+  width: 100%;
+}
+
+/* Shared card wrapper for file pickers */
+.file-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid;
+
+  button[matButton] {
+    background-color: #ffffff;
+    white-space: nowrap;
+  }
+
+  > button[matButton] {
+    align-self: flex-start;
+  }
+}
+
+.resource-card {
+  background: #eef2f7;
+  border-color: #d4dce6;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+}
+
+.cover-card {
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+}
+
+.file-card picsa-supabase-upload::ng-deep .uppy-Dashboard-inner {
+  background-color: #ffffff;
+}
+
+.cover-layout {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.cover-preview-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 120px;
+  padding: 4px 0;
+}
+
+.cover-label-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  display: block;
+  white-space: nowrap;
+
+  &.is-custom {
+    color: #0284c7;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .validation-message {

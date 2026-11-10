@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
@@ -28,7 +29,7 @@ describe('ResourceFileEditComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ResourceFileEditComponent],
+      imports: [ResourceFileEditComponent, PicsaTranslateModule.forRoot()],
       providers: [
         provideRouter([]),
         { provide: DashboardAuthService, useValue: mockAuthService },

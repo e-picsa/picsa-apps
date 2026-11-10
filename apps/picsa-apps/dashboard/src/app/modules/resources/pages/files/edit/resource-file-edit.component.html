@@ -3,9 +3,9 @@
 
   <form [formGroup]="form">
     <div class="form-content">
-      <div style="display: flex; flex-wrap: wrap; gap: 2em">
+      <div style="display: flex; flex-wrap: wrap; gap: 2rem">
         <!-- External URL -->
-        @if (form.value.external_url; as external_url) {
+        @if (externalUrl(); as external_url) {
           <div style="flex: 1">
             <label>External URL</label>
             <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
@@ -16,83 +16,121 @@
         }
 
         <!-- Storage file / External Url -->
-        @if (!form.value.external_url) {
-          <div>
-            <label>Resource</label>
-            @if (form.value.storage_file) {
-              <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
-              @if (canEdit()) {
-                <button
-                  matIconButton
-                  class="file-remove"
-                  (click)="handleStorageFileSelected(undefined, 'storage_file')"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
+        @if (!externalUrl()) {
+          <div style="flex: 0 1 280px; min-width: 240px; display: flex; flex-direction: column">
+            <label>Resource File</label>
+            <div class="file-card resource-card">
+              @if (storageFile()) {
+                <dashboard-storage-link [id]="storageFile() ?? ''" displayStyle="button"></dashboard-storage-link>
+                @if (canEdit()) {
+                  <button
+                    type="button"
+                    matButton="outlined"
+                    color="primary"
+                    (click)="handleStorageFileSelected(undefined, 'storage_file')"
+                    matTooltip="Replace with a different resource file"
+                    aria-label="Change file"
+                    style="margin-top: 8px"
+                  >
+                    <mat-icon>autorenew</mat-icon>
+                    Change File
+                  </button>
+                }
+              } @else if (canEdit()) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    uploadBlock;
+                    context: {
+                      fileTypes: allowedFileTypes,
+                      folder: 'resources',
+                      control: 'storage_file',
+                      tip: 'Pick from files already uploaded to storage',
+                    }
+                  "
+                ></ng-container>
               }
-            } @else if (canEdit()) {
-              <picsa-supabase-upload
-                [fileTypes]="allowedFileTypes"
-                [fileDropHeight]="128"
-                [autoUpload]="true"
-                [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources"
-                (uploadComplete)="handleUploadComplete($event, 'storage_file')"
-              ></picsa-supabase-upload>
-              <button
-                matButton
-                color="primary"
-                supabaseStoragePicker
-                [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources"
-                (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
-                style="margin-top: 4px"
-              >
-                <mat-icon>perm_media</mat-icon>
-                Select existing file
-              </button>
-            }
+            </div>
           </div>
         }
+
         <!-- Cover Image -->
-        <div style="flex: 1">
-          <label>Cover Image</label>
-          @if (form.value.cover_image) {
-            <dashboard-storage-link
-              #storageLink
-              [id]="form.value.cover_image"
-              displayStyle="button"
-            ></dashboard-storage-link>
+        <div style="flex: 1 1 300px; min-width: min(300px, 100%); display: flex; flex-direction: column">
+          <label>Cover Image (optional)</label>
+          <div class="cover-layout">
             @if (canEdit()) {
-              <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
-                <mat-icon>close</mat-icon>
-              </button>
+              <div class="file-card cover-card">
+                @if (coverImage()) {
+                  <dashboard-storage-link [id]="coverImage() ?? ''" displayStyle="button"></dashboard-storage-link>
+                  <button
+                    type="button"
+                    matButton="outlined"
+                    color="primary"
+                    (click)="handleStorageFileSelected(undefined, 'cover_image')"
+                    matTooltip="Remove custom cover and use default"
+                    aria-label="Change cover file"
+                    style="margin-top: 8px"
+                  >
+                    <mat-icon>autorenew</mat-icon>
+                    Change File
+                  </button>
+                } @else {
+                  <ng-container
+                    *ngTemplateOutlet="
+                      uploadBlock;
+                      context: {
+                        fileTypes: allowedCoverTypes,
+                        folder: 'resources/covers',
+                        control: 'cover_image',
+                        tip: 'Pick from images already uploaded to storage',
+                      }
+                    "
+                  ></ng-container>
+                }
+              </div>
             }
-            <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
-          } @else if (canEdit()) {
-            <picsa-supabase-upload
-              [fileTypes]="allowedCoverTypes"
-              [fileDropHeight]="128"
-              [autoUpload]="true"
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (uploadComplete)="handleUploadComplete($event, 'cover_image')"
-            ></picsa-supabase-upload>
-            <button
-              matButton
-              color="primary"
-              supabaseStoragePicker
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
-              style="margin-top: 4px"
-            >
-              <mat-icon>perm_media</mat-icon>
-              Select existing file
-            </button>
-          }
+            <div class="cover-preview-col">
+              @if (coverImage(); as coverImagePath) {
+                <picsa-fallback-image
+                  [src]="coverImagePath | storagePath"
+                  [fallbackType]="getFileFallbackType(mimetype())"
+                  size="md"
+                />
+                <span class="cover-label-text is-custom" [title]="coverFilename()">
+                  {{ coverFilename() }}
+                </span>
+              } @else {
+                <picsa-fallback-image [fallbackType]="getFileFallbackType(mimetype())" size="md" />
+                <span class="cover-label-text">Default Cover</span>
+              }
+            </div>
+          </div>
         </div>
       </div>
+      <!-- Shared upload dropzone + storage picker (single source for identical layout) -->
+      <ng-template #uploadBlock let-fileTypes="fileTypes" let-folder="folder" let-control="control" let-tip="tip">
+        <picsa-supabase-upload
+          [fileTypes]="fileTypes"
+          [fileDropHeight]="128"
+          [autoUpload]="true"
+          [storageBucketName]="storageBucketName()"
+          [storageFolderPath]="folder"
+          (uploadComplete)="handleUploadComplete($event, control)"
+        ></picsa-supabase-upload>
+        <button
+          type="button"
+          matButton="outlined"
+          color="primary"
+          supabaseStoragePicker
+          [storageBucketName]="storageBucketName()"
+          [storageFolderPath]="folder"
+          (storageFileSelected)="handleStorageFileSelected($event, control)"
+          [matTooltip]="tip"
+          style="margin-top: 8px"
+        >
+          <mat-icon>perm_media</mat-icon>
+          Choose Uploaded
+        </button>
+      </ng-template>
       <!-- Title -->
       <mat-form-field style="flex-basis: 100%">
         <mat-label>Title</mat-label>

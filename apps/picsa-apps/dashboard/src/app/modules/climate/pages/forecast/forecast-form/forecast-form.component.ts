@@ -174,8 +174,8 @@ export class ForecastFormComponent {
     const storageFolderPath = FORECAST_FOLDER_SEGMENT_MAPPING[this.forecastType()]().join('/');
     const storageFileName = FORECAST_FILE_NAME_MAPPING[this.forecastType()](file, formValue);
     const bucketName = this.countryCode;
-    ref.storageBucketName = bucketName;
-    ref.storageFolderPath = storageFolderPath;
+    ref.storageBucketName.set(bucketName);
+    ref.storageFolderPath.set(storageFolderPath);
     ref.renameFile(file.name, storageFileName);
     // handle upload
     const { failed, successful } = await ref.startUpload();

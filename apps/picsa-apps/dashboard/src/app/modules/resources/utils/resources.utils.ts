@@ -127,7 +127,7 @@ class CNodeTree {
       this.nodesById[collection.id] = new CNode(collection);
     }
     // assign parents (edges)
-    for (const collection of test_data) {
+    for (const collection of collections) {
       if (collection.collection_parent) {
         const parentNode = this.nodesById[collection.collection_parent];
         const node = this.nodesById[collection.id];

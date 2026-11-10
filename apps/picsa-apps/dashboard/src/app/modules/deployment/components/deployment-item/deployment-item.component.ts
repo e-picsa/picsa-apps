@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { IDeploymentRow } from '../../types';
@@ -12,7 +12,7 @@ import { IDeploymentRow } from '../../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentItemComponent {
-  @Input() deployment: IDeploymentRow;
+  readonly deployment = input.required<IDeploymentRow>();
   /** Specify whether the current deployment item is actively selected */
   readonly active = input<boolean>();
 }

@@ -3,6 +3,7 @@ import { PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent }
 
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { PicsaBackButtonComponent } from './components/back-button.component';
+import { PicsaFallbackImageComponent } from './components/fallback-image/fallback-image.component';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
 import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
@@ -14,6 +15,7 @@ const standalone = [
   AlertBoxComponent,
   PicsaBackButtonComponent,
   PicsaBreadcrumbsComponent,
+  PicsaFallbackImageComponent,
   PicsaHeaderComponent,
   PicsaConfigurationSelectComponent,
   PicsaConfigurationSummaryComponent,

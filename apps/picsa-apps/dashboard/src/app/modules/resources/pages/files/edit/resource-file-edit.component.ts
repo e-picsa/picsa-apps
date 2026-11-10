@@ -1,11 +1,15 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaFallbackImageComponent } from '@picsa/components';
 import { LOCALES_DATA } from '@picsa/data';
 import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import {
   IUploadResult,
+  StoragePathPipe,
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
@@ -17,6 +21,7 @@ import { DeploymentDashboardService } from '../../../../deployment/deployment.se
 import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceFileInsert, IResourceFileRow } from '../../../types';
+import { getFileFallbackType } from '../../../utils';
 import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
 import { createResourceEditPermissionState } from '../../../utils/resource-permissions.utils';
 
@@ -26,7 +31,10 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
     DashboardMaterialModule,
     DashboardStorageLinkComponent,
     FormsModule,
+    NgTemplateOutlet,
+    PicsaFallbackImageComponent,
     ReactiveFormsModule,
+    StoragePathPipe,
     SupabaseStoragePickerDirective,
     SupabaseUploadComponent,
   ],
@@ -35,6 +43,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFileEditComponent implements OnInit {
+  public readonly getFileFallbackType = getFileFallbackType;
   private service = inject(ResourcesDashboardService);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -76,6 +85,23 @@ export class ResourceFileEditComponent implements OnInit {
   public isCreate = this.permissions.isCreate;
   private resourceOwner = this.permissions.resourceOwner;
   public canEdit = this.permissions.canEdit;
+
+  /** Signal reads of form state for OnPush templates (patchValue emits through valueChanges) */
+  public storageFile = toSignal(this.form.controls.storage_file.valueChanges, {
+    initialValue: this.form.controls.storage_file.value,
+  });
+  public coverImage = toSignal(this.form.controls.cover_image.valueChanges, {
+    initialValue: this.form.controls.cover_image.value,
+  });
+  public externalUrl = toSignal(this.form.controls.external_url.valueChanges, {
+    initialValue: this.form.controls.external_url.value,
+  });
+  public mimetype = toSignal(this.form.controls.mimetype.valueChanges, {
+    initialValue: this.form.controls.mimetype.value,
+  });
+
+  /** Extracted filename for cover image */
+  public coverFilename = computed(() => this.coverImage()?.split('/')?.pop() || '');
 
   public get formValidationMessage(): string {
     return getResourceFormValidationMessage(this.form);
@@ -206,8 +232,10 @@ export class ResourceFileEditComponent implements OnInit {
       } else {
         this.form.patchValue({ cover_image: storagePath });
       }
+    } else if (controlName === 'storage_file') {
+      this.form.patchValue({ storage_file: '', filename: '', mimetype: '', size_kb: 0 });
     } else {
-      this.form.patchValue({ [controlName]: '' });
+      this.form.patchValue({ cover_image: '' });
     }
     this.form.controls[controlName].markAsDirty();
     this.form.markAsDirty();
