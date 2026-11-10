@@ -23,7 +23,6 @@ import { ResourcesDownloadService } from '../../services/resources-download.serv
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 export type IResourceCategory = 'Extension Resource' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
-export type IResourceSource = IResourceCategory;
 
 /** Pre-indexed set of all extension bundle file IDs across all country bundles */
 const ALL_BUNDLE_FILE_IDS = new Set<string>(
