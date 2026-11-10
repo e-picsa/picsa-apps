@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
+import { ILocaleCode, LOCALES_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
@@ -64,10 +64,13 @@ export class DownloadsPageComponent {
   private allResourceFileDocs = toSignal(this.dbFiles$, { initialValue: [] });
 
   private resourceFileDocs = computed(() => {
-    const { country_code } = this.configurationService.userSettings();
-    return this.allResourceFileDocs().filter((doc) =>
-      this.shouldShowResource(doc._data, country_code, this.languageFilter()),
-    );
+    const manifest = this.service.activeManifest();
+    const currentLang = this.languageFilter();
+    return this.allResourceFileDocs().filter((doc) => {
+      const manifestFile = manifest.filesById[doc.id];
+      if (!manifestFile) return false;
+      return this.shouldShowResource(manifestFile, currentLang);
+    });
   });
 
   public tableData = computed(() => this.resourceFileDocs().map((doc) => this.toTableData(doc)));
@@ -85,10 +88,10 @@ export class DownloadsPageComponent {
   public languageLabels = Object.fromEntries(LOCALES_DATA.map(({ id, language_label }) => [id, language_label]));
 
   public languageFilterOptions = computed(() => {
-    const { country_code } = this.configurationService.userSettings();
+    const { country_code } = this.configurationService.deploymentSettings();
     return LOCALES_DATA.filter((v) => v.country_code === country_code);
   });
-  public languageFilter = model(this.configurationService.userSettings().language_code);
+  public languageFilter = model<ILocaleCode | undefined>(this.configurationService.userSettings().language_code);
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
@@ -133,10 +136,8 @@ export class DownloadsPageComponent {
     await entry.download();
   }
 
-  /** Filter resources both by resource own country filter, and then by selected language filter */
-  private shouldShowResource(resource: IResourceFile, country_code: ICountryCode, languageFilter: ILocaleCode) {
-    const filterCountries = resource.filter?.countries;
-    if (filterCountries && !filterCountries.includes(country_code)) return false;
+  /** Filter resources by selected language filter */
+  private shouldShowResource(resource: IResourceFile, languageFilter?: ILocaleCode) {
     if (languageFilter && resource.language) {
       // include global english resources when any localised english language selected
       if (resource.language === 'global_en') return languageFilter.endsWith('_en');

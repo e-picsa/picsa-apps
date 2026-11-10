@@ -4,7 +4,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { provideRouter, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { PicsaTranslateModule } from '@picsa/i18n';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
@@ -16,23 +16,40 @@ describe('DownloadsPageComponent', () => {
   let addSvgIconSpy: jest.SpyInstance;
   let router: Router;
 
+  const mockManifestSignal = signal({
+    collections: [],
+    files: [] as any[],
+    links: [],
+    collectionsById: {},
+    filesById: {} as Record<string, any>,
+    linksById: {},
+  });
+
+  const mockDbFiles$ = new BehaviorSubject<any[]>([]);
+
   const mockResourcesToolService = {
     ready$: of(true),
+    ready: jest.fn().mockResolvedValue(true),
     dbFiles: {
-      find: () => ({ $: of([]) }),
+      find: () => ({ $: mockDbFiles$.asObservable() }),
       findOne: () => ({ exec: jest.fn().mockResolvedValue(null) }),
     },
+    activeManifest: mockManifestSignal,
   };
 
   const mockConfigurationService = {
     userSettings: signal({
       country_code: 'zm',
-      language_code: 'zm_en',
+      language_code: 'zm_en' as any,
+    }),
+    deploymentSettings: signal({
+      country_code: 'zm',
     }),
   };
 
   const mockDownloadService = {
     register: jest.fn(),
+    unregister: jest.fn(),
     queueMultiple: jest.fn(),
   };
 
@@ -83,5 +100,67 @@ describe('DownloadsPageComponent', () => {
 
     expect(download).toHaveBeenCalled();
     expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should filter resources to only show those included in current deployment manifest', () => {
+    mockManifestSignal.set({
+      collections: [],
+      files: [{ id: 'zm-file-1', title: 'ZM File', language: 'zm_en' }] as any[],
+      links: [],
+      collectionsById: {},
+      filesById: {
+        'zm-file-1': { id: 'zm-file-1', title: 'ZM File', language: 'zm_en' },
+      },
+      linksById: {},
+    });
+
+    const mockDocs = [
+      { id: 'zm-file-1', _data: { id: 'zm-file-1', title: 'ZM File', language: 'zm_en', _attachments: {} } },
+      { id: 'mw-file-1', _data: { id: 'mw-file-1', title: 'MW File', language: 'mw_ny', _attachments: {} } },
+      { id: 'farmer-video-1', _data: { id: 'farmer-video-1', title: 'Video', _attachments: {} } },
+    ];
+    mockDbFiles$.next(mockDocs);
+    fixture.detectChanges();
+
+    const displayedIds = component.tableData().map((entry) => entry.id);
+    expect(displayedIds).toEqual(['zm-file-1']);
+  });
+
+  it('should filter files by language within the active deployment manifest', () => {
+    mockManifestSignal.set({
+      collections: [],
+      files: [
+        { id: 'zm-file-en', title: 'ZM English', language: 'zm_en' },
+        { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem' },
+      ] as any[],
+      links: [],
+      collectionsById: {},
+      filesById: {
+        'zm-file-en': { id: 'zm-file-en', title: 'ZM English', language: 'zm_en' },
+        'zm-file-bem': { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem' },
+      },
+      linksById: {},
+    });
+
+    const mockDocs = [
+      { id: 'zm-file-en', _data: { id: 'zm-file-en', title: 'ZM English', language: 'zm_en', _attachments: {} } },
+      { id: 'zm-file-bem', _data: { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem', _attachments: {} } },
+    ];
+    mockDbFiles$.next(mockDocs);
+
+    // Initial language is zm_en
+    component.languageFilter.set('zm_en');
+    fixture.detectChanges();
+    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-en']);
+
+    // Switch to zm_bem
+    component.languageFilter.set('zm_bem' as any);
+    fixture.detectChanges();
+    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-bem']);
+
+    // Deselect filter (undefined) -> show all in manifest
+    component.languageFilter.set(undefined);
+    fixture.detectChanges();
+    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-en', 'zm-file-bem']);
   });
 });
