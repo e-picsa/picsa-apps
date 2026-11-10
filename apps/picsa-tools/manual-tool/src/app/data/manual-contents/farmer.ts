@@ -40,7 +40,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 6,
           zm_toi: 6,
         },
-        name: translateMarker('A'),
+        name: 'A',
         label: translateMarker('What does the farmer currently do?'),
         type: 'step',
         activities: [
@@ -67,7 +67,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 12,
           zm_toi: 11,
         },
-        name: translateMarker('B'),
+        name: 'B',
         label: translateMarker('Is the climate changing?'),
         type: 'step',
         activities: [
@@ -89,7 +89,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 15,
           zm_toi: 14,
         },
-        name: translateMarker('C'),
+        name: 'C',
         label: translateMarker('What are the opportunities and risks?'),
         type: 'step',
         activities: [
@@ -111,7 +111,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 17,
           zm_toi: 16,
         },
-        name: translateMarker('D'),
+        name: 'D',
         label: translateMarker('What are the options for the farmer?'),
         type: 'step',
         activities: [
@@ -143,7 +143,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 19,
           zm_toi: 18,
         },
-        name: translateMarker('E'),
+        name: 'E',
         label: translateMarker('Options by context'),
         type: 'step',
         activities: [
@@ -165,7 +165,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 20,
           zm_toi: 19,
         },
-        name: translateMarker('F'),
+        name: 'F',
         label: translateMarker('Comparing different options and planning using Participatory Budgets'),
         type: 'step',
         activities: [
@@ -187,7 +187,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 23,
           zm_toi: 21,
         },
-        name: translateMarker('G'),
+        name: 'G',
         label: translateMarker('The farmer decides'),
         type: 'step',
         activities: [
@@ -214,7 +214,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 24,
           zm_toi: 21,
         },
-        name: translateMarker('H'),
+        name: 'H',
         label: translateMarker('Seasonal forecast'),
         type: 'step',
         activities: [],
@@ -230,7 +230,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 26,
           zm_toi: 23,
         },
-        name: translateMarker('I'),
+        name: 'I',
         label: translateMarker('Response to forecast'),
         type: 'step',
         activities: [
@@ -257,7 +257,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 27,
           zm_toi: 24,
         },
-        name: translateMarker('J'),
+        name: 'J',
         label: translateMarker('Short-term forecasts and warnings'),
         type: 'step',
         activities: [],
@@ -273,8 +273,8 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 29,
           zm_toi: 26,
         },
-        name: translateMarker('K'),
-        label: translateMarker('Response to forecast'),
+        name: 'K',
+        label: translateMarker('Response to short-term forecast'),
         type: 'step',
         activities: [
           {
@@ -300,7 +300,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           zm_lue: 30,
           zm_toi: 27,
         },
-        name: translateMarker('L'),
+        name: 'L',
         label: translateMarker('Learn and improve'),
         type: 'step',
         activities: [
