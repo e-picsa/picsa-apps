@@ -94,26 +94,26 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
     mirrorStorage: ['storage_file'],
   },
   resource_collections: {
+    mirrorStorage: ['cover_image'],
     columnMappings: {
       owner: SEED_ADMIN_USER_ID,
     },
   },
   resource_files: {
     priority: 1,
+    mirrorStorage: ['cover_image', 'storage_file'],
     columnMappings: {
-      cover_image: 'global/images/placeholder.svg',
-      storage_file: null,
       owner: SEED_ADMIN_USER_ID,
     },
   },
   resource_files_child: {
+    mirrorStorage: ['cover_image', 'storage_file'],
     columnMappings: {
-      cover_image: 'global/images/placeholder.svg',
-      storage_file: null,
       owner: SEED_ADMIN_USER_ID,
     },
   },
   resource_links: {
+    mirrorStorage: ['cover_image'],
     columnMappings: {
       owner: SEED_ADMIN_USER_ID,
     },
