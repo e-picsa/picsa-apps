@@ -251,7 +251,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
           zw_nd: 58,
         },
         name: translateMarker('Step K'),
-        label: translateMarker('Response to forecast'),
+        label: translateMarker('Response to short-term forecast'),
         type: 'step',
         activities: [
           {

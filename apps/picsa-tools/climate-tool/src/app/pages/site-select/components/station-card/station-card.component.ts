@@ -25,7 +25,7 @@ const strings = {
   climateStation: translateMarker('Climate Station'),
   stations: translateMarker('Stations'),
   allStations: translateMarker('All Stations'),
-  viewStation: translateMarker('View {{station}}'),
+  viewStation: translateMarker('View'),
 };
 
 @Component({
