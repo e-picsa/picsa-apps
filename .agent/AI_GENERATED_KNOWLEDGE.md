@@ -190,6 +190,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The farmer mobile app (`apps/picsa-tools/resources-tool`) currently reads static bundled assets loaded into local RxDB collections (`resources_tool_collections`, `resources_tool_files`, `resources_tool_links`) via `populateHardcodedResources()`.
   - Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`, which queries `resource_collections`, `resource_files`, and `resource_links`, strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
   - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
+  - **Download Manager Scoping (`/resources/downloads`)**: The in-app download manager handles all downloadable files across the current deployment from `resources_tool_files` (not solely extension resource bundles). Download sources comprise: (1) extension files from `RESOURCE_MANIFESTS[country_code]`, (2) manuals from `PICSA_MANUAL_RESOURCES` (matching `filter.countries` or `global_en`), and (3) farmer videos from `RESOURCE_VIDEO_HASHMAP` (matching `${country_code}_*` or `global_*`). Scoping checks `activeManifest.filesById` (extension resources), `resource.filter?.countries` (manuals), and `resource.language.startsWith(...)` (videos / global files), strictly excluding other countries' assets while preserving language filtering and global fallbacks.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
   - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
@@ -398,6 +399,26 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Strict Country Scoping for Dashboard Resources
 
 - **No Global Resource Bleed**: Resources uploaded within country deployments must be strictly scoped to `country_code` (`.eq('country_code', countryCode)`). Avoid falling back to `'global'` for downloadable files or external links unless explicitly designed as universal cross-border fixtures, ensuring clear tenant isolation and accurate deployment context badges.
+
+### In-App Download Manager Deployment Scoping & Authoritative Registry Sourcing
+
+- **Deployment Scoping in In-App Download Manager (`/resources/downloads`)**:
+  - The in-app download manager manages all downloadable offline files in the local RxDB database (`dbFiles`), not just extension bundle files.
+  - Scoping to the active deployment uses a three-tier check:
+    1. Active country extension manifest (`manifest.filesById[id]`).
+    2. Explicit country filter on the resource (`resource.filter?.countries.includes(country_code)`), used by multi-country PICSA manuals.
+    3. Country-matched locale (`resource.language.startsWith(`${countryCode}_`)`) or universal global resources (`resource.language.startsWith('global_')`).
+    4. When in `country_code: 'global'`, all files are included.
+  - Strict exclusion: Files belonging to other country deployments (e.g. `mw_*` or `tj_*` in a `zm` deployment) are strictly excluded from the table, preventing irrelevant downloads.
+- **Source Categorization (`source` Column)**:
+  - Downloadable resources originate from 4 authoritative categories: `'Extension'`, `'PICSA Manual'`, `'Farmer Video'`, and `'Digital Skills'`.
+  - Never use brittle string heuristics (such as `.startsWith('video_')`) or default fallbacks to `'Farmer Video'`. Categorization must be checked against authoritative source registries:
+    - `activeManifest.filesById` and pre-indexed `ALL_BUNDLE_FILE_IDS` from `RESOURCE_BUNDLES` -> `'Extension'`.
+    - `PICSA_MANUAL_RESOURCES` -> `'PICSA Manual'`.
+    - `DIGITAL_SKILLS_VIDEO_HASHMAP` -> `'Digital Skills'`.
+    - `FARMER_VIDEO_HASHMAP` (intro, operational, picsaSteps, testimonials) -> `'Farmer Video'`.
+    - Unknown/unmatched content returns blank (`''`) rather than mislabeling.
+  - `PicsaDataTableComponent` natively supports header filter dropdowns via `filterColumns: ['source']` in `IDataTableOptions`. Default sortability across columns allows users to group, sort, and filter downloads by source.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 

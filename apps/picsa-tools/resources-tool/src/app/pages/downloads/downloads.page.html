@@ -16,7 +16,7 @@
     <picsa-data-table
       [data]="tableData()"
       [options]="tableOptions"
-      [valueTemplates]="{size_kb,title,subtype,language,_downloaded,_actions}"
+      [valueTemplates]="{size_kb,title,source,subtype,language,_downloaded,_actions}"
       (rowClick)="handleRowClick($event)"
     >
       <ng-template #subtype let-value>
@@ -27,6 +27,13 @@
         } @default {
         <mat-icon svgIcon="resources_tool:filetype_document"></mat-icon>
         } }
+      </ng-template>
+      <ng-template #source let-value>
+        @if(value){
+        <span class="text-xs font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap"
+          >{{ value | translate }}</span
+        >
+        }
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">
         @if(downloaded){

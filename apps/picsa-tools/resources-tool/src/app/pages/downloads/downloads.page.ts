@@ -6,7 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ILocaleCode, LOCALES_DATA } from '@picsa/data';
+import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
+import { DIGITAL_SKILLS_VIDEO_HASHMAP, FARMER_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
@@ -14,19 +15,32 @@ import { RxDocument } from 'rxdb';
 import { switchMap } from 'rxjs';
 
 import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
+import { RESOURCE_BUNDLES } from '../../data';
+import { PICSA_MANUAL_RESOURCES } from '../../data/picsa/manuals';
 import { ResourcesMaterialModule } from '../../material.module';
 import { IResourceFile } from '../../schemas';
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
+export type IResourceSource = 'Extension' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
+
+/** Pre-indexed set of all extension bundle file IDs across all country bundles */
+const ALL_BUNDLE_FILE_IDS = new Set<string>(
+  Object.values(RESOURCE_BUNDLES).flatMap((bundle) => (bundle.files || []).map((file) => file.id)),
+);
+
 /** Table data stores original doc separate to data, and populates _downloaded state */
-type IResourceTableEntry = IResourceFile & { _downloaded: boolean; _actions: Record<string, boolean> } & {
+type IResourceTableEntry = IResourceFile & {
+  _downloaded: boolean;
+  _actions: Record<string, boolean>;
+  source: IResourceSource;
   doc: RxDocument<IResourceFile>;
 };
 
 const DISPLAY_COLUMNS = [
   '_downloaded',
   'title',
+  'source',
   'subtype',
   'size_kb',
   'language',
@@ -64,12 +78,15 @@ export class DownloadsPageComponent {
   private allResourceFileDocs = toSignal(this.dbFiles$, { initialValue: [] });
 
   private resourceFileDocs = computed(() => {
+    const { country_code } = this.configurationService.deploymentSettings();
     const manifest = this.service.activeManifest();
     const currentLang = this.languageFilter();
+
     return this.allResourceFileDocs().filter((doc) => {
-      const manifestFile = manifest.filesById[doc.id];
-      if (!manifestFile) return false;
-      return this.shouldShowResource(manifestFile, currentLang);
+      if (!this.isFileInDeployment(doc._data, country_code, manifest.filesById)) {
+        return false;
+      }
+      return this.shouldShowResource(doc._data, currentLang);
     });
   });
 
@@ -95,7 +112,9 @@ export class DownloadsPageComponent {
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
+    filterColumns: ['source'],
     formatHeader: (value) => {
+      if (value === 'source') return 'Source';
       if (value === 'subtype') return 'Type';
       if (value === 'size_kb') return 'Size';
       if (value === '_downloaded') return '';
@@ -136,23 +155,92 @@ export class DownloadsPageComponent {
     await entry.download();
   }
 
+  /** Determine whether a resource file is relevant to the active country deployment */
+  private isFileInDeployment(
+    resource: IResourceFile,
+    countryCode: ICountryCode,
+    activeManifestFilesById: Record<string, IResourceFile>,
+  ): boolean {
+    if (countryCode === 'global') return true;
+
+    // Direct match with active country manifest (bundle files)
+    if (activeManifestFilesById[resource.id]) return true;
+
+    // Explicit country filter specified on resource (e.g. manuals)
+    if (resource.filter?.countries) {
+      return resource.filter.countries.includes(countryCode);
+    }
+
+    // Locale-based scoping (e.g. farmer videos, global manuals)
+    if (resource.language) {
+      if (resource.language.startsWith(`${countryCode}_`)) return true;
+      if (resource.language.startsWith('global_')) return true;
+      return false;
+    }
+
+    return false;
+  }
+
   /** Filter resources by selected language filter */
   private shouldShowResource(resource: IResourceFile, languageFilter?: ILocaleCode) {
-    if (languageFilter && resource.language) {
-      // include global english resources when any localised english language selected
-      if (resource.language === 'global_en') return languageFilter.endsWith('_en');
-      return languageFilter === resource.language;
+    if (!languageFilter || !resource.language) {
+      return true;
     }
-    return true;
+
+    // Direct match with selected locale
+    if (resource.language === languageFilter) {
+      return true;
+    }
+
+    // Include global English resources when any localised English language is selected
+    if (resource.language === 'global_en' && languageFilter.endsWith('_en')) {
+      return true;
+    }
+
+    // Match cross-border languages sharing the same language subtag (e.g. mw_ny and zm_ny)
+    // when the resource is explicitly designated for this country
+    const filterLang = languageFilter.split('_')[1];
+    const resourceLang = resource.language.split('_')[1];
+    if (filterLang && filterLang === resourceLang && resource.filter?.countries) {
+      const filterCountry = languageFilter.split('_')[0] as ICountryCode;
+      if (resource.filter.countries.includes(filterCountry)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Determine authoritative content source/area for a resource based on exact registry membership.
+   * Returns blank ('') if unrecognized to prevent mislabeling.
+   */
+  public getResourceSource(resourceId: string): IResourceSource {
+    const manifest = this.service.activeManifest();
+    if (manifest.filesById[resourceId] || ALL_BUNDLE_FILE_IDS.has(resourceId)) {
+      return 'Extension';
+    }
+    if (PICSA_MANUAL_RESOURCES[resourceId as keyof typeof PICSA_MANUAL_RESOURCES]) {
+      return 'PICSA Manual';
+    }
+    if (DIGITAL_SKILLS_VIDEO_HASHMAP[resourceId]) {
+      return 'Digital Skills';
+    }
+    if (FARMER_VIDEO_HASHMAP[resourceId]) {
+      return 'Farmer Video';
+    }
+    return '';
   }
 
   private toTableData(doc: RxDocument<IResourceFile>): IResourceTableEntry {
     const _downloaded = Object.keys(doc._data._attachments).length > 0;
     const _actions = { delete: _downloaded ? true : false };
+    const source = this.getResourceSource(doc.id);
     return {
       ...doc._data,
       _downloaded,
       _actions,
+      source,
       doc,
     };
   }

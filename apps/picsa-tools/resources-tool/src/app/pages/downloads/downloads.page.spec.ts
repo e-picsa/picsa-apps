@@ -102,65 +102,244 @@ describe('DownloadsPageComponent', () => {
     expect(navigateSpy).not.toHaveBeenCalled();
   });
 
-  it('should filter resources to only show those included in current deployment manifest', () => {
+  it('should include all downloadable resources relevant to current deployment (manifest files, manuals, farmer videos, and global files)', () => {
     mockManifestSignal.set({
       collections: [],
-      files: [{ id: 'zm-file-1', title: 'ZM File', language: 'zm_en' }] as any[],
+      files: [{ id: 'zm-bundle-1', title: 'ZM Extension Doc', language: 'zm_en' }] as any[],
       links: [],
       collectionsById: {},
       filesById: {
-        'zm-file-1': { id: 'zm-file-1', title: 'ZM File', language: 'zm_en' },
+        'zm-bundle-1': { id: 'zm-bundle-1', title: 'ZM Extension Doc', language: 'zm_en' },
       },
       linksById: {},
     });
 
     const mockDocs = [
-      { id: 'zm-file-1', _data: { id: 'zm-file-1', title: 'ZM File', language: 'zm_en', _attachments: {} } },
-      { id: 'mw-file-1', _data: { id: 'mw-file-1', title: 'MW File', language: 'mw_ny', _attachments: {} } },
-      { id: 'farmer-video-1', _data: { id: 'farmer-video-1', title: 'Video', _attachments: {} } },
+      // 1. ZM Bundle file
+      {
+        id: 'zm-bundle-1',
+        _data: { id: 'zm-bundle-1', title: 'ZM Extension Doc', language: 'zm_en', _attachments: {} },
+      },
+      // 2. Global English manual
+      {
+        id: 'picsa_manual',
+        _data: { id: 'picsa_manual', title: 'PICSA Manual', language: 'global_en', _attachments: {} },
+      },
+      // 3. Multi-country manual matching ZM
+      {
+        id: 'picsa_manual_chichewa',
+        _data: {
+          id: 'picsa_manual_chichewa',
+          title: 'Buku',
+          language: 'mw_ny',
+          filter: { countries: ['mw', 'zm'] },
+          _attachments: {},
+        },
+      },
+      // 4. Country manual for another country (TJ)
+      {
+        id: 'picsa_manual_tajik',
+        _data: {
+          id: 'picsa_manual_tajik',
+          title: 'Tajik Manual',
+          language: 'tj_tg',
+          filter: { countries: ['tj'] },
+          _attachments: {},
+        },
+      },
+      // 5. ZM Farmer video
+      { id: 'video_zm_bem', _data: { id: 'video_zm_bem', title: 'Video Bemba', language: 'zm_bem', _attachments: {} } },
+      // 6. Global Farmer video
+      {
+        id: 'video_global_en',
+        _data: { id: 'video_global_en', title: 'Video Global EN', language: 'global_en', _attachments: {} },
+      },
+      // 7. MW Farmer video (other country)
+      { id: 'video_mw_ny', _data: { id: 'video_mw_ny', title: 'Video MW', language: 'mw_ny', _attachments: {} } },
+      // 8. MW Bundle file (other country)
+      {
+        id: 'mw-bundle-1',
+        _data: {
+          id: 'mw-bundle-1',
+          title: 'MW Extension Doc',
+          language: 'mw_en',
+          filter: { countries: ['mw'] },
+          _attachments: {},
+        },
+      },
     ];
     mockDbFiles$.next(mockDocs);
+
+    // Unselected language filter: should include all files relevant to ZM, excluding other countries
+    component.languageFilter.set(undefined);
     fixture.detectChanges();
 
     const displayedIds = component.tableData().map((entry) => entry.id);
-    expect(displayedIds).toEqual(['zm-file-1']);
+    expect(displayedIds).toContain('zm-bundle-1');
+    expect(displayedIds).toContain('picsa_manual');
+    expect(displayedIds).toContain('picsa_manual_chichewa');
+    expect(displayedIds).toContain('video_zm_bem');
+    expect(displayedIds).toContain('video_global_en');
+
+    // Should strictly exclude other country files
+    expect(displayedIds).not.toContain('picsa_manual_tajik');
+    expect(displayedIds).not.toContain('video_mw_ny');
+    expect(displayedIds).not.toContain('mw-bundle-1');
   });
 
-  it('should filter files by language within the active deployment manifest', () => {
+  it('should filter files by language within the active deployment', () => {
     mockManifestSignal.set({
       collections: [],
-      files: [
-        { id: 'zm-file-en', title: 'ZM English', language: 'zm_en' },
-        { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem' },
-      ] as any[],
+      files: [{ id: 'zm-bundle-en', title: 'ZM Doc EN', language: 'zm_en' }] as any[],
       links: [],
       collectionsById: {},
       filesById: {
-        'zm-file-en': { id: 'zm-file-en', title: 'ZM English', language: 'zm_en' },
-        'zm-file-bem': { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem' },
+        'zm-bundle-en': { id: 'zm-bundle-en', title: 'ZM Doc EN', language: 'zm_en' },
       },
       linksById: {},
     });
 
     const mockDocs = [
-      { id: 'zm-file-en', _data: { id: 'zm-file-en', title: 'ZM English', language: 'zm_en', _attachments: {} } },
-      { id: 'zm-file-bem', _data: { id: 'zm-file-bem', title: 'ZM Bemba', language: 'zm_bem', _attachments: {} } },
+      { id: 'zm-bundle-en', _data: { id: 'zm-bundle-en', title: 'ZM Doc EN', language: 'zm_en', _attachments: {} } },
+      { id: 'video_zm_en', _data: { id: 'video_zm_en', title: 'ZM Video EN', language: 'zm_en', _attachments: {} } },
+      {
+        id: 'video_global_en',
+        _data: { id: 'video_global_en', title: 'Global Video EN', language: 'global_en', _attachments: {} },
+      },
+      {
+        id: 'video_zm_bem',
+        _data: { id: 'video_zm_bem', title: 'ZM Video Bemba', language: 'zm_bem', _attachments: {} },
+      },
+      {
+        id: 'picsa_manual_chichewa',
+        _data: {
+          id: 'picsa_manual_chichewa',
+          title: 'Buku',
+          language: 'mw_ny',
+          filter: { countries: ['mw', 'zm'] },
+          _attachments: {},
+        },
+      },
     ];
     mockDbFiles$.next(mockDocs);
 
-    // Initial language is zm_en
+    // 1. Filter by English ('zm_en'): includes zm_en, global_en
     component.languageFilter.set('zm_en');
     fixture.detectChanges();
-    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-en']);
+    expect(component.tableData().map((e) => e.id)).toEqual(['zm-bundle-en', 'video_zm_en', 'video_global_en']);
 
-    // Switch to zm_bem
+    // 2. Filter by Bemba ('zm_bem'): includes zm_bem only
     component.languageFilter.set('zm_bem' as any);
     fixture.detectChanges();
-    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-bem']);
+    expect(component.tableData().map((e) => e.id)).toEqual(['video_zm_bem']);
 
-    // Deselect filter (undefined) -> show all in manifest
+    // 3. Filter by Nyanja ('zm_ny'): matches cross-border 'mw_ny' manual because filter.countries includes 'zm'
+    component.languageFilter.set('zm_ny' as any);
+    fixture.detectChanges();
+    expect(component.tableData().map((e) => e.id)).toEqual(['picsa_manual_chichewa']);
+
+    // 4. Clear filter (undefined): shows all deployment files
     component.languageFilter.set(undefined);
     fixture.detectChanges();
-    expect(component.tableData().map((e) => e.id)).toEqual(['zm-file-en', 'zm-file-bem']);
+    expect(component.tableData().map((e) => e.id)).toEqual([
+      'zm-bundle-en',
+      'video_zm_en',
+      'video_global_en',
+      'video_zm_bem',
+      'picsa_manual_chichewa',
+    ]);
+  });
+
+  describe('table source column and categorization', () => {
+    it('should configure tableOptions with source column, filterColumns, and formatted header', () => {
+      expect(component.tableOptions.displayColumns).toContain('source');
+      expect(component.tableOptions.filterColumns).toEqual(['source']);
+      expect(component.tableOptions.formatHeader?.('source')).toBe('Source');
+      expect(component.tableOptions.formatHeader?.('subtype')).toBe('Type');
+      expect(component.tableOptions.formatHeader?.('size_kb')).toBe('Size');
+      expect(component.tableOptions.formatHeader?.('_downloaded')).toBe('');
+      expect(component.tableOptions.formatHeader?.('_actions')).toBe('');
+    });
+
+    it('should accurately resolve source category across registries with blank fallback for unknowns', () => {
+      mockManifestSignal.set({
+        collections: [],
+        files: [{ id: 'active-manifest-file', title: 'Manifest File' }] as any[],
+        links: [],
+        collectionsById: {},
+        filesById: {
+          'active-manifest-file': { id: 'active-manifest-file', title: 'Manifest File' },
+        },
+        linksById: {},
+      });
+
+      // 1. Active manifest file -> 'Extension'
+      expect(component.getResourceSource('active-manifest-file')).toBe('Extension');
+
+      // 2. PICSA Manual -> 'PICSA Manual'
+      expect(component.getResourceSource('picsa_manual')).toBe('PICSA Manual');
+      expect(component.getResourceSource('picsa_manual_chichewa')).toBe('PICSA Manual');
+
+      // 3. Digital Skills -> 'Digital Skills'
+      expect(component.getResourceSource('digital_skills_1_introduction_global_en_360p')).toBe('Digital Skills');
+
+      // 4. Farmer Video -> 'Farmer Video'
+      expect(component.getResourceSource('farmer_intro_zm_bem_360p')).toBe('Farmer Video');
+
+      // 5. Unrecognized resource -> '' (blank, never defaults to Farmer Video)
+      expect(component.getResourceSource('unrecognized_file_id')).toBe('');
+    });
+
+    it('should populate source in tableData entries', () => {
+      mockManifestSignal.set({
+        collections: [],
+        files: [{ id: 'ext-doc', title: 'Extension Document' }] as any[],
+        links: [],
+        collectionsById: {},
+        filesById: {
+          'ext-doc': { id: 'ext-doc', title: 'Extension Document' },
+        },
+        linksById: {},
+      });
+
+      mockDbFiles$.next([
+        { id: 'ext-doc', _data: { id: 'ext-doc', title: 'Extension Document', _attachments: {} } },
+        { id: 'picsa_manual', _data: { id: 'picsa_manual', title: 'Manual', language: 'global_en', _attachments: {} } },
+        {
+          id: 'digital_skills_1_introduction_global_en_360p',
+          _data: {
+            id: 'digital_skills_1_introduction_global_en_360p',
+            title: 'Intro Digital',
+            language: 'global_en',
+            _attachments: {},
+          },
+        },
+        {
+          id: 'farmer_intro_zm_bem_360p',
+          _data: {
+            id: 'farmer_intro_zm_bem_360p',
+            title: 'Farmer Intro Bemba',
+            language: 'zm_bem',
+            _attachments: {},
+          },
+        },
+        {
+          id: 'custom_unknown',
+          _data: { id: 'custom_unknown', title: 'Unknown', language: 'global_en', _attachments: {} },
+        },
+      ]);
+
+      component.languageFilter.set(undefined);
+      fixture.detectChanges();
+
+      const tableData = component.tableData();
+      const byId = Object.fromEntries(tableData.map((row) => [row.id, row.source]));
+
+      expect(byId['ext-doc']).toBe('Extension');
+      expect(byId['picsa_manual']).toBe('PICSA Manual');
+      expect(byId['digital_skills_1_introduction_global_en_360p']).toBe('Digital Skills');
+      expect(byId['farmer_intro_zm_bem_360p']).toBe('Farmer Video');
+      expect(byId['custom_unknown']).toBe('');
+    });
   });
 });
