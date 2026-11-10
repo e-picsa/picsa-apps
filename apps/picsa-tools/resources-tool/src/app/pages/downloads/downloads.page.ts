@@ -22,7 +22,7 @@ import { IResourceFile } from '../../schemas';
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
-export type IResourceCategory = 'Extension' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
+export type IResourceCategory = 'Extension Resource' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
 export type IResourceSource = IResourceCategory;
 
 /** Pre-indexed set of all extension bundle file IDs across all country bundles */
@@ -253,7 +253,7 @@ export class DownloadsPageComponent {
   public getResourceCategory(resourceId: string): IResourceCategory {
     const manifest = this.service.activeManifest();
     if (manifest.filesById[resourceId] || ALL_BUNDLE_FILE_IDS.has(resourceId)) {
-      return 'Extension';
+      return 'Extension Resource';
     }
     if (PICSA_MANUAL_RESOURCES[resourceId as keyof typeof PICSA_MANUAL_RESOURCES]) {
       return 'PICSA Manual';

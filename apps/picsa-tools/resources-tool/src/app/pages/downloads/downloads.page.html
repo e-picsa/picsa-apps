@@ -31,16 +31,12 @@
       </ng-template>
       <ng-template #category let-value>
         @if(value){
-        <span class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap"
-          >{{ value | translate }}</span
-        >
+        <span class="text-sm font-medium text-slate-900 whitespace-nowrap">{{ value | translate }}</span>
         }
       </ng-template>
       <ng-template #source let-value>
         @if(value){
-        <span class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap"
-          >{{ value | translate }}</span
-        >
+        <span class="text-sm font-medium text-slate-900 whitespace-nowrap">{{ value | translate }}</span>
         }
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">

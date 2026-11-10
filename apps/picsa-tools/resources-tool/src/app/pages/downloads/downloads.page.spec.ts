@@ -279,9 +279,9 @@ describe('DownloadsPageComponent', () => {
         linksById: {},
       });
 
-      // 1. Active manifest file -> 'Extension'
-      expect(component.getResourceCategory('active-manifest-file')).toBe('Extension');
-      expect(component.getResourceSource('active-manifest-file')).toBe('Extension');
+      // 1. Active manifest file -> 'Extension Resource'
+      expect(component.getResourceCategory('active-manifest-file')).toBe('Extension Resource');
+      expect(component.getResourceSource('active-manifest-file')).toBe('Extension Resource');
 
       // 2. PICSA Manual -> 'PICSA Manual'
       expect(component.getResourceCategory('picsa_manual')).toBe('PICSA Manual');
@@ -342,7 +342,7 @@ describe('DownloadsPageComponent', () => {
       const tableData = component.tableData();
       const byId = Object.fromEntries(tableData.map((row) => [row.id, row.category]));
 
-      expect(byId['ext-doc']).toBe('Extension');
+      expect(byId['ext-doc']).toBe('Extension Resource');
       expect(byId['picsa_manual']).toBe('PICSA Manual');
       expect(byId['digital_skills_1_introduction_global_en_360p']).toBe('Digital Skills');
       expect(byId['farmer_intro_zm_bem_360p']).toBe('Farmer Video');
