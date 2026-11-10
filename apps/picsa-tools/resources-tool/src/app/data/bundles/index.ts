@@ -26,11 +26,11 @@ export const SUPABASE_STORAGE_PUBLIC_BASE = 'https://wpctacqpzxfzlucblowh.supaba
 
 /**
  * Resolve cover image path.
- * Paths starting with 'global/resources/covers/' map to bundled offline assets ('assets/resources/covers/').
- * Remote storage paths resolve to Supabase storage public URL.
+ * - Bundled offline asset paths ('assets/...') and absolute URLs are returned directly.
+ * - Unmatched remote storage paths fallback to Supabase public storage URL.
  */
 export function resolveCoverImage(coverPath?: string | null): string {
-  if (!coverPath || coverPath.includes('placeholder')) return '';
+  if (!coverPath) return '';
   if (coverPath.startsWith('assets/')) return coverPath;
   if (coverPath.startsWith('http://') || coverPath.startsWith('https://')) {
     try {
@@ -38,9 +38,6 @@ export function resolveCoverImage(coverPath?: string | null): string {
     } catch {
       return coverPath;
     }
-  }
-  if (coverPath.startsWith('global/resources/covers/')) {
-    return coverPath.replace('global/resources/covers/', 'assets/resources/covers/');
   }
   try {
     return encodeURI(decodeURI(`${SUPABASE_STORAGE_PUBLIC_BASE}/${coverPath}`));
@@ -54,9 +51,7 @@ export function resolveCoverImage(coverPath?: string | null): string {
  * Prefers Supabase storage URL if storage_file is set, otherwise falls back to external_url.
  */
 export function resolveFileUrl(file: IResourceFileBundleRow): string {
-  const rawUrl = file.storage_file
-    ? `${SUPABASE_STORAGE_PUBLIC_BASE}/${file.storage_file}`
-    : file.external_url || '';
+  const rawUrl = file.storage_file ? `${SUPABASE_STORAGE_PUBLIC_BASE}/${file.storage_file}` : file.external_url || '';
   if (!rawUrl) return '';
   try {
     return encodeURI(decodeURI(rawUrl));
