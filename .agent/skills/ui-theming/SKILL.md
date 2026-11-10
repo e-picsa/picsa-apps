@@ -20,6 +20,14 @@ The project uses a custom Tailwind configuration shared across apps, located at 
 - **Neutrals & Status (Borders, Backgrounds, Alerts):**
   You may use standard Tailwind colors (e.g., `gray-200`, `red-500`, `emerald-600`) for specific UI states, borders, or neutral backgrounds where strict theming is not required.
 
+### No Dark Mode Support
+
+> [!WARNING]
+> **Strictly DO NOT use Tailwind `dark:` variant classes** (e.g. `dark:text-white`, `dark:bg-neutral-800`, `dark:border-*`).
+>
+> - The application only supports light mode. All country themes (`libs/theme/src/themes/`) use `mat.m2-define-light-theme`.
+> - `libs/theme/src/tailwind.config.js` does NOT specify `darkMode: 'class'`. Using `dark:*` causes Tailwind to evaluate against the user's OS/system `prefers-color-scheme: dark`. This turns text white or backgrounds dark inside a light-themed Material UI, causing text and controls to become completely unreadable.
+
 ## Component Usage
 
 **Mandatory:** Use Angular Material components for all interactive elements (Buttons, Inputs, Icons, etc.) instead of native HTML elements.

@@ -204,6 +204,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - The farmer mobile app (`apps/picsa-tools/resources-tool`) currently reads static bundled assets loaded into local RxDB collections (`resources_tool_collections`, `resources_tool_files`, `resources_tool_links`) via `populateHardcodedResources()`.
   - Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`, which queries `resource_collections`, `resource_files`, and `resource_links`, strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
   - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
+  - **Download Manager Scoping (`/resources/downloads`)**: The in-app download manager handles all downloadable files across the current deployment from `resources_tool_files` (not solely extension resource bundles). Download sources comprise: (1) extension files from `RESOURCE_MANIFESTS[country_code]`, (2) manuals from `PICSA_MANUAL_RESOURCES` (matching `filter.countries` or `global_en`), and (3) farmer videos from `RESOURCE_VIDEO_HASHMAP` (matching `${country_code}_*` or `global_*`). Scoping checks `activeManifest.filesById` (extension resources), `resource.filter?.countries` (manuals), and `resource.language.startsWith(...)` (videos / global files), strictly excluding other countries' assets while preserving language filtering and global fallbacks.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
   - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
@@ -363,6 +364,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Root Cause of Icon Clipping**: Angular Material's `mat-icon` uses font-based glyphs sized to `24px` with `line-height: 1`. Applying Tailwind classes like `!w-5 !h-5 !text-lg` causes `text-lg` to set `line-height: 1.75rem` (28px) inside a `20px` (`h-5`) bounding box. This forces the glyph outside its container bounds, causing the icon to be sliced or clipped at the edges.
 - **Rule**: Never combine arbitrary Tailwind `text-*` and `w-*/h-*` on `mat-icon` without matching line-height (`leading-none`). Preferably, let Angular Material manage the icon size naturally or use standard 24px sizing, or specify `class="!text-[16px] !w-4 !h-4 leading-none"` when creating micro badges.
 
+### Absence of Dark Mode & Prohibition of Tailwind `dark:` Variants
+
+- **Light Mode Only**: The entire PICSA client application architecture is strictly light-mode only. All country themes in `libs/theme/src/themes/` define themes using `mat.m2-define-light-theme` applied via `body[data-theme='picsa-*']`.
+- **Preflight and Config Trap**: `libs/theme/src/tailwind.config.js` does NOT specify `darkMode: 'class'`.
+- **Never Use `dark:` Utility Classes**: Any use of Tailwind `dark:*` variants (e.g. `dark:text-white`, `dark:bg-gray-800`, `dark:border-neutral-700`) evaluates against the user's OS media query (`prefers-color-scheme: dark`). On devices with dark mode enabled in system settings, this flips text to white or light gray against the light Material surfaces, rendering text completely invisible. Sticking strictly to semantic tokens (`text-primary`, `var(--color-primary)`) or standard neutral light-mode utilities (`text-gray-900`, `bg-gray-50`) ensures rock-solid contrast.
+
 ### Fixed-Height Dialog Containers for Tabbed Content
 
 - **Consistent Dialog Height**: When presenting tabbed content (e.g. `mat-tab-group`) inside a modal where tabs have varying lengths (e.g., compact location summary vs long scrollable tables/charts), dialogs configured only with `maxHeight: '90vh'` will dynamically expand and shrink when switching tabs, creating jarring layout shifts.
@@ -438,6 +445,30 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Symmetric Path Resolution (Zero Drift)**: When a script downloads files to local disk and writes bundle manifest paths, always derive the local disk location directly from the canonical asset path function so disk storage and JSON manifests can never diverge.
 - **Extraction of Shared Processing Utilities**: Keep domain scripts (e.g. sync scripts, seed scripts) focused on orchestration. Heavy compute or multi-format media transforms (e.g. Sharp image resizing, format detection, human byte formatting) must be isolated in shared utility modules (`apps/picsa-scripts/src/media/image-optimizer.ts`) to maintain low cognitive complexity and enable reuse across CLI tasks.
 - **Plan Scrutiny Before Autonomous Action**: When asked "how will you fix it?" or addressing PR feedback, always present a structured, concise plan for the user to scrutinize first. Do not autonomously create branches, push commits, or open pull requests without explicit confirmation.
+
+### In-App Download Manager Deployment Scoping & Authoritative Registry Sourcing
+
+- **Deployment Scoping in In-App Download Manager (`/resources/downloads`)**:
+  - The in-app download manager manages all downloadable offline files in the local RxDB database (`dbFiles`), not just extension bundle files.
+  - Scoping to the active deployment uses a three-tier check:
+    1. Active country extension manifest (`manifest.filesById[id]`).
+    2. Explicit country filter on the resource (`resource.filter?.countries.includes(country_code)`), used by multi-country PICSA manuals.
+    3. Country-matched locale (`resource.language.startsWith(`${countryCode}_`)`) or universal global resources (`resource.language.startsWith('global_')`).
+    4. When in `country_code: 'global'`, all files are included.
+  - Strict exclusion: Files belonging to other country deployments (e.g. `mw_*` or `tj_*` in a `zm` deployment) are strictly excluded from the table, preventing irrelevant downloads.
+- **Category Categorization (`category` / `source` Column)**:
+  - Downloadable resources originate from 4 authoritative categories: `'Extension Resource'`, `'PICSA Manual'`, `'Farmer Video'`, and `'Digital Skills'`.
+  - The term **"Category"** is used as the intuitive column header and filter label (replacing technical "Source"), distinguishing domain content areas from the file format **"Type"** (PDF vs Video).
+  - Never use brittle string heuristics (such as `.startsWith('video_')`) or default fallbacks to `'Farmer Video'`. Categorization must be checked against authoritative source registries:
+    - `activeManifest.filesById` and pre-indexed `ALL_BUNDLE_FILE_IDS` from `RESOURCE_BUNDLES` -> `'Extension Resource'`.
+    - `PICSA_MANUAL_RESOURCES` -> `'PICSA Manual'`.
+    - `DIGITAL_SKILLS_VIDEO_HASHMAP` -> `'Digital Skills'`.
+    - `FARMER_VIDEO_HASHMAP` (intro, operational, picsaSteps, testimonials) -> `'Farmer Video'`.
+    - Unknown/unmatched content returns blank (`''`) rather than mislabeling.
+  - `PicsaDataTableComponent` natively supports header filter dropdowns via `filterColumns: ['category', 'subtype']` in `IDataTableOptions`, allowing users to filter by both Category and Type.
+  - `PicsaDataTableComponent` emits a single idiomatic `(filteredData)` output event on dataset updates and column/search filtering. Parent components bind `(filteredData)="filteredTableData.set($event)"` to synchronize external summary actions like bulk downloaders (`<resource-download-multiple [docs]="pendingDownloads()">`) with active table filter states.
+  - **Downloaded Status Checkmark Theming**: Never hardcode colors like `text-emerald-*` or `#059669` or use busy icons like `check_circle`. Use `<mat-icon color="primary">check</mat-icon>` so downloaded items inherit the active deployment's theme color (e.g. green in MW, blue in ZM, purple in ZW), while download action buttons remain standard neutral/black to distinguish them clearly.
+  - The redundant `'language'` column is excluded from the table (`DISPLAY_COLUMNS`) because language selection is prominently handled by the top chip listbox. On initial viewing, `languageFilter` automatically defaults to the user's active app language (matching deployment country locales, e.g. `zm_en`), ensuring the table opens pre-filtered to the user's language while allowing them to toggle chips to view other languages or all deployment files.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 

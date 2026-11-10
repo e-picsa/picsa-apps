@@ -18,12 +18,18 @@ const operational = hackGenerateLegacyResources(PICSA_OPERATIONAL_VIDEOS_DATA);
 const steps = hackGenerateLegacyResources(PICSA_FARMER_VIDEOS_DATA);
 const testimonials = hackGenerateLegacyResources(PICSA_VIDEO_TESTIMONIAL_DATA);
 
-export const RESOURCE_VIDEO_HASHMAP = {
-  ...arrayToHashmap(digitalSkills, 'id'),
+export const DIGITAL_SKILLS_VIDEO_HASHMAP = arrayToHashmap(digitalSkills, 'id');
+
+export const FARMER_VIDEO_HASHMAP = {
   ...arrayToHashmap(intro, 'id'),
   ...arrayToHashmap(operational, 'id'),
   ...arrayToHashmap(steps, 'id'),
   ...arrayToHashmap(testimonials, 'id'),
+};
+
+export const RESOURCE_VIDEO_HASHMAP = {
+  ...DIGITAL_SKILLS_VIDEO_HASHMAP,
+  ...FARMER_VIDEO_HASHMAP,
 };
 
 export * from './digitalSkills';
