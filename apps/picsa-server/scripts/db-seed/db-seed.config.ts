@@ -36,12 +36,6 @@ export interface ISeedDataConfiguration {
    * Unmirrorable files warn and null the column so the import still succeeds.
    */
   mirrorStorage?: string[];
-  /**
-   * Optional predicate to filter storage paths before downloading during extended seed.
-   * When returning false, the storage file is excluded from mirror download and the
-   * referencing column on the row is set to null in local Postgres.
-   */
-  mirrorStorageFilter?: (storagePath: string, row: Record<string, any>, column: string) => boolean;
 }
 
 /** Metadata columns stripped from every export (DB defaults repopulate on import) */
@@ -67,18 +61,6 @@ export const SEED_STATION_IDS = [
   'zw/masvingo_airport_met',
   'zw/plumtree_met',
 ];
-
-/**
- * Identify massive video files (farmer videos) that should not be mirrored to local storage.
- * Keeps the metadata database row while excluding the large binary download.
- */
-export const isFarmerVideoStorage = (storagePath: string, row: Record<string, any>, column: string): boolean => {
-  if (column === 'storage_file') {
-    if (row.mimetype?.startsWith('video/') || row.subtype === 'video') return true;
-    if (/\.(mp4|mov|avi|mkv|webm)$/i.test(storagePath) || storagePath.includes('/videos/')) return true;
-  }
-  return false;
-};
 
 /**
  * Base configuration for seed tables defining schemas, priorities, column mappings,
@@ -120,14 +102,12 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
   resource_files: {
     priority: 1,
     mirrorStorage: ['cover_image', 'storage_file'],
-    mirrorStorageFilter: (path, row, col) => !isFarmerVideoStorage(path, row, col),
     columnMappings: {
       owner: SEED_ADMIN_USER_ID,
     },
   },
   resource_files_child: {
     mirrorStorage: ['cover_image', 'storage_file'],
-    mirrorStorageFilter: (path, row, col) => !isFarmerVideoStorage(path, row, col),
     columnMappings: {
       owner: SEED_ADMIN_USER_ID,
     },

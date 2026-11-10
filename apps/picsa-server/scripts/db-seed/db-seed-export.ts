@@ -316,7 +316,7 @@ export class SupabaseSeedExport {
         // Mirror referenced storage files first so rows satisfy storage foreign
         // keys and remain downloadable offline (see mirrorStorage in db-seed.config)
         if (config.mirrorStorage?.length) {
-          await this.mirrorStorageFiles(rows, config.mirrorStorage, validStoragePaths, config.mirrorStorageFilter);
+          await this.mirrorStorageFiles(rows, config.mirrorStorage, validStoragePaths);
         }
 
         // Extended seeding preserves remote timestamps (created_at/updated_at are
@@ -458,22 +458,13 @@ export class SupabaseSeedExport {
    * Files that cannot be mirrored null the referencing column (with warning) so
    * the import still succeeds - the row stays live remotely and reappears later.
    */
-  private async mirrorStorageFiles(
-    rows: any[],
-    columns: string[],
-    validStoragePaths: Set<string>,
-    filter?: (storagePath: string, row: Record<string, any>, column: string) => boolean,
-  ): Promise<void> {
+  private async mirrorStorageFiles(rows: any[], columns: string[], validStoragePaths: Set<string>): Promise<void> {
     if (!this.remoteClient || !this.localClient) return;
     const missing = new Map<string, { row: any; column: string }[]>();
     for (const row of rows) {
       for (const column of columns) {
         const file = row?.[column] as string | null;
         if (!file) continue;
-        if (filter && !filter(file, row, column)) {
-          row[column] = null;
-          continue;
-        }
         this.referencedStoragePaths.add(file);
         if (validStoragePaths.has(file)) continue;
         const list = missing.get(file) ?? [];
