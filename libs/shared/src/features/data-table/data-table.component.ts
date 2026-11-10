@@ -160,7 +160,6 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
 
   /** Event output emitted when the filtered dataset changes */
   readonly filteredData = output<T[]>();
-  readonly filteredDataChange = output<T[]>();
 
   readonly paginator = viewChild(MatPaginator);
   readonly sort = viewChild(MatSort);
@@ -288,7 +287,6 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
   private emitFilteredData() {
     const filtered = (this.dataSource.filteredData ?? this.data() ?? []).slice();
     this.filteredData.emit(filtered);
-    this.filteredDataChange.emit(filtered);
   }
 
   public handleRowClick(row: T, e: Event) {

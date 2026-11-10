@@ -51,7 +51,7 @@
           [attr.aria-label]="'Open' | translate"
           [attr.title]="'Downloaded' | translate"
         >
-          <mat-icon class="text-emerald-600 dark:text-emerald-400">check_circle</mat-icon>
+          <mat-icon color="primary">check</mat-icon>
         </button>
         } @else {
         <resource-download [resource]="row" (click)="$event.stopImmediatePropagation()"></resource-download>

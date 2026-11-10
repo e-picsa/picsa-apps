@@ -114,11 +114,9 @@ describe('PicsaDataTableComponent', () => {
     expect(textTh.querySelector('.header-filter-btn')).toBeNull();
   });
 
-  it('should emit filteredData and filteredDataChange when data or filters change', () => {
+  it('should emit filteredData when data or filters change', () => {
     const emittedData: any[] = [];
-    const emittedChanges: any[] = [];
     component.filteredData.subscribe((d) => emittedData.push(d));
-    component.filteredDataChange.subscribe((d) => emittedChanges.push(d));
 
     fixture.componentRef.setInput('data', MOCK_DATA);
     fixture.componentRef.setInput('options', { filterColumns: ['tool'] });
@@ -131,6 +129,5 @@ describe('PicsaDataTableComponent', () => {
     fixture.detectChanges();
 
     expect(emittedData[emittedData.length - 1].map((r: any) => r.id)).toEqual(['1', '3']);
-    expect(emittedChanges[emittedChanges.length - 1].map((r: any) => r.id)).toEqual(['1', '3']);
   });
 });
