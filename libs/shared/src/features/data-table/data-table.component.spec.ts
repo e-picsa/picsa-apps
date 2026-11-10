@@ -113,4 +113,21 @@ describe('PicsaDataTableComponent', () => {
     const textTh = fixture.nativeElement.querySelector('th.mat-column-text');
     expect(textTh.querySelector('.header-filter-btn')).toBeNull();
   });
+
+  it('should emit filteredData when data or filters change', () => {
+    const emittedData: any[] = [];
+    component.filteredData.subscribe((d) => emittedData.push(d));
+
+    fixture.componentRef.setInput('data', MOCK_DATA);
+    fixture.componentRef.setInput('options', { filterColumns: ['tool'] });
+    fixture.detectChanges();
+
+    expect(emittedData.length).toBeGreaterThan(0);
+    expect(emittedData[emittedData.length - 1].length).toBe(4);
+
+    component.setColumnFilter('tool', 'budget');
+    fixture.detectChanges();
+
+    expect(emittedData[emittedData.length - 1].map((r: any) => r.id)).toEqual(['1', '3']);
+  });
 });
