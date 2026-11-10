@@ -15,6 +15,8 @@ export const LOCALISED_MANUALS: { [version in IManualVariant]: { [code in ILocal
     global_en: PICSA_MANUAL_RESOURCES.picsa_manual,
     mw_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa,
     zm_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa,
+    zw_sn: PICSA_MANUAL_RESOURCES.picsa_manual_zw_sn,
+    zw_nd: PICSA_MANUAL_RESOURCES.picsa_manual_zw_nd,
   },
   farmer: {
     global_en: PICSA_MANUAL_RESOURCES.picsa_manual_farmer,
