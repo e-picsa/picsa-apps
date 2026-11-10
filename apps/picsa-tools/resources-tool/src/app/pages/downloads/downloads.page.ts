@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, model, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -22,7 +22,8 @@ import { IResourceFile } from '../../schemas';
 import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
-export type IResourceSource = 'Extension' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
+export type IResourceCategory = 'Extension' | 'PICSA Manual' | 'Farmer Video' | 'Digital Skills' | '';
+export type IResourceSource = IResourceCategory;
 
 /** Pre-indexed set of all extension bundle file IDs across all country bundles */
 const ALL_BUNDLE_FILE_IDS = new Set<string>(
@@ -33,17 +34,17 @@ const ALL_BUNDLE_FILE_IDS = new Set<string>(
 type IResourceTableEntry = IResourceFile & {
   _downloaded: boolean;
   _actions: Record<string, boolean>;
-  source: IResourceSource;
+  category: IResourceCategory;
+  source: IResourceCategory;
   doc: RxDocument<IResourceFile>;
 };
 
 const DISPLAY_COLUMNS = [
   '_downloaded',
   'title',
-  'source',
+  'category',
   'subtype',
   'size_kb',
-  'language',
   '_actions',
 ] as const satisfies (keyof IResourceTableEntry)[];
 
@@ -92,11 +93,13 @@ export class DownloadsPageComponent {
 
   public tableData = computed(() => this.resourceFileDocs().map((doc) => this.toTableData(doc)));
 
-  public pendingDownloads = computed(() =>
-    this.tableData()
-      .filter((v) => !v._downloaded)
-      .map((v) => v.doc),
-  );
+  /** Table data filtered by PicsaDataTableComponent (column filters & search) */
+  public filteredTableData = signal<IResourceTableEntry[] | null>(null);
+
+  public pendingDownloads = computed(() => {
+    const rows = this.filteredTableData() ?? this.tableData();
+    return rows.filter((v) => !v._downloaded).map((v) => v.doc);
+  });
 
   public pendingDownloadsSize = computed(() =>
     this.pendingDownloads().reduce((prev, current) => prev + current.size_kb || 0, 0),
@@ -108,13 +111,45 @@ export class DownloadsPageComponent {
     const { country_code } = this.configurationService.deploymentSettings();
     return LOCALES_DATA.filter((v) => v.country_code === country_code);
   });
-  public languageFilter = model<ILocaleCode | undefined>(this.configurationService.userSettings().language_code);
+  public languageFilter = model<ILocaleCode | undefined>(this.resolveInitialLanguage());
+
+  private hasInitializedLanguage = false;
+
+  constructor() {
+    effect(() => {
+      const initialLang = this.resolveInitialLanguage();
+      if (initialLang && !this.hasInitializedLanguage) {
+        this.hasInitializedLanguage = true;
+        this.languageFilter.set(initialLang);
+      }
+    });
+  }
+
+  /**
+   * Determine the user's active language for initial filtering.
+   * Matches the deployment's country locale options, defaulting to user's language setting.
+   */
+  private resolveInitialLanguage(): ILocaleCode | undefined {
+    const userSettings = this.configurationService.userSettings();
+    const deployment = this.configurationService.deploymentSettings();
+    const userLang = userSettings.language_code;
+    const countryOptions = LOCALES_DATA.filter((v) => v.country_code === deployment.country_code);
+
+    if (userLang && countryOptions.some((opt) => opt.id === userLang)) {
+      return userLang;
+    }
+    if (userLang && (userLang === 'global_en' || userLang.endsWith('_en'))) {
+      const countryEn = countryOptions.find((opt) => opt.id.endsWith('_en'));
+      if (countryEn) return countryEn.id as ILocaleCode;
+    }
+    return userLang || (countryOptions[0]?.id as ILocaleCode);
+  }
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
-    filterColumns: ['source'],
+    filterColumns: ['category', 'subtype'],
     formatHeader: (value) => {
-      if (value === 'source') return 'Source';
+      if (value === 'category' || value === 'source') return 'Category';
       if (value === 'subtype') return 'Type';
       if (value === 'size_kb') return 'Size';
       if (value === '_downloaded') return '';
@@ -212,10 +247,10 @@ export class DownloadsPageComponent {
   }
 
   /**
-   * Determine authoritative content source/area for a resource based on exact registry membership.
+   * Determine authoritative content category for a resource based on exact registry membership.
    * Returns blank ('') if unrecognized to prevent mislabeling.
    */
-  public getResourceSource(resourceId: string): IResourceSource {
+  public getResourceCategory(resourceId: string): IResourceCategory {
     const manifest = this.service.activeManifest();
     if (manifest.filesById[resourceId] || ALL_BUNDLE_FILE_IDS.has(resourceId)) {
       return 'Extension';
@@ -232,15 +267,20 @@ export class DownloadsPageComponent {
     return '';
   }
 
+  public getResourceSource(resourceId: string): IResourceCategory {
+    return this.getResourceCategory(resourceId);
+  }
+
   private toTableData(doc: RxDocument<IResourceFile>): IResourceTableEntry {
     const _downloaded = Object.keys(doc._data._attachments).length > 0;
     const _actions = { delete: _downloaded ? true : false };
-    const source = this.getResourceSource(doc.id);
+    const category = this.getResourceCategory(doc.id);
     return {
       ...doc._data,
       _downloaded,
       _actions,
-      source,
+      category,
+      source: category,
       doc,
     };
   }

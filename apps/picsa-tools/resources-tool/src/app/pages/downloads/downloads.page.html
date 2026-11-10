@@ -16,7 +16,8 @@
     <picsa-data-table
       [data]="tableData()"
       [options]="tableOptions"
-      [valueTemplates]="{size_kb,title,source,subtype,language,_downloaded,_actions}"
+      [valueTemplates]="{size_kb,title,category,source,subtype,_downloaded,_actions}"
+      (filteredData)="filteredTableData.set($event)"
       (rowClick)="handleRowClick($event)"
     >
       <ng-template #subtype let-value>
@@ -28,17 +29,29 @@
         <mat-icon svgIcon="resources_tool:filetype_document"></mat-icon>
         } }
       </ng-template>
+      <ng-template #category let-value>
+        @if(value){
+        <span class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap"
+          >{{ value | translate }}</span
+        >
+        }
+      </ng-template>
       <ng-template #source let-value>
         @if(value){
-        <span class="text-xs font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap"
+        <span class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap"
           >{{ value | translate }}</span
         >
         }
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">
         @if(downloaded){
-        <button matIconButton (click)="openResource(row, $event)" [attr.aria-label]="'Open' | translate">
-          <mat-icon>visibility</mat-icon>
+        <button
+          matIconButton
+          (click)="openResource(row, $event)"
+          [attr.aria-label]="'Open' | translate"
+          [attr.title]="'Downloaded' | translate"
+        >
+          <mat-icon class="text-emerald-600 dark:text-emerald-400">check_circle</mat-icon>
         </button>
         } @else {
         <resource-download [resource]="row" (click)="$event.stopImmediatePropagation()"></resource-download>
@@ -49,7 +62,6 @@
         <span class="text-xs opacity-50">{{row.filename}}</span>
         }
       </ng-template>
-      <ng-template #language let-value>{{languageLabels[value]}}</ng-template>
 
       <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
       <ng-template #_actions let-actions let-row="row">

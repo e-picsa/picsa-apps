@@ -410,15 +410,18 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
     3. Country-matched locale (`resource.language.startsWith(`${countryCode}_`)`) or universal global resources (`resource.language.startsWith('global_')`).
     4. When in `country_code: 'global'`, all files are included.
   - Strict exclusion: Files belonging to other country deployments (e.g. `mw_*` or `tj_*` in a `zm` deployment) are strictly excluded from the table, preventing irrelevant downloads.
-- **Source Categorization (`source` Column)**:
+- **Category Categorization (`category` / `source` Column)**:
   - Downloadable resources originate from 4 authoritative categories: `'Extension'`, `'PICSA Manual'`, `'Farmer Video'`, and `'Digital Skills'`.
+  - The term **"Category"** is used as the intuitive column header and filter label (replacing technical "Source"), distinguishing domain content areas from the file format **"Type"** (PDF vs Video).
   - Never use brittle string heuristics (such as `.startsWith('video_')`) or default fallbacks to `'Farmer Video'`. Categorization must be checked against authoritative source registries:
     - `activeManifest.filesById` and pre-indexed `ALL_BUNDLE_FILE_IDS` from `RESOURCE_BUNDLES` -> `'Extension'`.
     - `PICSA_MANUAL_RESOURCES` -> `'PICSA Manual'`.
     - `DIGITAL_SKILLS_VIDEO_HASHMAP` -> `'Digital Skills'`.
     - `FARMER_VIDEO_HASHMAP` (intro, operational, picsaSteps, testimonials) -> `'Farmer Video'`.
     - Unknown/unmatched content returns blank (`''`) rather than mislabeling.
-  - `PicsaDataTableComponent` natively supports header filter dropdowns via `filterColumns: ['source']` in `IDataTableOptions`. Default sortability across columns allows users to group, sort, and filter downloads by source.
+  - `PicsaDataTableComponent` natively supports header filter dropdowns via `filterColumns: ['category', 'subtype']` in `IDataTableOptions`, allowing users to filter by both Category and Type.
+  - `PicsaDataTableComponent` emits `(filteredData)` and `(filteredDataChange)` output events on dataset updates and column/search filtering. Parent components bind `(filteredData)="filteredTableData.set($event)"` to synchronize external summary actions like bulk downloaders (`<resource-download-multiple [docs]="pendingDownloads()">`) with active table filter states.
+  - The redundant `'language'` column is excluded from the table (`DISPLAY_COLUMNS`) because language selection is prominently handled by the top chip listbox. On initial viewing, `languageFilter` automatically defaults to the user's active app language (matching deployment country locales, e.g. `zm_en`), ensuring the table opens pre-filtered to the user's language while allowing them to toggle chips to view other languages or all deployment files.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 

@@ -250,18 +250,24 @@ describe('DownloadsPageComponent', () => {
     ]);
   });
 
-  describe('table source column and categorization', () => {
-    it('should configure tableOptions with source column, filterColumns, and formatted header', () => {
-      expect(component.tableOptions.displayColumns).toContain('source');
-      expect(component.tableOptions.filterColumns).toEqual(['source']);
-      expect(component.tableOptions.formatHeader?.('source')).toBe('Source');
+  describe('table category column, type filter, and pending downloads', () => {
+    it('should configure tableOptions with category and subtype in filterColumns, omit language column, and format header', () => {
+      expect(component.tableOptions.displayColumns).toContain('category');
+      expect(component.tableOptions.displayColumns).not.toContain('language');
+      expect(component.tableOptions.filterColumns).toEqual(['category', 'subtype']);
+      expect(component.tableOptions.formatHeader?.('category')).toBe('Category');
+      expect(component.tableOptions.formatHeader?.('source')).toBe('Category');
       expect(component.tableOptions.formatHeader?.('subtype')).toBe('Type');
       expect(component.tableOptions.formatHeader?.('size_kb')).toBe('Size');
       expect(component.tableOptions.formatHeader?.('_downloaded')).toBe('');
       expect(component.tableOptions.formatHeader?.('_actions')).toBe('');
     });
 
-    it('should accurately resolve source category across registries with blank fallback for unknowns', () => {
+    it('should initialize languageFilter to current user language on first viewing', () => {
+      expect(component.languageFilter()).toBe('zm_en');
+    });
+
+    it('should accurately resolve category across registries with blank fallback for unknowns', () => {
       mockManifestSignal.set({
         collections: [],
         files: [{ id: 'active-manifest-file', title: 'Manifest File' }] as any[],
@@ -274,23 +280,24 @@ describe('DownloadsPageComponent', () => {
       });
 
       // 1. Active manifest file -> 'Extension'
+      expect(component.getResourceCategory('active-manifest-file')).toBe('Extension');
       expect(component.getResourceSource('active-manifest-file')).toBe('Extension');
 
       // 2. PICSA Manual -> 'PICSA Manual'
-      expect(component.getResourceSource('picsa_manual')).toBe('PICSA Manual');
-      expect(component.getResourceSource('picsa_manual_chichewa')).toBe('PICSA Manual');
+      expect(component.getResourceCategory('picsa_manual')).toBe('PICSA Manual');
+      expect(component.getResourceCategory('picsa_manual_chichewa')).toBe('PICSA Manual');
 
       // 3. Digital Skills -> 'Digital Skills'
-      expect(component.getResourceSource('digital_skills_1_introduction_global_en_360p')).toBe('Digital Skills');
+      expect(component.getResourceCategory('digital_skills_1_introduction_global_en_360p')).toBe('Digital Skills');
 
       // 4. Farmer Video -> 'Farmer Video'
-      expect(component.getResourceSource('farmer_intro_zm_bem_360p')).toBe('Farmer Video');
+      expect(component.getResourceCategory('farmer_intro_zm_bem_360p')).toBe('Farmer Video');
 
       // 5. Unrecognized resource -> '' (blank, never defaults to Farmer Video)
-      expect(component.getResourceSource('unrecognized_file_id')).toBe('');
+      expect(component.getResourceCategory('unrecognized_file_id')).toBe('');
     });
 
-    it('should populate source in tableData entries', () => {
+    it('should populate category and source in tableData entries', () => {
       mockManifestSignal.set({
         collections: [],
         files: [{ id: 'ext-doc', title: 'Extension Document' }] as any[],
@@ -333,13 +340,50 @@ describe('DownloadsPageComponent', () => {
       fixture.detectChanges();
 
       const tableData = component.tableData();
-      const byId = Object.fromEntries(tableData.map((row) => [row.id, row.source]));
+      const byId = Object.fromEntries(tableData.map((row) => [row.id, row.category]));
 
       expect(byId['ext-doc']).toBe('Extension');
       expect(byId['picsa_manual']).toBe('PICSA Manual');
       expect(byId['digital_skills_1_introduction_global_en_360p']).toBe('Digital Skills');
       expect(byId['farmer_intro_zm_bem_360p']).toBe('Farmer Video');
       expect(byId['custom_unknown']).toBe('');
+    });
+
+    it('should update pendingDownloads when table filtering is applied via filteredTableData', () => {
+      mockManifestSignal.set({
+        collections: [],
+        files: [
+          { id: 'ext-1', title: 'Doc 1' },
+          { id: 'ext-2', title: 'Doc 2' },
+        ] as any[],
+        links: [],
+        collectionsById: {},
+        filesById: {
+          'ext-1': { id: 'ext-1', title: 'Doc 1' },
+          'ext-2': { id: 'ext-2', title: 'Doc 2' },
+        },
+        linksById: {},
+      });
+
+      mockDbFiles$.next([
+        { id: 'ext-1', size_kb: 100, _data: { id: 'ext-1', title: 'Doc 1', size_kb: 100, _attachments: {} } },
+        { id: 'ext-2', size_kb: 200, _data: { id: 'ext-2', title: 'Doc 2', size_kb: 200, _attachments: {} } },
+      ]);
+
+      component.languageFilter.set(undefined);
+      fixture.detectChanges();
+
+      // Initially all pending downloads included
+      expect(component.pendingDownloads().map((d) => d.id)).toEqual(['ext-1', 'ext-2']);
+      expect(component.pendingDownloadsSize()).toBe(300);
+
+      // Simulate table filteredData event emission (e.g. filtered to ext-2)
+      const filtered = component.tableData().filter((row) => row.id === 'ext-2');
+      component.filteredTableData.set(filtered);
+      fixture.detectChanges();
+
+      expect(component.pendingDownloads().map((d) => d.id)).toEqual(['ext-2']);
+      expect(component.pendingDownloadsSize()).toBe(200);
     });
   });
 });

@@ -158,6 +158,10 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
   /** Event output emitted on table row click */
   readonly rowClick = output<T>();
 
+  /** Event output emitted when the filtered dataset changes */
+  readonly filteredData = output<T[]>();
+  readonly filteredDataChange = output<T[]>();
+
   readonly paginator = viewChild(MatPaginator);
   readonly sort = viewChild(MatSort);
 
@@ -262,6 +266,7 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
         }
       }
       this.cdr.markForCheck();
+      this.emitFilteredData();
     });
 
     // Sync search query and column filters to trigger MatTableDataSource filtering
@@ -276,7 +281,14 @@ export class PicsaDataTableComponent<T = Record<string, any>> {
         this.dataSource.paginator.firstPage();
       }
       this.cdr.markForCheck();
+      this.emitFilteredData();
     });
+  }
+
+  private emitFilteredData() {
+    const filtered = (this.dataSource.filteredData ?? this.data() ?? []).slice();
+    this.filteredData.emit(filtered);
+    this.filteredDataChange.emit(filtered);
   }
 
   public handleRowClick(row: T, e: Event) {
