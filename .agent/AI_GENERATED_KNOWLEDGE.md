@@ -98,6 +98,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
 - **Listener Registration Order Before `register()`**: Call `PushNotifications.removeAllListeners()` and register event listeners (`registration`, `registrationError`, `pushNotificationReceived`, `pushNotificationActionPerformed`) _before_ invoking `PushNotifications.register()`. On native platforms (iOS and Android), the registration callback can emit immediately during `register()`, causing early token events to be dropped if listeners are attached afterwards.
 - **Client FCM Token Restoration on Startup**: When loading an existing user profile from `app_users`, restore `dbProfile.fcm_token` into the local `fcmToken` signal if not already set. Because `userProfile` is a computed signal (`fcm_token: this.fcmToken()`) and `pendingDBUpdate` computes diffs against `dbProfile`, failing to restore `dbProfile.fcm_token` causes the computed signal to emit `fcm_token: null`, scheduling an update that inadvertently clears the user's stored FCM token in Supabase.
+
+### Resource Cover Images: Storage, Optimization, and Sync Caching
+
+- **Storage Conventions**:
+  - Generic category icons (`crops.svg`, `weather.svg`) and partner/service logos (`access-ag.jpg`, `daes_v2.webp`) remain shared in `global/resources/covers/*`.
+  - Country-specific document covers reside in `<country>/resources/covers/*` (e.g. `mw/resources/covers/bmtm.jpg`, `zw/resources/covers/Beef Cattle Management Calendar Infographic.png`).
+- **Offline Resolution (`resolveCoverImage`)**:
+  - `apps/picsa-tools/resources-tool/src/app/data/bundles/index.ts` maps `global/resources/covers/<file>` $\rightarrow$ `assets/resources/covers/<file>` and `<country>/resources/covers/<file>` $\rightarrow$ `assets/resources/covers/<country>/<file>`.
+- **Sync & Image Optimization (`scripts:resources:sync`)**:
+  - `sync-resources.ts` automatically downloads referenced covers and optimizes raster images using `sharp` constrained to `max 300x300` at 80% quality (dropping multi-megabyte posters by >95% down to 10–40 KB).
+  - To prevent recompressing unchanged files on repeat runs, `sync-resources.ts` uses `.sync-cache.json` matching remote storage metadata (`etag`, `size`, `updatedAt`) against local output files.
+- **Database Extended Seeding (`db-seed.config.ts`)**:
+  - Tables declaring `mirrorStorage` mirror remote storage files into local buckets.
+  - To exclude massive binaries (such as farmer videos) from local seed while retaining their database metadata rows and cover images, use `mirrorStorageFilter: (path, row, col) => !isFarmerVideoStorage(path, row, col)`. This skips the large binary download and sets `row.storage_file = null` in local Postgres.
 - **Push Token Logging Security**: Never log raw device push tokens (`token.value`) in console outputs. Redact tokens to avoid exposing sensitive push credentials in production device logs.
 
 ### TypeScript Strictness & SonarCloud Rules (S2871, Number Parsing, Duplication)
@@ -398,6 +412,24 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Strict Country Scoping for Dashboard Resources
 
 - **No Global Resource Bleed**: Resources uploaded within country deployments must be strictly scoped to `country_code` (`.eq('country_code', countryCode)`). Avoid falling back to `'global'` for downloadable files or external links unless explicitly designed as universal cross-border fixtures, ensuring clear tenant isolation and accurate deployment context badges.
+
+### Script Invocation & Argument Documentation Convention
+
+- **Mandatory Top-Level Docblocks**: All standalone maintenance, sync, migration, and housekeeping scripts must include a comprehensive JSDoc header at the very top of the file documenting:
+  1. **Purpose**: Clear summary of what the script does and which tables/storage buckets it touches.
+  2. **Direct Invocation**: Exact CLI command using both `yarn <script-name>` and `npx ts-node ...` / `yarn tsx ...` with explicit tsconfig paths.
+  3. **Options/Arguments**: Complete list of supported CLI flags with their data types, effects, and default values (e.g. `--local` vs `--remote`, `--dry-run`, `--country=<code>`).
+
+### Resource Bundle Normalization at Sync Time (No Client Regex/Remapping)
+
+- **Do Not Guess File Extensions or Paths in Client Code**: Never implement dynamic regex or extension-swapping logic (`.jpg` $\rightarrow$ `.webp`) inside client runtime helpers (such as `resolveCoverImage`).
+- **Sync Script Is Single Source of Truth**: When `sync-resources.ts` synchronizes and compresses covers to WebP (`assets/resources/covers/<file>.webp`), it must directly normalize the `cover_image` field in `mw.json`, `zm.json`, `zw.json` to the canonical asset path (`assets/resources/covers/...`).
+- **Zero Client Overhead**: The client manifest reads `row.cover_image` directly, ensuring 100% offline availability with zero regex overhead or runtime path resolution.
+
+### Resource Cover Cache & Cross-Developer Determinism
+
+- **Repository-First Cache Seeding**: The cover sync cache (`apps/picsa-scripts/.cache/resources-covers.json`) is gitignored. When the cache is missing (e.g. after a clean checkout or deletion), `syncReferencedCovers` checks `fs.existsSync(localDest)`. If the target WebP or SVG already exists locally on disk, the script marks it fresh and seeds the local cache entry without touching the filesystem or re-running Sharp.
+- **Preserve Existing SVGs**: Vector SVG icons checked into git are strictly preserved and never re-downloaded or overwritten during sync unless `--force-covers` is passed. This guarantees multiple developers running sync never produce spurious binary diffs.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 
