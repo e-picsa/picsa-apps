@@ -41,7 +41,7 @@ export interface IDBDoc {
 
 // data stored on _appMeta store
 export interface IAppMeta {
-  _key: 'VERSION' | 'USER_ID' | 'ENVIRONMENT';
+  _key: 'VERSION' | 'USER_ID' | 'ENVIRONMENT' | 'BUDGET_CARDS_LEGACY_MIGRATED';
   value: string;
 }
 

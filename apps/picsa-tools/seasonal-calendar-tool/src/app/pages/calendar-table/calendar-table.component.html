@@ -44,6 +44,9 @@
                   <picsa-form-crop-activity-select-multiple
                     [formField]="control"
                     [attr.data-hasValue]="control().value().length > 0 ? true : false"
+                    [customOptions]="customActivities()"
+                    [addCustomOption]="{ text: 'Add custom activity', matIcon: 'add' }"
+                    (addCustomClicked)="addCustomActivity(control)"
                   ></picsa-form-crop-activity-select-multiple>
                 </td>
               }
