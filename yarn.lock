@@ -17437,13 +17437,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:@picsa/capacitor-video-player@8.0.3":
-  version: 8.0.3
-  resolution: "@picsa/capacitor-video-player@npm:8.0.3"
+"capacitor-video-player@npm:@picsa/capacitor-video-player@8.0.4":
+  version: 8.0.4
+  resolution: "@picsa/capacitor-video-player@npm:8.0.4"
   peerDependencies:
     "@capacitor/core": ">=8.0.0"
     hls.js: ^1.4.0
-  checksum: 10c0/d030ae7ea1941b99ef18176c223e5b21da6455881aedcdaf11b26623339d4c41b54a6f8a9851e2545f1b8392341ff969b7b4df7755a2750e240b34732e38448d
+  checksum: 10c0/9b781286ae2fdb87e38374b31422c16d9ab66d1dafcf5b00eb31b6b63e344a880bfce2f95874c89845f897912a0559c40dea9c6907c6a5d6402492662680976d
   languageName: node
   linkType: hard
 
@@ -28975,7 +28975,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "npm:@picsa/capacitor-video-player@8.0.3"
+    capacitor-video-player: "npm:@picsa/capacitor-video-player@8.0.4"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
