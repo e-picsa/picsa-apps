@@ -20,7 +20,7 @@ prioritise, do not fix code in this pass unless explicitly asked.
 
 ## Step 0 — Load per-repo context (mandatory)
 
-1. Read `.agents/skills/repo-audit/repo-context.md` if it exists. It is
+1. Read `.agent/skills/repo-audit/repo-context.md` if it exists. It is
    repo-owned and takes precedence over generic assumptions.
 2. Note in particular: project summary, user archetypes, tech focus areas,
    scope overrides, audit file location, out-of-scope paths, and any
