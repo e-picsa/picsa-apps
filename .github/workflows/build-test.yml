@@ -6,6 +6,16 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
+      - 'documentation/**'
+      - '.agents/**'
+      - '.gemini/**'
+      - '.vscode/**'
+      - 'LICENSE'
+      - 'tools/ai/**'
+      - 'tools/scripts/**'
+      - 'tools/legacy/**'
   # Triggers automatically post-merge to populate/update the authoritative Nx cache on main
   push:
     branches:
