@@ -1,17 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SupabaseStoragePickerDirective } from './storage-file-picker.component';
+import { SupabaseService } from '../../supabase.service';
+import { SupabaseStorageFilePickerComponent } from './storage-file-picker.component';
 
-describe('SupabaseStoragePickerDirective', () => {
-  let component: SupabaseStoragePickerDirective;
-  let fixture: ComponentFixture<SupabaseStoragePickerDirective>;
+describe('SupabaseStorageFilePickerComponent', () => {
+  let component: SupabaseStorageFilePickerComponent;
+  let fixture: ComponentFixture<SupabaseStorageFilePickerComponent>;
 
   beforeEach(async () => {
+    const mockSupabaseService = {
+      ready: () => Promise.resolve(),
+      storage: {
+        list: jest.fn().mockResolvedValue([]),
+        getPublicLink: jest.fn((bucket: string, path: string) => `http://localhost/${bucket}/${path}`),
+      },
+    };
+
     await TestBed.configureTestingModule({
-      imports: [SupabaseStoragePickerDirective],
+      imports: [SupabaseStorageFilePickerComponent],
+      providers: [{ provide: SupabaseService, useValue: mockSupabaseService }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SupabaseStoragePickerDirective);
+    fixture = TestBed.createComponent(SupabaseStorageFilePickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

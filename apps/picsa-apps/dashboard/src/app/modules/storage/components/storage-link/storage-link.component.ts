@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject,input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -8,12 +8,13 @@ import { DashboardStorageService, IDashboardStorageEntry } from '../../../storag
  * Mat icons used to represent various filetype extensions
  * https://fonts.google.com/icons
  */
-const filetypeIconMapping = {
+const filetypeIconMapping: Record<string, string> = {
   pdf: 'description',
   jpeg: 'image',
   jpg: 'image',
   png: 'image',
   svg: 'image',
+  webp: 'image',
   mp4: 'smart_display',
   mp3: 'music_note',
 };
@@ -29,7 +30,7 @@ const filetypeIconMapping = {
  * Minimal component that takes a storage file id input and returns a link
  * to the public url of the file, as populated from resources store cache
  */
-export class DashboardStorageLinkComponent implements OnInit {
+export class DashboardStorageLinkComponent {
   private service = inject(DashboardStorageService);
 
   /** Resource storage id */
@@ -43,18 +44,39 @@ export class DashboardStorageLinkComponent implements OnInit {
     return this.entry()?.name?.split('/')?.pop() || '';
   });
 
-  public notFound = false;
+  public notFound = signal(false);
 
-  public fileTypeIcon = 'description';
+  public fileTypeIcon = signal('description');
 
-  async ngOnInit() {
-    const entry = await this.service.getStorageFileByPath(this.id());
-    this.entry.set(entry);
-    if (entry) {
-      this.fileTypeIcon = this.getFileTypeIcon(entry);
-    } else {
-      this.notFound = true;
-      console.error(`[Storage] entry not found: `, this.id);
+  constructor() {
+    effect(() => {
+      const id = this.id();
+      void this.loadEntry(id);
+    });
+  }
+
+  private async loadEntry(id: string) {
+    if (!id) {
+      this.entry.set(undefined);
+      this.notFound.set(false);
+      return;
+    }
+    this.notFound.set(false);
+    try {
+      const entry = await this.service.getStorageFileByPath(id);
+      if (this.id() !== id) return;
+      this.entry.set(entry);
+      if (entry) {
+        this.fileTypeIcon.set(this.getFileTypeIcon(entry));
+      } else {
+        this.notFound.set(true);
+        console.error(`[Storage] entry not found: `, id);
+      }
+    } catch (err) {
+      if (this.id() !== id) return;
+      this.entry.set(undefined);
+      this.notFound.set(true);
+      console.error(`[Storage] failed to load entry: `, id, err);
     }
   }
 
@@ -63,8 +85,8 @@ export class DashboardStorageLinkComponent implements OnInit {
   }
 
   private getFileTypeIcon(entry: IDashboardStorageEntry) {
-    const extension = entry.name?.split('.').pop();
-    if (!extension) return 'document';
-    return filetypeIconMapping[extension] || 'document';
+    const extension = entry.name?.split('.').pop()?.toLowerCase();
+    if (!extension) return 'description';
+    return filetypeIconMapping[extension] || 'description';
   }
 }

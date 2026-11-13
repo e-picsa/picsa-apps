@@ -1,0 +1,43 @@
+@if (label(); as fieldLabel) {
+  <label class="storage-upload-label">{{ fieldLabel }}</label>
+}
+
+@if (value(); as storagePath) {
+  <div class="storage-preview-row">
+    <dashboard-storage-link #storageLink [id]="storagePath" displayStyle="button" />
+    @if (!isDisabled()) {
+      <button type="button" matIconButton class="file-remove" (click)="clearValue()" matTooltip="Remove file">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+  @if (showImagePreview()) {
+    <img
+      class="cover-preview"
+      [src]="storageLink.entry()?.publicUrl || (storagePath | storagePath)"
+      alt="Cover Preview"
+    />
+  }
+} @else if (!isDisabled()) {
+  <picsa-supabase-upload
+    [fileTypes]="fileTypes()"
+    [fileDropHeight]="fileDropHeight()"
+    [autoUpload]="autoUpload()"
+    [storageBucketName]="storageBucketName() || 'global'"
+    [storageFolderPath]="storageFolderPath()"
+    (uploadComplete)="handleUploadComplete($event)"
+  />
+  <button
+    type="button"
+    matButton
+    color="primary"
+    supabaseStoragePicker
+    [storageBucketName]="storageBucketName()"
+    [storageFolderPath]="storageFolderPath()"
+    (storageFileSelected)="handleStorageFileSelected($event)"
+    style="margin-top: 4px"
+  >
+    <mat-icon>perm_media</mat-icon>
+    Select existing file
+  </button>
+}

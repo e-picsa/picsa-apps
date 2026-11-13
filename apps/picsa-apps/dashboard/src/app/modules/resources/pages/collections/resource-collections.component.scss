@@ -1,7 +1,7 @@
 .cover-image {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
   display: block;
-  margin: auto;
+  border-radius: 4px;
 }

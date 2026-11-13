@@ -18,79 +18,28 @@
         <!-- Storage file / External Url -->
         @if (!form.value.external_url) {
           <div>
-            <label>Resource</label>
-            @if (form.value.storage_file) {
-              <dashboard-storage-link [id]="form.value.storage_file" displayStyle="button"></dashboard-storage-link>
-              @if (canEdit()) {
-                <button
-                  matIconButton
-                  class="file-remove"
-                  (click)="handleStorageFileSelected(undefined, 'storage_file')"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              }
-            } @else if (canEdit()) {
-              <picsa-supabase-upload
-                [fileTypes]="allowedFileTypes"
-                [fileDropHeight]="128"
-                [autoUpload]="true"
-                [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources"
-                (uploadComplete)="handleUploadComplete($event, 'storage_file')"
-              ></picsa-supabase-upload>
-              <button
-                matButton
-                color="primary"
-                supabaseStoragePicker
-                [storageBucketName]="storageBucketName()"
-                storageFolderPath="resources"
-                (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
-                style="margin-top: 4px"
-              >
-                <mat-icon>perm_media</mat-icon>
-                Select existing file
-              </button>
-            }
+            <dashboard-storage-upload
+              label="Resource"
+              formControlName="storage_file"
+              [fileTypes]="allowedFileTypes"
+              [fileDropHeight]="128"
+              [storageBucketName]="storageBucketName()"
+              storageFolderPath="resources"
+              (fileMetadata)="handleStorageFileMetadata($event)"
+            />
           </div>
         }
         <!-- Cover Image -->
         <div style="flex: 1">
-          <label>Cover Image</label>
-          @if (form.value.cover_image) {
-            <dashboard-storage-link
-              #storageLink
-              [id]="form.value.cover_image"
-              displayStyle="button"
-            ></dashboard-storage-link>
-            @if (canEdit()) {
-              <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
-                <mat-icon>close</mat-icon>
-              </button>
-            }
-            <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
-          } @else if (canEdit()) {
-            <picsa-supabase-upload
-              [fileTypes]="allowedCoverTypes"
-              [fileDropHeight]="128"
-              [autoUpload]="true"
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (uploadComplete)="handleUploadComplete($event, 'cover_image')"
-            ></picsa-supabase-upload>
-            <button
-              matButton
-              color="primary"
-              supabaseStoragePicker
-              [storageBucketName]="storageBucketName()"
-              storageFolderPath="resources/covers"
-              (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
-              style="margin-top: 4px"
-            >
-              <mat-icon>perm_media</mat-icon>
-              Select existing file
-            </button>
-          }
+          <dashboard-storage-upload
+            label="Cover Image"
+            formControlName="cover_image"
+            [fileTypes]="allowedCoverTypes"
+            [fileDropHeight]="128"
+            [storageBucketName]="storageBucketName()"
+            storageFolderPath="resources/covers"
+            [showImagePreview]="true"
+          />
         </div>
       </div>
       <!-- Title -->
@@ -112,6 +61,17 @@
             <mat-option [value]="language.id">{{ language.language_label }}</mat-option>
           }
         </mat-select>
+      </mat-form-field>
+
+      <!-- Collections Assignment -->
+      <mat-form-field style="flex-basis: 100%">
+        <mat-label>Collections</mat-label>
+        <mat-select formControlName="collections" multiple>
+          @for (collection of collections(); track collection.id) {
+            <mat-option [value]="collection.id">{{ collection.title }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Choose which collection(s) this file belongs to.</mat-hint>
       </mat-form-field>
     </div>
     @if (canEdit()) {

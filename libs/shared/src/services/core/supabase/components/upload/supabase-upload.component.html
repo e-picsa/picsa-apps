@@ -1,6 +1,6 @@
 <!-- Dashboard dropzone -->
-@if (uppy) {
-  <uppy-dashboard [uppy]="uppy" [props]="dashboardOptions" />
+@if (uppy(); as uppyInstance) {
+  <uppy-dashboard [uppy]="uppyInstance" [props]="dashboardOptions()" />
 }
 
 <!-- Storage path editor -->
@@ -21,7 +21,7 @@
   <button
     matButton="outlined"
     color="primary"
-    [disabled]="dashboardOptions.disabled"
+    [disabled]="dashboardOptions().disabled"
     (click)="startUpload()"
     style="margin-top: 1rem"
   >

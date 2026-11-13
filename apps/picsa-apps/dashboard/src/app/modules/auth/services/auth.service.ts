@@ -10,7 +10,8 @@ import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/servic
 @Injectable({ providedIn: 'root' })
 export class DashboardAuthService {
   private supabaseAuthService = inject(SupabaseAuthService);
-  private activeDeploymentId = signal<string | undefined>(undefined);
+  private _activeDeploymentId = signal<string | undefined>(undefined);
+  public readonly activeDeploymentId = this._activeDeploymentId.asReadonly();
 
   public authUser = this.supabaseAuthService.authUser;
 
@@ -22,7 +23,7 @@ export class DashboardAuthService {
 
   /** Active auth roles for current deployment **/
   public readonly authRoles = computed<AppRole[]>(() => {
-    const deploymentId = this.activeDeploymentId();
+    const deploymentId = this._activeDeploymentId();
     const rolesByDeploymentId = this.rolesByDeploymentId();
     if (deploymentId && rolesByDeploymentId) {
       const authRoles: AppRole[] = rolesByDeploymentId[deploymentId] || [];
@@ -32,8 +33,8 @@ export class DashboardAuthService {
   });
 
   // Avoid circular refs by setting directly from dashboard deployment service
-  public setActiveDeploymentId(id: string) {
-    this.activeDeploymentId.set(id);
+  public setActiveDeploymentId(id?: string) {
+    this._activeDeploymentId.set(id);
   }
 
   public hasRole(requiredRole?: AppRole): boolean {

@@ -3,11 +3,11 @@
     <!-- Specific bucket files -->
     @if (storageBucketName) {
       <mat-tab [label]="storageBucketName">
-        @if (bucketEntries.length === 0) {
+        @if (bucketEntries().length === 0) {
           <p>No files in folder</p>
         } @else {
           <mat-selection-list [multiple]="false" [(ngModel)]="selected" (selectionChange)="handleFileSelect()">
-            @for (entry of bucketEntries; track entry.id) {
+            @for (entry of bucketEntries(); track entry.id) {
               <mat-list-option [value]="entry">{{ entry.name }}</mat-list-option>
             }
           </mat-selection-list>
@@ -16,11 +16,11 @@
     }
     <!-- Global Files -->
     <mat-tab label="Global">
-      @if (globalEntries.length === 0) {
+      @if (globalEntries().length === 0) {
         <p>No files in folder</p>
       } @else {
         <mat-selection-list [multiple]="false" [(ngModel)]="selected" (selectionChange)="handleFileSelect()">
-          @for (entry of globalEntries; track entry.id) {
+          @for (entry of globalEntries(); track entry.id) {
             <mat-list-option [value]="entry">{{ entry.name }}</mat-list-option>
           }
         </mat-selection-list>
@@ -29,8 +29,8 @@
   </mat-tab-group>
 
   <div class="preview-image">
-    @if (previewUrl) {
-      <img [src]="previewUrl" />
+    @if (previewUrl(); as url) {
+      <img [src]="url" />
     }
   </div>
 </div>

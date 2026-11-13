@@ -8,14 +8,18 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
-import { IResourceLinkRow } from '../../types';
+import { IResourceCollectionRow, IResourceLinkRow } from '../../types';
 
-const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
+export type IMergedResourceLink = IResourceLinkRow & {
+  collections: IResourceCollectionRow[];
+};
+
+const DISPLAY_COLUMNS: (keyof IMergedResourceLink)[] = [
   'type',
   'cover_image',
   'title',
   'description',
-  // 'sort_order',
+  'collections',
   'url',
   'modified_at',
 ];
@@ -45,20 +49,45 @@ export class ResourceLinksComponent implements OnInit {
     return deployment?.label || deployment?.country_code?.toUpperCase() || '';
   });
 
-  public links = signal<IResourceLinkRow[]>([]);
+  public collectionFilter = signal<'all' | 'in_collection' | 'unassigned'>('all');
+
+  private allLinks = signal<IMergedResourceLink[]>([]);
+
+  public links = computed(() => {
+    const filter = this.collectionFilter();
+    const list = this.allLinks();
+    if (filter === 'in_collection') {
+      return list.filter((l) => (l.collections?.length ?? 0) > 0);
+    }
+    if (filter === 'unassigned') {
+      return list.filter((l) => (l.collections?.length ?? 0) === 0);
+    }
+    return list;
+  });
+
   public tableOptions: IDataTableOptions = {
-    displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (row: IResourceLinkRow) => this.router.navigate([row.id], { relativeTo: this.route }),
+    displayColumns: DISPLAY_COLUMNS as string[],
+    handleRowClick: (row: IMergedResourceLink) => this.router.navigate([row.id], { relativeTo: this.route }),
   };
 
   constructor() {
     effect(() => {
       const links = this.service.links();
-      const sorted = links.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
-      this.links.set(sorted);
+      const merged: IMergedResourceLink[] = links.map((l) => ({
+        ...l,
+        collections: this.service.getResourceCollections('links', l.id),
+      }));
+      const sorted = merged.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
+      this.allLinks.set(sorted);
     });
   }
+
   async ngOnInit() {
     await this.service.ready();
+  }
+
+  public handleCollectionClick(e: Event, collection: IResourceCollectionRow) {
+    e.stopImmediatePropagation();
+    this.router.navigate(['..', 'collections', collection.id], { relativeTo: this.route });
   }
 }

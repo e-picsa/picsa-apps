@@ -1,5 +1,274 @@
 <div class="page-content">
-  <h2>🚧 Under Construction</h2>
+  <div class="flex items-center gap-4 mb-6 flex-wrap">
+    <h2 class="m-0">
+      {{ canEdit() ? (isCreate() ? 'Create Collection' : 'Edit Collection') : 'View Collection' }}
+    </h2>
+    <a matButton="outlined" routerLink="../" class="ml-auto">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Collections
+    </a>
+  </div>
 
-  <p>On this page admins will be able to manage resources within collections</p>
+  <form [formGroup]="form">
+    <!-- Responsive 2-column flex-wrap layout -->
+    <div class="flex flex-wrap gap-6 items-start">
+      <!-- Column 1: Collection Metadata -->
+      <section
+        class="flex-1 min-w-[280px] max-w-[440px] bg-white rounded-lg p-5 border border-slate-200 flex flex-col gap-4"
+      >
+        <h3 class="m-0 text-base font-medium text-slate-800">Collection Details</h3>
+
+        <!-- Shared Cover Image Upload/Preview -->
+        <dashboard-storage-upload
+          label="Cover Image"
+          formControlName="cover_image"
+          [fileTypes]="allowedCoverTypes"
+          [fileDropHeight]="110"
+          [storageBucketName]="storageBucketName()"
+          storageFolderPath="resources/covers"
+          [showImagePreview]="true"
+        />
+
+        <!-- Title -->
+        <mat-form-field class="w-full">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="e.g. Weather Resources, Crop Care..." />
+          @if (form.controls.title.errors?.['required']) {
+            <mat-error>Title is required</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field class="w-full">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            rows="3"
+            placeholder="Brief explanation of what this collection contains..."
+          ></textarea>
+        </mat-form-field>
+      </section>
+
+      <!-- Column 2: Collection Contents (Tabbed Files & Links Selector) -->
+      <section class="flex-[1.5] min-w-[320px] bg-white rounded-lg p-5 border border-slate-200">
+        <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+          <h3 class="m-0 text-base font-medium text-slate-800">Collection Contents</h3>
+          <span class="text-xs text-slate-500">
+            {{ selectedFileIds().size }} files &bull; {{ selectedLinkIds().size }} links selected
+          </span>
+        </div>
+
+        <mat-tab-group animationDuration="150ms">
+          <!-- Files Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <span class="flex items-center gap-1.5">
+                <mat-icon svgIcon="dashboard:filetype_document" class="!w-4 !h-4"></mat-icon>
+                Files ({{ selectedFileIds().size }} / {{ totalFilesCount() }})
+              </span>
+            </ng-template>
+
+            <div class="pt-4 flex flex-col gap-3">
+              <div class="flex items-center gap-3 flex-wrap">
+                <mat-form-field class="flex-1 min-w-[200px]" subscriptSizing="dynamic">
+                  <mat-icon matPrefix>search</mat-icon>
+                  <input
+                    matInput
+                    placeholder="Search files by title, filename, language..."
+                    [value]="filesSearch()"
+                    (input)="filesSearch.set($any($event.target).value)"
+                  />
+                  @if (filesSearch()) {
+                    <button
+                      type="button"
+                      matSuffix
+                      matIconButton
+                      (click)="filesSearch.set('')"
+                      aria-label="Clear search"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </mat-form-field>
+
+                <mat-chip-listbox
+                  aria-label="Filter files"
+                  [value]="filesViewFilter()"
+                  (change)="filesViewFilter.set($event.value || 'all')"
+                >
+                  <mat-chip-option value="all">All</mat-chip-option>
+                  <mat-chip-option value="selected">Selected ({{ selectedFileIds().size }})</mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+
+              <div class="resource-selector-list">
+                @for (file of filteredFiles(); track file.id) {
+                  <div
+                    class="resource-selector-row"
+                    [class.is-selected]="selectedFileIds().has(file.id)"
+                    [class.is-disabled]="!canEdit()"
+                    (click)="toggleFile(file.id)"
+                  >
+                    @if (file.cover_image) {
+                      <img
+                        class="resource-thumb"
+                        [src]="file.cover_image | storagePath"
+                        [alt]="file.title || file.filename"
+                      />
+                    } @else {
+                      <div class="resource-thumb-fallback">
+                        <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
+                      </div>
+                    }
+
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-medium text-slate-800 truncate">
+                        {{ file.title || file.filename }}
+                      </div>
+                      <div class="text-xs text-slate-500 truncate">
+                        @if (file.filename && file.title && file.filename !== file.title) {
+                          <span>{{ file.filename }} &bull; </span>
+                        }
+                        {{ file.language_code || 'All languages' }} &bull; {{ file.size_kb || 0 | sizeMB }} MB
+                      </div>
+                    </div>
+
+                    <mat-checkbox
+                      color="primary"
+                      [checked]="selectedFileIds().has(file.id)"
+                      [disabled]="!canEdit()"
+                      (click)="$event.stopPropagation()"
+                      (change)="toggleFile(file.id)"
+                    />
+                  </div>
+                } @empty {
+                  <p class="text-sm text-slate-400 italic py-6 text-center m-0">
+                    @if (filesViewFilter() === 'selected' && selectedFileIds().size === 0) {
+                      No files selected in this collection yet.
+                    } @else {
+                      No matching files found.
+                    }
+                  </p>
+                }
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Links Tab -->
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <span class="flex items-center gap-1.5">
+                <mat-icon class="!text-base !w-4 !h-4">language</mat-icon>
+                Links ({{ selectedLinkIds().size }} / {{ totalLinksCount() }})
+              </span>
+            </ng-template>
+
+            <div class="pt-4 flex flex-col gap-3">
+              <div class="flex items-center gap-3 flex-wrap">
+                <mat-form-field class="flex-1 min-w-[200px]" subscriptSizing="dynamic">
+                  <mat-icon matPrefix>search</mat-icon>
+                  <input
+                    matInput
+                    placeholder="Search links by title, URL, type..."
+                    [value]="linksSearch()"
+                    (input)="linksSearch.set($any($event.target).value)"
+                  />
+                  @if (linksSearch()) {
+                    <button
+                      type="button"
+                      matSuffix
+                      matIconButton
+                      (click)="linksSearch.set('')"
+                      aria-label="Clear search"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </mat-form-field>
+
+                <mat-chip-listbox
+                  aria-label="Filter links"
+                  [value]="linksViewFilter()"
+                  (change)="linksViewFilter.set($event.value || 'all')"
+                >
+                  <mat-chip-option value="all">All</mat-chip-option>
+                  <mat-chip-option value="selected">Selected ({{ selectedLinkIds().size }})</mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+
+              <div class="resource-selector-list">
+                @for (link of filteredLinks(); track link.id) {
+                  <div
+                    class="resource-selector-row"
+                    [class.is-selected]="selectedLinkIds().has(link.id)"
+                    [class.is-disabled]="!canEdit()"
+                    (click)="toggleLink(link.id)"
+                  >
+                    @if (link.cover_image) {
+                      <img class="resource-thumb" [src]="link.cover_image | storagePath" [alt]="link.title" />
+                    } @else {
+                      <div class="resource-thumb-fallback">
+                        <mat-icon>{{ getLinkIcon(link.type) }}</mat-icon>
+                      </div>
+                    }
+
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-medium text-slate-800 truncate">{{ link.title }}</div>
+                      <div class="text-xs text-slate-500 truncate">{{ link.url }}</div>
+                    </div>
+
+                    <mat-checkbox
+                      color="primary"
+                      [checked]="selectedLinkIds().has(link.id)"
+                      [disabled]="!canEdit()"
+                      (click)="$event.stopPropagation()"
+                      (change)="toggleLink(link.id)"
+                    />
+                  </div>
+                } @empty {
+                  <p class="text-sm text-slate-400 italic py-6 text-center m-0">
+                    @if (linksViewFilter() === 'selected' && selectedLinkIds().size === 0) {
+                      No links selected in this collection yet.
+                    } @else {
+                      No matching links found.
+                    }
+                  </p>
+                }
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </section>
+    </div>
+
+    @if (canEdit()) {
+      <div class="mt-6 flex items-center gap-4 flex-wrap">
+        <button
+          matButton="outlined"
+          color="primary"
+          [disabled]="!form.valid || form.pristine || isSaving()"
+          (click)="saveCollection()"
+        >
+          <mat-icon>done</mat-icon>
+          Save Collection
+        </button>
+        @if (!form.valid || form.pristine) {
+          <span
+            class="text-sm italic"
+            [class.text-slate-500]="form.pristine"
+            [class.text-red-600]="!form.pristine && !form.valid"
+          >
+            {{ formValidationMessage }}
+          </span>
+        }
+        @if (canDelete() && !isCreate()) {
+          <button class="ml-auto" matButton color="warn" type="button" (click)="promptDelete()">
+            <mat-icon>delete</mat-icon>
+            Delete Collection
+          </button>
+        }
+      </div>
+    }
+  </form>
 </div>

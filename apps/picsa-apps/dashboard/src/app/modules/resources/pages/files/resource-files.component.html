@@ -23,6 +23,23 @@
     These can be downloaded directly by users on the app, and used offline
   </p>
 
+  <div style="margin-bottom: 1rem">
+    <mat-chip-set>
+      <mat-chip-option [selected]="collectionFilter() === 'all'" (click)="collectionFilter.set('all')">
+        All
+      </mat-chip-option>
+      <mat-chip-option
+        [selected]="collectionFilter() === 'in_collection'"
+        (click)="collectionFilter.set('in_collection')"
+      >
+        In Collection
+      </mat-chip-option>
+      <mat-chip-option [selected]="collectionFilter() === 'unassigned'" (click)="collectionFilter.set('unassigned')">
+        Unassigned
+      </mat-chip-option>
+    </mat-chip-set>
+  </div>
+
   <picsa-data-table
     [data]="resources()"
     [options]="tableOptions"

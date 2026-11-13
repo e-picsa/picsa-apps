@@ -23,6 +23,23 @@
     These include websites, apps and social media
   </p>
 
+  <div style="margin-bottom: 1rem">
+    <mat-chip-set>
+      <mat-chip-option [selected]="collectionFilter() === 'all'" (click)="collectionFilter.set('all')">
+        All
+      </mat-chip-option>
+      <mat-chip-option
+        [selected]="collectionFilter() === 'in_collection'"
+        (click)="collectionFilter.set('in_collection')"
+      >
+        In Collection
+      </mat-chip-option>
+      <mat-chip-option [selected]="collectionFilter() === 'unassigned'" (click)="collectionFilter.set('unassigned')">
+        Unassigned
+      </mat-chip-option>
+    </mat-chip-set>
+  </div>
+
   <picsa-data-table
     [data]="links()"
     [options]="tableOptions"
@@ -30,6 +47,7 @@
       type: typeTemplate,
       modified_at: modifiedAtTemplate,
       cover_image: coverImageTemplate,
+      collections: collectionsTemplate,
       url: urlTemplate,
     }"
   >
@@ -52,11 +70,27 @@
     </ng-template>
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
-      <img class="cover-image" [src]="coverImage | storagePath" />
+      @if (coverImage) {
+        <img class="cover-image" [src]="coverImage | storagePath" />
+      }
+    </ng-template>
+    <!-- collections -->
+    <ng-template #collectionsTemplate let-collections>
+      <div style="display: flex; gap: 4px">
+        @for (collection of collections; track collection.id) {
+          <div
+            class="collection-cover-container"
+            [matTooltip]="collection.title"
+            (click)="handleCollectionClick($event, collection)"
+          >
+            <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+          </div>
+        }
+      </div>
     </ng-template>
     <!-- externalUrl -->
     <ng-template #urlTemplate let-url>
-      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow">
+      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
         <button matIconButton style="color: black; margin: auto">
           <mat-icon>open_in_new</mat-icon>
         </button>

@@ -1,6 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap, arrayToHashmapArray } from '@picsa/utils';
 
@@ -8,6 +7,7 @@ import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { DashboardStorageService } from '../storage';
 import {
   ICountryCode,
+  IResourceCollectionInsert,
   IResourceCollectionRow,
   IResourceFileChildRow,
   IResourceFileRow,
@@ -18,7 +18,6 @@ import {
 export class ResourcesDashboardService extends PicsaAsyncService {
   private supabaseService = inject(SupabaseService);
   private storageService = inject(DashboardStorageService);
-  private notificationService = inject(PicsaNotificationService);
 
   public collections = signal<IResourceCollectionRow[]>([]);
   public files = signal<IResourceFileRow[]>([]);
@@ -108,6 +107,114 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     this.files_child.set(serverData.files_child);
     this.collections.set(serverData.collections);
     this.links.set(serverData.links);
+  }
+
+  /** Unassigned files and links not currently assigned to any collection */
+  public unassignedResources = computed(() => {
+    const assignedFileIds = new Set<string>();
+    const assignedLinkIds = new Set<string>();
+    for (const col of this.collections()) {
+      for (const fId of col.resource_files || []) assignedFileIds.add(fId);
+      for (const lId of col.resource_links || []) assignedLinkIds.add(lId);
+    }
+    return {
+      files: this.files().filter((f) => !assignedFileIds.has(f.id)),
+      links: this.links().filter((l) => !assignedLinkIds.has(l.id)),
+    };
+  });
+
+  /**
+   * Save (create or update) a resource collection.
+   * Enforces top-level collections (collection_parent = null, resource_collections = []).
+   */
+  public async saveCollection(values: Partial<IResourceCollectionRow>): Promise<IResourceCollectionRow> {
+    const countryCode = values.country_code || this.deploymentService.activeDeploymentCountry();
+    const payload: IResourceCollectionInsert = {
+      title: values.title || '',
+      description: values.description || null,
+      cover_image: values.cover_image || null,
+      country_code: countryCode as ICountryCode,
+      collection_parent: null,
+      resource_collections: [] as string[],
+      resource_files: values.resource_files || [],
+      resource_links: values.resource_links || [],
+      ...(values.sort_order !== undefined ? { sort_order: values.sort_order } : {}),
+    };
+
+    const query = values.id
+      ? this.tables.collections.update(payload).eq('id', values.id)
+      : this.tables.collections.insert(payload);
+
+    const { data, error } = await query.select<'*', IResourceCollectionRow>().single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await this.refresh();
+    return data;
+  }
+
+  /**
+   * Delete a resource collection and clean up its cover image if unreferenced.
+   */
+  public async deleteResourceCollection(collection: IResourceCollectionRow): Promise<void> {
+    const res = await this.tables.collections.delete().eq('id', collection.id);
+    if (res.error) {
+      throw new Error(res.error.message);
+    }
+
+    if (collection.cover_image) {
+      await this.deleteCoverIfUnreferenced(collection.cover_image);
+    }
+
+    await this.refresh();
+  }
+
+  /**
+   * Synchronize the collections that reference a specific file or link.
+   * Updates `resource_files` or `resource_links` on affected collections.
+   */
+  public async syncResourceCollections(
+    type: 'files' | 'links',
+    resourceId: string,
+    targetCollectionIds: string[],
+  ): Promise<void> {
+    const targetSet = new Set(targetCollectionIds);
+    const fieldName = type === 'files' ? 'resource_files' : 'resource_links';
+    const collectionsToUpdate: { id: string; items: string[] }[] = [];
+
+    for (const collection of this.collections()) {
+      const currentItems: string[] = (collection[fieldName] as string[]) || [];
+      const hasItem = currentItems.includes(resourceId);
+      const shouldHave = targetSet.has(collection.id);
+
+      if (shouldHave && !hasItem) {
+        collectionsToUpdate.push({
+          id: collection.id,
+          items: [...currentItems, resourceId],
+        });
+      } else if (!shouldHave && hasItem) {
+        collectionsToUpdate.push({
+          id: collection.id,
+          items: currentItems.filter((id) => id !== resourceId),
+        });
+      }
+    }
+
+    if (collectionsToUpdate.length > 0) {
+      const results = await Promise.all(
+        collectionsToUpdate.map((u) => {
+          const updateData = type === 'files' ? { resource_files: u.items } : { resource_links: u.items };
+          return this.tables.collections.update(updateData).eq('id', u.id);
+        }),
+      );
+      const firstError = results.find((r) => r.error)?.error;
+      if (firstError) {
+        throw new Error(firstError.message);
+      }
+      await this.refresh();
+    }
   }
 
   /**

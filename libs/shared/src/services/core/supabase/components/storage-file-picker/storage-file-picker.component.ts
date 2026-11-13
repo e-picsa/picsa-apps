@@ -1,4 +1,15 @@
-import { Component, Directive, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Directive,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -41,8 +52,9 @@ export class SupabaseStoragePickerDirective {
   imports: [FormsModule, MatButtonModule, MatListModule, MatTabsModule],
   templateUrl: './storage-file-picker.component.html',
   styleUrls: ['./storage-file-picker.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupabaseStorageFilePickerComponent {
+export class SupabaseStorageFilePickerComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
 
   @Output() fileSelected = new EventEmitter<IStorageEntry | undefined>();
@@ -50,14 +62,14 @@ export class SupabaseStorageFilePickerComponent {
   @Input() storageFolderPath?: string;
 
   /** List of storage entries found within global folder path */
-  public globalEntries: IStorageEntry[] = [];
+  public globalEntries = signal<IStorageEntry[]>([]);
 
-  /** List of storage entries found withing named bucket folder path */
-  public bucketEntries: IStorageEntry[] = [];
+  /** List of storage entries found within named bucket folder path */
+  public bucketEntries = signal<IStorageEntry[]>([]);
 
   public selected: IStorageEntry[] = [];
 
-  public previewUrl: string;
+  public previewUrl = signal<string | undefined>(undefined);
 
   private get storage() {
     return this.supabaseService.storage;
@@ -67,10 +79,10 @@ export class SupabaseStorageFilePickerComponent {
     await this.supabaseService.ready();
     // Merge both global and storage bucket specific path entries
     const globalEntries = await this.storage.list('global', this.storageFolderPath);
-    this.globalEntries = this.prepareEntries(globalEntries);
+    this.globalEntries.set(this.prepareEntries(globalEntries));
     if (this.storageBucketName) {
       const bucketEntries = await this.storage.list(this.storageBucketName, this.storageFolderPath);
-      this.bucketEntries = this.prepareEntries(bucketEntries);
+      this.bucketEntries.set(this.prepareEntries(bucketEntries));
     }
   }
 
@@ -93,8 +105,10 @@ export class SupabaseStorageFilePickerComponent {
 
   public async handleFileSelect() {
     const [entry] = this.selected;
-    if (this.selected) {
-      this.previewUrl = this.storage.getPublicLink(entry.bucket_id as string, entry.name as string);
+    if (entry) {
+      this.previewUrl.set(this.storage.getPublicLink(entry.bucket_id as string, entry.name as string));
+    } else {
+      this.previewUrl.set(undefined);
     }
   }
 }

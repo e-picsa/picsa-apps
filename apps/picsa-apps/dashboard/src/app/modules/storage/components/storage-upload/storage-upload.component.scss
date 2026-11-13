@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.storage-upload-label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.storage-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+picsa-supabase-upload {
+  width: 100%;
+  max-width: 284px;
+}
+
+dashboard-storage-link {
+  display: inline-block;
+}
+
+button.file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img.cover-preview {
+  display: block;
+  margin-top: 8px;
+  max-width: 200px;
+  max-height: 160px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}

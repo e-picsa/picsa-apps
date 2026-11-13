@@ -58,7 +58,21 @@ export class ResourceFilesComponent implements OnInit {
     return deployment?.label || deployment?.country_code?.toUpperCase() || '';
   });
 
-  public resources = signal<IMergedResources[]>([]);
+  public collectionFilter = signal<'all' | 'in_collection' | 'unassigned'>('all');
+
+  private allResources = signal<IMergedResources[]>([]);
+
+  public resources = computed(() => {
+    const filter = this.collectionFilter();
+    const list = this.allResources();
+    if (filter === 'in_collection') {
+      return list.filter((r) => (r.collections?.length ?? 0) > 0);
+    }
+    if (filter === 'unassigned') {
+      return list.filter((r) => (r.collections?.length ?? 0) === 0);
+    }
+    return list;
+  });
 
   public readonly tableOptions: IDataTableOptions = {
     displayColumns: TABLE_COLUMNS,
@@ -82,7 +96,7 @@ export class ResourceFilesComponent implements OnInit {
         const deploymentResources = resources.filter((r) => this.filterDeploymentResource(r, deployment));
         const merged = this.getMergedResources(deploymentResources, deployment);
         const sorted = merged.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
-        this.resources.set(sorted);
+        this.allResources.set(sorted);
       }
     });
   }

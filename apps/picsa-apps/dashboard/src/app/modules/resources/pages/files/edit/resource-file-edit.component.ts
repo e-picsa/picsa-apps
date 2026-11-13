@@ -4,17 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
 import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import {
-  IUploadResult,
-  SupabaseStoragePickerDirective,
-  SupabaseUploadComponent,
-} from '@picsa/shared/services/core/supabase';
-import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
-import { DashboardStorageLinkComponent } from '../../../../storage';
+import { DashboardStorageUploadComponent, IStorageUploadFileMeta } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceFileInsert, IResourceFileRow } from '../../../types';
 import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
@@ -22,14 +16,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
 
 @Component({
   selector: 'dashboard-resource-file-edit',
-  imports: [
-    DashboardMaterialModule,
-    DashboardStorageLinkComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    SupabaseStoragePickerDirective,
-    SupabaseUploadComponent,
-  ],
+  imports: [DashboardMaterialModule, DashboardStorageUploadComponent, FormsModule, ReactiveFormsModule],
   templateUrl: './resource-file-edit.component.html',
   styleUrl: './resource-file-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +45,8 @@ export class ResourceFileEditComponent implements OnInit {
   public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
 
+  public collections = this.service.collections;
+
   public form = this.formBuilder.group({
     language_code: ['', Validators.required],
     title: ['', Validators.required],
@@ -68,6 +57,7 @@ export class ResourceFileEditComponent implements OnInit {
     filename: [''],
     mimetype: [''],
     size_kb: [0],
+    collections: new FormControl<string[]>([]),
     id: new FormControl(),
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
@@ -90,7 +80,6 @@ export class ResourceFileEditComponent implements OnInit {
     }
   }
 
-  // TODO - handle success/error messages
   public async saveResource() {
     if (!this.canEdit()) return;
     this.form.disable();
@@ -107,26 +96,29 @@ export class ResourceFileEditComponent implements OnInit {
       size_kb: rawValues.size_kb ?? 0,
       country_code: (rawValues.country_code ||
         this.deploymentService.activeDeploymentCountry()) as IResourceFileInsert['country_code'],
-      ...(rawValues.id ? { id: rawValues.id } : {}),
     };
-    const { data, error } = await this.service.tables.files.upsert(values).select<'*', IResourceFileRow>();
-    if (data && data.length > 0) {
-      this.notificationService.showSuccessNotification('Resource Saved');
-      // HACK - reinit all resources to ensure update populated
-      // TODO - could be made more efficient
-      await this.service.refresh();
 
-      // TODO - Add readonly view to navigate to
-      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
-    }
-    if (error) {
+    try {
+      const query = rawValues.id
+        ? this.service.tables.files.update(values).eq('id', rawValues.id)
+        : this.service.tables.files.insert(values);
+      const { data, error } = await query.select<'*', IResourceFileRow>().single();
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (data) {
+        await this.service.syncResourceCollections('files', data.id, rawValues.collections || []);
+
+        this.notificationService.showSuccessNotification('Resource Saved');
+        await this.service.refresh();
+
+        this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      }
+    } catch (err: unknown) {
       this.form.enable();
-      throw error;
+      const message = err instanceof Error ? err.message : 'Failed to save resource';
+      this.notificationService.showErrorNotification(message);
     }
-  }
-
-  public async openExternalResource(url: string) {
-    window.open(url, '_blank', 'noopener noreferrer nofollow');
   }
 
   public async promptDelete() {
@@ -149,63 +141,41 @@ export class ResourceFileEditComponent implements OnInit {
     });
   }
 
+  public handleStorageFileMetadata(meta: IStorageUploadFileMeta | undefined) {
+    if (meta) {
+      this.form.patchValue({
+        size_kb: meta.size_kb ?? 0,
+        mimetype: meta.mimetype || '',
+        filename: meta.filename || '',
+      });
+    } else {
+      this.form.patchValue({
+        size_kb: 0,
+        mimetype: '',
+        filename: '',
+      });
+    }
+  }
+
   private async populateResource(id: string) {
-    const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
+    const countryCode = this.deploymentService.activeDeploymentCountry() as IResourceFileRow['country_code'];
+    let query = this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
+    if (countryCode) {
+      query = query.eq('country_code', countryCode);
+    }
+    const { data } = await query;
     const resource = data?.[0];
     if (resource) {
       this.resourceOwner.set(resource.owner);
-      const countryCode = resource.country_code || (this.deploymentService.activeDeploymentCountry() as string);
+      const resolvedCountryCode = resource.country_code || (this.deploymentService.activeDeploymentCountry() as string);
       let language_code = resource.language_code;
       if (language_code === 'global_en' || !language_code) {
-        language_code = `${countryCode}_en`;
+        language_code = `${resolvedCountryCode}_en`;
       }
-      this.form.patchValue({ ...resource, language_code });
+      const assignedCollections = this.service.getResourceCollections('files', id).map((c) => c.id);
+      this.form.patchValue({ ...resource, language_code, collections: assignedCollections });
     } else {
-      // navigate back to list page if resource not found
-      // TODO - show better message
       this.router.navigate(['..'], { relativeTo: this.route });
-    }
-  }
-
-  public async handleUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'cover_image') {
-    if (res.length === 0) {
-      return;
-    }
-    const [{ meta, data }] = res;
-    const { bucketName, objectName } = meta;
-    const storagePath = `${bucketName}/${objectName}`;
-    if (controlName === 'storage_file') {
-      const { size, type: mimetype, name: filename } = data as File;
-      // TODO - get md5 checksum (or use supabase etag)
-      this.form.patchValue({
-        storage_file: storagePath,
-        size_kb: Math.round(size / 1024),
-        mimetype,
-        filename,
-      });
-    } else {
-      this.form.patchValue({ cover_image: storagePath });
-    }
-  }
-
-  public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'cover_image') {
-    if (entry) {
-      const { bucket_id, name } = entry;
-      const storagePath = `${bucket_id}/${name}`;
-      if (controlName === 'storage_file') {
-        const { metadata } = entry;
-        const { mimetype, size } = metadata;
-        this.form.patchValue({
-          storage_file: storagePath,
-          size_kb: Math.round(size / 1024),
-          filename: storagePath.split('/').pop(),
-          mimetype,
-        });
-      } else {
-        this.form.patchValue({ cover_image: storagePath });
-      }
-    } else {
-      this.form.patchValue({ [controlName]: '' });
     }
   }
 }
