@@ -1,16 +1,8 @@
 <div class="page-content">
   <div class="flex items-center gap-3 mb-2">
-    <h2 class="m-0">Resources App Sync Audit</h2>
-    @if (activeCountryLabel()) {
-      <mat-chip-set>
-        <mat-chip>{{ activeCountryLabel() }}</mat-chip>
-      </mat-chip-set>
-    }
+    <h2 class="m-0">Resources Admin</h2>
   </div>
-  <p class="mt-0 text-sm text-slate-500">
-    Compares live data-system records against offline bundled resources (<code>bundles/{{ activeCountry() }}.json</code
-    >) consumed by the mobile app.
-  </p>
+  <p class="mt-0 text-sm text-slate-500">Compares dashboard records against bundled app resources.</p>
 
   <!-- Summary Status Filters -->
   <div class="flex items-center gap-2.5 flex-wrap text-xs font-medium mb-4 select-none py-1">
