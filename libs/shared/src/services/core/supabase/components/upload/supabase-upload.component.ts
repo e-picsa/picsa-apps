@@ -202,13 +202,30 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     this.uploadComplete.emit(uploads);
   }
 
+  public async getTusAuthHeaders(): Promise<{ authorization: string; apikey: string }> {
+    const { anonKey } = this.supabaseService.config;
+    const { auth } = await this.supabaseService.auth.getClient;
+    const {
+      data: { session },
+    } = await auth.getSession();
+    const token = session?.access_token ?? anonKey;
+    return {
+      authorization: `Bearer ${token}`,
+      apikey: anonKey,
+    };
+  }
+
   private registerSupabaseUppyUploader(uppy: Uppy) {
     const { anonKey, apiUrl } = this.supabaseService.config;
     uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
       headers: {
-        authorization: `Bearer ${anonKey}`,
         apikey: anonKey,
+      },
+      onBeforeRequest: async (req) => {
+        const { authorization, apikey } = await this.getTusAuthHeaders();
+        req.setHeader('authorization', authorization);
+        req.setHeader('apikey', apikey);
       },
       // Retry upload after delay if not working immediately
       retryDelays: [0, 2000, 5000],

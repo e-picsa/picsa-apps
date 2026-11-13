@@ -4,38 +4,38 @@
 
 ## TypeScript Path Aliases (`@picsa/*`)
 
-| Alias | Target Path |
-| :--- | :--- |
-| `@picsa/*` | `libs/*` |
-| `@picsa/budget/*` | `apps/picsa-tools/budget-tool/*` |
-| `@picsa/climate/*` | `apps/picsa-tools/climate-tool/*` |
-| `@picsa/components` | `libs/components/src/index.ts` |
-| `@picsa/components/*` | `libs/components/src/components/*` |
-| `@picsa/configuration` | `libs/configuration/src/index.ts` |
-| `@picsa/crop-probability/*` | `apps/picsa-tools/crop-probability-tool/*` |
-| `@picsa/dashboard/*` | `apps/sites/dashboard/*` |
-| `@picsa/data` | `libs/data/index.ts` |
-| `@picsa/environments` | `libs/environments/src/index.ts` |
-| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*` |
-| `@picsa/farmer-content/*` | `apps/picsa-tools/farmer-content/*` |
-| `@picsa/forecasts/*` | `apps/picsa-tools/forecasts-tool/src/app/*` |
-| `@picsa/forms` | `libs/forms` |
-| `@picsa/i18n` | `libs/i18n/src/index.ts` |
-| `@picsa/i18n/*` | `libs/i18n/src/*` |
-| `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
-| `@picsa/migrations` | `libs/migrations/index.ts` |
-| `@picsa/models` | `libs/models/index.ts` |
-| `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
-| `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
+| Alias                        | Target Path                                 |
+| :--------------------------- | :------------------------------------------ |
+| `@picsa/*`                   | `libs/*`                                    |
+| `@picsa/budget/*`            | `apps/picsa-tools/budget-tool/*`            |
+| `@picsa/climate/*`           | `apps/picsa-tools/climate-tool/*`           |
+| `@picsa/components`          | `libs/components/src/index.ts`              |
+| `@picsa/components/*`        | `libs/components/src/components/*`          |
+| `@picsa/configuration`       | `libs/configuration/src/index.ts`           |
+| `@picsa/crop-probability/*`  | `apps/picsa-tools/crop-probability-tool/*`  |
+| `@picsa/dashboard/*`         | `apps/sites/dashboard/*`                    |
+| `@picsa/data`                | `libs/data/index.ts`                        |
+| `@picsa/environments`        | `libs/environments/src/index.ts`            |
+| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*`      |
+| `@picsa/farmer-content/*`    | `apps/picsa-tools/farmer-content/*`         |
+| `@picsa/forecasts/*`         | `apps/picsa-tools/forecasts-tool/src/app/*` |
+| `@picsa/forms`               | `libs/forms`                                |
+| `@picsa/i18n`                | `libs/i18n/src/index.ts`                    |
+| `@picsa/i18n/*`              | `libs/i18n/src/*`                           |
+| `@picsa/manual/*`            | `apps/picsa-tools/manual-tool/*`            |
+| `@picsa/migrations`          | `libs/migrations/index.ts`                  |
+| `@picsa/models`              | `libs/models/index.ts`                      |
+| `@picsa/option/*`            | `apps/picsa-tools/option-tool/*`            |
+| `@picsa/resources/*`         | `apps/picsa-tools/resources-tool/src/app/*` |
 | `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
-| `@picsa/server-types` | `apps/picsa-server/supabase/types/index.ts` |
-| `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
-| `@picsa/shared/*` | `libs/shared/src/*` |
-| `@picsa/theme` | `libs/theme/src/index.ts` |
-| `@picsa/utils` | `libs/utils/index.ts` |
-| `@picsa/utils/*` | `libs/utils/*` |
+| `@picsa/server-types`        | `apps/picsa-server/supabase/types/index.ts` |
+| `@picsa/server-utils`        | `apps/picsa-server/supabase/utils/index.ts` |
+| `@picsa/shared/*`            | `libs/shared/src/*`                         |
+| `@picsa/theme`               | `libs/theme/src/index.ts`                   |
+| `@picsa/utils`               | `libs/utils/index.ts`                       |
+| `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (548 files scanned)
+## Codebase Symbol Index (549 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -1168,8 +1168,8 @@
 - **[translate-debug.service.ts](../libs/i18n/src/translate-debug.service.ts)** (`libs/i18n/src/translate-debug.service.ts`)
   - `Service` **PicsaTranslateDebugService** (methods: [setEnabled])
 - **[translate.module.ts](../libs/i18n/src/translate.module.ts)** (`libs/i18n/src/translate.module.ts`)
-  - `Class` **_PicsaTranslateRootModule**
-  - `Class` **_PicsaTranslateChildModule**
+  - `Class` **\_PicsaTranslateRootModule**
+  - `Class` **\_PicsaTranslateChildModule**
   - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
   - `Function` **HttpLoaderFactory**
 - **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
@@ -1344,9 +1344,9 @@
   - `Service` **AppUserService** (methods: [setFcmToken, toggleInternalTester, setInternalTester])
 - **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
   - `Service` **CrashlyticsService** (methods: [init])
-- **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
+- **[\_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
   - `Service` **DBCacheService** (methods: [getCollection, getDoc, getDocs, setDoc, setDocs])
-- **[_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
+- **[\_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
   - `Service` **DBServerService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
   - `Interface` **IServerWriteBatchEntry**
 - **[abstract.db.ts](../libs/shared/src/services/core/db/abstract.db.ts)** (`libs/shared/src/services/core/db/abstract.db.ts`)
@@ -1430,7 +1430,7 @@
   - `Component` **SupabaseStorageFilePickerComponent** (methods: [ngOnInit, compareFn])
   - `Interface` **IStoragePickerData**
 - **[supabase-upload.component.ts](../libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts)** (`libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts`)
-  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, ngOnDestroy, renameFile, startUpload])
+  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, ngOnDestroy, renameFile, startUpload, getTusAuthHeaders])
   - `Interface` **IUploadResult**
   - `Type` **FileDropFile**
 - **[storagePath.pipe.ts](../libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts)** (`libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts`)
@@ -1493,7 +1493,7 @@
 - **[async.utils.ts](../libs/utils/async.utils.ts)** (`libs/utils/async.utils.ts`)
   - `Function` **allSettledInBatches**
 - **[browser.utils.ts](../libs/utils/browser.utils.ts)** (`libs/utils/browser.utils.ts`)
-  - `Function` **_wait**
+  - `Function` **\_wait**
 - **[climate-qc.utils.ts](../libs/utils/climate-qc.utils.ts)** (`libs/utils/climate-qc.utils.ts`)
   - `Interface` **IClimateQcGates**
   - `Interface` **ISeasonDiscrepancyRecord**
@@ -1643,4 +1643,5 @@
   - `Migration` **20261106120000_disable_climate_audit_cleanup.sql**
 - **[20261110000000_resource_cover_defaults_null.sql](../apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql)** (`apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql`)
   - `Migration` **20261110000000_resource_cover_defaults_null.sql**
-
+- **[20261113000000_resources_rls_and_storage_hardening.sql](../apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql)** (`apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql`)
+  - `SQLFunctions` **2 function(s)** ([public.user_is_global_admin, public.guard_resource_collection_immutable_fields])
