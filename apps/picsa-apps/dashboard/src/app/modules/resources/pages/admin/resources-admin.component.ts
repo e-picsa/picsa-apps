@@ -52,8 +52,8 @@ const DISPLAY_COLUMNS: (keyof IResourceDiffRow)[] = ['kind', 'title', 'status', 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourcesAdminComponent implements OnInit {
-  private service = inject(ResourcesDashboardService);
-  private deploymentService = inject(DeploymentDashboardService);
+  private readonly service = inject(ResourcesDashboardService);
+  private readonly deploymentService = inject(DeploymentDashboardService);
 
   public activeCountry = computed(() => {
     return this.deploymentService.activeDeploymentCountry() || '';
