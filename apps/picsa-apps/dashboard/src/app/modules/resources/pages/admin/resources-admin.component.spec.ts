@@ -22,7 +22,7 @@ describe('ResourcesAdminComponent', () => {
       description: 'Resources to help care for crops',
       cover_image: 'global/resources/covers/crops.svg',
       resource_files: ['gap', 'bmtm'],
-      resource_links: ['accessAg', 'plantwise'],
+      resource_links: ['accessAg', 'plantwise', 'plantix', 'zaulimi', 'mlimi', 'daes_v2'],
       sort_order: 7,
       country_code: 'mw',
     },
@@ -146,6 +146,6 @@ describe('ResourcesAdminComponent', () => {
 
     expect(fileRow?.status).toBe('In Sync');
     expect(linkRow?.status).toBe('In Sync');
-    expect(colRow?.detail).not.toContain('Cover image changed');
+    expect(colRow?.status).toBe('In Sync');
   });
 });

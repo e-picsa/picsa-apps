@@ -61,13 +61,13 @@
     <ng-template #mimetypeTemplate let-mimetype>
       @switch (mimetype) {
         @case ('application/pdf') {
-          <mat-icon svgIcon="dashboard:filetype_pdf" [matTooltip]="mimetype"></mat-icon>
+          <mat-icon class="type-icon" svgIcon="dashboard:filetype_pdf" [matTooltip]="mimetype"></mat-icon>
         }
         @case ('video/mp4') {
-          <mat-icon svgIcon="dashboard:filetype_video" [matTooltip]="mimetype"></mat-icon>
+          <mat-icon class="type-icon" svgIcon="dashboard:filetype_video" [matTooltip]="mimetype"></mat-icon>
         }
         @default {
-          <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>
+          <mat-icon class="type-icon" svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>
         }
       }
     </ng-template>

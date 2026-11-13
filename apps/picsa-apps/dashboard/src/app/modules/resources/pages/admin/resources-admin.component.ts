@@ -22,7 +22,6 @@ export interface IResourceDiffRow {
   kind: ResourceKind;
   title: string;
   status: ResourceSyncStatus;
-  detail: string;
   dbItem?: IResourceCollectionRow | IResourceFileRow | IResourceLinkRow;
   appItem?: unknown;
 }
@@ -35,7 +34,7 @@ export interface IResourceSyncStats {
   orphanedInApp: number;
 }
 
-const DISPLAY_COLUMNS: (keyof IResourceDiffRow)[] = ['kind', 'title', 'status', 'detail'];
+const DISPLAY_COLUMNS: (keyof IResourceDiffRow)[] = ['kind', 'title', 'status'];
 
 @Component({
   selector: 'dashboard-resources-admin',
@@ -137,8 +136,6 @@ export class ResourcesAdminComponent implements OnInit {
           return 'Resource / Collection';
         case 'status':
           return 'Sync Status';
-        case 'detail':
-          return 'Sync Details';
         default:
           return formatHeaderDefault(v);
       }
@@ -162,9 +159,7 @@ export class ResourcesAdminComponent implements OnInit {
     appList: TApp[],
     options: {
       getTitle: (item: TDb | TApp) => string;
-      getDiffs: (dbItem: TDb, appItem: TApp) => string[];
-      getInSyncDetail: (dbItem: TDb) => string;
-      missingDetail: string;
+      hasDiff: (dbItem: TDb, appItem: TApp) => boolean;
     },
   ): IResourceDiffRow[] {
     const rows: IResourceDiffRow[] = [];
@@ -179,19 +174,16 @@ export class ResourcesAdminComponent implements OnInit {
           kind,
           title: options.getTitle(dbItem),
           status: 'Missing in App',
-          detail: options.missingDetail,
           dbItem,
         });
         continue;
       }
 
-      const diffs = options.getDiffs(dbItem, appItem);
       rows.push({
         id: dbItem.id,
         kind,
         title: options.getTitle(dbItem),
-        status: diffs.length > 0 ? 'Differs' : 'In Sync',
-        detail: diffs.length > 0 ? diffs.join(', ') : options.getInSyncDetail(dbItem),
+        status: options.hasDiff(dbItem, appItem) ? 'Differs' : 'In Sync',
         dbItem,
         appItem,
       });
@@ -204,7 +196,6 @@ export class ResourcesAdminComponent implements OnInit {
           kind,
           title: options.getTitle(appItem),
           status: 'Orphaned in App',
-          detail: 'Present in app bundle, but deleted from data-system',
           appItem,
         });
       }
@@ -213,76 +204,50 @@ export class ResourcesAdminComponent implements OnInit {
     return rows;
   }
 
+  private hasSameIds(a?: string[] | null, b?: string[] | null): boolean {
+    const listA = a || [];
+    const listB = b || [];
+    if (listA.length !== listB.length) return false;
+    const setB = new Set(listB);
+    return listA.every((id) => setB.has(id));
+  }
+
   private computeCollectionDiffs(
     dbList: IResourceCollectionRow[],
     appList: IResourceCountryBundle['collections'],
   ): IResourceDiffRow[] {
     return this.computeEntityDiffs('Collection', dbList, appList, {
       getTitle: (c) => c.title || c.id,
-      missingDetail: 'Created in data-system, not yet synced to app bundle',
-      getInSyncDetail: (c) => `${(c.resource_files || []).length} files, ${(c.resource_links || []).length} links`,
-      getDiffs: (dbItem, appItem) => {
-        const diffs: string[] = [];
-        if (dbItem.title !== appItem.title) diffs.push(`Title ('${dbItem.title}' vs app '${appItem.title}')`);
-        if ((dbItem.description || null) !== (appItem.description || null)) diffs.push('Description changed');
-        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
-          diffs.push('Cover image changed');
-        }
-        if ((dbItem.sort_order ?? 1) !== (appItem.sort_order ?? 1)) {
-          diffs.push(`Sort order (${dbItem.sort_order ?? 1} vs app ${appItem.sort_order ?? 1})`);
-        }
-
-        const dbFiles = [...(dbItem.resource_files || [])].sort((a, b) => a.localeCompare(b));
-        const appFiles = [...(appItem.resource_files || [])].sort((a, b) => a.localeCompare(b));
-        if (JSON.stringify(dbFiles) !== JSON.stringify(appFiles)) {
-          diffs.push(`Files (${dbFiles.length} vs app ${appFiles.length})`);
-        }
-
-        const dbLinks = [...(dbItem.resource_links || [])].sort((a, b) => a.localeCompare(b));
-        const appLinks = [...(appItem.resource_links || [])].sort((a, b) => a.localeCompare(b));
-        if (JSON.stringify(dbLinks) !== JSON.stringify(appLinks)) {
-          diffs.push(`Links (${dbLinks.length} vs app ${appLinks.length})`);
-        }
-
-        return diffs;
-      },
+      hasDiff: (dbItem, appItem) =>
+        dbItem.title !== appItem.title ||
+        (dbItem.description || null) !== (appItem.description || null) ||
+        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image) ||
+        (dbItem.sort_order ?? 1) !== (appItem.sort_order ?? 1) ||
+        !this.hasSameIds(dbItem.resource_files, appItem.resource_files) ||
+        !this.hasSameIds(dbItem.resource_links, appItem.resource_links),
     });
   }
 
   private computeFileDiffs(dbList: IResourceFileRow[], appList: IResourceCountryBundle['files']): IResourceDiffRow[] {
     return this.computeEntityDiffs('File', dbList, appList, {
       getTitle: (f) => f.title || f.filename || f.id,
-      missingDetail: 'Uploaded in data-system, not yet synced to app bundle',
-      getInSyncDetail: (f) => `${f.mimetype || 'file'} • ${f.size_kb ?? 0} KB`,
-      getDiffs: (dbItem, appItem) => {
-        const diffs: string[] = [];
-        if (dbItem.title !== appItem.title) diffs.push('Title changed');
-        if ((dbItem.storage_file || null) !== (appItem.storage_file || null)) diffs.push('Storage file changed');
-        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
-          diffs.push('Cover image changed');
-        }
-        if ((dbItem.language_code || null) !== (appItem.language_code || null)) diffs.push('Language changed');
-        if ((dbItem.external_url || null) !== (appItem.external_url || null)) diffs.push('URL changed');
-        return diffs;
-      },
+      hasDiff: (dbItem, appItem) =>
+        dbItem.title !== appItem.title ||
+        (dbItem.storage_file || null) !== (appItem.storage_file || null) ||
+        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image) ||
+        (dbItem.language_code || null) !== (appItem.language_code || null) ||
+        (dbItem.external_url || null) !== (appItem.external_url || null),
     });
   }
 
   private computeLinkDiffs(dbList: IResourceLinkRow[], appList: IResourceCountryBundle['links']): IResourceDiffRow[] {
     return this.computeEntityDiffs('Link', dbList, appList, {
       getTitle: (l) => l.title || l.id,
-      missingDetail: 'Created in data-system, not yet synced to app bundle',
-      getInSyncDetail: (l) => l.url || '',
-      getDiffs: (dbItem, appItem) => {
-        const diffs: string[] = [];
-        if (dbItem.title !== appItem.title) diffs.push('Title changed');
-        if (dbItem.url !== appItem.url) diffs.push('URL changed');
-        if (dbItem.type !== appItem.type) diffs.push(`Type (${dbItem.type} vs ${appItem.type})`);
-        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
-          diffs.push('Cover changed');
-        }
-        return diffs;
-      },
+      hasDiff: (dbItem, appItem) =>
+        dbItem.title !== appItem.title ||
+        dbItem.url !== appItem.url ||
+        dbItem.type !== appItem.type ||
+        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image),
     });
   }
 }
