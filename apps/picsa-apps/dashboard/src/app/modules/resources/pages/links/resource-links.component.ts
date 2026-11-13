@@ -35,7 +35,6 @@ const DISPLAY_COLUMNS: (keyof IMergedResourceLink)[] = [
     AuthRoleRequiredDirective,
   ],
   templateUrl: './resource-links.component.html',
-  styleUrl: './resource-links.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinksComponent implements OnInit {

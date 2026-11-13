@@ -1,18 +1,12 @@
 <div class="page-content">
-  <div style="display: flex; align-items: center; gap: 0.75rem">
-    <h2 style="margin: 0">Resource Links</h2>
+  <div class="flex items-center gap-3">
+    <h2 class="m-0">Resource Links</h2>
     @if (activeCountry()) {
       <mat-chip-set>
         <mat-chip>{{ activeCountry() }}</mat-chip>
       </mat-chip-set>
     }
-    <button
-      *roleRequired="'resources.editor'"
-      matButton="outlined"
-      color="primary"
-      routerLink="create"
-      style="margin-left: auto"
-    >
+    <button *roleRequired="'resources.editor'" matButton="outlined" color="primary" routerLink="create" class="ml-auto">
       <mat-icon>add</mat-icon>
       Add Link
     </button>
@@ -23,7 +17,7 @@
     These include websites, apps and social media
   </p>
 
-  <div style="margin-bottom: 1rem">
+  <div class="mb-4">
     <mat-chip-set>
       <mat-chip-option [selected]="collectionFilter() === 'all'" (click)="collectionFilter.set('all')">
         All
@@ -64,27 +58,27 @@
           <mat-icon>phone_android</mat-icon>
         }
         @default {
-          <div style="text-transform: capitalize">{{ type }}</div>
+          <div class="capitalize">{{ type }}</div>
         }
       }
     </ng-template>
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
       @if (coverImage) {
-        <img class="cover-image" [src]="coverImage | storagePath" />
+        <img class="w-10 h-10 object-contain block mx-auto" [src]="coverImage | storagePath" />
       }
     </ng-template>
     <!-- collections -->
     <ng-template #collectionsTemplate let-collections>
-      <div style="display: flex; gap: 4px">
+      <div class="flex gap-1">
         @for (collection of collections; track collection.id) {
           <div
-            class="collection-cover-container"
+            class="w-8 h-8 cursor-pointer rounded overflow-hidden border border-solid border-slate-200 flex items-center justify-center"
             [matTooltip]="collection.title"
             (click)="handleCollectionClick($event, collection)"
           >
             @if (collection.cover_image) {
-              <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+              <img class="w-full h-full object-contain color-on-hover" [src]="collection.cover_image | storagePath" />
             }
           </div>
         }
@@ -93,7 +87,7 @@
     <!-- externalUrl -->
     <ng-template #urlTemplate let-url>
       <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
-        <button matIconButton style="color: black; margin: auto">
+        <button matIconButton class="text-black mx-auto">
           <mat-icon>open_in_new</mat-icon>
         </button>
       </a>

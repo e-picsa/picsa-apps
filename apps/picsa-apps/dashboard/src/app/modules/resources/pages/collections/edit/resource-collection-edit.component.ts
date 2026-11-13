@@ -30,7 +30,6 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
     StoragePathPipe,
   ],
   templateUrl: './resource-collection-edit.component.html',
-  styleUrl: './resource-collection-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionEditComponent implements OnInit {

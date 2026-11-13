@@ -1,18 +1,12 @@
 <div class="page-content">
-  <div style="display: flex; align-items: center; gap: 0.75rem">
-    <h2 style="margin: 0">Resource Collections</h2>
+  <div class="flex items-center gap-3">
+    <h2 class="m-0">Resource Collections</h2>
     @if (activeCountry()) {
       <mat-chip-set>
         <mat-chip>{{ activeCountry() }}</mat-chip>
       </mat-chip-set>
     }
-    <button
-      *roleRequired="'resources.editor'"
-      matButton="outlined"
-      color="primary"
-      routerLink="create"
-      style="margin-left: auto"
-    >
+    <button *roleRequired="'resources.editor'" matButton="outlined" color="primary" routerLink="create" class="ml-auto">
       <mat-icon>add</mat-icon>
       Add Collection
     </button>
@@ -32,7 +26,7 @@
     <!-- Cover Image -->
     <ng-template #coverImageTemplate let-coverImage>
       @if (coverImage) {
-        <img class="cover-image" [src]="coverImage | storagePath" />
+        <img class="w-11 h-11 object-contain block rounded" [src]="coverImage | storagePath" />
       }
     </ng-template>
 

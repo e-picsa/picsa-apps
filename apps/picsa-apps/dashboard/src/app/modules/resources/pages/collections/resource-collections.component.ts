@@ -35,7 +35,6 @@ const DISPLAY_COLUMNS: (keyof ICollectionTableRow)[] = [
     AuthRoleRequiredDirective,
   ],
   templateUrl: './resource-collections.component.html',
-  styleUrl: './resource-collections.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionsComponent implements OnInit {

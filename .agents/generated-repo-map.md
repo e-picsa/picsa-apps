@@ -35,7 +35,7 @@
 | `@picsa/utils`               | `libs/utils/index.ts`                       |
 | `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (549 files scanned)
+## Codebase Symbol Index (548 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -315,12 +315,6 @@
   - `Component` **UserProfileComponent** (methods: [loadProfile, saveProfile, resendVerificationEmail])
 - **[profile.module.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts`)
   - `Class` **ProfileModule**
-- **[resources-admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts`)
-  - `Component` **ResourcesAdminComponent** (methods: [ngOnInit])
-  - `Interface` **IResourceDiffRow**
-  - `Interface` **IResourceSyncStats**
-  - `Type` **ResourceSyncStatus**
-  - `Type` **ResourceKind**
 - **[resource-collection-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts`)
   - `Component` **ResourceCollectionEditComponent** (methods: [ngOnInit, toggleFile, toggleLink, getLinkIcon, saveCollection])
 - **[resource-collections.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts`)
@@ -363,7 +357,6 @@
   - `Type` **IResourceCollectionInsert**
 - **[resource-cover.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts`)
   - `Function` **getFileFallbackType**
-  - `Function` **normalizeBundledCoverPath**
 - **[resource-form.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts`)
   - `Function` **getResourceFormValidationMessage**
 - **[resource-permissions.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts`)

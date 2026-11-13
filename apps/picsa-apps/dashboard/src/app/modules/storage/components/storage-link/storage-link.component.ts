@@ -25,6 +25,9 @@ const filetypeIconMapping: Record<string, string> = {
   templateUrl: './storage-link.component.html',
   styleUrls: ['./storage-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.full-width]': 'fullWidth()',
+  },
 })
 /**
  * Minimal component that takes a storage file id input and returns a link
@@ -37,6 +40,8 @@ export class DashboardStorageLinkComponent {
   id = input.required<string>();
 
   displayStyle = input<'button' | 'link' | 'default'>('default');
+
+  fullWidth = input<boolean>(false);
 
   public entry = signal<IDashboardStorageEntry | undefined>(undefined);
 

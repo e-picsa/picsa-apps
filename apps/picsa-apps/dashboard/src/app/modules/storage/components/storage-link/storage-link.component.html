@@ -26,9 +26,9 @@
     }
     <!-- default style -->
     @default {
-      <div style="display: flex; align-items: center">
+      <div class="flex items-center">
         <mat-icon class="filetype-icon default-icon" [attr.data-icon]="fileTypeIcon()">{{ fileTypeIcon() }}</mat-icon>
-        <div class="filename" style="margin-left: 8px">{{ entryName() }}</div>
+        <div class="filename ml-2">{{ entryName() }}</div>
       </div>
     }
   }

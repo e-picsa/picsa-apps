@@ -2,7 +2,7 @@
   <h2>{{ canEdit() ? (isCreate() ? 'Create Resource Link' : 'Edit Resource Link') : 'View Resource Link' }}</h2>
 
   <form [formGroup]="form">
-    <div class="form-content" style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px">
+    <div class="flex flex-col gap-4 max-w-xl">
       <!-- Cover Image -->
       <dashboard-storage-upload
         label="Cover Image"
@@ -16,7 +16,7 @@
       />
 
       <!-- Title -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" />
         @if (form.controls.title.errors?.['required']) {
@@ -25,7 +25,7 @@
       </mat-form-field>
 
       <!-- URL -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>URL</mat-label>
         <input matInput type="text" formControlName="url" placeholder="https://..." />
         @if (form.controls.url.errors) {
@@ -34,7 +34,7 @@
       </mat-form-field>
 
       <!-- Type -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Type</mat-label>
         <mat-select formControlName="type">
           <mat-option value="web">Website</mat-option>
@@ -44,13 +44,13 @@
       </mat-form-field>
 
       <!-- Description -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3"></textarea>
       </mat-form-field>
 
       <!-- Collections Assignment -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Collections</mat-label>
         <mat-select formControlName="collections" multiple>
           @for (collection of collections(); track collection.id) {
@@ -62,18 +62,22 @@
     </div>
 
     @if (canEdit()) {
-      <div style="margin-top: 2rem; display: flex; align-items: center; max-width: 600px">
+      <div class="mt-8 flex items-center gap-4 max-w-xl">
         <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
           <mat-icon>done</mat-icon>
           Save Resource
         </button>
         @if (!form.valid || form.pristine) {
-          <span class="validation-message" style="margin-left: 1rem; color: #666; font-size: 0.875rem">{{
-            formValidationMessage
-          }}</span>
+          <span
+            class="text-sm italic"
+            [class.text-gray-500]="form.pristine"
+            [class.text-red-600]="!form.pristine && !form.valid"
+          >
+            {{ formValidationMessage }}
+          </span>
         }
         @if (form.valid && !isCreate()) {
-          <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
+          <button class="ml-auto" matButton color="warn" (click)="promptDelete()">
             <mat-icon>delete</mat-icon>
             Delete Resource
           </button>

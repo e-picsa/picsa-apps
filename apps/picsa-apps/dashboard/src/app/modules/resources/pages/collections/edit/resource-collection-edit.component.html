@@ -10,13 +10,10 @@
   </div>
 
   <form [formGroup]="form">
-    <!-- Responsive 2-column flex-wrap layout -->
-    <div class="flex flex-wrap gap-6 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
       <!-- Column 1: Collection Metadata -->
-      <section
-        class="flex-1 min-w-[280px] max-w-[440px] bg-white rounded-lg p-5 border border-slate-200 flex flex-col gap-4"
-      >
-        <h3 class="m-0 text-base font-medium text-slate-800">Collection Details</h3>
+      <section class="bg-white rounded-lg p-5 border border-solid border-slate-200 flex flex-col gap-4">
+        <h3 class="m-0">Collection Details</h3>
 
         <!-- Shared Cover Image Upload/Preview -->
         <dashboard-storage-upload
@@ -52,10 +49,10 @@
       </section>
 
       <!-- Column 2: Collection Contents (Tabbed Files & Links Selector) -->
-      <section class="flex-[1.5] min-w-[320px] bg-white rounded-lg p-5 border border-slate-200">
+      <section class="bg-white rounded-lg p-5 border border-solid border-slate-200">
         <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
-          <h3 class="m-0 text-base font-medium text-slate-800">Collection Contents</h3>
-          <span class="text-xs text-slate-500">
+          <h3 class="m-0">Collection Contents</h3>
+          <span class="text-sm text-gray-500">
             {{ selectedFileIds().size }} files &bull; {{ selectedLinkIds().size }} links selected
           </span>
         </div>
@@ -65,14 +62,14 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <span class="flex items-center gap-1.5">
-                <mat-icon svgIcon="dashboard:filetype_document" class="!w-4 !h-4"></mat-icon>
+                <mat-icon svgIcon="dashboard:filetype_document"></mat-icon>
                 Files ({{ selectedFileIds().size }} / {{ totalFilesCount() }})
               </span>
             </ng-template>
 
             <div class="pt-4 flex flex-col gap-3">
               <div class="flex items-center gap-3 flex-wrap">
-                <mat-form-field class="flex-1 min-w-[200px]" subscriptSizing="dynamic">
+                <mat-form-field class="flex-1" subscriptSizing="dynamic">
                   <mat-icon matPrefix>search</mat-icon>
                   <input
                     matInput
@@ -103,31 +100,35 @@
                 </mat-chip-listbox>
               </div>
 
-              <div class="resource-selector-list">
+              <div class="flex flex-col gap-2 max-h-96 overflow-y-auto">
                 @for (file of filteredFiles(); track file.id) {
                   <div
-                    class="resource-selector-row"
-                    [class.is-selected]="selectedFileIds().has(file.id)"
-                    [class.is-disabled]="!canEdit()"
+                    class="flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
+                    [class]="
+                      (selectedFileIds().has(file.id)
+                        ? 'bg-sky-50 border-sky-300'
+                        : 'bg-white border-slate-200 hover:bg-slate-50') +
+                      (canEdit() ? ' cursor-pointer' : ' opacity-85')
+                    "
                     (click)="toggleFile(file.id)"
                   >
                     @if (file.cover_image) {
                       <img
-                        class="resource-thumb"
+                        class="w-10 h-10 object-contain rounded border border-solid border-slate-200 bg-slate-50 shrink-0"
                         [src]="file.cover_image | storagePath"
                         [alt]="file.title || file.filename"
                       />
                     } @else {
-                      <div class="resource-thumb-fallback">
+                      <div
+                        class="w-10 h-10 rounded border border-solid border-slate-200 bg-slate-50 text-gray-500 flex items-center justify-center shrink-0"
+                      >
                         <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
                       </div>
                     }
 
                     <div class="flex-1 min-w-0">
-                      <div class="text-sm font-medium text-slate-800 truncate">
-                        {{ file.title || file.filename }}
-                      </div>
-                      <div class="text-xs text-slate-500 truncate">
+                      <div class="font-medium truncate">{{ file.title || file.filename }}</div>
+                      <div class="text-xs text-gray-500 truncate">
                         @if (file.filename && file.title && file.filename !== file.title) {
                           <span>{{ file.filename }} &bull; </span>
                         }
@@ -144,7 +145,7 @@
                     />
                   </div>
                 } @empty {
-                  <p class="text-sm text-slate-400 italic py-6 text-center m-0">
+                  <p class="text-sm text-gray-500 italic py-6 text-center m-0">
                     @if (filesViewFilter() === 'selected' && selectedFileIds().size === 0) {
                       No files selected in this collection yet.
                     } @else {
@@ -160,14 +161,14 @@
           <mat-tab>
             <ng-template mat-tab-label>
               <span class="flex items-center gap-1.5">
-                <mat-icon class="!text-base !w-4 !h-4">language</mat-icon>
+                <mat-icon>language</mat-icon>
                 Links ({{ selectedLinkIds().size }} / {{ totalLinksCount() }})
               </span>
             </ng-template>
 
             <div class="pt-4 flex flex-col gap-3">
               <div class="flex items-center gap-3 flex-wrap">
-                <mat-form-field class="flex-1 min-w-[200px]" subscriptSizing="dynamic">
+                <mat-form-field class="flex-1" subscriptSizing="dynamic">
                   <mat-icon matPrefix>search</mat-icon>
                   <input
                     matInput
@@ -198,25 +199,35 @@
                 </mat-chip-listbox>
               </div>
 
-              <div class="resource-selector-list">
+              <div class="flex flex-col gap-2 max-h-96 overflow-y-auto">
                 @for (link of filteredLinks(); track link.id) {
                   <div
-                    class="resource-selector-row"
-                    [class.is-selected]="selectedLinkIds().has(link.id)"
-                    [class.is-disabled]="!canEdit()"
+                    class="flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
+                    [class]="
+                      (selectedLinkIds().has(link.id)
+                        ? 'bg-sky-50 border-sky-300'
+                        : 'bg-white border-slate-200 hover:bg-slate-50') +
+                      (canEdit() ? ' cursor-pointer' : ' opacity-85')
+                    "
                     (click)="toggleLink(link.id)"
                   >
                     @if (link.cover_image) {
-                      <img class="resource-thumb" [src]="link.cover_image | storagePath" [alt]="link.title" />
+                      <img
+                        class="w-10 h-10 object-contain rounded border border-solid border-slate-200 bg-slate-50 shrink-0"
+                        [src]="link.cover_image | storagePath"
+                        [alt]="link.title"
+                      />
                     } @else {
-                      <div class="resource-thumb-fallback">
+                      <div
+                        class="w-10 h-10 rounded border border-solid border-slate-200 bg-slate-50 text-gray-500 flex items-center justify-center shrink-0"
+                      >
                         <mat-icon>{{ getLinkIcon(link.type) }}</mat-icon>
                       </div>
                     }
 
                     <div class="flex-1 min-w-0">
-                      <div class="text-sm font-medium text-slate-800 truncate">{{ link.title }}</div>
-                      <div class="text-xs text-slate-500 truncate">{{ link.url }}</div>
+                      <div class="font-medium truncate">{{ link.title }}</div>
+                      <div class="text-xs text-gray-500 truncate">{{ link.url }}</div>
                     </div>
 
                     <mat-checkbox
@@ -228,7 +239,7 @@
                     />
                   </div>
                 } @empty {
-                  <p class="text-sm text-slate-400 italic py-6 text-center m-0">
+                  <p class="text-sm text-gray-500 italic py-6 text-center m-0">
                     @if (linksViewFilter() === 'selected' && selectedLinkIds().size === 0) {
                       No links selected in this collection yet.
                     } @else {
@@ -257,7 +268,7 @@
         @if (!form.valid || form.pristine) {
           <span
             class="text-sm italic"
-            [class.text-slate-500]="form.pristine"
+            [class.text-gray-500]="form.pristine"
             [class.text-red-600]="!form.pristine && !form.valid"
           >
             {{ formValidationMessage }}
