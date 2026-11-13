@@ -103,4 +103,4 @@ apps/picsa-scripts/.cache
 # Agent worktree audit companion report (regenerated on every run)
 tools/ai/ai-worktree-audit-report.md
 # repo-templates:repo-audit
-.agents/tmp/audit-ledger.md
+.agent/tmp
