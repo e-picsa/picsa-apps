@@ -39,7 +39,7 @@
         (stats().inSync === 0 && selectedStatus() !== 'In Sync' ? ' opacity-60' : '')
       "
     >
-      <mat-icon class="!w-4 !h-4 !text-base leading-none text-emerald-600">check_circle</mat-icon>
+      <mat-icon class="chip-icon text-emerald-600">check_circle</mat-icon>
       <span class="opacity-85">In Sync:</span>
       <span class="font-bold">{{ stats().inSync }}</span>
     </button>
@@ -55,7 +55,7 @@
         (stats().differs === 0 && selectedStatus() !== 'Differs' ? ' opacity-60' : '')
       "
     >
-      <mat-icon class="!w-4 !h-4 !text-base leading-none text-amber-600">difference</mat-icon>
+      <mat-icon class="chip-icon text-amber-600">difference</mat-icon>
       <span class="opacity-85">Differs:</span>
       <span class="font-bold">{{ stats().differs }}</span>
     </button>
@@ -71,7 +71,7 @@
         (stats().missingInApp === 0 && selectedStatus() !== 'Missing in App' ? ' opacity-60' : '')
       "
     >
-      <mat-icon class="!w-4 !h-4 !text-base leading-none text-blue-600">cloud</mat-icon>
+      <mat-icon class="chip-icon text-blue-600">cloud</mat-icon>
       <span class="opacity-85">Missing in App:</span>
       <span class="font-bold">{{ stats().missingInApp }}</span>
     </button>
@@ -87,35 +87,10 @@
         (stats().orphanedInApp === 0 && selectedStatus() !== 'Orphaned in App' ? ' opacity-60' : '')
       "
     >
-      <mat-icon class="!w-4 !h-4 !text-base leading-none text-purple-600">smartphone</mat-icon>
+      <mat-icon class="chip-icon text-purple-600">smartphone</mat-icon>
       <span class="opacity-85">Orphaned in App:</span>
       <span class="font-bold">{{ stats().orphanedInApp }}</span>
     </button>
-  </div>
-
-  <!-- Filters -->
-  <div class="flex items-center gap-4 flex-wrap mb-4">
-    <mat-button-toggle-group [value]="selectedKind()" (change)="selectedKind.set($event.value)">
-      <mat-button-toggle value="all">All</mat-button-toggle>
-      <mat-button-toggle value="Collection">Collections</mat-button-toggle>
-      <mat-button-toggle value="File">Files</mat-button-toggle>
-      <mat-button-toggle value="Link">Links</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <mat-button-toggle-group [value]="selectedStatus()" (change)="selectedStatus.set($event.value)">
-      <mat-button-toggle value="all">All Statuses</mat-button-toggle>
-      <mat-button-toggle value="actionable">Actionable Only</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <mat-form-field class="flex-1 min-w-[220px] max-w-xs ml-auto" subscriptSizing="dynamic">
-      <mat-icon matPrefix>search</mat-icon>
-      <input
-        matInput
-        placeholder="Filter by title, ID, or diff..."
-        [value]="searchTerm()"
-        (input)="searchTerm.set($any($event.target).value)"
-      />
-    </mat-form-field>
   </div>
 
   <!-- Diff Table -->
@@ -130,17 +105,19 @@
     >
       <!-- Kind Template -->
       <ng-template #kindTemplate let-kind>
-        <span class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
+        <span class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 whitespace-nowrap">
           @switch (kind) {
             @case ('Collection') {
-              <mat-icon class="!w-4 !h-4 !text-base text-slate-500">folder</mat-icon> Collection
+              <mat-icon class="type-icon text-slate-500">folder</mat-icon>
+              <span>Collection</span>
             }
             @case ('File') {
-              <mat-icon class="!w-4 !h-4 !text-base text-slate-500" svgIcon="dashboard:filetype_document"></mat-icon>
-              File
+              <mat-icon class="type-icon text-slate-500" svgIcon="dashboard:filetype_document"></mat-icon>
+              <span>File</span>
             }
             @case ('Link') {
-              <mat-icon class="!w-4 !h-4 !text-base text-slate-500">language</mat-icon> Link
+              <mat-icon class="type-icon text-slate-500">language</mat-icon>
+              <span>Link</span>
             }
           }
         </span>
@@ -151,30 +128,34 @@
         @switch (status) {
           @case ('In Sync') {
             <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 whitespace-nowrap"
             >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon> In Sync
+              <mat-icon class="status-icon">check_circle</mat-icon>
+              <span>In Sync</span>
             </span>
           }
           @case ('Differs') {
             <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 whitespace-nowrap"
             >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">difference</mat-icon> Differs
+              <mat-icon class="status-icon">difference</mat-icon>
+              <span>Differs</span>
             </span>
           }
           @case ('Missing in App') {
             <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap"
             >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">cloud</mat-icon> Missing in App
+              <mat-icon class="status-icon">cloud</mat-icon>
+              <span>Missing in App</span>
             </span>
           }
           @case ('Orphaned in App') {
             <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 whitespace-nowrap"
             >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">smartphone</mat-icon> Orphaned in App
+              <mat-icon class="status-icon">smartphone</mat-icon>
+              <span>Orphaned in App</span>
             </span>
           }
         }
@@ -184,27 +165,11 @@
     <div
       class="flex flex-col items-center justify-center py-12 px-6 bg-white rounded-lg border border-solid border-slate-200 text-center"
     >
-      <mat-icon class="text-emerald-600 !w-10 !h-10 !text-[40px]">check_circle</mat-icon>
+      <mat-icon class="empty-icon text-emerald-600">check_circle</mat-icon>
       <h3 class="mt-2 mb-1">No differences found</h3>
       <p class="text-sm text-slate-500 m-0">
         All resources matching the current filters are in sync with the app bundle.
       </p>
     </div>
   }
-
-  <!-- Sync Instructions Box -->
-  <div class="mt-8 p-4 bg-slate-50 rounded-lg border border-solid border-slate-200">
-    <div class="flex items-start gap-3">
-      <mat-icon class="text-blue-600">sync</mat-icon>
-      <div>
-        <h3 class="m-0 text-sm font-semibold">Syncing to App Bundle</h3>
-        <p class="mt-1 mb-2 text-xs text-slate-600">
-          To update the bundled offline fallback JSON with the latest data-system changes, run:
-        </p>
-        <code class="inline-block px-3 py-1.5 bg-slate-900 text-sky-300 rounded font-mono text-xs">
-          yarn scripts:resources:sync --country={{ activeCountry() || 'mw' }}
-        </code>
-      </div>
-    </div>
-  </div>
 </div>

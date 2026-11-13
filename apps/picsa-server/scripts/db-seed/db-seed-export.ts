@@ -489,7 +489,8 @@ export class SupabaseSeedExport {
       try {
         const { bytes, downloaded } = await this.loadStorageBytes(file, remoteMeta.get(file), complete);
         if (downloaded) stats.downloaded++;
-        await this.uploadStorageBytes(file, bytes, refs[0]?.row?.mimetype);
+        const contentType = resolveStorageContentType(file, refs, remoteMeta.get(file)?.mimetype);
+        await this.uploadStorageBytes(file, bytes, contentType);
         validStoragePaths.add(file);
         stats.uploaded++;
       } catch {
@@ -542,6 +543,7 @@ export class SupabaseSeedExport {
               size: Number(row.metadata?.size ?? row.metadata?.contentLength) || null,
               etag: row.metadata?.eTag ?? row.metadata?.etag ?? null,
               updatedAt: row.updated_at ?? null,
+              mimetype: row.metadata?.mimetype ?? null,
             });
           }
         });
@@ -697,6 +699,23 @@ export class SupabaseSeedExport {
     const filePath = resolve(SEED_DIR, fileName);
     await writeFile(filePath, csv, 'utf-8');
   }
+}
+
+/**
+ * Determine upload Content-Type for a mirrored storage file.
+ * Prefer extension-derived MIME types so `resource_files.mimetype` (which describes
+ * `storage_file`, e.g. `application/pdf`) is never applied to `cover_image` uploads.
+ */
+export function resolveStorageContentType(
+  storagePath: string,
+  refs: { column: string; row?: { mimetype?: string | null } }[],
+  remoteMime?: string | null,
+): string {
+  const pathMime = getMimeType(storagePath);
+  if (pathMime) return pathMime;
+  if (remoteMime && remoteMime !== 'application/octet-stream') return remoteMime;
+  const storageFileMime = refs.find((ref) => ref.column === 'storage_file')?.row?.mimetype;
+  return storageFileMime || remoteMime || 'application/octet-stream';
 }
 
 /** Map PostgREST errors to actionable messages */

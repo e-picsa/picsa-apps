@@ -101,16 +101,9 @@ describe('ResourcesAdminComponent', () => {
     expect(stats.missingInApp).toBeGreaterThanOrEqual(1);
   });
 
-  it('should filter rows by kind, actionable status, and status chip toggle', () => {
-    component.selectedKind.set('Collection');
-    const collectionRows = component.displayedRows();
-    expect(collectionRows.every((r) => r.kind === 'Collection')).toBe(true);
+  it('should filter rows by status chip toggle and expose table kind filter', () => {
+    expect(component.tableOptions.filterColumns).toEqual(['kind']);
 
-    component.selectedStatus.set('actionable');
-    const actionableRows = component.displayedRows();
-    expect(actionableRows.every((r) => r.status !== 'In Sync')).toBe(true);
-
-    component.selectedKind.set('all');
     component.toggleStatusFilter('Missing in App');
     expect(component.selectedStatus()).toBe('Missing in App');
     expect(component.displayedRows().every((r) => r.status === 'Missing in App')).toBe(true);

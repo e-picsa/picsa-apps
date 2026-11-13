@@ -363,10 +363,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ---
 
-### Material Icon Glyph Clipping (`mat-icon` and Line-Height Traps)
+### Material Icon Alignment & Resizing (`mat-icon` and Tailwind Traps)
 
-- **Root Cause of Icon Clipping**: Angular Material's `mat-icon` uses font-based glyphs sized to `24px` with `line-height: 1`. Applying Tailwind classes like `!w-5 !h-5 !text-lg` causes `text-lg` to set `line-height: 1.75rem` (28px) inside a `20px` (`h-5`) bounding box. This forces the glyph outside its container bounds, causing the icon to be sliced or clipped at the edges.
-- **Rule**: Never combine arbitrary Tailwind `text-*` and `w-*/h-*` on `mat-icon` without matching line-height (`leading-none`). Preferably, let Angular Material manage the icon size naturally or use standard 24px sizing, or specify `class="!text-[16px] !w-4 !h-4 leading-none"` when creating micro badges.
+- **Root Cause of Alignment Drift & Clipping**: Angular Material's `.mat-icon` defaults to `width: 24px; height: 24px; overflow: hidden;` and `.material-icons` sets `font-size: 24px; line-height: 1;`. Applying Tailwind typography/sizing classes (e.g. `!w-4 !h-4 !text-base`, `!w-3.5 !h-3.5 !text-sm`) overrides `line-height` (`text-base` sets `line-height: 1.5rem`, `text-sm` sets `line-height: 1.25rem`), pushing glyphs off-center vertically and clipping them inside smaller icon containers.
+- **Rule**: Never use Tailwind sizing or typography classes (`w-*`, `h-*`, `text-*`, `!w-*`, `!h-*`, `!text-*`) on `<mat-icon>`. Use Angular Material's `inline` input for inline prose (`font-size/height/width/line-height: inherit`), Material component tokens where available, or manual component SCSS setting **`font-size`**, **`width`**, and **`height`** together to the exact same size with `line-height: 1` (works for both font icons and `svgIcon`).
 
 ### Absence of Dark Mode & Prohibition of Tailwind `dark:` Variants
 

@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -17,7 +15,7 @@ import { normalizeBundledCoverPath } from '../../utils';
 
 export type ResourceSyncStatus = 'In Sync' | 'Differs' | 'Missing in App' | 'Orphaned in App';
 export type ResourceKind = 'Collection' | 'File' | 'Link';
-export type ResourceStatusFilter = 'all' | 'actionable' | ResourceSyncStatus;
+export type ResourceStatusFilter = 'all' | ResourceSyncStatus;
 
 export interface IResourceDiffRow {
   id: string;
@@ -44,8 +42,6 @@ const DISPLAY_COLUMNS: (keyof IResourceDiffRow)[] = ['kind', 'title', 'status', 
   imports: [
     CommonModule,
     DashboardMaterialModule,
-    FormsModule,
-    MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
     PicsaDataTableComponent,
@@ -68,14 +64,8 @@ export class ResourcesAdminComponent implements OnInit {
     return deployment?.label || this.activeCountry().toUpperCase();
   });
 
-  /** Filter by resource kind: 'all' | 'Collection' | 'File' | 'Link' */
-  public selectedKind = signal<'all' | ResourceKind>('all');
-
-  /** Filter by status: 'all' | 'actionable' | ResourceSyncStatus */
+  /** Filter by status: 'all' | ResourceSyncStatus */
   public selectedStatus = signal<ResourceStatusFilter>('all');
-
-  /** Text search query */
-  public searchTerm = signal<string>('');
 
   /** Active country bundle statically imported from the app data bundle */
   public appBundle = computed<IResourceCountryBundle | null>(() => {
@@ -128,31 +118,17 @@ export class ResourcesAdminComponent implements OnInit {
     };
   });
 
-  /** Filtered rows based on kind, status, and search query */
+  /** Filtered rows based on selected summary status chip */
   public displayedRows = computed<IResourceDiffRow[]>(() => {
-    const kind = this.selectedKind();
     const status = this.selectedStatus();
-    const search = this.searchTerm().toLowerCase().trim();
-
-    return this.allDiffRows().filter((row) => {
-      if (kind !== 'all' && row.kind !== kind) return false;
-      if (status === 'actionable') {
-        if (row.status === 'In Sync') return false;
-      } else if (status !== 'all' && row.status !== status) {
-        return false;
-      }
-      if (search) {
-        const matchesTitle = row.title.toLowerCase().includes(search);
-        const matchesDetail = row.detail.toLowerCase().includes(search);
-        const matchesId = row.id.toLowerCase().includes(search);
-        if (!matchesTitle && !matchesDetail && !matchesId) return false;
-      }
-      return true;
-    });
+    const rows = this.allDiffRows();
+    if (status === 'all') return rows;
+    return rows.filter((row) => row.status === status);
   });
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS as string[],
+    filterColumns: ['kind'],
     formatHeader: (v) => {
       switch (v) {
         case 'kind':
