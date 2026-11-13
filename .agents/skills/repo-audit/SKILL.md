@@ -28,8 +28,8 @@ prioritise, do not fix code in this pass unless explicitly asked.
 3. Also locate the repo's declared stack and engineering rules (`AGENTS.md`,
    `.agents/rules/`, `tech-stack.md`, framework skill files, root manifests) as
    **declared intent** to compare against reality in Phases 1–2. If
-   `repo-context.md` itself contradicts `package.json` or actual code (e.g.
-   naming a retired backend), flag the drift.
+   `repo-context.md` contradicts root manifests or code (e.g. naming a retired
+   backend), flag the drift.
 4. If `repo-context.md` is missing or has unfilled TODOs, infer users and focus
    from `readme.md`, `package.json`, docs, and code. Flag only the user-impact
    inferences as `SUSPECTED` (archetype assumptions in Scope and coverage).
@@ -39,9 +39,10 @@ prioritise, do not fix code in this pass unless explicitly asked.
 5. Respect any `## Overrides` section: a repo may skip, emphasise, or replace
    specific audit dimensions. Overrides win over this skill's defaults.
 6. Check for a previous audit file: default `AUDIT.md` in the same folder as
-   this skill (`.agents/skills/repo-audit/AUDIT.md`), or the path named in
-   `repo-context.md` or the user prompt. If one exists, read it as the baseline and record its date and base commit for the delta in
-   phase 6 (Synthesise).
+   this skill (`.agents/skills/repo-audit/AUDIT.md`), falling back to root
+   `AUDIT.md` if present, or the path named in `repo-context.md` or the user
+   prompt. If one exists, read it as the baseline and record its date and base
+   commit for phase 6 (Synthesise).
 7. Protect the baseline before overwriting it: `git status` only proves the
    baseline was committed if the audit file is clean. Before writing a new
    report over an existing audit file, check `git status --porcelain` on that
@@ -98,44 +99,43 @@ each other; the lead agent merges them into the main ledger at synthesis.
      `pyproject.toml`, `Cargo.toml`, etc.) to inventory:
      1. Competing backends, persistence/cache engines, state-management libs,
         and telemetry/auth SDKs.
-     2. Legacy vs modern framework primitives relative to the repo's declared
-        rules (e.g. module vs standalone components, legacy decorators vs
-        signals, deprecated control-flow syntax).
-     3. Manifest anomalies: dependencies that appear unused (`0` or dead-only
-        imports), duplicated (two libs solving the same job), outdated/EOL or
-        superseded by newer versions/built-ins already in the repo, or
-        misplaced in runtime `dependencies` instead of `devDependencies`.
+     2. Legacy vs modern framework primitives relative to declared rules (e.g.
+        module vs standalone components, legacy decorators vs signals,
+        deprecated control-flow syntax).
+     3. Manifest anomalies: dependencies with `0` or dead-only imports,
+        duplicated engines solving the same job, outdated/EOL or superseded
+        packages, or dev-only tools misplaced in runtime `dependencies`.
+
    Optionally fan out read-only exploration subagents per dimension on large
    repos (each writing its own ledger file); default is a single pass.
 
 2. **Architecture, Dependencies & Maintainability** — Judge whether structure
-   and mental models help contributors ship safely over the long term. Prefer
-   boring, explicit boundaries and one canonical way to do a job. Check:
-   - **Stack & migration hygiene (competing paradigms):** When the Orient census
-     shows >1 backend, persistence layer, state-management system, or framework
+   and mental models help contributors ship safely long term. Prefer boring,
+   explicit boundaries and one canonical way to do a job. Check:
+   - **Stack & migration hygiene (competing paradigms):** When the census shows
+     more than one backend, persistence layer, state system, or framework
      generation, verify whether legacy paths are **contained** (isolated,
      documented sunset, no new callers) or **leaking** (imported by shared
      libs, wired into app root, or copied into recent work). Quantify spread
      with exact file/import counts.
-   - **Dependency & manifest audit:** Review `package.json` (and edge/runtime
-     manifests) with actual import counts from Orient. Flag dead/legacy deps,
+   - **Dependency & manifest audit:** Review `package.json` and workspace or
+     runtime manifests against Orient import counts. Flag dead/legacy deps,
      duplicated engines (e.g. two spreadsheet/HTTP/DB libs), outdated/EOL
      packages with concrete cost (CVEs, peer-dep locks, broken installs,
-     client bundle bloat), and dev-only tooling shipped in runtime deps.
-   - **Declared rules vs reality & system comprehension:** Compare
-     `AGENTS.md` / `.agents/rules/` / `tech-stack.md` / `README.md` against
-     actual code. Flag half-finished migrations and **copy-trap surfaces**
-     where an agent or new contributor grepping an example hits a legacy
-     pattern first without clear deprecation markers.
+     bundle bloat), and dev-only tooling in runtime deps.
+   - **Declared rules vs reality & system comprehension:** Compare `AGENTS.md`,
+     rules, `tech-stack.md`, and `README.md` against code. Flag half-finished
+     migrations and **copy-trap surfaces** where an agent or contributor
+     grepping an example hits a legacy pattern first without deprecation markers.
    - **Stack currency & boundaries:** Check core stack against current stable
-     releases as of today (state the date checked and versions observed; flag
-     only drift with concrete cost such as EOL, broken installs, or blocked
-     APIs); module boundaries and API contracts; separation vs leakage (name
-     the file where the boundary breaks); over-engineering (one-caller
-     abstractions to delete) vs under-engineering (duplicated lifecycle
-     handling, weakly-typed boundary APIs to consolidate); lockfiles and
-     whether upgrades are tested in CI. Stack-specific checks belong in
-     `repo-context.md` Tech focus, not as assumed defaults.
+     releases as of today (state date checked and versions observed; flag only
+     drift with concrete cost such as EOL, broken installs, or blocked APIs);
+     module boundaries and API contracts; separation vs leakage (name the file
+     where the boundary breaks); over-engineering (one-caller abstractions) vs
+     under-engineering (duplicated lifecycle handling, weakly-typed boundary
+     APIs — e.g. stringly-typed bridge APIs); lockfiles and CI upgrade tests.
+     Stack-specific checks belong in `repo-context.md` Tech focus, not as
+     assumed defaults.
 
 3. **User impact and functionality** — Identify consumers from `repo-context.md`
    first, else infer from README/docs/examples. Record each archetype as goal,
@@ -150,23 +150,23 @@ each other; the lead agent merges them into the main ledger at synthesis.
    the ledger with value and effort left blank for now — do not rank or build
    roadmap items here. Ranking happens only in Synthesise once bugs, security,
    and AI workflow have been examined. Drop changes with no named beneficiary
-   (contributors and future maintainers are valid beneficiaries when the
-   mental-model or maintenance drag is evidenced).
+   (contributors and future maintainers count when mental-model or maintenance
+   drag is evidenced).
    Scales (applied at synthesis, never as time estimates — AI cadence makes
    days meaningless):
    - **Value H:** removes a crash, data loss, or blocker for a primary
      archetype; **OR** eliminates major long-term maintenance / mental-model
-     drag (competing backends/persistence/state stacks, systemic boundary
-     leakage, high-frequency contributor/AI confusion traps) that compounds
-     every future change.
+     drag (competing stacks, systemic leakage, contributor/AI traps) that
+     compounds future changes.
    - **Value M:** clear pain for a subset of users, or meaningful toil /
-     cognitive load removed (e.g., simplifying a workflow, retiring an
-     isolated legacy shim, fixing misleading docs/rules).
+     cognitive load removed (simplifying a workflow, retiring an isolated
+     shim, fixing misleading docs/rules).
    - **Value L:** nice-to-have with limited reach or minor hygiene.
    - **Effort S:** likely one file, covered by automated tests, easy to review.
    - **Effort M:** a few files or needs extra test/review care.
    - **Effort L:** many files touched or needs heavy human oversight (uncovered
      paths, native bridges, migrations).
+
    Severity (`P0` fix now, `P1` next, `P2` soon) is the urgency axis and does
    not replace the value/effort ranking.
 
@@ -179,8 +179,8 @@ each other; the lead agent merges them into the main ledger at synthesis.
    e.g. web vs native in a plugin repo). For security, quote source → sink
    (`path:line` each); no reachable path means hardening idea, not a finding.
    Never audit `dist/`, `build/`, lockfiles, or vendored code as source
-   (inspecting build stats or `package.json` dependency graphs to measure
-   bundled dead/duplicate weight is permitted).
+   (inspecting build stats or manifest dependency graphs to measure bundled
+   dead/duplicate weight is permitted).
 
 5. **AI-first workflow** — The repo should let an agent go from fresh checkout
    to safe PR without guessing. Check: short `AGENTS.md` with install, verify,
@@ -198,26 +198,25 @@ each other; the lead agent merges them into the main ledger at synthesis.
    ledger, then rank it by value relative to effort (value H/M/L
    vs effort S/M/L, severity P0/P1/P2 as urgency only). Explicitly account for
    long-term maintainability and mental-model simplification in Value so
-   architectural consolidation is not starved by short-term quick fixes.
+   architectural consolidation is not starved by quick fixes.
    - **Roadmap completeness rule:** Every `P0` and `P1` finding — including
-     `Effort L` architectural/consolidation items — MUST appear in the Roadmap
-     table with a concrete, incremental Phase-1 step (e.g. quarantine, lint
-     guardrail, shim removal, or deprecation notice rather than an unbounded
-     rewrite). Never silently drop an `H/L` finding from the roadmap.
+     `Effort L` consolidation items — MUST appear in the Roadmap table with a
+     concrete Phase-1 step (e.g. quarantine, lint guardrail, shim removal, or
+     deprecation notice rather than an unbounded rewrite). Never silently drop
+     an `H/L` finding from the roadmap.
    - If a previous audit exists, reconcile each prior P0/P1 as Fixed, Still
      open, Invalid (with reason), or Superseded, then add newly identified
      findings with first-seen date.
    - Write the draft report from
      [report template](assets/audit-report-template.md) with an ISO date and base
-     commit in the header so the next audit can build on this one. Put the
-     **Roadmap** at the front of the report (right after Top Summary) so it is
-     immediately actionable, and present inventories and findings in Markdown
-     tables for scanability. Every roadmap item (quick win and strategic)
-     carries an ID, beneficiary, value (H/M/L), effort (S/M/L, files-impacted
-     and review/test burden — never days), dependencies, done-when acceptance,
-     one-line handoff Task prompt, and source finding refs so the next agent
-     can execute without re-reading the report. Delete the ledger file when the
-     report is written.
+     commit in the header so the next audit builds on this one. Put the
+     **Roadmap** at the front (right after Top summary) so it is immediately
+     actionable, and use Markdown tables for inventories and findings. Every
+     roadmap item (quick win and strategic) carries an ID, beneficiary, value
+     (H/M/L), effort (S/M/L, files-impacted and review/test burden — never
+     days), dependencies, done-when acceptance, one-line handoff Task prompt,
+     and source finding refs so the next agent executes without re-reading the
+     report. Delete the ledger file when the report is written.
 
 ## Step 2 — One-shot second opinion (no back-and-forth)
 
@@ -272,24 +271,22 @@ each other; the lead agent merges them into the main ledger at synthesis.
   verdict in one line per top claim plus any gap candidates (or why it was
   skipped).
 - Also write a full Markdown report (default: `AUDIT.md` inside the skill
-  folder, e.g. `.agents/skills/repo-audit/AUDIT.md`, or the path in
-  `repo-context.md` or the user prompt) using the report template.
-  Header carries ISO date, base commit SHA, scope, author model/agent, and
-  previous-audit date. Structure: top summary (with structural/maintainability
-  themes), **roadmap** (table + quick wins/strategic + task prompts), delta
-  since last audit, scope and coverage (including pattern/dependency census),
-  user impact and functionality, architecture (with stack/migration inventory +
-  dependency health table), maintainability & system understanding, bugs,
-  security, AI-first workflow, second opinion, appendix with exact
-  commands/outputs.
-  Finding rows carry their ledger IDs (e.g. `F3`) so roadmap `From` refs and
-  the next audit's delta stay traceable after the ledger file is deleted.
-  Roadmap items use the fixed schema (ID, beneficiary, effort, dependencies,
-  done-when, task prompt, finding refs, value, and files-impacted effort). A
-  single `AUDIT.md` always reflects the latest audit; committed git history
-  preserves prior versions, so overwrite rather than appending or versioning
-  filenames. If the existing audit file has uncommitted changes, warn and stop
-  instead of overwriting.
+  folder, `.agents/skills/repo-audit/AUDIT.md`, or the path in `repo-context.md`
+  or the user prompt) using the report template. Header carries ISO date, base
+  commit SHA, scope, author model/agent, and previous-audit date. Structure: top
+  summary (with structural/maintainability themes), **roadmap** (table + quick
+  wins/strategic + task prompts), delta since last audit, scope and coverage
+  (including census), user impact and functionality, architecture & dependencies
+  (stack/migration inventory + dependency health), maintainability & system
+  understanding, bugs, security, AI-first workflow, second opinion, appendix
+  with exact commands/outputs. Finding rows carry ledger IDs (e.g. `F3`) so
+  roadmap `From` refs and the next audit's delta stay traceable after ledger
+  deletion. Roadmap items use the fixed schema (ID, beneficiary, effort,
+  dependencies, done-when, task prompt, finding refs, value, and files-impacted
+  effort). A single `AUDIT.md` always reflects the latest audit; committed git
+  history preserves prior versions, so overwrite rather than appending or
+  versioning filenames. If the existing audit file has uncommitted changes,
+  warn and stop instead of overwriting.
 - Do not commit the report unless the user explicitly asks. Say where it was written.
 - If `repo-context.md` was missing or TODO, offer a draft (archetypes, focus,
   second-opinion preference, audit path) for human approval so the next audit
