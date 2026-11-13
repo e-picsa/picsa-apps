@@ -1,6 +1,14 @@
 import { FormGroup } from '@angular/forms';
 import { capitalise } from '@picsa/utils';
 
+export type ResourceCollectionFilter = 'all' | 'in_collection' | 'unassigned';
+
+export const RESOURCE_COLLECTION_FILTER_OPTIONS: { value: ResourceCollectionFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'in_collection', label: 'In Collection' },
+  { value: 'unassigned', label: 'Unassigned' },
+];
+
 /**
  * Derives a human-friendly validation summary message for resource edit forms.
  */

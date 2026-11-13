@@ -19,18 +19,11 @@
 
   <div class="mb-4">
     <mat-chip-set>
-      <mat-chip-option [selected]="collectionFilter() === 'all'" (click)="collectionFilter.set('all')">
-        All
-      </mat-chip-option>
-      <mat-chip-option
-        [selected]="collectionFilter() === 'in_collection'"
-        (click)="collectionFilter.set('in_collection')"
-      >
-        In Collection
-      </mat-chip-option>
-      <mat-chip-option [selected]="collectionFilter() === 'unassigned'" (click)="collectionFilter.set('unassigned')">
-        Unassigned
-      </mat-chip-option>
+      @for (option of collectionFilterOptions; track option.value) {
+        <mat-chip-option [selected]="collectionFilter() === option.value" (click)="collectionFilter.set(option.value)">
+          {{ option.label }}
+        </mat-chip-option>
+      }
     </mat-chip-set>
   </div>
 
@@ -63,24 +56,33 @@
       }
     </ng-template>
     <!-- cover image -->
-    <ng-template #coverImageTemplate let-coverImage>
+    <ng-template #coverImageTemplate let-coverImage let-row="row">
       @if (coverImage) {
-        <img class="w-10 h-10 object-contain block mx-auto" [src]="coverImage | storagePath" />
+        <img
+          class="w-10 h-10 object-contain block mx-auto"
+          [src]="coverImage | storagePath"
+          [alt]="row?.title || 'Resource cover'"
+        />
       }
     </ng-template>
     <!-- collections -->
     <ng-template #collectionsTemplate let-collections>
       <div class="flex gap-1">
         @for (collection of collections; track collection.id) {
-          <div
-            class="w-8 h-8 cursor-pointer rounded overflow-hidden border border-solid border-slate-200 flex items-center justify-center"
+          <button
+            type="button"
+            class="w-8 h-8 p-0 bg-transparent cursor-pointer rounded overflow-hidden border border-solid border-slate-200 flex items-center justify-center"
             [matTooltip]="collection.title"
             (click)="handleCollectionClick($event, collection)"
           >
             @if (collection.cover_image) {
-              <img class="w-full h-full object-contain color-on-hover" [src]="collection.cover_image | storagePath" />
+              <img
+                class="w-full h-full object-contain color-on-hover"
+                [src]="collection.cover_image | storagePath"
+                [alt]="collection.title"
+              />
             }
-          </div>
+          </button>
         }
       </div>
     </ng-template>

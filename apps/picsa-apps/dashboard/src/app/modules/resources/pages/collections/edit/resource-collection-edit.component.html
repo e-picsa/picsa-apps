@@ -102,13 +102,17 @@
 
               <div class="flex flex-col gap-2 max-h-96 overflow-y-auto">
                 @for (file of filteredFiles(); track file.id) {
-                  <div
-                    class="flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
+                  <button
+                    type="button"
+                    role="checkbox"
+                    [attr.aria-checked]="selectedFileIds().has(file.id)"
+                    [disabled]="!canEdit()"
+                    class="w-full text-left [font:inherit] text-inherit flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
                     [class]="
                       (selectedFileIds().has(file.id)
                         ? 'bg-sky-50 border-sky-300'
                         : 'bg-white border-slate-200 hover:bg-slate-50') +
-                      (canEdit() ? ' cursor-pointer' : ' opacity-85')
+                      (canEdit() ? ' cursor-pointer' : ' cursor-default opacity-85')
                     "
                     (click)="toggleFile(file.id)"
                   >
@@ -136,14 +140,14 @@
                       </div>
                     </div>
 
-                    <mat-checkbox
-                      color="primary"
-                      [checked]="selectedFileIds().has(file.id)"
-                      [disabled]="!canEdit()"
-                      (click)="$event.stopPropagation()"
-                      (change)="toggleFile(file.id)"
-                    />
-                  </div>
+                    <mat-icon
+                      aria-hidden="true"
+                      class="shrink-0"
+                      [class]="selectedFileIds().has(file.id) ? 'text-primary' : 'text-gray-400'"
+                    >
+                      {{ selectedFileIds().has(file.id) ? 'check_box' : 'check_box_outline_blank' }}
+                    </mat-icon>
+                  </button>
                 } @empty {
                   <p class="text-sm text-gray-500 italic py-6 text-center m-0">
                     @if (filesViewFilter() === 'selected' && selectedFileIds().size === 0) {
@@ -201,13 +205,17 @@
 
               <div class="flex flex-col gap-2 max-h-96 overflow-y-auto">
                 @for (link of filteredLinks(); track link.id) {
-                  <div
-                    class="flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
+                  <button
+                    type="button"
+                    role="checkbox"
+                    [attr.aria-checked]="selectedLinkIds().has(link.id)"
+                    [disabled]="!canEdit()"
+                    class="w-full text-left [font:inherit] text-inherit flex items-center gap-3 px-3 py-2 rounded border border-solid transition-colors"
                     [class]="
                       (selectedLinkIds().has(link.id)
                         ? 'bg-sky-50 border-sky-300'
                         : 'bg-white border-slate-200 hover:bg-slate-50') +
-                      (canEdit() ? ' cursor-pointer' : ' opacity-85')
+                      (canEdit() ? ' cursor-pointer' : ' cursor-default opacity-85')
                     "
                     (click)="toggleLink(link.id)"
                   >
@@ -230,14 +238,14 @@
                       <div class="text-xs text-gray-500 truncate">{{ link.url }}</div>
                     </div>
 
-                    <mat-checkbox
-                      color="primary"
-                      [checked]="selectedLinkIds().has(link.id)"
-                      [disabled]="!canEdit()"
-                      (click)="$event.stopPropagation()"
-                      (change)="toggleLink(link.id)"
-                    />
-                  </div>
+                    <mat-icon
+                      aria-hidden="true"
+                      class="shrink-0"
+                      [class]="selectedLinkIds().has(link.id) ? 'text-primary' : 'text-gray-400'"
+                    >
+                      {{ selectedLinkIds().has(link.id) ? 'check_box' : 'check_box_outline_blank' }}
+                    </mat-icon>
+                  </button>
                 } @empty {
                   <p class="text-sm text-gray-500 italic py-6 text-center m-0">
                     @if (linksViewFilter() === 'selected' && selectedLinkIds().size === 0) {

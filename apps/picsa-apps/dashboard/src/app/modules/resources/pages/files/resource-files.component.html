@@ -25,18 +25,11 @@
 
   <div class="mb-4">
     <mat-chip-set>
-      <mat-chip-option [selected]="collectionFilter() === 'all'" (click)="collectionFilter.set('all')">
-        All
-      </mat-chip-option>
-      <mat-chip-option
-        [selected]="collectionFilter() === 'in_collection'"
-        (click)="collectionFilter.set('in_collection')"
-      >
-        In Collection
-      </mat-chip-option>
-      <mat-chip-option [selected]="collectionFilter() === 'unassigned'" (click)="collectionFilter.set('unassigned')">
-        Unassigned
-      </mat-chip-option>
+      @for (option of collectionFilterOptions; track option.value) {
+        <mat-chip-option [selected]="collectionFilter() === option.value" (click)="collectionFilter.set(option.value)">
+          {{ option.label }}
+        </mat-chip-option>
+      }
     </mat-chip-set>
   </div>
 
@@ -92,15 +85,20 @@
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
         @for (collection of collections; track collection.id) {
-          <div
-            class="collection-cover-container"
+          <button
+            type="button"
+            class="collection-cover-container p-0 border-0 bg-transparent cursor-pointer"
             [matTooltip]="collection.title"
             (click)="handleCollectionClick($event, collection)"
           >
             @if (collection.cover_image) {
-              <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+              <img
+                class="collection-cover color-on-hover"
+                [src]="collection.cover_image | storagePath"
+                [alt]="collection.title"
+              />
             }
-          </div>
+          </button>
         }
       </div>
     </ng-template>

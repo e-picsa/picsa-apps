@@ -13,7 +13,7 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { IDeploymentRow } from '../../../deployment/types';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow } from '../../types';
-import { getFileFallbackType } from '../../utils';
+import { getFileFallbackType, RESOURCE_COLLECTION_FILTER_OPTIONS, ResourceCollectionFilter } from '../../utils';
 
 type IMergedResources = IResourceFileRow & {
   children: IResourceFileRow[];
@@ -52,6 +52,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
 })
 export class ResourceFilesComponent implements OnInit {
   public readonly getFileFallbackType = getFileFallbackType;
+  public readonly collectionFilterOptions = RESOURCE_COLLECTION_FILTER_OPTIONS;
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -62,7 +63,7 @@ export class ResourceFilesComponent implements OnInit {
     return deployment?.label || deployment?.country_code?.toUpperCase() || '';
   });
 
-  public collectionFilter = signal<'all' | 'in_collection' | 'unassigned'>('all');
+  public collectionFilter = signal<ResourceCollectionFilter>('all');
 
   private allResources = signal<IMergedResources[]>([]);
 

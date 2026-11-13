@@ -9,6 +9,7 @@ import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceLinkRow } from '../../types';
+import { RESOURCE_COLLECTION_FILTER_OPTIONS, ResourceCollectionFilter } from '../../utils';
 
 export type IMergedResourceLink = IResourceLinkRow & {
   collections: IResourceCollectionRow[];
@@ -38,6 +39,7 @@ const DISPLAY_COLUMNS: (keyof IMergedResourceLink)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinksComponent implements OnInit {
+  public readonly collectionFilterOptions = RESOURCE_COLLECTION_FILTER_OPTIONS;
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -48,7 +50,7 @@ export class ResourceLinksComponent implements OnInit {
     return deployment?.label || deployment?.country_code?.toUpperCase() || '';
   });
 
-  public collectionFilter = signal<'all' | 'in_collection' | 'unassigned'>('all');
+  public collectionFilter = signal<ResourceCollectionFilter>('all');
 
   private allLinks = signal<IMergedResourceLink[]>([]);
 
