@@ -1,22 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
 import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import {
-  IUploadResult,
-  StoragePathPipe,
-  SupabaseStoragePickerDirective,
-  SupabaseUploadComponent,
-} from '@picsa/shared/services/core/supabase';
-import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
-import { DashboardStorageLinkComponent } from '../../../../storage';
+import { DashboardStorageUploadComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceLinkInsert, IResourceLinkRow } from '../../../types';
 import { getResourceFormValidationMessage } from '../../../utils/resource-form.utils';
@@ -24,15 +16,7 @@ import { createResourceEditPermissionState } from '../../../utils/resource-permi
 
 @Component({
   selector: 'dashboard-resource-link-edit',
-  imports: [
-    DashboardMaterialModule,
-    DashboardStorageLinkComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    StoragePathPipe,
-    SupabaseStoragePickerDirective,
-    SupabaseUploadComponent,
-  ],
+  imports: [DashboardMaterialModule, DashboardStorageUploadComponent, FormsModule, ReactiveFormsModule],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,6 +34,8 @@ export class ResourceLinkEditComponent implements OnInit {
   public storageBucketName = computed(() => this.deploymentService.activeDeployment()?.country_code);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
 
+  public collections = this.service.collections;
+
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
     title: ['', Validators.required],
@@ -57,6 +43,7 @@ export class ResourceLinkEditComponent implements OnInit {
     type: ['web', Validators.required],
     url: ['', [Validators.required, PICSAFormValidators.isUrl]],
     cover_image: [''],
+    collections: new FormControl<string[]>([]),
     country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
@@ -64,11 +51,6 @@ export class ResourceLinkEditComponent implements OnInit {
   public isCreate = this.permissions.isCreate;
   private resourceOwner = this.permissions.resourceOwner;
   public canEdit = this.permissions.canEdit;
-
-  /** Signal read of cover state for OnPush templates (patchValue emits through valueChanges) */
-  public coverImage = toSignal(this.form.controls.cover_image.valueChanges, {
-    initialValue: this.form.controls.cover_image.value,
-  });
 
   public get formValidationMessage(): string {
     return getResourceFormValidationMessage(this.form);
@@ -79,12 +61,7 @@ export class ResourceLinkEditComponent implements OnInit {
     this.isCreate.set(!id || id === 'create');
     await this.service.ready();
     if (id && id !== 'create') {
-      const { data } = await this.service.tables.links.select<'*', IResourceLinkRow>('*').eq('id', id);
-      const resource = data?.[0];
-      if (resource) {
-        this.resourceOwner.set(resource.owner);
-        this.populateResource(resource);
-      }
+      await this.populateResource(id);
     }
   }
 
@@ -98,18 +75,29 @@ export class ResourceLinkEditComponent implements OnInit {
       type: (rawValues.type || 'web') as IResourceLinkInsert['type'],
       url: rawValues.url || '',
       cover_image: rawValues.cover_image || null,
-      country_code: (rawValues.country_code || null) as IResourceLinkInsert['country_code'],
-      ...(rawValues.id ? { id: rawValues.id } : {}),
+      country_code: (rawValues.country_code ||
+        this.deploymentService.activeDeploymentCountry()) as IResourceLinkInsert['country_code'],
     };
-    const { data, error } = await this.service.tables.links.upsert(values).select<'*', IResourceLinkRow>();
-    if (data && data.length > 0) {
-      this.notificationService.showSuccessNotification('Resource Link Saved');
-      await this.service.refresh();
-      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
-    }
-    if (error) {
+
+    try {
+      const query = rawValues.id
+        ? this.service.tables.links.update(values).eq('id', rawValues.id)
+        : this.service.tables.links.insert(values);
+      const { data, error } = await query.select<'*', IResourceLinkRow>().single();
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (data) {
+        await this.service.syncResourceCollections('links', data.id, rawValues.collections || []);
+
+        this.notificationService.showSuccessNotification('Resource Link Saved');
+        await this.service.refresh();
+        this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      }
+    } catch (err: unknown) {
       this.form.enable();
-      this.notificationService.showErrorNotification(error.message);
+      const message = err instanceof Error ? err.message : 'Failed to save resource link';
+      this.notificationService.showErrorNotification(message);
     }
   }
 
@@ -133,31 +121,29 @@ export class ResourceLinkEditComponent implements OnInit {
     });
   }
 
-  public handleStorageFileSelected(entry: IStorageEntry | undefined) {
-    const storagePath = entry ? `${entry.bucket_id}/${entry.name}` : '';
-    this.form.patchValue({ cover_image: storagePath });
-    this.form.controls.cover_image.markAsDirty();
-    this.form.markAsDirty();
-  }
-
-  public async handleUploadComplete(res: IUploadResult[]) {
-    if (res.length === 0) return;
-    const [{ meta }] = res;
-    const storagePath = `${meta.bucketName}/${meta.objectName}`;
-    this.form.patchValue({ cover_image: storagePath });
-    this.form.controls.cover_image.markAsDirty();
-    this.form.markAsDirty();
-  }
-
-  private populateResource(resource: IResourceLinkRow) {
-    this.form.patchValue({
-      id: resource.id,
-      title: resource.title || '',
-      description: resource.description || '',
-      type: resource.type || 'web',
-      url: resource.url || '',
-      cover_image: resource.cover_image || '',
-      country_code: resource.country_code || this.deploymentService.activeDeploymentCountry(),
-    });
+  private async populateResource(id: string) {
+    const countryCode = this.deploymentService.activeDeploymentCountry() as IResourceLinkRow['country_code'];
+    let query = this.service.tables.links.select<'*', IResourceLinkRow>('*').eq('id', id);
+    if (countryCode) {
+      query = query.eq('country_code', countryCode);
+    }
+    const { data } = await query;
+    const resource = data?.[0];
+    if (resource) {
+      this.resourceOwner.set(resource.owner);
+      const assignedCollections = this.service.getResourceCollections('links', resource.id).map((c) => c.id);
+      this.form.patchValue({
+        id: resource.id,
+        title: resource.title || '',
+        description: resource.description || '',
+        type: resource.type || 'web',
+        url: resource.url || '',
+        cover_image: resource.cover_image || '',
+        collections: assignedCollections,
+        country_code: resource.country_code || this.deploymentService.activeDeploymentCountry(),
+      });
+    } else {
+      this.router.navigate(['..'], { relativeTo: this.route });
+    }
   }
 }

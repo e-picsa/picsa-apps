@@ -6,6 +6,8 @@ import {
   inject,
   input,
   model,
+  OnDestroy,
+  OnInit,
   output,
   signal,
 } from '@angular/core';
@@ -62,7 +64,7 @@ export interface IUploadResult {
   styleUrls: ['./supabase-upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupabaseUploadComponent {
+export class SupabaseUploadComponent implements OnInit, OnDestroy {
   private supabaseService = inject(SupabaseService);
 
   /** Default height of file dropper */
@@ -121,6 +123,7 @@ export class SupabaseUploadComponent {
   }
 
   private storageService: SupabaseStorageService;
+  private isDestroyed = false;
 
   constructor() {
     // Apply restriction changes to a live Uppy instance
@@ -131,8 +134,15 @@ export class SupabaseUploadComponent {
 
   async ngOnInit() {
     await this.supabaseService.ready();
+    if (this.isDestroyed) return;
     this.storageService = this.supabaseService.storage;
     this.initUppy();
+  }
+
+  ngOnDestroy() {
+    this.isDestroyed = true;
+    this.uppy()?.close();
+    this.uppy.set(undefined);
   }
 
   public renameFile(originalName: string, newName: string) {
@@ -147,12 +157,12 @@ export class SupabaseUploadComponent {
     }
   }
 
-  private async initUppy() {
+  private initUppy() {
     // Create new Uppy instance, mapping configurable props
     const uppy = new Uppy({ debug: false, autoProceed: false, restrictions: this.restrictions() });
-    this.uppy.set(uppy);
     // Create custom upload to support upload to supabase
-    await this.registerSupabaseUppyUploader(uppy);
+    this.registerSupabaseUppyUploader(uppy);
+    this.uppy.set(uppy);
   }
 
   public async startUpload() {
@@ -172,7 +182,7 @@ export class SupabaseUploadComponent {
         cacheControl: 3600,
       };
       uppy.setFileMeta(file.id, meta);
-      await this.checkDuplicateUpload(file);
+      await this.checkDuplicateUpload(uppy, file);
     }
     const res = await uppy.upload();
     await this.handleUploadComplete(res);
@@ -192,7 +202,7 @@ export class SupabaseUploadComponent {
     this.uploadComplete.emit(uploads);
   }
 
-  private async registerSupabaseUppyUploader(uppy: Uppy) {
+  private registerSupabaseUppyUploader(uppy: Uppy) {
     const { anonKey, apiUrl } = this.supabaseService.config;
     uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
@@ -220,6 +230,7 @@ export class SupabaseUploadComponent {
     uppy.on('file-added', () => this.handleFileAdded());
     uppy.on('file-removed', () => this.fileChanged.emit(this.files[0]));
   }
+
   private handleFileAdded() {
     this.fileChanged.emit(this.files[0]);
     if (this.autoUpload()) {
@@ -227,7 +238,7 @@ export class SupabaseUploadComponent {
     }
   }
 
-  private async checkDuplicateUpload(file: UppyFile) {
+  private async checkDuplicateUpload(uppy: Uppy, file: UppyFile) {
     let storagePath = `${this.storageBucketName()}`;
     const folderPath = this.storageFolderPath();
     if (folderPath) {
@@ -236,7 +247,7 @@ export class SupabaseUploadComponent {
     storagePath += `/${file.name}`;
     const storageFile = await this.storageService.getFile(storagePath);
     if (storageFile) {
-      this.uppy()?.removeFile(file.id);
+      uppy.removeFile(file.id);
       throw new Error(`Resource with name ${file.name} already exists`);
     }
   }

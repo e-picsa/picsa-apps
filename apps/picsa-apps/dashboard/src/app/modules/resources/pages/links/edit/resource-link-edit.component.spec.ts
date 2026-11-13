@@ -1,9 +1,12 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
+import { DashboardStorageService, DashboardStorageUploadComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { ResourceLinkEditComponent } from './resource-link-edit.component';
 
@@ -24,8 +27,22 @@ describe('ResourceLinkEditComponent', () => {
     };
 
     const mockResourcesService = {
+      collections: signal([]),
       ready: () => Promise.resolve(),
       tables: { links: { select: () => ({ eq: () => Promise.resolve({ data: [] }) }) } },
+    };
+
+    const mockSupabaseService = {
+      ready: () => new Promise(() => undefined),
+      config: { apiUrl: 'http://localhost:54321', anonKey: 'test-key' },
+      storage: {
+        getFile: jest.fn().mockResolvedValue(null),
+        getPublicLink: jest.fn((bucket: string, path: string) => `http://localhost/${bucket}/${path}`),
+      },
+    };
+
+    const mockDashboardStorageService = {
+      getStorageFileByPath: jest.fn().mockResolvedValue(null),
     };
 
     await TestBed.configureTestingModule({
@@ -41,6 +58,8 @@ describe('ResourceLinkEditComponent', () => {
         },
         { provide: DeploymentDashboardService, useValue: mockDeploymentService },
         { provide: ResourcesDashboardService, useValue: mockResourcesService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: DashboardStorageService, useValue: mockDashboardStorageService },
       ],
     }).compileComponents();
 
@@ -48,6 +67,10 @@ describe('ResourceLinkEditComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  function getCoverUploadComponent(): DashboardStorageUploadComponent {
+    return fixture.debugElement.query(By.directive(DashboardStorageUploadComponent)).componentInstance;
+  }
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -69,21 +92,26 @@ describe('ResourceLinkEditComponent', () => {
     expect(component.form.enabled).toBe(true);
   });
 
-  it('should mark form and cover_image control dirty when cover image upload completes', async () => {
+  it('should mark form and cover_image control dirty when cover image upload completes', () => {
+    activeRoles.set(['resources.editor']);
+    fixture.detectChanges();
+
     expect(component.form.pristine).toBe(true);
     expect(component.form.controls.cover_image.pristine).toBe(true);
 
-    const mockUploadResult = [
+    const coverUpload = getCoverUploadComponent();
+    expect(coverUpload.maxFileSizeMB()).toBe(5);
+
+    coverUpload.handleUploadComplete([
       {
+        data: new File(['mock'], 'link-cover.png', { type: 'image/png' }),
         meta: {
           bucketName: 'mw',
           objectName: 'resources/covers/link-cover.png',
           cacheControl: 3600,
         },
       },
-    ];
-
-    await component.handleUploadComplete(mockUploadResult as any);
+    ]);
 
     expect(component.form.controls.cover_image.value).toBe('mw/resources/covers/link-cover.png');
     expect(component.form.controls.cover_image.dirty).toBe(true);
@@ -91,9 +119,13 @@ describe('ResourceLinkEditComponent', () => {
   });
 
   it('should mark form and cover_image control dirty when selecting or clearing storage file', () => {
+    activeRoles.set(['resources.editor']);
+    fixture.detectChanges();
+
     expect(component.form.pristine).toBe(true);
 
-    component.handleStorageFileSelected({
+    const coverUpload = getCoverUploadComponent();
+    coverUpload.handleStorageFileSelected({
       bucket_id: 'mw',
       name: 'resources/covers/existing.jpg',
       metadata: {} as any,
@@ -102,7 +134,7 @@ describe('ResourceLinkEditComponent', () => {
     expect(component.form.controls.cover_image.dirty).toBe(true);
     expect(component.form.dirty).toBe(true);
 
-    component.handleStorageFileSelected(undefined);
+    coverUpload.clearValue();
     expect(component.form.controls.cover_image.value).toBe('');
     expect(component.form.controls.cover_image.dirty).toBe(true);
     expect(component.form.dirty).toBe(true);

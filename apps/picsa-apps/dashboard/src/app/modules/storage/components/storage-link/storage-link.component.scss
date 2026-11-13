@@ -2,6 +2,15 @@
   display: block;
   max-width: 200px;
 }
+:host(.full-width) {
+  width: 100%;
+  max-width: none;
+
+  button.chip-button {
+    width: 100%;
+    background-color: #ffffff;
+  }
+}
 .error-message {
   color: var(--color-warn);
   overflow: hidden;

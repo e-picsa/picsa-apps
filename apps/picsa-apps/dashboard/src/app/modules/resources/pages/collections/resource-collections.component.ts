@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -10,19 +10,17 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow } from '../../types';
 
-interface IMergedCollection extends Omit<IResourceCollectionRow, 'collection_parent'> {
-  collection_parent?: IResourceCollectionRow;
+export interface ICollectionTableRow extends IResourceCollectionRow {
+  files_count: number;
+  links_count: number;
 }
 
-const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
+const DISPLAY_COLUMNS: (keyof ICollectionTableRow)[] = [
   'cover_image',
   'title',
   'description',
-  // 'resource_collections',
-  // 'resource_files',
-  // 'resource_links',
-  'collection_parent',
-  // 'sort_order',
+  'resource_files',
+  'resource_links',
   'modified_at',
 ];
 
@@ -37,11 +35,10 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
     AuthRoleRequiredDirective,
   ],
   templateUrl: './resource-collections.component.html',
-  styleUrl: './resource-collections.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionsComponent implements OnInit {
-  private service = inject(ResourcesDashboardService);
+  public service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private deploymentService = inject(DeploymentDashboardService);
@@ -51,55 +48,38 @@ export class ResourceCollectionsComponent implements OnInit {
     return deployment?.label || deployment?.country_code?.toUpperCase() || '';
   });
 
-  public collections: IMergedCollection[] = [];
+  public collections = computed<ICollectionTableRow[]>(() => {
+    const rawCollections = [...this.service.collections()];
+    const sorted = rawCollections.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
+
+    return sorted.map((col) => ({
+      ...col,
+      files_count: col.resource_files?.length ?? 0,
+      links_count: col.resource_links?.length ?? 0,
+    }));
+  });
+
   public tableOptions: IDataTableOptions = {
-    displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (collection: IMergedCollection, e) => {
+    displayColumns: DISPLAY_COLUMNS as string[],
+    handleRowClick: (collection: ICollectionTableRow, e) => {
       e.stopImmediatePropagation();
       this.router.navigate([collection.id], { relativeTo: this.route });
     },
     formatHeader: (v) => {
-      switch (v as keyof IMergedCollection) {
-        case 'resource_collections':
-          return 'Child Collections';
+      switch (v) {
         case 'resource_files':
           return 'Files';
         case 'resource_links':
           return 'Links';
-        case 'collection_parent':
-          return 'Parent Collection';
+        case 'modified_at':
+          return 'Updated';
         default:
           return formatHeaderDefault(v);
       }
     },
   };
 
-  constructor() {
-    effect(() => {
-      const collectionsHashmap = this.service.collectionsById();
-      const collections = this.service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));
-      this.collections = collections.sort(this.sortCollections);
-    });
-  }
   async ngOnInit() {
     await this.service.ready();
-  }
-
-  private mergeCollectionData(
-    collection: IResourceCollectionRow,
-    collectionsHashmap: Record<string, IResourceCollectionRow>,
-  ): IMergedCollection {
-    return {
-      ...collection,
-      collection_parent: collectionsHashmap[collection.collection_parent || ''],
-    };
-  }
-
-  /** Sort collections first by name of parent (root collections first), then by modified date   */
-  private sortCollections(a: IMergedCollection, b: IMergedCollection) {
-    if (a.collection_parent === b.collection_parent) {
-      return b.modified_at > a.modified_at ? 1 : -1;
-    }
-    return (b.collection_parent || '') > (a.collection_parent || '') ? -1 : 1;
   }
 }

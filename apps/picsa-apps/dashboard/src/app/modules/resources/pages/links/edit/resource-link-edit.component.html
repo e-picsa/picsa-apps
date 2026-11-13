@@ -2,49 +2,21 @@
   <h2>{{ canEdit() ? (isCreate() ? 'Create Resource Link' : 'Edit Resource Link') : 'View Resource Link' }}</h2>
 
   <form [formGroup]="form">
-    <div class="form-content" style="display: flex; flex-direction: column; gap: 1rem; max-width: 600px">
+    <div class="flex flex-col gap-4 max-w-xl">
       <!-- Cover Image -->
-      <div>
-        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem">Cover Image</label>
-        @if (coverImage(); as coverImagePath) {
-          <dashboard-storage-link [id]="coverImagePath ?? ''" displayStyle="button"></dashboard-storage-link>
-          @if (canEdit()) {
-            <button matIconButton class="file-remove" (click)="handleStorageFileSelected(undefined)">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-          <img
-            class="cover-preview"
-            [src]="coverImagePath | storagePath"
-            style="margin-top: 8px; max-height: 120px; display: block; border-radius: 4px"
-          />
-        } @else if (canEdit()) {
-          <picsa-supabase-upload
-            [fileTypes]="allowedCoverTypes"
-            [fileDropHeight]="100"
-            [autoUpload]="true"
-            [maxFileSizeMB]="5"
-            [storageBucketName]="storageBucketName()"
-            storageFolderPath="resources/covers"
-            (uploadComplete)="handleUploadComplete($event)"
-          ></picsa-supabase-upload>
-          <button
-            matButton
-            color="primary"
-            supabaseStoragePicker
-            [storageBucketName]="storageBucketName()"
-            storageFolderPath="resources/covers"
-            (storageFileSelected)="handleStorageFileSelected($event)"
-            style="margin-top: 4px"
-          >
-            <mat-icon>perm_media</mat-icon>
-            Select existing file
-          </button>
-        }
-      </div>
+      <dashboard-storage-upload
+        label="Cover Image"
+        formControlName="cover_image"
+        [fileTypes]="allowedCoverTypes"
+        [fileDropHeight]="100"
+        [maxFileSizeMB]="5"
+        [storageBucketName]="storageBucketName()"
+        storageFolderPath="resources/covers"
+        [showImagePreview]="true"
+      />
 
       <!-- Title -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" />
         @if (form.controls.title.errors?.['required']) {
@@ -53,7 +25,7 @@
       </mat-form-field>
 
       <!-- URL -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>URL</mat-label>
         <input matInput type="text" formControlName="url" placeholder="https://..." />
         @if (form.controls.url.errors) {
@@ -62,7 +34,7 @@
       </mat-form-field>
 
       <!-- Type -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Type</mat-label>
         <mat-select formControlName="type">
           <mat-option value="web">Website</mat-option>
@@ -72,25 +44,40 @@
       </mat-form-field>
 
       <!-- Description -->
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="w-full">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+
+      <!-- Collections Assignment -->
+      <mat-form-field class="w-full">
+        <mat-label>Collections</mat-label>
+        <mat-select formControlName="collections" multiple>
+          @for (collection of collections(); track collection.id) {
+            <mat-option [value]="collection.id">{{ collection.title }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Choose which collection(s) this link belongs to.</mat-hint>
       </mat-form-field>
     </div>
 
     @if (canEdit()) {
-      <div style="margin-top: 2rem; display: flex; align-items: center; max-width: 600px">
+      <div class="mt-8 flex items-center gap-4 max-w-xl">
         <button matButton="outlined" [disabled]="!form.valid || form.pristine" (click)="saveResource()">
           <mat-icon>done</mat-icon>
           Save Resource
         </button>
         @if (!form.valid || form.pristine) {
-          <span class="validation-message" style="margin-left: 1rem; color: #666; font-size: 0.875rem">{{
-            formValidationMessage
-          }}</span>
+          <span
+            class="text-sm italic"
+            [class.text-gray-500]="form.pristine"
+            [class.text-red-600]="!form.pristine && !form.valid"
+          >
+            {{ formValidationMessage }}
+          </span>
         }
         @if (form.valid && !isCreate()) {
-          <button style="margin-left: auto" matButton color="warn" (click)="promptDelete()">
+          <button class="ml-auto" matButton color="warn" (click)="promptDelete()">
             <mat-icon>delete</mat-icon>
             Delete Resource
           </button>

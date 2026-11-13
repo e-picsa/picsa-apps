@@ -1,0 +1,92 @@
+@if (label(); as fieldLabel) {
+  <label class="block font-medium text-sm text-slate-700 mb-2">{{ fieldLabel }}</label>
+}
+
+<div
+  [class]="
+    cardStyle() !== 'none'
+      ? 'file-card flex flex-col items-stretch gap-2 p-3 rounded-lg border border-solid flex-1 min-w-0 ' +
+        (cardStyle() === 'resource'
+          ? 'resource-card bg-slate-100 border-slate-300'
+          : 'cover-card bg-gray-100 border-gray-300')
+      : ''
+  "
+>
+  @if (value(); as storagePath) {
+    <div class="flex items-center gap-1 w-full">
+      <dashboard-storage-link
+        #storageLink
+        [id]="storagePath"
+        displayStyle="button"
+        [fullWidth]="cardStyle() !== 'none'"
+      />
+      @if (!isDisabled() && cardStyle() === 'none') {
+        <button type="button" matIconButton (click)="clearValue()" [matTooltip]="removeTooltip()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    @if (!isDisabled() && cardStyle() !== 'none') {
+      <button
+        type="button"
+        matButton="outlined"
+        color="primary"
+        class="mt-2 self-start bg-white whitespace-nowrap"
+        (click)="clearValue()"
+        [matTooltip]="removeTooltip()"
+        aria-label="Change file"
+      >
+        <mat-icon>autorenew</mat-icon>
+        Change File
+      </button>
+    }
+    @if (showImagePreview()) {
+      <img
+        class="block mt-2 max-w-[200px] max-h-40 object-contain rounded border border-solid border-slate-200 bg-slate-50"
+        [src]="storageLink.entry()?.publicUrl || (storagePath | storagePath)"
+        alt="Cover Preview"
+      />
+    }
+  } @else if (!isDisabled()) {
+    <picsa-supabase-upload
+      [fileTypes]="fileTypes()"
+      [fileDropHeight]="fileDropHeight()"
+      [autoUpload]="autoUpload()"
+      [maxFileSizeMB]="maxFileSizeMB()"
+      [storageBucketName]="storageBucketName() || 'global'"
+      [storageFolderPath]="storageFolderPath()"
+      (uploadComplete)="handleUploadComplete($event)"
+    />
+    @if (cardStyle() !== 'none') {
+      <button
+        type="button"
+        matButton="outlined"
+        color="primary"
+        class="mt-2 self-start bg-white whitespace-nowrap"
+        supabaseStoragePicker
+        [storageBucketName]="storageBucketName()"
+        [storageFolderPath]="storageFolderPath()"
+        (storageFileSelected)="handleStorageFileSelected($event)"
+        [matTooltip]="pickerTooltip()"
+      >
+        <mat-icon>perm_media</mat-icon>
+        Choose Uploaded
+      </button>
+    } @else {
+      <button
+        type="button"
+        matButton
+        color="primary"
+        class="mt-1"
+        supabaseStoragePicker
+        [storageBucketName]="storageBucketName()"
+        [storageFolderPath]="storageFolderPath()"
+        (storageFileSelected)="handleStorageFileSelected($event)"
+        [matTooltip]="pickerTooltip()"
+      >
+        <mat-icon>perm_media</mat-icon>
+        Select existing file
+      </button>
+    }
+  }
+</div>

@@ -3,13 +3,16 @@
     <!-- chip style -->
     @case ('button') {
       <button
+        type="button"
         class="chip-button filetype-icon"
         matButton
-        [attr.data-icon]="fileTypeIcon"
+        [attr.data-icon]="fileTypeIcon()"
         [title]="entryName()"
         (click)="handleLinkClick(e.publicUrl)"
       >
-        <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
+        <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon()">{{
+          fileTypeIcon()
+        }}</mat-icon>
         <div class="chip-text filename">
           <span>{{ entryName() }}</span>
         </div>
@@ -23,13 +26,13 @@
     }
     <!-- default style -->
     @default {
-      <div style="display: flex; align-items: center">
-        <mat-icon class="filetype-icon default-icon" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
-        <div class="filename" style="margin-left: 8px">{{ entryName() }}</div>
+      <div class="flex items-center">
+        <mat-icon class="filetype-icon default-icon" [attr.data-icon]="fileTypeIcon()">{{ fileTypeIcon() }}</mat-icon>
+        <div class="filename ml-2">{{ entryName() }}</div>
       </div>
     }
   }
 }
-@if (notFound) {
+@if (notFound()) {
   <p class="error-message">Not Found<br />{{ id() }}</p>
 }

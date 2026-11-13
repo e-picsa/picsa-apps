@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+picsa-supabase-upload {
+  width: 100%;
+  max-width: 284px;
+}
+
+.file-card picsa-supabase-upload {
+  max-width: none;
+
+  &::ng-deep .uppy-Dashboard-inner {
+    background-color: #ffffff;
+  }
+}

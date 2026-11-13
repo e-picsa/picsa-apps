@@ -1,10 +1,14 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/i18n';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardAuthService } from '../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
+import { DashboardStorageService, DashboardStorageUploadComponent } from '../../../../storage';
+import { ResourcesDashboardService } from '../../../resources.service';
 import { ResourceFileEditComponent } from './resource-file-edit.component';
 
 describe('ResourceFileEditComponent', () => {
@@ -28,12 +32,35 @@ describe('ResourceFileEditComponent', () => {
       activeDeploymentCountry: () => mockDeployment()?.country_code,
     };
 
+    const mockResourcesService = {
+      collections: signal([]),
+      ready: () => Promise.resolve(),
+      tables: { files: { select: () => ({ eq: () => Promise.resolve({ data: [] }) }) } },
+      getResourceCollections: () => [],
+    };
+
+    const mockSupabaseService = {
+      ready: () => new Promise(() => undefined),
+      config: { apiUrl: 'http://localhost:54321', anonKey: 'test-key' },
+      storage: {
+        getFile: jest.fn().mockResolvedValue(null),
+        getPublicLink: jest.fn((bucket: string, path: string) => `http://localhost/${bucket}/${path}`),
+      },
+    };
+
+    const mockDashboardStorageService = {
+      getStorageFileByPath: jest.fn().mockResolvedValue(null),
+    };
+
     await TestBed.configureTestingModule({
       imports: [ResourceFileEditComponent, PicsaTranslateModule.forRoot()],
       providers: [
         provideRouter([]),
         { provide: DashboardAuthService, useValue: mockAuthService },
         { provide: DeploymentDashboardService, useValue: mockDeploymentService },
+        { provide: ResourcesDashboardService, useValue: mockResourcesService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: DashboardStorageService, useValue: mockDashboardStorageService },
       ],
     }).compileComponents();
 
@@ -41,6 +68,16 @@ describe('ResourceFileEditComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  function getUploadComponent(folder: string): DashboardStorageUploadComponent {
+    const uploadDebugEl = fixture.debugElement
+      .queryAll(By.directive(DashboardStorageUploadComponent))
+      .find((el) => (el.componentInstance as DashboardStorageUploadComponent).storageFolderPath() === folder);
+    if (!uploadDebugEl) {
+      throw new Error(`DashboardStorageUploadComponent for folder '${folder}' not found`);
+    }
+    return uploadDebugEl.componentInstance as DashboardStorageUploadComponent;
+  }
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -79,11 +116,17 @@ describe('ResourceFileEditComponent', () => {
     expect(languages.some((l) => l.id === 'mw_en')).toBe(true);
   });
 
-  it('should mark form and cover_image control dirty when cover image upload completes', async () => {
+  it('should mark form and cover_image control dirty when cover image upload completes', () => {
+    mockRoles.set(['resources.editor']);
+    fixture.detectChanges();
+
     expect(component.form.pristine).toBe(true);
     expect(component.form.controls.cover_image.pristine).toBe(true);
 
-    const mockUploadResult = [
+    const coverUpload = getUploadComponent('resources/covers');
+    expect(coverUpload.maxFileSizeMB()).toBe(5);
+
+    coverUpload.handleUploadComplete([
       {
         meta: {
           bucketName: 'mw',
@@ -92,9 +135,7 @@ describe('ResourceFileEditComponent', () => {
         },
         data: new File(['mock'], 'sample.png', { type: 'image/png' }),
       },
-    ];
-
-    await component.handleUploadComplete(mockUploadResult as any, 'cover_image');
+    ]);
 
     expect(component.form.controls.cover_image.value).toBe('mw/resources/covers/sample.png');
     expect(component.form.controls.cover_image.dirty).toBe(true);
@@ -103,28 +144,37 @@ describe('ResourceFileEditComponent', () => {
   });
 
   it('should mark form and cover_image control dirty when selecting or clearing cover image from storage', () => {
+    mockRoles.set(['resources.editor']);
+    fixture.detectChanges();
+
     expect(component.form.pristine).toBe(true);
 
-    component.handleStorageFileSelected(
-      { bucket_id: 'mw', name: 'resources/covers/existing.jpg', metadata: {} as any },
-      'cover_image',
-    );
+    const coverUpload = getUploadComponent('resources/covers');
+    coverUpload.handleStorageFileSelected({
+      bucket_id: 'mw',
+      name: 'resources/covers/existing.jpg',
+      metadata: {} as any,
+    });
 
     expect(component.form.controls.cover_image.value).toBe('mw/resources/covers/existing.jpg');
     expect(component.form.controls.cover_image.dirty).toBe(true);
     expect(component.form.dirty).toBe(true);
 
     // Clearing cover image
-    component.handleStorageFileSelected(undefined, 'cover_image');
+    coverUpload.clearValue();
     expect(component.form.controls.cover_image.value).toBe('');
     expect(component.form.controls.cover_image.dirty).toBe(true);
     expect(component.form.dirty).toBe(true);
   });
 
-  it('should mark form and storage_file control dirty when resource file upload completes', async () => {
+  it('should mark form and storage_file control dirty and populate metadata when resource file upload completes', () => {
+    mockRoles.set(['resources.editor']);
+    fixture.detectChanges();
+
     expect(component.form.pristine).toBe(true);
 
-    const mockUploadResult = [
+    const fileUpload = getUploadComponent('resources');
+    fileUpload.handleUploadComplete([
       {
         meta: {
           bucketName: 'mw',
@@ -133,11 +183,11 @@ describe('ResourceFileEditComponent', () => {
         },
         data: new File(['mock pdf content'], 'manual.pdf', { type: 'application/pdf' }),
       },
-    ];
-
-    await component.handleUploadComplete(mockUploadResult as any, 'storage_file');
+    ]);
 
     expect(component.form.controls.storage_file.value).toBe('mw/resources/manual.pdf');
+    expect(component.form.controls.filename.value).toBe('manual.pdf');
+    expect(component.form.controls.mimetype.value).toBe('application/pdf');
     expect(component.form.controls.storage_file.dirty).toBe(true);
     expect(component.form.dirty).toBe(true);
   });

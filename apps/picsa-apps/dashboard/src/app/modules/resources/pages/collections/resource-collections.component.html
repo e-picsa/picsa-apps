@@ -1,58 +1,52 @@
 <div class="page-content">
-  <div style="display: flex; align-items: center; gap: 0.75rem">
-    <h2 style="margin: 0">Resource Collections</h2>
+  <div class="flex items-center gap-3">
+    <h2 class="m-0">Resource Collections</h2>
     @if (activeCountry()) {
       <mat-chip-set>
         <mat-chip>{{ activeCountry() }}</mat-chip>
       </mat-chip-set>
     }
-    <button
-      *roleRequired="'resources.editor'"
-      matButton="outlined"
-      color="primary"
-      routerLink="create"
-      style="margin-left: auto"
-      [disabled]="true"
-    >
+    <button *roleRequired="'resources.editor'" matButton="outlined" color="primary" routerLink="create" class="ml-auto">
       <mat-icon>add</mat-icon>
       Add Collection
     </button>
   </div>
-  <p>
-    Here you can find resources that have been grouped to form a collection.
-    <br />
-    Collections can also contain nested sub-collections
-  </p>
+  <p>Top-level collections shown to farmers and extension workers in the mobile app.</p>
 
   <picsa-data-table
-    [data]="collections"
+    [data]="collections()"
     [options]="tableOptions"
     [valueTemplates]="{
-      modified_at: modifiedAtTemplate,
       cover_image: coverImageTemplate,
-      collection_parent: collectionParentTemplate,
+      resource_files: resourceFilesTemplate,
+      resource_links: resourceLinksTemplate,
+      modified_at: modifiedAtTemplate,
     }"
   >
-    <!-- cover image -->
-    <ng-template #coverImageTemplate let-coverImage>
+    <!-- Cover Image -->
+    <ng-template #coverImageTemplate let-coverImage let-row="row">
       @if (coverImage) {
-        <img class="cover-image" [src]="coverImage | storagePath" />
-      }
-    </ng-template>
-    <!-- parent collection -->
-    <ng-template #collectionParentTemplate let-collection>
-      @if (collection?.cover_image) {
         <img
-          class="cover-image color-on-hover"
-          [src]="collection.cover_image | storagePath"
-          [matTooltip]="collection.title"
+          class="w-11 h-11 object-contain block rounded"
+          [src]="coverImage | storagePath"
+          [alt]="row?.title || 'Collection cover'"
         />
       }
     </ng-template>
 
-    <!-- modified date -->
+    <!-- Files Count: plain number -->
+    <ng-template #resourceFilesTemplate let-files let-row="row">
+      {{ row.files_count }}
+    </ng-template>
+
+    <!-- Links Count: plain number -->
+    <ng-template #resourceLinksTemplate let-links let-row="row">
+      {{ row.links_count }}
+    </ng-template>
+
+    <!-- Modified Date -->
     <ng-template #modifiedAtTemplate let-date>
       {{ date | date: 'mediumDate' }}
-    </ng-template></picsa-data-table
-  >
+    </ng-template>
+  </picsa-data-table>
 </div>

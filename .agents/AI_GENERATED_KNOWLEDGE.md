@@ -197,12 +197,15 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **JWT Claim**: `custom_access_token_hook` injects deployment-keyed roles into the JWT `picsa_roles` claim.
 - **Client Authorization**:
   - Always check permissions using `DashboardAuthService.hasRole(role: AppRole)`.
-  - Route protection uses the functional `authRoleGuard` (`roleRequired` in `defineFeature`).
+  - Route protection uses the functional `authRoleGuard` (`roleRequired` in `defineFeature`), which awaits `isAuthChecked`, `isDeploymentChecked`, and `DashboardAuthService.activeDeploymentId` synchronization before checking `hasRole` so hard refreshes/deep links do not fail prematurely.
   - Template protection uses `AuthRoleRequiredDirective` whose selector is `[roleRequired]` (use `*roleRequired="'crop.editor'"`, **not** `*authRoleRequired`).
-- **Resources Ownership Rule**: `resources.editor` can create new resources and edit/delete **only** rows where `owner = auth.uid()`; `resources.admin` can edit/delete any resource in the deployment.
-- **Resources Architecture & App Sync**:
+- **Resources Ownership & Collection Rules**: `resources.editor` can create new files/links/collections, edit/delete **only** `resource_files` / `resource_links` rows where `owner = auth.uid()`, and edit any `resource_collections` in their deployment (collection deletion remains restricted to `resources.admin` or `owner`); `resources.admin` can edit/delete any resource or collection in the deployment.
+- **Resources Architecture, Collections & App Sync**:
   - The farmer mobile app (`apps/picsa-tools/resources-tool`) currently reads static bundled assets loaded into local RxDB collections (`resources_tool_collections`, `resources_tool_files`, `resources_tool_links`) via `populateHardcodedResources()`.
-  - Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`, which queries `resource_collections`, `resource_files`, and `resource_links`, strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
+  - **Top-Level Collections Only**: Sub-collections are prohibited in the dashboard and app bundles (`collection_parent = null`, `resource_collections = []`) to prevent manual curation sprawl and hierarchy nesting bugs.
+  - **Dashboard Display Ordering**: In the dashboard, collections are displayed sorted by `modified_at` descending (manual `sort_order` editing was removed from the collection edit form); the mobile app `ResourcesToolService.topLevelCollections` still reads `sort_order` if present.
+  - **Bidirectional Collection Assignment**: Assigning resources to collections works bidirectionally. Updating a collection's files/links or editing a file/link's `collections` multi-select synchronizes `resource_files` / `resource_links` on all affected collection rows (`syncResourceCollections`). Deleting a collection deletes unreferenced cover images from Supabase storage; deleting a file/link cleans up unreferenced storage objects without batch-mutating collection rows (the sync script strips dangling IDs on bundle export).
+  - **Sync Script Sanitization (`sync-resources.ts`)**: Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`. The script strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), strips dangling file/link IDs that no longer exist in `resource_files` or `resource_links`, forces `collection_parent = null` and `resource_collections = []`, sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
   - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
   - **Download Manager Scoping (`/resources/downloads`)**: The in-app download manager handles all downloadable files across the current deployment from `resources_tool_files` (not solely extension resource bundles). Download sources comprise: (1) extension files from `RESOURCE_MANIFESTS[country_code]`, (2) manuals from `PICSA_MANUAL_RESOURCES` (matching `filter.countries` or `global_en`), and (3) farmer videos from `RESOURCE_VIDEO_HASHMAP` (matching `${country_code}_*` or `global_*`). Scoping checks `activeManifest.filesById` (extension resources), `resource.filter?.countries` (manuals), and `resource.language.startsWith(...)` (videos / global files), strictly excluding other countries' assets while preserving language filtering and global fallbacks.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
@@ -419,6 +422,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 ### Strict Country Scoping for Dashboard Resources
 
 - **No Global Resource Bleed**: Resources uploaded within country deployments must be strictly scoped to `country_code` (`.eq('country_code', countryCode)`). Avoid falling back to `'global'` for downloadable files or external links unless explicitly designed as universal cross-border fixtures, ensuring clear tenant isolation and accurate deployment context badges.
+
+### Dashboard Storage Upload & Zoneless Change Detection
+
+- **Async `ngOnInit` in Zoneless Dashboard**: The dashboard uses `provideZonelessChangeDetection()`. In `SupabaseUploadComponent`, `ngOnInit` awaits `supabaseService.ready()` before instantiating `Uppy` (`await` yields to a microtask after the synchronous render pass). Any state populated after `await` (`uppy`, `dashboardOptions`, file-picker `bucketEntries`/`globalEntries`) **must** be stored in Angular `signal()`s; plain class fields fail to re-render when the uploader is toggled/remounted (e.g., removing a cover image).
+- **Shared Storage Upload CVA (`DashboardStorageUploadComponent`)**: Use `<dashboard-storage-upload formControlName="...">` (`apps/picsa-apps/dashboard/src/app/modules/storage`) instead of duplicating `@if (form.value.*)` + `<picsa-supabase-upload>` + `supabaseStoragePicker` + `<dashboard-storage-link>` blocks across resource forms.
 
 ### Script Invocation & Argument Documentation Convention
 

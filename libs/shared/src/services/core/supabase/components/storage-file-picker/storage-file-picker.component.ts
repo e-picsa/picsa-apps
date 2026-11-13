@@ -6,6 +6,7 @@ import {
   HostListener,
   inject,
   input,
+  OnInit,
   output,
   signal,
 } from '@angular/core';
@@ -65,7 +66,7 @@ export class SupabaseStoragePickerDirective {
   styleUrls: ['./storage-file-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupabaseStorageFilePickerComponent {
+export class SupabaseStorageFilePickerComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
   private dialogData = inject<IStoragePickerData>(MAT_DIALOG_DATA, { optional: true });
 
@@ -76,7 +77,7 @@ export class SupabaseStorageFilePickerComponent {
   /** List of storage entries found within global folder path */
   readonly globalEntries = signal<IStorageEntry[]>([]);
 
-  /** List of storage entries found withing named bucket folder path */
+  /** List of storage entries found within named bucket folder path */
   readonly bucketEntries = signal<IStorageEntry[]>([]);
 
   readonly selected = signal<IStorageEntry[]>([]);
