@@ -97,10 +97,14 @@ apps/picsa-scripts/.cache
 *.sync-cache.json
 
 # Agent local cache & triage state
+.agents/*.cache.json
+.agents/pr-triage-cache.json
+# Legacy .agent cache paths (kept so teammates pulling the rename don't get untracked files)
 .agent/*.cache.json
 .agent/pr-triage-cache.json
+.agent/tmp
 
 # Agent worktree audit companion report (regenerated on every run)
 tools/ai/ai-worktree-audit-report.md
 # repo-templates:repo-audit
-.agent/tmp
+.agents/tmp

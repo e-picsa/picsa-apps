@@ -3,7 +3,7 @@
  *
  * Scans the monorepo for TypeScript path aliases (@picsa/*) and code symbols
  * (services, components, directives, pipes) plus Supabase migrations, and writes
- * the results to .agent/generated-repo-map.md for agent context.
+ * the results to .agents/generated-repo-map.md for agent context.
  *
  * Usage:
  *   yarn ai:gen-codemap
@@ -16,7 +16,7 @@ import { Project, SyntaxKind } from 'ts-morph';
 
 const ROOT_DIR = path.resolve(__dirname, '../../../');
 const TSCONFIG_PATH = path.join(ROOT_DIR, 'tsconfig.base.json');
-const OUTPUT_PATH = path.join(ROOT_DIR, '.agent/generated-repo-map.md');
+const OUTPUT_PATH = path.join(ROOT_DIR, '.agents/generated-repo-map.md');
 
 interface PathAlias {
   alias: string;
@@ -260,7 +260,7 @@ function run() {
   fs.writeFileSync(OUTPUT_PATH, md, 'utf-8');
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(
-    `Repository map written to .agent/generated-repo-map.md in ${duration}s (${fileSummaries.length} files processed).`,
+    `Repository map written to .agents/generated-repo-map.md in ${duration}s (${fileSummaries.length} files processed).`,
   );
 }
 

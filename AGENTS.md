@@ -11,16 +11,16 @@ The architecture consists of a "Super App" (`apps/picsa-apps/app`) that acts as 
 
 ## Detailed Context
 
-Please refer to the following files in `.agent/rules/` for deep context:
+Please refer to the following files in `.agents/rules/` for deep context:
 
-- **[Codebase Map](.agent/codebase-map.md)**: Architecture, directory structure, and relationship between the Super App and tools.
-- **[Generated Symbol Map](.agent/generated-repo-map.md)**: Automatically generated symbol graph, `@picsa/*` path aliases, and component/service declarations. Run `yarn ai:gen-codemap` to update.
-- **[Tech Stack](.agent/rules/tech-stack.md)**: Detailed stack info, constraints (MobX, Tailwind preferences), and library versions.
-- **[Best Practices](.agent/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
-- **[Testing](.agent/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
-- **[UI & Theming](.agent/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
-- **[PR: Review](.agent/skills/pr-review/SKILL.md)**: Project-tailored workflow for conducting initial PR reviews (scope creep, over-engineering, code smells, util extraction, and maintainability).
-- **[PR: Address Feedback](.agent/skills/pr-address-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
+- **[Codebase Map](.agents/codebase-map.md)**: Architecture, directory structure, and relationship between the Super App and tools.
+- **[Generated Symbol Map](.agents/generated-repo-map.md)**: Automatically generated symbol graph, `@picsa/*` path aliases, and component/service declarations. Run `yarn ai:gen-codemap` to update.
+- **[Tech Stack](.agents/rules/tech-stack.md)**: Detailed stack info, constraints (MobX, Tailwind preferences), and library versions.
+- **[Best Practices](.agents/skills/angular/SKILL.md)**: Guidelines for modern Angular 21 development (Signals, Control Flow, Standalone).
+- **[Testing](.agents/rules/testing.md)**: Instructions for running and writing tests (Jest/Cypress).
+- **[UI & Theming](.agents/skills/ui-theming/SKILL.md)**: detailed Tailwind CSS usage guidelines, including semantic color usage and theming best practices.
+- **[PR: Review](.agents/skills/pr-review/SKILL.md)**: Project-tailored workflow for conducting initial PR reviews (scope creep, over-engineering, code smells, util extraction, and maintainability).
+- **[PR: Address Feedback](.agents/skills/pr-address-feedback/SKILL.md)**: Guidelines and triage matrix for resolving automated and human PR feedback without re-work loops.
 
 ## Core Principles
 
@@ -42,11 +42,10 @@ Please refer to the following files in `.agent/rules/` for deep context:
 
 ## Agent Meta-Instructions
 
-This file (`AGENTS.md`) is symlinked to `.cursorrules`, `gemini.md`, and other IDE-specific instruction files to ensure automatic context ingestion across all agentic tools (Gemini, Cursor, OpenCode, Copilot, etc.).
+`AGENTS.md` is the single canonical entrypoint for agentic tools across the repository (configured via `.gemini/settings.json` for Gemini and natively read by Cursor, OpenCode, Codex, etc.).
 **IMPORTANT**:
 
-1. These rule files are the **SAME FILE**. Do not read more than one of them to conserve context window.
-2. You **MUST** still reference the detailed documentation files in the `.agent/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
+1. Reference the detailed documentation files in the `.agents/rules/` folder (e.g., `codebase-map.md`, `tech-stack.md`) when relevant to your task. These provide essential project-specific "Rules".
 
 ### Worktree Initialisation (Run First in New Worktrees)
 
@@ -93,9 +92,9 @@ To avoid overloading the context window and consuming excessive tokens, all AI/A
 
 ## Self-Documentation & Codebase Knowledge Maintenance
 
-As an intelligent agent, you are responsible for maintaining the project's institutional memory in `.agent/AI_GENERATED_KNOWLEDGE.md`.
+As an intelligent agent, you are responsible for maintaining the project's institutional memory in `.agents/AI_GENERATED_KNOWLEDGE.md`.
 
-1. **Consult Before Acting**: Check `.agent/AI_GENERATED_KNOWLEDGE.md` for known gotchas (runtime incompatibilities, Supabase triggers, bundler traps, offline quirks) relevant to your task.
+1. **Consult Before Acting**: Check `.agents/AI_GENERATED_KNOWLEDGE.md` for known gotchas (runtime incompatibilities, Supabase triggers, bundler traps, offline quirks) relevant to your task.
 2. **When to Add Knowledge (High Quality Threshold)**:
    Add or update an entry ONLY if you encounter a non-obvious trap, unexpected runtime behavior, or codebase-specific constraint that:
    - Caused unexpected failures or required non-trivial debugging.
@@ -117,7 +116,7 @@ As an intelligent agent, you are responsible for maintaining the project's insti
      - New Angular services (`@Injectable`), components (`@Component`), directives (`@Directive`), or pipes (`@Pipe`).
      - New Supabase edge functions (`apps/picsa-server/supabase/functions/`), server utils, or database SQL migrations (`apps/picsa-server/supabase/migrations/*.sql`).
      - New tools in `apps/picsa-tools/` or deployable apps in `apps/picsa-apps/`.
-   - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agent/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.
+   - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agents/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.
 
 <!-- repo-templates:repo-audit:start -->
 ### Repo Audit Skill (Structured Codebase Audits)

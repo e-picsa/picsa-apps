@@ -4,38 +4,38 @@
 
 ## TypeScript Path Aliases (`@picsa/*`)
 
-| Alias | Target Path |
-| :--- | :--- |
-| `@picsa/*` | `libs/*` |
-| `@picsa/budget/*` | `apps/picsa-tools/budget-tool/*` |
-| `@picsa/climate/*` | `apps/picsa-tools/climate-tool/*` |
-| `@picsa/components` | `libs/components/src/index.ts` |
-| `@picsa/components/*` | `libs/components/src/components/*` |
-| `@picsa/configuration` | `libs/configuration/src/index.ts` |
-| `@picsa/crop-probability/*` | `apps/picsa-tools/crop-probability-tool/*` |
-| `@picsa/dashboard/*` | `apps/sites/dashboard/*` |
-| `@picsa/data` | `libs/data/index.ts` |
-| `@picsa/environments` | `libs/environments/src/index.ts` |
-| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*` |
-| `@picsa/farmer-content/*` | `apps/picsa-tools/farmer-content/*` |
-| `@picsa/forecasts/*` | `apps/picsa-tools/forecasts-tool/src/app/*` |
-| `@picsa/forms` | `libs/forms` |
-| `@picsa/i18n` | `libs/i18n/src/index.ts` |
-| `@picsa/i18n/*` | `libs/i18n/src/*` |
-| `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
-| `@picsa/migrations` | `libs/migrations/index.ts` |
-| `@picsa/models` | `libs/models/index.ts` |
-| `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
-| `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
+| Alias                        | Target Path                                 |
+| :--------------------------- | :------------------------------------------ |
+| `@picsa/*`                   | `libs/*`                                    |
+| `@picsa/budget/*`            | `apps/picsa-tools/budget-tool/*`            |
+| `@picsa/climate/*`           | `apps/picsa-tools/climate-tool/*`           |
+| `@picsa/components`          | `libs/components/src/index.ts`              |
+| `@picsa/components/*`        | `libs/components/src/components/*`          |
+| `@picsa/configuration`       | `libs/configuration/src/index.ts`           |
+| `@picsa/crop-probability/*`  | `apps/picsa-tools/crop-probability-tool/*`  |
+| `@picsa/dashboard/*`         | `apps/sites/dashboard/*`                    |
+| `@picsa/data`                | `libs/data/index.ts`                        |
+| `@picsa/environments`        | `libs/environments/src/index.ts`            |
+| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*`      |
+| `@picsa/farmer-content/*`    | `apps/picsa-tools/farmer-content/*`         |
+| `@picsa/forecasts/*`         | `apps/picsa-tools/forecasts-tool/src/app/*` |
+| `@picsa/forms`               | `libs/forms`                                |
+| `@picsa/i18n`                | `libs/i18n/src/index.ts`                    |
+| `@picsa/i18n/*`              | `libs/i18n/src/*`                           |
+| `@picsa/manual/*`            | `apps/picsa-tools/manual-tool/*`            |
+| `@picsa/migrations`          | `libs/migrations/index.ts`                  |
+| `@picsa/models`              | `libs/models/index.ts`                      |
+| `@picsa/option/*`            | `apps/picsa-tools/option-tool/*`            |
+| `@picsa/resources/*`         | `apps/picsa-tools/resources-tool/src/app/*` |
 | `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
-| `@picsa/server-types` | `apps/picsa-server/supabase/types/index.ts` |
-| `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
-| `@picsa/shared/*` | `libs/shared/src/*` |
-| `@picsa/theme` | `libs/theme/src/index.ts` |
-| `@picsa/utils` | `libs/utils/index.ts` |
-| `@picsa/utils/*` | `libs/utils/*` |
+| `@picsa/server-types`        | `apps/picsa-server/supabase/types/index.ts` |
+| `@picsa/server-utils`        | `apps/picsa-server/supabase/utils/index.ts` |
+| `@picsa/shared/*`            | `libs/shared/src/*`                         |
+| `@picsa/theme`               | `libs/theme/src/index.ts`                   |
+| `@picsa/utils`               | `libs/utils/index.ts`                       |
+| `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (541 files scanned)
+## Codebase Symbol Index (549 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -315,10 +315,17 @@
   - `Component` **UserProfileComponent** (methods: [loadProfile, saveProfile, resendVerificationEmail])
 - **[profile.module.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts`)
   - `Class` **ProfileModule**
+- **[resources-admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts`)
+  - `Component` **ResourcesAdminComponent** (methods: [ngOnInit])
+  - `Interface` **IResourceDiffRow**
+  - `Interface` **IResourceSyncStats**
+  - `Type` **ResourceSyncStatus**
+  - `Type` **ResourceKind**
 - **[resource-collection-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts`)
-  - `Component` **ResourceCollectionEditComponent**
+  - `Component` **ResourceCollectionEditComponent** (methods: [ngOnInit, toggleFile, toggleLink, getLinkIcon, saveCollection])
 - **[resource-collections.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts`)
   - `Component` **ResourceCollectionsComponent** (methods: [ngOnInit])
+  - `Interface` **ICollectionTableRow**
 - **[resources-farmer-videos.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.component.ts`)
   - `Component` **ResourcesFarmerVideosComponent** (methods: [getColumnCoverage, openPreview, openVariantPreview, copyUrl])
 - **[resources-farmer-videos.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/farmer-videos/resources-farmer-videos.utils.ts`)
@@ -333,23 +340,34 @@
   - `Function` **getVideosForCountry**
   - `Function` **getLocalesForCountry**
 - **[resource-file-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/edit/resource-file-edit.component.ts`)
-  - `Component` **ResourceFileEditComponent** (methods: [ngOnInit, saveResource, openExternalResource, promptDelete, handleUploadComplete])
+  - `Component` **ResourceFileEditComponent** (methods: [ngOnInit, saveResource, promptDelete, handleStorageFileMetadata])
 - **[resource-files.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/files/resource-files.component.ts`)
   - `Component` **ResourceFilesComponent** (methods: [ngOnInit, handleCollectionClick])
 - **[resource-link-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/edit/resource-link-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/edit/resource-link-edit.component.ts`)
-  - `Component` **ResourceLinkEditComponent** (methods: [ngOnInit, saveResource])
+  - `Component` **ResourceLinkEditComponent** (methods: [ngOnInit, saveResource, promptDelete])
 - **[resource-links.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/resource-links.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/links/resource-links.component.ts`)
-  - `Component` **ResourceLinksComponent** (methods: [ngOnInit])
+  - `Component` **ResourceLinksComponent** (methods: [ngOnInit, handleCollectionClick])
+  - `Type` **IMergedResourceLink**
 - **[resources.module.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/resources.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/resources.module.ts`)
   - `Class` **ResourcesPageModule**
 - **[resources.service.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/resources.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/resources.service.ts`)
-  - `Service` **ResourcesDashboardService** (methods: [refresh, init, getChildResources, getResourceCollections])
+  - `Service` **ResourcesDashboardService** (methods: [refresh, init, getChildResources, getResourceCollections, saveCollection])
 - **[index.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/types/index.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/types/index.ts`)
+  - `Type` **ICountryCode**
   - `Type` **IResourceCollectionRow**
   - `Type` **IResourceFileRow**
   - `Type` **IResourceFileChildRow**
   - `Type` **IResourceLinkRow**
+  - `Type` **IResourceLinkInsert**
+  - `Type` **IResourceFileInsert**
+  - `Type` **IResourceCollectionInsert**
+- **[resource-cover.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts`)
+  - `Function` **getFileFallbackType**
+  - `Function` **normalizeBundledCoverPath**
+- **[resource-form.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts`)
+  - `Function` **getResourceFormValidationMessage**
 - **[resource-permissions.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-permissions.utils.ts`)
+  - `Interface` **IResourcePermissionOptions**
   - `Function` **createResourceEditPermissionState**
 - **[resources.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resources.utils.ts`)
   - `Function` **getCollectionHierarchy**
@@ -359,7 +377,10 @@
 - **[stats.module.ts](../apps/picsa-apps/dashboard/src/app/modules/stats/stats.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/stats/stats.module.ts`)
   - `Class` **StatsModule**
 - **[storage-link.component.ts](../apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-link/storage-link.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-link/storage-link.component.ts`)
-  - `Component` **DashboardStorageLinkComponent** (methods: [ngOnInit, handleLinkClick])
+  - `Component` **DashboardStorageLinkComponent** (methods: [handleLinkClick])
+- **[storage-upload.component.ts](../apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-upload/storage-upload.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/storage/components/storage-upload/storage-upload.component.ts`)
+  - `Component` **DashboardStorageUploadComponent** (methods: [writeValue, registerOnChange, registerOnTouched, setDisabledState, handleUploadComplete])
+  - `Interface` **IStorageUploadFileMeta**
 - **[storage.service.ts](../apps/picsa-apps/dashboard/src/app/modules/storage/services/storage.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/storage/services/storage.service.ts`)
   - `Service` **DashboardStorageService** (methods: [init, getStorageFileByPath])
   - `Interface` **IDashboardStorageEntry**
@@ -395,10 +416,18 @@
 
 ### `apps/picsa-server/scripts/backup`
 
+- **[backup-db-full.ts](../apps/picsa-server/scripts/backup/backup-db-full.ts)** (`apps/picsa-server/scripts/backup/backup-db-full.ts`)
+  - `Function` **backupDatabaseFull**
 - **[backup-db.ts](../apps/picsa-server/scripts/backup/backup-db.ts)** (`apps/picsa-server/scripts/backup/backup-db.ts`)
   - `Function` **backupDatabase**
 - **[backup-storage.ts](../apps/picsa-server/scripts/backup/backup-storage.ts)** (`apps/picsa-server/scripts/backup/backup-storage.ts`)
   - `Function` **backupStorage**
+- **[backup.utils.ts](../apps/picsa-server/scripts/backup/backup.utils.ts)** (`apps/picsa-server/scripts/backup/backup.utils.ts`)
+  - `Function` **datedStamp**
+  - `Function` **dbArchiveName**
+  - `Function` **filesArchiveName**
+  - `Function` **archiveAndClean**
+  - `Function` **stagingDir**
 
 ### `apps/picsa-server/scripts/db-seed`
 
@@ -879,20 +908,23 @@
 - **[file.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/file/file.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/file/file.ts`)
   - `Component` **ResourceItemFileComponent** (methods: [ngOnInit, ngOnDestroy, handleFileLinkClick, handleDownloadStatusChange])
 - **[link.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/link/link.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/link/link.ts`)
-  - `Component` **ResourceItemLinkComponent** (methods: [handleClick])
+  - `Component` **ResourceItemLinkComponent** (methods: [handleClick, resolvePlayStoreUrl])
+  - `Function` **getLanguageLabel**
 - **[video.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-item/video.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-item/video.ts`)
   - `Component` **ResourceItemVideoComponent**
 - **[resource-share.component.ts](../apps/picsa-tools/resources-tool/src/app/components/resource-share/resource-share.component.ts)** (`apps/picsa-tools/resources-tool/src/app/components/resource-share/resource-share.component.ts`)
-  - `Component` **ResourceShareComponent**
-- **[generator.ts](../apps/picsa-tools/resources-tool/src/app/data/generator.ts)** (`apps/picsa-tools/resources-tool/src/app/data/generator.ts`)
-  - `Class` **ResourcesGenerator**
-- **[locations.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/locations.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/locations.ts`)
-  - `Interface` **IWeatherLocation**
-- **[meteoBlue.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/meteoBlue.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/meteoBlue.ts`)
-  - `Class` **MeteoBlueGenerator**
-- **[wmo.ts](../apps/picsa-tools/resources-tool/src/app/data/weather/wmo.ts)** (`apps/picsa-tools/resources-tool/src/app/data/weather/wmo.ts`)
-  - `Class` **WMOGenerator**
-  - `Class` **MeteoBlueGenerator**
+  - `Component` **ResourceShareComponent** (methods: [handleShare])
+- **[index.ts](../apps/picsa-tools/resources-tool/src/app/data/bundles/index.ts)** (`apps/picsa-tools/resources-tool/src/app/data/bundles/index.ts`)
+  - `Interface` **IResourceCountryBundle**
+  - `Interface` **IResourceCountryManifest**
+  - `Type` **IResourceCollectionRow**
+  - `Type` **IResourceFileRow**
+  - `Type` **IResourceLinkRow**
+  - `Type` **IResourceCollectionBundleRow**
+  - `Type` **IResourceFileBundleRow**
+  - `Type` **IResourceLinkBundleRow**
+  - `Function` **resolveCoverImage**
+  - `Function` **resolveFileUrl**
 - **[material.module.ts](../apps/picsa-tools/resources-tool/src/app/material.module.ts)** (`apps/picsa-tools/resources-tool/src/app/material.module.ts`)
   - `Class` **ResourcesMaterialModule** (methods: [registerIcons])
 - **[collection-routing.module.ts](../apps/picsa-tools/resources-tool/src/app/pages/collection/collection-routing.module.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/collection/collection-routing.module.ts`)
@@ -900,11 +932,12 @@
 - **[collection.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/collection/collection.component.ts`)
   - `Component` **CollectionComponent** (methods: [ngOnDestroy, ngOnInit, handleCollectionLoaded])
 - **[downloads.page.ts](../apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/downloads/downloads.page.ts`)
-  - `Component` **DownloadsPageComponent** (methods: [deleteDownload, handleRowClick, openResource])
+  - `Component` **DownloadsPageComponent** (methods: [deleteDownload, handleRowClick, openResource, getResourceCategory, getResourceSource])
+  - `Type` **IResourceCategory**
 - **[downloads-viewer.page.ts](../apps/picsa-tools/resources-tool/src/app/pages/downloads-viewer/downloads-viewer.page.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/downloads-viewer/downloads-viewer.page.ts`)
   - `Component` **DownloadsViewerPageComponent** (methods: [ngOnInit, ngOnDestroy, handleDownloadStatusChange, openExternally])
 - **[home.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/home/home.component.ts`)
-  - `Component` **HomeComponent** (methods: [ngOnInit])
+  - `Component` **HomeComponent**
 - **[search.component.ts](../apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts)** (`apps/picsa-tools/resources-tool/src/app/pages/search/search.component.ts`)
   - `Component` **ResourceSearchComponent** (methods: [ngOnInit, ngOnDestroy, onSearchInputChange])
 - **[index.ts](../apps/picsa-tools/resources-tool/src/app/schemas/base/index.ts)** (`apps/picsa-tools/resources-tool/src/app/schemas/base/index.ts`)
@@ -929,7 +962,7 @@
   - `Interface` **DownloadEntry**
   - `Type` **DownloadId**
 - **[resources-tool.service.ts](../apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts)** (`apps/picsa-tools/resources-tool/src/app/services/resources-tool.service.ts`)
-  - `Service` **ResourcesToolService** (methods: [init, filterLocalisedResources, openFileResource, getFileAttachmentURI, getFileAttachmentBlob])
+  - `Service` **ResourcesToolService** (methods: [isCollectionNonEmpty, getCollection, getLinks, getCollections, getFiles])
   - `Type` **IDownloadStatus**
 - **[data.utils.ts](../apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts)** (`apps/picsa-tools/resources-tool/src/app/utils/data.utils.ts`)
   - `Function` **filterHashmap**
@@ -963,6 +996,13 @@
   - `Component` **AlertBoxComponent**
 - **[back-button.component.ts](../libs/components/src/components/back-button.component.ts)** (`libs/components/src/components/back-button.component.ts`)
   - `Component` **PicsaBackButtonComponent**
+- **[fallback-image.component.ts](../libs/components/src/components/fallback-image/fallback-image.component.ts)** (`libs/components/src/components/fallback-image/fallback-image.component.ts`)
+  - `Component` **PicsaFallbackImageComponent** (methods: [onImageError])
+- **[fallback-image.types.ts](../libs/components/src/components/fallback-image/fallback-image.types.ts)** (`libs/components/src/components/fallback-image/fallback-image.types.ts`)
+  - `Interface` **IFallbackImageConfig**
+  - `Type` **FallbackImageType**
+  - `Function` **getFallbackTypeForMimetype**
+  - `Function` **getFallbackTypeForFilename**
 - **[info-tooltip.component.ts](../libs/components/src/components/info-tooltip/info-tooltip.component.ts)** (`libs/components/src/components/info-tooltip/info-tooltip.component.ts`)
   - `Component` **PicsaInfoTooltipComponent**
 - **[picsa-breadcrumbs.component.ts](../libs/components/src/components/picsa-breadcrumbs.component.ts)** (`libs/components/src/components/picsa-breadcrumbs.component.ts`)
@@ -1134,8 +1174,8 @@
 - **[translate-debug.service.ts](../libs/i18n/src/translate-debug.service.ts)** (`libs/i18n/src/translate-debug.service.ts`)
   - `Service` **PicsaTranslateDebugService** (methods: [setEnabled])
 - **[translate.module.ts](../libs/i18n/src/translate.module.ts)** (`libs/i18n/src/translate.module.ts`)
-  - `Class` **_PicsaTranslateRootModule**
-  - `Class` **_PicsaTranslateChildModule**
+  - `Class` **\_PicsaTranslateRootModule**
+  - `Class` **\_PicsaTranslateChildModule**
   - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
   - `Function` **HttpLoaderFactory**
 - **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
@@ -1310,9 +1350,9 @@
   - `Service` **AppUserService** (methods: [setFcmToken, toggleInternalTester, setInternalTester])
 - **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
   - `Service` **CrashlyticsService** (methods: [init])
-- **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
+- **[\_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
   - `Service` **DBCacheService** (methods: [getCollection, getDoc, getDocs, setDoc, setDocs])
-- **[_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
+- **[\_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
   - `Service` **DBServerService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
   - `Interface` **IServerWriteBatchEntry**
 - **[abstract.db.ts](../libs/shared/src/services/core/db/abstract.db.ts)** (`libs/shared/src/services/core/db/abstract.db.ts`)
@@ -1393,9 +1433,10 @@
   - `Component` **SupabaseStorageDownloadComponent** (methods: [start, stop])
 - **[storage-file-picker.component.ts](../libs/shared/src/services/core/supabase/components/storage-file-picker/storage-file-picker.component.ts)** (`libs/shared/src/services/core/supabase/components/storage-file-picker/storage-file-picker.component.ts`)
   - `Directive` **SupabaseStoragePickerDirective** (methods: [pickerOpen])
-  - `Component` **SupabaseStorageFilePickerComponent** (methods: [ngOnInit, compareFn, handleFileSelect])
+  - `Component` **SupabaseStorageFilePickerComponent** (methods: [ngOnInit, compareFn])
+  - `Interface` **IStoragePickerData**
 - **[supabase-upload.component.ts](../libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts)** (`libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts`)
-  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, renameFile, startUpload])
+  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, ngOnDestroy, renameFile, startUpload])
   - `Interface` **IUploadResult**
   - `Type` **FileDropFile**
 - **[storagePath.pipe.ts](../libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts)** (`libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts`)
@@ -1458,7 +1499,7 @@
 - **[async.utils.ts](../libs/utils/async.utils.ts)** (`libs/utils/async.utils.ts`)
   - `Function` **allSettledInBatches**
 - **[browser.utils.ts](../libs/utils/browser.utils.ts)** (`libs/utils/browser.utils.ts`)
-  - `Function` **_wait**
+  - `Function` **\_wait**
 - **[climate-qc.utils.ts](../libs/utils/climate-qc.utils.ts)** (`libs/utils/climate-qc.utils.ts`)
   - `Interface` **IClimateQcGates**
   - `Interface` **ISeasonDiscrepancyRecord**
@@ -1504,6 +1545,8 @@
   - `Function` **isAndroid**
   - `Function` **isNativeScript**
   - `Function` **isElectron**
+- **[string.utils.ts](../libs/utils/string.utils.ts)** (`libs/utils/string.utils.ts`)
+  - `Function` **safeDecodeURIComponent**
 - **[xlsx.ts](../libs/utils/xlsx.ts)** (`libs/utils/xlsx.ts`)
   - `Function` **xlsxToJson**
   - `Function` **jsonToXLSX**
@@ -1602,4 +1645,7 @@
   - `Migration` **20261105120000_enable_pg_net.sql**
 - **[20261106000000_drop_monitoring_kobo.sql](../apps/picsa-server/supabase/migrations/20261106000000_drop_monitoring_kobo.sql)** (`apps/picsa-server/supabase/migrations/20261106000000_drop_monitoring_kobo.sql`)
   - `Migration` **20261106000000_drop_monitoring_kobo.sql**
-
+- **[20261106120000_disable_climate_audit_cleanup.sql](../apps/picsa-server/supabase/migrations/20261106120000_disable_climate_audit_cleanup.sql)** (`apps/picsa-server/supabase/migrations/20261106120000_disable_climate_audit_cleanup.sql`)
+  - `Migration` **20261106120000_disable_climate_audit_cleanup.sql**
+- **[20261110000000_resource_cover_defaults_null.sql](../apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql)** (`apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql`)
+  - `Migration` **20261110000000_resource_cover_defaults_null.sql**
