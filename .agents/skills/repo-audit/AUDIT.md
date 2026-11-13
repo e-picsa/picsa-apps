@@ -1,6 +1,6 @@
 # Audit Report — PICSA Apps
 
-> Generated with `.agent/skills/repo-audit/SKILL.md`. Do not commit unless asked.
+> Generated with `.agents/skills/repo-audit/SKILL.md`. Do not commit unless asked.
 > Author: `opencode-go/muse-spark-1.3-contributor` (initial draft, second-opinion assimilated by `opencode/deepseek-v4.1-flash-free`); restructured to updated template + stack/dependency census by `gemini-4-hydrogen` (T3 Code / Antigravity).
 > Date: 2026-11-13. Base commit: `3d2fa9e467ef9171de415caec449caeca5c5dbbd`. Scope: full repo (apps/ + libs/ + Supabase + scripts + CI).
 > Context: `repo-context.md` filled — archetypes, focus areas, audit path, and known pain used directly; no invented users.
@@ -223,14 +223,14 @@ Effort `S/M/L` (never days): `S` likely one file + covered tests; `M` a few file
 | Standard / Doc | Declared target | Actual split (census) | Copy-trap / comprehension risk |
 | --- | --- | --- | --- |
 | `angular/SKILL.md:10-40,73-85` | Signals (`input()`/`output()`), standalone, `@if`/`@for` | `149` `input()` vs `35` `@Input`; `221` `@Component` (`18` `standalone: false` in `budget-tool`); `28` `@NgModule` | Contributors copying `budget-tool` or older `libs/` modules propagate `NgModule` / `@Input()` |
-| `.agent/rules/tech-stack.md:25-38` | Supabase primary, RxDB/Dexie offline, Signals/RxJS (MobX legacy) | `MobxAngularModule` + `PicsaDbModule` (Firestore+Dexie) + `PicsaDb_V2_Module` all loaded at `app.config.ts:30-32` | Root `app.config.ts` makes legacy MobX and Firestore look active/canonical |
+| `.agents/rules/tech-stack.md:25-38` | Supabase primary, RxDB/Dexie offline, Signals/RxJS (MobX legacy) | `MobxAngularModule` + `PicsaDbModule` (Firestore+Dexie) + `PicsaDb_V2_Module` all loaded at `app.config.ts:30-32` | Root `app.config.ts` makes legacy MobX and Firestore look active/canonical |
 | `README.md`, `AGENTS.md:5`, `tech-stack.md:7` | Accurate onboarding & stack versions | `README.md` lists Parse links; `AGENTS.md:5` & `tech-stack.md:7` say Capacitor 7 (code is `^8.0.0`) | Agents/devs misread backend & Capacitor major version; `AI_GENERATED_KNOWLEDGE.md` repeats gotchas 4× |
 
 **Maintainability findings:**
 
 | ID | Sev | Tier | V/E | Title | Location | Maintainability / onboarding impact | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| F41 | P2 | CONFIRMED | M/S | Docs & agent rules drift on Capacitor 8, Parse, and duplicate knowledge | `README.md:30-35`, `AGENTS.md:5`, `.agent/rules/tech-stack.md:7`, `.agent/AI_GENERATED_KNOWLEDGE.md:25,73,713,785` | New contributors & agents start with wrong backend/Capacitor mental model | Update Capacitor 7→8, drop Parse links, deduplicate knowledge notes |
+| F41 | P2 | CONFIRMED | M/S | Docs & agent rules drift on Capacitor 8, Parse, and duplicate knowledge | `README.md:30-35`, `AGENTS.md:5`, `.agents/rules/tech-stack.md:7`, `.agents/AI_GENERATED_KNOWLEDGE.md:25,73,713,785` | New contributors & agents start with wrong backend/Capacitor mental model | Update Capacitor 7→8, drop Parse links, deduplicate knowledge notes |
 
 - **Grouped style note (at most one):** Flat early-return style is generally followed in audited services; systemic smells are architectural (`F2`, `F4`, `F39`, `F40`), not formatting nits.
 
@@ -268,7 +268,7 @@ Effort `S/M/L` (never days): `S` likely one file + covered tests; `M` a few file
 | F29 | P0 | CONFIRMED | H/S | `README.md` quickstart not reproducible | `README.md:16-20`, `package.json:229`, `build-test.yml:49-54`, `ai-worktree-setup.mjs:33-40` | Omits corepack `yarn@4.14.1`, Node 24 CI, env-copy step; typo `lanugage:11` | Replace with verbatim 5-line quickstart |
 | F30 | P0 | CONFIRMED | H/M | CI/local verification parity gap | `build-test.yml:58-65` (`# - run: yarn nx test`) vs `tools/ai/ai-{lint,test,typecheck}.mjs` | Locally green `ai:*` checks can fail CI or merge broken tests | Add CI test/typecheck gate or parity job |
 | F31 | P1 | CONFIRMED | M/S | `ai:typecheck` undocumented in `AGENTS.md` | `package.json:35`, `tools/ai/ai-typecheck.mjs:1-19`, `AGENTS.md:62-78` | Agents fall back to slow builds or skip template typechecks | Add 3-line `ai:typecheck` stanza |
-| F32 | P2 | LIKELY | M/M | No generated API docs | `package.json:5-38`, `.agent/generated-repo-map.md:1-50` | Hand-edited docs drift from Supabase/lib APIs | Document "no API docs by design" or add `supabase gen types` |
+| F32 | P2 | LIKELY | M/M | No generated API docs | `package.json:5-38`, `.agents/generated-repo-map.md:1-50` | Hand-edited docs drift from Supabase/lib APIs | Document "no API docs by design" or add `supabase gen types` |
 | F33 | P1 | LIKELY | H/S | Credential copy sprawl + dirty-tree `HEAD` diff noise | `tools/ai/ai-worktree-setup.mjs:33-40`, `tools/ai/_shared.mjs:41-48` | Copies `.env*`/`google-services.json` silently; dirty sync files break `HEAD` diff | Add redaction warning + `--staged` guidance |
 
 ## Second opinion (one-shot, no debate)

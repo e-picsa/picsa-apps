@@ -877,10 +877,10 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## PR Triage Workflow & Skill (`pr-triage`)
 
-- **Skill Location**: `.agent/skills/pr-triage/` (symlinked via `.gemini/skills/pr-triage/`).
-- **Core Script**: `.agent/skills/pr-triage/scripts/triage-prs.sh` (wraps `triage-prs.mjs`).
+- **Skill Location**: `.agents/skills/pr-triage/`.
+- **Core Script**: `.agents/skills/pr-triage/scripts/triage-prs.sh` (wraps `triage-prs.mjs`).
 - **Cache Persistence & Anti-Duplication**:
-  - Triage audits are cached at `.agent/pr-triage-cache.json` (gitignored).
+  - Triage audits are cached at `.agents/pr-triage-cache.json` (gitignored).
   - Delta detection checks `headRefOid`. If unchanged, audits take < 1s without redundant GitHub API calls and report as `[cached]`.
   - Stale detection checks whether PR-Agent bot suggestions match the current branch HEAD SHA. If newer commits were pushed, suggestions are flagged as potentially addressed.
 - **Default Window & Untriaged Backlog**:

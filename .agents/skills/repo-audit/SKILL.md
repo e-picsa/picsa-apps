@@ -20,13 +20,13 @@ prioritise, do not fix code in this pass unless explicitly asked.
 
 ## Step 0 — Load per-repo context (mandatory)
 
-1. Read `.agent/skills/repo-audit/repo-context.md` (or `.agents/skills/repo-audit/repo-context.md`)
-   if it exists. It is repo-owned and takes precedence over generic assumptions.
+1. Read `.agents/skills/repo-audit/repo-context.md` if it exists. It is repo-owned
+   and takes precedence over generic assumptions.
 2. Note in particular: project summary, user archetypes, tech focus areas,
    scope overrides, audit file location, out-of-scope paths, and any
    second-opinion preference.
 3. Also locate the repo's declared stack and engineering rules (`AGENTS.md`,
-   `.agent/rules/`, `tech-stack.md`, framework skill files, root manifests) as
+   `.agents/rules/`, `tech-stack.md`, framework skill files, root manifests) as
    **declared intent** to compare against reality in Phases 1–2. If
    `repo-context.md` itself contradicts `package.json` or actual code (e.g.
    naming a retired backend), flag the drift.
@@ -39,9 +39,8 @@ prioritise, do not fix code in this pass unless explicitly asked.
 5. Respect any `## Overrides` section: a repo may skip, emphasise, or replace
    specific audit dimensions. Overrides win over this skill's defaults.
 6. Check for a previous audit file: default `AUDIT.md` in the same folder as
-   this skill (`.agent/skills/repo-audit/AUDIT.md` / `.agents/skills/repo-audit/AUDIT.md`),
-   or the path named in `repo-context.md` or the user prompt. If one exists,
-   read it as the baseline and record its date and base commit for the delta in
+   this skill (`.agents/skills/repo-audit/AUDIT.md`), or the path named in
+   `repo-context.md` or the user prompt. If one exists, read it as the baseline and record its date and base commit for the delta in
    phase 6 (Synthesise).
 7. Protect the baseline before overwriting it: `git status` only proves the
    baseline was committed if the audit file is clean. Before writing a new
@@ -124,7 +123,7 @@ each other; the lead agent merges them into the main ledger at synthesis.
      packages with concrete cost (CVEs, peer-dep locks, broken installs,
      client bundle bloat), and dev-only tooling shipped in runtime deps.
    - **Declared rules vs reality & system comprehension:** Compare
-     `AGENTS.md` / `.agent/rules/` / `tech-stack.md` / `README.md` against
+     `AGENTS.md` / `.agents/rules/` / `tech-stack.md` / `README.md` against
      actual code. Flag half-finished migrations and **copy-trap surfaces**
      where an agent or new contributor grepping an example hits a legacy
      pattern first without clear deprecation markers.
@@ -273,7 +272,7 @@ each other; the lead agent merges them into the main ledger at synthesis.
   verdict in one line per top claim plus any gap candidates (or why it was
   skipped).
 - Also write a full Markdown report (default: `AUDIT.md` inside the skill
-  folder, e.g. `.agent/skills/repo-audit/AUDIT.md`, or the path in
+  folder, e.g. `.agents/skills/repo-audit/AUDIT.md`, or the path in
   `repo-context.md` or the user prompt) using the report template.
   Header carries ISO date, base commit SHA, scope, author model/agent, and
   previous-audit date. Structure: top summary (with structural/maintainability

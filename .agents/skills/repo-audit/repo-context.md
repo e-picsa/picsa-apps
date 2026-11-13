@@ -14,9 +14,8 @@ shared libs (`libs/*`), Supabase edge functions/migrations (`apps/picsa-server`)
 and data sync scripts (`apps/picsa-scripts`). Large, long-lived codebase with
 heavy AI-assisted development and multiple active/stalled migration layers.
 
-Note: `.agents` is a symlink to `.agent` — the skill files live at the real
-path `.agent/skills/repo-audit/`. `agents.md`, `AGENTS.md`, `gemini.md`, and
-`.cursorrules` all resolve to the same agent entrypoint.
+Skill files live at `.agents/skills/repo-audit/`, and `AGENTS.md` is the canonical
+agent entrypoint.
 
 ## User archetypes
 
@@ -27,9 +26,9 @@ path `.agent/skills/repo-audit/`. `agents.md`, `AGENTS.md`, `gemini.md`, and
 ## Tech focus areas
 
 - **Backend & persistence consolidation**: Supabase primary backend (Auth, Postgres/RLS, Storage, Edge Functions) vs legacy Firebase/Firestore (`_server.db.ts`, `firebase.service.ts`) and dead `parse` remnants (distinguishing active Capacitor Firebase plugins for Analytics/Crashlytics/Performance from retired Firestore/DB paths); overlapping client storage layers (`db_v2` RxDB v16 vs legacy `db/`, `dexie`, and `rxdb-14` migration shim).
-- **State management & Angular 21 consistency**: Signals + RxJS vs legacy `mobx-angular` (`budget-tool`, root `app.config.ts`) and inconsistent service-provider patterns; remaining `NgModule` / `standalone: false` / `@Input()`/`@Output()` pockets vs `.agent/skills/angular/SKILL.md`.
+- **State management & Angular 21 consistency**: Signals + RxJS vs legacy `mobx-angular` (`budget-tool`, root `app.config.ts`) and inconsistent service-provider patterns; remaining `NgModule` / `standalone: false` / `@Input()`/`@Output()` pockets vs `.agents/skills/angular/SKILL.md`.
 - **Dependency hygiene (`package.json` & workspace manifests)**: dead, duplicate (e.g. dual spreadsheet/DB/HTTP libs), outdated/EOL, or misplaced runtime dependencies inflating app/native bundles or locking upgrades.
-- **System comprehension & doc parity**: accuracy of `README.md`, `AGENTS.md`, `.agent/rules/tech-stack.md`, `.agent/codebase-map.md`, and `tools/legacy` vs actual code, plus whether legacy code is quarantined or leaking into new work.
+- **System comprehension & doc parity**: accuracy of `README.md`, `AGENTS.md`, `.agents/rules/tech-stack.md`, `.agents/codebase-map.md`, and `tools/legacy` vs actual code, plus whether legacy code is quarantined or leaking into new work.
 - **Climate sync pipeline correctness**: ingestion, SHA-256 audit hashes, capability guards, legacy `override_data` cleanup, sync-date visibility per station/country.
 - **Chart reactivity and data handling**: timespan aggregation (strict null propagation), lazy CSV loading, dynamic terciles/overlays.
 - **Nx workspace boundaries (`apps/` vs `libs/`), Supabase RLS/Edge Functions, and CI parity** (including native Android build health).
@@ -46,7 +45,7 @@ path `.agent/skills/repo-audit/`. `agents.md`, `AGENTS.md`, `gemini.md`, and
 
 ## Audit file
 
-- `.agent/skills/repo-audit/AUDIT.md` (same folder as this skill; no committed baseline yet — move/retire any root `AUDIT.md`).
+- `.agents/skills/repo-audit/AUDIT.md` (same folder as this skill; no committed baseline yet — move/retire any root `AUDIT.md`).
 
 ## Out of scope
 

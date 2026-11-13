@@ -26,22 +26,22 @@ Run the project-native triage script from the repository root:
 
 ```bash
 # Triage the default 5 most recent active PRs:
-.agent/skills/pr-triage/scripts/triage-prs.sh
+.agents/skills/pr-triage/scripts/triage-prs.sh
 
 # Or triage specific PRs:
-.agent/skills/pr-triage/scripts/triage-prs.sh --prs 810,804
+.agents/skills/pr-triage/scripts/triage-prs.sh --prs 810,804
 
 # Or triage all open PRs:
-.agent/skills/pr-triage/scripts/triage-prs.sh --all
+.agents/skills/pr-triage/scripts/triage-prs.sh --all
 
 # Or customize the cache TTL (default 30 minutes):
-.agent/skills/pr-triage/scripts/triage-prs.sh --ttl 15
+.agents/skills/pr-triage/scripts/triage-prs.sh --ttl 15
 
 # Or force refresh all cached PRs disregarding previous cache:
-.agent/skills/pr-triage/scripts/triage-prs.sh --refresh
+.agents/skills/pr-triage/scripts/triage-prs.sh --refresh
 ```
 
-### Delta & Cache Management (`.agent/pr-triage-cache.json`)
+### Delta & Cache Management (`.agents/pr-triage-cache.json`)
 
 The script records each triaged PR's `headSha` (commit hash), audit timestamp, and verdict:
 
