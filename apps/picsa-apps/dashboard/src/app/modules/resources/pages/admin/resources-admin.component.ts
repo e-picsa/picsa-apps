@@ -11,7 +11,6 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow, IResourceLinkRow } from '../../types';
-import { normalizeBundledCoverPath } from '../../utils';
 
 export type ResourceSyncStatus = 'In Sync' | 'Differs' | 'Missing in App' | 'Orphaned in App';
 export type ResourceKind = 'Collection' | 'File' | 'Link';
@@ -212,6 +211,23 @@ export class ResourcesAdminComponent implements OnInit {
     return listA.every((id) => setB.has(id));
   }
 
+  /**
+   * Compare a Supabase storage `cover_image` path against an exported app bundle path.
+   * App bundle exports (`sync-resources`) move covers into `assets/resources/covers/`
+   * (flattening `global/`) and convert raster images to `.webp`.
+   */
+  private isSameCoverImage(dbCover?: string | null, appCover?: string | null): boolean {
+    const toCoverKey = (value?: string | null) => {
+      const path = (value || '').trim();
+      if (!path || path.startsWith('http://') || path.startsWith('https://')) return path;
+      return path
+        .replace(/^(?:assets|global)\/resources\/covers\//, '')
+        .replace(/^([a-z]{2})\/resources\/covers\//, '$1/')
+        .replace(/\.(png|jpe?g|webp)$/i, '.webp');
+    };
+    return toCoverKey(dbCover) === toCoverKey(appCover);
+  }
+
   private computeCollectionDiffs(
     dbList: IResourceCollectionRow[],
     appList: IResourceCountryBundle['collections'],
@@ -221,7 +237,7 @@ export class ResourcesAdminComponent implements OnInit {
       hasDiff: (dbItem, appItem) =>
         dbItem.title !== appItem.title ||
         (dbItem.description || null) !== (appItem.description || null) ||
-        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image) ||
+        !this.isSameCoverImage(dbItem.cover_image, appItem.cover_image) ||
         (dbItem.sort_order ?? 1) !== (appItem.sort_order ?? 1) ||
         !this.hasSameIds(dbItem.resource_files, appItem.resource_files) ||
         !this.hasSameIds(dbItem.resource_links, appItem.resource_links),
@@ -234,7 +250,7 @@ export class ResourcesAdminComponent implements OnInit {
       hasDiff: (dbItem, appItem) =>
         dbItem.title !== appItem.title ||
         (dbItem.storage_file || null) !== (appItem.storage_file || null) ||
-        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image) ||
+        !this.isSameCoverImage(dbItem.cover_image, appItem.cover_image) ||
         (dbItem.language_code || null) !== (appItem.language_code || null) ||
         (dbItem.external_url || null) !== (appItem.external_url || null),
     });
@@ -247,7 +263,7 @@ export class ResourcesAdminComponent implements OnInit {
         dbItem.title !== appItem.title ||
         dbItem.url !== appItem.url ||
         dbItem.type !== appItem.type ||
-        normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image),
+        !this.isSameCoverImage(dbItem.cover_image, appItem.cover_image),
     });
   }
 }
