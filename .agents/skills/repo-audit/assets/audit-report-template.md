@@ -1,6 +1,6 @@
 # Audit Report — <repo name>
 
-> Generated with `.agent/skills/repo-audit/SKILL.md`. Do not commit unless asked.
+> Generated with `.agents/skills/repo-audit/SKILL.md`. Do not commit unless asked.
 > Author: <model name (harness/agent)> (restructured/updated by <model name>, if applicable).
 > Date: <ISO date>. Base commit: <SHA>. Scope: <full | focused on X>.
 > Context: `repo-context.md` <filled | partial | missing — assumptions flagged>.

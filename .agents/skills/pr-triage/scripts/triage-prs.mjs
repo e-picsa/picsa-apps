@@ -31,7 +31,7 @@ function parseArgs() {
     refresh: false,
     json: false,
     cacheTtlMinutes: 30, // Default 30 minute TTL for cached PR records
-    cacheFile: path.resolve(process.cwd(), '.agent/pr-triage-cache.json'),
+    cacheFile: path.resolve(process.cwd(), '.agents/pr-triage-cache.json'),
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -106,7 +106,7 @@ function classifyDomains(files) {
     else if (p.startsWith('libs/utils/')) domains.add('Pure Utils');
     else if (p.startsWith('libs/theme/') || p.startsWith('libs/components/')) domains.add('UI & Theme');
     else if (p.startsWith('libs/')) domains.add('Shared Libs');
-    else if (p.startsWith('.agent/') || p.endsWith('.md')) domains.add('Docs & Tooling');
+    else if (p.startsWith('.agents/') || p.endsWith('.md')) domains.add('Docs & Tooling');
     else if (p.includes('package.json') || p.includes('tsconfig') || p.includes('nx.json'))
       domains.add('Workspace Config');
   }

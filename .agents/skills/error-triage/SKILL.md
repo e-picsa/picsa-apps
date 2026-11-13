@@ -117,4 +117,4 @@ Once a fix is implemented:
 1. `yarn ai:typecheck` (Verifies TypeScript and Angular HTML templates).
 2. `yarn ai:test` (Runs affected Jest unit tests).
 3. `yarn ai:lint` (Applies formatting and lint rules to touched files).
-4. **Knowledge Persistence**: If the error revealed a non-obvious runtime trap, bundler boundary, or Capacitor quirk, append the learning to the appropriate section of `.agent/AI_GENERATED_KNOWLEDGE.md`.
+4. **Knowledge Persistence**: If the error revealed a non-obvious runtime trap, bundler boundary, or Capacitor quirk, append the learning to the appropriate section of `.agents/AI_GENERATED_KNOWLEDGE.md`.

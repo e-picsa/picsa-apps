@@ -59,7 +59,7 @@ Categorize touched files across monorepo boundaries to understand blast radius:
 | **UI & Theme**           | `libs/theme/`, `libs/components/`                | Shared UI tokens and presentational components.                                          |
 | **Supabase / Backend**   | `apps/picsa-server/supabase/`                    | Migrations, Edge Functions, database triggers, seed CSVs.                                |
 | **Workspace Config**     | `package.json`, `tsconfig*`, `nx.json`, `tools/` | Workspace-wide impact. High scrutiny required.                                           |
-| **Agent Tooling & Docs** | `.agent/`, `AGENTS.md`, `*.md`                   | Development workflows, skills, institutional knowledge. Low blast radius.                |
+| **Agent Tooling & Docs** | `.agents/`, `AGENTS.md`, `*.md`                   | Development workflows, skills, institutional knowledge. Low blast radius.                |
 
 ### 3. Recommended Reading Order
 
@@ -153,7 +153,7 @@ To prevent shallow checklist fatigue and token bloat, execute only passes trigge
 | **Internationalization (i18n)** | Any `*.html` or user-facing `.ts` changed outside `apps/picsa-apps/dashboard/`      |
 | **Monorepo / Lib Boundaries**   | Any `libs/` path changed                                                            |
 | **Backend & Supabase**          | Any `apps/picsa-server/` path changed                                               |
-| **Workspace & Tooling**         | `package.json`, `tsconfig*`, `nx.json`, `tools/`, `.agent/`, or `AGENTS.md` changed |
+| **Workspace & Tooling**         | `package.json`, `tsconfig*`, `nx.json`, `tools/`, `.agents/`, or `AGENTS.md` changed |
 | **Bundle Impact**               | New npm dependency added, or new external import in `libs/`                         |
 
 ---

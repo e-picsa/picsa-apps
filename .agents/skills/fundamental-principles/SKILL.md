@@ -13,12 +13,12 @@ As an intelligent agent, you must improve your own workflow and help future agen
 
 **Before starting a new complex task:**
 
-- ALWAYS check `.agent/AI_GENERATED_KNOWLEDGE.md` for learnings and context from previous sessions.
+- ALWAYS check `.agents/AI_GENERATED_KNOWLEDGE.md` for learnings and context from previous sessions.
 
 **At the end of EVERY complex task or when significant decisions are made:**
 
 - You MUST automatically record your learnings.
-- Do this by appending a new entry to `.agent/AI_GENERATED_KNOWLEDGE.md`.
+- Do this by appending a new entry to `.agents/AI_GENERATED_KNOWLEDGE.md`.
 - Document things like:
   - New established architectural patterns.
   - Tricky bugs you resolved and their root cause.
