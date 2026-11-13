@@ -10,7 +10,9 @@
         [attr.aria-label]="'Change location' | translate"
       >
         <mat-icon class="!text-[20px] !w-5 !h-5 shrink-0">place</mat-icon>
-        <span class="truncate"> {{ (tableStationMeta()?.label || selectedLocationLabel()) || ('Select Location' | translate) }} </span>
+        <span class="truncate">
+          {{ tableStationMeta()?.label || selectedLocationLabel() || ('Select Location' | translate) }}
+        </span>
       </button>
     </div>
   </ng-template>
@@ -72,7 +74,7 @@
       <mat-icon class="!w-12 !h-12 !text-5xl text-slate-300">place</mat-icon>
       <p class="text-lg text-slate-600 m-0">
         @if (selectedLocationLabel(); as district) {
-          {{ 'No crop probability data available for {district}.' | translate: { district } }}
+          {{ 'No crop probability data available for' | translate }} {{ district }}.
         } @else {
           {{ 'No crop probability data available for this location.' | translate }}
         }

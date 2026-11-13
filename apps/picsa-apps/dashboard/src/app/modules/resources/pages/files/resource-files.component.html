@@ -54,10 +54,12 @@
     }"
   >
     <!-- cover image -->
-    <ng-template #coverImageTemplate let-cover_image>
-      @if (cover_image) {
-        <img class="cover-image" [src]="cover_image | storagePath" />
-      }
+    <ng-template #coverImageTemplate let-cover_image let-row="row">
+      <picsa-fallback-image
+        [src]="cover_image | storagePath"
+        [fallbackType]="getFileFallbackType(row?.mimetype)"
+        size="sm"
+      />
     </ng-template>
 
     <!-- size in MB -->
@@ -95,7 +97,9 @@
             [matTooltip]="collection.title"
             (click)="handleCollectionClick($event, collection)"
           >
-            <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+            @if (collection.cover_image) {
+              <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+            }
           </div>
         }
       </div>

@@ -10,5 +10,6 @@ export * from './climate-qc.utils';
 export * from './data';
 export * from './mimetypes';
 export * from './platform';
+export * from './string.utils';
 // export * from './xlsx'   // allow treeshaking xlsx package by omitting common export
 export * from './xml';

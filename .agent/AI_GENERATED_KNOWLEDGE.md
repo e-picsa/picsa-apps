@@ -98,6 +98,20 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Deferred On-Demand Permission Requests**: Never invoke `PushNotifications.requestPermissions()` immediately on app startup. Calling permission prompts immediately degrades user trust and leads to permanent denials. Instead, call `checkPermissions()` on startup to initialize listeners only if already granted. Use an in-app trigger (such as a header notification banner) so users grant permissions with clear contextual intent.
 - **Listener Registration Order Before `register()`**: Call `PushNotifications.removeAllListeners()` and register event listeners (`registration`, `registrationError`, `pushNotificationReceived`, `pushNotificationActionPerformed`) _before_ invoking `PushNotifications.register()`. On native platforms (iOS and Android), the registration callback can emit immediately during `register()`, causing early token events to be dropped if listeners are attached afterwards.
 - **Client FCM Token Restoration on Startup**: When loading an existing user profile from `app_users`, restore `dbProfile.fcm_token` into the local `fcmToken` signal if not already set. Because `userProfile` is a computed signal (`fcm_token: this.fcmToken()`) and `pendingDBUpdate` computes diffs against `dbProfile`, failing to restore `dbProfile.fcm_token` causes the computed signal to emit `fcm_token: null`, scheduling an update that inadvertently clears the user's stored FCM token in Supabase.
+
+### Resource Cover Images: Storage, Optimization, and Sync Caching
+
+- **Storage Conventions**:
+  - Generic category icons (`crops.svg`, `weather.svg`) and partner/service logos (`access-ag.jpg`, `daes_v2.webp`) remain shared in `global/resources/covers/*`.
+  - Country-specific document covers reside in `<country>/resources/covers/*` (e.g. `mw/resources/covers/bmtm.jpg`, `zw/resources/covers/Beef Cattle Management Calendar Infographic.png`).
+- **Offline Resolution (`resolveCoverImage`)**:
+  - `apps/picsa-tools/resources-tool/src/app/data/bundles/index.ts` maps `global/resources/covers/<file>` $\rightarrow$ `assets/resources/covers/<file>` and `<country>/resources/covers/<file>` $\rightarrow$ `assets/resources/covers/<country>/<file>`.
+- **Sync & Image Optimization (`scripts:resources:sync`)**:
+  - `sync-resources.ts` automatically downloads referenced covers and optimizes raster images using `sharp` constrained to `max 300x300` at 80% quality (dropping multi-megabyte posters by >95% down to 10–40 KB).
+  - To prevent recompressing unchanged files on repeat runs, `sync-resources.ts` uses `.sync-cache.json` matching remote storage metadata (`etag`, `size`, `updatedAt`) against local output files.
+- **Database Extended Seeding (`db-seed.config.ts`)**:
+  - Tables declaring `mirrorStorage` mirror remote storage files into local buckets.
+  - To exclude massive binaries (such as farmer videos) from local seed while retaining their database metadata rows and cover images, use `mirrorStorageFilter: (path, row, col) => !isFarmerVideoStorage(path, row, col)`. This skips the large binary download and sets `row.storage_file = null` in local Postgres.
 - **Push Token Logging Security**: Never log raw device push tokens (`token.value`) in console outputs. Redact tokens to avoid exposing sensitive push credentials in production device logs.
 
 ### TypeScript Strictness & SonarCloud Rules (S2871, Number Parsing, Duplication)
@@ -194,6 +208,7 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - **Sync Script Sanitization (`sync-resources.ts`)**: Content sync from Supabase to offline app data is executed via `yarn scripts:resources:sync [--local] [--country=<code>] [--audit-only]`. The script strips volatile timestamps (`created_at`, `modified_at`, `updated_at`), strips dangling file/link IDs that no longer exist in `resource_files` or `resource_links`, forces `collection_parent = null` and `resource_collections = []`, sorts deterministically by `id`, and outputs per-country JSON bundles into `apps/picsa-tools/resources-tool/src/app/data/bundles/{country}.json`.
   - **Resources Admin Sync Page (`/resources/admin`)**: Compares live Supabase database state against offline app bundles (`RESOURCE_BUNDLES`), displaying diff tables with `In Sync`, `Differs`, `Missing in App`, and `Orphaned in App` statuses matching climate and crop admin patterns.
   - Child resources (`resource_files_child`) remain as schema placeholders for future localization / resolution variants.
+  - **Download Manager Scoping (`/resources/downloads`)**: The in-app download manager handles all downloadable files across the current deployment from `resources_tool_files` (not solely extension resource bundles). Download sources comprise: (1) extension files from `RESOURCE_MANIFESTS[country_code]`, (2) manuals from `PICSA_MANUAL_RESOURCES` (matching `filter.countries` or `global_en`), and (3) farmer videos from `RESOURCE_VIDEO_HASHMAP` (matching `${country_code}_*` or `global_*`). Scoping checks `activeManifest.filesById` (extension resources), `resource.filter?.countries` (manuals), and `resource.language.startsWith(...)` (videos / global files), strictly excluding other countries' assets while preserving language filtering and global fallbacks.
 - **App User RLS Trap (`anon` vs Anonymous `authenticated`)**:
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
   - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
@@ -269,6 +284,17 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 ## 4. Angular 21, Signals & Reactive Architecture
 
+### Angular Reactive Forms Pristine Trap with `patchValue` on Async File Uploads
+
+- **The Problem**: In Angular Reactive Forms, invoking `form.patchValue(...)` updates control values and validation status synchronously, but does **NOT** toggle `pristine` to `false` or set `dirty` to `true`. Angular only marks controls as `dirty` in response to native user DOM interaction events (e.g. `input`, `change`).
+- **The Symptom**: When form save actions or validation hints are gated on `form.pristine` (e.g. `[disabled]="!form.valid || form.pristine"` or `getResourceFormValidationMessage(form)` returning `"No changes to save"`), completing an asynchronous upload (such as `<picsa-supabase-upload>` / Uppy Dashboard) or choosing a file from `<button supabaseStoragePicker>` updates the value in state, but the save button remains disabled because the form is still `pristine`.
+- **The Solution**: Any asynchronous file upload callback (`(uploadComplete)="handleUploadComplete($event, controlName)"`) or picker handler (`(storageFileSelected)="handleStorageFileSelected($event, controlName)"`) that updates the form via `patchValue` must explicitly call:
+  ```typescript
+  this.form.controls[controlName].markAsDirty();
+  this.form.markAsDirty();
+  ```
+  This marks both the individual control and parent form tree dirty, transitioning `form.pristine` to `false` and immediately enabling the form save action.
+
 ### Material CDK Overlays & OnPush Change Detection
 
 - **Issue**: Angular Material components like `mat-select` render dropdown options in an overlay container (`cdk-overlay-pane`) at the document root, outside the component's DOM tree. Under `ChangeDetectionStrategy.OnPush`, selection events do not bubble through the component's DOM tree, leaving the UI stale.
@@ -342,6 +368,12 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Root Cause of Icon Clipping**: Angular Material's `mat-icon` uses font-based glyphs sized to `24px` with `line-height: 1`. Applying Tailwind classes like `!w-5 !h-5 !text-lg` causes `text-lg` to set `line-height: 1.75rem` (28px) inside a `20px` (`h-5`) bounding box. This forces the glyph outside its container bounds, causing the icon to be sliced or clipped at the edges.
 - **Rule**: Never combine arbitrary Tailwind `text-*` and `w-*/h-*` on `mat-icon` without matching line-height (`leading-none`). Preferably, let Angular Material manage the icon size naturally or use standard 24px sizing, or specify `class="!text-[16px] !w-4 !h-4 leading-none"` when creating micro badges.
 
+### Absence of Dark Mode & Prohibition of Tailwind `dark:` Variants
+
+- **Light Mode Only**: The entire PICSA client application architecture is strictly light-mode only. All country themes in `libs/theme/src/themes/` define themes using `mat.m2-define-light-theme` applied via `body[data-theme='picsa-*']`.
+- **Preflight and Config Trap**: `libs/theme/src/tailwind.config.js` does NOT specify `darkMode: 'class'`.
+- **Never Use `dark:` Utility Classes**: Any use of Tailwind `dark:*` variants (e.g. `dark:text-white`, `dark:bg-gray-800`, `dark:border-neutral-700`) evaluates against the user's OS media query (`prefers-color-scheme: dark`). On devices with dark mode enabled in system settings, this flips text to white or light gray against the light Material surfaces, rendering text completely invisible. Sticking strictly to semantic tokens (`text-primary`, `var(--color-primary)`) or standard neutral light-mode utilities (`text-gray-900`, `bg-gray-50`) ensures rock-solid contrast.
+
 ### Fixed-Height Dialog Containers for Tabbed Content
 
 - **Consistent Dialog Height**: When presenting tabbed content (e.g. `mat-tab-group`) inside a modal where tabs have varying lengths (e.g., compact location summary vs long scrollable tables/charts), dialogs configured only with `maxHeight: '90vh'` will dynamically expand and shrink when switching tabs, creating jarring layout shifts.
@@ -396,6 +428,56 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 
 - **Async `ngOnInit` in Zoneless Dashboard**: The dashboard uses `provideZonelessChangeDetection()`. In `SupabaseUploadComponent`, `ngOnInit` awaits `supabaseService.ready()` before instantiating `Uppy` (`await` yields to a microtask after the synchronous render pass). Any state populated after `await` (`uppy`, `dashboardOptions`, file-picker `bucketEntries`/`globalEntries`) **must** be stored in Angular `signal()`s; plain class fields fail to re-render when the uploader is toggled/remounted (e.g., removing a cover image).
 - **Shared Storage Upload CVA (`DashboardStorageUploadComponent`)**: Use `<dashboard-storage-upload formControlName="...">` (`apps/picsa-apps/dashboard/src/app/modules/storage`) instead of duplicating `@if (form.value.*)` + `<picsa-supabase-upload>` + `supabaseStoragePicker` + `<dashboard-storage-link>` blocks across resource forms.
+
+### Script Invocation & Argument Documentation Convention
+
+- **Mandatory Top-Level Docblocks**: All standalone maintenance, sync, migration, and housekeeping scripts must include a comprehensive JSDoc header at the very top of the file documenting:
+  1. **Purpose**: Clear summary of what the script does and which tables/storage buckets it touches.
+  2. **Direct Invocation**: Exact CLI command using both `yarn <script-name>` and `npx ts-node ...` / `yarn tsx ...` with explicit tsconfig paths.
+  3. **Options/Arguments**: Complete list of supported CLI flags with their data types, effects, and default values (e.g. `--local` vs `--remote`, `--dry-run`, `--country=<code>`).
+
+### Resource Bundle Normalization at Sync Time (No Client Regex/Remapping)
+
+- **Do Not Guess File Extensions or Paths in Client Code**: Never implement dynamic regex or extension-swapping logic (`.jpg` $\rightarrow$ `.webp`) inside client runtime helpers (such as `resolveCoverImage`).
+- **Sync Script Is Single Source of Truth**: When `sync-resources.ts` synchronizes and compresses covers to WebP (`assets/resources/covers/<file>.webp`), it must directly normalize the `cover_image` field in `mw.json`, `zm.json`, `zw.json` to the canonical asset path (`assets/resources/covers/...`).
+- **Zero Client Overhead**: The client manifest reads `row.cover_image` directly, ensuring 100% offline availability with zero regex overhead or runtime path resolution.
+
+### Resource Cover Cache & Cross-Developer Determinism
+
+- **Repository-First Cache Seeding**: The cover sync cache (`apps/picsa-scripts/.cache/resources-covers.json`) is gitignored. When the cache is missing (e.g. after a clean checkout or deletion), `syncReferencedCovers` checks `fs.existsSync(localDest)`. If the target WebP or SVG already exists locally on disk, the script marks it fresh and seeds the local cache entry without touching the filesystem or re-running Sharp.
+- **Preserve Existing SVGs**: Vector SVG icons checked into git are strictly preserved and never re-downloaded or overwritten during sync unless forced. This guarantees multiple developers running sync never produce spurious binary diffs.
+
+### Grounding in Production Data & Anti-Overengineering in Tooling
+
+- **Query Real Data Before Writing Defensive Abstractions**: Always introspect the actual database tables and storage buckets before writing complex filtering, mimetype validations, or fallback transformations. Never write defensive code for hypothetical scenarios that don't exist in the data model (e.g. checking video mimetypes and file extensions on document tables that only contain PDFs, or adding string fallback escapes for legacy placeholders when zero database rows contain them).
+- **Fail-Fast Remote Integration**: In synchronization and data pipeline scripts, network or storage operations must fail fast with a descriptive error. Never swallow errors or default missing remote metadata to "treated as fresh", which causes stale local files to be permanently locked in place.
+- **Symmetric Path Resolution (Zero Drift)**: When a script downloads files to local disk and writes bundle manifest paths, always derive the local disk location directly from the canonical asset path function so disk storage and JSON manifests can never diverge.
+- **Extraction of Shared Processing Utilities**: Keep domain scripts (e.g. sync scripts, seed scripts) focused on orchestration. Heavy compute or multi-format media transforms (e.g. Sharp image resizing, format detection, human byte formatting) must be isolated in shared utility modules (`apps/picsa-scripts/src/media/image-optimizer.ts`) to maintain low cognitive complexity and enable reuse across CLI tasks.
+- **Plan Scrutiny Before Autonomous Action**: When asked "how will you fix it?" or addressing PR feedback, always present a structured, concise plan for the user to scrutinize first. Do not autonomously create branches, push commits, or open pull requests without explicit confirmation.
+
+### In-App Download Manager Deployment Scoping & Authoritative Registry Sourcing
+
+- **Deployment Scoping in In-App Download Manager (`/resources/downloads`)**:
+  - The in-app download manager manages all downloadable offline files in the local RxDB database (`dbFiles`), not just extension bundle files.
+  - Scoping to the active deployment uses a three-tier check:
+    1. Active country extension manifest (`manifest.filesById[id]`).
+    2. Explicit country filter on the resource (`resource.filter?.countries.includes(country_code)`), used by multi-country PICSA manuals.
+    3. Country-matched locale (`resource.language.startsWith(`${countryCode}_`)`) or universal global resources (`resource.language.startsWith('global_')`).
+    4. When in `country_code: 'global'`, all files are included.
+  - Strict exclusion: Files belonging to other country deployments (e.g. `mw_*` or `tj_*` in a `zm` deployment) are strictly excluded from the table, preventing irrelevant downloads.
+- **Category Categorization (`category` / `source` Column)**:
+  - Downloadable resources originate from 4 authoritative categories: `'Extension Resource'`, `'PICSA Manual'`, `'Farmer Video'`, and `'Digital Skills'`.
+  - The term **"Category"** is used as the intuitive column header and filter label (replacing technical "Source"), distinguishing domain content areas from the file format **"Type"** (PDF vs Video).
+  - Never use brittle string heuristics (such as `.startsWith('video_')`) or default fallbacks to `'Farmer Video'`. Categorization must be checked against authoritative source registries:
+    - `activeManifest.filesById` and pre-indexed `ALL_BUNDLE_FILE_IDS` from `RESOURCE_BUNDLES` -> `'Extension Resource'`.
+    - `PICSA_MANUAL_RESOURCES` -> `'PICSA Manual'`.
+    - `DIGITAL_SKILLS_VIDEO_HASHMAP` -> `'Digital Skills'`.
+    - `FARMER_VIDEO_HASHMAP` (intro, operational, picsaSteps, testimonials) -> `'Farmer Video'`.
+    - Unknown/unmatched content returns blank (`''`) rather than mislabeling.
+  - `PicsaDataTableComponent` natively supports header filter dropdowns via `filterColumns: ['category', 'subtype']` in `IDataTableOptions`, allowing users to filter by both Category and Type.
+  - `PicsaDataTableComponent` emits a single idiomatic `(filteredData)` output event on dataset updates and column/search filtering. Parent components bind `(filteredData)="filteredTableData.set($event)"` to synchronize external summary actions like bulk downloaders (`<resource-download-multiple [docs]="pendingDownloads()">`) with active table filter states.
+  - **Downloaded Status Checkmark Theming**: Never hardcode colors like `text-emerald-*` or `#059669` or use busy icons like `check_circle`. Use `<mat-icon color="primary">check</mat-icon>` so downloaded items inherit the active deployment's theme color (e.g. green in MW, blue in ZM, purple in ZW), while download action buttons remain standard neutral/black to distinguish them clearly.
+  - The redundant `'language'` column is excluded from the table (`DISPLAY_COLUMNS`) because language selection is prominently handled by the top chip listbox. On initial viewing, `languageFilter` automatically defaults to the user's active app language (matching deployment country locales, e.g. `zm_en`), ensuring the table opens pre-filtered to the user's language while allowing them to toggle chips to view other languages or all deployment files.
 
 ### Signal Reactivity for SVG Point Overlays & Render Events
 
@@ -871,3 +953,11 @@ To prevent recurring "whack-a-mole" layout inconsistencies across the Extension 
 5. **`picsa-sidenav-layout` Content Projection**:
    - `picsa-sidenav.component.ts` styles enforce `mat-sidenav-content > * { display: contents; }` to allow projected main content to stretch to full height.
    - Because `display: contents` removes the box model from the inner placeholder `div`, pages embedding `<picsa-sidenav-layout>` (such as `site-view.page.html` in climate-tool and `budget-view.page.html` in budget-tool) MUST wrap `<picsa-sidenav-layout>` in `<div class="page-content">` (with `height: 100%; min-height: 0; overflow-x: hidden; overflow-y: auto;` when hosting full-height tables).
+
+### Native File Sharing vs. File Opening (`@capacitor/filesystem` Percent-Encoded URIs)
+
+- **Why `FileOpener` Succeeds While `ShareService` Fails on Filenames with Spaces**:
+  - When `NativeStorageService.writeFile` saves an attachment to `Directory.Data`, `write_blob` writes the file using the raw unencoded `relativePath` (e.g. `picsa_extension/resources_tool_files/FAW Mangement for maize.pdf`), whereas `Filesystem.stat` returns a percent-encoded `file://` URI (`.../FAW%20Mangement%20for%20maize.pdf`) stored in `attachments._data.uri`.
+  - Opening the file via `cordova-plugin-file-opener2` (`FileOpener2.java`) works directly from `Directory.Data` because `android.net.Uri.parse(fileArg).getPath()` automatically URL-decodes `%20` and `@` before constructing `new File(fileName)`.
+  - Conversely, `@capacitor/share` requires copying the file to `Directory.Cache` via `NativeStorageService.copyFileToCache`. Because `Filesystem.copy({ from, directory: Directory.Data, to, toDirectory: Directory.Cache })` treats `from` and `to` as literal filesystem paths (not URIs), passing raw URI substrings with `%20` or leading slashes causes `Filesystem.copy` to fail with file-not-found.
+  - Always `decodeURIComponent` and strip leading slashes from `relativePath` and `targetFilename` in `NativeStorageService.copyFileToCache` and `ShareService.shareFromAttachmentsNative`. Because this decodes the stored URI at share time, it works retroactively for all already-downloaded files on user devices without requiring re-downloads or DB migrations.

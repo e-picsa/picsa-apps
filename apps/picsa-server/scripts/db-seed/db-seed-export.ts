@@ -1,3 +1,28 @@
+/**
+ * Database Seed Export Script
+ *
+ * Exports Supabase database tables to seed CSV files (under apps/picsa-server/supabase/data)
+ * and mirrors storage objects to local cache/container storage.
+ *
+ * Direct Invocation:
+ *   yarn tsx --tsconfig tsconfig.base.json apps/picsa-server/scripts/db-seed/db-seed-export.ts [options]
+ *   or:
+ *   yarn db:seed:export [options]
+ *
+ * Options:
+ *   --extended          Export extended seed dataset (includes storage file mirroring)
+ *   --tables=<a>,<b>    Filter export to specific comma-separated table names
+ *   --country=<code>    Filter export to a specific country (mw, zm, zw, tj)
+ *   --no-fetch          Skip querying remote tables (use cached CSVs)
+ *   --no-download       Skip downloading storage files during extended seed
+ *   --no-upload         Skip uploading storage files to local container
+ *   --csv               Write exported tables to CSV (default in standard seed)
+ *   --no-csv            Skip writing CSV files
+ *   --dry-run           Audit export without writing files or mutating storage
+ *   --local             Target local Supabase container (default: remote via apps/picsa-server/.env.server)
+ *   --env=<path>        Load environment variables from custom env file
+ *   --help, -h          Print usage instructions
+ */
 import { SupabaseClient } from '@supabase/supabase-js';
 import Papa from 'papaparse';
 import { writeFile, readFile, mkdir } from 'node:fs/promises';
@@ -617,21 +642,24 @@ export class SupabaseSeedExport {
         }
       }
 
-      // Safe foreign-key protection for deployments:
-      // If icon_path is set but does not exist in local storage_objects, set to null
-      if (table === 'deployments' && validStoragePaths && processed.icon_path) {
-        if (!validStoragePaths.has(processed.icon_path)) {
-          console.warn(
-            `⚠️  Deployment "${processed.id}": icon_path "${processed.icon_path}" not in local storage. Setting to null to satisfy foreign key.`,
-          );
-          processed.icon_path = null;
+      // Safe foreign-key protection for tables declaring mirrorStorage:
+      // If a storage reference column is set but does not exist in local storage_objects, set to null
+      if (config.mirrorStorage?.length && validStoragePaths) {
+        for (const col of config.mirrorStorage) {
+          if (processed[col] && !validStoragePaths.has(processed[col])) {
+            console.warn(
+              `⚠️  ${table} "${processed.id ?? 'row'}": ${col} "${processed[col]}" not in local storage. Setting to null to satisfy foreign key.`,
+            );
+            processed[col] = null;
+          }
         }
       }
 
       return processed;
     });
 
-    const chunkSize = 500;
+    // Reuse the per-table export batch size so large-row tables stay under the local statement timeout
+    const chunkSize = config.batchSize ?? 500;
     for (let i = 0; i < parsedRows.length; i += chunkSize) {
       const chunk = parsedRows.slice(i, i + chunkSize);
       const { error } = await this.localClient.schema(schema).from(table).upsert(chunk);

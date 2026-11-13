@@ -785,6 +785,10 @@
     "tool": "climate"
   },
   {
+    "text": "All Stations",
+    "tool": "climate"
+  },
+  {
     "text": "All Tools",
     "tool": "climate"
   },
@@ -814,6 +818,10 @@
   },
   {
     "text": "Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Climate Station",
     "tool": "climate"
   },
   {
@@ -858,6 +866,10 @@
   },
   {
     "text": "Extreme Rainfall",
+    "tool": "climate"
+  },
+  {
+    "text": "Finding closest stations",
     "tool": "climate"
   },
   {
@@ -925,11 +937,15 @@
     "tool": "climate"
   },
   {
-    "text": "Lowest minimum daily temp",
+    "text": "Locate",
     "tool": "climate"
   },
   {
-    "text": "Map",
+    "text": "Location",
+    "tool": "climate"
+  },
+  {
+    "text": "Lowest minimum daily temp",
     "tool": "climate"
   },
   {
@@ -1005,23 +1021,11 @@
     "tool": "climate"
   },
   {
-    "text": "Select a site",
-    "tool": "climate"
-  },
-  {
     "text": "Share Chart",
     "tool": "climate"
   },
   {
     "text": "Share Image",
-    "tool": "climate"
-  },
-  {
-    "text": "Show List",
-    "tool": "climate"
-  },
-  {
-    "text": "Show Map",
     "tool": "climate"
   },
   {
@@ -1034,6 +1038,10 @@
   },
   {
     "text": "Start of Season",
+    "tool": "climate"
+  },
+  {
+    "text": "Stations",
     "tool": "climate"
   },
   {
@@ -1142,6 +1150,10 @@
   },
   {
     "text": "Use it as historical context — not a forecast",
+    "tool": "climate"
+  },
+  {
+    "text": "View",
     "tool": "climate"
   },
   {
@@ -1303,10 +1315,6 @@
     "tool": "common"
   },
   {
-    "text": "Download",
-    "tool": "common"
-  },
-  {
     "text": "Downloading update in background...",
     "tool": "common"
   },
@@ -1348,11 +1356,11 @@
     "tool": "common"
   },
   {
-    "text": "Loading",
+    "text": "Manual",
     "tool": "common"
   },
   {
-    "text": "Manual",
+    "text": "Marks strings missing a translation with bullets",
     "tool": "common"
   },
   {
@@ -1409,10 +1417,6 @@
     "tool": "common"
   },
   {
-    "text": "Refresh",
-    "tool": "common"
-  },
-  {
     "text": "Remove screenshot",
     "tool": "common"
   },
@@ -1430,11 +1434,11 @@
     "tool": "common"
   },
   {
-    "text": "Select Location",
+    "text": "Send Feedback",
     "tool": "common"
   },
   {
-    "text": "Send Feedback",
+    "text": "Show Untranslated Text",
     "tool": "common"
   },
   {
@@ -1855,6 +1859,14 @@
     "tool": "crop-probability"
   },
   {
+    "text": "No crop probability data available for",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "No crop probability data available for this location.",
+    "tool": "crop-probability"
+  },
+  {
     "text": "Please select a location to view crop information",
     "tool": "crop-probability"
   },
@@ -1864,6 +1876,10 @@
   },
   {
     "text": "Probability of season start on or before date",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Select Location",
     "tool": "crop-probability"
   },
   {
@@ -1888,14 +1904,6 @@
   },
   {
     "text": "Digital Skills",
-    "tool": "extension"
-  },
-  {
-    "text": "Downloads",
-    "tool": "extension"
-  },
-  {
-    "text": "Forecasts",
     "tool": "extension"
   },
   {
@@ -1991,19 +1999,55 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Could not download forecast. Check your connection and try again.",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Daily",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Downscaled",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Forecasts",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Forecasts are up to date",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Loading forecasts...",
+    "tool": "forecasts"
+  },
+  {
     "text": "National",
     "tool": "forecasts"
   },
   {
-    "text": "No seasonal forecasts found",
+    "text": "No data available",
     "tool": "forecasts"
   },
   {
-    "text": "No short term forecasts found",
+    "text": "No forecasts available",
     "tool": "forecasts"
   },
   {
-    "text": "Please select a location to view forecasts",
+    "text": "No resources available",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Offline",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Refresh",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Refresh forecasts",
     "tool": "forecasts"
   },
   {
@@ -2019,8 +2063,20 @@
     "tool": "forecasts"
   },
   {
-    "text": "A",
-    "tool": "manual"
+    "text": "Show next forecasts",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Show previous forecasts",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Up to date",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Weekly",
+    "tool": "forecasts"
   },
   {
     "text": "Activity Flow Chart",
@@ -2031,15 +2087,7 @@
     "tool": "manual"
   },
   {
-    "text": "B",
-    "tool": "manual"
-  },
-  {
     "text": "Budget",
-    "tool": "manual"
-  },
-  {
-    "text": "C",
     "tool": "manual"
   },
   {
@@ -2055,10 +2103,6 @@
     "tool": "manual"
   },
   {
-    "text": "D",
-    "tool": "manual"
-  },
-  {
     "text": "Download the PICSA Manual",
     "tool": "manual"
   },
@@ -2067,15 +2111,7 @@
     "tool": "manual"
   },
   {
-    "text": "E",
-    "tool": "manual"
-  },
-  {
     "text": "Extension",
-    "tool": "manual"
-  },
-  {
-    "text": "F",
     "tool": "manual"
   },
   {
@@ -2087,19 +2123,7 @@
     "tool": "manual"
   },
   {
-    "text": "G",
-    "tool": "manual"
-  },
-  {
-    "text": "H",
-    "tool": "manual"
-  },
-  {
     "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "I",
     "tool": "manual"
   },
   {
@@ -2111,19 +2135,7 @@
     "tool": "manual"
   },
   {
-    "text": "J",
-    "tool": "manual"
-  },
-  {
     "text": "Just before the season",
-    "tool": "manual"
-  },
-  {
-    "text": "K",
-    "tool": "manual"
-  },
-  {
-    "text": "L",
     "tool": "manual"
   },
   {
@@ -2156,6 +2168,10 @@
   },
   {
     "text": "Response to forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Response to short-term forecast",
     "tool": "manual"
   },
   {
@@ -2415,6 +2431,22 @@
     "tool": "option"
   },
   {
+    "text": "Additional Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Additional Links",
+    "tool": "resources"
+  },
+  {
+    "text": "Cancel download",
+    "tool": "resources"
+  },
+  {
+    "text": "Check internet connection and try again",
+    "tool": "resources"
+  },
+  {
     "text": "Collection not found",
     "tool": "resources"
   },
@@ -2433,12 +2465,37 @@
     "context": "videos"
   },
   {
+    "text": "Download",
+    "tool": "resources"
+  },
+  {
     "text": "Download All",
+    "tool": "resources"
+  },
+  {
+    "text": "Download Failed",
+    "tool": "resources"
+  },
+  {
+    "text": "Download this resource to open it",
+    "tool": "resources"
+  },
+  {
+    "text": "Downloaded",
     "tool": "resources"
   },
   {
     "text": "Downloading",
     "tool": "resources"
+  },
+  {
+    "text": "Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "El Niño and La Niña",
+    "tool": "resources",
+    "context": "videos"
   },
   {
     "text": "Files",
@@ -2493,11 +2550,23 @@
     "tool": "resources"
   },
   {
+    "text": "Loading",
+    "tool": "resources"
+  },
+  {
     "text": "Manage Downloads",
     "tool": "resources"
   },
   {
     "text": "No results found",
+    "tool": "resources"
+  },
+  {
+    "text": "Open",
+    "tool": "resources"
+  },
+  {
+    "text": "Open with another app",
     "tool": "resources"
   },
   {
@@ -2531,6 +2600,10 @@
     "context": "videos"
   },
   {
+    "text": "Saving",
+    "tool": "resources"
+  },
+  {
     "text": "Search",
     "tool": "resources"
   },
@@ -2552,6 +2625,10 @@
     "text": "Short Term Forecast",
     "tool": "resources",
     "context": "videos"
+  },
+  {
+    "text": "This file cannot be displayed on this device",
+    "tool": "resources"
   },
   {
     "text": "Calendar Time",

@@ -30,6 +30,8 @@ As an intelligent agent, you must improve your own workflow and help future agen
 - Comments should only explain "why" the code does something if it's not obvious, or "what" complex logic establishes.
 - **Minimalist, Farmer-First UI (No Over-Engineering or Visual Noise)**: Do NOT add superfluous visual elements, chips, tags, metadata badges, or metrics unprompted (e.g., "Inside District", "X km from center", "Y years of data", extra status icons). Keep interfaces clean, direct, and focused on essential actions with minimal cognitive load (e.g., "View" instead of verbose button text). Avoid adding unprompted visual noise for the sake of it.
 - **Database Exploration**: ALWAYS use the `supabase-db` MCP skill (`mcp_supabase-db_query`) when trying to introspect the Supabase database (e.g., viewing registered functions, checking schema, exploring tables). This is significantly more efficient and accurate than reading raw schema files using `grep_search` or `view_file`.
+- **Grounding in Real Data over Hypothetical Over-Engineering**: Never write defensive logic, regex filters, or fallback branches for hypothetical scenarios. Always query the real Supabase database or storage bucket first to inspect actual data and schemas before implementing filtering or migration code.
+- **Fail-Fast Remote Integration**: In synchronization and data pipeline scripts, network or storage operations must fail fast with a descriptive error. Never swallow errors or default missing remote metadata to "treated as fresh".
 
 ## 3. Destructive Commands (CRITICAL)
 

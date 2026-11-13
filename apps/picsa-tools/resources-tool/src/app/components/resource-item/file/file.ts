@@ -95,6 +95,11 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
 
   public async handleDownloadStatusChange(dl: ResourceDownloadComponent) {
     if (dl.downloadStatus() === 'complete') {
+      if (!this.dbDoc()) {
+        await this.service.ready();
+        const doc = await this.service.dbFiles.findOne(this.resource().id).exec();
+        if (doc) this.dbDoc.set(doc);
+      }
       const uri = await dl.uri(false);
       if (uri) {
         this.fileUri.set(uri);

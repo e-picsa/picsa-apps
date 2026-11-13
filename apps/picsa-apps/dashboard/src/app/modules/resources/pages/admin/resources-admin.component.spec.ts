@@ -110,4 +110,41 @@ describe('ResourcesAdminComponent', () => {
     const actionableRows = component.displayedRows();
     expect(actionableRows.every((r) => r.status !== 'In Sync')).toBe(true);
   });
+
+  it('should treat DB cover paths matching synced bundle webp/svg paths as In Sync', () => {
+    // '29be07fe-cc1b-41c9-8689-26e6ec4718f0' in mw.json has:
+    // cover_image: "assets/resources/covers/mw/Cover Image.webp"
+    mockFiles.set([
+      {
+        id: '29be07fe-cc1b-41c9-8689-26e6ec4718f0',
+        title: 'MAIZE PRODUCTION',
+        storage_file: 'mw/resources/Guide to Maize Production _ Final @@ With Cover.pdf',
+        cover_image: 'mw/resources/covers/Cover Image.png',
+        language_code: 'mw_en',
+        external_url: '',
+        country_code: 'mw',
+      },
+    ]);
+    // 'accessAg' in mw.json has cover_image: "assets/resources/covers/access-ag.webp"
+    mockLinks.set([
+      {
+        id: 'accessAg',
+        title: 'Access Agriculture',
+        url: 'https://www.accessagriculture.org',
+        type: 'web',
+        cover_image: 'global/resources/covers/access-ag.jpg',
+        country_code: 'mw',
+      },
+    ]);
+    fixture.detectChanges();
+
+    const rows = component.allDiffRows();
+    const fileRow = rows.find((r) => r.id === '29be07fe-cc1b-41c9-8689-26e6ec4718f0');
+    const linkRow = rows.find((r) => r.id === 'accessAg');
+    const colRow = rows.find((r) => r.id === 'cropResources_mw');
+
+    expect(fileRow?.status).toBe('In Sync');
+    expect(linkRow?.status).toBe('In Sync');
+    expect(colRow?.detail).not.toContain('Cover image changed');
+  });
 });

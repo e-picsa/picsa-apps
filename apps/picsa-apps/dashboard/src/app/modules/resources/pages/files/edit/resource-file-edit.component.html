@@ -3,9 +3,9 @@
 
   <form [formGroup]="form">
     <div class="form-content">
-      <div style="display: flex; flex-wrap: wrap; gap: 2em">
+      <div style="display: flex; flex-wrap: wrap; gap: 2rem">
         <!-- External URL -->
-        @if (form.value.external_url; as external_url) {
+        @if (externalUrl(); as external_url) {
           <div style="flex: 1">
             <label>External URL</label>
             <a matButton="outlined" [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
@@ -16,30 +16,59 @@
         }
 
         <!-- Storage file / External Url -->
-        @if (!form.value.external_url) {
-          <div>
+        @if (!externalUrl()) {
+          <div style="flex: 0 1 280px; min-width: 240px; display: flex; flex-direction: column">
+            <label>Resource File</label>
             <dashboard-storage-upload
-              label="Resource"
               formControlName="storage_file"
+              cardStyle="resource"
+              removeTooltip="Replace with a different resource file"
+              pickerTooltip="Pick from files already uploaded to storage"
               [fileTypes]="allowedFileTypes"
               [fileDropHeight]="128"
+              [maxFileSizeMB]="50"
               [storageBucketName]="storageBucketName()"
               storageFolderPath="resources"
               (fileMetadata)="handleStorageFileMetadata($event)"
             />
           </div>
         }
+
         <!-- Cover Image -->
-        <div style="flex: 1">
-          <dashboard-storage-upload
-            label="Cover Image"
-            formControlName="cover_image"
-            [fileTypes]="allowedCoverTypes"
-            [fileDropHeight]="128"
-            [storageBucketName]="storageBucketName()"
-            storageFolderPath="resources/covers"
-            [showImagePreview]="true"
-          />
+        <div style="flex: 1 1 300px; min-width: min(300px, 100%); display: flex; flex-direction: column">
+          <label>Cover Image (optional)</label>
+          <div class="cover-layout">
+            @if (canEdit()) {
+              <dashboard-storage-upload
+                style="flex: 1; min-width: 0"
+                formControlName="cover_image"
+                cardStyle="cover"
+                removeTooltip="Remove custom cover and use default"
+                pickerTooltip="Pick from images already uploaded to storage"
+                [fileTypes]="allowedCoverTypes"
+                [fileDropHeight]="128"
+                [maxFileSizeMB]="5"
+                [storageBucketName]="storageBucketName()"
+                storageFolderPath="resources/covers"
+                [showImagePreview]="false"
+              />
+            }
+            <div class="cover-preview-col">
+              @if (coverImage(); as coverImagePath) {
+                <picsa-fallback-image
+                  [src]="coverImagePath | storagePath"
+                  [fallbackType]="getFileFallbackType(mimetype())"
+                  size="md"
+                />
+                <span class="cover-label-text is-custom" [title]="coverFilename()">
+                  {{ coverFilename() }}
+                </span>
+              } @else {
+                <picsa-fallback-image [fallbackType]="getFileFallbackType(mimetype())" size="md" />
+                <span class="cover-label-text">Default Cover</span>
+              }
+            </div>
+          </div>
         </div>
       </div>
       <!-- Title -->

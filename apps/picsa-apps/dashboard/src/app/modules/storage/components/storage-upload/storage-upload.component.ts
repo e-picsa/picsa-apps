@@ -50,6 +50,10 @@ export class DashboardStorageUploadComponent implements ControlValueAccessor {
   public storageFolderPath = input<string>('uploads');
   public showImagePreview = input<boolean>(false);
   public autoUpload = input<boolean>(true);
+  public maxFileSizeMB = input<number>(50);
+  public cardStyle = input<'none' | 'resource' | 'cover'>('none');
+  public removeTooltip = input<string>('Remove file');
+  public pickerTooltip = input<string>('');
   public disabled = input<boolean>(false);
 
   public fileMetadata = output<IStorageUploadFileMeta | undefined>();

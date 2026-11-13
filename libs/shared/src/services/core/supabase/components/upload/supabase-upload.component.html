@@ -1,15 +1,18 @@
 <!-- Dashboard dropzone -->
 @if (uppy(); as uppyInstance) {
   <uppy-dashboard [uppy]="uppyInstance" [props]="dashboardOptions()" />
+  @if (maxFileSizeMB()) {
+    <p class="upload-hint">Maximum file size: {{ maxFileSizeMB() }} MB</p>
+  }
 }
 
 <!-- Storage path editor -->
-@if (storageFolderPathEditable) {
+@if (storageFolderPathEditable()) {
   <mat-form-field floatLabel="always" style="width: 100%; margin-top: 1rem">
     <mat-label>Storage Folder</mat-label>
-    <input matInput type="text" [(ngModel)]="storageFolderPath" />
-    @if (storageFolderPath) {
-      <button matSuffix matIconButton aria-label="Clear" (click)="storageFolderPath = ''">
+    <input matInput type="text" [ngModel]="storageFolderPath()" (ngModelChange)="storageFolderPath.set($event)" />
+    @if (storageFolderPath()) {
+      <button matSuffix matIconButton aria-label="Clear" (click)="storageFolderPath.set('')">
         <mat-icon>close</mat-icon>
       </button>
     }
@@ -17,7 +20,7 @@
 }
 
 <!-- Upload button -->
-@if (!this.autoUpload && !hideUploadButton) {
+@if (!autoUpload() && !hideUploadButton()) {
   <button
     matButton="outlined"
     color="primary"

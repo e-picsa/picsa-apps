@@ -7,6 +7,8 @@ type IFarmerManualId_ZM =
   | 'picsa_manual_farmer_zm_lue'
   | 'picsa_manual_farmer_zm_toi';
 
+type IExtensionManualId_ZW = 'picsa_manual_zw_sn' | 'picsa_manual_zw_nd';
+
 type IPicsaManualId =
   | 'picsa_manual'
   | 'picsa_manual_farmer'
@@ -14,7 +16,8 @@ type IPicsaManualId =
   | 'picsa_manual_chichewa_farmer'
   | 'picsa_manual_tumbuka'
   | 'picsa_manual_tajik'
-  | IFarmerManualId_ZM;
+  | IFarmerManualId_ZM
+  | IExtensionManualId_ZW;
 
 /**
  * List of manuals available both within manual tool and resource collection
@@ -200,6 +203,39 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
     size_kb: 2160,
     filter: { countries: ['zm'] },
     keywords: ['manual', 'farmer'],
+    priority: 1,
+  },
+  // ZW Extension
+  picsa_manual_zw_sn: {
+    id: 'picsa_manual_zw_sn',
+    type: 'file',
+    subtype: 'pdf',
+    title: 'Gwaro Rebasa rePICSA',
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'zw_sn',
+    filename: 'picsa-manual.sn.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zw/manual/extension/picsa-manual.sn.pdf',
+    md5Checksum: 'a9eea0eedc7fbba7b640a3d3520abbe8',
+    size_kb: 2160.7,
+    filter: { countries: ['zw'] },
+    keywords: ['manual', 'extension'],
+    priority: 1,
+  },
+  picsa_manual_zw_nd: {
+    id: 'picsa_manual_zw_nd',
+    type: 'file',
+    subtype: 'pdf',
+    title: 'Ugwalo Lwendlela Yokusebenzisa iPICSA Labalimi',
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'zw_nd',
+    filename: 'picsa-manual.nd.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zw/manual/extension/picsa-manual.nd.pdf',
+    md5Checksum: '6d62e7c7c824f774dcea87e5eb6f72c0',
+    size_kb: 1987,
+    filter: { countries: ['zw'] },
+    keywords: ['manual', 'extension'],
     priority: 1,
   },
 };

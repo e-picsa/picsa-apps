@@ -1,0 +1,14 @@
+<div class="fallback-image-wrapper" [attr.data-size]="size()">
+  @if (showImage()) {
+    <img [src]="src()!" [alt]="alt()" [attr.data-fit]="fit()" (error)="onImageError()" class="preview-img" />
+  } @else {
+    <div class="fallback-badge-card" [attr.data-fallback-type]="fallbackType()">
+      @if (svgIcon(); as icon) {
+        <mat-icon class="fallback-icon" [svgIcon]="icon"></mat-icon>
+      } @else {
+        <mat-icon class="fallback-icon">{{ config().matIcon }}</mat-icon>
+      }
+      <span class="fallback-badge">{{ badgeText() }}</span>
+    </div>
+  }
+</div>

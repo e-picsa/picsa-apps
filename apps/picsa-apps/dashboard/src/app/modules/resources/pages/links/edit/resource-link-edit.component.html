@@ -9,6 +9,7 @@
         formControlName="cover_image"
         [fileTypes]="allowedCoverTypes"
         [fileDropHeight]="100"
+        [maxFileSizeMB]="5"
         [storageBucketName]="storageBucketName()"
         storageFolderPath="resources/covers"
         [showImagePreview]="true"

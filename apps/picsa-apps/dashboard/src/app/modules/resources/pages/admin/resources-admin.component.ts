@@ -13,6 +13,7 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow, IResourceLinkRow } from '../../types';
+import { normalizeBundledCoverPath } from '../../utils';
 
 export type ResourceSyncStatus = 'In Sync' | 'Differs' | 'Missing in App' | 'Orphaned in App';
 export type ResourceKind = 'Collection' | 'File' | 'Link';
@@ -198,19 +199,21 @@ export class ResourcesAdminComponent implements OnInit {
         const diffs: string[] = [];
         if (dbItem.title !== appItem.title) diffs.push(`Title ('${dbItem.title}' vs app '${appItem.title}')`);
         if ((dbItem.description || null) !== (appItem.description || null)) diffs.push('Description changed');
-        if ((dbItem.cover_image || null) !== (appItem.cover_image || null)) diffs.push('Cover image changed');
+        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
+          diffs.push('Cover image changed');
+        }
         if ((dbItem.sort_order ?? 1) !== (appItem.sort_order ?? 1)) {
           diffs.push(`Sort order (${dbItem.sort_order ?? 1} vs app ${appItem.sort_order ?? 1})`);
         }
 
-        const dbFiles = [...(dbItem.resource_files || [])].sort();
-        const appFiles = [...(appItem.resource_files || [])].sort();
+        const dbFiles = [...(dbItem.resource_files || [])].sort((a, b) => a.localeCompare(b));
+        const appFiles = [...(appItem.resource_files || [])].sort((a, b) => a.localeCompare(b));
         if (JSON.stringify(dbFiles) !== JSON.stringify(appFiles)) {
           diffs.push(`Files (${dbFiles.length} vs app ${appFiles.length})`);
         }
 
-        const dbLinks = [...(dbItem.resource_links || [])].sort();
-        const appLinks = [...(appItem.resource_links || [])].sort();
+        const dbLinks = [...(dbItem.resource_links || [])].sort((a, b) => a.localeCompare(b));
+        const appLinks = [...(appItem.resource_links || [])].sort((a, b) => a.localeCompare(b));
         if (JSON.stringify(dbLinks) !== JSON.stringify(appLinks)) {
           diffs.push(`Links (${dbLinks.length} vs app ${appLinks.length})`);
         }
@@ -276,7 +279,9 @@ export class ResourcesAdminComponent implements OnInit {
         const diffs: string[] = [];
         if (dbItem.title !== appItem.title) diffs.push(`Title changed`);
         if ((dbItem.storage_file || null) !== (appItem.storage_file || null)) diffs.push('Storage file changed');
-        if ((dbItem.cover_image || null) !== (appItem.cover_image || null)) diffs.push('Cover image changed');
+        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
+          diffs.push('Cover image changed');
+        }
         if ((dbItem.language_code || null) !== (appItem.language_code || null)) diffs.push('Language changed');
         if ((dbItem.external_url || null) !== (appItem.external_url || null)) diffs.push('URL changed');
 
@@ -341,7 +346,9 @@ export class ResourcesAdminComponent implements OnInit {
         if (dbItem.title !== appItem.title) diffs.push('Title changed');
         if (dbItem.url !== appItem.url) diffs.push('URL changed');
         if (dbItem.type !== appItem.type) diffs.push(`Type (${dbItem.type} vs ${appItem.type})`);
-        if ((dbItem.cover_image || null) !== (appItem.cover_image || null)) diffs.push('Cover changed');
+        if (normalizeBundledCoverPath(dbItem.cover_image) !== normalizeBundledCoverPath(appItem.cover_image)) {
+          diffs.push('Cover changed');
+        }
 
         if (diffs.length > 0) {
           rows.push({

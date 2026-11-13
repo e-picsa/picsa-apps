@@ -82,4 +82,46 @@ describe('ResourceItemLinkComponent', () => {
     expect(component.fallbackInfo().badge).toBe('PDF');
     expect(component.fileSizeText()).toBe('2.3 MB');
   });
+
+  it('correctly handles file resource wrapped by ResourceItemFileComponent (rawType file, internal subtype)', () => {
+    // Mimic the exact structure computed by ResourceItemFileComponent.resourceLink()
+    fixture.componentRef.setInput('resource', {
+      id: 'wrapped-file',
+      title: 'Guide PDF',
+      rawType: 'file',
+      subtype: 'internal',
+      type: 'link',
+      fileSubtype: 'pdf',
+      size_kb: 1024,
+      mimetype: 'application/pdf',
+      cover: { image: '', imageFit: 'contain' },
+    });
+    fixture.detectChanges();
+
+    expect(component.fallbackInfo().type).toBe('pdf');
+    expect(component.fallbackInfo().badge).toBe('PDF');
+
+    const fallbackBadge = fixture.nativeElement.querySelector('.fallback-badge-card');
+    expect(fallbackBadge).toBeTruthy();
+    expect(fallbackBadge.getAttribute('data-fallback-type')).toBe('pdf');
+    expect(fixture.nativeElement.querySelector('.fallback-badge').textContent.trim()).toBe('PDF');
+  });
+
+  it('correctly displays cover image when file resource has a cover', () => {
+    fixture.componentRef.setInput('resource', {
+      id: 'file-with-cover',
+      title: 'Video with Cover',
+      rawType: 'file',
+      subtype: 'internal',
+      type: 'link',
+      fileSubtype: 'video',
+      cover: { image: 'https://example.com/cover.jpg', imageFit: 'cover' },
+    });
+    fixture.detectChanges();
+
+    expect(component.coverImage()).toBe('https://example.com/cover.jpg');
+    const img: HTMLImageElement = fixture.nativeElement.querySelector('img.preview-img');
+    expect(img).toBeTruthy();
+    expect(img.getAttribute('src')).toBe('https://example.com/cover.jpg');
+  });
 });

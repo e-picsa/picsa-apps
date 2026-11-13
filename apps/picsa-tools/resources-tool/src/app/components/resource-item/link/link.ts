@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
+import { FallbackImageType, PicsaFallbackImageComponent } from '@picsa/components';
 import { ILocaleCode, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
@@ -25,7 +26,7 @@ export function getLanguageLabel(code?: string): string {
   selector: 'resource-item-link',
   templateUrl: 'link.html',
   styleUrls: ['link.scss'],
-  imports: [ResourcesMaterialModule, MatCardModule, MatIconModule, PicsaTranslateModule],
+  imports: [ResourcesMaterialModule, MatCardModule, MatIconModule, PicsaTranslateModule, PicsaFallbackImageComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceItemLinkComponent {
@@ -33,8 +34,6 @@ export class ResourceItemLinkComponent {
   private route = inject(ActivatedRoute);
 
   resource = input.required<any>();
-
-  public imageFailed = signal(false);
 
   shareUrl = computed<string>(() => {
     const { url, subtype } = this.resource();
@@ -78,9 +77,9 @@ export class ResourceItemLinkComponent {
 
   fallbackInfo = computed<{
     badge: string;
-    matIcon?: string;
+    type: FallbackImageType;
+    label?: string;
     svgIcon?: string;
-    colorClass: string;
   }>(() => {
     const res = this.resource();
     const type = res.rawType || res.type;
@@ -90,57 +89,48 @@ export class ResourceItemLinkComponent {
     if (type === 'collection') {
       return {
         badge: 'Collection',
-        matIcon: 'folder',
-        colorClass: 'collection-fallback',
+        type: 'folder',
+        label: 'Collection',
       };
     }
 
     if (subtype === 'video' || mimetype === 'video/mp4') {
       return {
         badge: 'Video',
+        type: 'video',
         svgIcon: 'resources_tool:filetype_video',
-        matIcon: 'movie',
-        colorClass: 'video-fallback',
       };
     }
 
     if (subtype === 'pdf' || mimetype === 'application/pdf') {
       return {
         badge: 'PDF',
+        type: 'pdf',
         svgIcon: 'resources_tool:filetype_pdf',
-        matIcon: 'picture_as_pdf',
-        colorClass: 'pdf-fallback',
       };
     }
 
     if (subtype === 'play_store') {
       return {
         badge: 'App',
+        type: 'app',
         svgIcon: 'resources_tool:play_store',
-        matIcon: 'apps',
-        colorClass: 'app-fallback',
       };
     }
 
     if (type === 'file') {
       return {
         badge: 'Doc',
+        type: 'document',
         svgIcon: 'resources_tool:filetype_document',
-        matIcon: 'description',
-        colorClass: 'document-fallback',
       };
     }
 
     return {
       badge: 'Link',
-      matIcon: 'language',
-      colorClass: 'link-fallback',
+      type: 'link',
     };
   });
-
-  onImageError() {
-    this.imageFailed.set(true);
-  }
 
   /** Check if any existing click handlers already bound to element to use as override */
   // eslint-disable-next-line @angular-eslint/no-output-native

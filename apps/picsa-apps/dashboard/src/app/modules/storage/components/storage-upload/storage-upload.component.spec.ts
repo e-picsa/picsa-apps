@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { By } from '@angular/platform-browser';
+import { SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 
 import { DashboardStorageService } from '../../services/storage.service';
 import { DashboardStorageUploadComponent } from './storage-upload.component';
@@ -10,7 +11,8 @@ describe('DashboardStorageUploadComponent', () => {
 
   beforeEach(async () => {
     const mockSupabaseService = {
-      ready: () => Promise.resolve(),
+      // Keep pending so Uppy Dashboard plugin (which has Jest CJS/ESM interop issues) does not mount in unit tests
+      ready: () => new Promise(() => undefined),
       config: { apiUrl: 'http://localhost:54321', anonKey: 'test-key' },
       storage: {
         getFile: jest.fn().mockResolvedValue(null),
@@ -66,5 +68,18 @@ describe('DashboardStorageUploadComponent', () => {
     expect(component.value()).toBe('');
     expect(fixture.nativeElement.querySelector('dashboard-storage-link')).toBeFalsy();
     expect(fixture.nativeElement.querySelector('picsa-supabase-upload')).toBeTruthy();
+  });
+
+  it('should forward maxFileSizeMB to SupabaseUploadComponent and apply cardStyle class', () => {
+    const childUploader = fixture.debugElement.query(By.directive(SupabaseUploadComponent))
+      .componentInstance as SupabaseUploadComponent;
+    expect(childUploader.maxFileSizeMB()).toBe(50);
+
+    fixture.componentRef.setInput('maxFileSizeMB', 5);
+    fixture.componentRef.setInput('cardStyle', 'cover');
+    fixture.detectChanges();
+
+    expect(childUploader.maxFileSizeMB()).toBe(5);
+    expect(fixture.nativeElement.querySelector('.file-card.cover-card')).toBeTruthy();
   });
 });

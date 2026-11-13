@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PicsaFallbackImageComponent } from '@picsa/components';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
@@ -12,6 +13,7 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { IDeploymentRow } from '../../../deployment/types';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow } from '../../types';
+import { getFileFallbackType } from '../../utils';
 
 type IMergedResources = IResourceFileRow & {
   children: IResourceFileRow[];
@@ -38,6 +40,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
     CommonModule,
     DashboardMaterialModule,
     PicsaDataTableComponent,
+    PicsaFallbackImageComponent,
     RouterModule,
     StoragePathPipe,
     SizeMBPipe,
@@ -48,6 +51,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFilesComponent implements OnInit {
+  public readonly getFileFallbackType = getFileFallbackType;
   private service = inject(ResourcesDashboardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);

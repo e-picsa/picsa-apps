@@ -2,42 +2,81 @@
   <label class="storage-upload-label">{{ fieldLabel }}</label>
 }
 
-@if (value(); as storagePath) {
-  <div class="storage-preview-row">
-    <dashboard-storage-link #storageLink [id]="storagePath" displayStyle="button" />
-    @if (!isDisabled()) {
-      <button type="button" matIconButton class="file-remove" (click)="clearValue()" matTooltip="Remove file">
-        <mat-icon>close</mat-icon>
+<div
+  [class.file-card]="cardStyle() !== 'none'"
+  [class.resource-card]="cardStyle() === 'resource'"
+  [class.cover-card]="cardStyle() === 'cover'"
+>
+  @if (value(); as storagePath) {
+    <div class="storage-preview-row">
+      <dashboard-storage-link #storageLink [id]="storagePath" displayStyle="button" />
+      @if (!isDisabled() && cardStyle() === 'none') {
+        <button type="button" matIconButton class="file-remove" (click)="clearValue()" [matTooltip]="removeTooltip()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    @if (!isDisabled() && cardStyle() !== 'none') {
+      <button
+        type="button"
+        matButton="outlined"
+        color="primary"
+        (click)="clearValue()"
+        [matTooltip]="removeTooltip()"
+        aria-label="Change file"
+        style="margin-top: 8px"
+      >
+        <mat-icon>autorenew</mat-icon>
+        Change File
       </button>
     }
-  </div>
-  @if (showImagePreview()) {
-    <img
-      class="cover-preview"
-      [src]="storageLink.entry()?.publicUrl || (storagePath | storagePath)"
-      alt="Cover Preview"
+    @if (showImagePreview()) {
+      <img
+        class="cover-preview"
+        [src]="storageLink.entry()?.publicUrl || (storagePath | storagePath)"
+        alt="Cover Preview"
+      />
+    }
+  } @else if (!isDisabled()) {
+    <picsa-supabase-upload
+      [fileTypes]="fileTypes()"
+      [fileDropHeight]="fileDropHeight()"
+      [autoUpload]="autoUpload()"
+      [maxFileSizeMB]="maxFileSizeMB()"
+      [storageBucketName]="storageBucketName() || 'global'"
+      [storageFolderPath]="storageFolderPath()"
+      (uploadComplete)="handleUploadComplete($event)"
     />
+    @if (cardStyle() !== 'none') {
+      <button
+        type="button"
+        matButton="outlined"
+        color="primary"
+        supabaseStoragePicker
+        [storageBucketName]="storageBucketName()"
+        [storageFolderPath]="storageFolderPath()"
+        (storageFileSelected)="handleStorageFileSelected($event)"
+        [matTooltip]="pickerTooltip()"
+        style="margin-top: 8px"
+      >
+        <mat-icon>perm_media</mat-icon>
+        Choose Uploaded
+      </button>
+    } @else {
+      <button
+        type="button"
+        matButton
+        color="primary"
+        supabaseStoragePicker
+        [storageBucketName]="storageBucketName()"
+        [storageFolderPath]="storageFolderPath()"
+        (storageFileSelected)="handleStorageFileSelected($event)"
+        [matTooltip]="pickerTooltip()"
+        style="margin-top: 4px"
+      >
+        <mat-icon>perm_media</mat-icon>
+        Select existing file
+      </button>
+    }
   }
-} @else if (!isDisabled()) {
-  <picsa-supabase-upload
-    [fileTypes]="fileTypes()"
-    [fileDropHeight]="fileDropHeight()"
-    [autoUpload]="autoUpload()"
-    [storageBucketName]="storageBucketName() || 'global'"
-    [storageFolderPath]="storageFolderPath()"
-    (uploadComplete)="handleUploadComplete($event)"
-  />
-  <button
-    type="button"
-    matButton
-    color="primary"
-    supabaseStoragePicker
-    [storageBucketName]="storageBucketName()"
-    [storageFolderPath]="storageFolderPath()"
-    (storageFileSelected)="handleStorageFileSelected($event)"
-    style="margin-top: 4px"
-  >
-    <mat-icon>perm_media</mat-icon>
-    Select existing file
-  </button>
-}
+</div>

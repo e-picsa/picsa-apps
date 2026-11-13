@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
+  computed,
+  effect,
   inject,
-  Input,
+  input,
+  model,
   OnDestroy,
   OnInit,
-  Output,
+  output,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +34,7 @@ interface IUploadMeta extends InternalMetadata {
   contentType?: string;
   /** Path to object within bucket */
   objectName: string;
+  [key: string]: unknown;
 }
 
 /** Storage entry data returned following upload */
@@ -44,7 +47,6 @@ export interface IUploadResult {
  * Supabase storage uploader built on top of Uppy dashboard, with support for resumable uploads
  *
  * https://supabase.com/docs/guides/storage/uploads/resumable-uploads
- * https://uppy.io/docs/tus/
  * https://tus.io/
  *
  */
@@ -66,64 +68,69 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   private supabaseService = inject(SupabaseService);
 
   /** Default height of file dropper */
-  @Input() set fileDropHeight(height: number) {
-    this._fileDropHeight = height;
-    this.dashboardOptions.update((opts) => ({ ...opts, height }));
-  }
-  get fileDropHeight(): number {
-    return this._fileDropHeight;
-  }
-  private _fileDropHeight = 300;
+  readonly fileDropHeight = input(300);
 
   /** Name of storage bucket for upload. Must already exist with required access permissions */
-  @Input() storageBucketName = 'global';
+  readonly storageBucketName = model('global');
 
-  /** Nested folder path within storage bucket */
-  @Input() storageFolderPath = 'uploads';
+  /** Nested folder path within storage bucket (two-way: editable via path editor) */
+  readonly storageFolderPath = model('uploads');
 
   /** Specify if storage folder path can be manually edited */
-  @Input() storageFolderPathEditable = false;
+  readonly storageFolderPathEditable = input(false);
 
-  @Input() autoUpload = false;
+  readonly autoUpload = input(false);
 
-  @Input() hideUploadButton = false;
+  readonly hideUploadButton = input(false);
 
-  @Input() set disabled(disabled: boolean) {
-    // Update options through signal for zoneless/OnPush change detection
-    this.dashboardOptions.update((opts) => ({ ...opts, disabled }));
-  }
+  /**
+   * Maximum file size in MB.
+   * Must match backend storage limit (supabase `config.toml` `file_size_limit = "50MiB"`).
+   * Enforced client-side via Uppy restrictions for immediate feedback.
+   */
+  readonly maxFileSizeMB = input(50);
+
+  readonly disabled = input(false);
+
   /**
    * Specify input file type. Must correspond to unique file type specifiers
    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#unique_file_type_specifiers
    */
-  @Input() set fileTypes(filetypes: string[]) {
-    this.setFileTypeRestrictions(filetypes);
-  }
+  readonly fileTypes = input<string[] | undefined>(undefined);
 
-  @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
-  @Output() fileChanged = new EventEmitter<FileDropFile | undefined>();
+  readonly uploadComplete = output<IUploadResult[]>();
+  readonly fileChanged = output<FileDropFile | undefined>();
 
-  public uppy = signal<Uppy | undefined>(undefined);
+  /** Uppy instance, populated asynchronously once supabase is ready */
+  readonly uppy = signal<Uppy | undefined>(undefined);
 
-  public dashboardOptions = signal<DashboardOptions>({
+  private restrictions = computed<NonNullable<UppyOptions['restrictions']>>(() => ({
+    maxNumberOfFiles: 1,
+    ...(this.fileTypes() ? { allowedFileTypes: this.fileTypes() } : {}),
+    maxFileSize: this.maxFileSizeMB() ? this.maxFileSizeMB() * 1024 * 1024 : null,
+  }));
+
+  readonly dashboardOptions = computed<DashboardOptions>(() => ({
     proudlyDisplayPoweredByUppy: false,
     hideUploadButton: true,
-    height: 300,
-  });
+    height: this.fileDropHeight(),
+    disabled: this.disabled(),
+  }));
 
   /** Access files currently loaded into uppy uploader */
   public get files() {
     return this.uppy()?.getFiles() ?? [];
   }
 
-  private uppyOptions: UppyOptions = {
-    debug: false,
-    autoProceed: false,
-    restrictions: { maxNumberOfFiles: 1 },
-  };
-
   private storageService: SupabaseStorageService;
   private isDestroyed = false;
+
+  constructor() {
+    // Apply restriction changes to a live Uppy instance
+    effect(() => {
+      this.uppy()?.setOptions({ restrictions: this.restrictions() });
+    });
+  }
 
   async ngOnInit() {
     await this.supabaseService.ready();
@@ -144,7 +151,7 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     const targetFile = this.files.find((f) => f.name === originalName);
     if (targetFile) {
       const { id, meta } = targetFile;
-      const objectName = `${this.storageFolderPath}/${newName}`;
+      const objectName = `${this.storageFolderPath()}/${newName}`;
       uppy.setFileState(id, { name: newName });
       uppy.setFileMeta(id, { ...meta, name: newName, objectName });
     }
@@ -152,8 +159,7 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
 
   private initUppy() {
     // Create new Uppy instance, mapping configurable props
-    const uppy = new Uppy(this.uppyOptions);
-    this.dashboardOptions.update((opts) => ({ ...opts, height: this._fileDropHeight }));
+    const uppy = new Uppy({ debug: false, autoProceed: false, restrictions: this.restrictions() });
     // Create custom upload to support upload to supabase
     this.registerSupabaseUppyUploader(uppy);
     this.uppy.set(uppy);
@@ -162,19 +168,20 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   public async startUpload() {
     const uppy = this.uppy();
     if (!uppy) {
-      throw new Error('Uploader not initialized');
+      throw new Error('Uploader not initialised');
     }
     // remove duplicates
     for (const file of this.files) {
-      const objectName = this.storageFolderPath ? `${this.storageFolderPath}/${file.name}` : file.name;
+      const folderPath = this.storageFolderPath();
+      const objectName = folderPath ? `${folderPath}/${file.name}` : file.name;
       const meta: IUploadMeta = {
         ...file.meta,
         contentType: file.type,
-        bucketName: this.storageBucketName,
+        bucketName: this.storageBucketName(),
         objectName,
         cacheControl: 3600,
       };
-      uppy.setFileMeta(file.id, meta as Record<string, any>);
+      uppy.setFileMeta(file.id, meta);
       await this.checkDuplicateUpload(uppy, file);
     }
     const res = await uppy.upload();
@@ -186,13 +193,13 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     const uploads = await Promise.all(
       res.successful.map(async (res) => {
         const data = res.data as File;
-        const meta: IUploadMeta = res.meta as any;
+        const meta = res.meta as unknown as IUploadMeta;
 
         const result: IUploadResult = { data, meta };
         return result;
       }),
     );
-    this.uploadComplete.next(uploads);
+    this.uploadComplete.emit(uploads);
   }
 
   private registerSupabaseUppyUploader(uppy: Uppy) {
@@ -221,33 +228,21 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     // Use file-added hook to update metadata used by supabase for managing file metadata
     // NOTE - additional hooks can also be added to observe upload progress, errors etc.
     uppy.on('file-added', () => this.handleFileAdded());
-    uppy.on('file-removed', () => this.fileChanged.next(this.files[0]));
+    uppy.on('file-removed', () => this.fileChanged.emit(this.files[0]));
   }
 
   private handleFileAdded() {
-    this.fileChanged.next(this.files[0]);
-    if (this.autoUpload) {
+    this.fileChanged.emit(this.files[0]);
+    if (this.autoUpload()) {
       this.startUpload();
     }
   }
 
-  private setFileTypeRestrictions(types: string[]) {
-    // Specify options loaded on init
-    this.uppyOptions = {
-      ...this.uppyOptions,
-      restrictions: {
-        ...this.uppyOptions.restrictions,
-        allowedFileTypes: types,
-      },
-    };
-    // Update options if uppy already initialised
-    this.uppy()?.setOptions(this.uppyOptions);
-  }
-
   private async checkDuplicateUpload(uppy: Uppy, file: UppyFile) {
-    let storagePath = `${this.storageBucketName}`;
-    if (this.storageFolderPath) {
-      storagePath += `/${this.storageFolderPath}`;
+    let storagePath = `${this.storageBucketName()}`;
+    const folderPath = this.storageFolderPath();
+    if (folderPath) {
+      storagePath += `/${folderPath}`;
     }
     storagePath += `/${file.name}`;
     const storageFile = await this.storageService.getFile(storagePath);
