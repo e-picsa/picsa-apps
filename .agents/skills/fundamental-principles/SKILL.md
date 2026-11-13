@@ -32,6 +32,7 @@ As an intelligent agent, you must improve your own workflow and help future agen
 - **Database Exploration**: ALWAYS use the `supabase-db` MCP skill (`mcp_supabase-db_query`) when trying to introspect the Supabase database (e.g., viewing registered functions, checking schema, exploring tables). This is significantly more efficient and accurate than reading raw schema files using `grep_search` or `view_file`.
 - **Grounding in Real Data over Hypothetical Over-Engineering**: Never write defensive logic, regex filters, or fallback branches for hypothetical scenarios. Always query the real Supabase database or storage bucket first to inspect actual data and schemas before implementing filtering or migration code.
 - **Fail-Fast Remote Integration**: In synchronization and data pipeline scripts, network or storage operations must fail fast with a descriptive error. Never swallow errors or default missing remote metadata to "treated as fresh".
+- **Angular Material `<mat-icon>` Resizing**: Never resize `<mat-icon>` using Tailwind sizing or typography classes (`w-*`, `h-*`, `text-*`, `!w-*`, `!h-*`, `!text-*`)—Tailwind `text-*` sets `line-height` and throws off vertical alignment. Resize `<mat-icon>` only via Angular Material mechanisms (`inline` inside inline text, parent Material theme tokens, or manual SCSS setting `font-size`, `width`, and `height` together with `line-height: 1`). See `.agents/skills/ui-theming/SKILL.md`.
 
 ## 3. Destructive Commands (CRITICAL)
 

@@ -39,6 +39,17 @@ The project uses a custom Tailwind configuration shared across apps, located at 
   - Avoid using legacy selectors like `mat-raised-button`, `mat-stroked-button`, `mat-flat-button`.
   - **Icon Buttons:** Use `matIconButton` (`<button matIconButton>`) instead of `mat-icon-button`.
 - **Icons:** Use `<mat-icon>`.
+  - **NEVER use Tailwind sizing or typography classes (`w-*`, `h-*`, `text-sm`, `text-base`, `text-[...]`, `!w-*`, `!h-*`, `!text-*`) on `<mat-icon>`.** Tailwind `text-*` utilities override `line-height` (e.g. `text-base` sets `line-height: 1.5rem`), misaligning and clipping glyphs inside Angular Material's `overflow: hidden` `.mat-icon` container.
+  - Prefer default `24px` sizing, `<mat-icon inline>` for icons embedded in inline text (sets `font-size/height/width/line-height: inherit`; avoid inside flex containers with fixed dimensions or with `svgIcon`), or Material component tokens (`mat.menu-overrides`, `mat.chips-overrides`, `mat.list-overrides`).
+  - When manually resizing `<mat-icon>` in component SCSS, set **`font-size`**, **`width`**, and **`height`** together to the same value (preserving `line-height: 1`), e.g.:
+    ```scss
+    mat-icon.badge-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 1;
+    }
+    ```
 - **Inputs:** Use `MatFormField` with `matInput`.
 
 Use Tailwind CSS for layout, spacing, and typography **around** the Material components, or to customize them via utility classes (e.g., margins), but prefer Material's native theming/colors (`color="primary"`) for the component state itself.
