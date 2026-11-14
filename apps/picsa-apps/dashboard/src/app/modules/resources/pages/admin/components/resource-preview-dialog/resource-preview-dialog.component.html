@@ -1,0 +1,102 @@
+<div class="flex flex-col bg-white max-h-[90vh]">
+  <div class="flex justify-between items-start gap-3 p-5 pb-4 border-b border-solid border-slate-200">
+    <div class="min-w-0">
+      <h3 class="m-0 mb-1 text-lg font-semibold text-slate-900">{{ data.title }}</h3>
+      <span class="text-xs text-slate-500">{{ data.kind }} &bull; {{ data.status }}</span>
+      @if (data.bundledOnly) {
+        <p class="mt-1 mb-0 text-xs text-purple-700">Bundled copy only &mdash; not in database.</p>
+      }
+    </div>
+    <button matIconButton mat-dialog-close aria-label="Close preview">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="overflow-y-auto">
+    @switch (data.kind) {
+      @case ('File') {
+        @if (showVideo() && data.fileUrl; as url) {
+          <div class="bg-black flex items-center justify-center">
+            <video controls autoplay playsinline class="w-full max-h-[65vh] outline-none" [src]="url">
+              Your browser does not support video playback.
+            </video>
+          </div>
+        } @else if (showPdf()) {
+          <iframe [src]="safeFileUrl()" class="w-full min-h-[60vh] border-0" title="PDF preview"></iframe>
+        } @else if (showFileFallback() && data.fileUrl; as url) {
+          <div class="flex flex-col items-center gap-3 p-8 text-center">
+            @if (data.coverUrl; as cover) {
+              <img [src]="cover" [alt]="data.title" class="max-h-40 object-contain" />
+            }
+            <a matButton="outlined" [href]="url" target="_blank" rel="noopener noreferrer">
+              <mat-icon>open_in_new</mat-icon>
+              Open File
+            </a>
+          </div>
+        } @else {
+          <p class="p-6 text-sm text-slate-500 text-center m-0">No previewable file attached.</p>
+        }
+      }
+      @case ('Link') {
+        <div class="flex flex-col items-center gap-3 p-8 text-center">
+          @if (data.coverUrl; as cover) {
+            <img [src]="cover" [alt]="data.title" class="max-h-40 object-contain" />
+          }
+          @if (data.linkUrl; as url) {
+            <p class="text-sm text-slate-500 break-all m-0">{{ url }}</p>
+            <a matButton="outlined" [href]="url" target="_blank" rel="noopener noreferrer nofollow">
+              <mat-icon>open_in_new</mat-icon>
+              Open Website
+            </a>
+          } @else {
+            <p class="text-sm text-slate-500 m-0">No URL available.</p>
+          }
+        </div>
+      }
+      @case ('Collection') {
+        <div class="p-5 flex flex-col gap-4">
+          <div>
+            <h4 class="m-0 mb-2 text-sm font-semibold text-slate-700">Files ({{ data.files?.length ?? 0 }})</h4>
+            @if ((data.files?.length ?? 0) > 0) {
+              <ul class="m-0 p-0 list-none flex flex-col gap-1.5">
+                @for (file of data.files; track file.id) {
+                  <li class="flex items-center gap-2 text-sm text-slate-800">
+                    <mat-icon class="text-slate-400">description</mat-icon>
+                    <span class="truncate">{{ file.title }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="m-0 text-sm text-slate-400 italic">No files in this collection.</p>
+            }
+          </div>
+          <div>
+            <h4 class="m-0 mb-2 text-sm font-semibold text-slate-700">Links ({{ data.links?.length ?? 0 }})</h4>
+            @if ((data.links?.length ?? 0) > 0) {
+              <ul class="m-0 p-0 list-none flex flex-col gap-1.5">
+                @for (link of data.links; track link.id) {
+                  <li class="flex items-center gap-2 text-sm text-slate-800">
+                    <mat-icon class="text-slate-400">language</mat-icon>
+                    <span class="truncate">{{ link.title }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="m-0 text-sm text-slate-400 italic">No links in this collection.</p>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="flex justify-end items-center gap-2 px-5 py-4 border-t border-solid border-slate-200 bg-slate-50">
+    @if (data.kind === 'File' && data.fileUrl; as url) {
+      <a matButton="outlined" [href]="url" target="_blank" rel="noopener noreferrer">
+        <mat-icon>open_in_new</mat-icon>
+        Open Original
+      </a>
+    }
+    <button matButton="filled" color="primary" mat-dialog-close>Close</button>
+  </div>
+</div>
