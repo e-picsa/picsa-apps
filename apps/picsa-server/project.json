@@ -81,14 +81,14 @@
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/supabase/data"],
       "options": {
-        "command": "yarn nx run picsa-server:supabase db reset && yarn tsx scripts/db-seed/db-seed.ts",
+        "command": "yarn nx run picsa-server:supabase db reset && yarn tsx scripts/db-seed/db-seed.ts && yarn tsx scripts/demo/demo-reset.ts",
         "cwd": "apps/picsa-server"
       }
     },
     "db:seed:extended": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn tsx scripts/db-seed/db-seed-export.ts --extended",
+        "command": "yarn tsx scripts/db-seed/db-seed-export.ts --extended && yarn tsx scripts/demo/demo-reset.ts",
         "cwd": "apps/picsa-server"
       }
     },
@@ -96,6 +96,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx supabase test db",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "demo:reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn tsx scripts/demo/demo-reset.ts",
         "cwd": "apps/picsa-server"
       }
     },

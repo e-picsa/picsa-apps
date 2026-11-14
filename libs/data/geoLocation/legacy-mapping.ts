@@ -5,6 +5,7 @@ export const COUNTRY_CODE_LEGACY_MAPPING: Record<CountryCodeLegacy, CountryCode>
   global: 'XX',
   mw: 'MW',
   tj: 'TJ',
+  xx: 'XX',
   zm: 'ZM',
   zw: 'ZW',
 };

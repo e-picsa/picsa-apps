@@ -958,6 +958,7 @@ export type Database = {
           tj_tg: string | null;
           tool: string;
           updated_at: string | null;
+          xx_ny: string | null;
           zm_bem: string | null;
           zm_kqn: string | null;
           zm_loz: string | null;
@@ -982,6 +983,7 @@ export type Database = {
           tj_tg?: string | null;
           tool: string;
           updated_at?: string | null;
+          xx_ny?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -1005,6 +1007,7 @@ export type Database = {
           tj_tg?: string | null;
           tool?: string;
           updated_at?: string | null;
+          xx_ny?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -1117,7 +1120,7 @@ export type Database = {
         | 'translations.admin'
         | 'translations.editor'
         | 'app.admin';
-      country_code: 'global' | 'mw' | 'zm' | 'tj' | 'zw';
+      country_code: 'global' | 'mw' | 'zm' | 'tj' | 'zw' | 'xx';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
         | 'global_en'
@@ -1863,7 +1866,7 @@ export const Constants = {
         'translations.editor',
         'app.admin',
       ],
-      country_code: ['global', 'mw', 'zm', 'tj', 'zw'],
+      country_code: ['global', 'mw', 'zm', 'tj', 'zw', 'xx'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
       locale_code: [
         'global_en',
