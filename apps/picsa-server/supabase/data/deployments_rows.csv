@@ -1,5 +1,4 @@
 id,country_code,label,configuration,access_key_md5,public,icon_path
 mw,mw,Malawi App,{},,false,global/images/flags/mw.svg
-test,tj,Testing,{},,false,global/images/flags/global.svg
 zm,zm,Zambia App,{},,false,global/images/flags/zm.svg
 zw,zw,Zimbabwe App,{},,false,global/images/flags/zw.svg

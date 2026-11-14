@@ -417,6 +417,8 @@ export class SupabaseSeedExport {
               query = query.ilike(key, value.value);
             } else if (value.operator === 'in') {
               query = query.in(key, value.value);
+            } else if (value.operator === 'neq') {
+              query = query.neq(key, value.value);
             }
           } else if (Array.isArray(value)) {
             query = query.in(key, value);

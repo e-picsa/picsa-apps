@@ -14,3 +14,6 @@
   - `baseline/` — immutable seed files, FK-referenced by baseline rows.
     Never wiped by reset.
   - `uploads/` — workshop scratch. Wiped on every reset.
+- The baseline also references one global-bucket file
+  (`global/forecasts/sample_seasonal.pdf`, from the repo seed assets);
+  `demo:reset` upserts it if missing but never deletes it.
