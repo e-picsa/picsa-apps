@@ -70,8 +70,13 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   /** Default height of file dropper */
   readonly fileDropHeight = input(300);
 
-  /** Name of storage bucket for upload. Must already exist with required access permissions */
-  readonly storageBucketName = model('global');
+  /**
+   * Name of storage bucket for upload. Must already exist with required access permissions.
+   * No default on purpose: callers must pass the active country bucket explicitly so
+   * uploads can never silently fall back to the read-only `global` bucket.
+   * `startUpload()` throws if left empty.
+   */
+  readonly storageBucketName = model<string>('');
 
   /** Nested folder path within storage bucket (two-way: editable via path editor) */
   readonly storageFolderPath = model('uploads');
@@ -166,6 +171,10 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   }
 
   public async startUpload() {
+    const bucketName = this.storageBucketName();
+    if (!bucketName) {
+      throw new Error('Uploader misconfigured: storageBucketName (country bucket) is required');
+    }
     const uppy = this.uppy();
     if (!uppy) {
       throw new Error('Uploader not initialised');
@@ -177,7 +186,7 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
       const meta: IUploadMeta = {
         ...file.meta,
         contentType: file.type,
-        bucketName: this.storageBucketName(),
+        bucketName,
         objectName,
         cacheControl: 3600,
       };

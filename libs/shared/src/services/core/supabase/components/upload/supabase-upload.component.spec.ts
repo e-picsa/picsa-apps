@@ -47,7 +47,13 @@ describe('SupabaseUploadComponent', () => {
   it('should default to unrestricted file types with 50MB limit', () => {
     expect(component.fileTypes()).toBeUndefined();
     expect(component.maxFileSizeMB()).toBe(50);
-    expect(component.storageBucketName()).toBe('global');
+  });
+
+  it('should require an explicit storage bucket instead of defaulting to global', async () => {
+    expect(component.storageBucketName()).toBe('');
+    await expect(component.startUpload()).rejects.toThrow('storageBucketName');
+    fixture.componentRef.setInput('storageBucketName', 'mw');
+    expect(component.storageBucketName()).toBe('mw');
   });
 
   it('should pass authenticated session access_token in Tus auth headers', async () => {
