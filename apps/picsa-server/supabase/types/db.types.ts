@@ -958,7 +958,7 @@ export type Database = {
           tj_tg: string | null;
           tool: string;
           updated_at: string | null;
-          xx_ny: string | null;
+          xx_qaa: string | null;
           zm_bem: string | null;
           zm_kqn: string | null;
           zm_loz: string | null;
@@ -983,7 +983,7 @@ export type Database = {
           tj_tg?: string | null;
           tool: string;
           updated_at?: string | null;
-          xx_ny?: string | null;
+          xx_qaa?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -1007,7 +1007,7 @@ export type Database = {
           tj_tg?: string | null;
           tool?: string;
           updated_at?: string | null;
-          xx_ny?: string | null;
+          xx_qaa?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -1095,6 +1095,10 @@ export type Database = {
           last_sign_in_at: string;
           organisation: string;
         }[];
+      };
+      storage_country_can_write: {
+        Args: { p_bucket: string; p_is_insert?: boolean; p_owner: string };
+        Returns: boolean;
       };
       user_has_country_role: {
         Args: { p_country_code: string; p_role: Database['public']['Enums']['app_role'] };

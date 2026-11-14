@@ -169,7 +169,7 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
  * Demo (`xx`) rows are excluded everywhere (see EXCLUDE_DEMO_COUNTRY) except
  * `climate_station_data`, whose inclusion list already covers only prod
  * stations. `translations` keeps all shared rows; only the demo-scoped
- * `xx_ny` column is omitted (single-sourced from the TS baseline instead).
+ * `xx_qaa` column is omitted (single-sourced from the TS baseline instead).
  */
 export const SEED_DATA_CONFIG: Record<string, ISeedDataConfiguration> = {
   ...SEED_DATA_BASE,
@@ -215,7 +215,7 @@ export const SEED_DATA_CONFIG: Record<string, ISeedDataConfiguration> = {
   },
   translations: {
     ...SEED_DATA_BASE.translations,
-    omitColumns: ['xx_ny'],
+    omitColumns: ['xx_qaa'],
   },
 };
 

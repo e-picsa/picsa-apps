@@ -31,13 +31,14 @@ export interface DemoBaseline {
   resource_collections: DemoInsert<Tables['resource_collections']['Insert']>[];
   forecasts: DemoInsert<Tables['forecasts']['Insert']>[];
   /**
-   * Demo Chichewa applied to *shared* translation rows (no xx duplicates —
-   * duplicates of the same English text would show top and bottom of the
-   * id-sorted table). Writing only the demo-scoped `xx_ny` column is invisible
-   * to other deployments; reset clears it back to NULL (see demo-reset).
-   * xx_ny values sourced from the matching mw_ny strings.
+   * Demo placeholder-language values applied to *shared* translation rows
+   * (no xx duplicates — duplicates of the same English text would show top
+   * and bottom of the id-sorted table). Writing only the demo-scoped `xx_qaa`
+   * column is invisible to other deployments; reset clears it back to NULL
+   * (see demo-reset). Values are self-explanatory demo copy, *not*
+   * translations of the English text — real Chichewa work belongs in `mw_ny`.
    */
-  translation_seeds: Pick<Tables['translations']['Insert'], 'id' | 'xx_ny'>[];
+  translation_seeds: Pick<Tables['translations']['Insert'], 'id' | 'xx_qaa'>[];
 }
 
 export const DEMO_BASELINE = {
@@ -220,18 +221,20 @@ export const DEMO_BASELINE = {
       mimetype: 'application/pdf',
     },
   ],
-  // Demo Chichewa for the top-of-list budget strings (ids match the shared
-  // rows; values are the rows' own mw_ny translations). No xx duplicate rows —
-  // duplicates would list the same English text twice (top and bottom).
+  // Demo placeholder-language values on shared rows (no xx duplicates).
+  // ids match the shared rows; values are self-explanatory demo copy, *not*
+  // translations — they show where real translations would appear and reset
+  // wipes them. Real Chichewa work belongs in `mw_ny`.
   translation_seeds: [
-    { id: 'budget--activities', xx_ny: 'Ntchito zakumunda' },
-    { id: 'budget--addcard', xx_ny: 'Onjezerani zochita zina' },
-    { id: 'budget--addfemalemember', xx_ny: 'Onjezerani munthu wa mkazi' },
-    { id: 'budget--addmalemember', xx_ny: 'Onjezerani munthu wa mwamuna' },
-    { id: 'budget--balance', xx_ny: 'Ndalama zotsala' },
-    { id: 'budget--budgettool', xx_ny: 'Chida cha ndondomeko ya ndalama' },
-    { id: 'budget--cardlabel', xx_ny: 'Dzina la choonjezeredwa' },
-    { id: 'budget--consumed', xx_ny: 'Chakudya choyenera kudyedwa' },
+    {
+      id: 'budget--activities',
+      xx_qaa: '[Demo] Translated text appears here — try editing this cell, then re-run demo:reset to restore it.',
+    },
+    {
+      id: 'budget--addcard',
+      xx_qaa:
+        '[Demo] Demo translations use a placeholder language, so they never mix with real translations like mw_ny.',
+    },
   ],
   climate_station_data: CLIMATE_STATION_DATA,
 } satisfies DemoBaseline;
