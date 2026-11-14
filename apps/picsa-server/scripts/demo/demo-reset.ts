@@ -35,7 +35,7 @@
  *      exist before any DB rows are inserted.
  *   2. Delete `xx` content rows (child tables before parents), then insert
  *      the baseline (deployments upserted, user roles insert-only), then
- *      apply demo Chichewa onto shared translation rows (clearing `xx_ny`
+ *      apply demo placeholder translations onto shared rows (clearing `xx_qaa`
  *      everywhere first so resets are deterministic).
  *   3. Wipe `xx/uploads/*` (workshop scratch). `xx/baseline/*` is never wiped.
  */
@@ -322,8 +322,8 @@ async function deleteDemoRows(client: AnyClient) {
   }
 }
 
-/** Apply demo Chichewa to shared translation rows (no xx duplicates).
- * Clears xx_ny everywhere first so resets are deterministic, then sets the
+/** Apply demo placeholder-language values to shared translation rows (no xx duplicates).
+ * Clears xx_qaa everywhere first so resets are deterministic, then sets the
  * seeded values on rows that exist. Missing ids are warned and skipped (e.g.
  * prod text changed and an id rotated) — never fatal. */
 async function applyTranslationSeeds(
@@ -348,7 +348,7 @@ async function applyTranslationSeeds(
       .schema('public')
       .from('translations')
       .select('*', { count: 'exact', head: true })
-      .not('xx_ny', 'is', null);
+      .not('xx_qaa', 'is', null);
     return { cleared: 0, applied: 0, missing, would_apply: seeds.length - missing.length };
   }
   let cleared = 0;
@@ -356,8 +356,8 @@ async function applyTranslationSeeds(
     const { error, count } = await client
       .schema('public')
       .from('translations')
-      .update({ xx_ny: null }, { count: 'exact' })
-      .not('xx_ny', 'is', null);
+      .update({ xx_qaa: null }, { count: 'exact' })
+      .not('xx_qaa', 'is', null);
     if (error) throw error;
     cleared = count ?? 0;
   }
@@ -367,7 +367,7 @@ async function applyTranslationSeeds(
     const { error } = await client
       .schema('public')
       .from('translations')
-      .update({ xx_ny: seed.xx_ny })
+      .update({ xx_qaa: seed.xx_qaa })
       .eq('id', seed.id);
     if (error) throw error;
     applied++;

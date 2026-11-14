@@ -60,8 +60,8 @@ SELECT ok(
 -- Demo translations column exists (DDL-owned, unlike seed-owned locale rows)
 SELECT ok(
   (SELECT count(*)::int FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'translations' AND column_name = 'xx_ny') = 1,
-  'translations has xx_ny column'
+    WHERE table_schema = 'public' AND table_name = 'translations' AND column_name = 'xx_qaa') = 1,
+  'translations has xx_qaa column'
 );
 
 -- ----------------------------------------------------------------------------

@@ -1,12 +1,11 @@
 // Auto-generated — do not edit manually
 // Run: npx tsx scripts/gen-types.ts
 
-export type CountryCode = 'MW' | 'TJ' | 'XX' | 'ZM' | 'ZW' | 'ZZ';
+export type CountryCode = 'MW' | 'TJ' | 'ZM' | 'ZW' | 'ZZ' | 'XX';
 
-export type CountryCodeLegacy = 'mw' | 'tj' | 'xx' | 'zm' | 'zw' | 'global';
+export type CountryCodeLegacy = 'mw' | 'tj' | 'zm' | 'zw' | 'xx' | 'global';
 
 export type LocaleCode =
-  | 'en-XX'
   | 'bem-ZM'
   | 'en'
   | 'en-MW'
@@ -23,10 +22,10 @@ export type LocaleCode =
   | 'tg-TJ'
   | 'toi-ZM'
   | 'tum-MW'
-  | 'ny-XX';
+  | 'en-XX'
+  | 'qaa-XX';
 
 export type LocaleCodeLegacy =
-  | 'xx_en'
   | 'zm_bem'
   | 'global_en'
   | 'mw_en'
@@ -43,4 +42,5 @@ export type LocaleCodeLegacy =
   | 'tj_tg'
   | 'zm_toi'
   | 'mw_tum'
-  | 'xx_ny';
+  | 'xx_en'
+  | 'xx_qaa';
