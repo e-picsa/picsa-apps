@@ -2,6 +2,7 @@ language_code,country_code,name,local_name
 bem,ZM,Bemba,Ichibemba
 en,,English,
 en,MW,English,
+en,XX,English,English
 en,ZM,English,
 en,ZW,English,
 kqn,ZM,Kaonde,ChiKaonde
@@ -10,6 +11,7 @@ lue,ZM,Luvale,ChiLuvale
 lun,ZM,Lunda,ChiLunda
 nd,ZW,Ndebele,isiNdebele
 ny,MW,Chichewa,Chichewa
+ny,XX,Chichewa,Chichewa
 ny,ZM,Nyanja,Chinyanja
 sn,ZW,Shona,ChiShona
 tg,TJ,Tajik,Тоҷикӣ
