@@ -213,6 +213,11 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
   - Web app users do not sign in and query Supabase using the `anon` Postgres role.
   - Native mobile app users call `signInAnonymously()` (`SupabaseAuthService.signInAppUser`) and receive the `authenticated` Postgres role (`is_anonymous: true`).
   - Therefore, on public content tables (`climate_stations`, `climate_station_data`, `forecasts`, `crop_data`, `crop_data_downscaled`, `resource_*`, `translations`, `geo.boundaries`), **never** revoke `SELECT` from `anon` (breaks web app) and **never** use permissive `FOR ALL TO authenticated USING (true)` policies (allows any mobile app user to mutate/delete DB records). Always grant `SELECT` to `anon, authenticated` and gate `INSERT`/`UPDATE`/`DELETE` policies with `public.user_has_country_role(...)` or `public.user_has_role(...)`.
+- **pgTAP Database & Storage RLS Testing (`picsa-server:db:test`)**:
+  - Run SQL authorization suites via `yarn nx run picsa-server:db:test` (`npx supabase test db` against tests in `apps/picsa-server/supabase/tests/database/`).
+  - Direct SQL `DELETE` statements on `storage.objects` inside pgTAP fail under `storage.protect_delete()` unless `SELECT set_config('storage.allow_delete_query', 'true', true);` is set for the rolled-back test transaction.
+  - `BEFORE UPDATE` triggers (such as `guard_resource_collection_immutable_fields`) execute _before_ RLS `WITH CHECK` policies, raising SQLSTATE `P0001` for non-admin field changes before RLS (`42501`) evaluates.
+  - Browser resumable uploads (`SupabaseUploadComponent`) using `@uppy/tus` must dynamically inject `session.access_token` via `onBeforeRequest` (with `anonKey` fallback); static `apikey` headers leave requests running as `anon` and fail authenticated `storage.objects` policies.
 
 ### User-Submitted Feedback & Storage Isolation
 

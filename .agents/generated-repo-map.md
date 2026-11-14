@@ -1438,7 +1438,7 @@
   - `Component` **SupabaseStorageFilePickerComponent** (methods: [ngOnInit, compareFn])
   - `Interface` **IStoragePickerData**
 - **[supabase-upload.component.ts](../libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts)** (`libs/shared/src/services/core/supabase/components/upload/supabase-upload.component.ts`)
-  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, ngOnDestroy, renameFile, startUpload])
+  - `Component` **SupabaseUploadComponent** (methods: [ngOnInit, ngOnDestroy, renameFile, startUpload, getTusAuthHeaders])
   - `Interface` **IUploadResult**
   - `Type` **FileDropFile**
 - **[storagePath.pipe.ts](../libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts)** (`libs/shared/src/services/core/supabase/pipes/storagePath.pipe.ts`)
@@ -1651,3 +1651,5 @@
   - `Migration` **20261106120000_disable_climate_audit_cleanup.sql**
 - **[20261110000000_resource_cover_defaults_null.sql](../apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql)** (`apps/picsa-server/supabase/migrations/20261110000000_resource_cover_defaults_null.sql`)
   - `Migration` **20261110000000_resource_cover_defaults_null.sql**
+- **[20261113000000_resources_rls_and_storage_hardening.sql](../apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql)** (`apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql`)
+  - `SQLFunctions` **2 function(s)** ([public.user_is_global_admin, public.guard_resource_collection_immutable_fields])

@@ -70,8 +70,13 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   /** Default height of file dropper */
   readonly fileDropHeight = input(300);
 
-  /** Name of storage bucket for upload. Must already exist with required access permissions */
-  readonly storageBucketName = model('global');
+  /**
+   * Name of storage bucket for upload. Must already exist with required access permissions.
+   * No default on purpose: callers must pass the active country bucket explicitly so
+   * uploads can never silently fall back to the read-only `global` bucket.
+   * `startUpload()` throws if left empty.
+   */
+  readonly storageBucketName = model<string>('');
 
   /** Nested folder path within storage bucket (two-way: editable via path editor) */
   readonly storageFolderPath = model('uploads');
@@ -166,6 +171,10 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
   }
 
   public async startUpload() {
+    const bucketName = this.storageBucketName();
+    if (!bucketName) {
+      throw new Error('Uploader misconfigured: storageBucketName (country bucket) is required');
+    }
     const uppy = this.uppy();
     if (!uppy) {
       throw new Error('Uploader not initialised');
@@ -177,7 +186,7 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
       const meta: IUploadMeta = {
         ...file.meta,
         contentType: file.type,
-        bucketName: this.storageBucketName(),
+        bucketName,
         objectName,
         cacheControl: 3600,
       };
@@ -202,13 +211,38 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     this.uploadComplete.emit(uploads);
   }
 
+  /**
+   * Build auth headers for Tus resumable uploads (`/storage/v1/upload/resumable`).
+   * Storage derives the Postgres role from the `Authorization` bearer token, so a static
+   * `anonKey` would run even signed-in editors as `anon` and fail the authenticated
+   * `storage.objects` RLS policies. Inject the live session JWT per request (via
+   * `onBeforeRequest`) and fall back to `anonKey` when signed out. `apikey` stays
+   * `anonKey` as it only identifies the project.
+   */
+  public async getTusAuthHeaders(): Promise<{ authorization: string; apikey: string }> {
+    const { anonKey } = this.supabaseService.config;
+    const { auth } = await this.supabaseService.auth.getClient;
+    const {
+      data: { session },
+    } = await auth.getSession();
+    const token = session?.access_token ?? anonKey;
+    return {
+      authorization: `Bearer ${token}`,
+      apikey: anonKey,
+    };
+  }
+
   private registerSupabaseUppyUploader(uppy: Uppy) {
     const { anonKey, apiUrl } = this.supabaseService.config;
     uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
       headers: {
-        authorization: `Bearer ${anonKey}`,
         apikey: anonKey,
+      },
+      onBeforeRequest: async (req) => {
+        const { authorization, apikey } = await this.getTusAuthHeaders();
+        req.setHeader('authorization', authorization);
+        req.setHeader('apikey', apikey);
       },
       // Retry upload after delay if not working immediately
       retryDelays: [0, 2000, 5000],

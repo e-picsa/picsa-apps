@@ -53,7 +53,7 @@
       [fileDropHeight]="fileDropHeight()"
       [autoUpload]="autoUpload()"
       [maxFileSizeMB]="maxFileSizeMB()"
-      [storageBucketName]="storageBucketName() || 'global'"
+      [storageBucketName]="storageBucketName() ?? ''"
       [storageFolderPath]="storageFolderPath()"
       (uploadComplete)="handleUploadComplete($event)"
     />

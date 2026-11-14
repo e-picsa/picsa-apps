@@ -92,6 +92,13 @@
         "cwd": "apps/picsa-server"
       }
     },
+    "db:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx supabase test db",
+        "cwd": "apps/picsa-server"
+      }
+    },
     "db:seed:export": {
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/supabase/data", "{projectRoot}/.env.server"],

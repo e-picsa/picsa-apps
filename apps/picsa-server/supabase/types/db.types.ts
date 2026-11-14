@@ -634,7 +634,7 @@ export type Database = {
       resource_collections: {
         Row: {
           collection_parent: string | null;
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -651,7 +651,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           collection_parent?: string | null;
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -667,7 +667,7 @@ export type Database = {
         };
         Update: {
           collection_parent?: string | null;
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -713,7 +713,7 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -790,7 +790,7 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -855,7 +855,7 @@ export type Database = {
       };
       resource_links: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -870,7 +870,7 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -884,7 +884,7 @@ export type Database = {
           url: string;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'] | null;
+          country_code?: Database['public']['Enums']['country_code'];
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
