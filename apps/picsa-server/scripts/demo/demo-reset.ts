@@ -2,8 +2,9 @@
  * Reset the demo (`xx`) sandbox: database + storage files.
  *
  * Single scoped entry point for everything demo — there is intentionally no
- * `db:demo:*` family. All demo rows live in `demo-baseline.ts` (typed against
- * the schema) and are applied here with the same service_role supabase-js
+ * `db:demo:*` family. All demo rows live in `baseline/` (typed against the
+ * schema; `index.ts` for curated content plus generated per-table files like
+ * `climate_station_data.ts`) and are applied here with the same service_role supabase-js
  * clients the seed scripts use (`getLocalSupabaseClient` /
  * `getExportSupabaseClient`).
  *

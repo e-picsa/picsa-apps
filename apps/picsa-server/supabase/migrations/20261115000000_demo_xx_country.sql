@@ -51,15 +51,26 @@ FOR SELECT TO public USING (bucket_id = 'xx');
 --    20261113000000_resources_rls_and_storage_hardening.sql)
 -- ----------------------------------------------------------------------------
 -- One helper holds the whole rule so the three policies stay identical and
--- grep-able; no per-country edits ever again. Semantics match the old
--- policies exactly (including: inserts require ownership).
+-- grep-able; no per-country edits ever again.
+--
+-- `owner` is per-object (the uploader, set by the Storage API from the JWT),
+-- not bucket-level: any country editor may upload (as themselves), while
+-- updates/deletes are limited to the owning uploader or a country admin.
+-- (The dashboard UI does not expose storage delete, and same-name uploads
+-- conflict server-side, so cross-user writes are rare in practice.)
+--
+-- NOTE on INSERT vs the old policies: the old INSERT checked roles only
+-- (20261113000000...sql:259-265, no owner check), so any country editor or
+-- admin could insert with any (or no) owner. The helper *tightens* this:
+-- inserts now require auth.uid() = owner, matching UPDATE/DELETE ownership
+-- semantics. Storage API uploads set owner from the JWT, so normal flows are
+-- unaffected; UPDATE/DELETE behavior is byte-for-byte identical to before.
 CREATE OR REPLACE FUNCTION public.storage_country_can_write(p_bucket text, p_owner uuid, p_is_insert boolean DEFAULT false)
 RETURNS boolean
 LANGUAGE sql STABLE
-SET search_path = public, auth
 AS $$
   SELECT p_bucket <> 'global' AND (
-    -- admins may write anything (inserts still require ownership, as before)
+    -- admins may write anything (inserts require ownership, as now enforced)
     (
       (
         public.user_has_country_role(p_bucket, 'resources.admin')
