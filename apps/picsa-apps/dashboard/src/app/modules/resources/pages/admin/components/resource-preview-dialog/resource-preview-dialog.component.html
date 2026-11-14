@@ -21,8 +21,8 @@
               Your browser does not support video playback.
             </video>
           </div>
-        } @else if (showPdf()) {
-          <iframe [src]="safeFileUrl()" class="w-full min-h-[60vh] border-0" title="PDF preview"></iframe>
+        } @else if (showPdf() && safeFileUrl(); as url) {
+          <iframe [src]="url" class="w-full min-h-[60vh] border-0" title="PDF preview"></iframe>
         } @else if (showFileFallback() && data.fileUrl; as url) {
           <div class="flex flex-col items-center gap-3 p-8 text-center">
             @if (data.coverUrl; as cover) {

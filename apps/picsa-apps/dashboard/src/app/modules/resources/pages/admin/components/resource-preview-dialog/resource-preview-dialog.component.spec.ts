@@ -43,6 +43,21 @@ describe('ResourcePreviewDialogComponent', () => {
     expect(fixture.nativeElement.querySelector('iframe')).toBeNull();
   });
 
+  it('should not iframe non-http urls, falling back to external link', async () => {
+    const fixture = await setup({
+      kind: 'File',
+      title: 'Evil',
+      status: 'Differs',
+      fileUrl: 'javascript:alert(1)',
+      fileKind: 'pdf',
+    });
+    expect(fixture.nativeElement.querySelector('iframe')).toBeNull();
+    expect(fixture.nativeElement.querySelector('video')).toBeNull();
+    // no inline preview and no file fallback - only the href-sanitized footer link remains
+    expect(fixture.nativeElement.textContent).toContain('No previewable file attached');
+    expect(fixture.nativeElement.textContent).toContain('Open Original');
+  });
+
   it('should render link with open button and bundled-only note', async () => {
     const fixture = await setup({
       kind: 'Link',
