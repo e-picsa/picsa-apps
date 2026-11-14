@@ -19,9 +19,11 @@ export interface ISeedDataConfiguration {
   orderBy?: string | string[];
   /**
    * Optional column-value filter for subset exports (e.g., { country_code: 'zm' }).
-   * Array values match any entry (e.g., { station_id: ['zm/chipata_met', 'zm/petauke_met'] })
+   * Array values match any entry (e.g., { station_id: ['zm/chipata_met', 'zm/petauke_met'] }).
+   * Operator objects support pattern matching and exclusion
+   * (e.g., { country_code: { operator: 'neq', value: 'xx' } }).
    */
-  filter?: Record<string, string | number | boolean | (string | number | boolean)[]>;
+  filter?: Record<string, SeedFilterValue>;
   /**
    * Column value overrides or transform functions applied during CSV import.
    * Supports static values (e.g. `{ cover_image: 'global/images/placeholder.svg', storage_file: null }`)\
@@ -38,11 +40,32 @@ export interface ISeedDataConfiguration {
   mirrorStorage?: string[];
 }
 
+/** Filter value shapes understood by db-seed-export's query builder. */
+export type SeedFilterValue =
+  | string
+  | number
+  | boolean
+  | (string | number | boolean)[]
+  | { operator: 'like' | 'ilike'; value: string }
+  | { operator: 'in'; value: (string | number | boolean)[] }
+  | { operator: 'neq'; value: string | number | boolean };
+
 /** Metadata columns stripped from every export (DB defaults repopulate on import) */
 export const SEED_METADATA_COLUMNS = ['created_at', 'updated_at'];
 
 /** Deterministic local seed admin user ID from seed.sql */
 export const SEED_ADMIN_USER_ID = '00000000-0000-0000-0000-000000000000';
+
+/**
+ * Demo (`xx`) rows live in the TS baseline (`scripts/demo/baseline`), never in
+ * committed seeds — a prod `demo:reset` would otherwise leak them into the
+ * next export. Excluded from the CSV-export config below (extended mirrors
+ * keep everything, and the chained `demo:reset` converges local state after).
+ * An explicit `--country=xx` still overrides this and exports demo rows.
+ */
+export const EXCLUDE_DEMO_COUNTRY: Record<string, SeedFilterValue> = {
+  country_code: { operator: 'neq', value: 'xx' },
+};
 
 /** Representative seed countries shared across country-scoped tables */
 export const SEED_COUNTRIES = ['zm', 'mw', 'zw'];
@@ -143,16 +166,56 @@ export const SEED_DATA_BASE: Record<string, ISeedDataConfiguration> = {
 /**
  * Standard seed configuration: filters datasets down to a representative subset
  * for storage in repo CSVs (`supabase/data`).
+ * Demo (`xx`) rows are excluded everywhere (see EXCLUDE_DEMO_COUNTRY) except
+ * `climate_station_data`, whose inclusion list already covers only prod
+ * stations. `translations` keeps all shared rows; only the demo-scoped
+ * `xx_ny` column is omitted (single-sourced from the TS baseline instead).
  */
 export const SEED_DATA_CONFIG: Record<string, ISeedDataConfiguration> = {
   ...SEED_DATA_BASE,
+  climate_stations: {
+    ...SEED_DATA_BASE.climate_stations,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
   climate_station_data: {
     ...SEED_DATA_BASE.climate_station_data,
     filter: { station_id: SEED_STATION_IDS },
   },
+  crop_data: {
+    ...SEED_DATA_BASE.crop_data,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  crop_data_downscaled: {
+    ...SEED_DATA_BASE.crop_data_downscaled,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  deployments: {
+    ...SEED_DATA_BASE.deployments,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
   forecasts: {
     ...SEED_DATA_BASE.forecasts,
-    filter: { forecast_type: ['seasonal', 'downscaled'] },
+    filter: { forecast_type: ['seasonal', 'downscaled'], ...EXCLUDE_DEMO_COUNTRY },
+  },
+  resource_collections: {
+    ...SEED_DATA_BASE.resource_collections,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  resource_files: {
+    ...SEED_DATA_BASE.resource_files,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  resource_files_child: {
+    ...SEED_DATA_BASE.resource_files_child,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  resource_links: {
+    ...SEED_DATA_BASE.resource_links,
+    filter: { ...EXCLUDE_DEMO_COUNTRY },
+  },
+  translations: {
+    ...SEED_DATA_BASE.translations,
+    omitColumns: ['xx_ny'],
   },
 };
 
