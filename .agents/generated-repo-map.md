@@ -315,6 +315,13 @@
   - `Component` **UserProfileComponent** (methods: [loadProfile, saveProfile, resendVerificationEmail])
 - **[profile.module.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts`)
   - `Class` **ProfileModule**
+- **[resources-admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts`)
+  - `Component` **ResourcesAdminComponent** (methods: [ngOnInit, toggleStatusFilter])
+  - `Interface` **IResourceDiffRow**
+  - `Interface` **IResourceSyncStats**
+  - `Type` **ResourceSyncStatus**
+  - `Type` **ResourceKind**
+  - `Type` **ResourceStatusFilter**
 - **[resource-collection-edit.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/edit/resource-collection-edit.component.ts`)
   - `Component` **ResourceCollectionEditComponent** (methods: [ngOnInit, toggleFile, toggleLink, getLinkIcon, saveCollection])
 - **[resource-collections.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/collections/resource-collections.component.ts`)
@@ -357,6 +364,7 @@
   - `Type` **IResourceCollectionInsert**
 - **[resource-cover.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts`)
   - `Function` **getFileFallbackType**
+  - `Function` **normalizeBundledCoverPath**
 - **[resource-form.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts`)
   - `Type` **ResourceCollectionFilter**
   - `Function` **getResourceFormValidationMessage**

@@ -6,6 +6,7 @@ export interface IStorageObjectMeta {
   size?: number | null;
   etag?: string | null;
   updatedAt?: string | null;
+  mimetype?: string | null;
 }
 
 interface IStorageCacheEntry {
