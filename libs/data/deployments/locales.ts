@@ -45,6 +45,9 @@ const LOCALES_BASE: {
   zw_en: { language_code: 'en', language_label: 'English', country_code: 'zw' },
   zw_sn: { language_code: 'sn', language_label: 'Shona', country_code: 'zw' },
   zw_nd: { language_code: 'nd', language_label: 'Ndebele', country_code: 'zw' },
+  // Demo (sandbox country mirrors Malawi content in English and Chichewa)
+  xx_en: { language_code: 'en', language_label: 'English', country_code: 'xx' },
+  xx_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'xx' },
   // Tajikistan
   tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj' },
 } as const;

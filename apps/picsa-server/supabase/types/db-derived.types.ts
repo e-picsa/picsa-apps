@@ -3,9 +3,10 @@
 
 export type CountryCode = 'MW' | 'TJ' | 'XX' | 'ZM' | 'ZW' | 'ZZ';
 
-export type CountryCodeLegacy = 'mw' | 'tj' | 'zm' | 'zw' | 'global';
+export type CountryCodeLegacy = 'mw' | 'tj' | 'xx' | 'zm' | 'zw' | 'global';
 
 export type LocaleCode =
+  | 'en-XX'
   | 'bem-ZM'
   | 'en'
   | 'en-MW'
@@ -21,9 +22,11 @@ export type LocaleCode =
   | 'sn-ZW'
   | 'tg-TJ'
   | 'toi-ZM'
-  | 'tum-MW';
+  | 'tum-MW'
+  | 'ny-XX';
 
 export type LocaleCodeLegacy =
+  | 'xx_en'
   | 'zm_bem'
   | 'global_en'
   | 'mw_en'
@@ -39,4 +42,5 @@ export type LocaleCodeLegacy =
   | 'zw_sn'
   | 'tj_tg'
   | 'zm_toi'
-  | 'mw_tum';
+  | 'mw_tum'
+  | 'xx_ny';

@@ -39,3 +39,14 @@ Related issues: #689, #690
 - [x] **Dynamic Terciles**: Recompute 33rd / 66th percentiles dynamically against the active timespan series using reactive computed signals.
 - [x] **El Niño / La Niña Reactivity**: Update point overlays and legend counts (`activeCount`) based on active timespan values across resolutions.
 - [x] **Export Alignment**: Ensure print layout and PNG export titles display the active period (e.g. "Dec–Feb (DJF) Rainfall") and period-specific definitions via `chartDefinitionText`.
+
+## 4. Demo (`xx`) Sandbox — Follow-ups
+
+Related: `test`→`demo` replacement, generic storage write policies (`20261115000000_demo_xx_country.sql`), `picsa-server:demo:reset` (typed TS baseline in `scripts/demo/`, chained into `db:seed` + `db:seed:extended`, confirm only for `--remote`). AGENTS.md now forbids `supabase db reset` during verification work.
+
+- [x] **Server sandbox**: `xx` enum/bucket/policies, `demo` deployment (config `{}`, dashboard lists the 2 `xx` stations, no API fallback), frozen `xx` station summaries (generated slices of prod seed snapshots, relabeled DEMO), forecast row stamped with reset-month `YYYYMM` id + global sample file, 8 demo `xx_ny` translations (top-of-list budget strings, authentic Chichewa), storage baseline/uploads split, `user_roles` insert-only.
+- [x] **No dashboard country guards**: refresh buttons will 422 for `xx` (upstream only knows mw/zm/zw) — accepted deliberately. Do NOT add a supported/unsupported two-tier system; wire up a backend `xx` country later if live demo refresh is ever needed. CSV seed pipeline owns geo/test rows — they converge via `db:seed:export` after the migration runs on prod; pgTAP asserts infra only.
+- [x] **Demo locale `xx_ny`**: `translations.xx_ny` column + `ny`/XX geo locale (same demo migration, single file), `gen-types` now includes `xx` (legacy filter fixed), `LOCALES_DATA` gains `xx_en`/`xx_ny` (picker-hidden like `tj` until the frontend swap), `legacy-mapping` += `xx`, `CLIMATE_STATIONS_META`/`PROBABILITY_TABLE_DATA` += `xx: []`. Demo Chichewa lives on *shared* rows via `translation_seeds` (no xx duplicates — duplicates listed the same text twice); reset clears `xx_ny` back to NULL. Dashboard translations page needs no changes.
+- [ ] **Dashboard reset button**: small `dashboard/demo/reset` edge function (service_role) calling the same baseline + storage wipe, so facilitators can reset without an operator. Script remains the fallback.
+- [ ] **Frontend `global`→demo swap** (partly done: types + locale plumbing above): still to do — unhide `xx` in country picker, `demo` deployment entry, `xx` resource bundles, bundled `xx` climate summaries + geo topojson, map boundary handling.
+- [x] **Docs**: `deployment/01-new-country` (enum, bucket+policies, generic write-policy rule, demo example), `server/database` (`demo:reset`), `server/setup` (`test` retired). Open decisions: storage subsection on security page; possible dashboard-deployments page.

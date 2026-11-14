@@ -1,0 +1,8 @@
+PICSA Demo baseline file — safe to delete, `demo:reset` restores it.
+
+This file proves the demo storage loop works end-to-end:
+seeded under xx/baseline/ (immutable, never wiped by reset),
+workshop uploads go under xx/uploads/ (wiped on every reset).
+
+Demo deployment: demo (country_code xx). Demo stations: Demo Kasungu,
+Demo Nkhotakota (Malawi-derived, fictitious ids — never confuse with prod).
