@@ -202,6 +202,14 @@ export class SupabaseUploadComponent implements OnInit, OnDestroy {
     this.uploadComplete.emit(uploads);
   }
 
+  /**
+   * Build auth headers for Tus resumable uploads (`/storage/v1/upload/resumable`).
+   * Storage derives the Postgres role from the `Authorization` bearer token, so a static
+   * `anonKey` would run even signed-in editors as `anon` and fail the authenticated
+   * `storage.objects` RLS policies. Inject the live session JWT per request (via
+   * `onBeforeRequest`) and fall back to `anonKey` when signed out. `apikey` stays
+   * `anonKey` as it only identifies the project.
+   */
   public async getTusAuthHeaders(): Promise<{ authorization: string; apikey: string }> {
     const { anonKey } = this.supabaseService.config;
     const { auth } = await this.supabaseService.auth.getClient;

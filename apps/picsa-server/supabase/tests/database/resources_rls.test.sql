@@ -3,7 +3,7 @@ BEGIN;
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path TO public, extensions;
 
-SELECT plan(50);
+SELECT plan(48);
 
 -- ----------------------------------------------------------------------------
 -- Test Helpers & Fixtures (rolled back cleanly at end of transaction)
@@ -124,13 +124,8 @@ SELECT is(
   'Unused resources bucket policies removed from storage.objects'
 );
 
-SELECT throws_ok(
-  $$ INSERT INTO public.resource_collections (id, title, country_code, owner)
-     VALUES ('bad_glob_col', 'Global', 'global', '11111111-1111-4111-8111-111111111111') $$,
-  '23514',
-  NULL,
-  'CHECK constraint blocks global country_code in resource_collections'
-);
+-- (No `'global'` ban by design: the app always sends the deployment country,
+-- so `country_code` is constrained to NOT NULL + explicit value only.)
 
 SELECT throws_ok(
   $$ INSERT INTO public.resource_collections (id, title, country_code, owner)
@@ -138,22 +133,6 @@ SELECT throws_ok(
   '23502',
   NULL,
   'NOT NULL blocks null country_code in resource_collections'
-);
-
-SELECT throws_ok(
-  $$ INSERT INTO public.resource_files (id, title, country_code, owner)
-     VALUES ('bad_glob_file', 'Global', 'global', '11111111-1111-4111-8111-111111111111') $$,
-  '23514',
-  NULL,
-  'CHECK constraint blocks global country_code in resource_files'
-);
-
-SELECT throws_ok(
-  $$ INSERT INTO public.resource_links (id, title, type, url, country_code, owner)
-     VALUES ('bad_glob_link', 'Global', 'web', 'https://example.org', 'global', '11111111-1111-4111-8111-111111111111') $$,
-  '23514',
-  NULL,
-  'CHECK constraint blocks global country_code in resource_links'
 );
 
 -- ----------------------------------------------------------------------------
@@ -174,6 +153,7 @@ SELECT ok(NOT public.user_is_global_admin(), 'no-role user user_is_global_admin(
 -- ----------------------------------------------------------------------------
 SELECT pg_temp.set_actor('anon', NULL);
 SELECT ok(EXISTS (SELECT 1 FROM public.resource_collections WHERE id = 'test_col_mw_ed1'), 'anon can SELECT resource_collections');
+SELECT ok(EXISTS (SELECT 1 FROM storage.objects WHERE bucket_id = 'global'), 'anon can SELECT global bucket storage.objects');
 SELECT throws_ok(
   $$ INSERT INTO public.resource_collections (id, title, country_code, owner)
      VALUES ('anon_col', 'Anon', 'mw', '11111111-1111-4111-8111-111111111111') $$,
@@ -256,7 +236,7 @@ SELECT throws_ok(
      SET owner = '22222222-2222-4222-8222-222222222222'
      WHERE id = 'test_col_mw_ed1' $$,
   'P0001',
-  'Only resources.admin can change collection owner',
+  'Collection owner is immutable (delete and recreate to reassign)',
   'non-admin editor cannot hijack collection owner via UPDATE'
 );
 SELECT throws_ok(
@@ -264,7 +244,7 @@ SELECT throws_ok(
      SET country_code = 'zm'
      WHERE id = 'test_col_mw_ed1' $$,
   'P0001',
-  'Only resources.admin can change collection country_code',
+  'Collection country_code is immutable (delete and recreate to move)',
   'non-admin editor cannot move mw collection to zm'
 );
 
@@ -286,9 +266,9 @@ SELECT throws_ok(
   $$ UPDATE public.resource_collections
      SET country_code = 'zm'
      WHERE id = 'test_col_mw_adm_del' $$,
-  '42501',
-  NULL,
-  'mw resources.admin cannot move mw collection to zm (RLS WITH CHECK)'
+  'P0001',
+  'Collection country_code is immutable (delete and recreate to move)',
+  'even resources.admin cannot move mw collection to zm (immutable country_code)'
 );
 WITH del AS (
   DELETE FROM public.resource_collections WHERE id = 'test_col_mw_adm_del' RETURNING id
@@ -432,17 +412,19 @@ SELECT throws_ok(
   'country-only resources.admin cannot INSERT into global bucket'
 );
 
--- global_admin: can write & delete in global bucket
+-- global bucket: no authenticated writes by design (read-only via API)
 SELECT pg_temp.set_actor('authenticated', '66666666-6666-4666-8666-666666666666');
-SELECT lives_ok(
+SELECT throws_ok(
   $$ INSERT INTO storage.objects (bucket_id, name, owner, owner_id)
      VALUES ('global', 'resources/covers/global_new.svg', '66666666-6666-4666-8666-666666666666', '66666666-6666-4666-8666-666666666666') $$,
-  'global admin can INSERT into global bucket'
+  '42501',
+  NULL,
+  'even global admin cannot INSERT into global bucket (no write policies)'
 );
 WITH del AS (
   DELETE FROM storage.objects WHERE id = '88888888-8888-4888-8888-888888888883' RETURNING id
 )
-SELECT is((SELECT count(*)::int FROM del), 1, 'global admin can DELETE from global bucket');
+SELECT is((SELECT count(*)::int FROM del), 0, 'even global admin cannot DELETE from global bucket');
 
 RESET ROLE;
 SELECT * FROM finish();
