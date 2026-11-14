@@ -1,11 +1,13 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow, IResourceLinkRow } from '../../types';
-import { ResourcesAdminComponent } from './resources-admin.component';
+import { ResourcePreviewDialogComponent } from './components/resource-preview-dialog';
+import { IResourceDiffRow, ResourcesAdminComponent } from './resources-admin.component';
 
 describe('ResourcesAdminComponent', () => {
   let component: ResourcesAdminComponent;
@@ -147,5 +149,21 @@ describe('ResourcesAdminComponent', () => {
     expect(fileRow?.status).toBe('In Sync');
     expect(linkRow?.status).toBe('In Sync');
     expect(colRow?.status).toBe('In Sync');
+  });
+
+  it('should open standalone preview dialog with mapped row data on row click', () => {
+    const { dialog } = component as unknown as { dialog: MatDialog };
+    const openSpy = jest.spyOn(dialog, 'open').mockReturnValue({} as never);
+    const row = component.allDiffRows().find((r) => r.kind === 'File') as IResourceDiffRow;
+    expect(row).toBeDefined();
+
+    (component.tableOptions.handleRowClick as (row: IResourceDiffRow) => void)(row);
+
+    expect(openSpy).toHaveBeenCalledWith(
+      ResourcePreviewDialogComponent,
+      expect.objectContaining({
+        data: expect.objectContaining({ kind: 'File', title: row.title, status: row.status }),
+      }),
+    );
   });
 });

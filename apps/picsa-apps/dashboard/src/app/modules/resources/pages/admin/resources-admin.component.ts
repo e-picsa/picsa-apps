@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -11,6 +12,7 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow, IResourceLinkRow } from '../../types';
+import { ResourcePreviewDialogComponent, toResourcePreviewData } from './components/resource-preview-dialog';
 
 export type ResourceSyncStatus = 'In Sync' | 'Differs' | 'Missing in App' | 'Orphaned in App';
 export type ResourceKind = 'Collection' | 'File' | 'Link';
@@ -52,6 +54,7 @@ const DISPLAY_COLUMNS: (keyof IResourceDiffRow)[] = ['kind', 'title', 'status'];
 export class ResourcesAdminComponent implements OnInit {
   private readonly service = inject(ResourcesDashboardService);
   private readonly deploymentService = inject(DeploymentDashboardService);
+  private readonly dialog = inject(MatDialog);
 
   public activeCountry = computed(() => {
     return this.deploymentService.activeDeploymentCountry() || '';
@@ -127,6 +130,7 @@ export class ResourcesAdminComponent implements OnInit {
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS as string[],
     filterColumns: ['kind'],
+    handleRowClick: (row: IResourceDiffRow) => this.openPreview(row),
     formatHeader: (v) => {
       switch (v) {
         case 'kind':
@@ -147,6 +151,16 @@ export class ResourcesAdminComponent implements OnInit {
 
   public toggleStatusFilter(status: ResourceSyncStatus): void {
     this.selectedStatus.set(this.selectedStatus() === status ? 'all' : status);
+  }
+
+  /**
+   * Open read-only preview dialog for a diff row, mirroring the farmer-app
+   * resource experience. Data is mapped to an immutable payload up-front so
+   * the dialog never shares mutable state with this view.
+   */
+  public openPreview(row: IResourceDiffRow): void {
+    const data = toResourcePreviewData(row, this.service.files(), this.service.links());
+    this.dialog.open(ResourcePreviewDialogComponent, { data, width: '760px', maxWidth: '95vw' });
   }
 
   private computeEntityDiffs<
