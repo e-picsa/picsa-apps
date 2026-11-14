@@ -10,6 +10,8 @@ export const CLIMATE_STATIONS_META: Record<CountryCodeLegacy, IStationMeta[]> = 
   global: [],
   mw: MW_STATIONS,
   tj: TJ_STATIONS,
+  // Demo stations served from the dashboard backend; no bundled metadata yet
+  xx: [],
   zm: ZM_STATIONS,
   zw: ZW_STATIONS,
 };

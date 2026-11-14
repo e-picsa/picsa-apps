@@ -75,7 +75,12 @@ To conserve context tokens and runtime, agents **MUST NOT** execute full applica
    - Do NOT run `yarn nx test` directly — `yarn ai:test` resolves the project and `--testFile` for you.
 3. **When Builds Are Permitted**:
    - ONLY run `yarn nx build` if explicitly requested by the user, or when modifying core bundler or Capacitor native configurations that cannot be validated via linting.
-4. **Background Dev Servers (STRICT: Never Orphan, Always Spin Down)**:
+4. **Database (STRICT: Never Reset)**:
+   - NEVER run `supabase db reset` (or `picsa-server:db:seed`, which wraps it) during verification or routine work. It wipes the entire local database — destroying seed data, other deployments' rows, and any work in progress — and forces a full reseed to recover.
+   - NEVER run `supabase stop` on the user's local stack. It is their dev environment, not a temp server you started — always leave it running.
+   - Prefer: `supabase test db` (transactional pgTAP, rolls back), `demo:reset --dry-run` (report-only), targeted reads via the service_role client, or `demo:reset` (scoped to `xx` only, idempotent).
+   - ONLY run a full reset/reseed when the user explicitly requests it.
+5. **Background Dev Servers (STRICT: Never Orphan, Always Spin Down)**:
    - Do NOT start long-running dev servers (`yarn start`, `nx serve`, `supabase start/functions serve`) in the background as a matter of course. Prefer verifying via `yarn ai:lint` / `yarn ai:test`, and reuse a server the user already has running (check ports via `lsof` before assuming none exists).
    - If a temporary server is genuinely required for verification: record its PID(s) immediately, and **kill the entire process tree before finishing** (killing only a parent `yarn`/`nx` wrapper orphans the child server — always verify the port is free with `lsof` afterwards, then kill any lingering listener PIDs too).
    - Never leave a restarted user server behind silently: if you had to restart a user's dev server, tell them explicitly so they can manage it.
@@ -119,6 +124,7 @@ As an intelligent agent, you are responsible for maintaining the project's insti
    - **Verify & Maintain Extraction Script**: After running `yarn ai:gen-codemap`, check `.agents/generated-repo-map.md` to confirm the new files/symbols were extracted correctly. If the script (`apps/picsa-scripts/src/generate-repo-map.ts`) missed your new code (e.g. due to an unhandled file extension, glob pattern, or AST structure), update `generate-repo-map.ts` to support it and re-run `yarn ai:gen-codemap`.
 
 <!-- repo-templates:repo-audit:start -->
+
 ### Repo Audit Skill (Structured Codebase Audits)
 
 - For a careful, evidence-backed repo audit, read `.agents/skills/repo-audit/SKILL.md` first and follow it end to end.

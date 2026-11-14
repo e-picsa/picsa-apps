@@ -1,10 +1,7 @@
-# Supabase
+# Supabase CLI scratch (branches, temp state, Studio SQL autosaves)
 .branches
 .temp
+snippets
 
 .env.local
 .env.test
-
-# Supabase
-.branches
-.temp

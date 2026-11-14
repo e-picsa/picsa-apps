@@ -46,9 +46,11 @@ async function generateDeriveCountryCodeTypes() {
   const localeCodes = locales.map((l) => `"${l.code}"`).join(' | ');
 
   // HACK - legacy format used lower case countries and lower `[country]_[lang]` locales
-  // with `global` code
+  // with `global` code. `ZZ` (the legacy `global` equivalent) is excluded as
+  // redundant; `XX` (demo) is included so the demo country works everywhere
+  // real countries do.
   const countryCodesLegacy = countries
-    .filter((c) => c.code !== 'XX' && c.code !== 'ZZ')
+    .filter((c) => c.code !== 'ZZ')
     .map((c) => `"${c.code.toLowerCase()}"`)
     .concat(`"global"`)
     .join(' | ');
