@@ -176,7 +176,11 @@ export const DEMO_BASELINE = {
       country_code: 'xx',
       filename: 'demo-guide.txt',
       mimetype: 'text/plain',
-      owner: '00000000-0000-0000-0000-000000000000',
+      // No owner: demo rows must not reference a user that only exists locally
+      // (prod auth.users has no seed admin, so a hardcoded owner UUID violates
+      // the owner FK there). Null owner = admins-only edits, which is correct
+      // for shared demo content.
+      owner: null,
     },
   ],
   resource_links: [

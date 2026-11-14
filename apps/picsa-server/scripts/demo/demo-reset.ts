@@ -29,8 +29,10 @@
  *   never wiped, so facilitator access survives resets.
  *
  * What it does, in order:
- *   1. Ensure `xx/baseline/*` storage files exist (upload missing). Baseline
- *      paths are FK-referenced by demo DB rows, so this runs first.
+ *   1. Ensure baseline storage files exist (upload missing): everything under
+ *      `xx/baseline/`, plus the global-bucket sample files the baseline
+ *      references (upsert-only, never deleted). FK-referenced paths must
+ *      exist before any DB rows are inserted.
  *   2. Delete `xx` content rows (child tables before parents), then insert
  *      the baseline (deployments upserted, user roles insert-only), then
  *      apply demo Chichewa onto shared translation rows (clearing `xx_ny`
@@ -161,7 +163,20 @@ const STORAGE_REF_COLUMNS: Record<string, string[]> = {
   resource_files: ['storage_file', 'cover_image'],
   resource_links: ['cover_image'],
   resource_collections: ['cover_image'],
+  // Forecasts are the one baseline row whose file lives outside the xx bucket;
+  // null it rather than fail the whole reset if the sample is missing.
+  forecasts: ['storage_file'],
 };
+
+/**
+ * Global-bucket files the baseline references (the demo forecast's sample PDF).
+ * Uploaded only if missing, never overwritten or deleted — unlike xx/baseline/*
+ * files (which are demo-owned and upserted), a global path may hold prod
+ * content that merely shares the name. Sourced from the repo's own seed
+ * assets so a reset is self-contained on any environment.
+ */
+const BASELINE_GLOBAL_FILES = ['forecasts/sample_seasonal.pdf'];
+const SEED_STORAGE_DIR = path.resolve(__dirname, '../../supabase/data/storage');
 
 /** Null out storage references with no matching storage_objects row (e.g. bare test DBs). */
 async function resolveStorageRefs(client: AnyClient, table: string, rows: Record<string, any>[]) {
@@ -218,30 +233,62 @@ async function listAllFiles(client: AnyClient, prefix: string): Promise<string[]
   return files;
 }
 
+async function uploadFile(client: AnyClient, bucket: string, name: string, localPath: string) {
+  const type = getMimeType(localPath);
+  if (!type) throw new Error(`Failed to lookup content type: ${localPath}`);
+  const fileBlob = new Blob([readFileSync(localPath)], { type });
+  const { error } = await client.storage.from(bucket).upload(name, fileBlob, { upsert: true });
+  if (error) {
+    console.error(`[storage] upload failed: ${bucket}/${name}`, error);
+    process.exit(1);
+  }
+}
+
+/** Check whether a file already exists in a bucket (read-only; never mutates). */
+async function remoteFileExists(client: AnyClient, bucket: string, name: string): Promise<boolean> {
+  const slash = name.lastIndexOf('/');
+  const dir = slash === -1 ? undefined : name.slice(0, slash);
+  const base = slash === -1 ? name : name.slice(slash + 1);
+  const { data, error } = await client.storage.from(bucket).list(dir, { limit: 1000 });
+  if (error) throw error;
+  return (data || []).some((entry: any) => entry.name === base);
+}
+
 async function ensureBaselineFiles(client: AnyClient, dryRun: boolean) {
   const entries = globSync('**', { stat: false, withFileTypes: true, cwd: SEED_STORAGE_XX_DIR }).filter((g) =>
     g.isFile(),
   );
   const relPaths = entries.map((e) => (e as any).relativePosix() as string);
+  // Global-bucket files the baseline references (never deleted, only upserted if missing).
+  const globalFiles = BASELINE_GLOBAL_FILES.filter((rel) => {
+    const present = fs.existsSync(path.join(SEED_STORAGE_DIR, 'global', rel));
+    if (!present)
+      console.warn(`[storage] repo is missing seed file global/${rel} — referencing demo rows will fall back to null`);
+    return present;
+  });
   if (dryRun) {
     console.log(`\n[storage] dry-run: would ensure ${relPaths.length} baseline file(s) under ${DEMO_BUCKET}/`);
     for (const rel of relPaths) console.log(`   = ${DEMO_BUCKET}/${rel}`);
+    for (const rel of globalFiles) {
+      const exists = await remoteFileExists(client, 'global', rel);
+      console.log(`   = global/${rel} ${exists ? '(already present — would leave untouched)' : '(would upload)'}`);
+    }
     return;
   }
   let uploaded = 0;
   for (const rel of relPaths) {
-    const localPath = path.join(SEED_STORAGE_XX_DIR, rel);
-    const type = getMimeType(rel);
-    if (!type) throw new Error(`Failed to lookup content type: ${localPath}`);
-    const fileBlob = new Blob([readFileSync(localPath)], { type });
-    const { error } = await client.storage.from(DEMO_BUCKET).upload(rel, fileBlob, { upsert: true });
-    if (error) {
-      console.error(`[storage] upload failed: ${DEMO_BUCKET}/${rel}`, error);
-      process.exit(1);
-    }
+    await uploadFile(client, DEMO_BUCKET, rel, path.join(SEED_STORAGE_XX_DIR, rel));
     uploaded++;
   }
-  console.log(`\n[storage] baseline ensured: ${uploaded} file(s) under ${DEMO_BUCKET}/`);
+  for (const rel of globalFiles) {
+    if (await remoteFileExists(client, 'global', rel)) {
+      console.log(`[storage] global/${rel} already exists — leaving untouched`);
+      continue;
+    }
+    await uploadFile(client, 'global', rel, path.join(SEED_STORAGE_DIR, 'global', rel));
+    uploaded++;
+  }
+  console.log(`\n[storage] baseline ensured: ${uploaded} file(s) (${relPaths.length} under ${DEMO_BUCKET}/)`);
 }
 
 async function wipeUploads(client: AnyClient, dryRun: boolean) {
