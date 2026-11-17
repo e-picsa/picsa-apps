@@ -1,0 +1,31 @@
+@use './filter-chips';
+
+mat-chip.qc-status-chip {
+  --mat-chip-container-height: 24px;
+  --mat-chip-label-text-size: 12px;
+}
+
+mat-chip.qc-chip-red {
+  --mat-chip-elevated-container-color: #ffebee;
+  --mat-chip-label-text-color: #c62828;
+}
+
+mat-chip.qc-chip-orange {
+  --mat-chip-elevated-container-color: #fff3e0;
+  --mat-chip-label-text-color: #e65100;
+}
+
+mat-chip.qc-chip-purple {
+  --mat-chip-elevated-container-color: #f3e5f5;
+  --mat-chip-label-text-color: #6a1b9a;
+}
+
+mat-chip.qc-chip-amber {
+  --mat-chip-elevated-container-color: #fff8e1;
+  --mat-chip-label-text-color: #f57f17;
+}
+
+mat-chip.qc-chip-neutral {
+  --mat-chip-elevated-container-color: #f5f5f5;
+  --mat-chip-label-text-color: #616161;
+}

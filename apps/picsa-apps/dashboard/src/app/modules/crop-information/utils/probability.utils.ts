@@ -2,10 +2,22 @@
 import type { IStationCropData } from '@picsa/crop-probability/src/app/models';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { groupAndSortCropDataItems } from '@picsa/crop-probability/src/app/utils/probability-table.utils';
-import { ICropName, MONTH_DATA } from '@picsa/data';
+import { ICropName } from '@picsa/data';
 
 import type { IAnnualRainfallSummariesData, ICropSuccessEntry } from '../../climate/types';
 import type { ICropData, ICropDataDownscaledWaterRequirements } from '../services';
+import {
+  ENFORCE_LOOKUP_BOUNDS,
+  evaluateVarietyQc,
+  extractLookupBoundsFromHashmap,
+  extractStationLookupBounds,
+  extractStationSeasonBounds,
+  formatPlantDayLabel,
+  type ICropVarietyQcResult,
+  type ILocationCropQcSummary,
+  type IStationLookupBounds,
+  type IStationSeasonBounds,
+} from './crop-qc.utils';
 
 export interface ISeasonStartProbability {
   plantDate: number;
@@ -101,11 +113,7 @@ export function roundToNearest(value: number, n: number): number {
 // HACK - current data system hardcodes ranges, so try to match
 // NOTE - this is a temporary measure and only works for data with 180 day offset
 export function plantDayToDateLabel(plantDate: number): string {
-  const d = new Date(2025, 0);
-  // TODO - +181 used in some local met but need to check with definitions/get api to return day of year
-  // Sometimes also 182/183
-  d.setDate(plantDate + 181);
-  return `${d.getDate()}-${MONTH_DATA[d.getMonth()].labelShort}`;
+  return formatPlantDayLabel(plantDate);
 }
 
 /**
@@ -244,53 +252,122 @@ export function sortByPriorityCrops(a: IStationCropData, b: IStationCropData): n
   return aPriority - bPriority;
 }
 
-export function generateTable(params: {
+export interface IGenerateTableParams {
   cropDataHashmap: Record<string, ICropData['Row']>;
   waterRequirements: ICropDataDownscaledWaterRequirements;
   startProbabilities: ISeasonStartProbability[];
   probabilityHashmap: IProbabilityHashmap;
-}): IStationCropData[] {
-  const { cropDataHashmap, waterRequirements = {}, startProbabilities, probabilityHashmap } = params;
+  lookupBounds?: IStationLookupBounds | null;
+  seasonBounds?: IStationSeasonBounds | null;
+  applyBounds?: boolean;
+  locationId?: string;
+  stationId?: string | null;
+}
+
+/** Generate probability table entries together with per-variety QC evaluation summary */
+export function generateTableWithQc(params: IGenerateTableParams): {
+  table: IStationCropData[];
+  qc: ILocationCropQcSummary;
+} {
+  const {
+    cropDataHashmap,
+    waterRequirements = {},
+    startProbabilities,
+    probabilityHashmap,
+    lookupBounds: providedLookupBounds,
+    seasonBounds = null,
+    applyBounds = ENFORCE_LOOKUP_BOUNDS,
+    locationId = '',
+    stationId = null,
+  } = params;
+
+  const lookupBounds =
+    providedLookupBounds === undefined ? extractLookupBoundsFromHashmap(probabilityHashmap) : providedLookupBounds;
+
   const entries: IStationCropData[] = [];
   const plantDates = startProbabilities.map((v) => v.plantDate);
+  const qcResults: ICropVarietyQcResult[] = [];
+  let includedCount = 0;
+  let excludedCount = 0;
+  let warningCount = 0;
+
   for (const [crop, requirements] of Object.entries(waterRequirements)) {
     const entry: IStationCropData = {
       crop: crop as ICropName,
       data: [],
     };
-    for (const [variety, waterRequirement] of Object.entries(requirements)) {
+    for (const [variety, waterRequirement] of Object.entries(requirements ?? {})) {
       const varietyData = cropDataHashmap[`${crop}/${variety}`];
-      if (varietyData) {
-        const { days_lower, days_upper } = varietyData;
-        const days = { lower: days_lower, upper: days_upper };
-        const probabilities = {
-          lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
-          upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
-        };
-        const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
-        entry.data.push({
-          days: [...new Set([days.lower, days_upper])].join(' - '),
-          days_lower: days.lower,
-          days_upper: days.upper,
-          variety,
-          probabilities: probabilityValues,
-          water: [waterRequirement],
-        });
-      } else {
-        console.warn(`no variety data found for [${crop}/${variety}]`);
+      const qcResult = evaluateVarietyQc({
+        locationId,
+        stationId,
+        crop,
+        variety,
+        waterRequirement,
+        varietyData,
+        lookupBounds,
+        seasonBounds,
+        applyBounds,
+      });
+      qcResults.push(qcResult);
+      if (qcResult.warnings.length > 0) warningCount++;
+
+      if (!qcResult.included || !varietyData) {
+        excludedCount++;
+        if (!varietyData) {
+          console.warn(`no variety data found for [${crop}/${variety}]`);
+        }
+        continue;
       }
+
+      includedCount++;
+      const { days_lower, days_upper } = varietyData;
+      const days = { lower: days_lower, upper: days_upper };
+      const probabilities = {
+        lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
+        upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
+      };
+      const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
+      entry.data.push({
+        days: [...new Set([days.lower, days_upper])].join(' - '),
+        days_lower: days.lower,
+        days_upper: days.upper,
+        variety,
+        probabilities: probabilityValues,
+        water: [waterRequirement],
+      });
     }
 
-    entry.data = groupAndSortCropDataItems(entry.data);
-    entries.push(entry);
+    if (entry.data.length > 0) {
+      entry.data = groupAndSortCropDataItems(entry.data);
+      entries.push(entry);
+    }
   }
 
-  return entries.sort(sortByPriorityCrops);
+  return {
+    table: entries.sort(sortByPriorityCrops),
+    qc: {
+      locationId,
+      stationId,
+      lookupBounds,
+      seasonBounds,
+      evaluatedCount: qcResults.length,
+      includedCount,
+      excludedCount,
+      warningCount,
+      results: qcResults,
+    },
+  };
+}
+
+export function generateTable(params: IGenerateTableParams): IStationCropData[] {
+  return generateTableWithQc(params).table;
 }
 
 export interface IExpectedProbabilityTable {
   table: IStationCropData[];
   startProbabilities: ISeasonStartProbability[];
+  qc: ILocationCropQcSummary;
 }
 
 /**
@@ -304,8 +381,19 @@ export function computeExpectedProbabilityTable(params: {
   waterRequirements: ICropDataDownscaledWaterRequirements;
   rainfallData: IAnnualRainfallSummariesData[];
   cropProbabilityData: ICropSuccessEntry[];
+  applyBounds?: boolean;
+  locationId?: string;
+  stationId?: string | null;
 }): IExpectedProbabilityTable | null {
-  const { cropDataHashmap, waterRequirements, rainfallData, cropProbabilityData } = params;
+  const {
+    cropDataHashmap,
+    waterRequirements,
+    rainfallData,
+    cropProbabilityData,
+    applyBounds = ENFORCE_LOOKUP_BOUNDS,
+    locationId,
+    stationId,
+  } = params;
   if (Object.keys(waterRequirements ?? {}).length === 0) return null;
   // Station data columns are nullable in the database
   if (!Array.isArray(rainfallData) || rainfallData.length === 0) return null;
@@ -313,8 +401,20 @@ export function computeExpectedProbabilityTable(params: {
   const startProbabilities = calcSeasonStartProbabilities(rainfallData, cropProbabilityData);
   if (startProbabilities.length === 0) return null;
   const probabilityHashmap = generateProbabilityHashmap(cropProbabilityData);
-  const table = generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
-  return { table, startProbabilities };
+  const lookupBounds = extractStationLookupBounds(cropProbabilityData);
+  const seasonBounds = extractStationSeasonBounds(rainfallData);
+  const { table, qc } = generateTableWithQc({
+    cropDataHashmap,
+    waterRequirements,
+    startProbabilities,
+    probabilityHashmap,
+    lookupBounds,
+    seasonBounds,
+    applyBounds,
+    locationId,
+    stationId,
+  });
+  return { table, startProbabilities, qc };
 }
 
 export function calcSeasonStartProbabilities(

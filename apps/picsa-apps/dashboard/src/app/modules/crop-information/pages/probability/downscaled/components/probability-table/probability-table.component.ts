@@ -19,12 +19,13 @@ import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@
 import type { IProbabilityTableMeta } from '@picsa/crop-probability/src/app/models';
 import { arrayToHashmap } from '@picsa/utils';
 
-import { ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
+import { IAnnualRainfallSummariesData, ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../../../../services';
 import { CropProbabilityDocxService } from '../../../../../services/crop-probability-docx.service';
+import { extractStationLookupBounds, extractStationSeasonBounds } from '../../../../../utils/crop-qc.utils';
 import {
   generateProbabilityHashmap,
-  generateTable,
+  generateTableWithQc,
   ISeasonStartProbability,
   roundToNearest,
 } from '../../../../../utils/probability.utils';
@@ -53,6 +54,8 @@ export class CropProbabilityTableComponent {
   waterRequirements = input.required<ICropDataDownscaledWaterRequirements>();
   /** Station crop probability lookup table entries */
   stationProbabilities = input.required<ICropSuccessEntry[]>();
+  /** Station annual rainfall summaries for season-length QC warnings */
+  rainfallData = input<IAnnualRainfallSummariesData[]>([]);
   /** Station row for use in missing station data redirect */
   station = input.required<IStationRow>();
 
@@ -69,14 +72,29 @@ export class CropProbabilityTableComponent {
     arrayToHashmap(this.service.cropData(), 'id', (v) => `${v.crop}/${v.variety}`),
   );
   private probabilityHashmap = computed(() => generateProbabilityHashmap(this.stationProbabilities()));
+  private lookupBounds = computed(() => extractStationLookupBounds(this.stationProbabilities()));
+  private seasonBounds = computed(() => extractStationSeasonBounds(this.rainfallData()));
 
-  public tableData = computed(() => {
+  private tableResult = computed(() => {
     const cropDataHashmap = this.cropDataHashmap();
     const waterRequirements = this.waterRequirements() || {};
     const startProbabilities = this.startProbabilities() || [];
     const probabilityHashmap = this.probabilityHashmap() || {};
-    return generateTable({ cropDataHashmap, waterRequirements, startProbabilities, probabilityHashmap });
+    return generateTableWithQc({
+      cropDataHashmap,
+      waterRequirements,
+      startProbabilities,
+      probabilityHashmap,
+      lookupBounds: this.lookupBounds(),
+      seasonBounds: this.seasonBounds(),
+      stationId: this.station()?.station_id ?? null,
+    });
   });
+
+  public tableData = computed(() => this.tableResult().table);
+  public qcSummary = computed(() => this.tableResult().qc);
+  public excludedVarieties = computed(() => this.qcSummary().results.filter((r) => !r.included));
+  public warnedVarieties = computed(() => this.qcSummary().results.filter((r) => r.included && r.warnings.length > 0));
 
   public tableMeta = computed<IProbabilityTableMeta>(() => {
     return {

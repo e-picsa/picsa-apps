@@ -889,6 +889,14 @@ This file is a shared, curated knowledge base of non-obvious engineering gotchas
 - **Monthly Data Nuances**:
   - Supabase `climate_station_data` stores both `monthly_temperature_data` and `monthly_rainfall_data` (plus metadata), sourced from `/v2/monthly_temperature_summaries/` and `/v2/monthly_rainfall_summaries/` respectively. Monthly rainfall coverage is currently partial upstream (ZM returns data for many stations; MW/ZW may return empty arrays), so empty responses preserve existing DB rows and CSVs. The admin monthly micro-matrix reflects the presence of each column, and capabilities record `monthly: ['rainfall']` when a monthly CSV contains rainfall.
 
+### Crop Probability Lookup Bounds & Season-End Constraint
+
+- **Per-Station Varying Lookup Bounds (`crop_probability_data`)**:
+  - Lookup table grids (`plant_length`, `total_rain`, `plant_day`) vary across stations even within the same country (e.g., ZM stations mostly cap at `150d / 1200mm` while `kafue_polder` uses `180d / 800mm`; MW stations mostly use `45–180d / 200–800mm` while `kasungu` and `nkhotakota` use `45–165d / 200–1200mm`; ZW `mt_darwin` caps at `160d` vs `180d` elsewhere). Always extract bounds dynamically via `extractStationLookupBounds()` rather than hardcoding country-wide constants.
+  - `findSurroundingKeys()` in `probability.utils.ts` clamps out-of-bounds inputs to the nearest boundary key; without pre-filtering via `evaluateVarietyQc()` (`crop-qc.utils.ts`), out-of-bounds varieties receive clamped probabilities and can even falsely merge into identical probability groups with shorter-cycle varieties (e.g., ZM `SC-719` and clamped `GANKATA`).
+- **Joint Season-End + Planting-Date Constraint Requires Daily Data**:
+  - `annual_rainfall_data` only stores annual summaries (`start_rains_doy`, `end_season_doy`, `seasonal_rain` measured from `start_rains` to `end_season`), not daily rainfall series. Calculating the joint probability that `plant_day + plant_length <= end_season_doy` _and_ cumulative rain from a fixed `plant_day` meets `total_rain` cannot be derived client-side from annual summaries and must be computed upstream in the Climate API (`/v2/crop_success_probabilities/`). The dashboard therefore enforces lookup-table bounds strictly while surfacing `season_length` exceedances and `>360d` cycles as QC warnings.
+
 ## PR Triage Workflow & Skill (`pr-triage`)
 
 - **Skill Location**: `.agents/skills/pr-triage/`.

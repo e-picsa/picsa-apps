@@ -14,7 +14,12 @@ import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from 
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { CropInformationService } from '../../../../services';
-import { groupDuplicateVarieties, ICropVarietyPair, IDuplicateGroup, normalizeName } from './duplicate-crops.utils';
+import {
+  buildCropVarietyPairs,
+  groupDuplicateVarieties,
+  ICropVarietyPair,
+  IDuplicateGroup,
+} from './duplicate-crops.utils';
 
 @Component({
   selector: 'dashboard-crop-duplicate-crops',
@@ -43,39 +48,9 @@ export class CropDuplicateCropsComponent implements AfterViewInit {
   }
 
   /** All crop/variety pairs from baseline and downscaled tables */
-  private allPairs = computed<ICropVarietyPair[]>(() => {
-    const pairs: ICropVarietyPair[] = [];
-
-    // From crop_data (baseline definitions)
-    for (const d of this.service.cropData()) {
-      pairs.push({
-        crop: normalizeName(d.crop),
-        variety: normalizeName(d.variety),
-        source: 'crop_data',
-        original_crop: d.crop,
-        original_variety: d.variety,
-      });
-    }
-
-    // From crop_data_downscaled water requirement keys (with affected locations)
-    for (const d of this.service.downscaledData()) {
-      const waterReqs = d.water_requirements as Record<string, Record<string, number>>;
-      for (const [crop, varieties] of Object.entries(waterReqs ?? {})) {
-        for (const variety of Object.keys(varieties)) {
-          pairs.push({
-            crop: normalizeName(crop),
-            variety: normalizeName(variety),
-            source: 'crop_data_downscaled',
-            original_crop: crop,
-            original_variety: variety,
-            location_id: d.location_id,
-          });
-        }
-      }
-    }
-
-    return pairs;
-  });
+  private allPairs = computed<ICropVarietyPair[]>(() =>
+    buildCropVarietyPairs(this.service.cropData(), this.service.downscaledData()),
+  );
 
   /** Duplicate groups keyed by normalized crop/variety, counting only distinct spellings */
   public duplicateGroups = computed<IDuplicateGroup[]>(() => groupDuplicateVarieties(this.allPairs()));

@@ -1,8 +1,13 @@
 <div class="space-y-4">
-  <p class="text-sm text-gray-600">
-    Compares committed app probability tables against tables regenerated from live data-system records. Only locations
-    with an app table or generatable data appear here — districts without any records are covered under Locations.
-  </p>
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <p class="text-sm text-gray-600 flex-1">
+      Compares committed app probability tables against tables regenerated from live data-system records. Click any row
+      to inspect excluded varieties and changed probability cells.
+    </p>
+    <mat-slide-toggle [checked]="applyBounds()" (change)="applyBounds.set($event.checked)">
+      Apply QC Bounds
+    </mat-slide-toggle>
+  </div>
 
   <div class="flex items-center gap-4">
     @if (loading()) {
@@ -14,86 +19,48 @@
   </div>
 
   @if (!loading() && !loadError()) {
-    <!-- Summary Stats -->
-    <div class="flex flex-wrap gap-4">
-      <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
-        <mat-icon class="text-blue-600">info</mat-icon>
-        <span>{{ stats().noData }} locations with no data</span>
-      </div>
-      <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
-        <mat-icon class="text-green-600">check_circle</mat-icon>
-        <span>{{ stats().inSync }} In Sync</span>
-      </div>
-      <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
-        <mat-icon class="text-red-600">error</mat-icon>
-        <span>{{ stats().differs }} Differs</span>
-      </div>
-      <div class="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded">
-        <mat-icon class="text-orange-600">warning</mat-icon>
-        <span>{{ stats().missing }} Missing in App</span>
-      </div>
-      <div class="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded">
-        <mat-icon class="text-purple-600">link_off</mat-icon>
-        <span>{{ stats().orphaned }} Orphaned in App</span>
-      </div>
-      <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded">
-        <mat-icon class="text-gray-600">cloud_off</mat-icon>
-        <span>{{ stats().noSource }} No Source Data</span>
-      </div>
-    </div>
+    <!-- Headline filter chips (matching Translations list pattern, preserving colors & icons) -->
+    <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'actionable')" class="mb-4">
+      <mat-chip-option value="actionable" [selected]="tableFilter() === 'actionable'" class="chip-neutral">
+        <mat-icon matChipAvatar>list</mat-icon>
+        All Changes: {{ stats().actionable }}
+      </mat-chip-option>
+      <mat-chip-option value="In Sync" [selected]="tableFilter() === 'In Sync'" class="chip-green">
+        <mat-icon matChipAvatar>check_circle</mat-icon>
+        In Sync: {{ stats().inSync }}
+      </mat-chip-option>
+      @if (stats().newExclusions > 0) {
+        <mat-chip-option value="New Exclusions" [selected]="tableFilter() === 'New Exclusions'" class="chip-orange">
+          <mat-icon matChipAvatar>filter_alt</mat-icon>
+          New Exclusions: {{ stats().newExclusions }}
+        </mat-chip-option>
+      }
+      <mat-chip-option value="Differs" [selected]="tableFilter() === 'Differs'" class="chip-red">
+        <mat-icon matChipAvatar>error</mat-icon>
+        Differs: {{ stats().differs }}
+      </mat-chip-option>
+      <mat-chip-option value="Missing in App" [selected]="tableFilter() === 'Missing in App'" class="chip-orange">
+        <mat-icon matChipAvatar>warning</mat-icon>
+        Missing in App: {{ stats().missing }}
+      </mat-chip-option>
+      <mat-chip-option value="Orphaned in App" [selected]="tableFilter() === 'Orphaned in App'" class="chip-purple">
+        <mat-icon matChipAvatar>link_off</mat-icon>
+        Orphaned in App: {{ stats().orphaned }}
+      </mat-chip-option>
+      <mat-chip-option value="No Source Data" [selected]="tableFilter() === 'No Source Data'" class="chip-neutral">
+        <mat-icon matChipAvatar>cloud_off</mat-icon>
+        No Source Data: {{ stats().noSource }}
+      </mat-chip-option>
+    </mat-chip-listbox>
 
-    <!-- Data Table (fully in-sync rows omitted) -->
     @if (displayedRows().length > 0) {
       <picsa-data-table
         [data]="displayedRows()"
         [options]="tableOptions"
-        [valueTemplates]="valueTemplates"
+        [valueTemplates]="valueTemplates()"
+        (rowClick)="openDiffDialog($event)"
       ></picsa-data-table>
-      <ng-template #statusTemplate let-row="row">
-        @switch (row.status) {
-          @case ('In Sync') {
-            <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e8f5e9] text-[#2e7d32]"
-              [matTooltip]="row.detail || row.status"
-            >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">check_circle</mat-icon>In Sync
-            </span>
-          }
-          @case ('Differs') {
-            <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fff3e0] text-[#e65100]"
-              [matTooltip]="row.detail"
-            >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">difference</mat-icon>Differs
-            </span>
-          }
-          @case ('Missing in App') {
-            <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e3f2fd] text-[#1565c0]"
-              [matTooltip]="row.detail"
-            >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">cloud</mat-icon>Missing in App
-            </span>
-          }
-          @case ('Orphaned in App') {
-            <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3e5f5] text-[#6a1b9a]"
-              [matTooltip]="row.detail"
-            >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">smartphone</mat-icon>Orphaned in App
-            </span>
-          }
-          @default {
-            <span
-              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f5f5f5] text-[#616161]"
-              [matTooltip]="row.detail || row.status"
-            >
-              <mat-icon class="!w-3.5 !h-3.5 !text-sm">cloud_off</mat-icon>{{ row.status }}
-            </span>
-          }
-        }
-      </ng-template>
-    } @else if (diffRows().length > 0) {
+    } @else if (diffRows().length > 0 && tableFilter() === 'actionable') {
       <div class="flex items-center justify-center py-8">
         <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>
         <p class="text-gray-600">All app tables are in sync with data-system records</p>
@@ -101,8 +68,139 @@
     } @else {
       <div class="flex items-center justify-center py-8">
         <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
-        <p class="text-gray-600">No app tables and no data-system records to compare</p>
+        <p class="text-gray-600">No locations match the selected filter</p>
       </div>
     }
   }
 </div>
+
+<!-- Cell Templates (kept outside @if so viewChild resolves before async data arrives) -->
+<ng-template #excludedTemplate let-row="row">
+  <span [class]="row.excluded_count > 0 ? 'text-amber-700 font-semibold' : 'text-gray-500'">
+    {{ row.excluded_count }}
+  </span>
+</ng-template>
+
+<ng-template #probChangeTemplate let-row="row">
+  @if (row.prob_change_pct === null) {
+    <span class="text-gray-400">—</span>
+  } @else if (row.prob_change_pct === 0) {
+    <span class="text-gray-600">0%</span>
+  } @else {
+    <span class="text-red-700 font-semibold">{{ row.prob_change_pct }}%</span>
+  }
+</ng-template>
+
+<!-- Row Click Diff Inspector Dialog -->
+<ng-template #diffDialogTemplate>
+  @if (selectedDiffRow(); as row) {
+    <div class="p-6 space-y-5 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 border-b pb-3">
+        <div>
+          <h3 class="text-lg font-semibold m-0">{{ row.location_label }} ({{ row.location_id }})</h3>
+          <p class="text-sm text-gray-600 mt-1 mb-0">
+            Station: <span class="font-medium">{{ row.station }}</span> · Status:
+            <span class="font-medium">{{ row.status }}</span> · App: {{ row.app_varieties }} vs DB:
+            {{ row.db_varieties }}
+            @if (row.prob_change_pct !== null) {
+              · Prob Changes: <span class="font-medium">{{ row.prob_change_pct }}%</span>
+            }
+          </p>
+        </div>
+        <button matIconButton mat-dialog-close aria-label="Close diff dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      @if (row._dialogData; as dialogData) {
+        <!-- Station Bounds Summary -->
+        @if (dialogData.qc?.lookupBounds; as bounds) {
+          <div class="flex flex-wrap gap-3 text-xs bg-slate-50 border border-slate-200 rounded p-3">
+            <span><strong>Crop Length:</strong> {{ bounds.minDays }}–{{ bounds.maxDays }} d</span>
+            <span><strong>Water Req:</strong> {{ bounds.minWater }}–{{ bounds.maxWater }} mm</span>
+            <span><strong>Planting Dates:</strong> {{ bounds.minPlantDateLabel }}–{{ bounds.maxPlantDateLabel }}</span>
+            @if (dialogData.qc?.seasonBounds; as season) {
+              <span><strong>Observed Season:</strong> {{ season.minSeasonLength }}–{{ season.maxSeasonLength }} d</span>
+            }
+          </div>
+        }
+
+        <!-- QC Exclusions & Warnings -->
+        @if (dialogData.qcIssues.length > 0) {
+          <div class="space-y-2">
+            <h4 class="text-sm font-semibold text-gray-800 m-0">
+              QC Exclusions &amp; Warnings ({{ dialogData.qcIssues.length }})
+            </h4>
+            <div class="border rounded overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead class="bg-gray-50 border-b">
+                  <tr>
+                    <th class="p-2">Crop</th>
+                    <th class="p-2">Variety</th>
+                    <th class="p-2">Days</th>
+                    <th class="p-2">Water</th>
+                    <th class="p-2">Action</th>
+                    <th class="p-2">Reason</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of dialogData.qcIssues; track item.crop + '/' + item.variety) {
+                    <tr class="border-b last:border-b-0">
+                      <td class="p-2 font-medium">{{ item.crop }}</td>
+                      <td class="p-2">{{ item.variety }}</td>
+                      <td class="p-2">
+                        @if (item.daysLower !== null) {
+                          {{
+                            item.daysLower === item.daysUpper ? item.daysLower : item.daysLower + '-' + item.daysUpper
+                          }}
+                        } @else {
+                          —
+                        }
+                      </td>
+                      <td class="p-2">{{ item.waterRequirement }} mm</td>
+                      <td class="p-2">
+                        <span
+                          class="px-2 py-0.5 rounded-full font-medium"
+                          [class]="item.included ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'"
+                        >
+                          {{ item.included ? 'Warning' : 'Excluded' }}
+                        </span>
+                      </td>
+                      <td class="p-2">
+                        @for (issue of item.failures.concat(item.warnings); track issue.code) {
+                          <div>{{ issue.message }}</div>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- Combined Crop Probability Diff Table -->
+        @if (dialogData.diffTable.length > 0) {
+          <div class="space-y-2">
+            <h4 class="text-sm font-semibold text-gray-800 m-0">
+              Changed Crops (red cells = changed or removed; hover to view previous App value)
+            </h4>
+            <crop-probability-table
+              [stationData]="dialogData.diffTable"
+              [tableMeta]="dialogData.diffTableMeta"
+              [cellDiffs]="dialogData.cellDiffs"
+            ></crop-probability-table>
+          </div>
+        } @else {
+          <p class="text-sm text-gray-600">{{ row.detail }}</p>
+        }
+      } @else {
+        <p class="text-sm text-gray-600">{{ row.detail }}</p>
+      }
+
+      <div class="flex justify-end pt-2 border-t">
+        <button matButton mat-dialog-close>Close</button>
+      </div>
+    </div>
+  }
+</ng-template>

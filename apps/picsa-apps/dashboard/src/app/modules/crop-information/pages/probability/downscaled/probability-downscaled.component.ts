@@ -47,6 +47,7 @@ export class ProbabilityDownscaledComponent {
     () => this.downscaledData()?.water_requirements as ICropDataDownscaledWaterRequirements,
   );
   public downscaledStationProbabilities = signal<ICropSuccessEntry[] | undefined>(undefined);
+  public downscaledStationRainfallData = signal<IAnnualRainfallSummariesData[]>([]);
 
   public seasonStartProbabilities = signal<ISeasonStartProbability[]>([]);
 
@@ -115,6 +116,7 @@ export class ProbabilityDownscaledComponent {
     }
     const cropProbabilityData = data?.crop_probability_data as ICropSuccessEntry[];
     const rainfallData = data?.annual_rainfall_data as IAnnualRainfallSummariesData[];
+    this.downscaledStationRainfallData.set(Array.isArray(rainfallData) ? rainfallData : []);
     if (cropProbabilityData) {
       this.downscaledStationProbabilities.set(cropProbabilityData);
       // derive season start probabilities

@@ -35,7 +35,7 @@
 | `@picsa/utils`               | `libs/utils/index.ts`                       |
 | `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (549 files scanned)
+## Codebase Symbol Index (557 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -192,20 +192,29 @@
 - **[admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/admin.component.ts`)
   - `Component` **DashboardCropAdminComponent** (methods: [handleDataLoad, downloadTemplate, processImport, exportCropProbabilityTables])
 - **[crop-app-diff.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.component.ts`)
-  - `Component` **CropAppDiffComponent** (methods: [ngAfterViewInit])
+  - `Component` **CropAppDiffComponent** (methods: [openDiffDialog])
+  - `Interface` **IAppDbDiffDialogData**
   - `Interface` **IAppDbDiffRow**
+  - `Type` **AppDbDiffStatus**
+  - `Type` **AppDiffFilter**
 - **[crop-app-diff.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-app-diff.utils.ts`)
   - `Interface` **IProbabilityTableSummary**
+  - `Interface` **ICombinedDiffTableResult**
   - `Function` **locationIdFromAppId**
   - `Function` **summarizeProbabilityTable**
   - `Function` **deepEqualJson**
   - `Function` **findDifferingCrops**
+  - `Function` **calcProbabilityChangePct**
+  - `Function` **buildCombinedDiffTable**
+- **[crop-qc.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts`)
+  - `Component` **CropQcComponent** (methods: [openVarietyDialog, statusChipClass])
 - **[duplicate-crops.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts`)
   - `Component` **CropDuplicateCropsComponent** (methods: [ngAfterViewInit, copyVariants])
 - **[duplicate-crops.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.utils.ts`)
   - `Interface` **ICropVarietyPair**
   - `Interface` **IDuplicateGroup**
   - `Function` **normalizeName**
+  - `Function` **buildCropVarietyPairs**
   - `Function` **groupDuplicateVarieties**
 - **[location-coverage.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/location-coverage.component.ts`)
   - `Component` **CropLocationCoverageComponent** (methods: [ngAfterViewInit, openSetStationDialog])
@@ -216,7 +225,9 @@
   - `Type` **StationProbabilitiesAvailability**
   - `Function` **buildLocationCoverageRows**
 - **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
-  - `Component` **CropMissingStationInfoComponent** (methods: [ngAfterViewInit])
+  - `Component` **CropMissingStationInfoComponent**
+  - `Type` **StationBoundsFilter**
+  - `Type` **StationBoundsStatus**
 - **[set-station-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts`)
   - `Component` **CropSetStationDialogComponent** (methods: [handleStationSelected, close])
   - `Interface` **ISetStationDialogData**
@@ -257,8 +268,20 @@
 - **[crop-probability-docx.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts`)
   - `Service` **CropProbabilityDocxService** (methods: [exportDocx, buildDocxDocument, formatProbability])
   - `Interface` **IExportDocxOptions**
+- **[crop-qc.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/crop-qc.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/crop-qc.utils.ts`)
+  - `Interface` **ICropQcIssue**
+  - `Interface` **IStationLookupBounds**
+  - `Interface` **IStationSeasonBounds**
+  - `Interface` **ICropVarietyQcResult**
+  - `Interface` **ILocationCropQcSummary**
+  - `Interface` **ICropVarietyLocationIssue**
+  - `Interface` **ICropVarietyQcAggregateRow**
+  - `Type` **CropQcIssueCode**
+  - `Type` **CropVarietyQcStatus**
+  - `Function` **formatPlantDayLabel**
 - **[probability.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils.ts`)
   - `Interface` **ISeasonStartProbability**
+  - `Interface` **IGenerateTableParams**
   - `Interface` **IExpectedProbabilityTable**
   - `Type` **IProbabilityInterpolationStrategy**
   - `Type` **IProbabilityHashmap**
@@ -267,7 +290,6 @@
   - `Function` **plantDayToDateLabel**
   - `Function` **cumulativeDistribution**
   - `Function` **generateProbabilityHashmap**
-  - `Function` **interpolateValue**
 - **[admin-overview.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/admin-overview/admin-overview.component.ts`)
   - `Component` **DeploymentAdminSummaryComponent**
 - **[deployment-item.component.ts](../apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/deployment/components/deployment-item/deployment-item.component.ts`)
@@ -315,8 +337,17 @@
   - `Component` **UserProfileComponent** (methods: [loadProfile, saveProfile, resendVerificationEmail])
 - **[profile.module.ts](../apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts)** (`apps/picsa-apps/dashboard/src/app/modules/profile/profile.module.ts`)
   - `Class` **ProfileModule**
+- **[resource-preview-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/components/resource-preview-dialog/resource-preview-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/components/resource-preview-dialog/resource-preview-dialog.component.ts`)
+  - `Component` **ResourcePreviewDialogComponent**
+- **[resource-preview-dialog.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/components/resource-preview-dialog/resource-preview-dialog.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/components/resource-preview-dialog/resource-preview-dialog.utils.ts`)
+  - `Interface` **IResourcePreviewMember**
+  - `Interface` **IResourcePreviewDialogData**
+  - `Interface` **IPreviewSource**
+  - `Type` **ResourcePreviewKind**
+  - `Type` **ResourcePreviewFileKind**
+  - `Function` **toResourcePreviewData**
 - **[resources-admin.component.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/pages/admin/resources-admin.component.ts`)
-  - `Component` **ResourcesAdminComponent** (methods: [ngOnInit, toggleStatusFilter])
+  - `Component` **ResourcesAdminComponent** (methods: [ngOnInit, toggleStatusFilter, openPreview])
   - `Interface` **IResourceDiffRow**
   - `Interface` **IResourceSyncStats**
   - `Type` **ResourceSyncStatus**
@@ -364,7 +395,6 @@
   - `Type` **IResourceCollectionInsert**
 - **[resource-cover.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-cover.utils.ts`)
   - `Function` **getFileFallbackType**
-  - `Function` **normalizeBundledCoverPath**
 - **[resource-form.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/resources/utils/resource-form.utils.ts`)
   - `Type` **ResourceCollectionFilter**
   - `Function` **getResourceFormValidationMessage**
@@ -437,10 +467,18 @@
   - `Class` **SupabaseSeedExport** (methods: [run])
   - `Interface` **SeedExportCliOptions**
   - `Function` **parseExportCliArgs**
+  - `Function` **resolveStorageContentType**
 - **[db-seed.config.ts](../apps/picsa-server/scripts/db-seed/db-seed.config.ts)** (`apps/picsa-server/scripts/db-seed/db-seed.config.ts`)
   - `Interface` **ISeedDataConfiguration**
+  - `Type` **SeedFilterValue**
 - **[db-seed.ts](../apps/picsa-server/scripts/db-seed/db-seed.ts)** (`apps/picsa-server/scripts/db-seed/db-seed.ts`)
   - `Class` **SupabaseSeed** (methods: [initClient, getClient, setClient, run, seedDevUsersAndPermissions])
+
+### `apps/picsa-server/scripts/demo`
+
+- **[index.ts](../apps/picsa-server/scripts/demo/baseline/index.ts)** (`apps/picsa-server/scripts/demo/baseline/index.ts`)
+  - `Interface` **DemoBaseline**
+  - `Type` **DemoInsert**
 
 ### `apps/picsa-server/scripts/utils`
 
@@ -787,7 +825,7 @@
 - **[app.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/app.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/app.component.ts`)
   - `Component` **PicsaCropProbabilityTool**
 - **[crop-probability-table.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts`)
-  - `Component` **CropProbabilityTableComponent** (methods: [formatProbability, sharePicture])
+  - `Component` **CropProbabilityTableComponent** (methods: [formatProbability, getCellDiff, getSeasonDiff, sharePicture])
   - `Type` **IProbabilityTableRow**
 - **[index.ts](../apps/picsa-tools/crop-probability-tool/src/app/models/index.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/models/index.ts`)
   - `Interface` **IProbabilityTableMeta**
@@ -1653,3 +1691,7 @@
   - `Migration` **20261110000000_resource_cover_defaults_null.sql**
 - **[20261113000000_resources_rls_and_storage_hardening.sql](../apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql)** (`apps/picsa-server/supabase/migrations/20261113000000_resources_rls_and_storage_hardening.sql`)
   - `SQLFunctions` **2 function(s)** ([public.user_is_global_admin, public.guard_resource_collection_immutable_fields])
+- **[20261115000000_demo_xx_country.sql](../apps/picsa-server/supabase/migrations/20261115000000_demo_xx_country.sql)** (`apps/picsa-server/supabase/migrations/20261115000000_demo_xx_country.sql`)
+  - `SQLFunctions` **1 function(s)** ([public.storage_country_can_write])
+- **[20261117000000_demo_placeholder_language.sql](../apps/picsa-server/supabase/migrations/20261117000000_demo_placeholder_language.sql)** (`apps/picsa-server/supabase/migrations/20261117000000_demo_placeholder_language.sql`)
+  - `Migration` **20261117000000_demo_placeholder_language.sql**

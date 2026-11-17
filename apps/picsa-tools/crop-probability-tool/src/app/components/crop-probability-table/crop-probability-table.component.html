@@ -44,7 +44,15 @@
         <td mat-header-cell *matHeaderCellDef>{{ column.label }}</td>
       </ng-container>
       <ng-container [matColumnDef]="'prob-value-' + $index">
-        <td mat-header-cell *matHeaderCellDef>{{ formatProbability(tableMeta().seasonProbabilities[$index]) }}</td>
+        <td
+          mat-header-cell
+          *matHeaderCellDef
+          [class.diff-changed]="getSeasonDiff($index)"
+          [matTooltip]="getSeasonDiff($index) ?? ''"
+          [matTooltipDisabled]="!getSeasonDiff($index)"
+        >
+          {{ formatProbability(tableMeta().seasonProbabilities[$index]) }}
+        </td>
       </ng-container>
     }
 
@@ -75,14 +83,26 @@
 
     <ng-container matColumnDef="variety">
       <th mat-header-cell *matHeaderCellDef>{{ 'Variety' | translate }}</th>
-      <td mat-cell *matCellDef="let element">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [class.diff-changed]="getCellDiff(element, 'variety')"
+        [matTooltip]="getCellDiff(element, 'variety') ?? ''"
+        [matTooltipDisabled]="!getCellDiff(element, 'variety')"
+      >
         {{ element.variety | translate }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="days">
       <th mat-header-cell *matHeaderCellDef>{{ 'Days to maturity' | translate }}</th>
-      <td mat-cell *matCellDef="let element">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [class.diff-changed]="getCellDiff(element, 'days')"
+        [matTooltip]="getCellDiff(element, 'days') ?? ''"
+        [matTooltipDisabled]="!getCellDiff(element, 'days')"
+      >
         {{ element.days | translate }}
       </td>
     </ng-container>
@@ -91,7 +111,13 @@
       <th mat-header-cell *matHeaderCellDef class="!normal-case">
         {{ 'Crop Water Requirement' | translate }}*<br />(mm)
       </th>
-      <td mat-cell *matCellDef="let element">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [class.diff-changed]="getCellDiff(element, 'water')"
+        [matTooltip]="getCellDiff(element, 'water') ?? ''"
+        [matTooltipDisabled]="!getCellDiff(element, 'water')"
+      >
         @let water = (element.water || []).join('-');
         <div>{{ water | translate }} mm</div>
       </td>
@@ -101,7 +127,15 @@
     @for (column of probabilityColumns(); track column) {
       <ng-container [matColumnDef]="column.name">
         <th mat-header-cell *matHeaderCellDef class="probability-cell">{{ column.label }}</th>
-        <td *matCellDef="let element" class="probability-cell">{{ formatProbability(element[column.name]) }}</td>
+        <td
+          *matCellDef="let element"
+          class="probability-cell"
+          [class.diff-changed]="getCellDiff(element, column.name)"
+          [matTooltip]="getCellDiff(element, column.name) ?? ''"
+          [matTooltipDisabled]="!getCellDiff(element, column.name)"
+        >
+          {{ formatProbability(element[column.name]) }}
+        </td>
       </ng-container>
     }
 

@@ -90,6 +90,34 @@ describe('CropProbabilityTableComponent', () => {
     expect(rows[1].cropNameRowspan).toBe(0);
   });
 
+  it('should apply diff-changed class only to cells listed in cellDiffs', () => {
+    fixture.componentRef.setInput('tableMeta', {
+      id: 'test',
+      label: 'Test Location',
+      station_label: 'Test Station',
+      seasonProbabilities: [1, 0.5],
+      dateHeadings: ['Date 1', 'Date 2'],
+    });
+    fixture.componentRef.setInput('stationData', [
+      {
+        crop: 'maize',
+        data: [{ variety: 'SC403', days: '110', water: [308], probabilities: [0.9, 0.8] }],
+      },
+    ]);
+    fixture.componentRef.setInput('cellDiffs', {
+      'maize/SC403': { prob_0: 'Was: 8/10' },
+      __season__: { prob_1: 'Was: 4/10' },
+    });
+    fixture.detectChanges();
+
+    const row = component.dataSource.data[0];
+    expect(component.getCellDiff(row, 'prob_0')).toBe('Was: 8/10');
+    expect(component.getCellDiff(row, 'prob_1')).toBeUndefined();
+    expect(component.getSeasonDiff(1)).toBe('Was: 4/10');
+    const diffCells = (fixture.nativeElement as HTMLElement).querySelectorAll('td.diff-changed');
+    expect(diffCells.length).toBe(2);
+  });
+
   describe('sharePicture', () => {
     beforeEach(() => {
       fixture.componentRef.setInput('tableMeta', {
