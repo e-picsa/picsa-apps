@@ -25,6 +25,7 @@
             <dashboard-crop-probability-table
               [waterRequirements]="downscaledWaterRequirements()"
               [stationProbabilities]="stationProbabilities"
+              [rainfallData]="downscaledStationRainfallData()"
               [station]="downscaled.station"
               [startProbabilities]="startProbabilities"
               [locationName]="locationMeta().label"

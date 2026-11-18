@@ -2,6 +2,8 @@
 import type { IStationCropData } from '@picsa/crop-probability/src/app/models';
 
 import {
+  buildCombinedDiffTable,
+  calcProbabilityChangePct,
   deepEqualJson,
   findDifferingCrops,
   locationIdFromAppId,
@@ -65,5 +67,87 @@ describe('findDifferingCrops', () => {
     const app = [cropEntry('maize', [1, 0.5]), cropEntry('sorghum', [0.2])];
     const expected = [cropEntry('maize', [1, 0.9]), cropEntry('cotton', [0.3])];
     expect(findDifferingCrops(app, expected)).toEqual(['cotton', 'maize', 'sorghum']);
+  });
+});
+
+describe('buildCombinedDiffTable', () => {
+  it('should build a combined table highlighting ungrouped varieties, changed probabilities, and removed rows', () => {
+    const app = [
+      {
+        crop: 'maize',
+        data: [
+          { variety: 'SC-719, GANKATA', days: '140 - 155', water: [630], probabilities: [0.1, 0] },
+          { variety: 'SC-727', days: '150 - 155', water: [615], probabilities: [0.4, 0.1] },
+        ],
+      },
+      {
+        crop: 'beans',
+        data: [{ variety: 'NUA', days: '70', water: [195], probabilities: [1, 1] }],
+      },
+    ] as IStationCropData[];
+
+    const expected = [
+      {
+        crop: 'maize',
+        data: [{ variety: 'SC-719', days: '140 - 145', water: [630], probabilities: [0.2, 0] }],
+      },
+      {
+        crop: 'beans',
+        data: [{ variety: 'NUA', days: '70', water: [195], probabilities: [1, 1] }],
+      },
+    ] as IStationCropData[];
+
+    const { stationData, cellDiffs } = buildCombinedDiffTable({
+      app,
+      expected,
+      appSeasonProbabilities: [0.5, 0.8],
+      dbSeasonProbabilities: [0.6, 0.8],
+    });
+
+    // Only maize differs; beans matches and is omitted
+    expect(stationData.map((c) => c.crop)).toEqual(['maize']);
+    expect(stationData[0].data.map((d) => d.variety)).toEqual(['SC-719', 'SC-727']);
+    expect(cellDiffs['__season__']).toEqual({ prob_0: 'Was: 5/10' });
+    expect(cellDiffs['maize/SC-719']).toEqual({
+      variety: 'Was: SC-719, GANKATA',
+      days: 'Was: 140 - 155',
+      prob_0: 'Was: 1/10',
+    });
+    expect(cellDiffs['maize/SC-727']).toEqual({
+      variety: 'Removed from DB (was: SC-727)',
+      days: 'Removed (was: 150 - 155)',
+      water: 'Removed (was: 615 mm)',
+      prob_0: 'Removed (was: 4/10)',
+      prob_1: 'Removed (was: 1/10)',
+    });
+  });
+});
+
+describe('calcProbabilityChangePct', () => {
+  it('should return 0% when retained varieties have identical probabilities despite exclusions', () => {
+    const app = [
+      {
+        crop: 'maize',
+        data: [
+          { variety: 'SC-419', days: '110', water: [400], probabilities: [0.8, 0.6] },
+          { variety: 'SC-727', days: '155', water: [600], probabilities: [0.4, 0.1] },
+        ],
+      },
+    ] as IStationCropData[];
+    const expected = [
+      { crop: 'maize', data: [{ variety: 'SC-419', days: '110', water: [400], probabilities: [0.8, 0.6] }] },
+    ] as IStationCropData[];
+    expect(calcProbabilityChangePct(app, expected)).toBe(0);
+  });
+
+  it('should return exact percentage of changed probability cells', () => {
+    const app = [
+      { crop: 'maize', data: [{ variety: 'SC-419', days: '110', water: [400], probabilities: [0.8, 0.6, 0.4, 0.2] }] },
+    ] as IStationCropData[];
+    const expected = [
+      { crop: 'maize', data: [{ variety: 'SC-419', days: '110', water: [400], probabilities: [0.9, 0.6, 0.4, 0.2] }] },
+    ] as IStationCropData[];
+    expect(calcProbabilityChangePct(app, expected)).toBe(25);
+    expect(calcProbabilityChangePct(null, expected)).toBeNull();
   });
 });

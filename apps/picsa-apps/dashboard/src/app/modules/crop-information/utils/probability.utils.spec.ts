@@ -8,6 +8,7 @@ import {
   calcSeasonStartProbabilities,
   computeExpectedProbabilityTable,
   findSurroundingKeys,
+  generateTableWithQc,
   getCropSuccessProbability,
   interpolateValue,
   linearInterpolationStrategy,
@@ -245,6 +246,106 @@ describe('probability.utils', () => {
       expect(computeExpectedProbabilityTable({ ...base, rainfallData: null })).toBeNull();
       expect(computeExpectedProbabilityTable({ ...base, cropProbabilityData: null })).toBeNull();
       expect(computeExpectedProbabilityTable({ ...base, waterRequirements: {} })).toBeNull();
+    });
+  });
+
+  describe('generateTableWithQc & computeExpectedProbabilityTable bounds gating', () => {
+    const cropDataHashmap = {
+      'maize/SC-419': { crop: 'maize', variety: 'SC-419', days_lower: 110, days_upper: 120 },
+      'maize/SC-727': { crop: 'maize', variety: 'SC-727', days_lower: 150, days_upper: 155 },
+      'pigeon-peas/KACHANGU': { crop: 'pigeon-peas', variety: 'KACHANGU', days_lower: 190, days_upper: 190 },
+      'beans/NUA': { crop: 'beans', variety: 'NUA', days_lower: 70, days_upper: 70 },
+    } as never;
+
+    const waterRequirements = {
+      maize: { 'SC-419': 450, 'SC-727': 600 },
+      'pigeon-peas': { KACHANGU: 600 },
+      beans: { NUA: 195 },
+    };
+
+    const cropProbabilityData = [
+      {
+        station: 'TEST',
+        plant_day: 123,
+        plant_length: 60,
+        total_rain: 200,
+        prop_success_no_start: 0.9,
+        prop_success_with_start: 0.9,
+      },
+      {
+        station: 'TEST',
+        plant_day: 123,
+        plant_length: 150,
+        total_rain: 200,
+        prop_success_no_start: 0.4,
+        prop_success_with_start: 0.4,
+      },
+      {
+        station: 'TEST',
+        plant_day: 123,
+        plant_length: 60,
+        total_rain: 800,
+        prop_success_no_start: 0.7,
+        prop_success_with_start: 0.7,
+      },
+      {
+        station: 'TEST',
+        plant_day: 123,
+        plant_length: 150,
+        total_rain: 800,
+        prop_success_no_start: 0.2,
+        prop_success_with_start: 0.2,
+      },
+    ] as never[];
+
+    const rainfallData = [
+      { station: 'TEST', year: 2019, start_rains_doy: 110, season_length: 140 },
+      { station: 'TEST', year: 2020, start_rains_doy: 130, season_length: 140 },
+    ] as never[];
+
+    it('should exclude out-of-bounds varieties and omit empty crop groups by default', () => {
+      const result = computeExpectedProbabilityTable({
+        cropDataHashmap,
+        waterRequirements,
+        rainfallData,
+        cropProbabilityData,
+        locationId: 'chipata',
+        stationId: 'zm/chipata_met',
+      });
+      expect(result).not.toBeNull();
+      if (!result) return;
+      // Only maize/SC-419 is within [60..150]d and [200..800]mm; pigeon-peas and beans become empty and are omitted
+      expect(result.table.map((c) => c.crop)).toEqual(['maize']);
+      expect(result.table[0].data.map((d) => d.variety)).toEqual(['SC-419']);
+      expect(result.qc.includedCount).toBe(1);
+      expect(result.qc.excludedCount).toBe(3);
+    });
+
+    it('should include out-of-bounds varieties when applyBounds is false', () => {
+      const result = computeExpectedProbabilityTable({
+        cropDataHashmap,
+        waterRequirements,
+        rainfallData,
+        cropProbabilityData,
+        applyBounds: false,
+      });
+      expect(result).not.toBeNull();
+      if (!result) return;
+      expect(result.table.map((c) => c.crop)).toEqual(['maize', 'beans', 'pigeon-peas']);
+      expect(result.qc.includedCount).toBe(4);
+      expect(result.qc.excludedCount).toBe(0);
+    });
+
+    it('should still render varieties without filtering when station lookup hashmap is empty', () => {
+      const { table, qc } = generateTableWithQc({
+        cropDataHashmap,
+        waterRequirements: { maize: { 'SC-727': 600 } },
+        startProbabilities: [{ plantDate: 123, label: '31-Oct', probability: 0.5 }],
+        probabilityHashmap: {},
+      });
+      expect(table).toHaveLength(1);
+      expect(table[0].data[0].probabilities).toEqual([null]);
+      expect(qc.excludedCount).toBe(0);
     });
   });
 });

@@ -18,7 +18,7 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
 import { computeExpectedProbabilityTable, roundToNearest } from '../../utils/probability.utils';
 import { CropAppDiffComponent } from './components/components/crop-app-diff.component';
-import { CropDuplicateCropsComponent } from './components/components/duplicate-crops.component';
+import { CropQcComponent } from './components/components/crop-qc.component';
 import { CropLocationCoverageComponent } from './components/components/location-coverage.component';
 import { CropMissingStationInfoComponent } from './components/components/missing-station-info.component';
 
@@ -55,7 +55,7 @@ interface ICropDataImport {
     DashboardMaterialModule,
     CropLocationCoverageComponent,
     CropMissingStationInfoComponent,
-    CropDuplicateCropsComponent,
+    CropQcComponent,
     CropAppDiffComponent,
     PicsaFormsModule,
     MatTabsModule,

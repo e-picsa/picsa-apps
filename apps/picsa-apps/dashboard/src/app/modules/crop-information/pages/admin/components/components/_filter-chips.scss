@@ -1,0 +1,45 @@
+// Shared headline filter chip colors matching translations list Material CSS tokens
+mat-chip-option.chip-neutral {
+  --mat-chip-elevated-container-color: #f3f4f6;
+  --mat-chip-label-text-color: #374151;
+  --mat-chip-with-icon-icon-color: #4b5563;
+  --mat-chip-elevated-selected-container-color: #4b5563 !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
+
+mat-chip-option.chip-green {
+  --mat-chip-elevated-container-color: #f0fdf4;
+  --mat-chip-label-text-color: #166534;
+  --mat-chip-with-icon-icon-color: #15803d;
+  --mat-chip-elevated-selected-container-color: #16a34a !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
+
+mat-chip-option.chip-red {
+  --mat-chip-elevated-container-color: #fef2f2;
+  --mat-chip-label-text-color: #991b1b;
+  --mat-chip-with-icon-icon-color: #dc2626;
+  --mat-chip-elevated-selected-container-color: #dc2626 !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
+
+mat-chip-option.chip-orange {
+  --mat-chip-elevated-container-color: #fff7ed;
+  --mat-chip-label-text-color: #9a3412;
+  --mat-chip-with-icon-icon-color: #ea580c;
+  --mat-chip-elevated-selected-container-color: #ea580c !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}
+
+mat-chip-option.chip-purple {
+  --mat-chip-elevated-container-color: #faf5ff;
+  --mat-chip-label-text-color: #6b21a8;
+  --mat-chip-with-icon-icon-color: #7e22ce;
+  --mat-chip-elevated-selected-container-color: #7e22ce !important;
+  --mat-chip-selected-label-text-color: #ffffff !important;
+  --mat-chip-with-icon-selected-icon-color: #ffffff !important;
+}

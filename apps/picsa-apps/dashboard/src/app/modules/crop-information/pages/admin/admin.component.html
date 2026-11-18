@@ -24,31 +24,37 @@
       </div>
     </mat-tab>
 
+    <!-- Crops & Varieties QC -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">eco</mat-icon>
+        <span>Crops</span>
+        @if (cropsQc.stats().issues > 0) {
+          <span
+            class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
+            >{{ cropsQc.stats().issues }}</span
+          >
+        }
+      </ng-template>
+      <div class="p-4">
+        <dashboard-crop-qc #cropsQc></dashboard-crop-qc>
+      </div>
+    </mat-tab>
+
     <!-- App vs Database -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">difference</mat-icon>
         <span>App Diff</span>
-        @if (appDiff.stats().differs > 0) {
+        @if (appDiff.stats().differs + appDiff.stats().newExclusions > 0) {
           <span
             class="bg-[#e65100] text-white text-[0.7rem] font-semibold py-[0.1rem] px-[0.45rem] rounded-full ml-2"
-            >{{ appDiff.stats().differs }}</span
+            >{{ appDiff.stats().differs + appDiff.stats().newExclusions }}</span
           >
         }
       </ng-template>
       <div class="p-4">
         <dashboard-crop-app-diff #appDiff></dashboard-crop-app-diff>
-      </div>
-    </mat-tab>
-
-    <!-- Duplicate Crop & Variety Inspector -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="!w-5 !h-5 !text-[1.15rem] mr-2">content_copy</mat-icon>
-        <span>Duplicates</span>
-      </ng-template>
-      <div class="p-4">
-        <dashboard-crop-duplicate-crops></dashboard-crop-duplicate-crops>
       </div>
     </mat-tab>
 

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { CROPS_DATA_HASHMAP, ICropData, ICropName } from '@picsa/data';
 import { PicsaFormsModule } from '@picsa/forms';
@@ -21,6 +22,7 @@ const STRINGS = {
 export type IProbabilityTableRow = IStationCropDataItem & {
   crop: ICropName;
   cropNameRowspan: number;
+  diffs?: Partial<Record<string, string>>;
   [key: `prob_${number}`]: number | null | undefined;
 };
 
@@ -28,7 +30,7 @@ export type IProbabilityTableRow = IStationCropDataItem & {
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
-  imports: [FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
+  imports: [FormsModule, MatTableModule, MatTooltipModule, PicsaFormsModule, PicsaTranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent {
@@ -43,6 +45,11 @@ export class CropProbabilityTableComponent {
   public tableMeta = input.required<IProbabilityTableMeta>();
 
   public filterCrop = input<string>();
+
+  /** Optional per-cell diff tooltips keyed by `${crop}/${variety}` (or `'__season__'`) -> column -> tooltip */
+  public cellDiffs = input<Record<string, Partial<Record<string, string>>>>();
+
+  public seasonDiffs = computed(() => this.cellDiffs()?.['__season__']);
 
   public selectedCropName = model<string>();
 
@@ -111,6 +118,7 @@ export class CropProbabilityTableComponent {
 
     effect(() => {
       const stationData = this.stationData();
+      const diffsMap = this.cellDiffs();
       if (!stationData) {
         this.dataSource.data = [];
         return;
@@ -123,6 +131,7 @@ export class CropProbabilityTableComponent {
             ...item,
             crop: cropGroup.crop,
             cropNameRowspan: index === 0 ? sortedGroupItems.length : 0,
+            diffs: diffsMap?.[`${cropGroup.crop}/${item.variety}`],
           };
           item.probabilities?.forEach((prob, probIndex) => {
             row[`prob_${probIndex}`] = prob;

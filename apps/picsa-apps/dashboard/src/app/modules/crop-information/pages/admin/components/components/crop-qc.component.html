@@ -1,0 +1,132 @@
+<div class="space-y-4">
+  <p class="text-sm text-gray-600">
+    Per-variety quality control across downscaled locations. Red or amber values indicate missed thresholds; click any
+    row to inspect affected locations.
+  </p>
+
+  <!-- Headline filter chips (matching Translations list pattern) -->
+  <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
+    <mat-chip-option value="all" [selected]="tableFilter() === 'all'" class="chip-neutral">
+      <mat-icon matChipAvatar>list</mat-icon>
+      All: {{ stats().total }}
+    </mat-chip-option>
+    <mat-chip-option value="issues" [selected]="tableFilter() === 'issues'" class="chip-orange">
+      <mat-icon matChipAvatar>filter_alt</mat-icon>
+      Warnings &amp; Exclusions: {{ stats().issues }}
+    </mat-chip-option>
+    <mat-chip-option value="duplicates" [selected]="tableFilter() === 'duplicates'" class="chip-purple">
+      <mat-icon matChipAvatar>content_copy</mat-icon>
+      Duplicates: {{ duplicateCount() }}
+    </mat-chip-option>
+  </mat-chip-listbox>
+
+  @if (tableFilter() === 'duplicates') {
+    <dashboard-crop-duplicate-crops></dashboard-crop-duplicate-crops>
+  } @else if (displayedRows().length > 0) {
+    <picsa-data-table
+      [data]="displayedRows()"
+      [options]="tableOptions"
+      [valueTemplates]="valueTemplates()"
+      (rowClick)="openVarietyDialog($event)"
+    ></picsa-data-table>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <mat-icon class="text-green-600 text-4xl mr-2">check_circle</mat-icon>
+      <p class="text-gray-600">No varieties have exclusions or warnings</p>
+    </div>
+  }
+</div>
+
+<!-- Cell Templates (kept outside @if so viewChild resolves before async data arrives) -->
+<ng-template #daysTemplate let-row="row">
+  <span
+    [class]="
+      row.days_issue === 'exclude'
+        ? 'text-red-700 font-semibold'
+        : row.days_issue === 'warning'
+          ? 'text-amber-700 font-semibold'
+          : ''
+    "
+  >
+    {{ row.days }}
+  </span>
+</ng-template>
+
+<ng-template #waterTemplate let-row="row">
+  <span [class]="row.water_issue === 'exclude' ? 'text-red-700 font-semibold' : ''">
+    {{ row.water_range }}
+  </span>
+</ng-template>
+
+<ng-template #statusTemplate let-row="row">
+  @if (row.status === 'OK') {
+    <mat-icon class="text-green-600" aria-label="OK">check_circle</mat-icon>
+  } @else if (row.status === 'Unused') {
+    <span class="text-gray-400">—</span>
+  } @else {
+    <mat-chip class="qc-status-chip" [class]="statusChipClass(row.status)">
+      {{ row.status }}
+    </mat-chip>
+  }
+</ng-template>
+
+<!-- Row Click Threshold Detail Modal -->
+<ng-template #varietyDialogTemplate>
+  @if (selectedRow(); as row) {
+    <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 border-b pb-3">
+        <div>
+          <h3 class="text-lg font-semibold m-0">{{ row.crop }} / {{ row.variety }}</h3>
+          <p class="text-sm text-gray-600 mt-1 mb-0">
+            Days: {{ row.days }} · Water: {{ row.water_range }} · Excluded: {{ row.locations_excluded }}/{{
+              row.locations_total
+            }}
+          </p>
+        </div>
+        <button matIconButton mat-dialog-close aria-label="Close modal">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      @if (row.issues.length > 0) {
+        <div class="border rounded overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead class="bg-gray-50 border-b">
+              <tr>
+                <th class="p-2">Location</th>
+                <th class="p-2">Station</th>
+                <th class="p-2">Days</th>
+                <th class="p-2">Water</th>
+                <th class="p-2">Threshold Missed</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of row.issues; track item.locationId) {
+                <tr class="border-b last:border-b-0">
+                  <td class="p-2 font-medium">{{ item.locationId }}</td>
+                  <td class="p-2">{{ item.stationId || '—' }}</td>
+                  <td class="p-2">{{ item.days }}</td>
+                  <td class="p-2">{{ item.waterRequirement }} mm</td>
+                  <td class="p-2" [class]="item.excluded ? 'text-red-700 font-medium' : 'text-amber-700'">
+                    {{ item.reasons.join('; ') }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-sm text-gray-600">
+          {{ row.summary || 'No location threshold issues' }}
+          @if (row.locations_total === 0) {
+            (no downscaled locations configured)
+          }
+        </p>
+      }
+
+      <div class="flex justify-end pt-2 border-t">
+        <button matButton mat-dialog-close>Close</button>
+      </div>
+    </div>
+  }
+</ng-template>

@@ -24,6 +24,44 @@
     </div>
   </picsa-alert-box>
 }
+@if (excludedVarieties().length > 0 || warnedVarieties().length > 0) {
+  <picsa-alert-box type="warning" class="block my-3">
+    <div class="space-y-2 text-sm">
+      @if (excludedVarieties().length > 0) {
+        <div>
+          <strong>{{ excludedVarieties().length }} variety(ies) omitted (outside station lookup bounds):</strong>
+          <ul class="list-disc pl-5 mt-1 mb-0">
+            @for (item of excludedVarieties(); track item.crop + '/' + item.variety) {
+              <li>
+                <span class="font-medium">{{ item.crop }} / {{ item.variety }}</span
+                >:
+                @for (issue of item.failures; track issue.code; let last = $last) {
+                  <span>{{ issue.message }}{{ last ? '' : '; ' }}</span>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+      @if (warnedVarieties().length > 0) {
+        <div>
+          <strong>{{ warnedVarieties().length }} variety(ies) with season-length / cycle warnings:</strong>
+          <ul class="list-disc pl-5 mt-1 mb-0">
+            @for (item of warnedVarieties(); track item.crop + '/' + item.variety) {
+              <li>
+                <span class="font-medium">{{ item.crop }} / {{ item.variety }}</span
+                >:
+                @for (issue of item.warnings; track issue.code; let last = $last) {
+                  <span>{{ issue.message }}{{ last ? '' : '; ' }}</span>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </picsa-alert-box>
+}
 
 <!-- HACK - reuse frontend ui component -->
 <crop-probability-table #table [stationData]="tableData()" [tableMeta]="tableMeta()"></crop-probability-table>

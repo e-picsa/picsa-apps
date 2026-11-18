@@ -3,6 +3,42 @@ export function normalizeName(str: string): string {
   return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+/** Build normalized crop/variety pairs from baseline crop_data and downscaled water_requirements */
+export function buildCropVarietyPairs(
+  cropData: { crop: string; variety: string }[],
+  downscaledData: { location_id: string; water_requirements: unknown }[],
+): ICropVarietyPair[] {
+  const pairs: ICropVarietyPair[] = [];
+
+  for (const d of cropData) {
+    pairs.push({
+      crop: normalizeName(d.crop),
+      variety: normalizeName(d.variety),
+      source: 'crop_data',
+      original_crop: d.crop,
+      original_variety: d.variety,
+    });
+  }
+
+  for (const d of downscaledData) {
+    const waterReqs = d.water_requirements as Record<string, Record<string, number>>;
+    for (const [crop, varieties] of Object.entries(waterReqs ?? {})) {
+      for (const variety of Object.keys(varieties)) {
+        pairs.push({
+          crop: normalizeName(crop),
+          variety: normalizeName(variety),
+          source: 'crop_data_downscaled',
+          original_crop: crop,
+          original_variety: variety,
+          location_id: d.location_id,
+        });
+      }
+    }
+  }
+
+  return pairs;
+}
+
 export interface ICropVarietyPair {
   crop: string;
   variety: string;

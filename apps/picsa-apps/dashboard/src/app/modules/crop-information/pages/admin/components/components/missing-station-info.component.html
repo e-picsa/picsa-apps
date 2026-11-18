@@ -1,51 +1,73 @@
 <div class="space-y-4">
   <p class="text-sm text-gray-600">
-    Deployment stations and whether crop probability data is available for them. A station is in good order when
-    probability data exists; assigning it to locations happens under Locations.
+    Per-station crop probability lookup bounds consistency against the country majority. Hover any status icon to view
+    crop length, water requirement, and planting date bounds.
   </p>
 
-  <!-- Summary Stats -->
-  <div class="flex flex-wrap gap-4">
-    <div class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded">
-      <mat-icon class="text-blue-600">info</mat-icon>
-      <span>{{ stats().total }} stations</span>
-    </div>
-    <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
-      <mat-icon class="text-green-600">check_circle</mat-icon>
-      <span>{{ stats().withData }} with probability data</span>
-    </div>
-    <div class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded">
-      <mat-icon class="text-red-600">error</mat-icon>
-      <span>{{ stats().withoutData }} without probability data</span>
-    </div>
-  </div>
+  <!-- Headline filter chips (matching Translations list pattern) -->
+  <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
+    <mat-chip-option value="all" [selected]="tableFilter() === 'all'" class="chip-neutral">
+      <mat-icon matChipAvatar>list</mat-icon>
+      All: {{ stats().total }}
+    </mat-chip-option>
+    <mat-chip-option value="missing_data" [selected]="tableFilter() === 'missing_data'" class="chip-red">
+      <mat-icon matChipAvatar>error</mat-icon>
+      No Probabilities: {{ stats().withoutData }}
+    </mat-chip-option>
+    @if (stats().inconsistent > 0) {
+      <mat-chip-option value="inconsistent" [selected]="tableFilter() === 'inconsistent'" class="chip-orange">
+        <mat-icon matChipAvatar>filter_alt</mat-icon>
+        Inconsistent Bounds: {{ stats().inconsistent }}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
 
   <!-- Data Table -->
-  @if (stationStatuses().length > 0) {
+  @if (displayedRows().length > 0) {
     <picsa-data-table
-      [data]="stationStatuses()"
+      [data]="displayedRows()"
       [options]="tableOptions"
-      [valueTemplates]="valueTemplates"
+      [valueTemplates]="valueTemplates()"
     ></picsa-data-table>
-    <ng-template #probabilitiesTemplate let-row="row">
-      @if (row.has_probabilities) {
-        <mat-icon
-          class="text-green-600"
-          [matTooltip]="row.probabilities_detail"
-          aria-label="Probability data available"
-        >
-          check_circle
-        </mat-icon>
-      } @else {
-        <mat-icon class="text-red-600" [matTooltip]="row.probabilities_detail" aria-label="No probability data">
-          cancel
-        </mat-icon>
-      }
-    </ng-template>
   } @else {
     <div class="flex items-center justify-center py-8">
       <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
-      <p class="text-gray-600">No stations found for this deployment</p>
+      <p class="text-gray-600">No stations match the active filter</p>
     </div>
   }
 </div>
+
+<ng-template #boundsTemplate let-row="row">
+  @switch (row.probability_bounds) {
+    @case ('consistent') {
+      <mat-icon
+        class="text-green-600"
+        [matTooltip]="row.bounds_tooltip"
+        matTooltipClass="multiline-tooltip"
+        aria-label="Consistent bounds"
+      >
+        check_circle
+      </mat-icon>
+    }
+    @case ('inconsistent') {
+      <mat-icon
+        class="text-amber-600"
+        [matTooltip]="row.bounds_tooltip"
+        matTooltipClass="multiline-tooltip"
+        aria-label="Inconsistent bounds"
+      >
+        warning
+      </mat-icon>
+    }
+    @default {
+      <mat-icon
+        class="text-red-600"
+        [matTooltip]="row.bounds_tooltip"
+        matTooltipClass="multiline-tooltip"
+        aria-label="No probabilities"
+      >
+        cancel
+      </mat-icon>
+    }
+  }
+</ng-template>
