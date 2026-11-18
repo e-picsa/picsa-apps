@@ -22,6 +22,7 @@ const STRINGS = {
 export type IProbabilityTableRow = IStationCropDataItem & {
   crop: ICropName;
   cropNameRowspan: number;
+  diffs?: Partial<Record<string, string>>;
   [key: `prob_${number}`]: number | null | undefined;
 };
 
@@ -47,6 +48,8 @@ export class CropProbabilityTableComponent {
 
   /** Optional per-cell diff tooltips keyed by `${crop}/${variety}` (or `'__season__'`) -> column -> tooltip */
   public cellDiffs = input<Record<string, Partial<Record<string, string>>>>();
+
+  public seasonDiffs = computed(() => this.cellDiffs()?.['__season__']);
 
   public selectedCropName = model<string>();
 
@@ -115,6 +118,7 @@ export class CropProbabilityTableComponent {
 
     effect(() => {
       const stationData = this.stationData();
+      const diffsMap = this.cellDiffs();
       if (!stationData) {
         this.dataSource.data = [];
         return;
@@ -127,6 +131,7 @@ export class CropProbabilityTableComponent {
             ...item,
             crop: cropGroup.crop,
             cropNameRowspan: index === 0 ? sortedGroupItems.length : 0,
+            diffs: diffsMap?.[`${cropGroup.crop}/${item.variety}`],
           };
           item.probabilities?.forEach((prob, probIndex) => {
             row[`prob_${probIndex}`] = prob;
@@ -141,14 +146,6 @@ export class CropProbabilityTableComponent {
   public formatProbability(value: number | null | undefined): string {
     if (value == null || isNaN(value)) return '';
     return `${Math.round(value * 10)}/10`;
-  }
-
-  public getCellDiff(row: IProbabilityTableRow, col: string): string | undefined {
-    return this.cellDiffs()?.[`${row.crop}/${row.variety}`]?.[col];
-  }
-
-  public getSeasonDiff(index: number): string | undefined {
-    return this.cellDiffs()?.['__season__']?.[`prob_${index}`];
   }
 
   /** Export rendered table to image and invoke system share sheet */

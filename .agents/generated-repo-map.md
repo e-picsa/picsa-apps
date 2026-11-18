@@ -825,7 +825,7 @@
 - **[app.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/app.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/app.component.ts`)
   - `Component` **PicsaCropProbabilityTool**
 - **[crop-probability-table.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/components/crop-probability-table/crop-probability-table.component.ts`)
-  - `Component` **CropProbabilityTableComponent** (methods: [formatProbability, getCellDiff, getSeasonDiff, sharePicture])
+  - `Component` **CropProbabilityTableComponent** (methods: [formatProbability, sharePicture])
   - `Type` **IProbabilityTableRow**
 - **[index.ts](../apps/picsa-tools/crop-probability-tool/src/app/models/index.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/models/index.ts`)
   - `Interface` **IProbabilityTableMeta**

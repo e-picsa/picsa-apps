@@ -47,9 +47,9 @@
         <td
           mat-header-cell
           *matHeaderCellDef
-          [class.diff-changed]="getSeasonDiff($index)"
-          [matTooltip]="getSeasonDiff($index) ?? ''"
-          [matTooltipDisabled]="!getSeasonDiff($index)"
+          [class.diff-changed]="seasonDiffs()?.['prob_' + $index]"
+          [matTooltip]="seasonDiffs()?.['prob_' + $index] ?? ''"
+          [matTooltipDisabled]="!seasonDiffs()?.['prob_' + $index]"
         >
           {{ formatProbability(tableMeta().seasonProbabilities[$index]) }}
         </td>
@@ -86,9 +86,9 @@
       <td
         mat-cell
         *matCellDef="let element"
-        [class.diff-changed]="getCellDiff(element, 'variety')"
-        [matTooltip]="getCellDiff(element, 'variety') ?? ''"
-        [matTooltipDisabled]="!getCellDiff(element, 'variety')"
+        [class.diff-changed]="element.diffs?.['variety']"
+        [matTooltip]="element.diffs?.['variety'] ?? ''"
+        [matTooltipDisabled]="!element.diffs?.['variety']"
       >
         {{ element.variety | translate }}
       </td>
@@ -99,9 +99,9 @@
       <td
         mat-cell
         *matCellDef="let element"
-        [class.diff-changed]="getCellDiff(element, 'days')"
-        [matTooltip]="getCellDiff(element, 'days') ?? ''"
-        [matTooltipDisabled]="!getCellDiff(element, 'days')"
+        [class.diff-changed]="element.diffs?.['days']"
+        [matTooltip]="element.diffs?.['days'] ?? ''"
+        [matTooltipDisabled]="!element.diffs?.['days']"
       >
         {{ element.days | translate }}
       </td>
@@ -114,9 +114,9 @@
       <td
         mat-cell
         *matCellDef="let element"
-        [class.diff-changed]="getCellDiff(element, 'water')"
-        [matTooltip]="getCellDiff(element, 'water') ?? ''"
-        [matTooltipDisabled]="!getCellDiff(element, 'water')"
+        [class.diff-changed]="element.diffs?.['water']"
+        [matTooltip]="element.diffs?.['water'] ?? ''"
+        [matTooltipDisabled]="!element.diffs?.['water']"
       >
         @let water = (element.water || []).join('-');
         <div>{{ water | translate }} mm</div>
@@ -130,9 +130,9 @@
         <td
           *matCellDef="let element"
           class="probability-cell"
-          [class.diff-changed]="getCellDiff(element, column.name)"
-          [matTooltip]="getCellDiff(element, column.name) ?? ''"
-          [matTooltipDisabled]="!getCellDiff(element, column.name)"
+          [class.diff-changed]="element.diffs?.[column.name]"
+          [matTooltip]="element.diffs?.[column.name] ?? ''"
+          [matTooltipDisabled]="!element.diffs?.[column.name]"
         >
           {{ formatProbability(element[column.name]) }}
         </td>

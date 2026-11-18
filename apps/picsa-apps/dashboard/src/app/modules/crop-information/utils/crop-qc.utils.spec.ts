@@ -241,10 +241,22 @@ describe('crop-qc.utils', () => {
       expect(byKey['maize/LOCAL'].status).toBe('Missing Definition');
       expect(byKey['cassava/SAUTI'].status).toBe('Season / >360d Warning');
       expect(byKey['cassava/SAUTI'].water_min).toBeNull();
+      expect(byKey['cassava/SAUTI'].warnings_count).toBe(1);
       expect(byKey['cassava/SAUTI'].days_issue).toBe('warning');
       expect(byKey['cassava/SAUTI'].summary).toBe('> 360d limit');
       expect(byKey['maize/SC-727'].status_rank).toBeLessThan(byKey['maize/LOCAL'].status_rank);
       expect(byKey['cassava/SAUTI'].status_rank).toBeLessThan(byKey['maize/SC-419'].status_rank);
+
+      // Verify >360d variety with downscaled locations is not double-counted (+1)
+      const downscaledOver360 = buildCropVarietyQcRows({
+        cropData: [{ crop: 'cassava', variety: 'SAUTI', days_lower: 450, days_upper: 450 }],
+        downscaledData: [
+          { location_id: 'loc1', station_id: 'zm/chipata_met', water_requirements: { cassava: { SAUTI: 500 } } },
+          { location_id: 'loc2', station_id: 'zm/chipata_met', water_requirements: { cassava: { SAUTI: 520 } } },
+        ],
+        stationBoundsById: { 'zm/chipata_met': { lookupBounds, seasonBounds: null } },
+      });
+      expect(downscaledOver360[0].warnings_count).toBe(2);
     });
   });
 });

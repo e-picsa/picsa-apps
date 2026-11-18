@@ -38,7 +38,7 @@ function formatBoundsSignature(b: IStationLookupBounds) {
 }
 
 function formatTooltipDate(label: string): string {
-  return label.replace(/-/g, ' ');
+  return label.replaceAll('-', ' ');
 }
 
 function buildBoundsTooltip(
@@ -63,9 +63,9 @@ function buildBoundsTooltip(
  * (crop length, water requirement, planting dates) against the country majority.
  */
 export class CropMissingStationInfoComponent {
-  private service = inject(CropInformationService);
+  private readonly service = inject(CropInformationService);
 
-  private boundsTemplate =
+  private readonly boundsTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: IStationProbabilityStatus }>>('boundsTemplate');
 
   public valueTemplates = computed(() => {

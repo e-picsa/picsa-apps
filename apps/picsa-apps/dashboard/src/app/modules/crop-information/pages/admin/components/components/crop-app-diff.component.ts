@@ -131,13 +131,15 @@ const APP_INDEX_BY_COUNTRY: Record<string, IProbabilityTable[]> = {
  * row-click combined probability diff dialog.
  */
 export class CropAppDiffComponent {
-  private service = inject(CropInformationService);
-  private deploymentService = inject(DeploymentDashboardService);
-  private dialog = inject(MatDialog);
+  private readonly service = inject(CropInformationService);
+  private readonly deploymentService = inject(DeploymentDashboardService);
+  private readonly dialog = inject(MatDialog);
 
-  private excludedTemplate = viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('excludedTemplate');
-  private probChangeTemplate = viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('probChangeTemplate');
-  private diffDialogTemplate = viewChild.required<TemplateRef<unknown>>('diffDialogTemplate');
+  private readonly excludedTemplate =
+    viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('excludedTemplate');
+  private readonly probChangeTemplate =
+    viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('probChangeTemplate');
+  private readonly diffDialogTemplate = viewChild.required<TemplateRef<unknown>>('diffDialogTemplate');
 
   public valueTemplates = computed(() => {
     const excluded = this.excludedTemplate();

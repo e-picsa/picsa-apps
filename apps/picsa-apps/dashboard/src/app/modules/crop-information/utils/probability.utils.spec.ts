@@ -343,7 +343,7 @@ describe('probability.utils', () => {
         startProbabilities: [{ plantDate: 123, label: '31-Oct', probability: 0.5 }],
         probabilityHashmap: {},
       });
-      expect(table.length).toBe(1);
+      expect(table).toHaveLength(1);
       expect(table[0].data[0].probabilities).toEqual([null]);
       expect(qc.excludedCount).toBe(0);
     });

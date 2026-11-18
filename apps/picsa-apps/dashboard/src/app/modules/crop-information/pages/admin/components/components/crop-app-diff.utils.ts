@@ -119,6 +119,88 @@ export function calcProbabilityChangePct(
   return Math.round((changedCells / totalCells) * 100);
 }
 
+function buildSeasonDiffs(
+  appSeasonProbabilities?: (number | null)[],
+  dbSeasonProbabilities?: (number | null)[],
+): Partial<Record<string, string>> | null {
+  if (!appSeasonProbabilities || !dbSeasonProbabilities) return null;
+  const seasonDiffs: Partial<Record<string, string>> = {};
+  const maxLen = Math.max(appSeasonProbabilities.length, dbSeasonProbabilities.length);
+  for (let i = 0; i < maxLen; i++) {
+    const appStr = formatProb(appSeasonProbabilities[i]);
+    const dbStr = formatProb(dbSeasonProbabilities[i]);
+    if (appStr !== dbStr) {
+      seasonDiffs[`prob_${i}`] = `Was: ${appStr}`;
+    }
+  }
+  return Object.keys(seasonDiffs).length > 0 ? seasonDiffs : null;
+}
+
+function buildDbRowDiff(
+  dbItem: IStationCropDataItem,
+  matchedApp: IStationCropDataItem | undefined,
+): Partial<Record<string, string>> {
+  if (!matchedApp) {
+    const rowDiff: Partial<Record<string, string>> = {
+      variety: 'Added in DB (not in App)',
+      days: 'Added in DB',
+      water: 'Added in DB',
+    };
+    (dbItem.probabilities ?? []).forEach((_, idx) => {
+      rowDiff[`prob_${idx}`] = 'Added in DB';
+    });
+    return rowDiff;
+  }
+
+  const rowDiff: Partial<Record<string, string>> = {};
+  if (dbItem.variety !== matchedApp.variety) rowDiff['variety'] = `Was: ${matchedApp.variety}`;
+  if (dbItem.days !== matchedApp.days) rowDiff['days'] = `Was: ${matchedApp.days}`;
+  if (formatWater(dbItem.water) !== formatWater(matchedApp.water)) {
+    rowDiff['water'] = `Was: ${formatWater(matchedApp.water)}`;
+  }
+  const dbProbs = dbItem.probabilities ?? [];
+  const appProbs = matchedApp.probabilities ?? [];
+  const maxProbs = Math.max(dbProbs.length, appProbs.length);
+  for (let i = 0; i < maxProbs; i++) {
+    if (formatProb(dbProbs[i]) !== formatProb(appProbs[i])) {
+      rowDiff[`prob_${i}`] = `Was: ${formatProb(appProbs[i])}`;
+    }
+  }
+  return rowDiff;
+}
+
+function buildRemovedAppRows(
+  crop: string,
+  appItems: IStationCropDataItem[],
+  dbTokens: Set<string>,
+  cellDiffs: Record<string, Partial<Record<string, string>>>,
+): IStationCropDataItem[] {
+  const removedAppItems = appItems.filter((a) => !splitVarieties(a.variety).some((t) => dbTokens.has(t)));
+  const removedPlaceholders: IStationCropDataItem[] = removedAppItems.map((a) => ({
+    ...a,
+    probabilities: (a.probabilities ?? []).map(() => null),
+  }));
+  const groupedRemoved = groupAndSortCropDataItems(removedPlaceholders);
+
+  for (const removedRow of groupedRemoved) {
+    const tokens = splitVarieties(removedRow.variety);
+    const sources = removedAppItems.filter((a) => splitVarieties(a.variety).some((t) => tokens.includes(t)));
+    const rowDiff: Partial<Record<string, string>> = {
+      variety: `Removed from DB (was: ${removedRow.variety})`,
+      days: `Removed (was: ${removedRow.days})`,
+      water: `Removed (was: ${formatWater(removedRow.water)})`,
+    };
+    const maxProbs = Math.max(...sources.map((s) => (s.probabilities ?? []).length), 0);
+    for (let i = 0; i < maxProbs; i++) {
+      const oldVals = [...new Set(sources.map((s) => formatProb(s.probabilities?.[i])))];
+      rowDiff[`prob_${i}`] = `Removed (was: ${oldVals.join(' / ')})`;
+    }
+    cellDiffs[`${crop}/${removedRow.variety}`] = rowDiff;
+  }
+
+  return groupedRemoved;
+}
+
 /**
  * Build a combined IStationCropData[] for differing crops only (DB rows + removed App rows)
  * alongside cell-level diff tooltips (keyed by `${crop}/${variety}` -> column -> old value).
@@ -134,19 +216,9 @@ export function buildCombinedDiffTable(params: {
   const expectedList = expected ?? [];
   const cellDiffs: Record<string, Partial<Record<string, string>>> = {};
 
-  if (appSeasonProbabilities && dbSeasonProbabilities) {
-    const seasonDiffs: Partial<Record<string, string>> = {};
-    const maxLen = Math.max(appSeasonProbabilities.length, dbSeasonProbabilities.length);
-    for (let i = 0; i < maxLen; i++) {
-      const appStr = formatProb(appSeasonProbabilities[i]);
-      const dbStr = formatProb(dbSeasonProbabilities[i]);
-      if (appStr !== dbStr) {
-        seasonDiffs[`prob_${i}`] = `Was: ${appStr}`;
-      }
-    }
-    if (Object.keys(seasonDiffs).length > 0) {
-      cellDiffs['__season__'] = seasonDiffs;
-    }
+  const seasonDiffs = buildSeasonDiffs(appSeasonProbabilities, dbSeasonProbabilities);
+  if (seasonDiffs) {
+    cellDiffs['__season__'] = seasonDiffs;
   }
 
   const appByCrop = new Map(appList.map((entry) => [String(entry.crop), entry.data ?? []]));
@@ -159,66 +231,13 @@ export function buildCombinedDiffTable(params: {
     const dbTokens = new Set(dbItems.flatMap((it) => splitVarieties(it.variety)));
 
     for (const dbItem of dbItems) {
-      const matchedApp = findMatchingAppItem(dbItem, appItems);
-      const rowKey = `${crop}/${dbItem.variety}`;
-      const rowDiff: Partial<Record<string, string>> = {};
-
-      if (!matchedApp) {
-        rowDiff['variety'] = 'Added in DB (not in App)';
-        rowDiff['days'] = 'Added in DB';
-        rowDiff['water'] = 'Added in DB';
-        (dbItem.probabilities ?? []).forEach((_, idx) => {
-          rowDiff[`prob_${idx}`] = 'Added in DB';
-        });
-      } else {
-        if (dbItem.variety !== matchedApp.variety) {
-          rowDiff['variety'] = `Was: ${matchedApp.variety}`;
-        }
-        if (dbItem.days !== matchedApp.days) {
-          rowDiff['days'] = `Was: ${matchedApp.days}`;
-        }
-        if (formatWater(dbItem.water) !== formatWater(matchedApp.water)) {
-          rowDiff['water'] = `Was: ${formatWater(matchedApp.water)}`;
-        }
-        const dbProbs = dbItem.probabilities ?? [];
-        const appProbs = matchedApp.probabilities ?? [];
-        const maxProbs = Math.max(dbProbs.length, appProbs.length);
-        for (let i = 0; i < maxProbs; i++) {
-          if (formatProb(dbProbs[i]) !== formatProb(appProbs[i])) {
-            rowDiff[`prob_${i}`] = `Was: ${formatProb(appProbs[i])}`;
-          }
-        }
-      }
-
+      const rowDiff = buildDbRowDiff(dbItem, findMatchingAppItem(dbItem, appItems));
       if (Object.keys(rowDiff).length > 0) {
-        cellDiffs[rowKey] = rowDiff;
+        cellDiffs[`${crop}/${dbItem.variety}`] = rowDiff;
       }
     }
 
-    // Include App items whose varieties were completely removed from DB
-    const removedAppItems = appItems.filter((a) => !splitVarieties(a.variety).some((t) => dbTokens.has(t)));
-    const removedPlaceholders: IStationCropDataItem[] = removedAppItems.map((a) => ({
-      ...a,
-      probabilities: (a.probabilities ?? []).map(() => null),
-    }));
-    const groupedRemoved = groupAndSortCropDataItems(removedPlaceholders);
-
-    for (const removedRow of groupedRemoved) {
-      const tokens = splitVarieties(removedRow.variety);
-      const sources = removedAppItems.filter((a) => splitVarieties(a.variety).some((t) => tokens.includes(t)));
-      const rowDiff: Partial<Record<string, string>> = {
-        variety: `Removed from DB (was: ${removedRow.variety})`,
-        days: `Removed (was: ${removedRow.days})`,
-        water: `Removed (was: ${formatWater(removedRow.water)})`,
-      };
-      const maxProbs = Math.max(...sources.map((s) => (s.probabilities ?? []).length), 0);
-      for (let i = 0; i < maxProbs; i++) {
-        const oldVals = [...new Set(sources.map((s) => formatProb(s.probabilities?.[i])))];
-        rowDiff[`prob_${i}`] = `Removed (was: ${oldVals.join(' / ')})`;
-      }
-      cellDiffs[`${crop}/${removedRow.variety}`] = rowDiff;
-    }
-
+    const groupedRemoved = buildRemovedAppRows(crop, appItems, dbTokens, cellDiffs);
     const combinedItems = [...dbItems, ...groupedRemoved];
     if (combinedItems.length > 0) {
       stationData.push({ crop: crop as IStationCropData['crop'], data: combinedItems });

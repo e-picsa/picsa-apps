@@ -264,6 +264,28 @@ export interface IGenerateTableParams {
   stationId?: string | null;
 }
 
+function buildTableRowItem(
+  variety: string,
+  waterRequirement: number,
+  varietyData: ICropData['Row'],
+  plantDates: number[],
+  probabilityHashmap: IProbabilityHashmap,
+) {
+  const { days_lower, days_upper } = varietyData;
+  const probabilities = {
+    lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
+    upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
+  };
+  return {
+    days: [...new Set([days_lower, days_upper])].join(' - '),
+    days_lower,
+    days_upper,
+    variety,
+    probabilities: generateProbabilityEntryValues(probabilities, plantDates),
+    water: [waterRequirement],
+  };
+}
+
 /** Generate probability table entries together with per-variety QC evaluation summary */
 export function generateTableWithQc(params: IGenerateTableParams): {
   table: IStationCropData[];
@@ -287,15 +309,9 @@ export function generateTableWithQc(params: IGenerateTableParams): {
   const entries: IStationCropData[] = [];
   const plantDates = startProbabilities.map((v) => v.plantDate);
   const qcResults: ICropVarietyQcResult[] = [];
-  let includedCount = 0;
-  let excludedCount = 0;
-  let warningCount = 0;
 
   for (const [crop, requirements] of Object.entries(waterRequirements)) {
-    const entry: IStationCropData = {
-      crop: crop as ICropName,
-      data: [],
-    };
+    const entry: IStationCropData = { crop: crop as ICropName, data: [] };
     for (const [variety, waterRequirement] of Object.entries(requirements ?? {})) {
       const varietyData = cropDataHashmap[`${crop}/${variety}`];
       const qcResult = evaluateVarietyQc({
@@ -310,32 +326,13 @@ export function generateTableWithQc(params: IGenerateTableParams): {
         applyBounds,
       });
       qcResults.push(qcResult);
-      if (qcResult.warnings.length > 0) warningCount++;
 
       if (!qcResult.included || !varietyData) {
-        excludedCount++;
-        if (!varietyData) {
-          console.warn(`no variety data found for [${crop}/${variety}]`);
-        }
+        if (!varietyData) console.warn(`no variety data found for [${crop}/${variety}]`);
         continue;
       }
 
-      includedCount++;
-      const { days_lower, days_upper } = varietyData;
-      const days = { lower: days_lower, upper: days_upper };
-      const probabilities = {
-        lower: getCropSuccessProbability(waterRequirement, days_lower, plantDates, probabilityHashmap),
-        upper: getCropSuccessProbability(waterRequirement, days_upper, plantDates, probabilityHashmap),
-      };
-      const probabilityValues = generateProbabilityEntryValues(probabilities, plantDates);
-      entry.data.push({
-        days: [...new Set([days.lower, days_upper])].join(' - '),
-        days_lower: days.lower,
-        days_upper: days.upper,
-        variety,
-        probabilities: probabilityValues,
-        water: [waterRequirement],
-      });
+      entry.data.push(buildTableRowItem(variety, waterRequirement, varietyData, plantDates, probabilityHashmap));
     }
 
     if (entry.data.length > 0) {
@@ -344,8 +341,10 @@ export function generateTableWithQc(params: IGenerateTableParams): {
     }
   }
 
+  entries.sort(sortByPriorityCrops);
+  const includedCount = qcResults.filter((r) => r.included).length;
   return {
-    table: entries.sort(sortByPriorityCrops),
+    table: entries,
     qc: {
       locationId,
       stationId,
@@ -353,8 +352,8 @@ export function generateTableWithQc(params: IGenerateTableParams): {
       seasonBounds,
       evaluatedCount: qcResults.length,
       includedCount,
-      excludedCount,
-      warningCount,
+      excludedCount: qcResults.length - includedCount,
+      warningCount: qcResults.filter((r) => r.warnings.length > 0).length,
       results: qcResults,
     },
   };

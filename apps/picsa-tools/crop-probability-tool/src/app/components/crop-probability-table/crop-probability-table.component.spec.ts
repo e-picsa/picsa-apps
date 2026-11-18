@@ -111,11 +111,11 @@ describe('CropProbabilityTableComponent', () => {
     fixture.detectChanges();
 
     const row = component.dataSource.data[0];
-    expect(component.getCellDiff(row, 'prob_0')).toBe('Was: 8/10');
-    expect(component.getCellDiff(row, 'prob_1')).toBeUndefined();
-    expect(component.getSeasonDiff(1)).toBe('Was: 4/10');
+    expect(row.diffs?.['prob_0']).toBe('Was: 8/10');
+    expect(row.diffs?.['prob_1']).toBeUndefined();
+    expect(component.seasonDiffs()?.['prob_1']).toBe('Was: 4/10');
     const diffCells = (fixture.nativeElement as HTMLElement).querySelectorAll('td.diff-changed');
-    expect(diffCells.length).toBe(2);
+    expect(diffCells).toHaveLength(2);
   });
 
   describe('sharePicture', () => {

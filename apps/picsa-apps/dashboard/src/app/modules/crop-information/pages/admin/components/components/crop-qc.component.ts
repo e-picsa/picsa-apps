@@ -27,16 +27,16 @@ import { buildCropVarietyPairs, groupDuplicateVarieties } from './duplicate-crop
  * warnings, integrated duplicate inspection, and row-click threshold modals.
  */
 export class CropQcComponent {
-  private service = inject(CropInformationService);
-  private dialog = inject(MatDialog);
+  private readonly service = inject(CropInformationService);
+  private readonly dialog = inject(MatDialog);
 
-  private daysTemplate =
+  private readonly daysTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: ICropVarietyQcAggregateRow }>>('daysTemplate');
-  private waterTemplate =
+  private readonly waterTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: ICropVarietyQcAggregateRow }>>('waterTemplate');
-  private statusTemplate =
+  private readonly statusTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: ICropVarietyQcAggregateRow }>>('statusTemplate');
-  private varietyDialogTemplate = viewChild.required<TemplateRef<unknown>>('varietyDialogTemplate');
+  private readonly varietyDialogTemplate = viewChild.required<TemplateRef<unknown>>('varietyDialogTemplate');
 
   public valueTemplates = computed(() => {
     const days = this.daysTemplate();

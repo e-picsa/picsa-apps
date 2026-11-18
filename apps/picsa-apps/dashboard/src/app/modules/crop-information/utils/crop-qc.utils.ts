@@ -134,43 +134,21 @@ function inferGridStep(values: Set<number>): number | null {
   return Number.isFinite(minDiff) ? minDiff : null;
 }
 
-/** Extract empirical min/max lookup grid bounds from a station's crop_probability_data entries */
-export function extractStationLookupBounds(
-  entries: ICropSuccessEntry[] | null | undefined,
-): IStationLookupBounds | null {
-  if (!Array.isArray(entries) || entries.length === 0) return null;
-
-  const days = new Set<number>();
-  const waters = new Set<number>();
-  const plantDays = new Set<number>();
-
-  let minDays = Infinity;
-  let maxDays = -Infinity;
-  let minWater = Infinity;
-  let maxWater = -Infinity;
-  let minPlantDay = Infinity;
-  let maxPlantDay = -Infinity;
-
-  for (const entry of entries) {
-    const { plant_length, total_rain, plant_day } = entry;
-    if (typeof plant_length === 'number' && Number.isFinite(plant_length)) {
-      days.add(plant_length);
-      if (plant_length < minDays) minDays = plant_length;
-      if (plant_length > maxDays) maxDays = plant_length;
-    }
-    if (typeof total_rain === 'number' && Number.isFinite(total_rain)) {
-      waters.add(total_rain);
-      if (total_rain < minWater) minWater = total_rain;
-      if (total_rain > maxWater) maxWater = total_rain;
-    }
-    if (typeof plant_day === 'number' && Number.isFinite(plant_day)) {
-      plantDays.add(plant_day);
-      if (plant_day < minPlantDay) minPlantDay = plant_day;
-      if (plant_day > maxPlantDay) maxPlantDay = plant_day;
-    }
-  }
-
+function buildLookupBoundsFromSets(params: {
+  days: Set<number>;
+  waters: Set<number>;
+  plantDays: Set<number>;
+  entryCount: number;
+}): IStationLookupBounds | null {
+  const { days, waters, plantDays, entryCount } = params;
   if (days.size === 0 || waters.size === 0 || plantDays.size === 0) return null;
+
+  const minDays = Math.min(...days);
+  const maxDays = Math.max(...days);
+  const minWater = Math.min(...waters);
+  const maxWater = Math.max(...waters);
+  const minPlantDay = Math.min(...plantDays);
+  const maxPlantDay = Math.max(...plantDays);
 
   return {
     minDays,
@@ -187,8 +165,33 @@ export function extractStationLookupBounds(
     plantDayStep: inferGridStep(plantDays),
     minPlantDateLabel: formatPlantDayLabel(minPlantDay),
     maxPlantDateLabel: formatPlantDayLabel(maxPlantDay),
-    entryCount: entries.length,
+    entryCount,
   };
+}
+
+function addFiniteNumber(target: Set<number>, value: unknown) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    target.add(value);
+  }
+}
+
+/** Extract empirical min/max lookup grid bounds from a station's crop_probability_data entries */
+export function extractStationLookupBounds(
+  entries: ICropSuccessEntry[] | null | undefined,
+): IStationLookupBounds | null {
+  if (!Array.isArray(entries) || entries.length === 0) return null;
+
+  const days = new Set<number>();
+  const waters = new Set<number>();
+  const plantDays = new Set<number>();
+
+  for (const entry of entries) {
+    addFiniteNumber(days, entry.plant_length);
+    addFiniteNumber(waters, entry.total_rain);
+    addFiniteNumber(plantDays, entry.plant_day);
+  }
+
+  return buildLookupBoundsFromSets({ days, waters, plantDays, entryCount: entries.length });
 }
 
 /** Fallback bounds extraction directly from an already-built probability hashmap */
@@ -199,51 +202,28 @@ export function extractLookupBoundsFromHashmap(
   const waterKeys = Object.keys(hashmap).map(Number).filter(Number.isFinite);
   if (waterKeys.length === 0) return null;
 
+  const waters = new Set(waterKeys);
   const days = new Set<number>();
   const plantDays = new Set<number>();
   let entryCount = 0;
 
   for (const wKey of waterKeys) {
     const byDays = hashmap[wKey] ?? {};
-    for (const dStr of Object.keys(byDays)) {
+    for (const [dStr, byPlant] of Object.entries(byDays)) {
       const dNum = Number(dStr);
       if (!Number.isFinite(dNum)) continue;
       days.add(dNum);
-      const byPlant = byDays[dNum] ?? {};
-      for (const pStr of Object.keys(byPlant)) {
-        const pNum = Number(pStr);
-        if (!Number.isFinite(pNum)) continue;
+      const plantKeys = Object.keys(byPlant ?? {})
+        .map(Number)
+        .filter(Number.isFinite);
+      for (const pNum of plantKeys) {
         plantDays.add(pNum);
         entryCount++;
       }
     }
   }
 
-  if (days.size === 0 || plantDays.size === 0) return null;
-  const minWater = Math.min(...waterKeys);
-  const maxWater = Math.max(...waterKeys);
-  const minDays = Math.min(...days);
-  const maxDays = Math.max(...days);
-  const minPlantDay = Math.min(...plantDays);
-  const maxPlantDay = Math.max(...plantDays);
-
-  return {
-    minDays,
-    maxDays,
-    daysSteps: days.size,
-    daysStep: inferGridStep(days),
-    minWater,
-    maxWater,
-    waterSteps: waterKeys.length,
-    waterStep: inferGridStep(new Set(waterKeys)),
-    minPlantDay,
-    maxPlantDay,
-    plantDaySteps: plantDays.size,
-    plantDayStep: inferGridStep(plantDays),
-    minPlantDateLabel: formatPlantDayLabel(minPlantDay),
-    maxPlantDateLabel: formatPlantDayLabel(maxPlantDay),
-    entryCount,
-  };
+  return buildLookupBoundsFromSets({ days, waters, plantDays, entryCount });
 }
 
 /** Extract observed historical season length bounds from a station's annual_rainfall_data */
@@ -485,6 +465,71 @@ const ISSUE_CODE_SHORT_LABEL: Record<CropQcIssueCode, string> = {
   exceeds_max_season_length: '> max season',
 };
 
+const DAYS_EXCLUDE_CODES = new Set<CropQcIssueCode>([
+  'days_below_lookup_min',
+  'days_above_lookup_max',
+  'days_upper_above_lookup_max',
+]);
+
+const WATER_EXCLUDE_CODES = new Set<CropQcIssueCode>(['water_below_lookup_min', 'water_above_lookup_max']);
+
+function applyIssueFlags(agg: IVarietyAggregator, issue: ICropQcIssue) {
+  agg.issueTags.add(ISSUE_CODE_SHORT_LABEL[issue.code]);
+  if (DAYS_EXCLUDE_CODES.has(issue.code)) {
+    agg.daysIssue = 'exclude';
+  } else if (
+    agg.daysIssue !== 'exclude' &&
+    (issue.code === 'exceeds_360_days' || issue.code === 'exceeds_max_season_length')
+  ) {
+    agg.daysIssue = 'warning';
+  }
+  if (WATER_EXCLUDE_CODES.has(issue.code)) {
+    agg.waterIssue = 'exclude';
+  }
+}
+
+function mergeQcResultIntoAggregators(byKey: Map<string, IVarietyAggregator>, res: ICropVarietyQcResult) {
+  const key = `${res.crop}/${res.variety}`;
+  let agg = byKey.get(key);
+  if (!agg) {
+    agg = {
+      crop: res.crop,
+      variety: res.variety,
+      daysLower: null,
+      daysUpper: null,
+      daysIssue: null,
+      waters: [],
+      waterIssue: null,
+      included: 0,
+      excluded: 0,
+      warnings: 0,
+      missingDef: true,
+      issueTags: new Set(),
+      issues: [],
+    };
+    byKey.set(key, agg);
+  }
+  agg.waters.push(res.waterRequirement);
+  if (res.included) agg.included++;
+  else agg.excluded++;
+  if (res.warnings.length > 0) agg.warnings++;
+
+  const allIssues = [...res.failures, ...res.warnings];
+  if (allIssues.length === 0) return;
+
+  for (const issue of allIssues) {
+    applyIssueFlags(agg, issue);
+  }
+  agg.issues.push({
+    locationId: res.locationId,
+    stationId: res.stationId,
+    days: res.daysLower != null && res.daysUpper != null ? formatDaysRange(res.daysLower, res.daysUpper) : '—',
+    waterRequirement: res.waterRequirement,
+    excluded: !res.included,
+    reasons: allIssues.map((i) => i.message),
+  });
+}
+
 /** Aggregate QC results per crop/variety across all deployment locations for the Admin Crops tab */
 export function buildCropVarietyQcRows(params: {
   cropData: Pick<ICropData['Row'], 'crop' | 'variety' | 'days_lower' | 'days_upper'>[];
@@ -514,7 +559,7 @@ export function buildCropVarietyQcRows(params: {
       waterIssue: null,
       included: 0,
       excluded: 0,
-      warnings: exceeds360 ? 1 : 0,
+      warnings: 0,
       missingDef: false,
       issueTags,
       issues: [],
@@ -533,62 +578,8 @@ export function buildCropVarietyQcRows(params: {
       seasonBounds: bounds?.seasonBounds ?? null,
       applyBounds,
     });
-
     for (const res of summary.results) {
-      const key = `${res.crop}/${res.variety}`;
-      let agg = byKey.get(key);
-      if (!agg) {
-        agg = {
-          crop: res.crop,
-          variety: res.variety,
-          daysLower: null,
-          daysUpper: null,
-          daysIssue: null,
-          waters: [],
-          waterIssue: null,
-          included: 0,
-          excluded: 0,
-          warnings: 0,
-          missingDef: true,
-          issueTags: new Set(),
-          issues: [],
-        };
-        byKey.set(key, agg);
-      }
-      agg.waters.push(res.waterRequirement);
-      if (res.included) agg.included++;
-      else agg.excluded++;
-      if (res.warnings.length > 0) agg.warnings++;
-
-      const allIssues = [...res.failures, ...res.warnings];
-      if (allIssues.length > 0) {
-        for (const issue of allIssues) {
-          agg.issueTags.add(ISSUE_CODE_SHORT_LABEL[issue.code]);
-          if (
-            issue.code === 'days_below_lookup_min' ||
-            issue.code === 'days_above_lookup_max' ||
-            issue.code === 'days_upper_above_lookup_max'
-          ) {
-            agg.daysIssue = 'exclude';
-          } else if (
-            agg.daysIssue !== 'exclude' &&
-            (issue.code === 'exceeds_360_days' || issue.code === 'exceeds_max_season_length')
-          ) {
-            agg.daysIssue = 'warning';
-          }
-          if (issue.code === 'water_below_lookup_min' || issue.code === 'water_above_lookup_max') {
-            agg.waterIssue = 'exclude';
-          }
-        }
-        agg.issues.push({
-          locationId: res.locationId,
-          stationId: res.stationId,
-          days: res.daysLower != null && res.daysUpper != null ? formatDaysRange(res.daysLower, res.daysUpper) : '—',
-          waterRequirement: res.waterRequirement,
-          excluded: !res.included,
-          reasons: allIssues.map((i) => i.message),
-        });
-      }
+      mergeQcResultIntoAggregators(byKey, res);
     }
   }
 
@@ -600,6 +591,7 @@ export function buildCropVarietyQcRows(params: {
     const water_min = agg.waters.length > 0 ? Math.min(...agg.waters) : null;
     const status = resolveAggregateStatus(agg, locationsTotal);
     const status_rank = STATUS_SORT_RANK[status];
+    const warnings_count = agg.warnings || (agg.daysUpper != null && agg.daysUpper > MAX_SUPPORTED_CROP_DAYS ? 1 : 0);
     const summary = [...agg.issueTags].sort((a, b) => a.localeCompare(b)).join(', ');
     agg.issues.sort((a, b) => a.locationId.localeCompare(b.locationId));
 
@@ -616,7 +608,7 @@ export function buildCropVarietyQcRows(params: {
       locations_total: locationsTotal,
       locations_included: agg.included,
       locations_excluded: agg.excluded,
-      warnings_count: agg.warnings,
+      warnings_count,
       status,
       status_rank,
       summary,
