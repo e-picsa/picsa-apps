@@ -1,5 +1,5 @@
 import type { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import type { IStationMeta } from '@picsa/models';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 
@@ -140,8 +140,7 @@ describe('Location Proximity Utils', () => {
 
     for (const country of activeCountries) {
       it(`resolves center and boundary feature for every district in "${country}" (including topoName aliases)`, async () => {
-        const geoData = getGeoLocationData(country);
-        const deepest = getDeepestLocations(geoData);
+        const deepest = getDownscaledLocations(country);
 
         expect(deepest.length).toBeGreaterThan(0);
 
@@ -160,13 +159,13 @@ describe('Location Proximity Utils', () => {
       expect(result).toBeUndefined();
     });
 
-    it('resolves parent location boundary when preferredAdminLevel: 4 is passed', async () => {
-      const zwProvince = await getLocationCenterAndBoundary('zw', 'manicaland', 4);
+    it('resolves parent location boundary when role "parent" is passed', async () => {
+      const zwProvince = await getLocationCenterAndBoundary('zw', 'manicaland', 'parent');
       expect(zwProvince).toBeDefined();
       expect(zwProvince?.feature).toBeDefined();
       expect(typeof zwProvince?.center.lat).toBe('number');
 
-      const zmProvince = await getLocationCenterAndBoundary('zm', 'central', 4);
+      const zmProvince = await getLocationCenterAndBoundary('zm', 'central', 'parent');
       expect(zmProvince).toBeDefined();
       expect(zmProvince?.feature).toBeDefined();
       expect(typeof zmProvince?.center.lat).toBe('number');
@@ -276,8 +275,7 @@ describe('Location Proximity Utils', () => {
 
     for (const country of activeCountries) {
       it(`validates all stations in "${country}" map to a recognized district`, () => {
-        const geoData = getGeoLocationData(country);
-        const deepest = getDeepestLocations(geoData);
+        const deepest = getDownscaledLocations(country);
         const stations = CLIMATE_STATIONS_META[country as CountryCodeLegacy];
 
         expect(stations.length).toBeGreaterThan(0);

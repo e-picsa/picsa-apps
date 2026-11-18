@@ -25,7 +25,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
-import { getGeoLocationData, getLocationLabel, isLocationComplete } from '@picsa/data/geoLocation';
+import { getLocationLabel, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -118,13 +118,13 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public locationReady = computed(() => {
     const country = this.countryCode();
     if (!country) return false;
-    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
+    return isLocationComplete(country as ICountryCode, this.locationSelected());
   });
 
   public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
     if (!country) return undefined;
-    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+    return getLocationLabel(country as ICountryCode, this.locationSelected());
   });
 
   public locationOverlayOpen = signal(false);

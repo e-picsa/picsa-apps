@@ -20,7 +20,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, getLocationLabel, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
+import { getLocationLabel, IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import { TourService } from '@picsa/shared/services/core/tour';
@@ -73,13 +73,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
     if (!country) return undefined;
-    return getLocationLabel(getGeoLocationData(country as ICountryCode), this.locationSelected());
+    return getLocationLabel(country as ICountryCode, this.locationSelected());
   });
 
   public locationReady = computed(() => {
     const country = this.countryCode();
     if (!country) return false;
-    return isLocationComplete(getGeoLocationData(country as ICountryCode), this.locationSelected());
+    return isLocationComplete(country as ICountryCode, this.locationSelected());
   });
 
   /** Deepest selected location segment, used to match probability tables */
@@ -212,10 +212,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const tables = PROBABILITY_TABLE_DATA[country] ?? [];
     const entry = tables.find((v) => v.id === locationId || v.id.endsWith(`/${locationId}`));
     if (!entry) return undefined;
-    const [admin_4, admin_5] = entry.id.split('/');
+    const [parentId, childId] = entry.id.split('/');
     // Station options with sublocations use the full table id as option value
-    const admin5Value = entry.id.includes('--') ? entry.id : admin_5;
-    return [undefined, undefined, country, undefined, admin_4, admin5Value];
+    const sublocationValue = entry.id.includes('--') ? entry.id : childId;
+    return [undefined, undefined, country, undefined, parentId, sublocationValue];
   }
 
   protected readonly STRINGS = STRINGS;

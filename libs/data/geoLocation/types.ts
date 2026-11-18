@@ -1,54 +1,41 @@
-export interface IGeolocationAdmin5Location {
+export interface IGeoLocationBase {
   id: string;
   label: string;
-  admin_4: string;
-  /** Optional OSM boundary name when it differs from the display label */
-  topoName?: string;
-}
-
-export interface IGeolocationAdmin6Location {
-  id: string;
-  label: string;
-  admin_4: string;
   /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
   topoName?: string;
+  coordinates?: { latitude: number; longitude: number };
 }
 
-/** District-level location with resolved parent tier references */
+export interface IGeoLocationItem extends IGeoLocationBase {
+  /** Resolved parent tier id populated on child layers */
+  parentId?: string;
+}
+
+export interface IGeoLayer<TKey extends string = string> {
+  key: TKey;
+  label: string;
+  /** Internal OSM admin_level in <COUNTRY>.topo.json when boundary geometry exists for this layer */
+  topoAdminLevel?: 4 | 5 | 6;
+  locations: IGeoLocationItem[];
+}
+
+export interface IGeolocationData {
+  topoJson: () => Promise<ITopoJson>;
+  /** Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district / epa) */
+  layers: IGeoLayer[];
+}
+
+/** Deepest-tier location with resolved parent tier references */
 export interface IDeepestLocation {
   id: string;
   label: string;
-  /** Parent tier id (admin_4 slot) where the tier defines one, else empty */
+  /** Parent tier id where the country defines multiple layers, else empty */
   parentId: string;
   /** Parent tier label, empty when no parent */
   parentLabel: string;
   /** Optional OSM boundary name when it differs from the display label */
   topoName?: string;
-}
-
-export interface IGeolocationData {
-  topoJson: () => Promise<ITopoJson>;
-  /**
-   * Osm admin_4 typically represents district/province level data
-   * https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative
-   **/
-  admin_4: {
-    label: string;
-    locations: { id: string; label: string; topoName?: string }[];
-  };
-  admin_5?: {
-    label: string;
-    locations: IGeolocationAdmin5Location[];
-  };
-  /**
-   * Optional third tier (e.g. Zimbabwe districts, OSM admin level 6).
-   * Slots are relative hierarchy positions, not OSM numbers - each country
-   * defines which slots it uses (mw: 4, zm: 4+5, zw: 4+6).
-   **/
-  admin_6?: {
-    label: string;
-    locations: IGeolocationAdmin6Location[];
-  };
+  coordinates?: { latitude: number; longitude: number };
 }
 
 export interface IGeoJsonData<T = Record<string, string>> {
@@ -64,6 +51,8 @@ export interface IGeoJsonData<T = Record<string, string>> {
     };
   }[];
 }
+
+export type IGeoJsonFeature<T = ITopoJsonFeatureProperties> = IGeoJsonData<T>['features'][number];
 
 export type IBoundaryData = Record<string, number[][]>;
 

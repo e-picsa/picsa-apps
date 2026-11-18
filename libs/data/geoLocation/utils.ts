@@ -1,83 +1,151 @@
-import { IBoundaryData, IDeepestLocation, IGeoJsonData, IGeolocationData, ITopoJson } from './types';
-
 import * as topojson from 'topojson-client';
 
-/** Hierarchy slots in top-down order. Names are relative positions, not OSM level numbers. */
-export type GeoLocationSlot = 'admin_4' | 'admin_5' | 'admin_6';
+import type { ICountryCode } from '../deployments';
+import { getGeoLocationData } from './data';
+import {
+  IBoundaryData,
+  IDeepestLocation,
+  IGeoJsonData,
+  IGeoJsonFeature,
+  IGeoLocationItem,
+  ITopoJson,
+  ITopoJsonFeatureProperties,
+} from './types';
 
-const ALL_SLOTS: GeoLocationSlot[] = ['admin_4', 'admin_5', 'admin_6'];
+const geoJsonFeatureCache = new Map<string, IGeoJsonData<ITopoJsonFeatureProperties>>();
 
-/** Slots defined for a country, top-down (e.g. mw: [admin_4], zm: [admin_4, admin_5], zw: [admin_4, admin_6]) */
-export function getLocationSlots(data: IGeolocationData): GeoLocationSlot[] {
-  return ALL_SLOTS.filter((slot) => data[slot] !== undefined);
-}
-
-/** Locations at the deepest defined tier (e.g. districts), with parent tier references resolved */
-export function getDeepestLocations(data: IGeolocationData): IDeepestLocation[] {
-  const slots = getLocationSlots(data);
-  const locations: { id: string; label: string; admin_4?: string; topoName?: string }[] =
-    data[slots[slots.length - 1]]?.locations ?? [];
+/** Locations at the deepest defined layer for a country, with parent tier references resolved */
+export function getDownscaledLocations(country_code: ICountryCode): IDeepestLocation[] {
+  const { layers } = getGeoLocationData(country_code);
+  const deepestLayer = layers[layers.length - 1];
+  if (!deepestLayer) return [];
+  const hasParent = layers.length > 1;
+  const parentLayer = hasParent ? layers[layers.length - 2] : undefined;
   const parentLabels: Record<string, string> = {};
-  for (const parent of data.admin_4?.locations ?? []) parentLabels[parent.id] = parent.label;
-  return locations.map((location) => {
-    const parentId = location.admin_4 ?? '';
+  if (parentLayer) {
+    for (const parent of parentLayer.locations) {
+      parentLabels[parent.id] = parent.label;
+    }
+  }
+  return deepestLayer.locations.map((loc) => {
+    const parentId = hasParent ? (loc.parentId ?? '') : '';
     return {
-      id: location.id,
-      label: location.label,
+      id: loc.id,
+      label: loc.label,
       parentId,
       parentLabel: parentId ? (parentLabels[parentId] ?? '') : '',
-      ...(location.topoName ? { topoName: location.topoName } : {}),
+      ...(loc.topoName !== undefined ? { topoName: loc.topoName } : {}),
+      ...(loc.coordinates !== undefined ? { coordinates: loc.coordinates } : {}),
     };
   });
 }
 
-/** OSM-style level number of the deepest tier, for topojson geometry filtering */
-export function getDeepestAdminLevel(data: IGeolocationData): 4 | 5 | 6 {
-  const slot = getLocationSlots(data).pop() as GeoLocationSlot;
-  return Number(slot.split('_')[1]) as 4 | 5 | 6;
-}
-
-/** Find a location by id, searching deepest tier first (district ids win over same-named provinces) */
-export function findLocationById(data: IGeolocationData, id: string) {
-  const slots = getLocationSlots(data);
-  for (let i = slots.length - 1; i >= 0; i--) {
-    const slot = slots[i];
-    const location = data[slot]?.locations.find((v) => v.id === id);
-    if (location) return { location, slot };
-  }
-  return undefined;
+/**
+ * Look up a downscaled (deepest-layer) location by id for a country.
+ * Falls back to a humanised label with empty parent metadata if not present in static geo data.
+ */
+export function getDownscaledLocation(country_code: ICountryCode, location_id: string): IDeepestLocation {
+  const match = getDownscaledLocations(country_code).find((l) => l.id === location_id);
+  if (match) return match;
+  return {
+    id: location_id,
+    label: formatLocationIdAsLabel(location_id),
+    parentId: '',
+    parentLabel: '',
+  };
 }
 
 /**
- * Check all required hierarchy segments are selected for the country's tier structure.
- * Multi-tier countries (e.g. zm: admin_4+admin_5, zw: admin_4+admin_6) require both
- * segments (stored at indexes 4 and 5), single-tier countries (e.g. mw) only the first.
+ * Check all required hierarchy segments are selected for the country's layer structure.
+ * Multi-layer countries (e.g. zm, zw) require both segments (stored at indexes 4 and 5),
+ * single-layer countries (e.g. mw) only index 4.
  */
-export function isLocationComplete(data: IGeolocationData, location: (string | undefined)[] | undefined): boolean {
+export function isLocationComplete(country_code: ICountryCode, location: (string | undefined)[] | undefined): boolean {
   if (!location) return false;
-  if (getLocationSlots(data).length > 1) {
-    return !!location[4] && !!location[5];
+  const { layers } = getGeoLocationData(country_code);
+  if (layers.length > 1) {
+    return Boolean(location[4] && location[5]);
   }
-  return !!location[4];
+  return Boolean(location[4]);
 }
 
-/** Display label for a stored location array, resolving the deepest selected tier first */
+/** Display label for a stored location array, resolving the deepest selected layer first */
 export function getLocationLabel(
-  data: IGeolocationData,
+  country_code: ICountryCode,
   location: (string | undefined)[] | undefined,
 ): string | undefined {
-  const admin4Id = location?.[4];
-  const deepId = location?.[5];
-  const slots = getLocationSlots(data);
-  if (slots.length > 1 && deepId) {
-    const deepSlot = slots[slots.length - 1];
-    const match = data[deepSlot]?.locations.find((l) => l.id === deepId);
+  if (!location) return undefined;
+  const { layers } = getGeoLocationData(country_code);
+  const topId = location[4];
+  const childId = location[5];
+  if (layers.length > 1 && childId) {
+    const deepestLayer = layers[layers.length - 1];
+    const match = deepestLayer?.locations.find((l) => l.id === childId);
     if (match) return match.label;
   }
-  if (admin4Id) {
-    return data.admin_4.locations.find((l) => l.id === admin4Id)?.label;
+  if (topId) {
+    return layers[0]?.locations.find((l) => l.id === topId)?.label;
   }
   return undefined;
+}
+
+/** Normalize location names for comparison by stripping administrative suffixes and punctuation */
+export function normalizeLocationName(name?: string | null): string {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/\b(district|province|city|met)\b/gi, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+/**
+ * Retrieve the matching GeoJSON feature from a country's TopoJSON for a location.
+ * Defaults to the deepest ('downscaled') layer; pass 'parent' for the top layer (e.g. province).
+ * If the target layer has no boundary geometries (`topoAdminLevel === undefined`), automatically
+ * falls back up the parent chain using `parentId`.
+ */
+export async function getLocationTopoFeature(
+  country_code: ICountryCode,
+  location_id: string,
+  role: 'downscaled' | 'parent' = 'downscaled',
+): Promise<IGeoJsonFeature<ITopoJsonFeatureProperties> | undefined> {
+  const geoData = getGeoLocationData(country_code);
+  const { layers } = geoData;
+  if (layers.length === 0) return undefined;
+
+  let layerIndex = role === 'parent' ? 0 : layers.length - 1;
+  const initialItem = layers[layerIndex]?.locations.find((l) => l.id === location_id);
+  if (!initialItem) return undefined;
+  let item: IGeoLocationItem = initialItem;
+
+  while (layerIndex > 0 && layers[layerIndex].topoAdminLevel === undefined) {
+    const parentId = item.parentId;
+    if (!parentId) return undefined;
+    layerIndex--;
+    const parentItem = layers[layerIndex]?.locations.find((l) => l.id === parentId);
+    if (!parentItem) return undefined;
+    item = parentItem;
+  }
+
+  const adminLevel = layers[layerIndex].topoAdminLevel;
+  if (adminLevel === undefined) return undefined;
+
+  const cacheKey = `${country_code}:${adminLevel}`;
+  let geojson = geoJsonFeatureCache.get(cacheKey);
+  if (!geojson) {
+    const topo = await geoData.topoJson();
+    geojson = topoJsonToGeoJson<ITopoJsonFeatureProperties>(topo, adminLevel);
+    geoJsonFeatureCache.set(cacheKey, geojson);
+  }
+
+  const candidates = [item.label, item.topoName, item.id].filter(
+    (v): v is string => typeof v === 'string' && Boolean(v),
+  );
+  return geojson.features.find((f) => {
+    const featName = f.properties?.name;
+    return candidates.some((candidate) => normalizeLocationName(featName) === normalizeLocationName(candidate));
+  });
 }
 
 /** Convert a raw location id (e.g. `mt_darwin`) to a display label (`Mt Darwin`) */
@@ -170,7 +238,7 @@ export function boundariesToGeoJson(data: IBoundaryData, propertyKeyField: strin
 
 function sortObjectByKey(object: Record<string, any>) {
   const sorted: Record<string, any> = {};
-  for (const key of Object.keys(object).sort()) {
+  for (const key of Object.keys(object).sort((a, b) => a.localeCompare(b))) {
     sorted[key] = object[key];
   }
   return sorted;

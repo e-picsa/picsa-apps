@@ -4,12 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICountryCode } from '@picsa/data';
-import {
-  findLocationById,
-  formatLocationIdAsLabel,
-  getGeoLocationData,
-  getLocationSlots,
-} from '@picsa/data/geoLocation';
+import { getDownscaledLocation, getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
@@ -17,16 +12,13 @@ import {
   IDataTableOptions,
   PicsaDataTableComponent,
 } from '@picsa/shared/features/data-table/data-table.component';
-import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaledWaterRequirements } from '../../services';
 
 interface ICropDataDownscaledTableData {
   // include parent location label if location specifies a sublocation tier
-  admin_4?: string;
-  admin_5?: string;
-  admin_6?: string;
+  parent_location?: string;
   location: string;
   location_id: string;
   station: string | null;
@@ -73,7 +65,7 @@ export class CropProbabilityComponent {
   }
 
   public goToDownscaled(row: ICropDataDownscaledTableData) {
-    // Always navigate by the raw location id - geo labels (admin_4/admin_5) are only
+    // Always navigate by the raw location id - geo labels are only
     // populated when the location exists in the geo lookup, so they can be undefined
     this.router.navigate([row.location_id], { relativeTo: this.route });
   }
@@ -109,42 +101,29 @@ export class CropProbabilityComponent {
     return [];
   }
 
-  /** Merge crop location id with lookup geojson data  **/
+  /** Merge crop location id with geolocation lookup data **/
   private mergeDetailedLocationData(country_code: string, data: ICropDataDownscaledTableData[]) {
-    const locationData = getGeoLocationData(country_code as ICountryCode);
-    const slots = getLocationSlots(locationData);
-    // top tier is always admin_4 - show as leading column when locations sit in a deeper tier
-    const topSlot = slots[0] as 'admin_4';
-    const isSublocation = slots.length > 1;
+    const code = country_code as ICountryCode;
+    const { layers } = getGeoLocationData(code);
+    const hasParent = layers.length > 1;
+    const parentLabelHeader = layers[0]?.label ?? '';
 
-    // Update table to show top-tier column if location is a sublocation
-    if (isSublocation) {
-      this.downscaledTableDataOptions.update((opts) => ({
-        ...opts,
-        displayColumns: [topSlot as string].concat(opts.displayColumns || []),
-        formatHeader: (v) => {
-          if (v === topSlot) return locationData[topSlot].label;
-          return formatHeaderDefault(v);
-        },
-      }));
-    }
+    this.downscaledTableDataOptions.update((opts) => ({
+      ...opts,
+      displayColumns: hasParent ? ['parent_location', ...TABLE_DISPLAY_COLUMNS] : TABLE_DISPLAY_COLUMNS,
+      formatHeader: (v) => {
+        if (v === 'parent_location') return parentLabelHeader;
+        return formatHeaderDefault(v);
+      },
+    }));
 
-    // merge location label and parent location if required
-    const topLocations = arrayToHashmap(locationData[topSlot].locations, 'id');
     return data.map((entry) => {
-      const { location } = entry;
-      const found = findLocationById(locationData, location);
-      if (found) {
-        entry[found.slot] = location;
-        if (isSublocation) {
-          const parentId = (found.location as Record<string, string | undefined>)[topSlot];
-          entry[topSlot] = (parentId && topLocations[parentId]?.label) || formatLocationIdAsLabel(location);
-        }
-        entry.location = found.location.label;
-      } else {
-        entry.location = formatLocationIdAsLabel(location);
-      }
-      return entry;
+      const resolved = getDownscaledLocation(code, entry.location_id);
+      return {
+        ...entry,
+        ...(hasParent ? { parent_location: resolved.parentLabel } : {}),
+        location: resolved.label,
+      };
     });
   }
 }

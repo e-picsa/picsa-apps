@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
@@ -80,12 +80,14 @@ export class CropLocationCoverageComponent implements AfterViewInit {
   public creatingRecord = signal(false);
 
   public rows = computed<ICoverageRow[]>(() => {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    const geoLocations = getDeepestLocations(locationData).map(({ id, label, parentLabel }) => ({
-      id,
-      label,
-      parent: parentLabel,
-    }));
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    const geoLocations = countryCode
+      ? getDownscaledLocations(countryCode).map(({ id, label, parentLabel }) => ({
+          id,
+          label,
+          parent: parentLabel,
+        }))
+      : [];
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const stationsHashmap = arrayToHashmap(this.service.stations(), 'id');
 

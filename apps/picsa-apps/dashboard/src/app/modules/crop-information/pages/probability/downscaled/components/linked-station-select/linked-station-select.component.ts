@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDeepestAdminLevel, getDeepestLocations, topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import { getLocationTopoFeature } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -186,31 +186,7 @@ export class CropLinkedStationSelectComponent {
 
   /** Retrieve TopoJSON, convert to GeoJSON and match the current location's geometry */
   private async fetchMapData(countryCode: CountryCodeLegacy, locationId: string): Promise<any> {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    if (!locationData) return undefined;
-
-    const topojsonObj = await locationData.topoJson();
-    // filter to deepest tier with data - district geometries appear once level 6 topo exists
-    const adminLevel = getDeepestAdminLevel(locationData);
-    const geojson = topoJsonToGeoJson(topojsonObj, adminLevel);
-
-    const locations = getDeepestLocations(locationData);
-    const location = locations.find((v) => v.id === locationId);
-
-    if (location) {
-      const candidates = [location.label, (location as { topoName?: string }).topoName].filter((v): v is string => !!v);
-      return geojson.features.find((f) =>
-        candidates.some((name) => this.normalizeName(f.properties.name) === this.normalizeName(name)),
-      );
-    }
-    return undefined;
-  }
-
-  private normalizeName(name: string | undefined | null): string {
-    return (name || '')
-      .toLowerCase()
-      .replace(/\b(district|province)\b/g, '')
-      .replace(/[^a-z0-9]/g, '');
+    return getLocationTopoFeature(countryCode, locationId);
   }
 
   public handleStationSelectOpen() {

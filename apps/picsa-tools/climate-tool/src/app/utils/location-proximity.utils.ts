@@ -1,8 +1,14 @@
 import type { ICountryCode } from '@picsa/data';
 import type { IGeoJsonData } from '@picsa/data/geoLocation';
-import type { GeoLocationSlot } from '@picsa/data/geoLocation';
-import { findLocationById, getGeoLocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
+import {
+  getGeoLocationData,
+  getLocationTopoFeature,
+  normalizeLocationName,
+  topoJsonToGeoJson,
+} from '@picsa/data/geoLocation';
 import type { IStationMeta } from '@picsa/models';
+
+export { normalizeLocationName };
 
 export interface IStationRecommendation {
   station: IStationMeta;
@@ -38,7 +44,7 @@ export interface ILocationCenterResult {
 /** Backwards-compatible alias */
 export type IDistrictCenterResult = ILocationCenterResult;
 
-/** In-memory cache for parsed GeoJSON by country code and admin level to prevent CPU lockup on rapid navigation */
+/** In-memory cache for parsed country GeoJSON to prevent CPU lockup on rapid navigation */
 const geoJsonCache = new Map<string, IGeoJsonData>();
 
 export function clearGeoJsonCache() {
@@ -57,18 +63,6 @@ export function calculateHaversineDistanceKm(lat1: number, lon1: number, lat2: n
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c);
-}
-
-/**
- * Normalize location names for comparison by stripping common administrative suffixes and punctuation
- */
-export function normalizeLocationName(name?: string): string {
-  if (!name) return '';
-  return name
-    .toLowerCase()
-    .replace(/\b(district|province|city|met)\b/gi, '')
-    .replace(/[^a-z0-9]/g, '')
-    .trim();
 }
 
 /**
@@ -155,7 +149,8 @@ export function getCombinedLocationAndStationBounds(
 export const getCombinedDistrictAndStationBounds = getCombinedLocationAndStationBounds;
 
 /**
- * Retrieve reference coordinates and GeoJSON boundary for a location at the country's deepest tier.
+ * Retrieve reference coordinates and GeoJSON boundary for a location.
+ * Defaults to the country's deepest ('downscaled') layer; pass 'parent' for top layer (e.g. province).
  * 1. Checks precomputed `center: [lng, lat]` property in the TopoJSON feature.
  * 2. Falls back to calculating the centroid from the polygon bounding box.
  * 3. Falls back to precomputed location coordinates if available.
@@ -163,56 +158,10 @@ export const getCombinedDistrictAndStationBounds = getCombinedLocationAndStation
 export async function getLocationCenterAndBoundary(
   countryCode: ICountryCode,
   locationId: string,
-  preferredSlotOrLevel?: GeoLocationSlot | number,
+  role: 'downscaled' | 'parent' = 'downscaled',
 ): Promise<ILocationCenterResult | undefined> {
-  const geoData = getGeoLocationData(countryCode);
-
-  let locationItem:
-    | { id: string; label: string; topoName?: string; coordinates?: { latitude: number; longitude: number } }
-    | undefined;
-  let adminLevel = 0;
-
-  if (preferredSlotOrLevel) {
-    const slotKey: GeoLocationSlot =
-      typeof preferredSlotOrLevel === 'number'
-        ? (`admin_${preferredSlotOrLevel}` as GeoLocationSlot)
-        : preferredSlotOrLevel;
-    if (geoData[slotKey]) {
-      locationItem = geoData[slotKey]?.locations.find((l) => l.id === locationId);
-      if (locationItem) {
-        adminLevel = Number(slotKey.split('_')[1]);
-      }
-    }
-  }
-
-  if (!locationItem) {
-    const found = findLocationById(geoData, locationId);
-    if (found) {
-      locationItem = found.location;
-      adminLevel = Number(found.slot.split('_')[1]);
-    }
-  }
-
-  if (!locationItem || !adminLevel) return undefined;
-
   try {
-    const cacheKey = `${countryCode}:${adminLevel}`;
-    let geojson = geoJsonCache.get(cacheKey);
-    if (!geojson) {
-      const topojson = await geoData.topoJson();
-      geojson = topoJsonToGeoJson(topojson, adminLevel);
-      geoJsonCache.set(cacheKey, geojson);
-    }
-
-    const candidates = [locationItem.label, locationItem.topoName, locationItem.id].filter(
-      (v): v is string => typeof v === 'string' && Boolean(v),
-    );
-
-    const feature = geojson.features.find((f: { properties?: { name?: string } }) => {
-      const featName = f.properties?.name;
-      return candidates.some((candidate) => normalizeLocationName(featName) === normalizeLocationName(candidate));
-    }) as IProximityFeature | undefined;
-
+    const feature = (await getLocationTopoFeature(countryCode, locationId, role)) as IProximityFeature | undefined;
     if (feature) {
       // 1. Direct precomputed center from TopoJSON properties: [lng, lat]
       const centerCoords = feature.properties?.center;
@@ -237,7 +186,9 @@ export async function getLocationCenterAndBoundary(
   }
 
   // 3. Fallback: Check if location item itself has precomputed coordinates
-  const locationCoords = (locationItem as { coordinates?: { latitude: number; longitude: number } }).coordinates;
+  const { layers } = getGeoLocationData(countryCode);
+  const targetLayer = role === 'parent' ? layers[0] : layers[layers.length - 1];
+  const locationCoords = targetLayer?.locations.find((l) => l.id === locationId)?.coordinates;
   if (locationCoords?.latitude && locationCoords?.longitude) {
     return {
       center: {

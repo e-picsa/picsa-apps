@@ -24,7 +24,7 @@ import { type SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { getDeepestLocations, getGeoLocationData } from '../../../../libs/data/geoLocation';
+import { getDownscaledLocations } from '../../../../libs/data/geoLocation';
 import type { ICountryCode } from '../../../../libs/data/deployments/countries';
 import type { IDeepestLocation } from '../../../../libs/data/geoLocation/types';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -227,8 +227,7 @@ async function fetchSyncContext(supabase: SupabaseClient, country: string, optio
     if (row.id) stationNameHashmap.set(row.id, row.station_name ?? row.id);
   }
 
-  const locationData = getGeoLocationData(country as ICountryCode);
-  const locations = getDeepestLocations(locationData);
+  const locations = getDownscaledLocations(country as ICountryCode);
 
   const countryDir = getCountryDir(country);
   if (!options.auditOnly && !fs.existsSync(countryDir)) {
