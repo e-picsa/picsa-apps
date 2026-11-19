@@ -20,14 +20,10 @@
 
   @if (!loading() && !loadError()) {
     <!-- Headline filter chips (matching Translations list pattern, preserving colors & icons) -->
-    <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'actionable')" class="mb-4">
-      <mat-chip-option value="actionable" [selected]="tableFilter() === 'actionable'" class="chip-neutral">
+    <mat-chip-listbox (change)="tableFilter.set($event.value ?? 'all')" class="mb-4">
+      <mat-chip-option value="all" [selected]="tableFilter() === 'all'" class="chip-neutral">
         <mat-icon matChipAvatar>list</mat-icon>
-        All Changes: {{ stats().actionable }}
-      </mat-chip-option>
-      <mat-chip-option value="In Sync" [selected]="tableFilter() === 'In Sync'" class="chip-green">
-        <mat-icon matChipAvatar>check_circle</mat-icon>
-        In Sync: {{ stats().inSync }}
+        All: {{ stats().total }}
       </mat-chip-option>
       @if (stats().newExclusions > 0) {
         <mat-chip-option value="New Exclusions" [selected]="tableFilter() === 'New Exclusions'" class="chip-orange">
@@ -35,22 +31,30 @@
           New Exclusions: {{ stats().newExclusions }}
         </mat-chip-option>
       }
-      <mat-chip-option value="Differs" [selected]="tableFilter() === 'Differs'" class="chip-red">
-        <mat-icon matChipAvatar>error</mat-icon>
-        Differs: {{ stats().differs }}
-      </mat-chip-option>
-      <mat-chip-option value="Missing in App" [selected]="tableFilter() === 'Missing in App'" class="chip-orange">
-        <mat-icon matChipAvatar>warning</mat-icon>
-        Missing in App: {{ stats().missing }}
-      </mat-chip-option>
-      <mat-chip-option value="Orphaned in App" [selected]="tableFilter() === 'Orphaned in App'" class="chip-purple">
-        <mat-icon matChipAvatar>link_off</mat-icon>
-        Orphaned in App: {{ stats().orphaned }}
-      </mat-chip-option>
-      <mat-chip-option value="No Source Data" [selected]="tableFilter() === 'No Source Data'" class="chip-neutral">
-        <mat-icon matChipAvatar>cloud_off</mat-icon>
-        No Source Data: {{ stats().noSource }}
-      </mat-chip-option>
+      @if (stats().differs > 0) {
+        <mat-chip-option value="Differs" [selected]="tableFilter() === 'Differs'" class="chip-red">
+          <mat-icon matChipAvatar>error</mat-icon>
+          Differs: {{ stats().differs }}
+        </mat-chip-option>
+      }
+      @if (stats().missing > 0) {
+        <mat-chip-option value="Missing in App" [selected]="tableFilter() === 'Missing in App'" class="chip-orange">
+          <mat-icon matChipAvatar>warning</mat-icon>
+          Missing in App: {{ stats().missing }}
+        </mat-chip-option>
+      }
+      @if (stats().orphaned > 0) {
+        <mat-chip-option value="Orphaned in App" [selected]="tableFilter() === 'Orphaned in App'" class="chip-purple">
+          <mat-icon matChipAvatar>link_off</mat-icon>
+          Orphaned in App: {{ stats().orphaned }}
+        </mat-chip-option>
+      }
+      @if (stats().noSource > 0) {
+        <mat-chip-option value="No Source Data" [selected]="tableFilter() === 'No Source Data'" class="chip-neutral">
+          <mat-icon matChipAvatar>cloud_off</mat-icon>
+          No Source Data: {{ stats().noSource }}
+        </mat-chip-option>
+      }
     </mat-chip-listbox>
 
     @if (displayedRows().length > 0) {
@@ -60,11 +64,6 @@
         [valueTemplates]="valueTemplates()"
         (rowClick)="openDiffDialog($event)"
       ></picsa-data-table>
-    } @else if (diffRows().length > 0 && tableFilter() === 'actionable') {
-      <div class="flex items-center justify-center py-8">
-        <mat-icon class="text-green-500 text-4xl mr-2">check_circle</mat-icon>
-        <p class="text-gray-600">All app tables are in sync with data-system records</p>
-      </div>
     } @else {
       <div class="flex items-center justify-center py-8">
         <mat-icon class="text-gray-400 text-4xl mr-2">info</mat-icon>
@@ -75,6 +74,13 @@
 </div>
 
 <!-- Cell Templates (kept outside @if so viewChild resolves before async data arrives) -->
+<ng-template #stationTemplate let-value let-row="row">
+  @if (row.station_changed) {
+    <span class="text-orange-700 font-medium">{{ value }}</span>
+  } @else {
+    <span>{{ value }}</span>
+  }
+</ng-template>
 <ng-template #excludedTemplate let-row="row">
   <span [class]="row.excluded_count > 0 ? 'text-amber-700 font-semibold' : 'text-gray-500'">
     {{ row.excluded_count }}

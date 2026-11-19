@@ -1,7 +1,7 @@
 <div class="space-y-4">
   <p class="text-sm text-gray-600">
-    Per-station crop probability lookup bounds consistency against the country majority. Hover any status icon to view
-    crop length, water requirement, and planting date bounds.
+    Per-station crop probability lookup bounds consistency against the country majority. Click any row to compare the
+    standard bounds used by most stations against this station.
   </p>
 
   <!-- Headline filter chips (matching Translations list pattern) -->
@@ -28,6 +28,7 @@
       [data]="displayedRows()"
       [options]="tableOptions"
       [valueTemplates]="valueTemplates()"
+      (rowClick)="openBoundsDialog($event)"
     ></picsa-data-table>
   } @else {
     <div class="flex items-center justify-center py-8">
@@ -69,5 +70,83 @@
         cancel
       </mat-icon>
     }
+  }
+</ng-template>
+
+<!-- Row Click Bounds Comparison Dialog -->
+<ng-template #boundsDialogTemplate>
+  @if (selectedStation(); as station) {
+    <div class="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 border-b pb-3">
+        <div>
+          <h3 class="text-lg font-semibold m-0">{{ station.station_name }}</h3>
+          <p class="text-sm text-gray-600 mt-1 mb-0">
+            {{ station.district }} ·
+            @if (station.probability_bounds === 'inconsistent') {
+              <span class="font-medium text-orange-700">Inconsistent bounds</span>
+            } @else if (station.probability_bounds === 'consistent') {
+              <span class="font-medium text-green-700">Consistent with standard</span>
+            } @else {
+              <span class="font-medium text-red-700">No probability data</span>
+            }
+          </p>
+        </div>
+        <button matIconButton mat-dialog-close aria-label="Close bounds dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      @if (!station.has_probabilities) {
+        <p class="text-sm text-gray-600">This station has no crop probability data to compare.</p>
+      } @else {
+        <p class="text-sm text-gray-600 mt-0">
+          Standard bounds used by most stations compared against this station. Orange rows differ from the standard.
+        </p>
+        <div class="border rounded overflow-hidden">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-gray-50 border-b text-xs uppercase text-gray-500">
+              <tr>
+                <th class="p-3 font-medium"></th>
+                <th class="p-3 font-medium">Standard (most stations)</th>
+                <th class="p-3 font-medium">This station</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of boundsComparison(); track row.label) {
+                <tr class="border-b last:border-b-0" [class.bg-orange-50]="row.differs">
+                  <td class="p-3 font-medium whitespace-nowrap">
+                    {{ row.label }}
+                    @if (row.differs) {
+                      <span class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                        Differs
+                      </span>
+                    }
+                  </td>
+                  <td class="p-3 text-gray-700">
+                    {{ row.standard }}
+                    @if (row.standardStep) {
+                      <span class="block text-xs text-gray-500">{{ row.standardStep }}</span>
+                    }
+                    <span class="block text-xs text-gray-500">
+                      {{ row.standardCount }} of {{ majoritySummary().totalWithData }} stations
+                    </span>
+                  </td>
+                  <td class="p-3" [class.text-orange-800]="row.differs" [class.font-medium]="row.differs">
+                    {{ row.station }}
+                    @if (row.stationStep) {
+                      <span class="block text-xs font-normal opacity-80">{{ row.stationStep }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <div class="flex justify-end pt-2 border-t">
+        <button matButton mat-dialog-close>Close</button>
+      </div>
+    </div>
   }
 </ng-template>

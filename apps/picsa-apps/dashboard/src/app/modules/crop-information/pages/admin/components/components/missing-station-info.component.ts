@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -18,6 +19,28 @@ interface IStationProbabilityStatus {
   probability_bounds: StationBoundsStatus;
   bounds_tooltip: string;
   data_updated: string;
+  station_bounds: IStationLookupBounds | null;
+  differs: { days: boolean; water: boolean; plant: boolean };
+}
+
+interface IMajorityBoundsSummary {
+  daysRef: IStationLookupBounds | null;
+  waterRef: IStationLookupBounds | null;
+  plantRef: IStationLookupBounds | null;
+  daysCount: number;
+  waterCount: number;
+  plantCount: number;
+  totalWithData: number;
+}
+
+interface IBoundsComparisonRow {
+  label: string;
+  standard: string;
+  standardStep: string | null;
+  station: string;
+  stationStep: string | null;
+  differs: boolean;
+  standardCount: number;
 }
 
 function findMajoritySignature(signatures: string[]): string | null {
@@ -39,6 +62,23 @@ function formatBoundsSignature(b: IStationLookupBounds) {
 
 function formatTooltipDate(label: string): string {
   return label.replaceAll('-', ' ');
+}
+
+function formatDaysParts(b: IStationLookupBounds | null): { main: string; step: string | null } {
+  if (!b) return { main: '—', step: null };
+  return { main: `${b.minDays}–${b.maxDays}d`, step: b.daysStep != null ? `step ${b.daysStep}d` : null };
+}
+
+function formatWaterParts(b: IStationLookupBounds | null): { main: string; step: string | null } {
+  if (!b) return { main: '—', step: null };
+  return { main: `${b.minWater}–${b.maxWater}mm`, step: b.waterStep != null ? `step ${b.waterStep}mm` : null };
+}
+
+function formatPlantParts(b: IStationLookupBounds | null): { main: string; step: string | null } {
+  if (!b) return { main: '—', step: null };
+  const min = formatTooltipDate(b.minPlantDateLabel);
+  const max = formatTooltipDate(b.maxPlantDateLabel);
+  return { main: `${min} – ${max}`, step: b.plantDayStep != null ? `step ${b.plantDayStep}d` : null };
 }
 
 function buildBoundsTooltip(
@@ -64,9 +104,11 @@ function buildBoundsTooltip(
  */
 export class CropMissingStationInfoComponent {
   private readonly service = inject(CropInformationService);
+  private readonly dialog = inject(MatDialog);
 
   private readonly boundsTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: IStationProbabilityStatus }>>('boundsTemplate');
+  private readonly boundsDialogTemplate = viewChild.required<TemplateRef<unknown>>('boundsDialogTemplate');
 
   public valueTemplates = computed(() => {
     const bounds = this.boundsTemplate();
@@ -76,16 +118,48 @@ export class CropMissingStationInfoComponent {
   });
 
   public tableFilter = signal<StationBoundsFilter>('all');
+  public selectedStation = signal<IStationProbabilityStatus | null>(null);
 
-  /** One row per deployment station with lookup bounds consistency status */
-  public stationStatuses = computed<IStationProbabilityStatus[]>(() => {
+  /** Parsed bounds per station, shared by status rows and majority summary */
+  private parsedBounds = computed(() => {
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
-    const parsed = this.service.stations().map((station) => {
+    return this.service.stations().map((station) => {
       const stationId = station.id || station.station_id;
       const stationData = stationId ? stationDataHashmap[stationId] : undefined;
       const lookupBounds = extractStationLookupBounds(stationData?.crop_probability_data as ICropSuccessEntry[]);
       return { station, stationData, lookupBounds };
     });
+  });
+
+  /** Majority (standard) bounds per dimension with usage counts */
+  public majoritySummary = computed<IMajorityBoundsSummary>(() => {
+    const parsed = this.parsedBounds();
+    const sigs = parsed
+      .map((p) => (p.lookupBounds ? formatBoundsSignature(p.lookupBounds) : null))
+      .filter((s): s is NonNullable<typeof s> => s !== null);
+    const majorityDays = findMajoritySignature(sigs.map((s) => s.days));
+    const majorityWater = findMajoritySignature(sigs.map((s) => s.water));
+    const majorityPlant = findMajoritySignature(sigs.map((s) => s.plant));
+    const findRef = (key: 'days' | 'water' | 'plant', sig: string | null) => {
+      if (!sig) return null;
+      return (
+        parsed.find((p) => p.lookupBounds && formatBoundsSignature(p.lookupBounds)[key] === sig)?.lookupBounds ?? null
+      );
+    };
+    return {
+      daysRef: findRef('days', majorityDays),
+      waterRef: findRef('water', majorityWater),
+      plantRef: findRef('plant', majorityPlant),
+      daysCount: majorityDays ? sigs.filter((s) => s.days === majorityDays).length : 0,
+      waterCount: majorityWater ? sigs.filter((s) => s.water === majorityWater).length : 0,
+      plantCount: majorityPlant ? sigs.filter((s) => s.plant === majorityPlant).length : 0,
+      totalWithData: sigs.length,
+    };
+  });
+
+  /** One row per deployment station with lookup bounds consistency status */
+  public stationStatuses = computed<IStationProbabilityStatus[]>(() => {
+    const parsed = this.parsedBounds();
 
     const sigs = parsed
       .map((p) => (p.lookupBounds ? formatBoundsSignature(p.lookupBounds) : null))
@@ -103,10 +177,11 @@ export class CropMissingStationInfoComponent {
         let probability_bounds: StationBoundsStatus = 'missing';
         let has_inconsistent_bounds = false;
         let bounds_tooltip = 'No crop probability data';
+        let differs = { days: false, water: false, plant: false };
 
         if (lookupBounds) {
           const sig = formatBoundsSignature(lookupBounds);
-          const differs = {
+          differs = {
             days: majorityDays !== null && sig.days !== majorityDays,
             water: majorityWater !== null && sig.water !== majorityWater,
             plant: majorityPlant !== null && sig.plant !== majorityPlant,
@@ -124,10 +199,59 @@ export class CropMissingStationInfoComponent {
           probability_bounds,
           bounds_tooltip,
           data_updated: has_probabilities ? updated : '—',
+          station_bounds: lookupBounds,
+          differs,
         };
       })
       .sort((a, b) => a.station_name.localeCompare(b.station_name));
   });
+
+  /** Standard-vs-station comparison rows for the selected station dialog */
+  public boundsComparison = computed<IBoundsComparisonRow[]>(() => {
+    const selected = this.selectedStation();
+    if (!selected) return [];
+    const majority = this.majoritySummary();
+    const standardDays = formatDaysParts(majority.daysRef);
+    const stationDays = formatDaysParts(selected.station_bounds);
+    const standardWater = formatWaterParts(majority.waterRef);
+    const stationWater = formatWaterParts(selected.station_bounds);
+    const standardPlant = formatPlantParts(majority.plantRef);
+    const stationPlant = formatPlantParts(selected.station_bounds);
+    return [
+      {
+        label: 'Crop Length',
+        standard: standardDays.main,
+        standardStep: standardDays.step,
+        station: stationDays.main,
+        stationStep: stationDays.step,
+        differs: selected.differs.days,
+        standardCount: majority.daysCount,
+      },
+      {
+        label: 'Water Requirement',
+        standard: standardWater.main,
+        standardStep: standardWater.step,
+        station: stationWater.main,
+        stationStep: stationWater.step,
+        differs: selected.differs.water,
+        standardCount: majority.waterCount,
+      },
+      {
+        label: 'Planting Dates',
+        standard: standardPlant.main,
+        standardStep: standardPlant.step,
+        station: stationPlant.main,
+        stationStep: stationPlant.step,
+        differs: selected.differs.plant,
+        standardCount: majority.plantCount,
+      },
+    ];
+  });
+
+  public openBoundsDialog(row: IStationProbabilityStatus) {
+    this.selectedStation.set(row);
+    this.dialog.open(this.boundsDialogTemplate(), { width: '620px', maxWidth: '95vw' });
+  }
 
   /** Summary stats */
   public stats = computed(() => {

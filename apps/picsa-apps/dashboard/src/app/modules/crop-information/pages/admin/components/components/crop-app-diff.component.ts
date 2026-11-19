@@ -65,7 +65,7 @@ export type AppDbDiffStatus =
   | 'No Source Data'
   | 'In Sync';
 
-export type AppDiffFilter = 'actionable' | AppDbDiffStatus;
+export type AppDiffFilter = 'all' | AppDbDiffStatus;
 
 export interface IAppDbDiffDialogData {
   diffTable: IStationCropData[];
@@ -79,6 +79,7 @@ export interface IAppDbDiffRow {
   location_id: string;
   location_label: string;
   station: string;
+  station_changed: boolean;
   app_varieties: number;
   db_varieties: number;
   excluded_count: number;
@@ -139,21 +140,25 @@ export class CropAppDiffComponent {
     viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('excludedTemplate');
   private readonly probChangeTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('probChangeTemplate');
+  private readonly stationTemplate =
+    viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('stationTemplate');
   private readonly diffDialogTemplate = viewChild.required<TemplateRef<unknown>>('diffDialogTemplate');
 
   public valueTemplates = computed(() => {
     const excluded = this.excludedTemplate();
     const probChange = this.probChangeTemplate();
+    const station = this.stationTemplate();
     const map: Record<string, TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>> = {};
     if (excluded) map['excluded_count'] = excluded;
     if (probChange) map['prob_change_pct'] = probChange;
+    if (station) map['station'] = station;
     return map;
   });
 
   public loading = signal(true);
   public loadError = signal<string | null>(null);
   public applyBounds = signal(ENFORCE_LOOKUP_BOUNDS);
-  public tableFilter = signal<AppDiffFilter>('actionable');
+  public tableFilter = signal<AppDiffFilter>('all');
   public selectedDiffRow = signal<IAppDbDiffRow | null>(null);
 
   /** App data index entries for the active country */
@@ -258,6 +263,7 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station: this.formatStationComparison(entry.station_label, dbStation),
+        station_changed: this.isStationChanged(entry.station_label, dbStation),
         app_varieties: appSummary.varieties,
         db_varieties: 0,
         excluded_count: 0,
@@ -283,6 +289,7 @@ export class CropAppDiffComponent {
     const dbSummary = summarizeProbabilityTable(expected.table);
     const dbStation = this.stationDisplayName(expected.station.station_id, ctx.stationHashmap);
     const station = this.formatStationComparison(entry.station_label, dbStation);
+    const station_changed = this.isStationChanged(entry.station_label, dbStation);
     const excludedCount = expected.qc.excludedCount;
     const qcIssues = expected.qc.results.filter((r) => r.failures.length > 0 || r.warnings.length > 0);
     const dbSeasonProbabilities = expected.startProbabilities.map((s) => roundToNearest(s.probability, 0.1));
@@ -301,6 +308,7 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station,
+        station_changed,
         app_varieties: appSummary.varieties,
         db_varieties: dbSummary.varieties,
         excluded_count: excludedCount,
@@ -322,6 +330,7 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station,
+        station_changed,
         app_varieties: appSummary.varieties,
         db_varieties: dbSummary.varieties,
         excluded_count: excludedCount,
@@ -356,6 +365,7 @@ export class CropAppDiffComponent {
       location_id: locationId,
       location_label: entry.label,
       station,
+      station_changed,
       app_varieties: appSummary.varieties,
       db_varieties: dbSummary.varieties,
       excluded_count: excludedCount,
@@ -392,6 +402,7 @@ export class CropAppDiffComponent {
       return {
         ...base,
         station,
+        station_changed: false,
         db_varieties: summarizeProbabilityTable(expected.table).varieties,
         excluded_count: expected.qc.excludedCount,
         status: 'Missing in App',
@@ -415,6 +426,7 @@ export class CropAppDiffComponent {
     return {
       ...base,
       station: row.station_id ?? '—',
+      station_changed: false,
       db_varieties: 0,
       excluded_count: 0,
       status: 'No Source Data',
@@ -425,20 +437,16 @@ export class CropAppDiffComponent {
   public displayedRows = computed(() => {
     const rows = this.diffRows();
     const filter = this.tableFilter();
-    if (filter === 'actionable') {
-      return rows.filter((row) => row.status !== 'In Sync');
-    }
+    if (filter === 'all') return rows;
     return rows.filter((row) => row.status === filter);
   });
 
   public stats = computed(() => {
     const rows = this.diffRows();
     const count = (status: AppDbDiffStatus) => rows.filter((row) => row.status === status).length;
-    const inSync = count('In Sync');
     return {
       total: rows.length,
-      actionable: rows.length - inSync,
-      inSync,
+      inSync: count('In Sync'),
       newExclusions: count('New Exclusions'),
       differs: count('Differs'),
       missing: count('Missing in App'),
@@ -519,6 +527,10 @@ export class CropAppDiffComponent {
     if (!appStation) return dbStation || '—';
     if (!dbStation || appStation === dbStation) return appStation;
     return `${appStation} → ${dbStation}`;
+  }
+
+  private isStationChanged(appStation: string, dbStation: string): boolean {
+    return !!appStation && !!dbStation && appStation !== dbStation;
   }
 
   /** Explain why a location has no usable data-system row */
