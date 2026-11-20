@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations, getGeoLocationData } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
@@ -80,12 +80,14 @@ export class CropLocationCoverageComponent implements AfterViewInit {
   public creatingRecord = signal(false);
 
   public rows = computed<ICoverageRow[]>(() => {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    const geoLocations = getDeepestLocations(locationData).map(({ id, label, parentLabel }) => ({
-      id,
-      label,
-      parent: parentLabel,
-    }));
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    const geoLocations = countryCode
+      ? getDownscaledLocations(countryCode).map(({ id, label, parentLabel }) => ({
+          id,
+          label,
+          parent: parentLabel,
+        }))
+      : [];
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const stationsHashmap = arrayToHashmap(this.service.stations(), 'id');
 
@@ -124,25 +126,35 @@ export class CropLocationCoverageComponent implements AfterViewInit {
     };
   });
 
-  public tableOptions: IDataTableOptions = {
-    displayColumns: ['location_label', 'parent_location', 'status', 'paired_with', 'station', 'probabilities', 'crops'],
-    paginatorSizes: [50, 100],
-    search: true,
-    sort: { id: 'location_label', start: 'asc' },
-    formatHeader: (v) => {
-      const headerMap: Record<string, string> = {
-        location_label: 'Location',
-        parent_location: 'Parent',
-        status: 'Status',
-        paired_with: 'Paired With',
-        station: 'Linked Station',
-        probabilities: 'Probabilities',
-        crops: 'Crops Covered',
-      };
-      return headerMap[v] || formatHeaderDefault(v);
-    },
-    exportFilename: 'crop-location-coverage.csv',
-  };
+  public tableOptions = computed<IDataTableOptions>(() => {
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    const layers = countryCode ? getGeoLocationData(countryCode).layers : [];
+    const parentLayer = layers.length > 1 ? layers.at(-2) : undefined;
+    const deepestLayer = layers.at(-1);
+    const displayColumns = parentLayer
+      ? ['parent_location', 'location_label', 'status', 'paired_with', 'station', 'probabilities', 'crops']
+      : ['location_label', 'status', 'paired_with', 'station', 'probabilities', 'crops'];
+
+    return {
+      displayColumns,
+      paginatorSizes: [50, 100],
+      search: true,
+      sort: { id: 'location_label', start: 'asc' },
+      formatHeader: (v) => {
+        const headerMap: Record<string, string> = {
+          location_label: deepestLayer?.label ?? 'Location',
+          parent_location: parentLayer?.label ?? 'Parent',
+          status: 'Status',
+          paired_with: 'Paired With',
+          station: 'Linked Station',
+          probabilities: 'Probabilities',
+          crops: 'Crops Covered',
+        };
+        return headerMap[v] || formatHeaderDefault(v);
+      },
+      exportFilename: 'crop-location-coverage.csv',
+    };
+  });
 
   /**
    * Open the station picker for a location, creating an empty record first

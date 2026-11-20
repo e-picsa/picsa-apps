@@ -1,3 +1,5 @@
+import type { IGeoLocationBase } from '../types';
+
 const MW_DISTRICTS = [
   { id: 'balaka', label: 'Balaka' },
   { id: 'blantyre', label: 'Blantyre' },
@@ -27,6 +29,12 @@ const MW_DISTRICTS = [
   { id: 'salima', label: 'Salima' },
   { id: 'thyolo', label: 'Thyolo' },
   { id: 'zomba', label: 'Zomba' },
-];
+] as const satisfies readonly IGeoLocationBase[];
+
+export type MwDistrictId = (typeof MW_DISTRICTS)[number]['id'];
+
+export interface IMwEpa extends IGeoLocationBase {
+  district: MwDistrictId;
+}
 
 export default MW_DISTRICTS;

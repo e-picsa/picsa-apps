@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -176,8 +176,7 @@ export class DashboardCropAdminComponent {
       const exportEntries: any[] = [];
       let skippedEmpty = 0;
 
-      const locationData = this.deploymentService.activeDeploymentLocationData();
-      const locations = getDeepestLocations(locationData);
+      const locations = getDownscaledLocations(countryCode);
 
       for (const row of downscaledRows || []) {
         if (!row.station_id || !row.water_requirements) continue;
@@ -341,8 +340,8 @@ export class DashboardCropAdminComponent {
   }
 
   private getLocationList() {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    return getDeepestLocations(locationData);
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    return countryCode ? getDownscaledLocations(countryCode) : [];
   }
 
   private qualityControlData(data: ICropDataImport[] = []) {

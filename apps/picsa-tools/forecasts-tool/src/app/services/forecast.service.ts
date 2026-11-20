@@ -15,8 +15,7 @@ import { IForecastRow } from '../types/forecast.types';
 
 interface IDownscaledLocation {
   country_code?: ICountryCode;
-  admin_4?: string;
-  admin_5?: string;
+  locations?: string[];
 }
 
 type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
@@ -147,9 +146,9 @@ export class ForecastService extends PicsaAsyncService {
       const isReady = this.readySignal();
       if (!isReady) return;
 
-      const { country_code, admin_4, admin_5 } = this.downscaledLocation();
-      if (country_code && admin_4) {
-        this.loadDownscaledForecasts(country_code, admin_4, admin_5);
+      const { country_code, locations } = this.downscaledLocation();
+      if (country_code && locations && locations.length > 0) {
+        void this.loadDownscaledForecasts(country_code, locations);
       } else {
         if (this.activeDownscaledLoad) {
           this.activeDownscaledLoad.cancelled = true;
@@ -170,12 +169,10 @@ export class ForecastService extends PicsaAsyncService {
   public setForecastLocation(location?: IUserSettings['location']) {
     if (location) {
       const country_code = location[2] as ICountryCode;
+      // Deduplicate so cross-layer ID collisions (e.g. ZW masvingo province + district) run a single query
+      const locations = [...new Set(location.slice(4).filter((v): v is string => Boolean(v)))];
       this.countryLocation.set(country_code);
-      this.downscaledLocation.set({
-        country_code,
-        admin_4: location[4],
-        admin_5: location[5],
-      });
+      this.downscaledLocation.set({ country_code, locations });
     } else {
       this.countryLocation.set(undefined);
       this.downscaledLocation.set({});
@@ -448,8 +445,8 @@ export class ForecastService extends PicsaAsyncService {
     return (data || []).map((el) => SERVER_DB_MAPPING(el));
   }
 
-  private async loadDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
-    const locationKey = `${country_code}||${admin_4}||${admin_5 || ''}`;
+  private async loadDownscaledForecasts(country_code: CountryCodeLegacy, locations: string[]) {
+    const locationKey = `${country_code}||${locations.join('||')}`;
     if (this.activeDownscaledLoad) {
       this.activeDownscaledLoad.cancelled = true;
     }
@@ -460,14 +457,14 @@ export class ForecastService extends PicsaAsyncService {
 
     try {
       // 1. Load cached downscaled forecasts first (offline-first)
-      let cached = await this.loadCachedDownscaledForecasts(country_code, admin_4, admin_5);
+      let cached = await this.loadCachedDownscaledForecasts(country_code, locations);
 
       // If empty (fresh install / offline), seed from bundled FORECASTS_DB
       if (cached.length === 0) {
         const filters: ((v: IForecastBundleRow) => boolean)[] = [
           (v) => v.forecast_type === 'downscaled',
           (v) => v.country_code === country_code,
-          (v) => (admin_5 && v.downscaled_location === admin_5) || v.downscaled_location === admin_4,
+          (v) => Boolean(v.downscaled_location && locations.includes(v.downscaled_location)),
         ];
         const hardcoded = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
         if (hardcoded.length > 0) {
@@ -479,7 +476,7 @@ export class ForecastService extends PicsaAsyncService {
       this.downscaledForecastDocs.set(cached.filter(isLiveForecast));
 
       // 2. Fetch latest from server if online
-      const serverForecasts = await this.loadServerDownscaledForecasts(country_code, admin_4, admin_5);
+      const serverForecasts = await this.loadServerDownscaledForecasts(country_code, locations);
       if (currentLoad.cancelled) return;
 
       if (serverForecasts.length > 0) {
@@ -494,7 +491,7 @@ export class ForecastService extends PicsaAsyncService {
       const removedIds = await this.reconcileForecastTombstones({
         country_code,
         forecast_type: 'downscaled',
-        downscaled_location: admin_5 ? [admin_4, admin_5] : [admin_4],
+        downscaled_location: locations,
       });
       if (currentLoad.cancelled) return;
       if (removedIds.length > 0) {
@@ -565,16 +562,16 @@ export class ForecastService extends PicsaAsyncService {
     return removeIds;
   }
 
-  private async loadCachedDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
+  private async loadCachedDownscaledForecasts(country_code: CountryCodeLegacy, locations: string[]) {
     const selector: MangoQuerySelector<IForecast> = {
       forecast_type: 'downscaled',
       country_code,
-      downscaled_location: admin_5 ? { $in: [admin_4, admin_5] } : admin_4,
+      downscaled_location: locations.length > 1 ? { $in: locations } : locations[0],
     };
     return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }] }).exec();
   }
 
-  private async loadServerDownscaledForecasts(country_code: CountryCodeLegacy, admin_4: string, admin_5?: string) {
+  private async loadServerDownscaledForecasts(country_code: CountryCodeLegacy, locations: string[]) {
     await this.supabaseService.ready();
     if (!this.supabaseService.isAvailable()) {
       return [];
@@ -586,10 +583,10 @@ export class ForecastService extends PicsaAsyncService {
       .eq('forecast_type', 'downscaled')
       .eq('country_code', country_code);
 
-    if (admin_5) {
-      query.in('downscaled_location', [admin_4, admin_5]);
+    if (locations.length > 1) {
+      query.in('downscaled_location', locations);
     } else {
-      query.eq('downscaled_location', admin_4);
+      query.eq('downscaled_location', locations[0]);
     }
 
     const { data, error } = await query.order('id', { ascending: false });

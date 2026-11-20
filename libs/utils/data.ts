@@ -6,7 +6,11 @@ import { ParseLocalConfig, ParseRemoteConfig, parse as parseCSV } from 'papapars
  * @param keyfield any unique field which all array objects contain to use as hash keys (e.g. 'id')
  * @param keyAccessor alternative function to access key from element data (instead of using keyfield)
  */
-export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T, keyAccessor?: (el: T) => string) {
+export function arrayToHashmap<T extends object>(
+  arr: readonly T[],
+  keyfield: keyof T,
+  keyAccessor?: (el: T) => string,
+) {
   const hashmap: Record<string, T> = {};
   if (!Array.isArray(arr)) {
     console.error('Cannot convert array to hashmap, not an array', {

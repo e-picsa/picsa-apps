@@ -43,8 +43,8 @@ describe('FormLocationOverlayComponent', () => {
     expect(confirmed).toEqual([[undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']]);
   });
 
-  // zw pairs admin_4 provinces with admin_6 districts (no admin_5 tier) - both segments still required
-  it('requires both segments for multi-tier countries without an admin_5 tier (zw)', () => {
+  // zw defines a 2-layer province + district hierarchy - both segments still required
+  it('requires both segments for multi-layer countries (zw)', () => {
     fixture.componentRef.setInput('countryCode', 'zw');
     fixture.componentRef.setInput('open', true);
 

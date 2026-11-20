@@ -1,154 +1,176 @@
 import type { ICountryCode } from '../deployments';
-import { getGeoLocationData } from './index';
+import * as dataModule from './data';
+import { getGeoLocationData } from './data';
 import type { IGeolocationData } from './types';
 import {
-  getDeepestAdminLevel,
-  getDeepestLocations,
+  clearGeoJsonFeatureCache,
+  getDownscaledLocation,
+  getDownscaledLocations,
   getLocationLabel,
+  getLocationTopoFeature,
   isLocationComplete,
-  topoJsonToGeoJson,
 } from './utils';
 
-const baseData = {
-  topoJson: async () => ({}) as never,
-  admin_4: {
-    label: 'Province',
-    locations: [
-      { id: 'eastern', label: 'Eastern' },
-      { id: 'central', label: 'Central' },
-    ],
-  },
-} as IGeolocationData;
+describe('getDownscaledLocations', () => {
+  it('resolves parent ids, labels, and topoName for multi-layer countries (zm, zw)', () => {
+    const zmLocations = getDownscaledLocations('zm');
+    expect(zmLocations.find((l) => l.id === 'chipata')).toEqual({
+      id: 'chipata',
+      label: 'Chipata',
+      parentId: 'eastern',
+      parentLabel: 'Eastern',
+    });
+    expect(zmLocations.find((l) => l.id === 'senga')).toEqual({
+      id: 'senga',
+      label: 'Senga',
+      parentId: 'northern',
+      parentLabel: 'Northern',
+      topoName: 'Senga Hill District',
+    });
 
-describe('getDeepestLocations', () => {
-  it('should resolve parent ids, labels, and topoName for tiered countries', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_5: {
-        label: 'District',
-        locations: [
-          { id: 'chipata', label: 'Chipata', admin_4: 'eastern' },
-          { id: 'senga', label: 'Senga', admin_4: 'central', topoName: 'Senga Hill District' },
-        ],
-      },
-    };
-    expect(getDeepestLocations(data)).toEqual([
-      { id: 'chipata', label: 'Chipata', parentId: 'eastern', parentLabel: 'Eastern' },
-      {
-        id: 'senga',
-        label: 'Senga',
-        parentId: 'central',
-        parentLabel: 'Central',
-        topoName: 'Senga Hill District',
-      },
-    ]);
+    const zwLocations = getDownscaledLocations('zw');
+    expect(zwLocations.find((l) => l.id === 'bikita')).toEqual({
+      id: 'bikita',
+      label: 'Bikita',
+      parentId: 'masvingo',
+      parentLabel: 'Masvingo',
+    });
+    expect(zwLocations.find((l) => l.id === 'mangwe')).toEqual({
+      id: 'mangwe',
+      label: 'Mangwe',
+      parentId: 'matabeleland_south',
+      parentLabel: 'Matabeleland South',
+      topoName: 'Bulilimamangwe',
+    });
   });
 
-  it('should return empty parents for single-tier countries', () => {
-    expect(getDeepestLocations(baseData)).toEqual([
-      { id: 'eastern', label: 'Eastern', parentId: '', parentLabel: '' },
-      { id: 'central', label: 'Central', parentId: '', parentLabel: '' },
-    ]);
+  it('returns empty parent metadata for single-layer countries (mw)', () => {
+    const mwLocations = getDownscaledLocations('mw');
+    expect(mwLocations.find((l) => l.id === 'lilongwe')).toEqual({
+      id: 'lilongwe',
+      label: 'Lilongwe',
+      parentId: '',
+      parentLabel: '',
+    });
+    expect(mwLocations.find((l) => l.id === 'nneno')).toEqual({
+      id: 'nneno',
+      label: 'Nneno',
+      parentId: '',
+      parentLabel: '',
+      topoName: 'Neno',
+    });
+  });
+});
+
+describe('getDownscaledLocation', () => {
+  it('looks up downscaled locations strictly in the deepest layer, handling cross-layer id collisions', () => {
+    expect(getDownscaledLocation('zw', 'masvingo')).toEqual({
+      id: 'masvingo',
+      label: 'Masvingo',
+      parentId: 'masvingo',
+      parentLabel: 'Masvingo',
+    });
+    expect(getDownscaledLocation('mw', 'nkhata_bay')).toEqual({
+      id: 'nkhata_bay',
+      label: 'Nkhata Bay',
+      parentId: '',
+      parentLabel: '',
+    });
   });
 
-  it('should leave parent labels blank for unknown parent ids', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_5: { label: 'District', locations: [{ id: 'orphan', label: 'Orphan', admin_4: 'removed' }] },
-    };
-    expect(getDeepestLocations(data)).toEqual([
-      { id: 'orphan', label: 'Orphan', parentId: 'removed', parentLabel: '' },
-    ]);
+  it('falls back to a formatted label with empty parents when location_id is unknown', () => {
+    expect(getDownscaledLocation('zw', 'custom_station_area')).toEqual({
+      id: 'custom_station_area',
+      label: 'Custom Station Area',
+      parentId: '',
+      parentLabel: '',
+    });
   });
 });
 
 describe('isLocationComplete', () => {
-  it('should require only admin_4 for single-tier countries', () => {
-    expect(isLocationComplete(baseData, [undefined, undefined, 'mw'])).toBe(false);
-    expect(isLocationComplete(baseData, [undefined, undefined, 'mw', undefined, 'lilongwe'])).toBe(true);
+  it('requires only segment 4 for single-layer countries (mw)', () => {
+    expect(isLocationComplete('mw', [undefined, undefined, 'mw'])).toBe(false);
+    expect(isLocationComplete('mw', [undefined, undefined, 'mw', undefined, 'lilongwe'])).toBe(true);
   });
 
-  it('should require both segments for admin_4+admin_5 countries', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_5: { label: 'District', locations: [{ id: 'kabwe', label: 'Kabwe', admin_4: 'central' }] },
-    };
-    expect(isLocationComplete(data, [undefined, undefined, 'zm', undefined, 'central'])).toBe(false);
-    expect(isLocationComplete(data, [undefined, undefined, 'zm', undefined, 'central', 'kabwe'])).toBe(true);
+  it('requires both segments 4 and 5 for multi-layer countries (zm, zw)', () => {
+    expect(isLocationComplete('zm', [undefined, undefined, 'zm', undefined, 'central'])).toBe(false);
+    expect(isLocationComplete('zm', [undefined, undefined, 'zm', undefined, 'central', 'kabwe'])).toBe(true);
+
+    expect(isLocationComplete('zw', [undefined, undefined, 'zw', undefined, 'masvingo'])).toBe(false);
+    expect(isLocationComplete('zw', [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita'])).toBe(true);
   });
 
-  it('should require both segments for admin_4+admin_6 countries', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_6: { label: 'District', locations: [{ id: 'bikita', label: 'Bikita', admin_4: 'masvingo' }] },
-    };
-    expect(isLocationComplete(data, [undefined, undefined, 'zw', undefined, 'masvingo'])).toBe(false);
-    expect(isLocationComplete(data, [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita'])).toBe(true);
-  });
-
-  it('should return false without a location', () => {
-    expect(isLocationComplete(baseData, undefined)).toBe(false);
+  it('returns false without a location', () => {
+    expect(isLocationComplete('mw', undefined)).toBe(false);
   });
 });
 
 describe('getLocationLabel', () => {
-  it('should resolve single-tier district labels', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_4: { label: 'District', locations: [{ id: 'lilongwe', label: 'Lilongwe' }] },
-    };
-    expect(getLocationLabel(data, [undefined, undefined, 'mw', undefined, 'lilongwe'])).toBe('Lilongwe');
-    expect(getLocationLabel(data, [undefined, undefined, 'mw'])).toBeUndefined();
+  it('resolves single-layer district labels (mw)', () => {
+    expect(getLocationLabel('mw', [undefined, undefined, 'mw', undefined, 'lilongwe'])).toBe('Lilongwe');
+    expect(getLocationLabel('mw', [undefined, undefined, 'mw'])).toBeUndefined();
   });
 
-  it('should prefer the deepest tier label, including admin_6 countries', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_4: { label: 'Province', locations: [{ id: 'masvingo', label: 'Masvingo' }] },
-      admin_6: { label: 'District', locations: [{ id: 'bikita', label: 'Bikita', admin_4: 'masvingo' }] },
-    };
-    expect(getLocationLabel(data, [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita'])).toBe('Bikita');
-    expect(getLocationLabel(data, [undefined, undefined, 'zw', undefined, 'masvingo'])).toBe('Masvingo');
+  it('prefers the deepest layer label for multi-layer countries (zw)', () => {
+    expect(getLocationLabel('zw', [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita'])).toBe('Bikita');
+    expect(getLocationLabel('zw', [undefined, undefined, 'zw', undefined, 'masvingo'])).toBe('Masvingo');
   });
 
-  it('should fall back to admin_4 when the deep id is unknown', () => {
-    const data: IGeolocationData = {
-      ...baseData,
-      admin_4: { label: 'Province', locations: [{ id: 'southern', label: 'Southern' }] },
-      admin_5: { label: 'District', locations: [{ id: 'mazabuka', label: 'Mazabuka', admin_4: 'southern' }] },
-    };
+  it('falls back to top layer when the deep id is unknown', () => {
     const location = [undefined, undefined, 'zm', undefined, 'southern', 'southern/mazabuka--kafue-polder'];
-    expect(getLocationLabel(data, location)).toBe('Southern');
+    expect(getLocationLabel('zm', location)).toBe('Southern');
   });
 });
 
-describe('TopoJSON boundary alignment for all countries', () => {
+describe('getLocationTopoFeature', () => {
   const countries: ICountryCode[] = ['mw', 'zm', 'zw'];
-  const normalize = (s?: string) =>
-    (s ?? '')
-      .toLowerCase()
-      .replace(/\b(district|province|city|met)\b/gi, '')
-      .replace(/[^a-z0-9]/g, '')
-      .trim();
 
   for (const country of countries) {
     it(`resolves every deepest location in "${country}" to a valid TopoJSON feature`, async () => {
-      const data = getGeoLocationData(country);
-      const deepest = getDeepestLocations(data);
-      const adminLevel = getDeepestAdminLevel(data);
-      const topo = await data.topoJson();
-      const geojson = topoJsonToGeoJson(topo, adminLevel);
-
+      const deepest = getDownscaledLocations(country);
       expect(deepest.length).toBeGreaterThan(0);
-      expect(geojson.features.length).toBeGreaterThan(0);
 
       for (const loc of deepest) {
-        const candidates = [loc.label, loc.topoName, loc.id].filter((v): v is string => Boolean(v));
-        const match = geojson.features.find((f) =>
-          candidates.some((c) => normalize(f.properties?.name) === normalize(c)),
-        );
-        expect(match).toBeDefined();
+        const feature = await getLocationTopoFeature(country, loc.id);
+        expect(feature).toBeDefined();
       }
     });
   }
+
+  it('distinguishes parent vs downscaled role when ids collide across layers', async () => {
+    const provinceFeature = await getLocationTopoFeature('zw', 'masvingo', 'parent');
+    const districtFeature = await getLocationTopoFeature('zw', 'masvingo', 'downscaled');
+
+    expect(provinceFeature).toBeDefined();
+    expect(districtFeature).toBeDefined();
+    expect(String(provinceFeature?.properties?.admin_level)).toBe('4');
+    expect(String(districtFeature?.properties?.admin_level)).toBe('6');
+  });
+
+  it('falls back to parent layer topoAdminLevel when deepest layer has no boundary geometries', async () => {
+    clearGeoJsonFeatureCache();
+    const mwData = getGeoLocationData('mw');
+    const mockData: IGeolocationData = {
+      topoJson: mwData.topoJson,
+      layers: [
+        mwData.layers[0],
+        {
+          key: 'epa',
+          label: 'EPA',
+          locations: [{ id: 'lilongwe_west', label: 'Lilongwe West', parentId: 'lilongwe' }],
+        },
+      ],
+    };
+    const spy = jest.spyOn(dataModule, 'getGeoLocationData').mockReturnValue(mockData);
+    try {
+      const feature = await getLocationTopoFeature('mw', 'lilongwe_west');
+      expect(feature).toBeDefined();
+      expect(feature?.properties?.name).toContain('Lilongwe');
+    } finally {
+      spy.mockRestore();
+      clearGeoJsonFeatureCache();
+    }
+  });
 });

@@ -359,3 +359,106 @@ describe('ForecastService offline download guard', () => {
     expect(mockAttachment.putAttachment).toHaveBeenCalledWith(doc, 'zm/forecasts/weekly/2026/zm_en.pdf', blob);
   });
 });
+
+describe('ForecastService downscaled location loading', () => {
+  let service: ForecastService;
+  let mockSupabase: any;
+  let mockCollection: any;
+  let queryBuilders: any[];
+
+  const flushEffectsAndPromises = async () => {
+    TestBed.flushEffects();
+    for (let i = 0; i < 6; i++) {
+      await Promise.resolve();
+    }
+  };
+
+  beforeEach(async () => {
+    queryBuilders = [];
+    mockCollection = {
+      find: jest.fn(() => ({
+        exec: jest.fn().mockResolvedValue([{ id: '2026/downscaled/cached/en', storage_file: 'cached.pdf' }]),
+      })),
+      findByIds: jest.fn(() => ({ exec: jest.fn().mockResolvedValue(new Map()) })),
+      bulkRemove: jest.fn().mockResolvedValue([]),
+      bulkUpsert: jest.fn().mockResolvedValue({ success: [], error: [] }),
+    };
+    mockSupabase = {
+      ready: jest.fn().mockResolvedValue(undefined),
+      isAvailable: jest.fn().mockReturnValue(true),
+      db: {
+        table: jest.fn(() => {
+          const qb = mockTableQuery({ data: [], error: null });
+          queryBuilders.push(qb);
+          return qb;
+        }),
+      },
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        ForecastService,
+        { provide: SupabaseService, useValue: mockSupabase },
+        {
+          provide: PicsaDatabase_V2_Service,
+          useValue: {
+            ensureCollections: jest.fn().mockResolvedValue(undefined),
+            db: { collections: { forecasts: mockCollection } },
+          },
+        },
+        { provide: PicsaDatabaseAttachmentService, useValue: { ready: jest.fn().mockResolvedValue(undefined) } },
+      ],
+    });
+    service = TestBed.inject(ForecastService);
+    jest.spyOn(service as any, 'loadForecastsForCountry').mockResolvedValue(undefined);
+    await service.ready();
+  });
+
+  it('queries single location with eq for single-layer countries (mw)', async () => {
+    service.setForecastLocation([undefined, undefined, 'mw', undefined, 'lilongwe']);
+    await flushEffectsAndPromises();
+
+    expect(mockCollection.find).toHaveBeenCalledWith({
+      selector: { forecast_type: 'downscaled', country_code: 'mw', downscaled_location: 'lilongwe' },
+      sort: [{ id: 'desc' }],
+    });
+    expect(queryBuilders[0].eq).toHaveBeenCalledWith('downscaled_location', 'lilongwe');
+    expect(queryBuilders[0].in).not.toHaveBeenCalled();
+  });
+
+  it('queries all selected segments with $in / in for multi-layer countries (zm)', async () => {
+    service.setForecastLocation([undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']);
+    await flushEffectsAndPromises();
+
+    expect(mockCollection.find).toHaveBeenCalledWith({
+      selector: {
+        forecast_type: 'downscaled',
+        country_code: 'zm',
+        downscaled_location: { $in: ['southern', 'mazabuka'] },
+      },
+      sort: [{ id: 'desc' }],
+    });
+    expect(queryBuilders[0].in).toHaveBeenCalledWith('downscaled_location', ['southern', 'mazabuka']);
+  });
+
+  it('deduplicates colliding parent/child ids (zw masvingo/masvingo)', async () => {
+    service.setForecastLocation([undefined, undefined, 'zw', undefined, 'masvingo', 'masvingo']);
+    await flushEffectsAndPromises();
+
+    expect(mockCollection.find).toHaveBeenCalledWith({
+      selector: { forecast_type: 'downscaled', country_code: 'zw', downscaled_location: 'masvingo' },
+      sort: [{ id: 'desc' }],
+    });
+    expect(queryBuilders[0].eq).toHaveBeenCalledWith('downscaled_location', 'masvingo');
+    expect(queryBuilders[0].in).not.toHaveBeenCalled();
+  });
+
+  it('clears downscaled docs when location is cleared', async () => {
+    service.setForecastLocation([undefined, undefined, 'mw', undefined, 'lilongwe']);
+    await flushEffectsAndPromises();
+    expect(service.downscaledForecastDocs().length).toBe(1);
+
+    service.setForecastLocation(undefined);
+    await flushEffectsAndPromises();
+    expect(service.downscaledForecastDocs()).toEqual([]);
+  });
+});
