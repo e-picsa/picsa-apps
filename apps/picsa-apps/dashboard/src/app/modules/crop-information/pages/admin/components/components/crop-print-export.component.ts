@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
+import { CROPS_DATA_HASHMAP, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { getDeepestLocations } from '@picsa/data/geoLocation';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -23,6 +23,12 @@ interface ILocationGroup {
   id: string;
   label: string;
   districts: { id: string; label: string; available: boolean }[];
+}
+
+interface ICropFamily {
+  id: string;
+  label: string;
+  varietyCount: number;
 }
 
 @Component({
@@ -98,8 +104,25 @@ export class CropPrintExportComponent {
     return [LOCALES_DATA_HASHMAP['global_en'], ...locales];
   });
 
+  /** Crop families present in the master data, with variety counts */
+  public cropFamilies = computed<ICropFamily[]>(() => {
+    const byCrop = new Map<string, Set<string>>();
+    for (const row of this.cropService.cropData()) {
+      if (!byCrop.has(row.crop)) byCrop.set(row.crop, new Set());
+      byCrop.get(row.crop)?.add(row.variety);
+    }
+    return [...byCrop.entries()]
+      .map(([id, varieties]) => ({
+        id,
+        label: CROPS_DATA_HASHMAP[id as keyof typeof CROPS_DATA_HASHMAP]?.label || id,
+        varietyCount: varieties.size,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  });
+
   public selectedLocationIds = signal<string[]>([]);
   public selectedLanguageCodes = signal<string[]>(['global_en']);
+  public selectedCropIds = signal<string[]>([]);
 
   public exporting = signal(false);
   public singleExportingId = signal<string | null>(null);
@@ -112,7 +135,11 @@ export class CropPrintExportComponent {
   public availableCount = computed(() => this.locations().length - this.unavailableIds().size);
   public estimatedFiles = computed(() => this.selectedLocationIds().length * this.selectedLanguageCodes().length);
   public canExport = computed(
-    () => !this.exporting() && !this.singleExportingId() && this.selectedLocationIds().length > 0,
+    () =>
+      !this.exporting() &&
+      !this.singleExportingId() &&
+      this.selectedLocationIds().length > 0 &&
+      this.selectedCropIds().length > 0,
   );
 
   public get busy(): boolean {
@@ -142,7 +169,7 @@ export class CropPrintExportComponent {
   }
 
   constructor() {
-    // Default to all available locations once async data resolves
+    // Default to all available locations and all crop families once async data resolves
     effect(() => {
       const locs = this.locations();
       if (locs.length > 0 && this.selectedLocationIds().length === 0 && !this.hasInitialisedSelection) {
@@ -150,9 +177,29 @@ export class CropPrintExportComponent {
         this.selectedLocationIds.set(locs.filter((l) => !this.unavailableIds().has(l.id)).map((l) => l.id));
       }
     });
+    effect(() => {
+      const families = this.cropFamilies();
+      if (families.length > 0 && this.selectedCropIds().length === 0 && !this.hasInitialisedCrops) {
+        this.hasInitialisedCrops = true;
+        this.selectedCropIds.set(families.map((f) => f.id));
+      }
+    });
   }
 
   private hasInitialisedSelection = false;
+  private hasInitialisedCrops = false;
+
+  public isCropSelected(id: string): boolean {
+    return this.selectedCropIds().includes(id);
+  }
+
+  public toggleCrop(id: string, checked: boolean) {
+    this.selectedCropIds.update((prev) => (checked ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)));
+  }
+
+  public toggleAllCrops(selectAll: boolean) {
+    this.selectedCropIds.set(selectAll ? this.cropFamilies().map((f) => f.id) : []);
+  }
 
   public isLocationSelected(id: string): boolean {
     return this.selectedLocationIds().includes(id);
@@ -226,6 +273,7 @@ export class CropPrintExportComponent {
       const { files, skipped, failed } = await this.printService.exportPrint({
         locationIds,
         languageCodes: this.selectedLanguageCodes(),
+        cropFamilies: this.selectedCropIds(),
         format,
         onProgress: (done, total, stage) => {
           this.progressDone.set(done);

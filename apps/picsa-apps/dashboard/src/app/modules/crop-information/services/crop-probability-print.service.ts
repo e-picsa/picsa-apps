@@ -25,6 +25,8 @@ export type PrintExportStage = 'preparing' | 'generating' | 'converting' | 'zipp
 export interface IPrintExportRequest {
   locationIds: string[];
   languageCodes: string[];
+  /** Crop family ids to include; all families included when empty/omitted */
+  cropFamilies?: string[];
   format: CropPrintFormat;
   onProgress?: (done: number, total: number, stage: PrintExportStage) => void;
 }
@@ -57,7 +59,10 @@ export class CropProbabilityPrintService {
    * Shared pipeline with single-location table and app-data export.
    * Skips locations with no usable data (no station, no water requirements, empty table).
    */
-  public async computeLocationTables(locationIds?: string[]): Promise<{
+  public async computeLocationTables(
+    locationIds?: string[],
+    cropFamilies?: string[],
+  ): Promise<{
     tables: IPrintExportTable[];
     skippedEmpty: number;
   }> {
@@ -85,6 +90,7 @@ export class CropProbabilityPrintService {
     const locationData = this.deploymentService.activeDeploymentLocationData();
     const locations = getDeepestLocations(locationData);
     const filterSet = locationIds && locationIds.length > 0 ? new Set(locationIds) : null;
+    const cropSet = cropFamilies && cropFamilies.length > 0 ? new Set(cropFamilies) : null;
 
     const tables: IPrintExportTable[] = [];
     let skippedEmpty = 0;
@@ -111,9 +117,17 @@ export class CropProbabilityPrintService {
         skippedEmpty++;
         continue;
       }
+      const allWaterRequirements = row.water_requirements as ICropDataDownscaledWaterRequirements;
+      const waterRequirements = cropSet
+        ? Object.fromEntries(Object.entries(allWaterRequirements).filter(([crop]) => cropSet.has(crop)))
+        : allWaterRequirements;
+      if (Object.keys(waterRequirements).length === 0) {
+        skippedEmpty++;
+        continue;
+      }
       const expected = computeExpectedProbabilityTable({
         cropDataHashmap,
-        waterRequirements: row.water_requirements as ICropDataDownscaledWaterRequirements,
+        waterRequirements: waterRequirements as ICropDataDownscaledWaterRequirements,
         rainfallData,
         cropProbabilityData,
       });
@@ -162,14 +176,14 @@ export class CropProbabilityPrintService {
    * output so formatting stays identical. One failed file never blocks the rest.
    */
   public async exportPrint(request: IPrintExportRequest): Promise<IPrintExportResult> {
-    const { locationIds, languageCodes, format, onProgress } = request;
+    const { locationIds, languageCodes, cropFamilies, format, onProgress } = request;
     const activeDeployment = this.deploymentService.activeDeployment();
     if (!activeDeployment) throw new Error('No active deployment');
     const countryCode = activeDeployment.country_code;
 
     const langs = languageCodes.length > 0 ? languageCodes : ['global_en'];
     onProgress?.(0, 0, 'preparing');
-    const { tables, skippedEmpty } = await this.computeLocationTables(locationIds);
+    const { tables, skippedEmpty } = await this.computeLocationTables(locationIds, cropFamilies);
 
     if (tables.length === 0) {
       this.notificationService.showErrorNotification('No locations with crop probability data found for export');

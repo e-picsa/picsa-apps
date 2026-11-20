@@ -500,6 +500,8 @@ export class CropProbabilityDocxService {
         {
           properties: {
             page: {
+              // Portrait A4 (210mm x 297mm) so Word and converted PDFs share print geometry
+              size: { width: 11906, height: 16838 },
               margin: {
                 top: 567, // 10mm in dxa (1mm = 56.7 dxa)
                 bottom: 567,

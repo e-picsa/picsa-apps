@@ -33,6 +33,11 @@ describe('CropPrintExportComponent', () => {
             ready: jest.fn().mockResolvedValue(undefined),
             downscaledData: signal([]),
             stationData: signal([]),
+            cropData: signal([
+              { crop: 'maize', variety: 'SC 403' },
+              { crop: 'maize', variety: 'SC 719' },
+              { crop: 'beans', variety: 'Kholophethe' },
+            ]),
           },
         },
         { provide: CropProbabilityPrintService, useValue: mockPrintService },
@@ -57,10 +62,16 @@ describe('CropPrintExportComponent', () => {
   it('should bulk export word docs with selected locations and languages', async () => {
     component.selectedLocationIds.set(['buhera']);
     component.selectedLanguageCodes.set(['global_en', 'zw_sn']);
+    component.selectedCropIds.set(['maize']);
     fixture.detectChanges();
     await component.exportBulk('docx');
     expect(mockPrintService.exportPrint).toHaveBeenCalledWith(
-      expect.objectContaining({ locationIds: ['buhera'], languageCodes: ['global_en', 'zw_sn'], format: 'docx' }),
+      expect.objectContaining({
+        locationIds: ['buhera'],
+        languageCodes: ['global_en', 'zw_sn'],
+        cropFamilies: ['maize'],
+        format: 'docx',
+      }),
     );
   });
 
@@ -72,6 +83,18 @@ describe('CropPrintExportComponent', () => {
     expect(mockPrintService.exportPrint).toHaveBeenCalledWith(
       expect.objectContaining({ locationIds: ['buhera'], format: 'pdf' }),
     );
+  });
+
+  it('should disable export with no crops selected', () => {
+    component.selectedLocationIds.set(['buhera']);
+    component.selectedCropIds.set([]);
+    expect(component.canExport()).toBe(false);
+  });
+
+  it('should list all crop families with variety counts by default', () => {
+    expect(component.selectedCropIds().length).toBe(2);
+    const maize = component.cropFamilies().find((f) => f.id === 'maize');
+    expect(maize?.varietyCount).toBe(2);
   });
 
   it('should toggle all districts within a group', () => {

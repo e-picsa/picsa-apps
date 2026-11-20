@@ -9,74 +9,105 @@
     </mat-select>
   </mat-form-field>
 
-  <!-- Locations checklist, grouped by province -->
-  <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0">
-    <div class="flex items-center gap-2">
-      <h4 class="flex-1">Districts ({{ selectedLocationIds().length }}/{{ availableCount() }} available)</h4>
-      <button matButton="outlined" (click)="toggleAllLocations(true)" [disabled]="busy">All</button>
-      <button matButton="outlined" (click)="toggleAllLocations(false)" [disabled]="busy">None</button>
+  <!-- Locations + crops, equal width -->
+  <div class="flex flex-col md:flex-row gap-4">
+    <!-- Districts checklist, grouped by province -->
+    <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0 flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <h4 class="flex-1">Districts ({{ selectedLocationIds().length }}/{{ availableCount() }} available)</h4>
+        <button matButton="outlined" (click)="toggleAllLocations(true)" [disabled]="busy">All</button>
+        <button matButton="outlined" (click)="toggleAllLocations(false)" [disabled]="busy">None</button>
+      </div>
+      <div class="flex-1 min-h-0 overflow-auto space-y-4 max-h-[38vh]">
+        @for (group of locationGroups(); track group.id) {
+          <div>
+            <div class="flex items-center gap-2">
+              <mat-checkbox
+                [checked]="isGroupChecked(group)"
+                [indeterminate]="isGroupIndeterminate(group)"
+                (change)="toggleGroup(group, $event.checked)"
+                [disabled]="busy"
+              >
+                <span class="font-medium">{{ group.label }}</span>
+              </mat-checkbox>
+              <span class="text-sm text-gray-500"
+                >{{ groupSelectedCount(group) }}/{{ groupSelectableCount(group) }}</span
+              >
+            </div>
+            <div class="ml-6 space-y-1 mt-1">
+              @for (loc of group.districts; track loc.id) {
+                <div class="flex items-center gap-1">
+                  <mat-checkbox
+                    class="flex-1"
+                    [checked]="isLocationSelected(loc.id)"
+                    (change)="toggleLocation(loc.id, $event.checked)"
+                    [disabled]="!loc.available || busy"
+                  >
+                    {{ loc.label }}
+                    @if (!loc.available) {
+                      <span class="text-gray-500 text-sm">(no data)</span>
+                    }
+                  </mat-checkbox>
+                  <button
+                    matIconButton
+                    (click)="exportSingle(loc.id, 'docx')"
+                    [disabled]="!loc.available || busy"
+                    matTooltip="Export single Word doc"
+                  >
+                    <mat-icon>description</mat-icon>
+                  </button>
+                  <button
+                    matIconButton
+                    (click)="exportSingle(loc.id, 'pdf')"
+                    [disabled]="!loc.available || busy"
+                    matTooltip="Export single PDF"
+                  >
+                    <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="text-gray-500 text-sm">No locations found</p>
+        }
+      </div>
     </div>
-    <div class="flex-1 min-h-0 overflow-auto space-y-4 max-h-[38vh]">
-      @for (group of locationGroups(); track group.id) {
-        <div>
-          <div class="flex items-center gap-2">
+
+    <!-- Crop families -->
+    <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0 flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <h4 class="flex-1">Crops ({{ selectedCropIds().length }}/{{ cropFamilies().length }})</h4>
+        <button matButton="outlined" (click)="toggleAllCrops(true)" [disabled]="busy">All</button>
+        <button matButton="outlined" (click)="toggleAllCrops(false)" [disabled]="busy">None</button>
+      </div>
+      <div class="flex-1 min-h-0 overflow-auto space-y-1 max-h-[38vh]">
+        @for (family of cropFamilies(); track family.id) {
+          <div class="flex items-center gap-1">
             <mat-checkbox
-              [checked]="isGroupChecked(group)"
-              [indeterminate]="isGroupIndeterminate(group)"
-              (change)="toggleGroup(group, $event.checked)"
+              class="flex-1"
+              [checked]="isCropSelected(family.id)"
+              (change)="toggleCrop(family.id, $event.checked)"
               [disabled]="busy"
             >
-              <span class="font-medium">{{ group.label }}</span>
+              {{ family.label }}
+              <span class="text-gray-500 text-sm">({{ family.varietyCount }})</span>
             </mat-checkbox>
-            <span class="text-sm text-gray-500">{{ groupSelectedCount(group) }}/{{ groupSelectableCount(group) }}</span>
           </div>
-          <div class="ml-6 space-y-1 mt-1">
-            @for (loc of group.districts; track loc.id) {
-              <div class="flex items-center gap-1">
-                <mat-checkbox
-                  class="flex-1"
-                  [checked]="isLocationSelected(loc.id)"
-                  (change)="toggleLocation(loc.id, $event.checked)"
-                  [disabled]="!loc.available || busy"
-                >
-                  {{ loc.label }}
-                  @if (!loc.available) {
-                    <span class="text-gray-500 text-sm">(no data)</span>
-                  }
-                </mat-checkbox>
-                <button
-                  matIconButton
-                  (click)="exportSingle(loc.id, 'docx')"
-                  [disabled]="!loc.available || busy"
-                  matTooltip="Export single Word doc"
-                >
-                  <mat-icon>description</mat-icon>
-                </button>
-                <button
-                  matIconButton
-                  (click)="exportSingle(loc.id, 'pdf')"
-                  [disabled]="!loc.available || busy"
-                  matTooltip="Export single PDF"
-                >
-                  <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      } @empty {
-        <p class="text-gray-500 text-sm">No locations found</p>
-      }
+        } @empty {
+          <p class="text-gray-500 text-sm">No crops found</p>
+        }
+      </div>
     </div>
   </div>
 
   <!-- Actions + progress -->
   <div class="flex items-center gap-4">
-    <button matButton="outlined" (click)="exportBulk('docx')" [disabled]="!canExport()">
+    <button matButton="filled" class="brand-word" (click)="exportBulk('docx')" [disabled]="!canExport()">
       <mat-icon>description</mat-icon>
       Export Word Docs
     </button>
-    <button matButton="filled" color="primary" (click)="exportBulk('pdf')" [disabled]="!canExport()">
+    <button matButton="filled" class="brand-pdf" (click)="exportBulk('pdf')" [disabled]="!canExport()">
       <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
       Export PDFs
     </button>
