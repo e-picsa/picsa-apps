@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+// Brand colours matching the desktop apps (Word blue, Acrobat red)
+.brand-word {
+  --mdc-filled-button-container-color: #2b579a;
+  --mdc-filled-button-label-text-color: #fff;
+}
+
+.brand-pdf {
+  --mdc-filled-button-container-color: #ec1c24;
+  --mdc-filled-button-label-text-color: #fff;
+}

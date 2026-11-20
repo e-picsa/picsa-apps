@@ -2701,6 +2701,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.28.6":
+  version: 7.29.14
+  resolution: "@babel/runtime@npm:7.29.14"
+  checksum: 10c0/dd809ac74c2154a549c9a9fbe73a3da84927c987d1291a1f1618f9263fa372a0de0d575c2616b3b420586a9974114c81ee47953c5d25074da66b58bf9d33d870
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.27.2, @babel/template@npm:^7.28.6":
   version: 7.28.6
   resolution: "@babel/template@npm:7.28.6"
@@ -14175,6 +14182,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pako@npm:^2.0.3":
+  version: 2.0.4
+  resolution: "@types/pako@npm:2.0.4"
+  checksum: 10c0/5765bf8bc7e77ee141c454118f03e544b8f6cb51eb257d82dc5830feeab8cd00818af3a1eabefdfbe8dd3ae9916ed5403937bf1031a0ee51deea27fdf4dccdfb
+  languageName: node
+  linkType: hard
+
 "@types/papaparse@npm:^5.5.2":
   version: 5.5.2
   resolution: "@types/papaparse@npm:5.5.2"
@@ -14221,6 +14235,13 @@ __metadata:
   version: 6.15.0
   resolution: "@types/qs@npm:6.15.0"
   checksum: 10c0/1b104cac50e655fc41d7fc1de2c2aba2908c4cf833a555b6808fb4c96752662b439238f2392a15d2590a7a6ca75dbd40e42d9378ac2be0d548ee484954363688
+  languageName: node
+  linkType: hard
+
+"@types/raf@npm:^3.4.0":
+  version: 3.4.3
+  resolution: "@types/raf@npm:3.4.3"
+  checksum: 10c0/dea835f0daa399c51db9137f5337dc08a2b4a5f61f645658966ecabaebbbd0fd59551f384a1141e14e22a1cc5a591da7d4d88c60a525ad1399108b6dd2641d75
   languageName: node
   linkType: hard
 
@@ -14431,6 +14452,13 @@ __metadata:
   version: 1.3.5
   resolution: "@types/triple-beam@npm:1.3.5"
   checksum: 10c0/d5d7f25da612f6d79266f4f1bb9c1ef8f1684e9f60abab251e1261170631062b656ba26ff22631f2760caeafd372abc41e64867cde27fba54fafb73a35b9056a
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 10c0/4c4855f10de7c6c135e0d32ce462419d8abbbc33713b31d294596c0cc34ae1fa6112a2f9da729c8f7a20707782b0d69da3b1f8df6645b0366d08825ca1522e0c
   languageName: node
   linkType: hard
 
@@ -17427,6 +17455,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"canvg@npm:^3.0.11":
+  version: 3.0.11
+  resolution: "canvg@npm:3.0.11"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+    "@types/raf": "npm:^3.4.0"
+    core-js: "npm:^3.8.3"
+    raf: "npm:^3.4.1"
+    regenerator-runtime: "npm:^0.13.7"
+    rgbcolor: "npm:^1.0.1"
+    stackblur-canvas: "npm:^2.0.0"
+    svg-pathdata: "npm:^6.0.3"
+  checksum: 10c0/03ea5b69e97a4a476ef5fc8455d0da2718bd68cd8ace3e42718176bf4b7dfd80eb1d0eba47dcd04b34ed9a0c5c8ed849ead0f364dad0e35369254a45d5e098c4
+  languageName: node
+  linkType: hard
+
 "capacitor-blob-writer@npm:^1.1.16":
   version: 1.1.20
   resolution: "capacitor-blob-writer@npm:1.1.20"
@@ -18327,6 +18371,13 @@ __metadata:
   version: 3.49.0
   resolution: "core-js-pure@npm:3.49.0"
   checksum: 10c0/b4580a57b917d0bf1029356b1a60abf0f9b99562b67bf39c01485d58891f23603459ed71bde1d7f75c0a9a346829d8c281b255c525fb119726341364c513e82e
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.6.0, core-js@npm:^3.8.3":
+  version: 3.51.0
+  resolution: "core-js@npm:3.51.0"
+  checksum: 10c0/1c10402cb9e8748c17327a68ba7a69e535d125cc81b63261506400681bdd814c6267c55fbc51fafd71d3094dcb25f5f41cc1bc5caba6a15118c73aec9653dd3b
   languageName: node
   linkType: hard
 
@@ -19797,6 +19848,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"docx-preview@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "docx-preview@npm:0.4.1"
+  dependencies:
+    jszip: "npm:>=3.0.0"
+  checksum: 10c0/5baf489e9cc611eb216ae8ea7fdf50107816e96ef0f1f103028417f88831528474038b9372a75b817bd344fbd4c9d07fd8b37c54360b02d293a873831c72161a
+  languageName: node
+  linkType: hard
+
 "docx@npm:^9.2.0":
   version: 9.7.1
   resolution: "docx@npm:9.7.1"
@@ -19835,6 +19895,18 @@ __metadata:
   dependencies:
     domelementtype: "npm:^2.3.0"
   checksum: 10c0/bba1e5932b3e196ad6862286d76adc89a0dbf0c773e5ced1eb01f9af930c50093a084eff14b8de5ea60b895c56a04d5de8bbc4930c5543d029091916770b2d2a
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.3.1":
+  version: 3.4.17
+  resolution: "dompurify@npm:3.4.17"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/6a12251ef5e700fc91b6d96d33e9f8b5fd590c55276f632cf42d182c5808e9f48d5bef435ab26eac235dfcc05ed8fe95e1c8308dcc502bf1050e561f14d0361a
   languageName: node
   linkType: hard
 
@@ -21426,6 +21498,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-png@npm:^6.2.0":
+  version: 6.4.0
+  resolution: "fast-png@npm:6.4.0"
+  dependencies:
+    "@types/pako": "npm:^2.0.3"
+    iobuffer: "npm:^5.3.2"
+    pako: "npm:^2.1.0"
+  checksum: 10c0/bca27a09d56a5ead536b11c1ddccf4fe44c7c0af88a8faefab6a397527d9c71b00c09b2055d0108807c438c50719dd2acbd7217ef88785b500888db26fa0358a
+  languageName: node
+  linkType: hard
+
 "fast-uri@npm:^3.0.1":
   version: 3.1.0
   resolution: "fast-uri@npm:3.1.0"
@@ -21536,6 +21619,13 @@ __metadata:
     node-domexception: "npm:^1.0.0"
     web-streams-polyfill: "npm:^3.0.3"
   checksum: 10c0/60054bf47bfa10fb0ba6cb7742acec2f37c1f56344f79a70bb8b1c48d77675927c720ff3191fa546410a0442c998d27ab05e9144c32d530d8a52fbe68f843b69
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.8.1":
+  version: 0.8.3
+  resolution: "fflate@npm:0.8.3"
+  checksum: 10c0/eab181ca37f5348ae76d4b6f840e0026e30220e33153289ac942222d8b9638237d486507dbcc09878d724095bd354993a2ee48bbee99c8f2c6440d4448719aa7
   languageName: node
   linkType: hard
 
@@ -22861,7 +22951,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html2canvas@npm:^1.4.1":
+"html2canvas@npm:^1.0.0-rc.5, html2canvas@npm:^1.4.1":
   version: 1.4.1
   resolution: "html2canvas@npm:1.4.1"
   dependencies:
@@ -23402,6 +23492,13 @@ __metadata:
     source-map-support: "npm:^0.x"
     teen_process: "npm:^2.0.0"
   checksum: 10c0/428afdf404d7297475646fee5afa217dc5fb3e9b347080eefded372d54517321aaa0137435ab54666d0e42a0232f00187113b08ca828670022b6b1eb190b7668
+  languageName: node
+  linkType: hard
+
+"iobuffer@npm:^5.3.2":
+  version: 5.4.0
+  resolution: "iobuffer@npm:5.4.0"
+  checksum: 10c0/1b3f9a5ea158bc63f038b374b42832acdb9db13ea9cfa4ed78723f30894986442f6c033dff4ae2fdf34724bf0fe432e3b86c11ca82049568c58b8d7fb47a6ac2
   languageName: node
   linkType: hard
 
@@ -25452,6 +25549,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jspdf@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "jspdf@npm:4.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.28.6"
+    canvg: "npm:^3.0.11"
+    core-js: "npm:^3.6.0"
+    dompurify: "npm:^3.3.1"
+    fast-png: "npm:^6.2.0"
+    fflate: "npm:^0.8.1"
+    html2canvas: "npm:^1.0.0-rc.5"
+  dependenciesMeta:
+    canvg:
+      optional: true
+    core-js:
+      optional: true
+    dompurify:
+      optional: true
+    html2canvas:
+      optional: true
+  checksum: 10c0/d905809b374de1060ab39ba4b1603935fcced314bef8f63f7fd272d3f96eff0b50a96e48d3c2063ac8e51b84a1442464ff2b037af13f54b082e456416da470b7
+  languageName: node
+  linkType: hard
+
 "jsprim@npm:^2.0.2":
   version: 2.0.2
   resolution: "jsprim@npm:2.0.2"
@@ -25461,6 +25582,18 @@ __metadata:
     json-schema: "npm:0.4.0"
     verror: "npm:1.10.0"
   checksum: 10c0/677be2d41df536c92c6d0114a492ef197084018cfbb1a3e10b1fa1aad889564b2e3a7baa6af7949cc2d73678f42368b0be165a26bd4e4de6883a30dd6a24e98d
+  languageName: node
+  linkType: hard
+
+"jszip@npm:>=3.0.0":
+  version: 3.10.2
+  resolution: "jszip@npm:3.10.2"
+  dependencies:
+    lie: "npm:~3.3.0"
+    pako: "npm:~1.0.2"
+    readable-stream: "npm:~2.3.6"
+    setimmediate: "npm:^1.0.5"
+  checksum: 10c0/c51b1473062bb7ac81c0c76047d99a2b56a062f2427ac989e28b46b31ecab636a440f137d15ff6320a961b7e1048c802f0bed83a2e10ed0ba9c2cfd84e818bc6
   languageName: node
   linkType: hard
 
@@ -28524,6 +28657,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pako@npm:^2.1.0":
+  version: 2.2.0
+  resolution: "pako@npm:2.2.0"
+  checksum: 10c0/e5d31de1940fdd13cc4014296b0026112483d0834bce4856ca29c8af8438d030c6416986a0f6df7d5372cae18d6dd6c57f48b24a49d6c207c0a4cc66af15c07d
+  languageName: node
+  linkType: hard
+
 "pako@npm:~1.0.2":
   version: 1.0.11
   resolution: "pako@npm:1.0.11"
@@ -28985,6 +29125,7 @@ __metadata:
     deepmerge: "npm:^4.3.0"
     dexie: "npm:^3.2.3"
     docx: "npm:^9.2.0"
+    docx-preview: "npm:^0.4.1"
     downloadjs: "npm:^1.4.7"
     eslint: "npm:8.57.0"
     eslint-config-prettier: "npm:9.1.0"
@@ -29013,6 +29154,7 @@ __metadata:
     jest-util: "npm:30.0.5"
     jetifier: "npm:^2.0.0"
     jsonc-eslint-parser: "npm:^2.4.0"
+    jspdf: "npm:^4.2.1"
     jszip: "npm:^3.10.1"
     jwt-decode: "npm:^4.0.0"
     ky: "npm:^1.7.4"
@@ -30162,6 +30304,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"raf@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "raf@npm:3.4.1"
+  dependencies:
+    performance-now: "npm:^2.1.0"
+  checksum: 10c0/337f0853c9e6a77647b0f499beedafea5d6facfb9f2d488a624f88b03df2be72b8a0e7f9118a3ff811377d534912039a3311815700d2b6d2313f82f736f9eb6e
+  languageName: node
+  linkType: hard
+
 "rambda@npm:^9.1.0":
   version: 9.4.2
   resolution: "rambda@npm:9.4.2"
@@ -30394,7 +30545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.4":
+"regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 10c0/12b069dc774001fbb0014f6a28f11c09ebfe3c0d984d88c9bced77fdb6fedbacbca434d24da9ae9371bfbf23f754869307fb51a4c98a8b8b18e5ef748677ca24
@@ -30736,6 +30887,13 @@ __metadata:
   version: 0.2.5
   resolution: "rgb2hex@npm:0.2.5"
   checksum: 10c0/32bf5373fe2690efc2a1761c9b50500faa6248e86ef3051766b06d4e95f3c49acfa6d522da5ea87e5db3ec5412ed777570fd626b1505c54bb5a970653fc9757b
+  languageName: node
+  linkType: hard
+
+"rgbcolor@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "rgbcolor@npm:1.0.1"
+  checksum: 10c0/13af06c523351bac2854b85a22d1dfafd9310efd898e9bd96c8706f9aa09a3ddc8392ab00ae03d12950782164a97677f21834ffd84ffebf76ae106add319f956
   languageName: node
   linkType: hard
 
@@ -32680,6 +32838,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stackblur-canvas@npm:^2.0.0":
+  version: 2.7.0
+  resolution: "stackblur-canvas@npm:2.7.0"
+  checksum: 10c0/df290d0629056d5bb43d37548d0b24cb8593c79d742650e68489abf61013db578c9980724c2508bb738d107204f2e2494ab94c3cf69d6b725caa9c63b8c7e272
+  languageName: node
+  linkType: hard
+
 "stackframe@npm:^1.3.4":
   version: 1.3.4
   resolution: "stackframe@npm:1.3.4"
@@ -33062,6 +33227,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"svg-pathdata@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "svg-pathdata@npm:6.0.3"
+  checksum: 10c0/1ba4ad2fa81e86df37d6e78d3be9e664bbedf97773b725a863a85db384285be32dc37d9c0d61e477d89594ee95b967d2c53d6bee2d76420aab670ab4124a38b9
   languageName: node
   linkType: hard
 

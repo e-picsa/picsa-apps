@@ -16,6 +16,7 @@ import {
   WidthType,
 } from 'docx';
 import download from 'downloadjs';
+import { firstValueFrom } from 'rxjs';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type {
@@ -27,6 +28,8 @@ export interface IExportDocxOptions {
   stationData: IStationCropData[];
   tableMeta: IProbabilityTableMeta;
   locationName: string;
+  /** Parent location label (e.g. province), shown above the location when present */
+  parentLocationName?: string;
   languageCode?: string;
   languageLabel?: string;
 }
@@ -38,36 +41,79 @@ export class CropProbabilityDocxService {
   private translateService = inject(TranslateService);
 
   public async exportDocx(options: IExportDocxOptions): Promise<void> {
-    const { stationData, tableMeta, locationName, languageCode, languageLabel } = options;
+    const { stationData, tableMeta, locationName, parentLocationName, languageCode, languageLabel } = options;
 
-    if (languageCode) {
-      this.translateService.use(languageCode);
-    }
+    const resolved = this.resolveExportLanguage(languageCode, languageLabel);
+    await this.ensureLanguageLoaded(resolved.normalizedCode);
 
+    const doc = this.buildDocxDocument(stationData, tableMeta, locationName, parentLocationName);
+    const blob = await Packer.toBlob(doc);
+    const filename = this.buildExportFilename(locationName, resolved.label, resolved.isEnglish, 'docx');
+    download(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  }
+
+  /** Generate a docx blob without triggering download (for bulk zip exports) */
+  public async generateDocxBlob(options: IExportDocxOptions): Promise<Blob> {
+    const { stationData, tableMeta, locationName, parentLocationName, languageCode } = options;
+    const resolved = this.resolveExportLanguage(languageCode, options.languageLabel);
+    await this.ensureLanguageLoaded(resolved.normalizedCode);
+    const doc = this.buildDocxDocument(stationData, tableMeta, locationName, parentLocationName);
+    return Packer.toBlob(doc);
+  }
+
+  /** Resolve language label, normalised translate code and english check */
+  public resolveExportLanguage(
+    languageCode?: string,
+    languageLabelOverride?: string,
+  ): { code: string; normalizedCode: string; label: string; isEnglish: boolean } {
     const currentLang =
       languageCode || this.translateService.currentLang || this.translateService.defaultLang || 'global_en';
+    const entry =
+      LOCALES_DATA_HASHMAP[currentLang as keyof typeof LOCALES_DATA_HASHMAP] ||
+      LOCALES_DATA.find((l) => l.id === currentLang || l.language_code === currentLang);
+    const label = languageLabelOverride || entry?.language_label || 'English';
+    const isEnglish = (entry?.language_code ?? (currentLang.endsWith('_en') ? 'en' : '')) === 'en';
+    // All english locales share global_en translations (see PicsaTranslateService)
+    const normalizedCode = currentLang.endsWith('_en') ? 'global_en' : currentLang;
+    return { code: currentLang, normalizedCode, label, isEnglish };
+  }
 
-    const resolvedLangLabel =
-      languageLabel ||
-      LOCALES_DATA_HASHMAP[currentLang as keyof typeof LOCALES_DATA_HASHMAP]?.language_label ||
-      LOCALES_DATA.find((l) => l.id === currentLang || l.language_code === currentLang)?.language_label ||
-      'English';
+  /**
+   * Ensure ngx-translate has loaded the target language before using instant().
+   * Throws when the requested language fails to activate so callers never
+   * silently generate a document in the wrong language (bulk exports record
+   * the failure against the file and continue with the rest).
+   */
+  public async ensureLanguageLoaded(normalizedCode: string): Promise<void> {
+    await firstValueFrom(this.translateService.use(normalizedCode));
+    if (this.translateService.currentLang !== normalizedCode) {
+      throw new Error(`Translation language [${normalizedCode}] failed to activate`);
+    }
+  }
 
-    const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
-    const blob = await Packer.toBlob(doc);
+  /**
+   * Build export filename. English omits language suffix for backwards compatibility,
+   * non-english appends language label
+   * e.g. `Dedza - Crop Probabilities.docx` vs `Dedza - Crop Probabilities - Chichewa.docx`
+   */
+  public buildExportFilename(locationName: string, langLabel: string, isEnglish: boolean, ext: 'docx' | 'pdf'): string {
     const sanitizedLocation = (locationName || 'Location').replace(/[/\\?%*:|"<>]/g, '_');
-    const sanitizedLang = resolvedLangLabel.replace(/[/\\?%*:|"<>]/g, '_');
-    const filename = `${sanitizedLocation} - Crop Probabilities - ${sanitizedLang}.docx`;
-    download(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    if (isEnglish) {
+      return `${sanitizedLocation} - Crop Probabilities.${ext}`;
+    }
+    const sanitizedLang = (langLabel || 'Language').replace(/[/\\?%*:|"<>]/g, '_');
+    return `${sanitizedLocation} - Crop Probabilities - ${sanitizedLang}.${ext}`;
   }
 
   public buildDocxDocument(
     stationData: IStationCropData[],
     tableMeta: IProbabilityTableMeta,
     locationName: string,
+    parentLocationName = '',
   ): Document {
     const dateHeadings = tableMeta.dateHeadings || [];
     const numDateCols = dateHeadings.length || 1;
+    const locationLine = parentLocationName ? `${parentLocationName} - ${locationName}` : locationName;
 
     // Localized labels
     const cropInfoLabel = this.translateService.instant('Crop Information');
@@ -137,7 +183,7 @@ export class CropProbabilityDocxService {
               new Paragraph({
                 children: [
                   new TextRun({ text: cropInfoLabel, bold: true, size: 24 }),
-                  new TextRun({ text: `\n${locationName}`, bold: true, size: 20 }),
+                  new TextRun({ text: locationLine, bold: true, size: 20, break: 1 }),
                 ],
               }),
             ],
@@ -462,6 +508,8 @@ export class CropProbabilityDocxService {
         {
           properties: {
             page: {
+              // Portrait A4 (210mm x 297mm) so Word and converted PDFs share print geometry
+              size: { width: 11906, height: 16838 },
               margin: {
                 top: 567, // 10mm in dxa (1mm = 56.7 dxa)
                 bottom: 567,

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { DashboardCropAdminComponent } from './admin.component';
 
@@ -8,7 +9,7 @@ describe('DashboardCropAdminComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardCropAdminComponent],
+      imports: [DashboardCropAdminComponent, PicsaTranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardCropAdminComponent);
