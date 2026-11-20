@@ -74,8 +74,8 @@
 </div>
 
 <!-- Cell Templates (kept outside @if so viewChild resolves before async data arrives) -->
-<ng-template #stationTemplate let-value let-row="row">
-  @if (row.station_changed) {
+<ng-template #stationTemplate let-value>
+  @if (value.includes('→')) {
     <span class="text-orange-700 font-medium">{{ value }}</span>
   } @else {
     <span>{{ value }}</span>

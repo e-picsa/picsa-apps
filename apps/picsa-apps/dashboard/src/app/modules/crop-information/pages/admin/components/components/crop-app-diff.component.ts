@@ -79,7 +79,6 @@ export interface IAppDbDiffRow {
   location_id: string;
   location_label: string;
   station: string;
-  station_changed: boolean;
   app_varieties: number;
   db_varieties: number;
   excluded_count: number;
@@ -263,7 +262,6 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station: this.formatStationComparison(entry.station_label, dbStation),
-        station_changed: this.isStationChanged(entry.station_label, dbStation),
         app_varieties: appSummary.varieties,
         db_varieties: 0,
         excluded_count: 0,
@@ -289,7 +287,6 @@ export class CropAppDiffComponent {
     const dbSummary = summarizeProbabilityTable(expected.table);
     const dbStation = this.stationDisplayName(expected.station.station_id, ctx.stationHashmap);
     const station = this.formatStationComparison(entry.station_label, dbStation);
-    const station_changed = this.isStationChanged(entry.station_label, dbStation);
     const excludedCount = expected.qc.excludedCount;
     const qcIssues = expected.qc.results.filter((r) => r.failures.length > 0 || r.warnings.length > 0);
     const dbSeasonProbabilities = expected.startProbabilities.map((s) => roundToNearest(s.probability, 0.1));
@@ -308,7 +305,6 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station,
-        station_changed,
         app_varieties: appSummary.varieties,
         db_varieties: dbSummary.varieties,
         excluded_count: excludedCount,
@@ -330,7 +326,6 @@ export class CropAppDiffComponent {
         location_id: locationId,
         location_label: entry.label,
         station,
-        station_changed,
         app_varieties: appSummary.varieties,
         db_varieties: dbSummary.varieties,
         excluded_count: excludedCount,
@@ -365,7 +360,6 @@ export class CropAppDiffComponent {
       location_id: locationId,
       location_label: entry.label,
       station,
-      station_changed,
       app_varieties: appSummary.varieties,
       db_varieties: dbSummary.varieties,
       excluded_count: excludedCount,
@@ -402,7 +396,6 @@ export class CropAppDiffComponent {
       return {
         ...base,
         station,
-        station_changed: false,
         db_varieties: summarizeProbabilityTable(expected.table).varieties,
         excluded_count: expected.qc.excludedCount,
         status: 'Missing in App',
@@ -426,7 +419,6 @@ export class CropAppDiffComponent {
     return {
       ...base,
       station: row.station_id ?? '—',
-      station_changed: false,
       db_varieties: 0,
       excluded_count: 0,
       status: 'No Source Data',
@@ -527,10 +519,6 @@ export class CropAppDiffComponent {
     if (!appStation) return dbStation || '—';
     if (!dbStation || appStation === dbStation) return appStation;
     return `${appStation} → ${dbStation}`;
-  }
-
-  private isStationChanged(appStation: string, dbStation: string): boolean {
-    return !!appStation && !!dbStation && appStation !== dbStation;
   }
 
   /** Explain why a location has no usable data-system row */
