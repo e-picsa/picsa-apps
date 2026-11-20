@@ -110,10 +110,18 @@
                       {{ row.standardCount }} of {{ dialog.total }} stations
                     </span>
                   </td>
-                  <td class="p-3" [class.text-orange-800]="row.differs" [class.font-medium]="row.differs">
-                    {{ row.station }}
+                  <td class="p-3">
+                    <span [class.text-orange-800]="row.mainDiffers" [class.font-medium]="row.mainDiffers">{{
+                      row.station
+                    }}</span>
                     @if (row.stationStep) {
-                      <span class="block text-xs font-normal opacity-80">{{ row.stationStep }}</span>
+                      <span
+                        class="block text-xs font-normal"
+                        [class.text-orange-800]="row.stepDiffers"
+                        [class.font-medium]="row.stepDiffers"
+                        [class.text-gray-500]="!row.stepDiffers"
+                        >{{ row.stationStep }}</span
+                      >
                     }
                   </td>
                 </tr>

@@ -183,6 +183,8 @@ export class CropMissingStationInfoComponent {
         standardStep: standardDays.step,
         station: stationDays.main,
         stationStep: stationDays.step,
+        mainDiffers: m.daysRef ? b.minDays !== m.daysRef.minDays || b.maxDays !== m.daysRef.maxDays : false,
+        stepDiffers: m.daysRef ? b.daysStep !== m.daysRef.daysStep : false,
         differs: selected.differs.days,
         standardCount: m.daysCount,
       },
@@ -192,6 +194,8 @@ export class CropMissingStationInfoComponent {
         standardStep: standardWater.step,
         station: stationWater.main,
         stationStep: stationWater.step,
+        mainDiffers: m.waterRef ? b.minWater !== m.waterRef.minWater || b.maxWater !== m.waterRef.maxWater : false,
+        stepDiffers: m.waterRef ? b.waterStep !== m.waterRef.waterStep : false,
         differs: selected.differs.water,
         standardCount: m.waterCount,
       },
@@ -201,6 +205,10 @@ export class CropMissingStationInfoComponent {
         standardStep: standardPlant.step,
         station: stationPlant.main,
         stationStep: stationPlant.step,
+        mainDiffers: m.plantRef
+          ? b.minPlantDay !== m.plantRef.minPlantDay || b.maxPlantDay !== m.plantRef.maxPlantDay
+          : false,
+        stepDiffers: m.plantRef ? b.plantDayStep !== m.plantRef.plantDayStep : false,
         differs: selected.differs.plant,
         standardCount: m.plantCount,
       },
