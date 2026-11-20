@@ -28,6 +28,8 @@ export interface IExportDocxOptions {
   stationData: IStationCropData[];
   tableMeta: IProbabilityTableMeta;
   locationName: string;
+  /** Parent location label (e.g. province), shown above the location when present */
+  parentLocationName?: string;
   languageCode?: string;
   languageLabel?: string;
 }
@@ -39,12 +41,12 @@ export class CropProbabilityDocxService {
   private translateService = inject(TranslateService);
 
   public async exportDocx(options: IExportDocxOptions): Promise<void> {
-    const { stationData, tableMeta, locationName, languageCode, languageLabel } = options;
+    const { stationData, tableMeta, locationName, parentLocationName, languageCode, languageLabel } = options;
 
     const resolved = this.resolveExportLanguage(languageCode, languageLabel);
     await this.ensureLanguageLoaded(resolved.normalizedCode);
 
-    const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
+    const doc = this.buildDocxDocument(stationData, tableMeta, locationName, parentLocationName);
     const blob = await Packer.toBlob(doc);
     const filename = this.buildExportFilename(locationName, resolved.label, resolved.isEnglish, 'docx');
     download(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
@@ -52,10 +54,10 @@ export class CropProbabilityDocxService {
 
   /** Generate a docx blob without triggering download (for bulk zip exports) */
   public async generateDocxBlob(options: IExportDocxOptions): Promise<Blob> {
-    const { stationData, tableMeta, locationName, languageCode } = options;
+    const { stationData, tableMeta, locationName, parentLocationName, languageCode } = options;
     const resolved = this.resolveExportLanguage(languageCode, options.languageLabel);
     await this.ensureLanguageLoaded(resolved.normalizedCode);
-    const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
+    const doc = this.buildDocxDocument(stationData, tableMeta, locationName, parentLocationName);
     return Packer.toBlob(doc);
   }
 
@@ -76,12 +78,16 @@ export class CropProbabilityDocxService {
     return { code: currentLang, normalizedCode, label, isEnglish };
   }
 
-  /** Ensure ngx-translate has loaded the target language before using instant() */
+  /**
+   * Ensure ngx-translate has loaded the target language before using instant().
+   * Throws when the requested language fails to activate so callers never
+   * silently generate a document in the wrong language (bulk exports record
+   * the failure against the file and continue with the rest).
+   */
   public async ensureLanguageLoaded(normalizedCode: string): Promise<void> {
-    try {
-      await firstValueFrom(this.translateService.use(normalizedCode));
-    } catch (e) {
-      console.warn(`[CropDocx] Failed to load language [${normalizedCode}]`, e);
+    await firstValueFrom(this.translateService.use(normalizedCode));
+    if (this.translateService.currentLang !== normalizedCode) {
+      throw new Error(`Translation language [${normalizedCode}] failed to activate`);
     }
   }
 
@@ -103,9 +109,11 @@ export class CropProbabilityDocxService {
     stationData: IStationCropData[],
     tableMeta: IProbabilityTableMeta,
     locationName: string,
+    parentLocationName = '',
   ): Document {
     const dateHeadings = tableMeta.dateHeadings || [];
     const numDateCols = dateHeadings.length || 1;
+    const locationLine = parentLocationName ? `${parentLocationName} - ${locationName}` : locationName;
 
     // Localized labels
     const cropInfoLabel = this.translateService.instant('Crop Information');
@@ -175,7 +183,7 @@ export class CropProbabilityDocxService {
               new Paragraph({
                 children: [
                   new TextRun({ text: cropInfoLabel, bold: true, size: 24 }),
-                  new TextRun({ text: `\n${locationName}`, bold: true, size: 20 }),
+                  new TextRun({ text: locationLine, bold: true, size: 20, break: 1 }),
                 ],
               }),
             ],

@@ -8,7 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CROPS_DATA_HASHMAP, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
@@ -53,9 +53,9 @@ export class CropPrintExportComponent {
   private printService = inject(CropProbabilityPrintService);
 
   public locations = computed(() => {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    if (!locationData) return [];
-    return getDeepestLocations(locationData).sort((a, b) => a.label.localeCompare(b.label));
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    if (!countryCode) return [];
+    return getDownscaledLocations(countryCode).sort((a, b) => a.label.localeCompare(b.label));
   });
 
   /** Locations with no exportable data (no station, requirements or probabilities) */
@@ -142,9 +142,7 @@ export class CropPrintExportComponent {
       this.selectedCropIds().length > 0,
   );
 
-  public get busy(): boolean {
-    return this.exporting() || !!this.singleExportingId();
-  }
+  public busy = computed(() => this.exporting() || !!this.singleExportingId());
 
   public statusText = computed(() => {
     const stage = this.stage();
@@ -251,12 +249,12 @@ export class CropPrintExportComponent {
 
   public exportBulk(format: CropPrintFormat) {
     if (!this.canExport()) return;
-    this.runExport(this.selectedLocationIds(), null, format);
+    return this.runExport(this.selectedLocationIds(), null, format);
   }
 
   public exportSingle(locationId: string, format: CropPrintFormat) {
-    if (this.busy) return;
-    this.runExport([locationId], locationId, format);
+    if (this.busy() || this.selectedCropIds().length === 0) return;
+    return this.runExport([locationId], locationId, format);
   }
 
   private async runExport(locationIds: string[], singleId: string | null, format: CropPrintFormat) {
@@ -282,11 +280,7 @@ export class CropPrintExportComponent {
         },
       });
       this.failures.set(failed);
-      this.lastResult.set(
-        files > 0
-          ? `Exported ${files} file(s)${skipped > 0 ? `, skipped ${skipped} with no data` : ''}${failed.length > 0 ? `, ${failed.length} failed` : ''}`
-          : 'No files exported - no locations with data',
-      );
+      this.lastResult.set(this.formatResultMessage(files, skipped, failed.length));
     } catch (e) {
       this.lastResult.set(`Export failed: ${(e as Error).message || e}`);
     } finally {
@@ -294,5 +288,13 @@ export class CropPrintExportComponent {
       else this.exporting.set(false);
       this.stage.set('idle');
     }
+  }
+
+  /** Summarise a completed export run for the status line */
+  private formatResultMessage(files: number, skipped: number, failedCount: number): string {
+    if (files === 0) return 'No files exported - no locations with data';
+    const skippedNote = skipped > 0 ? `, skipped ${skipped} with no data` : '';
+    const failedNote = failedCount > 0 ? `, ${failedCount} failed` : '';
+    return `Exported ${files} file(s)${skippedNote}${failedNote}`;
   }
 }

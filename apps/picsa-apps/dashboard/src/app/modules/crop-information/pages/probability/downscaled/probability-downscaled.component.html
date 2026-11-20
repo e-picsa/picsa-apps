@@ -29,6 +29,7 @@
               [station]="downscaled.station"
               [startProbabilities]="startProbabilities"
               [locationName]="locationMeta().label"
+              [parentLocationName]="locationMeta().parentLabel ?? ''"
             ></dashboard-crop-probability-table>
           }
         } @else {

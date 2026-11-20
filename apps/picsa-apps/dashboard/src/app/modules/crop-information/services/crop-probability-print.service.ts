@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
 import download from 'downloadjs';
@@ -35,6 +35,7 @@ export interface IPrintExportTable {
   location_id: string;
   label: string;
   parentId: string;
+  parentLabel: string;
   table: IStationCropData[];
   meta: IProbabilityTableMeta;
 }
@@ -87,8 +88,7 @@ export class CropProbabilityPrintService {
     const cropData = this.cropService.cropData();
     const cropDataHashmap = arrayToHashmap(cropData, 'id', (v) => `${v.crop}/${v.variety}`);
 
-    const locationData = this.deploymentService.activeDeploymentLocationData();
-    const locations = getDeepestLocations(locationData);
+    const locations = getDownscaledLocations(countryCode);
     const filterSet = locationIds && locationIds.length > 0 ? new Set(locationIds) : null;
     const cropSet = cropFamilies && cropFamilies.length > 0 ? new Set(cropFamilies) : null;
 
@@ -145,11 +145,13 @@ export class CropProbabilityPrintService {
       }
       const match = locations.find((v) => v.id === row.location_id);
       const parentId = match?.parentId || '';
+      const parentLabel = match?.parentLabel || '';
       const label = match?.label || row.location_id;
       tables.push({
         location_id: row.location_id,
         label,
         parentId,
+        parentLabel,
         table,
         meta: {
           id: row.location_id,
@@ -215,6 +217,7 @@ export class CropProbabilityPrintService {
               stationData: entry.table,
               tableMeta: entry.meta,
               locationName: entry.label,
+              parentLocationName: entry.parentLabel || undefined,
               languageCode: langCode,
             });
             const blob = format === 'pdf' ? await this.pdfService.convertDocxBlobToPdf(docxBlob) : docxBlob;

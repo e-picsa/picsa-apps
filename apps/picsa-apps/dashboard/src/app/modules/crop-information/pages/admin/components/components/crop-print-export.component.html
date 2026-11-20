@@ -15,8 +15,8 @@
     <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0 flex-1 min-w-0">
       <div class="flex items-center gap-2">
         <h4 class="flex-1">Districts ({{ selectedLocationIds().length }}/{{ availableCount() }} available)</h4>
-        <button matButton="outlined" (click)="toggleAllLocations(true)" [disabled]="busy">All</button>
-        <button matButton="outlined" (click)="toggleAllLocations(false)" [disabled]="busy">None</button>
+        <button matButton="outlined" (click)="toggleAllLocations(true)" [disabled]="busy()">All</button>
+        <button matButton="outlined" (click)="toggleAllLocations(false)" [disabled]="busy()">None</button>
       </div>
       <div class="flex-1 min-h-0 overflow-auto space-y-4 max-h-[38vh]">
         @for (group of locationGroups(); track group.id) {
@@ -26,7 +26,7 @@
                 [checked]="isGroupChecked(group)"
                 [indeterminate]="isGroupIndeterminate(group)"
                 (change)="toggleGroup(group, $event.checked)"
-                [disabled]="busy"
+                [disabled]="busy()"
               >
                 <span class="font-medium">{{ group.label }}</span>
               </mat-checkbox>
@@ -41,7 +41,7 @@
                     class="flex-1"
                     [checked]="isLocationSelected(loc.id)"
                     (change)="toggleLocation(loc.id, $event.checked)"
-                    [disabled]="!loc.available || busy"
+                    [disabled]="!loc.available || busy()"
                   >
                     {{ loc.label }}
                     @if (!loc.available) {
@@ -51,7 +51,7 @@
                   <button
                     matIconButton
                     (click)="exportSingle(loc.id, 'docx')"
-                    [disabled]="!loc.available || busy"
+                    [disabled]="!loc.available || busy() || selectedCropIds().length === 0"
                     matTooltip="Export single Word doc"
                   >
                     <mat-icon>description</mat-icon>
@@ -59,7 +59,7 @@
                   <button
                     matIconButton
                     (click)="exportSingle(loc.id, 'pdf')"
-                    [disabled]="!loc.available || busy"
+                    [disabled]="!loc.available || busy() || selectedCropIds().length === 0"
                     matTooltip="Export single PDF"
                   >
                     <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
@@ -78,8 +78,8 @@
     <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0 flex-1 min-w-0">
       <div class="flex items-center gap-2">
         <h4 class="flex-1">Crops ({{ selectedCropIds().length }}/{{ cropFamilies().length }})</h4>
-        <button matButton="outlined" (click)="toggleAllCrops(true)" [disabled]="busy">All</button>
-        <button matButton="outlined" (click)="toggleAllCrops(false)" [disabled]="busy">None</button>
+        <button matButton="outlined" (click)="toggleAllCrops(true)" [disabled]="busy()">All</button>
+        <button matButton="outlined" (click)="toggleAllCrops(false)" [disabled]="busy()">None</button>
       </div>
       <div class="flex-1 min-h-0 overflow-auto space-y-1 max-h-[38vh]">
         @for (family of cropFamilies(); track family.id) {
@@ -88,7 +88,7 @@
               class="flex-1"
               [checked]="isCropSelected(family.id)"
               (change)="toggleCrop(family.id, $event.checked)"
-              [disabled]="busy"
+              [disabled]="busy()"
             >
               {{ family.label }}
               <span class="text-gray-500 text-sm">({{ family.varietyCount }})</span>
@@ -111,7 +111,7 @@
       <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
       Export PDFs
     </button>
-    @if (busy) {
+    @if (busy()) {
       <div class="flex-1 flex items-center gap-3">
         @if (progressIndeterminate) {
           <mat-progress-bar mode="indeterminate" class="flex-1" />
@@ -124,7 +124,7 @@
       <span class="text-sm">{{ lastResult() }}</span>
     }
   </div>
-  @if (!busy && failures().length > 0) {
+  @if (!busy() && failures().length > 0) {
     <div class="text-sm text-red-700 space-y-1">
       <div>{{ failures().length }} file(s) failed:</div>
       <ul class="list-disc pl-5">
@@ -137,7 +137,7 @@
       }
     </div>
   }
-  @if (!busy && estimatedFiles() > 150) {
+  @if (!busy() && estimatedFiles() > 150) {
     <p class="text-sm text-amber-700">Large export ({{ estimatedFiles() }} files) - this may take a few minutes.</p>
   }
 </div>

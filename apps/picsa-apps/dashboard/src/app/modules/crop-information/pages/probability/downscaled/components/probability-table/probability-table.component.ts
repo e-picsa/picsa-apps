@@ -62,6 +62,8 @@ export class CropProbabilityTableComponent {
   startProbabilities = input.required<ISeasonStartProbability[]>();
 
   locationName = input.required<string>();
+  /** Parent location label (e.g. province), shown above the location when present */
+  parentLocationName = input<string>('');
 
   public hasDownscaledWaterRequirements = computed(() => Object.keys(this.waterRequirements()).length > 0);
   public hasStationCropProbabilities = computed(() => this.stationProbabilities().length > 0);
@@ -113,6 +115,7 @@ export class CropProbabilityTableComponent {
       stationData: this.tableData(),
       tableMeta: this.tableMeta(),
       locationName: this.locationName(),
+      parentLocationName: this.parentLocationName() || undefined,
     });
   }
 

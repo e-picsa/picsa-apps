@@ -136,6 +136,6 @@ export class ProbabilityDownscaledComponent {
     if (downscaledData && countryCode) {
       return getDownscaledLocation(countryCode, downscaledData.location_id);
     }
-    return { id: '', label: '' };
+    return { id: '', label: '', parentId: '', parentLabel: '' };
   }
 }

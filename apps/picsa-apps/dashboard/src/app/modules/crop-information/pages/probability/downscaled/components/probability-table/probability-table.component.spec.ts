@@ -64,6 +64,7 @@ describe('CropProbabilityTableComponent', () => {
         station_label: 'DEDZA MET',
       }),
       locationName: 'Dedza North',
+      parentLocationName: undefined,
     });
   });
 });

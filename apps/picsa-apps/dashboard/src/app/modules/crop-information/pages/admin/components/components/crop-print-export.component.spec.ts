@@ -23,7 +23,6 @@ describe('CropPrintExportComponent', () => {
           provide: DeploymentDashboardService,
           useValue: {
             activeDeploymentCountry: signal('zw'),
-            activeDeploymentLocationData: signal(undefined),
             activeDeployment: signal({ country_code: 'zw' }),
           },
         },
@@ -103,6 +102,15 @@ describe('CropPrintExportComponent', () => {
       true,
     );
     expect(component.selectedLocationIds()).toContain('buhera');
+  });
+
+  it('should not export a single location when no crops selected', async () => {
+    component.selectedLanguageCodes.set(['global_en']);
+    component.selectedCropIds.set([]);
+    (mockPrintService.exportPrint as jest.Mock).mockClear();
+    fixture.detectChanges();
+    await component.exportSingle('buhera', 'pdf');
+    expect(mockPrintService.exportPrint).not.toHaveBeenCalled();
   });
 
   it('should export a single location directly', async () => {

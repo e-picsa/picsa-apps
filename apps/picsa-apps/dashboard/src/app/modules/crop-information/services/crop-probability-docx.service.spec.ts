@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { Document, Packer } from 'docx';
 import download from 'downloadjs';
+import JSZip from 'jszip';
 import { of } from 'rxjs';
 
 import { CropProbabilityDocxService } from './crop-probability-docx.service';
@@ -53,7 +54,10 @@ describe('CropProbabilityDocxService', () => {
     },
   ];
 
+  let mockCurrentLang = 'global_en';
+
   beforeEach(() => {
+    mockCurrentLang = 'global_en';
     (download as unknown as jest.Mock).mockClear();
     TestBed.configureTestingModule({
       providers: [
@@ -61,9 +65,14 @@ describe('CropProbabilityDocxService', () => {
         {
           provide: TranslateService,
           useValue: {
-            currentLang: 'global_en',
             defaultLang: 'global_en',
-            use: jest.fn().mockReturnValue(of({})),
+            get currentLang() {
+              return mockCurrentLang;
+            },
+            use: jest.fn((lang: string) => {
+              mockCurrentLang = lang;
+              return of({});
+            }),
             instant: jest.fn((key: string) => key),
           },
         },
@@ -107,6 +116,21 @@ describe('CropProbabilityDocxService', () => {
     const buffer = await Packer.toBuffer(doc);
     expect(buffer).toBeDefined();
     expect(buffer.length).toBeGreaterThan(0);
+  });
+
+  it('should build a valid Document structure with parent location in header', async () => {
+    const doc = service.buildDocxDocument(mockStationData, mockMeta, 'Chibombo', 'Central');
+    expect(doc).toBeInstanceOf(Document);
+
+    const buffer = await Packer.toBuffer(doc);
+    expect(buffer).toBeDefined();
+    expect(buffer.length).toBeGreaterThan(0);
+
+    const zip = await JSZip.loadAsync(buffer);
+    const xml = await zip.file('word/document.xml')?.async('text');
+    expect(xml).toContain('Central - Chibombo');
+    // Location title must sit on its own line below the heading
+    expect(xml).toContain('<w:br');
   });
 
   it('should export docx with english filename omitting language suffix', async () => {
