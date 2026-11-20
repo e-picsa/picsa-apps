@@ -187,7 +187,7 @@ export async function getLocationCenterAndBoundary(
 
   // 3. Fallback: Check if location item itself has precomputed coordinates
   const { layers } = getGeoLocationData(countryCode);
-  const targetLayer = role === 'parent' ? layers[0] : layers[layers.length - 1];
+  const targetLayer = role === 'parent' ? layers[0] : layers.at(-1);
   const locationCoords = targetLayer?.locations.find((l) => l.id === locationId)?.coordinates;
   if (locationCoords?.latitude && locationCoords?.longitude) {
     return {

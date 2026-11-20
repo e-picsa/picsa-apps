@@ -240,7 +240,7 @@ export class SiteSelectPage {
   public readonly tableOptions = computed(() => {
     const country_code = this.userCountryCode();
     const { layers } = getGeoLocationData(country_code);
-    const deepestLabel = layers[layers.length - 1]?.label ?? layers[0]?.label ?? '';
+    const deepestLabel = layers.at(-1)?.label ?? layers[0]?.label ?? '';
     return {
       displayColumns: ['map', 'name', 'district'],
       formatHeader: (v) => {

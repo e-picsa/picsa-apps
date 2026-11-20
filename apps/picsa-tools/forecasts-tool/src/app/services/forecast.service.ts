@@ -148,7 +148,7 @@ export class ForecastService extends PicsaAsyncService {
 
       const { country_code, locations } = this.downscaledLocation();
       if (country_code && locations && locations.length > 0) {
-        this.loadDownscaledForecasts(country_code, locations);
+        void this.loadDownscaledForecasts(country_code, locations);
       } else {
         if (this.activeDownscaledLoad) {
           this.activeDownscaledLoad.cancelled = true;

@@ -133,7 +133,7 @@ export class DashboardCropWaterRequirementsComponent {
     if (!country_code) return [];
     const { layers } = getGeoLocationData(country_code);
     const parentLayer = layers.length > 1 ? layers[0] : undefined;
-    const deepestLayer = layers[layers.length - 1];
+    const deepestLayer = layers.at(-1);
     const hasParent = Boolean(parentLayer);
     const parentColLabel = parentLayer?.label ?? '';
     const deepestColLabel = deepestLayer?.label ?? 'Location';
