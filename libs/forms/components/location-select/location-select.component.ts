@@ -3,16 +3,16 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, output, si
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, getLocationSlots, IGeolocationData } from '@picsa/data/geoLocation';
+import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
 /**
  * Location select displays dropdown selection boxes for administrative parent and sub-location
  * tiers within the current user selected country.
  *
- * Each country defines its own slots (e.g. mw: [admin_4], zm: [admin_4, admin_5], zw: [admin_4, admin_6]).
- * The first dropdown renders the parent tier, and when a secondary tier exists, the second dropdown renders
- * the deepest defined sublocation tier.
+ * Each country defines ordered `layers` (e.g. mw: [district], zm: [province, district], zw: [province, district]).
+ * Assumes 1 or 2 hierarchy layers (upcoming MW EPAs remain 2-layer, mapped to tuple indexes 4 and 5).
+ * Supporting 3+ layers in the future would require dynamic per-layer dropdowns and extending the persisted tuple.
  */
 @Component({
   selector: 'picsa-form-location-select',
@@ -39,33 +39,17 @@ export class FormLocationSelectComponent {
   public sublocationOptions = signal<{ id: string; label: string }[]>([]);
   public sublocationSelected = signal<string | undefined>(undefined);
 
-  /** Backwards-compatible aliases for legacy templates and specs */
-  public get admin4Selected() {
-    return this.parentSelected;
-  }
-  public get admin5Selected() {
-    return this.sublocationSelected;
-  }
-  public get admin5Options() {
-    return this.sublocationOptions;
-  }
-
-  /** Parent location tier defined for the country (drives the first dropdown) */
+  /** Parent location layer defined for the country (drives the first dropdown) */
   public parentLocation = computed(() => {
-    const locationData = this.locationData();
-    const slots = getLocationSlots(locationData);
-    const slot = slots[0];
-    return slot ? { slot, ...locationData[slot]! } : undefined;
+    const { layers } = this.locationData();
+    return layers[0];
   });
 
-  /** Deepest location tier defined for the country (drives the second dropdown) */
+  /** Deepest location layer defined for the country (drives the second dropdown) */
   public sublocation = computed(() => {
-    const locationData = this.locationData();
-    const slots = getLocationSlots(locationData);
-    if (slots.length < 2) return undefined;
-    const slot = slots[slots.length - 1];
-    const parentSlot = slots[slots.length - 2];
-    return { slot, parentSlot, ...locationData[slot]! };
+    const { layers } = this.locationData();
+    if (layers.length < 2) return undefined;
+    return layers[layers.length - 1];
   });
 
   public computedValue = computed<(string | undefined)[]>(
@@ -144,10 +128,7 @@ export class FormLocationSelectComponent {
     }
     const sublocation = this.sublocation();
     if (sublocation) {
-      const parentSlot = sublocation.parentSlot;
-      const filteredLocations = sublocation.locations.filter(
-        (o) => (o as Record<string, string>)[parentSlot] === parentSelected,
-      );
+      const filteredLocations = sublocation.locations.filter((o) => o.parentId === parentSelected);
       this.sublocationOptions.set(filteredLocations);
       let currentSublocation = this.sublocationSelected();
       if (currentSublocation && !filteredLocations.find((v) => v.id === currentSublocation)) {

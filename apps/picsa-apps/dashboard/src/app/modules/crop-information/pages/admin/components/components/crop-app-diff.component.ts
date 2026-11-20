@@ -24,7 +24,7 @@ import type {
   IProbabilityTableMeta,
   IStationCropData,
 } from '@picsa/crop-probability/src/app/models';
-import { getDeepestLocations } from '@picsa/data/geoLocation';
+import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -65,7 +65,7 @@ export type AppDbDiffStatus =
   | 'No Source Data'
   | 'In Sync';
 
-export type AppDiffFilter = 'actionable' | AppDbDiffStatus;
+export type AppDiffFilter = 'all' | AppDbDiffStatus;
 
 export interface IAppDbDiffDialogData {
   diffTable: IStationCropData[];
@@ -139,21 +139,25 @@ export class CropAppDiffComponent {
     viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('excludedTemplate');
   private readonly probChangeTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('probChangeTemplate');
+  private readonly stationTemplate =
+    viewChild<TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>>('stationTemplate');
   private readonly diffDialogTemplate = viewChild.required<TemplateRef<unknown>>('diffDialogTemplate');
 
   public valueTemplates = computed(() => {
     const excluded = this.excludedTemplate();
     const probChange = this.probChangeTemplate();
+    const station = this.stationTemplate();
     const map: Record<string, TemplateRef<{ $implicit: unknown; row: IAppDbDiffRow }>> = {};
     if (excluded) map['excluded_count'] = excluded;
     if (probChange) map['prob_change_pct'] = probChange;
+    if (station) map['station'] = station;
     return map;
   });
 
   public loading = signal(true);
   public loadError = signal<string | null>(null);
   public applyBounds = signal(ENFORCE_LOOKUP_BOUNDS);
-  public tableFilter = signal<AppDiffFilter>('actionable');
+  public tableFilter = signal<AppDiffFilter>('all');
   public selectedDiffRow = signal<IAppDbDiffRow | null>(null);
 
   /** App data index entries for the active country */
@@ -425,20 +429,16 @@ export class CropAppDiffComponent {
   public displayedRows = computed(() => {
     const rows = this.diffRows();
     const filter = this.tableFilter();
-    if (filter === 'actionable') {
-      return rows.filter((row) => row.status !== 'In Sync');
-    }
+    if (filter === 'all') return rows;
     return rows.filter((row) => row.status === filter);
   });
 
   public stats = computed(() => {
     const rows = this.diffRows();
     const count = (status: AppDbDiffStatus) => rows.filter((row) => row.status === status).length;
-    const inSync = count('In Sync');
     return {
       total: rows.length,
-      actionable: rows.length - inSync,
-      inSync,
+      inSync: count('In Sync'),
       newExclusions: count('New Exclusions'),
       differs: count('Differs'),
       missing: count('Missing in App'),
@@ -504,9 +504,10 @@ export class CropAppDiffComponent {
   }
 
   private locationLabels = computed(() => {
-    const locationData = this.deploymentService.activeDeploymentLocationData();
+    const countryCode = this.deploymentService.activeDeploymentCountry();
     const labels: Record<string, string> = {};
-    for (const location of getDeepestLocations(locationData)) labels[location.id] = location.label;
+    if (!countryCode) return labels;
+    for (const location of getDownscaledLocations(countryCode)) labels[location.id] = location.label;
     return labels;
   });
 

@@ -38,7 +38,7 @@
   @if (rows().length > 0) {
     <picsa-data-table
       [data]="rows()"
-      [options]="tableOptions"
+      [options]="tableOptions()"
       [valueTemplates]="valueTemplates"
       (rowClick)="openSetStationDialog($event)"
     ></picsa-data-table>

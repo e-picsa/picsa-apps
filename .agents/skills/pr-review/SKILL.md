@@ -43,23 +43,29 @@ git diff -M -C --stat $(git merge-base HEAD "origin/${DEFAULT_BASE}")...HEAD
 git diff -M -C --name-only $(git merge-base HEAD "origin/${DEFAULT_BASE}")...HEAD
 ```
 
-### 2. Monorepo Domain Distribution Map
+### 2. Monorepo Domain Distribution Map (Two-Tier Blast Radius)
 
-Categorize touched files across monorepo boundaries to understand blast radius:
+Categorize touched files across monorepo boundaries and **audience risk tier** before diving into line-by-line diffs:
 
-| Domain                   | Paths                                            | Architectural Role & Sensitivity                                                         |
-| ------------------------ | ------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| **Super App Shell**      | `apps/picsa-apps/app/`                           | Global navigation, app shell, root guards. High blast radius for mobile app.             |
-| **Mobile Native**        | `apps/picsa-apps/app-native/`                    | Capacitor native wrappers, native plugins, permissions.                                  |
-| **Admin Dashboard**      | `apps/picsa-apps/dashboard/`                     | Web-only admin tool. Does not affect mobile bundle size. Relaxed i18n rules.             |
-| **Domain Tools**         | `apps/picsa-tools/<tool-name>/`                  | Embedded mini-apps (e.g. `climate-tool`, `crop-tool`). Changes should be self-contained. |
-| **Pure Models**          | `libs/models/`                                   | **Pure TypeScript only**. Zero runtime code. Only `import type` allowed.                 |
-| **Pure Utilities**       | `libs/utils/`                                    | Platform-agnostic helpers. **No Angular, RxDB, or DOM imports allowed**.                 |
-| **Domain Data**          | `libs/data/`                                     | Chart definitions, static data structures, domain metadata.                              |
-| **UI & Theme**           | `libs/theme/`, `libs/components/`                | Shared UI tokens and presentational components.                                          |
-| **Supabase / Backend**   | `apps/picsa-server/supabase/`                    | Migrations, Edge Functions, database triggers, seed CSVs.                                |
-| **Workspace Config**     | `package.json`, `tsconfig*`, `nx.json`, `tools/` | Workspace-wide impact. High scrutiny required.                                           |
-| **Agent Tooling & Docs** | `.agents/`, `AGENTS.md`, `*.md`                   | Development workflows, skills, institutional knowledge. Low blast radius.                |
+| Risk Tier                             | Domain                        | Paths                                                                                   | Architectural Role & Sensitivity                                                                                                                                                               |
+| ------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Super App Shell**           | `apps/picsa-apps/app/`                                                                  | Global navigation, app shell, root guards. High blast radius across Play Store / offline mobile releases.                                                                                      |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Mobile Native**             | `apps/picsa-apps/app-native/`                                                           | Capacitor native wrappers, native plugins, permissions. Slowest turnaround if a regression ships.                                                                                              |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Domain Tools**              | `apps/picsa-tools/<tool-name>/`                                                         | Farmer-facing mini-apps (`climate-tool`, `crop-probability-tool`, `forecasts-tool`, etc.). Changes should stay self-contained and offline-safe.                                                |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Shared App UI & Config**    | `libs/components/`, `libs/forms/`, `libs/shared/`, `libs/configuration/`, `libs/theme/` | Shared UI controls (`FormLocationSelectComponent`), persisted user settings tuples, DB/Supabase clients, and theme tokens. Highest cross-tool UI regression risk.                              |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Pure Models & Domain Data** | `libs/models/`, `libs/data/`                                                            | `libs/models/` = **pure TypeScript only** (`import type` only). `libs/data/` = static multi-country lookups, TopoJSON, chart definitions. Schema/contract changes affect both Tier 1 & Tier 2. |
+| 🔴 **Tier 1: Public / Farmer-Facing** | **Pure Utilities**            | `libs/utils/`                                                                           | Platform-agnostic helpers. **No Angular, RxDB, or DOM imports allowed**.                                                                                                                       |
+| 🟡 **Tier 2: Internal / Admin-Only**  | **Admin Dashboard**           | `apps/picsa-apps/dashboard/`                                                            | Web-only internal admin portal. Does not affect mobile bundle size; fast to hotfix; relaxed i18n rules.                                                                                        |
+| 🟡 **Tier 2: Internal / Admin-Only**  | **Workspace Scripts**         | `apps/picsa-scripts/`                                                                   | One-off / CI data sync scripts and tooling. Zero runtime impact on users.                                                                                                                      |
+| ⚪ **Platform / Infra**               | **Supabase / Backend**        | `apps/picsa-server/supabase/`                                                           | Migrations, Edge Functions, database triggers, seed CSVs. High scrutiny for data integrity & RLS.                                                                                              |
+| ⚪ **Platform / Infra**               | **Workspace Config**          | `package.json`, `tsconfig*`, `nx.json`, `tools/`                                        | Workspace-wide impact. High scrutiny required.                                                                                                                                                 |
+| ⚪ **Docs**                           | **Agent Tooling & Docs**      | `.agents/`, `AGENTS.md`, `*.md`                                                         | Development workflows, skills, institutional knowledge. Low blast radius.                                                                                                                      |
+
+> [!IMPORTANT]
+> **Apply Asymmetric Rigor by Tier**:
+>
+> - **Tier 1 (Public-Facing App & Shared Libs)**: Shipped to farmers and extension workers (offline-first, Play Store release lag). Strictly verify persisted state backward compatibility (`userSettings`, RxDB schemas), single- vs multi-layer country edge cases, and automated unit test coverage of changed paths.
+> - **Tier 2 (Admin Dashboard & Scripts)**: Web-only internal tooling. Focus on data correctness and admin workflows; avoid blocking on minor polish or demanding speculative hardening for low-frequency internal screens.
 
 ### 3. Recommended Reading Order
 
@@ -147,14 +153,15 @@ The Picsa codebase prioritizes flat, straightforward code over clever abstractio
 
 To prevent shallow checklist fatigue and token bloat, execute only passes triggered by the diff. Report skipped passes as `N/A` rather than `Clean`:
 
-| Pass                            | Trigger Condition                                                                   |
-| ------------------------------- | ----------------------------------------------------------------------------------- |
-| **Angular 21 Conventions**      | Any `*.component.*`, `*.directive.ts`, `*.pipe.ts` changed                          |
-| **Internationalization (i18n)** | Any `*.html` or user-facing `.ts` changed outside `apps/picsa-apps/dashboard/`      |
-| **Monorepo / Lib Boundaries**   | Any `libs/` path changed                                                            |
-| **Backend & Supabase**          | Any `apps/picsa-server/` path changed                                               |
-| **Workspace & Tooling**         | `package.json`, `tsconfig*`, `nx.json`, `tools/`, `.agents/`, or `AGENTS.md` changed |
-| **Bundle Impact**               | New npm dependency added, or new external import in `libs/`                         |
+| Pass                            | Trigger Condition                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------- |
+| **Angular 21 Conventions**      | Any `*.component.*`, `*.directive.ts`, `*.pipe.ts` changed                        |
+| **Internationalization (i18n)** | Any `*.html` or user-facing `.ts` changed outside `apps/picsa-apps/dashboard/`    |
+| **Monorepo / Lib Boundaries**   | Any `libs/` path changed                                                          |
+| **Backend & Supabase**          | Any `apps/picsa-server/` path changed                                             |
+| **Workspace & Tooling**         | `package.json`, `tsconfig*`, `nx.json`, `tools/`, `.agents/`, `AGENTS.md` changed |
+| **Bundle Impact**               | New npm dependency added, or new external import in `libs/`                       |
+| **Public-Facing Safeguards**    | Any Tier 1 path (`app/`, `app-native/`, `picsa-tools/`, `libs/`) modified         |
 
 ---
 
@@ -230,7 +237,13 @@ function getMetricBadge(metric?: IMetric): MetricBadgeStatus {
 - [ ] **No Heavy Export Libs in Shared Libs**: Libraries like `docx` or `downloadjs` must live strictly in `apps/picsa-apps/dashboard/src/app/modules/.../services/`, never in `libs/` (prevents Capacitor bundle bloat).
 - [ ] **Unit Test Colocation**: Every new utility or component must have its `*.spec.ts` colocated directly next to the source file, not in an app folder.
 
-#### 5. Skip CI-Enforced Rules (Do Not Duplicate CI)
+#### 5. Public-Facing Safeguard Audit (When Tier 1 Triggered)
+
+- [ ] **Coverage of Changed Tier 1 Paths**: Verify whether refactored services, utilities, or components in `app/`, `picsa-tools/`, or `libs/` have unit specs exercising the _newly changed_ code paths (not just pre-existing helper tests).
+- [ ] **Multi-Country / Offline / Persisted State Edge Cases**: Confirm specs cover single-layer (`mw`) vs multi-layer (`zm`, `zw`) deployments, offline fallbacks, and backward compatibility with existing persisted `userSettings` / RxDB records.
+- [ ] **Flag Coverage Gaps Explicitly**: If a critical public-facing flow was refactored without test coverage, flag adding targeted Jest specs before merge and surface concrete manual smoke-test scenarios in Section 6.
+
+#### 6. Skip CI-Enforced Rules (Do Not Duplicate CI)
 
 Do **NOT** raise manual review comments for rules already enforced automatically by CI linters and SonarCloud on this repo:
 
@@ -374,6 +387,20 @@ _(Adhering to budget: Max 8 comments, max 5 🟡)_
 _Items below the comment budget or below confidence thresholds, noted for your personal discretion rather than posting to the author:_
 
 - `<file>:<line>`: <observation> (Reason suppressed: e.g. low confidence / minor nit / touched legacy line)
+
+---
+
+## 6. Manual QA Checklist _(Include When Tier 1 or UI-Critical Paths Changed)_
+
+_(Prioritized by user impact — separate critical public-facing app checks from quick internal dashboard smoke tests)_
+
+### Priority 1 — Public-Facing App (Must Test Before Merge)
+
+- **[Tool / Shared UI Flow]**: Concrete user scenario covering edge cases (e.g. single-layer vs multi-layer country, offline fallback, returning persisted user state) where automated E2E/unit coverage is incomplete.
+
+### Priority 2 — Admin Dashboard (Quick Smoke Check)
+
+- **[Dashboard Screen]**: Brief check on internal admin workflow(s) affected by the change.
 ````
 
 ---

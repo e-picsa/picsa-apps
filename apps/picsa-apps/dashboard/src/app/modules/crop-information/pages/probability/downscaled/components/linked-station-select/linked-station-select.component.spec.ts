@@ -29,10 +29,8 @@ describe('CropLinkedStationSelectComponent', () => {
   let fixture: ComponentFixture<CropLinkedStationSelectComponent>;
 
   const mockActiveCountry = signal<string>('mw');
-  const mockLocationData = signal(null);
   const mockDeploymentService = {
     activeDeploymentCountry: mockActiveCountry,
-    activeDeploymentLocationData: mockLocationData,
   };
 
   const mockSupabaseService = {

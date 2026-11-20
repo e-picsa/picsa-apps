@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
 import type { ICountryCode } from '@picsa/data';
-import { getDeepestLocations, getGeoLocationData, getLocationSlots, isLocationComplete } from '@picsa/data/geoLocation';
+import { getDownscaledLocations, getGeoLocationData, isLocationComplete } from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IStationMeta } from '@picsa/models';
@@ -89,13 +89,12 @@ export class SiteSelectPage {
     const country = this.userCountryCode();
     if (!country || !loc || !loc.length) return undefined;
 
-    const geoData = getGeoLocationData(country as ICountryCode);
-    if (!isLocationComplete(geoData, loc)) return undefined;
+    if (!isLocationComplete(country as ICountryCode, loc)) return undefined;
 
     const locationId = loc[5] ?? loc[4];
     if (!locationId) return undefined;
 
-    return getDeepestLocations(geoData).find((l) => l.id === locationId);
+    return getDownscaledLocations(country as ICountryCode).find((l) => l.id === locationId);
   });
 
   /** Backwards-compatible alias for selectedLocationEntry */
@@ -240,9 +239,8 @@ export class SiteSelectPage {
   /** Table configuration for the "All stations" dialog */
   public readonly tableOptions = computed(() => {
     const country_code = this.userCountryCode();
-    const geoData = getGeoLocationData(country_code);
-    const slots = getLocationSlots(geoData);
-    const deepestLabel = geoData[slots[slots.length - 1]]?.label ?? geoData[slots[0]]?.label ?? '';
+    const { layers } = getGeoLocationData(country_code);
+    const deepestLabel = layers.at(-1)?.label ?? layers[0]?.label ?? '';
     return {
       displayColumns: ['map', 'name', 'district'],
       formatHeader: (v) => {
@@ -396,9 +394,7 @@ export class SiteSelectPage {
       if (lastRenderedParentLocationId === parentId) return;
       lastRenderedParentLocationId = parentId;
 
-      const slots = getLocationSlots(getGeoLocationData(countryCode as ICountryCode));
-      const parentSlot = slots[0];
-      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, parentSlot)
+      getLocationCenterAndBoundary(countryCode as ICountryCode, parentId, 'parent')
         .then((result) => {
           if (!result?.feature) return;
           if (this.selectedLocationEntry()) return;
@@ -658,8 +654,7 @@ export class SiteSelectPage {
     const country = this.userCountryCode();
     if (!country || !station.location?.length) return;
 
-    const geoData = getGeoLocationData(country as ICountryCode);
-    const deepest = getDeepestLocations(geoData);
+    const deepest = getDownscaledLocations(country as ICountryCode);
     const matchingLocation = deepest.find((d) => isStationInLocation(station, d.label, d.id));
     if (!matchingLocation || matchingLocation.id === this.selectedLocationEntry()?.id) {
       return;

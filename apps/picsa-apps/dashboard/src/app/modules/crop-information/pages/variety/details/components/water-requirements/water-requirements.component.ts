@@ -9,11 +9,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { getGeoLocationData } from '@picsa/data/geoLocation';
+import { getDownscaledLocation, getGeoLocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { arrayToHashmap } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../../../../auth/directives/authRoleRequired.directive';
@@ -132,34 +131,30 @@ export class DashboardCropWaterRequirementsComponent {
     const { downscaled } = data;
     const country_code = this.deploymentService.activeDeployment()?.country_code;
     if (!country_code) return [];
-    const { admin_4, admin_5 } = getGeoLocationData(country_code);
-    const { label: admin_4_label } = admin_4;
-    const admin4Hashmap = arrayToHashmap(admin_4.locations, 'id');
-    if (admin_5) {
-      // If using admin_5 include columns for both admin_4 and admin_5 values
-      // re-populate admin 4 and 5 labels from location id
-      const admin5Hashmap = arrayToHashmap(admin_5.locations, 'id');
-      const { label: admin_5_label } = admin_5;
-      return downscaled.map(({ location_id, water_requirement }) => {
-        const admin_4_value = admin5Hashmap[location_id].admin_4;
+    const { layers } = getGeoLocationData(country_code);
+    const parentLayer = layers.length > 1 ? layers[0] : undefined;
+    const deepestLayer = layers.at(-1);
+    const hasParent = Boolean(parentLayer);
+    const parentColLabel = parentLayer?.label ?? '';
+    const deepestColLabel = deepestLayer?.label ?? 'Location';
+
+    return downscaled.map(({ location_id, water_requirement }) => {
+      const loc = getDownscaledLocation(country_code, location_id);
+      if (hasParent) {
         return {
-          [admin_4_label]: admin4Hashmap[admin_4_value]?.label,
-          [admin_5_label]: admin5Hashmap[location_id]?.label,
+          [parentColLabel]: loc.parentLabel,
+          [deepestColLabel]: loc.label,
           location_id,
           water_requirement,
-          location_hash: `${country_code}/${admin_4_value}/${location_id}`,
+          location_hash: `${country_code}/${loc.parentId}/${location_id}`,
         };
-      });
-    } else {
-      // Otherwise just include admin_4 label column
-      return downscaled.map(({ location_id, water_requirement }) => {
-        return {
-          [admin_4_label]: admin4Hashmap[location_id]?.label,
-          location_id,
-          water_requirement: water_requirement,
-          location_hash: `${country_code}/${location_id}`,
-        };
-      });
-    }
+      }
+      return {
+        [deepestColLabel]: loc.label,
+        location_id,
+        water_requirement,
+        location_hash: `${country_code}/${location_id}`,
+      };
+    });
   }
 }

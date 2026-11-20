@@ -4,17 +4,17 @@ import { filterLocationsToProbabilityTables } from './location-filter.utils';
 
 const TABLE = (id: string, label = id) => ({ id, label });
 
-const baseData = (overrides?: Partial<IGeolocationData>): IGeolocationData => ({
+const baseData = (layers: IGeolocationData['layers']): IGeolocationData => ({
   topoJson: async () => ({}) as never,
-  admin_4: { label: 'District', locations: [] },
-  ...overrides,
+  layers,
 });
 
 describe('filterLocationsToProbabilityTables', () => {
-  describe('single-tier geo data (e.g. mw)', () => {
+  describe('single-layer geo data (e.g. mw)', () => {
     const mwData = () =>
-      baseData({
-        admin_4: {
+      baseData([
+        {
+          key: 'district',
           label: 'District',
           locations: [
             { id: 'lilongwe', label: 'Lilongwe' },
@@ -22,35 +22,35 @@ describe('filterLocationsToProbabilityTables', () => {
             { id: 'karonga', label: 'Karonga' },
           ],
         },
-      });
+      ]);
     const tables = [TABLE('lilongwe', 'Lilongwe'), TABLE('dowa', 'Dowa')];
 
     it('should only filter districts when max one table per district', () => {
       const result = filterLocationsToProbabilityTables(mwData(), tables);
-      expect(result.admin_4.locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
-      expect(result.admin_5).toBeUndefined();
+      expect(result.layers[0].locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
+      expect(result.layers).toHaveLength(1);
     });
 
-    it('should synthesise a sublocation tier when a district has multiple tables', () => {
+    it('should synthesise a sublocation layer when a district has multiple tables', () => {
       const multiTables = [
         TABLE('lilongwe', 'Lilongwe'),
         TABLE('dowa/boma_met_station', 'Boma'),
         TABLE('dowa/mvera_met_station', 'Mvera'),
       ];
       const result = filterLocationsToProbabilityTables(mwData(), multiTables);
-      expect(result.admin_4.locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
-      expect(result.admin_5?.locations).toEqual([
-        { id: 'lilongwe', admin_4: 'lilongwe', label: 'Lilongwe' },
-        { id: 'boma_met_station', admin_4: 'dowa', label: 'Boma' },
-        { id: 'mvera_met_station', admin_4: 'dowa', label: 'Mvera' },
+      expect(result.layers[0].locations.map((v) => v.id)).toEqual(['lilongwe', 'dowa']);
+      expect(result.layers[1]?.locations).toEqual([
+        { id: 'lilongwe', parentId: 'lilongwe', label: 'Lilongwe' },
+        { id: 'boma_met_station', parentId: 'dowa', label: 'Boma' },
+        { id: 'mvera_met_station', parentId: 'dowa', label: 'Mvera' },
       ]);
     });
 
     it('should not mutate the input data', () => {
       const input = mwData();
       filterLocationsToProbabilityTables(input, tables);
-      expect(input.admin_4.locations).toHaveLength(3);
-      expect(input.admin_5).toBeUndefined();
+      expect(input.layers[0].locations).toHaveLength(3);
+      expect(input.layers).toHaveLength(1);
     });
 
     it('should return identical results when run repeatedly on the same input', () => {
@@ -60,14 +60,15 @@ describe('filterLocationsToProbabilityTables', () => {
       const first = filterLocationsToProbabilityTables(input, tables);
       const second = filterLocationsToProbabilityTables(input, tables);
       expect(second).toEqual(first);
-      expect(second.admin_4.locations).toHaveLength(2);
+      expect(second.layers[0].locations).toHaveLength(2);
     });
   });
 
-  describe('multi-tier geo data (e.g. zm)', () => {
+  describe('multi-layer geo data (e.g. zm)', () => {
     const zmData = () =>
-      baseData({
-        admin_4: {
+      baseData([
+        {
+          key: 'province',
           label: 'Province',
           locations: [
             { id: 'central', label: 'Central' },
@@ -75,25 +76,26 @@ describe('filterLocationsToProbabilityTables', () => {
             { id: 'eastern', label: 'Eastern' },
           ],
         },
-        admin_5: {
+        {
+          key: 'district',
           label: 'District',
           locations: [
-            { id: 'kabwe', label: 'Kabwe', admin_4: 'central' },
-            { id: 'mazabuka', label: 'Mazabuka', admin_4: 'southern' },
-            { id: 'chipata', label: 'Chipata', admin_4: 'eastern' },
+            { id: 'kabwe', label: 'Kabwe', parentId: 'central' },
+            { id: 'mazabuka', label: 'Mazabuka', parentId: 'southern' },
+            { id: 'chipata', label: 'Chipata', parentId: 'eastern' },
           ],
         },
-      });
+      ]);
     const tables = [
       TABLE('central/kabwe', 'Kabwe'),
       TABLE('southern/mazabuka--kafue-polder', 'Kafue Polder'),
       TABLE('southern/mazabuka--magoye-agromet', 'Magoye Agromet'),
     ];
 
-    it('should filter tiers and append sublocation entries for tables sharing a district', () => {
+    it('should filter layers and append sublocation entries for tables sharing a district', () => {
       const result = filterLocationsToProbabilityTables(zmData(), tables);
-      expect(result.admin_4.locations.map((v) => v.id)).toEqual(['central', 'southern']);
-      expect(result.admin_5?.locations.map((v) => v.id)).toEqual([
+      expect(result.layers[0].locations.map((v) => v.id)).toEqual(['central', 'southern']);
+      expect(result.layers[1]?.locations.map((v) => v.id)).toEqual([
         'kabwe',
         'mazabuka',
         'southern/mazabuka--kafue-polder',
@@ -105,8 +107,8 @@ describe('filterLocationsToProbabilityTables', () => {
       const input = zmData();
       filterLocationsToProbabilityTables(input, tables);
       const second = filterLocationsToProbabilityTables(input, tables);
-      expect(input.admin_5?.locations).toHaveLength(3);
-      expect(second.admin_5?.locations).toHaveLength(4);
+      expect(input.layers[1]?.locations).toHaveLength(3);
+      expect(second.layers[1]?.locations).toHaveLength(4);
     });
   });
 });

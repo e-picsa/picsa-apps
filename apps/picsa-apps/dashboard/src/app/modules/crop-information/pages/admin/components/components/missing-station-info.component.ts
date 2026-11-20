@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -16,8 +17,9 @@ interface IStationProbabilityStatus {
   has_probabilities: boolean;
   has_inconsistent_bounds: boolean;
   probability_bounds: StationBoundsStatus;
-  bounds_tooltip: string;
   data_updated: string;
+  station_bounds: IStationLookupBounds | null;
+  differs: { days: boolean; water: boolean; plant: boolean };
 }
 
 function findMajoritySignature(signatures: string[]): string | null {
@@ -41,14 +43,9 @@ function formatTooltipDate(label: string): string {
   return label.replaceAll('-', ' ');
 }
 
-function buildBoundsTooltip(
-  b: IStationLookupBounds,
-  differs: { days: boolean; water: boolean; plant: boolean },
-): string {
-  const daysLine = `Length: ${b.minDays}-${b.maxDays}d | ${b.daysStep ?? '?'}d${differs.days ? ' (differs)' : ''}`;
-  const waterLine = `Water: ${b.minWater}-${b.maxWater}mm | ${b.waterStep ?? '?'}mm${differs.water ? ' (differs)' : ''}`;
-  const dateLine = `Date: ${formatTooltipDate(b.minPlantDateLabel)} - ${formatTooltipDate(b.maxPlantDateLabel)} | ${b.plantDayStep ?? '?'}d${differs.plant ? ' (differs)' : ''}`;
-  return `${daysLine}\n${waterLine}\n${dateLine}`;
+/** Split a bound into main value and step shown on the next line */
+function boundParts(main: string, step: number | null, unit: string): { main: string; step: string | null } {
+  return { main, step: step != null ? `step ${step}${unit}` : null };
 }
 
 @Component({
@@ -64,9 +61,11 @@ function buildBoundsTooltip(
  */
 export class CropMissingStationInfoComponent {
   private readonly service = inject(CropInformationService);
+  private readonly dialog = inject(MatDialog);
 
   private readonly boundsTemplate =
     viewChild<TemplateRef<{ $implicit: unknown; row: IStationProbabilityStatus }>>('boundsTemplate');
+  private readonly boundsDialogTemplate = viewChild.required<TemplateRef<unknown>>('boundsDialogTemplate');
 
   public valueTemplates = computed(() => {
     const bounds = this.boundsTemplate();
@@ -76,24 +75,51 @@ export class CropMissingStationInfoComponent {
   });
 
   public tableFilter = signal<StationBoundsFilter>('all');
+  private readonly selectedStation = signal<IStationProbabilityStatus | null>(null);
 
-  /** One row per deployment station with lookup bounds consistency status */
-  public stationStatuses = computed<IStationProbabilityStatus[]>(() => {
+  /** Parsed bounds per station, shared by status rows and majority summary */
+  private parsedBounds = computed(() => {
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
-    const parsed = this.service.stations().map((station) => {
+    return this.service.stations().map((station) => {
       const stationId = station.id || station.station_id;
       const stationData = stationId ? stationDataHashmap[stationId] : undefined;
       const lookupBounds = extractStationLookupBounds(stationData?.crop_probability_data as ICropSuccessEntry[]);
       return { station, stationData, lookupBounds };
     });
+  });
 
+  /** Single majority computation reused by status rows and the dialog */
+  private majority = computed(() => {
+    const parsed = this.parsedBounds();
     const sigs = parsed
       .map((p) => (p.lookupBounds ? formatBoundsSignature(p.lookupBounds) : null))
       .filter((s): s is NonNullable<typeof s> => s !== null);
+    const days = findMajoritySignature(sigs.map((s) => s.days));
+    const water = findMajoritySignature(sigs.map((s) => s.water));
+    const plant = findMajoritySignature(sigs.map((s) => s.plant));
+    const findRef = (key: 'days' | 'water' | 'plant', sig: string | null) =>
+      sig
+        ? (parsed.find((p) => p.lookupBounds && formatBoundsSignature(p.lookupBounds)[key] === sig)?.lookupBounds ??
+          null)
+        : null;
+    return {
+      days,
+      water,
+      plant,
+      daysRef: findRef('days', days),
+      waterRef: findRef('water', water),
+      plantRef: findRef('plant', plant),
+      daysCount: days ? sigs.filter((s) => s.days === days).length : 0,
+      waterCount: water ? sigs.filter((s) => s.water === water).length : 0,
+      plantCount: plant ? sigs.filter((s) => s.plant === plant).length : 0,
+      total: sigs.length,
+    };
+  });
 
-    const majorityDays = findMajoritySignature(sigs.map((s) => s.days));
-    const majorityWater = findMajoritySignature(sigs.map((s) => s.water));
-    const majorityPlant = findMajoritySignature(sigs.map((s) => s.plant));
+  /** One row per deployment station with lookup bounds consistency status */
+  public stationStatuses = computed<IStationProbabilityStatus[]>(() => {
+    const parsed = this.parsedBounds();
+    const { days, water, plant } = this.majority();
 
     return parsed
       .map(({ station, stationData, lookupBounds }) => {
@@ -102,18 +128,17 @@ export class CropMissingStationInfoComponent {
 
         let probability_bounds: StationBoundsStatus = 'missing';
         let has_inconsistent_bounds = false;
-        let bounds_tooltip = 'No crop probability data';
+        let differs = { days: false, water: false, plant: false };
 
         if (lookupBounds) {
           const sig = formatBoundsSignature(lookupBounds);
-          const differs = {
-            days: majorityDays !== null && sig.days !== majorityDays,
-            water: majorityWater !== null && sig.water !== majorityWater,
-            plant: majorityPlant !== null && sig.plant !== majorityPlant,
+          differs = {
+            days: days !== null && sig.days !== days,
+            water: water !== null && sig.water !== water,
+            plant: plant !== null && sig.plant !== plant,
           };
           has_inconsistent_bounds = differs.days || differs.water || differs.plant;
           probability_bounds = has_inconsistent_bounds ? 'inconsistent' : 'consistent';
-          bounds_tooltip = buildBoundsTooltip(lookupBounds, differs);
         }
 
         return {
@@ -122,12 +147,80 @@ export class CropMissingStationInfoComponent {
           has_probabilities,
           has_inconsistent_bounds,
           probability_bounds,
-          bounds_tooltip,
           data_updated: has_probabilities ? updated : '—',
+          station_bounds: lookupBounds,
+          differs,
         };
       })
       .sort((a, b) => a.station_name.localeCompare(b.station_name));
   });
+
+  /** Dialog-scoped standard-vs-station comparison, null when no selection */
+  public dialogComparison = computed(() => {
+    const selected = this.selectedStation();
+    if (!selected) return null;
+    const m = this.majority();
+    if (!selected.station_bounds) return { station: selected, total: m.total, rows: [] };
+    const b = selected.station_bounds;
+    const plantLabel = (ref: IStationLookupBounds | null) =>
+      ref ? `${formatTooltipDate(ref.minPlantDateLabel)} – ${formatTooltipDate(ref.maxPlantDateLabel)}` : '—';
+    const stationDays = boundParts(`${b.minDays}–${b.maxDays}d`, b.daysStep, 'd');
+    const standardDays = m.daysRef
+      ? boundParts(`${m.daysRef.minDays}–${m.daysRef.maxDays}d`, m.daysRef.daysStep, 'd')
+      : { main: '—', step: null };
+    const stationWater = boundParts(`${b.minWater}–${b.maxWater}mm`, b.waterStep, 'mm');
+    const standardWater = m.waterRef
+      ? boundParts(`${m.waterRef.minWater}–${m.waterRef.maxWater}mm`, m.waterRef.waterStep, 'mm')
+      : { main: '—', step: null };
+    const stationPlant = boundParts(plantLabel(b), b.plantDayStep, 'd');
+    const standardPlant = m.plantRef
+      ? boundParts(plantLabel(m.plantRef), m.plantRef.plantDayStep, 'd')
+      : { main: '—', step: null };
+    const rows = [
+      {
+        label: 'Crop Length',
+        standard: standardDays.main,
+        standardStep: standardDays.step,
+        station: stationDays.main,
+        stationStep: stationDays.step,
+        mainDiffers: m.daysRef ? b.minDays !== m.daysRef.minDays || b.maxDays !== m.daysRef.maxDays : false,
+        stepDiffers: m.daysRef ? b.daysStep !== m.daysRef.daysStep : false,
+        differs: selected.differs.days,
+        standardCount: m.daysCount,
+      },
+      {
+        label: 'Water Requirement',
+        standard: standardWater.main,
+        standardStep: standardWater.step,
+        station: stationWater.main,
+        stationStep: stationWater.step,
+        mainDiffers: m.waterRef ? b.minWater !== m.waterRef.minWater || b.maxWater !== m.waterRef.maxWater : false,
+        stepDiffers: m.waterRef ? b.waterStep !== m.waterRef.waterStep : false,
+        differs: selected.differs.water,
+        standardCount: m.waterCount,
+      },
+      {
+        label: 'Planting Dates',
+        standard: standardPlant.main,
+        standardStep: standardPlant.step,
+        station: stationPlant.main,
+        stationStep: stationPlant.step,
+        mainDiffers: m.plantRef
+          ? b.minPlantDay !== m.plantRef.minPlantDay || b.maxPlantDay !== m.plantRef.maxPlantDay
+          : false,
+        stepDiffers: m.plantRef ? b.plantDayStep !== m.plantRef.plantDayStep : false,
+        differs: selected.differs.plant,
+        standardCount: m.plantCount,
+      },
+    ];
+    return { station: selected, total: m.total, rows };
+  });
+
+  public openBoundsDialog(row: IStationProbabilityStatus) {
+    this.selectedStation.set(row);
+    const ref = this.dialog.open(this.boundsDialogTemplate(), { width: '620px', maxWidth: '95vw' });
+    ref.afterClosed().subscribe(() => this.selectedStation.set(null));
+  }
 
   /** Summary stats */
   public stats = computed(() => {

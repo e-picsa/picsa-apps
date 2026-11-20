@@ -149,7 +149,7 @@
     <mat-icon>download</mat-icon>
     <span class="capitalize">
       @if (locationSelect.isValid()) {
-        {{ locationSelect.admin5Selected() || locationSelect.admin4Selected() }} Template
+        {{ locationSelect.sublocationSelected() || locationSelect.parentSelected() }} Template
       } @else {
         Template
       }
