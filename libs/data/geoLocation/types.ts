@@ -21,7 +21,12 @@ export interface IGeoLayer<TKey extends string = string> {
 
 export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
-  /** Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district / epa) */
+  /**
+   * Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district / epa).
+   * Note: UI selectors (`FormLocationSelectComponent`) and persisted `userSettings.location`
+   * tuples currently assume 1 or 2 layers (upcoming MW EPAs remain 2-layer). Supporting 3+
+   * layers in the future will require extending those consumers and tuple slots.
+   */
   layers: IGeoLayer[];
 }
 

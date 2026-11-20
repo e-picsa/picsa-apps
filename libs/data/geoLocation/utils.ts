@@ -7,16 +7,21 @@ import {
   IDeepestLocation,
   IGeoJsonData,
   IGeoJsonFeature,
+  IGeoLayer,
   IGeoLocationItem,
   ITopoJson,
   ITopoJsonFeatureProperties,
 } from './types';
 
 const geoJsonFeatureCache = new Map<string, IGeoJsonData<ITopoJsonFeatureProperties>>();
+const downscaledByLayersCache = new WeakMap<IGeoLayer[], Map<string, IDeepestLocation>>();
 
-/** Locations at the deepest defined layer for a country, with parent tier references resolved */
-export function getDownscaledLocations(country_code: ICountryCode): IDeepestLocation[] {
-  const { layers } = getGeoLocationData(country_code);
+/** Clear cached parsed TopoJSON features (useful in tests or after mock overrides) */
+export function clearGeoJsonFeatureCache() {
+  geoJsonFeatureCache.clear();
+}
+
+function buildDownscaledLocations(layers: IGeoLayer[]): IDeepestLocation[] {
   const deepestLayer = layers[layers.length - 1];
   if (!deepestLayer) return [];
   const hasParent = layers.length > 1;
@@ -40,12 +45,24 @@ export function getDownscaledLocations(country_code: ICountryCode): IDeepestLoca
   });
 }
 
+/** Locations at the deepest defined layer for a country, with parent tier references resolved */
+export function getDownscaledLocations(country_code: ICountryCode): IDeepestLocation[] {
+  const { layers } = getGeoLocationData(country_code);
+  return buildDownscaledLocations(layers);
+}
+
 /**
  * Look up a downscaled (deepest-layer) location by id for a country.
  * Falls back to a humanised label with empty parent metadata if not present in static geo data.
  */
 export function getDownscaledLocation(country_code: ICountryCode, location_id: string): IDeepestLocation {
-  const match = getDownscaledLocations(country_code).find((l) => l.id === location_id);
+  const { layers } = getGeoLocationData(country_code);
+  let byId = downscaledByLayersCache.get(layers);
+  if (!byId) {
+    byId = new Map(buildDownscaledLocations(layers).map((loc) => [loc.id, loc]));
+    downscaledByLayersCache.set(layers, byId);
+  }
+  const match = byId.get(location_id);
   if (match) return match;
   return {
     id: location_id,
@@ -57,8 +74,8 @@ export function getDownscaledLocation(country_code: ICountryCode, location_id: s
 
 /**
  * Check all required hierarchy segments are selected for the country's layer structure.
- * Multi-layer countries (e.g. zm, zw) require both segments (stored at indexes 4 and 5),
- * single-layer countries (e.g. mw) only index 4.
+ * Assumes 1 or 2 layers stored at tuple indexes 4 and 5 (MW EPAs remain 2-layer);
+ * extending to 3+ layers in the future will require checking additional tuple indexes.
  */
 export function isLocationComplete(country_code: ICountryCode, location: (string | undefined)[] | undefined): boolean {
   if (!location) return false;
@@ -69,7 +86,10 @@ export function isLocationComplete(country_code: ICountryCode, location: (string
   return Boolean(location[4]);
 }
 
-/** Display label for a stored location array, resolving the deepest selected layer first */
+/**
+ * Display label for a stored location array, resolving the deepest selected layer first.
+ * Assumes 1 or 2 layers stored at indexes 4 and 5; extend if 3+ layers are introduced later.
+ */
 export function getLocationLabel(
   country_code: ICountryCode,
   location: (string | undefined)[] | undefined,

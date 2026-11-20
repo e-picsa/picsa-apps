@@ -11,8 +11,8 @@ import { isEqual } from '@picsa/utils/object.utils';
  * tiers within the current user selected country.
  *
  * Each country defines ordered `layers` (e.g. mw: [district], zm: [province, district], zw: [province, district]).
- * The first dropdown renders the top-level layer, and when a deeper layer exists, the second dropdown renders
- * the deepest defined sublocation layer.
+ * Assumes 1 or 2 hierarchy layers (upcoming MW EPAs remain 2-layer, mapped to tuple indexes 4 and 5).
+ * Supporting 3+ layers in the future would require dynamic per-layer dropdowns and extending the persisted tuple.
  */
 @Component({
   selector: 'picsa-form-location-select',

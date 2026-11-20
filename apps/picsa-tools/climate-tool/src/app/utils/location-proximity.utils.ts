@@ -1,6 +1,7 @@
 import type { ICountryCode } from '@picsa/data';
 import type { IGeoJsonData } from '@picsa/data/geoLocation';
 import {
+  clearGeoJsonFeatureCache,
   getGeoLocationData,
   getLocationTopoFeature,
   normalizeLocationName,
@@ -49,6 +50,7 @@ const geoJsonCache = new Map<string, IGeoJsonData>();
 
 export function clearGeoJsonCache() {
   geoJsonCache.clear();
+  clearGeoJsonFeatureCache();
 }
 
 /**

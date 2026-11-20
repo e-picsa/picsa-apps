@@ -169,7 +169,8 @@ export class ForecastService extends PicsaAsyncService {
   public setForecastLocation(location?: IUserSettings['location']) {
     if (location) {
       const country_code = location[2] as ICountryCode;
-      const locations = location.slice(4).filter((v): v is string => Boolean(v));
+      // Deduplicate so cross-layer ID collisions (e.g. ZW masvingo province + district) run a single query
+      const locations = [...new Set(location.slice(4).filter((v): v is string => Boolean(v)))];
       this.countryLocation.set(country_code);
       this.downscaledLocation.set({ country_code, locations });
     } else {

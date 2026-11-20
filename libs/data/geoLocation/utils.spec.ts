@@ -3,6 +3,7 @@ import * as dataModule from './data';
 import { getGeoLocationData } from './data';
 import type { IGeolocationData } from './types';
 import {
+  clearGeoJsonFeatureCache,
   getDownscaledLocation,
   getDownscaledLocations,
   getLocationLabel,
@@ -149,6 +150,7 @@ describe('getLocationTopoFeature', () => {
   });
 
   it('falls back to parent layer topoAdminLevel when deepest layer has no boundary geometries', async () => {
+    clearGeoJsonFeatureCache();
     const mwData = getGeoLocationData('mw');
     const mockData: IGeolocationData = {
       topoJson: mwData.topoJson,
@@ -168,6 +170,7 @@ describe('getLocationTopoFeature', () => {
       expect(feature?.properties?.name).toContain('Lilongwe');
     } finally {
       spy.mockRestore();
+      clearGeoJsonFeatureCache();
     }
   });
 });
