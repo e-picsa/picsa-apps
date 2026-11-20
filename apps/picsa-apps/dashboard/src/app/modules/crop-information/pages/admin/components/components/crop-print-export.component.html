@@ -51,7 +51,7 @@
                   <button
                     matIconButton
                     (click)="exportSingle(loc.id, 'docx')"
-                    [disabled]="!loc.available || busy() || selectedCropIds().length === 0"
+                    [disabled]="!hasExportableRows(loc.id) || busy()"
                     matTooltip="Export single Word doc"
                   >
                     <mat-icon>description</mat-icon>
@@ -59,7 +59,7 @@
                   <button
                     matIconButton
                     (click)="exportSingle(loc.id, 'pdf')"
-                    [disabled]="!loc.available || busy() || selectedCropIds().length === 0"
+                    [disabled]="!hasExportableRows(loc.id) || busy()"
                     matTooltip="Export single PDF"
                   >
                     <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
@@ -77,12 +77,12 @@
     <!-- Crop families -->
     <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0 flex-1 min-w-0">
       <div class="flex items-center gap-2">
-        <h4 class="flex-1">Crops ({{ selectedCropIds().length }}/{{ cropFamilies().length }})</h4>
+        <h4 class="flex-1">Crops ({{ selectedVisibleCropCount() }}/{{ visibleCropFamilies().length }})</h4>
         <button matButton="outlined" (click)="toggleAllCrops(true)" [disabled]="busy()">All</button>
         <button matButton="outlined" (click)="toggleAllCrops(false)" [disabled]="busy()">None</button>
       </div>
       <div class="flex-1 min-h-0 overflow-auto space-y-1 max-h-[38vh]">
-        @for (family of cropFamilies(); track family.id) {
+        @for (family of visibleCropFamilies(); track family.id) {
           <div class="flex items-center gap-1">
             <mat-checkbox
               class="flex-1"
@@ -91,11 +91,19 @@
               [disabled]="busy()"
             >
               {{ family.label }}
-              <span class="text-gray-500 text-sm">({{ family.varietyCount }})</span>
+              <span class="text-gray-500 text-sm">{{ cropCountLabel(family.id) }}</span>
             </mat-checkbox>
           </div>
         } @empty {
-          <p class="text-gray-500 text-sm">No crops found</p>
+          <p class="text-gray-500 text-sm">
+            @if (cropFamilies().length === 0) {
+              No crops found
+            } @else if (selectedLocationIds().length === 0) {
+              Select location to view crops
+            } @else {
+              No crops with data for the selected districts
+            }
+          </p>
         }
       </div>
     </div>

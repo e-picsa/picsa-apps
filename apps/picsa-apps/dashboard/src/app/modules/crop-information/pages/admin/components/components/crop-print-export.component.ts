@@ -12,7 +12,7 @@ import { getDownscaledLocations } from '@picsa/data/geoLocation';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
-import { CropInformationService } from '../../../../services';
+import { CropInformationService, type ICropDataDownscaledWaterRequirements } from '../../../../services';
 import {
   CropPrintFormat,
   CropProbabilityPrintService,
@@ -120,6 +120,58 @@ export class CropPrintExportComponent {
       .sort((a, b) => a.label.localeCompare(b.label));
   });
 
+  /** Max table rows per crop family across currently selected locations */
+  public cropFamilyMaxRows = computed(() => {
+    const selected = new Set(this.selectedLocationIds());
+    const maxRows = new Map<string, number>();
+    if (selected.size === 0) return maxRows;
+    for (const row of this.cropService.downscaledData()) {
+      if (!selected.has(row.location_id)) continue;
+      const water = row.water_requirements as ICropDataDownscaledWaterRequirements | null;
+      if (!water) continue;
+      for (const [crop, varieties] of Object.entries(water)) {
+        const count = varieties ? Object.keys(varieties).length : 0;
+        if (count > (maxRows.get(crop) ?? 0)) maxRows.set(crop, count);
+      }
+    }
+    return maxRows;
+  });
+
+  private downscaledByLocation = computed(() => {
+    const map = new Map<string, { water_requirements?: Record<string, Record<string, number> | null> }>();
+    for (const row of this.cropService.downscaledData()) {
+      map.set(row.location_id, row as { water_requirements?: Record<string, Record<string, number> | null> });
+    }
+    return map;
+  });
+
+  /** Whether a location has any rows for the currently selected crops (drives per-row buttons) */
+  public hasExportableRows(locationId: string): boolean {
+    if (this.selectedCropIds().length === 0) return false;
+    const water = this.downscaledByLocation().get(locationId)?.water_requirements;
+    if (!water) return false;
+    return this.selectedCropIds().some((crop) => {
+      const varieties = water[crop];
+      return !!varieties && Object.keys(varieties).length > 0;
+    });
+  }
+
+  /** Counter label for a family, e.g. "(3)" */
+  public cropCountLabel(id: string): string {
+    return `(${this.cropFamilyMaxRows().get(id) ?? 0})`;
+  }
+
+  /** Families with at least one row in the selected locations; zero-row families are hidden */
+  public visibleCropFamilies = computed(() =>
+    this.cropFamilies().filter((f) => (this.cropFamilyMaxRows().get(f.id) ?? 0) > 0),
+  );
+
+  /** Selected families that are currently visible (hidden zero-row families don't count) */
+  public selectedVisibleCropCount = computed(() => {
+    const selected = new Set(this.selectedCropIds());
+    return this.visibleCropFamilies().filter((f) => selected.has(f.id)).length;
+  });
+
   public selectedLocationIds = signal<string[]>([]);
   public selectedLanguageCodes = signal<string[]>(['global_en']);
   public selectedCropIds = signal<string[]>([]);
@@ -135,11 +187,7 @@ export class CropPrintExportComponent {
   public availableCount = computed(() => this.locations().length - this.unavailableIds().size);
   public estimatedFiles = computed(() => this.selectedLocationIds().length * this.selectedLanguageCodes().length);
   public canExport = computed(
-    () =>
-      !this.exporting() &&
-      !this.singleExportingId() &&
-      this.selectedLocationIds().length > 0 &&
-      this.selectedCropIds().length > 0,
+    () => !this.exporting() && !this.singleExportingId() && this.selectedVisibleCropCount() > 0,
   );
 
   public busy = computed(() => this.exporting() || !!this.singleExportingId());
@@ -196,7 +244,7 @@ export class CropPrintExportComponent {
   }
 
   public toggleAllCrops(selectAll: boolean) {
-    this.selectedCropIds.set(selectAll ? this.cropFamilies().map((f) => f.id) : []);
+    this.selectedCropIds.set(selectAll ? this.visibleCropFamilies().map((f) => f.id) : []);
   }
 
   public isLocationSelected(id: string): boolean {
@@ -253,7 +301,7 @@ export class CropPrintExportComponent {
   }
 
   public exportSingle(locationId: string, format: CropPrintFormat) {
-    if (this.busy() || this.selectedCropIds().length === 0) return;
+    if (this.busy() || !this.hasExportableRows(locationId)) return;
     return this.runExport([locationId], locationId, format);
   }
 

@@ -30,7 +30,13 @@ describe('CropPrintExportComponent', () => {
           provide: CropInformationService,
           useValue: {
             ready: jest.fn().mockResolvedValue(undefined),
-            downscaledData: signal([]),
+            downscaledData: signal([
+              {
+                location_id: 'buhera',
+                water_requirements: { maize: { 'SC 403': 400, 'SC 719': 450 }, beans: { Kholophethe: 300 } },
+              },
+              { location_id: 'mutare', water_requirements: { maize: { 'SC 403': 400 } } },
+            ]),
             stationData: signal([]),
             cropData: signal([
               { crop: 'maize', variety: 'SC 403' },
@@ -96,6 +102,31 @@ describe('CropPrintExportComponent', () => {
     expect(maize?.varietyCount).toBe(2);
   });
 
+  it('should show max rows per family across selected locations', () => {
+    component.selectedLocationIds.set(['buhera', 'mutare']);
+    expect(component.cropCountLabel('maize')).toBe('(2)');
+    expect(component.cropCountLabel('beans')).toBe('(1)');
+  });
+
+  it('should match single location values when only one location selected', () => {
+    component.selectedLocationIds.set(['mutare']);
+    expect(component.cropCountLabel('maize')).toBe('(1)');
+    expect(component.cropCountLabel('beans')).toBe('(0)');
+  });
+
+  it('should hide families with no rows in the selected locations', () => {
+    component.selectedLocationIds.set(['mutare']);
+    expect(component.visibleCropFamilies().map((f) => f.id)).toEqual(['maize']);
+    // beans is still selected but hidden, so excluded from the counter
+    expect(component.selectedVisibleCropCount()).toBe(1);
+  });
+
+  it('should select only visible families on select all', () => {
+    component.selectedLocationIds.set(['mutare']);
+    component.toggleAllCrops(true);
+    expect(component.selectedCropIds()).toEqual(['maize']);
+  });
+
   it('should toggle all districts within a group', () => {
     component.toggleGroup(
       { id: 'manicaland', label: 'Manicaland', districts: [{ id: 'buhera', label: 'Buhera', available: true }] },
@@ -113,12 +144,30 @@ describe('CropPrintExportComponent', () => {
     expect(mockPrintService.exportPrint).not.toHaveBeenCalled();
   });
 
+  it('should not export a single location with no rows for the selected crops', async () => {
+    component.selectedCropIds.set(['beans']);
+    (mockPrintService.exportPrint as jest.Mock).mockClear();
+    await component.exportSingle('mutare', 'pdf');
+    expect(mockPrintService.exportPrint).not.toHaveBeenCalled();
+  });
+
   it('should export a single location directly', async () => {
     component.selectedLanguageCodes.set(['global_en']);
     fixture.detectChanges();
     await component.exportSingle('buhera', 'pdf');
     expect(mockPrintService.exportPrint).toHaveBeenCalledWith(
       expect.objectContaining({ locationIds: ['buhera'], format: 'pdf' }),
+    );
+  });
+
+  it('should use the currently selected crop filter for single exports', async () => {
+    component.selectedLanguageCodes.set(['global_en']);
+    component.selectedCropIds.set(['beans']);
+    (mockPrintService.exportPrint as jest.Mock).mockClear();
+    fixture.detectChanges();
+    await component.exportSingle('buhera', 'docx');
+    expect(mockPrintService.exportPrint).toHaveBeenCalledWith(
+      expect.objectContaining({ locationIds: ['buhera'], cropFamilies: ['beans'], format: 'docx' }),
     );
   });
 });
