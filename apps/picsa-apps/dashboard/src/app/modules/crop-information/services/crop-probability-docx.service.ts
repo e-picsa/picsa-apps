@@ -16,6 +16,7 @@ import {
   WidthType,
 } from 'docx';
 import download from 'downloadjs';
+import { firstValueFrom } from 'rxjs';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type {
@@ -40,25 +41,62 @@ export class CropProbabilityDocxService {
   public async exportDocx(options: IExportDocxOptions): Promise<void> {
     const { stationData, tableMeta, locationName, languageCode, languageLabel } = options;
 
-    if (languageCode) {
-      this.translateService.use(languageCode);
-    }
-
-    const currentLang =
-      languageCode || this.translateService.currentLang || this.translateService.defaultLang || 'global_en';
-
-    const resolvedLangLabel =
-      languageLabel ||
-      LOCALES_DATA_HASHMAP[currentLang as keyof typeof LOCALES_DATA_HASHMAP]?.language_label ||
-      LOCALES_DATA.find((l) => l.id === currentLang || l.language_code === currentLang)?.language_label ||
-      'English';
+    const resolved = this.resolveExportLanguage(languageCode, languageLabel);
+    await this.ensureLanguageLoaded(resolved.normalizedCode);
 
     const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
     const blob = await Packer.toBlob(doc);
-    const sanitizedLocation = (locationName || 'Location').replace(/[/\\?%*:|"<>]/g, '_');
-    const sanitizedLang = resolvedLangLabel.replace(/[/\\?%*:|"<>]/g, '_');
-    const filename = `${sanitizedLocation} - Crop Probabilities - ${sanitizedLang}.docx`;
+    const filename = this.buildExportFilename(locationName, resolved.label, resolved.isEnglish, 'docx');
     download(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  }
+
+  /** Generate a docx blob without triggering download (for bulk zip exports) */
+  public async generateDocxBlob(options: IExportDocxOptions): Promise<Blob> {
+    const { stationData, tableMeta, locationName, languageCode } = options;
+    const resolved = this.resolveExportLanguage(languageCode, options.languageLabel);
+    await this.ensureLanguageLoaded(resolved.normalizedCode);
+    const doc = this.buildDocxDocument(stationData, tableMeta, locationName);
+    return Packer.toBlob(doc);
+  }
+
+  /** Resolve language label, normalised translate code and english check */
+  public resolveExportLanguage(
+    languageCode?: string,
+    languageLabelOverride?: string,
+  ): { code: string; normalizedCode: string; label: string; isEnglish: boolean } {
+    const currentLang =
+      languageCode || this.translateService.currentLang || this.translateService.defaultLang || 'global_en';
+    const entry =
+      LOCALES_DATA_HASHMAP[currentLang as keyof typeof LOCALES_DATA_HASHMAP] ||
+      LOCALES_DATA.find((l) => l.id === currentLang || l.language_code === currentLang);
+    const label = languageLabelOverride || entry?.language_label || 'English';
+    const isEnglish = (entry?.language_code ?? (currentLang.endsWith('_en') ? 'en' : '')) === 'en';
+    // All english locales share global_en translations (see PicsaTranslateService)
+    const normalizedCode = currentLang.endsWith('_en') ? 'global_en' : currentLang;
+    return { code: currentLang, normalizedCode, label, isEnglish };
+  }
+
+  /** Ensure ngx-translate has loaded the target language before using instant() */
+  public async ensureLanguageLoaded(normalizedCode: string): Promise<void> {
+    try {
+      await firstValueFrom(this.translateService.use(normalizedCode));
+    } catch (e) {
+      console.warn(`[CropDocx] Failed to load language [${normalizedCode}]`, e);
+    }
+  }
+
+  /**
+   * Build export filename. English omits language suffix for backwards compatibility,
+   * non-english appends language label
+   * e.g. `Dedza - Crop Probabilities.docx` vs `Dedza - Crop Probabilities - Chichewa.docx`
+   */
+  public buildExportFilename(locationName: string, langLabel: string, isEnglish: boolean, ext: 'docx' | 'pdf'): string {
+    const sanitizedLocation = (locationName || 'Location').replace(/[/\\?%*:|"<>]/g, '_');
+    if (isEnglish) {
+      return `${sanitizedLocation} - Crop Probabilities.${ext}`;
+    }
+    const sanitizedLang = (langLabel || 'Language').replace(/[/\\?%*:|"<>]/g, '_');
+    return `${sanitizedLocation} - Crop Probabilities - ${sanitizedLang}.${ext}`;
   }
 
   public buildDocxDocument(

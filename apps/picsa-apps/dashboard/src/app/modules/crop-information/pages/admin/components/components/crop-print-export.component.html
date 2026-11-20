@@ -1,0 +1,112 @@
+<div class="flex flex-col gap-4">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+    <mat-label>Languages ({{ selectedLanguageCodes().length }})</mat-label>
+    <mat-select multiple [ngModel]="selectedLanguageCodes()" (ngModelChange)="selectedLanguageCodes.set($event)">
+      <mat-select-trigger>{{ selectedLanguageCodes().length }} selected</mat-select-trigger>
+      @for (lang of languageOptions(); track lang.id) {
+        <mat-option [value]="lang.id">{{ lang.language_label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Locations checklist, grouped by province -->
+  <div class="border border-gray-200 rounded p-4 flex flex-col gap-3 min-h-0">
+    <div class="flex items-center gap-2">
+      <h4 class="flex-1">Districts ({{ selectedLocationIds().length }}/{{ availableCount() }} available)</h4>
+      <button matButton="outlined" (click)="toggleAllLocations(true)" [disabled]="busy">All</button>
+      <button matButton="outlined" (click)="toggleAllLocations(false)" [disabled]="busy">None</button>
+    </div>
+    <div class="flex-1 min-h-0 overflow-auto space-y-4 max-h-[38vh]">
+      @for (group of locationGroups(); track group.id) {
+        <div>
+          <div class="flex items-center gap-2">
+            <mat-checkbox
+              [checked]="isGroupChecked(group)"
+              [indeterminate]="isGroupIndeterminate(group)"
+              (change)="toggleGroup(group, $event.checked)"
+              [disabled]="busy"
+            >
+              <span class="font-medium">{{ group.label }}</span>
+            </mat-checkbox>
+            <span class="text-sm text-gray-500">{{ groupSelectedCount(group) }}/{{ groupSelectableCount(group) }}</span>
+          </div>
+          <div class="ml-6 space-y-1 mt-1">
+            @for (loc of group.districts; track loc.id) {
+              <div class="flex items-center gap-1">
+                <mat-checkbox
+                  class="flex-1"
+                  [checked]="isLocationSelected(loc.id)"
+                  (change)="toggleLocation(loc.id, $event.checked)"
+                  [disabled]="!loc.available || busy"
+                >
+                  {{ loc.label }}
+                  @if (!loc.available) {
+                    <span class="text-gray-500 text-sm">(no data)</span>
+                  }
+                </mat-checkbox>
+                <button
+                  matIconButton
+                  (click)="exportSingle(loc.id, 'docx')"
+                  [disabled]="!loc.available || busy"
+                  matTooltip="Export single Word doc"
+                >
+                  <mat-icon>description</mat-icon>
+                </button>
+                <button
+                  matIconButton
+                  (click)="exportSingle(loc.id, 'pdf')"
+                  [disabled]="!loc.available || busy"
+                  matTooltip="Export single PDF"
+                >
+                  <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      } @empty {
+        <p class="text-gray-500 text-sm">No locations found</p>
+      }
+    </div>
+  </div>
+
+  <!-- Actions + progress -->
+  <div class="flex items-center gap-4">
+    <button matButton="outlined" (click)="exportBulk('docx')" [disabled]="!canExport()">
+      <mat-icon>description</mat-icon>
+      Export Word Docs
+    </button>
+    <button matButton="filled" color="primary" (click)="exportBulk('pdf')" [disabled]="!canExport()">
+      <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
+      Export PDFs
+    </button>
+    @if (busy) {
+      <div class="flex-1 flex items-center gap-3">
+        @if (progressIndeterminate) {
+          <mat-progress-bar mode="indeterminate" class="flex-1" />
+        } @else {
+          <mat-progress-bar mode="determinate" [value]="(progressDone() / progressTotal()) * 100" class="flex-1" />
+        }
+        <span class="text-sm whitespace-nowrap">{{ statusText() }}</span>
+      </div>
+    } @else if (lastResult()) {
+      <span class="text-sm">{{ lastResult() }}</span>
+    }
+  </div>
+  @if (!busy && failures().length > 0) {
+    <div class="text-sm text-red-700 space-y-1">
+      <div>{{ failures().length }} file(s) failed:</div>
+      <ul class="list-disc pl-5">
+        @for (f of failures().slice(0, 5); track f.file) {
+          <li>{{ f.file }} - {{ f.error }}</li>
+        }
+      </ul>
+      @if (failures().length > 5) {
+        <div>…and {{ failures().length - 5 }} more (see notification)</div>
+      }
+    </div>
+  }
+  @if (!busy && estimatedFiles() > 150) {
+    <p class="text-sm text-amber-700">Large export ({{ estimatedFiles() }} files) - this may take a few minutes.</p>
+  }
+</div>

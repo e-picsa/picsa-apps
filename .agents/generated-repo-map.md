@@ -35,7 +35,7 @@
 | `@picsa/utils`               | `libs/utils/index.ts`                       |
 | `@picsa/utils/*`             | `libs/utils/*`                              |
 
-## Codebase Symbol Index (557 files scanned)
+## Codebase Symbol Index (560 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -206,6 +206,8 @@
   - `Function` **findDifferingCrops**
   - `Function` **calcProbabilityChangePct**
   - `Function` **buildCombinedDiffTable**
+- **[crop-print-export.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-print-export.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-print-export.component.ts`)
+  - `Component` **CropPrintExportComponent** (methods: [toggleAllLocations, languageLabel, export])
 - **[crop-qc.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts`)
   - `Component` **CropQcComponent** (methods: [openVarietyDialog, statusChipClass])
 - **[duplicate-crops.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts`)
@@ -265,9 +267,18 @@
   - `Type` **ICropDataMergedWaterRequirement**
   - `Type` **ICropDataMerged**
   - `Type` **IStationDataWithMeta**
+- **[crop-print-pdf.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-print-pdf.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-print-pdf.service.ts`)
+  - `Service` **CropPrintPdfService** (methods: [convertDocxBlobToPdf])
 - **[crop-probability-docx.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-docx.service.ts`)
-  - `Service` **CropProbabilityDocxService** (methods: [exportDocx, buildDocxDocument, formatProbability])
+  - `Service` **CropProbabilityDocxService** (methods: [exportDocx, generateDocxBlob, resolveExportLanguage, ensureLanguageLoaded, buildExportFilename])
   - `Interface` **IExportDocxOptions**
+- **[crop-probability-print.service.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-print.service.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/services/crop-probability-print.service.ts`)
+  - `Service` **CropProbabilityPrintService** (methods: [computeLocationTables, exportPrint])
+  - `Interface` **IPrintExportRequest**
+  - `Interface` **IPrintExportTable**
+  - `Interface` **IPrintExportResult**
+  - `Type` **CropPrintFormat**
+  - `Type` **PrintExportStage**
 - **[crop-qc.utils.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/crop-qc.utils.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/crop-qc.utils.ts`)
   - `Interface` **ICropQcIssue**
   - `Interface` **IStationLookupBounds**
