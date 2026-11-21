@@ -81,7 +81,6 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public rows = computed<ICoverageRow[]>(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    const layers = countryCode ? getGeoLocationData(countryCode).layers : [];
     const geoLocations = countryCode
       ? getDownscaledLocations(countryCode).map(({ id, label, parentLabel }) => ({
           id,
@@ -89,13 +88,6 @@ export class CropLocationCoverageComponent implements AfterViewInit {
           parent: parentLabel,
         }))
       : [];
-    // Db records can be stored at a non-deepest tier (e.g. MW district records
-    // ahead of the EPA rollout). Resolve those against parent layers so they
-    // render with real labels instead of falling through as unknown orphans.
-    const parentLocations =
-      layers.length > 1
-        ? layers.slice(0, -1).flatMap((layer) => layer.locations.map(({ id, label }) => ({ id, label })))
-        : [];
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const stationsHashmap = arrayToHashmap(this.service.stations(), 'id');
 
@@ -116,7 +108,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
         water_requirements: (row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {},
       };
     });
-    return buildLocationCoverageRows({ geoLocations, dbRows, parentLocations });
+    return buildLocationCoverageRows({ geoLocations, dbRows });
   });
 
   public stats = computed(() => {
@@ -145,10 +137,9 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
     return {
       displayColumns,
-      filterColumns: parentLayer ? ['parent_location'] : [],
       paginatorSizes: [50, 100],
       search: true,
-      sort: { id: parentLayer ? 'parent_location' : 'location_label', start: 'asc' },
+      sort: { id: 'location_label', start: 'asc' },
       formatHeader: (v) => {
         const headerMap: Record<string, string> = {
           location_label: deepestLayer?.label ?? 'Location',

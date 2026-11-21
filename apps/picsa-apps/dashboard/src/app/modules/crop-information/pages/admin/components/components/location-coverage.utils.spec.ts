@@ -75,33 +75,14 @@ describe('buildLocationCoverageRows', () => {
     expect(byId.get('katete')?.probability_count).toBe(0);
   });
 
-  it('should resolve db rows stored at a parent tier against parent locations', () => {
-    const shared = { maize: { 'PHB-30D79': 450 } };
+  it('should append data-system rows for unknown districts as orphans', () => {
     const rows = buildLocationCoverageRows({
-      geoLocations: [
-        { id: 'bazale_epa', label: 'Bazale EPA', parent: 'Balaka' },
-        { id: 'balaka_boma', label: 'Balaka Boma', parent: 'Balaka' },
-      ],
-      dbRows: [dbRow('balaka', shared, { station_id: 'mw/balaka_township' })],
-      parentLocations: [{ id: 'balaka', label: 'Balaka' }],
-    });
-    const balaka = rows.find((row) => row.location_id === 'balaka');
-    expect(balaka?.location_label).toBe('Balaka');
-    expect(balaka?.parent_location).toBe('Balaka');
-    expect(balaka?.status).toBe('Unique');
-    expect(balaka?.station).toBe('Station balaka');
-  });
-
-  it('should keep unknown-district label for ids in no geo layer', () => {
-    const rows = buildLocationCoverageRows({
-      geoLocations: [{ id: 'bazale_epa', label: 'Bazale EPA', parent: 'Balaka' }],
+      geoLocations,
       dbRows: [dbRow('retired-district', { maize: { 'PHB-30D79': 450 } })],
-      parentLocations: [{ id: 'balaka', label: 'Balaka' }],
     });
     const orphan = rows.find((row) => row.location_id === 'retired-district');
     expect(orphan?.status).toBe('Unique');
     expect(orphan?.location_label).toBe('retired-district (unknown district)');
-    expect(orphan?.parent_location).toBe('');
   });
 
   it('should propagate parent locations and leave orphans blank', () => {
@@ -125,17 +106,5 @@ describe('buildLocationCoverageRows', () => {
       dbRows: [dbRow('chipata', shared), dbRow('chadiza', shared)],
     });
     expect(rows.map((row) => row.location_label)).toEqual(['Chadiza', 'Chipata', 'Katete', 'Petauke']);
-  });
-
-  it('should order rows by parent location first, then location label', () => {
-    const rows = buildLocationCoverageRows({
-      geoLocations: [
-        { id: 'bazale_epa', label: 'Bazale EPA', parent: 'Balaka' },
-        { id: 'chigumula_fr', label: 'Chigumula FR', parent: 'Blantyre' },
-        { id: 'balaka_boma', label: 'Balaka Boma', parent: 'Balaka' },
-      ],
-      dbRows: [],
-    });
-    expect(rows.map((row) => row.location_label)).toEqual(['Balaka Boma', 'Bazale EPA', 'Chigumula FR']);
   });
 });

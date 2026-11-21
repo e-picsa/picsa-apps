@@ -49,22 +49,15 @@ function resolveProbabilities(dbRow: IPairingRow | undefined): {
  * (no record, or a record still empty) share the No Requirements status, records
  * sharing byte-identical requirements are Paired, and the rest are Unique.
  * Data-system rows for unknown districts are appended as orphans.
- * Sorted by parent location then location label ascending by default.
+ * Sorted by location label ascending by default.
  */
 export function buildLocationCoverageRows(params: {
   geoLocations: ICoverageGeoLocation[];
   dbRows: IPairingRow[];
-  /**
-   * Non-deepest layer locations (e.g. districts now that EPAs are deepest for MW).
-   * Db records stored at a parent tier resolve labels from here instead of
-   * rendering as unknown-district orphans.
-   */
-  parentLocations?: ICoverageGeoLocation[];
 }): ICoverageRow[] {
-  const { geoLocations, dbRows, parentLocations = [] } = params;
+  const { geoLocations, dbRows } = params;
   const dbById = new Map(dbRows.map((row) => [row.location_id, row]));
   const geoIds = new Set(geoLocations.map((location) => location.id));
-  const parentById = new Map(parentLocations.map((location) => [location.id, location]));
 
   // Index multi-member groups by location for paired-with lookups
   const groupByLocation = new Map<string, IPairingRow[]>();
@@ -81,12 +74,10 @@ export function buildLocationCoverageRows(params: {
   // Data-system rows for districts outside deployment geo data
   for (const dbRow of dbRows) {
     if (geoIds.has(dbRow.location_id)) continue;
-    rows.push(buildOrphanRow(dbRow, groupByLocation, parentById.get(dbRow.location_id)?.label));
+    rows.push(buildOrphanRow(dbRow, groupByLocation));
   }
 
-  return rows.sort(
-    (a, b) => a.parent_location.localeCompare(b.parent_location) || a.location_label.localeCompare(b.location_label),
-  );
+  return rows.sort((a, b) => a.location_label.localeCompare(b.location_label));
 }
 
 /** Coverage row for a deployment district, merged with its data-system record if present */
@@ -126,23 +117,13 @@ function buildGeoRow(
   };
 }
 
-/**
- * Coverage row for a data-system record outside the deepest geo layer.
- * Records stored at a parent tier (e.g. MW district records ahead of the EPA
- * rollout) resolve to that tier's label; genuinely unknown ids keep the
- * unknown-district label. Parent-tier rows carry the tier label in both
- * location columns so district filtering and parent sorting include them.
- */
-function buildOrphanRow(
-  dbRow: IPairingRow,
-  groupByLocation: Map<string, IPairingRow[]>,
-  parentLabel?: string,
-): ICoverageRow {
+/** Coverage row for a data-system record outside deployment geo data */
+function buildOrphanRow(dbRow: IPairingRow, groupByLocation: Map<string, IPairingRow[]>): ICoverageRow {
   const probInfo = resolveProbabilities(dbRow);
   const base = {
     location_id: dbRow.location_id,
-    location_label: parentLabel ?? `${dbRow.location_id} (unknown district)`,
-    parent_location: parentLabel ?? '',
+    location_label: `${dbRow.location_id} (unknown district)`,
+    parent_location: '',
     station: dbRow.station_name,
     station_id: dbRow.station_id,
     probabilities: probInfo.probabilities,
