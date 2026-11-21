@@ -4,17 +4,17 @@
 # https://docs.pr-agent.ai/installation/github/?h=fallback_models#using-configuration-files
 # https://docs.pr-agent.ai/tools/describe/#configuration-options
 
-# https://ai.google.dev/gemini-api/docs/models
+# https://aistudio.google.com/docs/models
 
 [config]
-model = "gemini/gemini-3.8-flash"
+model = "gemini/gemini-4-hydrogen"
 fallback_models = ["openrouter/openai/gpt-6-luna"]
-# max tokens required for newer models not known by current version of pr-agent used in actions 
-# use lowest common of fallback models
+# LiteLLM unified context is 1M for hydrogen, 922k max input for luna —
+# use the lowest common limit so both primary and fallback stay in-bounds.
 custom_model_max_tokens = 922000
 max_model_tokens = 922000
 ai_timeout = 180
-temperature = 0.1
+no_temperature_models = ["gemini-4-hydrogen"]
 reasoning_effort = "low"
 
 # Exclude files from PR-Agent analysis
