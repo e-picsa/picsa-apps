@@ -12,7 +12,7 @@ function createLayer<TKey extends string>(
   key: TKey,
   label: string,
   locations: readonly IGeoLocationBase[],
-  topoAdminLevel?: 4 | 5 | 6,
+  topoAdminLevel?: number,
 ): IGeoLayer<TKey> {
   return {
     key,
@@ -27,11 +27,13 @@ function createChildLayer<TKey extends string, TParentField extends string>(
   label: string,
   locations: readonly (IGeoLocationBase & Record<TParentField, string>)[],
   parentField: TParentField,
-  topoAdminLevel?: 4 | 5 | 6,
+  topoAdminLevel?: number,
+  parentLayer: string = parentField,
 ): IGeoLayer<TKey> {
   return {
     key,
     label,
+    parentLayer,
     ...(topoAdminLevel !== undefined ? { topoAdminLevel } : {}),
     locations: locations.map((loc) => ({
       id: loc.id,

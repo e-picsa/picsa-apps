@@ -139,17 +139,21 @@
 
 <!-- Template Export Location Select -->
 <ng-template #templateExport>
-  <picsa-form-location-select [countryCode]="countryCode()" #locationSelect></picsa-form-location-select>
+  <picsa-form-location-select
+    [countryCode]="countryCode()"
+    [tool]="'cropProbability'"
+    #locationSelect
+  ></picsa-form-location-select>
   <button
     class="ml-2"
     matButton="outlined"
-    (click)="downloadTemplate(locationSelect.computedValue())"
+    (click)="downloadTemplate(locationSelect.deepestSelectedId())"
     [disabled]="!locationSelect.isValid()"
   >
     <mat-icon>download</mat-icon>
     <span class="capitalize">
       @if (locationSelect.isValid()) {
-        {{ locationSelect.sublocationSelected() || locationSelect.parentSelected() }} Template
+        {{ locationSelect.deepestSelectedId() }} Template
       } @else {
         Template
       }

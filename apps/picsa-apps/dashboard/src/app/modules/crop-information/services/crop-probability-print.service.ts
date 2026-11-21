@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { getDownscaledLocations } from '@picsa/data/geoLocation';
+import { getLocationsForTool } from '@picsa/data/geoLocation';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
 import download from 'downloadjs';
@@ -88,7 +88,7 @@ export class CropProbabilityPrintService {
     const cropData = this.cropService.cropData();
     const cropDataHashmap = arrayToHashmap(cropData, 'id', (v) => `${v.crop}/${v.variety}`);
 
-    const locations = getDownscaledLocations(countryCode);
+    const locations = getLocationsForTool(countryCode, 'cropProbability');
     const filterSet = locationIds && locationIds.length > 0 ? new Set(locationIds) : null;
     const cropSet = cropFamilies && cropFamilies.length > 0 ? new Set(cropFamilies) : null;
 

@@ -1,3 +1,8 @@
+export type GeoToolKey = 'cropProbability' | 'forecast' | 'climate';
+
+/** Location selection keyed by country layer key (e.g. `{ province: 'southern', district: 'mazabuka' }`) */
+export type ILocationSelection = Record<string, string>;
+
 export interface IGeoLocationBase {
   id: string;
   label: string;
@@ -16,32 +21,36 @@ export interface IGeoLayer<TKey extends string = string> {
   key: TKey;
   label: string;
   /** Internal OSM admin_level in <COUNTRY>.topo.json when boundary geometry exists for this layer */
-  topoAdminLevel?: 4 | 5 | 6;
+  topoAdminLevel?: number;
+  /** Explicit parent layer key referenced by `parentId` on items in this layer */
+  parentLayer?: string;
   locations: IGeoLocationItem[];
 }
 
 export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
-  /**
-   * Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district).
-   * Note: UI selectors (`FormLocationSelectComponent`) and persisted `userSettings.location`
-   * tuples currently assume 1 or 2 layers. Supporting 3+ layers in the future will
-   * require extending those consumers and tuple slots.
-   */
+  /** Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district or epa). */
   layers: IGeoLayer[];
+  /**
+   * Optional per-tool target layer key. Omitted tools default to the country's deepest layer.
+   * Only needed when tools operate at different tiers (e.g. MW forecasts at `district` while crop targets `epa`).
+   */
+  toolLayers?: Partial<Record<GeoToolKey, string>>;
 }
 
-/** Deepest-tier location with resolved parent tier references */
-export interface IDeepestLocation {
-  id: string;
-  label: string;
-  /** Parent tier id where the country defines multiple layers, else empty */
+/** Normalized location entry with resolved parent tier references */
+export interface IGeoLocationNode extends IGeoLocationBase {
+  layerKey: string;
+  /** Parent tier id where the layer defines a parent tier, else empty */
   parentId: string;
   /** Parent tier label, empty when no parent */
   parentLabel: string;
-  /** Optional OSM boundary name when it differs from the display label */
-  topoName?: string;
-  coordinates?: { latitude: number; longitude: number };
+}
+
+export interface IResolvedToolLocations {
+  layerKey: string;
+  /** 0 = unselected/invalid, 1 = resolved, >1 = coarser selection matching multiple child locations */
+  locations: IGeoLocationNode[];
 }
 
 export interface IGeoJsonData<T = Record<string, string>> {

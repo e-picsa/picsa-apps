@@ -9,7 +9,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration';
 import type { ICountryCode } from '@picsa/data';
-import { getDownscaledLocations, getGeoLocationData, isLocationComplete } from '@picsa/data/geoLocation';
+import {
+  getGeoLocationData,
+  getLocationsForTool,
+  getToolLayers,
+  ILocationSelection,
+  isSelectionComplete,
+  resolveLocationForTool,
+} from '@picsa/data/geoLocation';
 import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IStationMeta } from '@picsa/models';
@@ -74,8 +81,8 @@ export class SiteSelectPage {
   /** User's assigned deployment country */
   public readonly userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
-  /** Selected [country, admin_1, ..., admin_n] from form-location-select */
-  public readonly selectedLocation = signal<(string | undefined)[]>([]);
+  /** Selected location keyed by geo layer from form-location-select */
+  public readonly selectedLocation = signal<ILocationSelection>({});
 
   /** Map readiness flag bound from picsa-map */
   public readonly mapReady = signal(false);
@@ -87,14 +94,9 @@ export class SiteSelectPage {
   public readonly selectedLocationEntry = computed(() => {
     const loc = this.selectedLocation();
     const country = this.userCountryCode();
-    if (!country || !loc || !loc.length) return undefined;
-
-    if (!isLocationComplete(country as ICountryCode, loc)) return undefined;
-
-    const locationId = loc[5] ?? loc[4];
-    if (!locationId) return undefined;
-
-    return getDownscaledLocations(country as ICountryCode).find((l) => l.id === locationId);
+    if (!country || !isSelectionComplete(country as ICountryCode, loc, 'climate')) return undefined;
+    const { locations } = resolveLocationForTool(country as ICountryCode, loc, 'climate');
+    return locations.length === 1 ? locations[0] : undefined;
   });
 
   /** Backwards-compatible alias for selectedLocationEntry */
@@ -118,7 +120,9 @@ export class SiteSelectPage {
    * Once a country resolves the country-fallback effect owns the camera, so
    * marker updates no longer pan (avoids sequential stop-and-refit jumps).
    */
-  public readonly shouldFitMarkers = computed(() => !this.selectedLocation()?.some(Boolean) && !this.userCountryCode());
+  public readonly shouldFitMarkers = computed(
+    () => Object.keys(this.selectedLocation()).length === 0 && !this.userCountryCode(),
+  );
 
   /** Bounding box combining the selected location feature and the displayed or recommended station */
   public readonly locationAndStationBounds = computed(() => {
@@ -255,9 +259,8 @@ export class SiteSelectPage {
   private manualStationSelection: IStationMeta | undefined = undefined;
 
   constructor() {
-    const settings = this.configurationService.userSettings();
-    const initialLocation = settings?.location;
-    if (initialLocation && initialLocation.length > 0) {
+    const initialLocation = this.configurationService.activeLocationSelection();
+    if (Object.keys(initialLocation).length > 0) {
       this.selectedLocation.set(initialLocation);
     }
 
@@ -369,9 +372,10 @@ export class SiteSelectPage {
     let lastRenderedParentLocationId: string | undefined = undefined;
     effect(() => {
       const loc = this.selectedLocation();
-      const parentId = loc?.[4];
-      const hasSublocation = this.selectedLocationEntry() !== undefined;
       const countryCode = this.userCountryCode();
+      const topLayerKey = countryCode ? getToolLayers(countryCode as ICountryCode, 'climate')[0]?.key : undefined;
+      const parentId = topLayerKey ? loc[topLayerKey] : undefined;
+      const hasSublocation = this.selectedLocationEntry() !== undefined;
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
 
@@ -430,7 +434,7 @@ export class SiteSelectPage {
       const picsaMap = this.picsaMap();
       const mapReady = this.mapReady();
       const loc = this.selectedLocation();
-      const hasDeeperSelection = !!loc?.[4] || this.selectedLocationEntry() !== undefined;
+      const hasDeeperSelection = Object.keys(loc).length > 0 || this.selectedLocationEntry() !== undefined;
 
       if (!picsaMap || !mapReady || !countryCode || hasDeeperSelection) {
         if (!countryCode) lastRenderedFallbackCountry = undefined;
@@ -445,7 +449,7 @@ export class SiteSelectPage {
           if (!bounds) return;
           // Skip stale results: country changed or deeper selection made while loading
           if (this.userCountryCode() !== countryCode) return;
-          if (this.selectedLocation()?.[4] || this.selectedLocationEntry()) return;
+          if (Object.keys(this.selectedLocation()).length > 0 || this.selectedLocationEntry()) return;
           const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
           picsaMap.fitBounds(bounds, {
             maxZoom: 7,
@@ -466,12 +470,12 @@ export class SiteSelectPage {
     }
   }
 
-  public handleLocationChanged(location: (string | undefined)[]) {
+  public handleLocationChanged(location: ILocationSelection) {
     if (isEqual(location, this.selectedLocation())) {
       return;
     }
     this.selectedLocation.set(location);
-    this.configurationService.updateUserSettings({ location });
+    this.configurationService.setLocationSelection(location);
   }
 
   /**
@@ -644,19 +648,23 @@ export class SiteSelectPage {
     const country = this.userCountryCode();
     if (!country || !station.location?.length) return;
 
-    const deepest = getDownscaledLocations(country as ICountryCode);
+    const layers = getToolLayers(country as ICountryCode, 'climate');
+    const deepest = getLocationsForTool(country as ICountryCode, 'climate');
     const matchingLocation = deepest.find((d) => isStationInLocation(station, d.label, d.id));
     if (!matchingLocation || matchingLocation.id === this.selectedLocationEntry()?.id) {
       return;
     }
 
     this.manualStationSelection = station;
-    const location: (string | undefined)[] = matchingLocation.parentId
-      ? [undefined, undefined, country, undefined, matchingLocation.parentId, matchingLocation.id]
-      : [undefined, undefined, country, undefined, matchingLocation.id];
+    const location: ILocationSelection = {};
+    if (layers.length > 1 && matchingLocation.parentId) {
+      const parentKey = layers[layers.length - 1].parentLayer ?? layers[layers.length - 2].key;
+      location[parentKey] = matchingLocation.parentId;
+    }
+    location[matchingLocation.layerKey] = matchingLocation.id;
 
     this.selectedLocation.set(location);
-    this.configurationService.updateUserSettings({ location });
+    this.configurationService.setLocationSelection(location);
   }
 
   public syncDistrictFromStation(station: IStationMeta) {

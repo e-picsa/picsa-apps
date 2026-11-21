@@ -1,18 +1,39 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  untracked,
+  viewChildren,
+} from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ICountryCode } from '@picsa/data';
-import { getGeoLocationData, IGeolocationData } from '@picsa/data/geoLocation';
+import {
+  GeoToolKey,
+  getGeoLocationData,
+  IGeoLayer,
+  IGeolocationData,
+  IGeoLocationItem,
+  ILocationSelection,
+} from '@picsa/data/geoLocation';
 import { isEqual } from '@picsa/utils/object.utils';
 
+interface ILayerRow {
+  layer: IGeoLayer;
+  index: number;
+  options: IGeoLocationItem[];
+  selectedId: string | undefined;
+  disabled: boolean;
+}
+
 /**
- * Location select displays dropdown selection boxes for administrative parent and sub-location
- * tiers within the current user selected country.
- *
- * Each country defines ordered `layers` (e.g. mw: [district], zm: [province, district], zw: [province, district]).
- * Assumes 1 or 2 hierarchy layers, mapped to tuple indexes 4 and 5.
- * Supporting 3+ layers in the future would require dynamic per-layer dropdowns and extending the persisted tuple.
+ * Location select displays dropdowns for each administrative/agricultural tier configured
+ * for the country (1, 2, or N layers), optionally capped to a tool's target layer.
  */
 @Component({
   selector: 'picsa-form-location-select',
@@ -23,122 +44,137 @@ import { isEqual } from '@picsa/utils/object.utils';
 })
 export class FormLocationSelectComponent {
   public countryCode = input.required<string>();
-
-  public value = input<(string | undefined)[]>([]);
-
-  /** Optional method to apply to data before rendering locations in list */
+  public value = input<ILocationSelection>({});
+  /** Optional tool scope; caps rendered dropdowns to the layer configured for that tool */
+  public tool = input<GeoToolKey | undefined>(undefined);
+  /** Optional method to filter locations before rendering */
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
-  public valueChanged = output<(string | undefined)[]>();
+  public valueChanged = output<ILocationSelection>();
 
-  public readonly sublocationSelect = viewChild<MatSelect>('sublocationSelect');
+  public readonly layerSelects = viewChildren<MatSelect>('layerSelect');
+  public selectedByLayer = signal<ILocationSelection>({}, { equal: isEqual });
 
-  /** Parent tier selected (e.g. Province in multi-tier, District in single-tier) */
-  public parentSelected = signal<string | undefined>(undefined);
-  /** Deepest sublocation tier options and selection */
-  public sublocationOptions = signal<{ id: string; label: string }[]>([]);
-  public sublocationSelected = signal<string | undefined>(undefined);
-
-  /** Parent location layer defined for the country (drives the first dropdown) */
-  public parentLocation = computed(() => {
-    const { layers } = this.locationData();
-    return layers[0];
-  });
-
-  /** Deepest location layer defined for the country (drives the second dropdown) */
-  public sublocation = computed(() => {
-    const { layers } = this.locationData();
-    if (layers.length < 2) return undefined;
-    return layers[layers.length - 1];
-  });
-
-  public computedValue = computed<(string | undefined)[]>(
-    () => this.getComputedValue(this.parentSelected(), this.sublocationSelected()),
-    { equal: isEqual },
+  public locationData = computed<IGeolocationData>(() =>
+    this.locationModifier()(getGeoLocationData(this.countryCode() as ICountryCode), this.countryCode()),
   );
 
-  public isValid = computed(() => {
-    const computedValue = this.computedValue();
-    if (this.sublocation()) return Boolean(computedValue[5]);
-    return Boolean(computedValue[4]);
+  public visibleLayers = computed<IGeoLayer[]>(() => {
+    const data = this.locationData();
+    const tool = this.tool();
+    if (!tool) return data.layers;
+    const targetKey = data.toolLayers?.[tool];
+    if (!targetKey) return data.layers;
+    const idx = data.layers.findIndex((l) => l.key === targetKey);
+    return idx >= 0 ? data.layers.slice(0, idx + 1) : data.layers;
   });
 
-  public locationData = computed<IGeolocationData>(() => {
-    const countryCode = this.countryCode();
-    return this.getLocationData(countryCode);
+  public layerRows = computed<ILayerRow[]>(() => {
+    const layers = this.visibleLayers();
+    const selected = this.selectedByLayer();
+    return layers.map((layer, index) => {
+      if (index === 0) {
+        return { layer, index, options: layer.locations, selectedId: selected[layer.key], disabled: false };
+      }
+      const parentKey = layer.parentLayer ?? layers[index - 1].key;
+      const parentId = selected[parentKey];
+      const options = parentId ? layer.locations.filter((o) => o.parentId === parentId) : [];
+      return { layer, index, options, selectedId: selected[layer.key], disabled: !parentId };
+    });
+  });
+
+  public isValid = computed(() => {
+    const layers = this.visibleLayers();
+    if (layers.length === 0) return false;
+    const selected = this.selectedByLayer();
+    return layers.every((layer) => Boolean(selected[layer.key]));
+  });
+
+  /** Deepest selected location id across visible layers */
+  public deepestSelectedId = computed(() => {
+    const layers = this.visibleLayers();
+    const selected = this.selectedByLayer();
+    for (let i = layers.length - 1; i >= 0; i--) {
+      const id = selected[layers[i].key];
+      if (id) return id;
+    }
+    return undefined;
   });
 
   constructor() {
-    // Set input values when passed
+    // Seed from external `value` input when it changes (without resetting on unrelated layer updates)
     effect(() => {
       const inputValue = this.value();
-      this.parentSelected.set(inputValue[4]);
-      this.sublocationSelected.set(inputValue[5]);
+      const layers = untracked(() => this.visibleLayers());
+      this.selectedByLayer.set(this.reconcileSelection(layers, inputValue ?? {}));
     });
 
+    // Re-reconcile if country or tool changes visible layers
     effect(() => {
-      const parentSelected = this.parentSelected();
-      this.handleParentSelected(parentSelected);
+      const layers = this.visibleLayers();
+      const current = untracked(() => this.selectedByLayer());
+      this.selectedByLayer.set(this.reconcileSelection(layers, current));
     });
 
-    // Emit value changes whenever computedValue updates (e.g. parent selected, sublocation selected, or cleared)
-    let lastEmitted: (string | undefined)[] | undefined = undefined;
+    let lastEmitted: ILocationSelection | undefined = undefined;
     effect(() => {
-      const computedValue = this.computedValue();
-      if (computedValue && !isEqual(computedValue, lastEmitted)) {
-        if (computedValue[4] || computedValue[5] || (lastEmitted && (lastEmitted[4] || lastEmitted[5]))) {
-          lastEmitted = computedValue;
-          this.valueChanged.emit(computedValue);
-        }
+      const current = this.selectedByLayer();
+      const hasAny = Object.keys(current).length > 0;
+      const hadAny = lastEmitted ? Object.keys(lastEmitted).length > 0 : false;
+      if (!isEqual(current, lastEmitted) && (hasAny || hadAny)) {
+        lastEmitted = current;
+        this.valueChanged.emit(current);
       }
     });
   }
 
-  public onParentSelectionChange(newParentValue: string | undefined) {
-    this.parentSelected.set(newParentValue);
-    // If a sublocation tier exists and has multiple options, auto-open the sublocation dropdown on user interaction
-    if (newParentValue && this.sublocation()) {
+  public onLayerSelectionChange(layerIndex: number, newValue: string | undefined) {
+    const layers = this.visibleLayers();
+    const current = this.selectedByLayer();
+    const candidate: ILocationSelection = {};
+    for (let i = 0; i < layerIndex; i++) {
+      const key = layers[i].key;
+      if (current[key]) candidate[key] = current[key];
+    }
+    if (layers[layerIndex] && newValue) {
+      candidate[layers[layerIndex].key] = newValue;
+    }
+
+    const reconciled = this.reconcileSelection(layers, candidate);
+    this.selectedByLayer.set(reconciled);
+
+    const nextIndex = layerIndex + 1;
+    const nextLayer = layers[nextIndex];
+    if (newValue && nextLayer && !reconciled[nextLayer.key]) {
       setTimeout(() => {
-        if (this.sublocationOptions().length > 1 && !this.sublocationSelected()) {
-          this.sublocationSelect()?.open();
+        const nextRow = this.layerRows()[nextIndex];
+        if (nextRow && nextRow.options.length > 1 && !nextRow.selectedId) {
+          this.layerSelects()[nextIndex]?.open();
         }
       });
     }
   }
 
-  private getComputedValue(parentSelected?: string, sublocationSelected?: string) {
-    const value = [undefined, undefined, this.countryCode(), undefined, parentSelected];
-    if (this.sublocation()) {
-      value.push(sublocationSelected);
-    }
-    return value;
-  }
-
-  private getLocationData(country_code: string): IGeolocationData {
-    const locationData = getGeoLocationData(country_code as ICountryCode);
-    return this.locationModifier()(locationData, country_code);
-  }
-
-  /** Update sublocation options/selected when parent tier selection changes */
-  private handleParentSelected(parentSelected: string | undefined) {
-    if (!parentSelected) {
-      this.sublocationOptions.set([]);
-      this.sublocationSelected.set(undefined);
-      return;
-    }
-    const sublocation = this.sublocation();
-    if (sublocation) {
-      const filteredLocations = sublocation.locations.filter((o) => o.parentId === parentSelected);
-      this.sublocationOptions.set(filteredLocations);
-      let currentSublocation = this.sublocationSelected();
-      if (currentSublocation && !filteredLocations.find((v) => v.id === currentSublocation)) {
-        currentSublocation = undefined;
-        this.sublocationSelected.set(undefined);
+  private reconcileSelection(layers: IGeoLayer[], candidate: ILocationSelection): ILocationSelection {
+    const result: ILocationSelection = {};
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      let options = layer.locations;
+      if (i > 0) {
+        const parentKey = layer.parentLayer ?? layers[i - 1].key;
+        const parentId = result[parentKey];
+        if (!parentId) break;
+        options = layer.locations.filter((o) => o.parentId === parentId);
       }
-      // Set value when only 1 option available
-      if (!currentSublocation && filteredLocations.length === 1) {
-        this.sublocationSelected.set(filteredLocations[0].id);
+      const candidateId = candidate[layer.key];
+      if (candidateId && options.some((o) => o.id === candidateId)) {
+        result[layer.key] = candidateId;
+      } else if (i > 0 && options.length === 1) {
+        result[layer.key] = options[0].id;
+      } else {
+        break;
       }
     }
+    return result;
   }
 }

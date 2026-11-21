@@ -3,110 +3,165 @@ import * as topojson from 'topojson-client';
 import type { ICountryCode } from '../deployments';
 import { getGeoLocationData } from './data';
 import {
+  GeoToolKey,
   IBoundaryData,
-  IDeepestLocation,
   IGeoJsonData,
   IGeoJsonFeature,
   IGeoLayer,
   IGeoLocationItem,
+  IGeoLocationNode,
+  ILocationSelection,
+  IResolvedToolLocations,
   ITopoJson,
   ITopoJsonFeatureProperties,
 } from './types';
 
 const geoJsonFeatureCache = new Map<string, IGeoJsonData<ITopoJsonFeatureProperties>>();
-const downscaledByLayersCache = new WeakMap<IGeoLayer[], Map<string, IDeepestLocation>>();
 
 /** Clear cached parsed TopoJSON features (useful in tests or after mock overrides) */
 export function clearGeoJsonFeatureCache() {
   geoJsonFeatureCache.clear();
 }
 
-function buildDownscaledLocations(layers: IGeoLayer[]): IDeepestLocation[] {
-  const deepestLayer = layers[layers.length - 1];
-  if (!deepestLayer) return [];
-  const hasParent = layers.length > 1;
-  const parentLayer = hasParent ? layers[layers.length - 2] : undefined;
-  const parentLabels: Record<string, string> = {};
-  if (parentLayer) {
-    for (const parent of parentLayer.locations) {
-      parentLabels[parent.id] = parent.label;
-    }
-  }
-  return deepestLayer.locations.map((loc) => {
-    const parentId = hasParent ? (loc.parentId ?? '') : '';
+function getParentLayer(layers: IGeoLayer[], index: number): IGeoLayer | undefined {
+  if (index <= 0) return undefined;
+  const parentKey = layers[index].parentLayer;
+  return parentKey ? layers.find((l) => l.key === parentKey) : layers[index - 1];
+}
+
+function buildLayerNodes(layers: IGeoLayer[], index: number): IGeoLocationNode[] {
+  const layer = layers[index];
+  if (!layer) return [];
+  const parentLayer = getParentLayer(layers, index);
+  const parentLabels = new Map(parentLayer?.locations.map((p) => [p.id, p.label]) ?? []);
+  return layer.locations.map((loc) => {
+    const parentId = parentLayer ? (loc.parentId ?? '') : '';
     return {
       id: loc.id,
       label: loc.label,
+      layerKey: layer.key,
       parentId,
-      parentLabel: parentId ? (parentLabels[parentId] ?? '') : '',
+      parentLabel: parentId ? (parentLabels.get(parentId) ?? '') : '',
       ...(loc.topoName !== undefined ? { topoName: loc.topoName } : {}),
       ...(loc.coordinates !== undefined ? { coordinates: loc.coordinates } : {}),
     };
   });
 }
 
-/** Locations at the deepest defined layer for a country, with parent tier references resolved */
-export function getDownscaledLocations(country_code: ICountryCode): IDeepestLocation[] {
-  const { layers } = getGeoLocationData(country_code);
-  return buildDownscaledLocations(layers);
-}
-
-/**
- * Look up a downscaled (deepest-layer) location by id for a country.
- * Falls back to a humanised label with empty parent metadata if not present in static geo data.
- */
-export function getDownscaledLocation(country_code: ICountryCode, location_id: string): IDeepestLocation {
-  const { layers } = getGeoLocationData(country_code);
-  let byId = downscaledByLayersCache.get(layers);
-  if (!byId) {
-    byId = new Map(buildDownscaledLocations(layers).map((loc) => [loc.id, loc]));
-    downscaledByLayersCache.set(layers, byId);
+function validateSelectionChain(layers: IGeoLayer[], selection?: ILocationSelection): IGeoLocationNode[] {
+  if (!selection) return [];
+  const chain: IGeoLocationNode[] = [];
+  for (let i = 0; i < layers.length; i++) {
+    const id = selection[layers[i].key];
+    if (!id) break;
+    const node = buildLayerNodes(layers, i).find((n) => n.id === id);
+    if (!node) break;
+    if (i > 0) {
+      const parentLayer = getParentLayer(layers, i);
+      const selectedParent = parentLayer ? chain.find((n) => n.layerKey === parentLayer.key) : undefined;
+      if (selectedParent && node.parentId !== selectedParent.id) break;
+    }
+    chain.push(node);
   }
-  const match = byId.get(location_id);
-  if (match) return match;
-  return {
-    id: location_id,
-    label: formatLocationIdAsLabel(location_id),
-    parentId: '',
-    parentLabel: '',
-  };
+  return chain;
 }
 
-/**
- * Check all required hierarchy segments are selected for the country's layer structure.
- * Assumes 1 or 2 layers stored at tuple indexes 4 and 5;
- * extending to 3+ layers in the future will require checking additional tuple indexes.
- */
-export function isLocationComplete(country_code: ICountryCode, location: (string | undefined)[] | undefined): boolean {
-  if (!location) return false;
-  const { layers } = getGeoLocationData(country_code);
-  if (layers.length > 1) {
-    return Boolean(location[4] && location[5]);
-  }
-  return Boolean(location[4]);
+/** Return ordered layers visible for a tool (capped at `toolLayers[tool]`, or all layers when omitted) */
+export function getToolLayers(country_code: ICountryCode, tool?: GeoToolKey): IGeoLayer[] {
+  const { layers, toolLayers } = getGeoLocationData(country_code);
+  if (!tool) return layers;
+  const targetKey = toolLayers?.[tool];
+  if (!targetKey) return layers;
+  const idx = layers.findIndex((l) => l.key === targetKey);
+  return idx >= 0 ? layers.slice(0, idx + 1) : layers;
 }
 
-/**
- * Display label for a stored location array, resolving the deepest selected layer first.
- * Assumes 1 or 2 layers stored at indexes 4 and 5; extend if 3+ layers are introduced later.
- */
-export function getLocationLabel(
+/** Return all normalized locations at the target layer configured for a tool */
+export function getLocationsForTool(country_code: ICountryCode, tool: GeoToolKey): IGeoLocationNode[] {
+  const layers = getToolLayers(country_code, tool);
+  return buildLayerNodes(layers, layers.length - 1);
+}
+
+/** Strict lookup for a location at a tool's target layer (returns undefined when absent) */
+export function findLocationForTool(
   country_code: ICountryCode,
-  location: (string | undefined)[] | undefined,
-): string | undefined {
-  if (!location) return undefined;
+  tool: GeoToolKey,
+  location_id: string,
+): IGeoLocationNode | undefined {
+  if (!location_id) return undefined;
+  return getLocationsForTool(country_code, tool).find((loc) => loc.id === location_id);
+}
+
+/**
+ * Deterministically resolve a user's location selection to the target layer for a tool.
+ * - Exact match at the tool's layer -> `[node]`
+ * - Selection deeper than the tool's layer (e.g. EPA -> district forecast) -> walks up `parentId` to `[ancestor]`
+ * - Selection coarser than the tool's layer (e.g. province -> districts) -> returns matching child nodes
+ * - Unselected or invalid selection -> `[]`
+ */
+export function resolveLocationForTool(
+  country_code: ICountryCode,
+  selection: ILocationSelection | undefined,
+  tool: GeoToolKey,
+): IResolvedToolLocations {
   const { layers } = getGeoLocationData(country_code);
-  const topId = location[4];
-  const childId = location[5];
-  if (layers.length > 1 && childId) {
-    const deepestLayer = layers[layers.length - 1];
-    const match = deepestLayer?.locations.find((l) => l.id === childId);
-    if (match) return match.label;
+  const toolLayers = getToolLayers(country_code, tool);
+  const targetIndex = toolLayers.length - 1;
+  const targetLayerKey = toolLayers[targetIndex]?.key ?? '';
+  if (targetIndex < 0) return { layerKey: targetLayerKey, locations: [] };
+
+  const chain = validateSelectionChain(layers, selection);
+  if (chain.length === 0) return { layerKey: targetLayerKey, locations: [] };
+
+  const exact = chain.find((n) => n.layerKey === targetLayerKey);
+  if (exact) return { layerKey: targetLayerKey, locations: [exact] };
+
+  let current = chain[chain.length - 1];
+  let currentIndex = layers.findIndex((l) => l.key === current.layerKey);
+
+  // Deeper selection: walk up parentId until reaching targetIndex
+  if (currentIndex > targetIndex) {
+    while (currentIndex > targetIndex) {
+      const parentLayer = getParentLayer(layers, currentIndex);
+      if (!parentLayer || !current.parentId) return { layerKey: targetLayerKey, locations: [] };
+      currentIndex = layers.findIndex((l) => l.key === parentLayer.key);
+      const parent = buildLayerNodes(layers, currentIndex).find((n) => n.id === current.parentId);
+      if (!parent) return { layerKey: targetLayerKey, locations: [] };
+      current = parent;
+    }
+    return { layerKey: targetLayerKey, locations: [current] };
   }
-  if (topId) {
-    return layers[0]?.locations.find((l) => l.id === topId)?.label;
+
+  // Coarser selection: walk down parentId collecting matching descendants at targetIndex
+  let parentIds = new Set([current.id]);
+  let nodes: IGeoLocationNode[] = [];
+  for (let i = currentIndex + 1; i <= targetIndex; i++) {
+    nodes = buildLayerNodes(layers, i).filter((n) => parentIds.has(n.parentId));
+    parentIds = new Set(nodes.map((n) => n.id));
   }
-  return undefined;
+  return { layerKey: targetLayerKey, locations: nodes };
+}
+
+/** Check every required layer (up to `tool`'s target layer, or deepest when omitted) has a valid selection */
+export function isSelectionComplete(
+  country_code: ICountryCode,
+  selection: ILocationSelection | undefined,
+  tool?: GeoToolKey,
+): boolean {
+  const toolLayers = getToolLayers(country_code, tool);
+  if (toolLayers.length === 0) return false;
+  const chain = validateSelectionChain(toolLayers, selection);
+  return chain.length === toolLayers.length;
+}
+
+/** Display label for the deepest valid selected tier in a location selection */
+export function getSelectionLabel(
+  country_code: ICountryCode,
+  selection: ILocationSelection | undefined,
+): string | undefined {
+  const { layers } = getGeoLocationData(country_code);
+  const chain = validateSelectionChain(layers, selection);
+  return chain[chain.length - 1]?.label;
 }
 
 /** Normalize location names for comparison by stripping administrative suffixes and punctuation */
@@ -121,29 +176,35 @@ export function normalizeLocationName(name?: string | null): string {
 
 /**
  * Retrieve the matching GeoJSON feature from a country's TopoJSON for a location.
- * Defaults to the deepest ('downscaled') layer; pass 'parent' for the top layer (e.g. province).
- * Layers without boundary geometries (`topoAdminLevel === undefined`) automatically
- * fall back up the parent chain using `parentId`.
+ * Defaults to the deepest layer; pass 'parent' for the top layer or an explicit `layerKey`.
+ * Layers without boundary geometries (`topoAdminLevel === undefined`) walk up `parentId`.
  */
 export async function getLocationTopoFeature(
   country_code: ICountryCode,
   location_id: string,
-  role: 'downscaled' | 'parent' = 'downscaled',
+  roleOrLayerKey: 'downscaled' | 'parent' | string = 'downscaled',
 ): Promise<IGeoJsonFeature<ITopoJsonFeatureProperties> | undefined> {
   const geoData = getGeoLocationData(country_code);
   const { layers } = geoData;
   if (layers.length === 0) return undefined;
 
-  let layerIndex = role === 'parent' ? 0 : layers.length - 1;
+  let layerIndex =
+    roleOrLayerKey === 'parent'
+      ? 0
+      : roleOrLayerKey === 'downscaled'
+        ? layers.length - 1
+        : layers.findIndex((l) => l.key === roleOrLayerKey);
+  if (layerIndex < 0) return undefined;
+
   const initialItem = layers[layerIndex]?.locations.find((l) => l.id === location_id);
   if (!initialItem) return undefined;
   let item: IGeoLocationItem = initialItem;
 
   while (layerIndex > 0 && layers[layerIndex].topoAdminLevel === undefined) {
-    const parentId = item.parentId;
-    if (!parentId) return undefined;
-    layerIndex--;
-    const parentItem = layers[layerIndex]?.locations.find((l) => l.id === parentId);
+    const parentLayer = getParentLayer(layers, layerIndex);
+    if (!item.parentId || !parentLayer) return undefined;
+    layerIndex = layers.findIndex((l) => l.key === parentLayer.key);
+    const parentItem = layers[layerIndex]?.locations.find((l) => l.id === item.parentId);
     if (!parentItem) return undefined;
     item = parentItem;
   }
@@ -177,13 +238,11 @@ export function formatLocationIdAsLabel(location_id: string) {
 }
 
 export function topoJsonToGeoJson<T = any>(t: ITopoJson, adminLevel?: string | number): IGeoJsonData<T> {
-  // convert the first named object in the topology
   const [objectName] = Object.keys(t.objects);
   const topologyObject = t.objects[objectName];
 
   if (adminLevel && topologyObject.type === 'GeometryCollection') {
     const levelStr = String(adminLevel);
-    // filter geometries at the TopoJSON level before converting to GeoJSON
     const filteredGeometries = topologyObject.geometries.filter(
       (g) => g.properties && String(g.properties.admin_level) === levelStr,
     );
@@ -195,14 +254,9 @@ export function topoJsonToGeoJson<T = any>(t: ITopoJson, adminLevel?: string | n
 }
 
 /**
- * Take input geoJson feature collection data and extract coordinates into a a more simple
- * coordinate lookup table
- * @param propertyKeyField name of field within feature properties to use to index output
- * @param precision number or decimal places used to round coordinate values and omit duplicates
- *
- * NOTE - For more complex geometries it is likely better to use TopoJson instead, particularly
- * in cases such as shared borders
- **/
+ * Take input geoJson feature collection data and extract coordinates into a simple
+ * coordinate lookup table.
+ */
 export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: keyof T, precision = 2) {
   const boundaries: IBoundaryData = {};
 
@@ -210,8 +264,7 @@ export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: 
     const key = feature.properties[propertyKeyField] as string;
     if (!key) {
       const allKeys = Object.keys(feature.properties as any).join(',');
-      const errMsg = `[${propertyKeyField as any}] not found\nAvailable keys: [${allKeys}]`;
-      throw new Error(errMsg);
+      throw new Error(`[${propertyKeyField as any}] not found\nAvailable keys: [${allKeys}]`);
     }
     if (boundaries[key]) {
       throw new Error(`duplicate key found for: ${key}`);
@@ -222,11 +275,9 @@ export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: 
     let y1 = -1;
     const allCoordinates = flattenCoordinates(feature.geometry.coordinates);
     for (const [x, y] of allCoordinates) {
-      // round x and y values to number of decimal places provided by precision
       const sf = 10 ** precision;
       const xRounded = Math.round(x * sf) / sf;
       const yRounded = Math.round(y * sf) / sf;
-      // include coordinates only if different from previous (after rounding)
       if (x1 !== xRounded && y1 !== yRounded) {
         coordinates.push([xRounded, yRounded]);
         x1 = xRounded;
@@ -264,11 +315,6 @@ function sortObjectByKey(object: Record<string, any>) {
   return sorted;
 }
 
-/**
- * Geojson includes coordinates that can be nested various levels deep,
- * e.g. [[x1,y1],[x2,y2]], [[[x1,y1],[x2,y2]],[[x3,x4]]], etc.
- * Take any arbitrary level of nesting and extract to single coordinate array
- */
 function flattenCoordinates(data: any[] = []): number[][] {
   if (Array.isArray(data)) {
     const [el] = data;

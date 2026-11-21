@@ -162,42 +162,35 @@ export async function getLocationCenterAndBoundary(
   locationId: string,
   role: 'downscaled' | 'parent' = 'downscaled',
 ): Promise<ILocationCenterResult | undefined> {
-  try {
-    const feature = (await getLocationTopoFeature(countryCode, locationId, role)) as IProximityFeature | undefined;
-    if (feature) {
-      // 1. Direct precomputed center from TopoJSON properties: [lng, lat]
-      const centerCoords = feature.properties?.center;
-      if (Array.isArray(centerCoords) && centerCoords.length >= 2) {
-        const [lng, lat] = centerCoords;
-        if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
-          return {
-            center: { lat, lng },
-            feature,
-          };
-        }
-      }
+  const { layers } = getGeoLocationData(countryCode);
+  const targetLayer = role === 'parent' ? layers[0] : layers[layers.length - 1];
+  const explicitCoords = targetLayer?.locations.find((l) => l.id === locationId)?.coordinates;
 
-      // 2. Fallback: compute bounding box center from geometry
-      const bboxCenter = computeFeatureBboxCenter(feature);
-      if (bboxCenter) {
-        return { center: bboxCenter, feature };
-      }
-    }
+  let feature: IProximityFeature | undefined;
+  try {
+    feature = (await getLocationTopoFeature(countryCode, locationId, role)) as IProximityFeature | undefined;
   } catch (err) {
     console.warn(`[LocationProximity] Could not compute location center from TopoJSON for ${locationId}:`, err);
   }
 
-  // 3. Fallback: Check if location item itself has precomputed coordinates
-  const { layers } = getGeoLocationData(countryCode);
-  const targetLayer = role === 'parent' ? layers[0] : layers.at(-1);
-  const locationCoords = targetLayer?.locations.find((l) => l.id === locationId)?.coordinates;
-  if (locationCoords?.latitude && locationCoords?.longitude) {
+  // Prefer explicit point coordinates (e.g. EPA centers) paired with the resolved boundary polygon
+  if (explicitCoords?.latitude && explicitCoords?.longitude) {
     return {
-      center: {
-        lat: locationCoords.latitude,
-        lng: locationCoords.longitude,
-      },
+      center: { lat: explicitCoords.latitude, lng: explicitCoords.longitude },
+      ...(feature ? { feature } : {}),
     };
+  }
+
+  if (feature) {
+    const centerCoords = feature.properties?.center;
+    if (Array.isArray(centerCoords) && centerCoords.length >= 2) {
+      const [lng, lat] = centerCoords;
+      if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+        return { center: { lat, lng }, feature };
+      }
+    }
+    const bboxCenter = computeFeatureBboxCenter(feature);
+    if (bboxCenter) return { center: bboxCenter, feature };
   }
 
   return undefined;

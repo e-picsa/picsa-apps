@@ -6,7 +6,7 @@ export const USER_SETTINGS = {
     deployment_id: 'zm',
     language_code: 'zm_en',
     user_type: 'farmer',
-    location: [undefined, undefined, 'zm'],
+    locationsByCountry: {},
     climate_tool: {
       station_id: '',
     },
@@ -16,7 +16,7 @@ export const USER_SETTINGS = {
     deployment_id: 'mw',
     language_code: 'mw_en',
     user_type: 'extension',
-    location: [undefined, undefined, 'mw'],
+    locationsByCountry: {},
     climate_tool: {
       station_id: '',
     },

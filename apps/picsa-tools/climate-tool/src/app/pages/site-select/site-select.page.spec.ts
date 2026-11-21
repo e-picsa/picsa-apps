@@ -110,11 +110,17 @@ describe('SiteSelectPage', () => {
     configService = TestBed.inject(ConfigurationService);
     userSettingsSignal = signal<IUserSettings>({
       country_code: 'zm',
-      location: [undefined, undefined, 'zm', undefined, 'southern', 'choma'],
+      locationsByCountry: { zm: { province: 'southern', district: 'choma' } },
     } as unknown as IUserSettings);
     (configService as unknown as { userSettings: WritableSignal<IUserSettings> }).userSettings = userSettingsSignal;
     jest.spyOn(configService, 'updateUserSettings').mockImplementation((update) => {
       userSettingsSignal.update((curr) => ({ ...curr, ...update }));
+    });
+    jest.spyOn(configService, 'setLocationSelection').mockImplementation((selection, countryCode) => {
+      userSettingsSignal.update((curr) => {
+        const target = countryCode ?? curr.country_code;
+        return { ...curr, locationsByCountry: { ...(curr.locationsByCountry ?? {}), [target]: selection } };
+      });
     });
 
     fixture = TestBed.createComponent(SiteSelectPage);
@@ -133,27 +139,27 @@ describe('SiteSelectPage', () => {
   });
 
   it('should clear selectedDistrict when location is incomplete (only province selected)', () => {
-    component.selectedLocation.set([undefined, undefined, 'zm', undefined, 'southern', undefined]);
+    component.selectedLocation.set({ province: 'southern' });
     expect(component.selectedDistrict()).toBeUndefined();
   });
 
   it('should update location and settings when handleLocationChanged is called with complete location', () => {
-    const newLocation = [undefined, undefined, 'zm', undefined, 'southern', 'monze'];
+    const newLocation = { province: 'southern', district: 'monze' };
 
     component.handleLocationChanged(newLocation);
 
     expect(component.selectedLocation()).toEqual(newLocation);
-    expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: newLocation });
+    expect(configService.setLocationSelection).toHaveBeenCalledWith(newLocation);
   });
 
   it('should persist incomplete location to user settings when sublocation not present', () => {
-    const partialLocation = [undefined, undefined, 'zm', undefined, 'southern', undefined];
+    const partialLocation = { province: 'southern' };
     jest.clearAllMocks();
 
     component.handleLocationChanged(partialLocation);
 
     expect(component.selectedLocation()).toEqual(partialLocation);
-    expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: partialLocation });
+    expect(configService.setLocationSelection).toHaveBeenCalledWith(partialLocation);
   });
 
   it('should set preferred station and navigate when confirmAndNavigate is called', () => {
@@ -258,7 +264,7 @@ describe('SiteSelectPage', () => {
 
   it('should zoom map to parent location bounds and outline feature when parent location is selected ahead of sublocation', async () => {
     component.mapReady.set(true);
-    const partialLocation = [undefined, undefined, 'zm', undefined, 'central', undefined];
+    const partialLocation = { province: 'central' };
     component.handleLocationChanged(partialLocation);
     fixture.detectChanges();
 
@@ -286,7 +292,7 @@ describe('SiteSelectPage', () => {
   it('should zoom map to country bounds once when country known but no province/district selected', async () => {
     jest.clearAllMocks();
     component.mapReady.set(true);
-    component.handleLocationChanged([undefined, undefined, 'zm', undefined, undefined, undefined]);
+    component.handleLocationChanged({});
     fixture.detectChanges();
 
     // Allow async getCountryBounds (topojson parse) to resolve and effect to execute
@@ -370,9 +376,12 @@ describe('SiteSelectPage', () => {
   });
 
   describe('location boundary rendering per deployment', () => {
-    const selectLocation = async (country_code: string, location: (string | undefined)[]) => {
+    const selectLocation = async (country_code: string, location: Record<string, string>) => {
       jest.clearAllMocks();
-      userSettingsSignal.set({ country_code, location } as unknown as IUserSettings);
+      userSettingsSignal.set({
+        country_code,
+        locationsByCountry: { [country_code]: location },
+      } as unknown as IUserSettings);
       component.mapReady.set(true);
       component.handleLocationChanged(location);
       fixture.detectChanges();
@@ -402,17 +411,17 @@ describe('SiteSelectPage', () => {
     };
 
     it('zm full selection renders the district boundary', async () => {
-      await selectLocation('zm', [undefined, undefined, 'zm', undefined, 'southern', 'choma']);
+      await selectLocation('zm', { province: 'southern', district: 'choma' });
       expectBoundaryRendered({ admin_level: '5' });
     });
 
     it('mw district selection renders the district boundary', async () => {
-      await selectLocation('mw', [undefined, undefined, 'mw', undefined, 'balaka', undefined]);
+      await selectLocation('mw', { district: 'balaka' });
       expectBoundaryRendered({ admin_level: '4', name: 'Balaka' });
     });
 
     it('zw full selection renders the district boundary', async () => {
-      await selectLocation('zw', [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge']);
+      await selectLocation('zw', { province: 'manicaland', district: 'chipinge' });
       expectBoundaryRendered({ admin_level: '6' });
     });
 
@@ -422,7 +431,7 @@ describe('SiteSelectPage', () => {
       jest.clearAllMocks();
       userSettingsSignal.set({
         country_code: 'mw',
-        location: [undefined, undefined, 'mw', undefined, 'balaka', undefined],
+        locationsByCountry: { mw: { district: 'balaka' } },
       } as unknown as IUserSettings);
       const reloadFixture = TestBed.createComponent(SiteSelectPage);
       const reloadComponent = reloadFixture.componentInstance;
