@@ -54,6 +54,9 @@ jest.mock('maplibre-gl', () => {
     public getMaxZoom = jest.fn(() => 22);
     public setStyle = jest.fn();
     public setPaintProperty = jest.fn();
+    public setLayoutProperty = jest.fn();
+    public setSprite = jest.fn();
+    public setGlyphs = jest.fn();
     public fitBounds = jest.fn();
     public flyTo = jest.fn();
     public resize = jest.fn();
@@ -61,6 +64,11 @@ jest.mock('maplibre-gl', () => {
     public getZoom = jest.fn(() => this.zoom);
     constructor(options: any) {
       this.options = options;
+      // Model the live style's initial layers so presence checks behave
+      const initialLayers = options?.style?.layers;
+      if (Array.isArray(initialLayers)) {
+        for (const l of initialLayers) this.layers[l.id] = { ...l };
+      }
       mapInstances.push(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -141,6 +149,40 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
   const mockMap = () => mockMapInstances()[0];
   const setZoom = (zoom: number) => {
     mockMap().zoom = zoom;
+  };
+
+  const TEST_VECTOR_STYLE = {
+    version: 8,
+    sources: {
+      'test-vector': { type: 'vector', tiles: ['https://example.com/{z}/{x}/{y}.pbf'] },
+    },
+    sprite: 'https://example.com/sprite',
+    glyphs: 'https://example.com/fonts/{fontstack}/{range}.pbf',
+    layers: [
+      { id: 'test-background', type: 'background', paint: { 'background-color': '#fff' } },
+      {
+        id: 'test-water',
+        type: 'fill',
+        source: 'test-vector',
+        'source-layer': 'water',
+        paint: { 'fill-color': '#00f' },
+      },
+    ],
+  };
+
+  const mockFetch = () => {
+    const fetchMock = jest.fn().mockResolvedValue({ json: () => Promise.resolve(TEST_VECTOR_STYLE) });
+    (globalThis as any).fetch = fetchMock;
+    return fetchMock;
+  };
+  const clearFetch = () => {
+    delete (globalThis as any).fetch;
+  };
+  const waitForVectorLayers = async () => {
+    for (let i = 0; i < 40 && !(component as any).vectorLayersAdded; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    fixture.detectChanges();
   };
 
   // Maplibre fires callbacks outside angular change detection in production,
@@ -258,38 +300,96 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
   it('keeps the offline raster below zoom 9 when online (no metered fetches)', () => {
     emitLoad();
     const map = mockMap();
-    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+    expect(map.setStyle).not.toHaveBeenCalled();
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('picsa-local-layer', 'visibility', expect.anything());
   });
 
-  it('switches to online vector style at zoom >= 9 when online', () => {
-    setZoom(10);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-    // no local raster underlay is attached (it would be hidden and waste fetches)
-    map.emit('styledata');
-    expect(map.sources['picsa-local-tiles']).toBeUndefined();
-  });
+  describe('online vector base layer', () => {
+    it('shows the online vector base at zoom >= 9 without replacing the style', async () => {
+      const fetchMock = mockFetch();
+      try {
+        emitLoad();
+        const map = mockMap();
+        component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
 
-  it('swaps back to offline raster when zooming out below 9', () => {
-    setZoom(10);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+        setZoom(10);
+        map.emit('zoomend');
+        await waitForVectorLayers();
 
-    setZoom(5);
-    map.emit('zoomend');
-    expect(map.setStyle).toHaveBeenCalledWith(expect.objectContaining({ name: 'picsa-offline' }));
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+        expect(map.setStyle).not.toHaveBeenCalled();
+        // vector layers are inserted below existing custom overlays
+        expect(map.addLayer).toHaveBeenCalledWith(
+          expect.objectContaining({ id: 'test-water' }),
+          'location-boundary-fill',
+        );
+        // overlay layers survive the crossing untouched
+        expect(map.layers['location-boundary-line']).toBeTruthy();
+        // raster hidden, vector visible
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('switches back to offline raster when zooming out below 9', async () => {
+      const fetchMock = mockFetch();
+      try {
+        emitLoad();
+        const map = mockMap();
+        setZoom(10);
+        map.emit('zoomend');
+        await waitForVectorLayers();
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+
+        setZoom(5);
+        map.emit('zoomend');
+        fixture.detectChanges();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(map.setStyle).not.toHaveBeenCalled();
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'visible');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('stays on offline raster when the vector style cannot be fetched', async () => {
+      (globalThis as any).fetch = jest.fn().mockRejectedValue(new Error('offline'));
+      try {
+        emitLoad();
+        const map = mockMap();
+        setZoom(10);
+        map.emit('zoomend');
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        fixture.detectChanges();
+
+        expect((component as any).vectorLayersAdded).toBe(false);
+        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'none');
+      } finally {
+        clearFetch();
+      }
+    });
   });
 
   it('stays on offline raster when offline, even at high zoom', () => {
-    isOnline.set(false);
-    setZoom(12);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-    // raster source caps at native zoom 8 so no missing-zoom tiles are fetched (overscaled instead)
-    expect(map.options.style.sources['picsa-local-tiles'].maxzoom).toBe(8);
+    const fetchMock = mockFetch();
+    try {
+      isOnline.set(false);
+      setZoom(12);
+      emitLoad();
+      fixture.detectChanges();
+      const map = mockMap();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+      // raster source caps at native zoom 8 so no missing-zoom tiles are fetched (overscaled instead)
+      expect(map.options.style.sources['picsa-local-tiles'].maxzoom).toBe(8);
+    } finally {
+      clearFetch();
+    }
   });
 
   it('renders markers with [lng, lat] conversion and emits clicks', () => {
@@ -346,5 +446,38 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.layers['district-boundary-fill']).toBeUndefined();
     expect(map.layers['district-boundary-line']).toBeUndefined();
     expect(map.sources['district-boundary']).toBeUndefined();
+  });
+
+  it('keeps overlays in place across zoom crossings in both directions', async () => {
+    const fetchMock = mockFetch();
+    try {
+      emitLoad();
+      const map = mockMap();
+      component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
+
+      // Zoom in past the vector threshold: style is never replaced, so the
+      // overlay layers are never touched
+      setZoom(10);
+      map.emit('zoomend');
+      for (let i = 0; i < 40 && !(component as any).vectorLayersAdded; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(map.layers['location-boundary-line']).toBeTruthy();
+      expect(map.layers['location-boundary-fill']).toBeTruthy();
+
+      // Zoom back out: overlay layers still present, no rebuild involved
+      setZoom(5);
+      map.emit('zoomend');
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(map.layers['location-boundary-line']).toBeTruthy();
+      expect(map.layers['location-boundary-fill']).toBeTruthy();
+      expect(map.sources['location-boundary']).toBeTruthy();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    } finally {
+      clearFetch();
+    }
   });
 });

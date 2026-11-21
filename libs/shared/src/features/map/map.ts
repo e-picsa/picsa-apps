@@ -81,6 +81,24 @@ export interface IGeoJsonLayerOptions {
 export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry | Record<string, any>;
 export type IGeoJsonData = GeoJsonData;
 
+/** Available colours for shared map boundary styles */
+export type MapBoundaryColor = 'green';
+
+/**
+ * Shared boundary overlay styles, keyed by colour.
+ * Presentation lives here (not in geo data) so map consumers share one definition.
+ */
+export const MAP_BOUNDARY_STYLES: Record<MapBoundaryColor, IGeoJsonLayerOptions> = {
+  green: {
+    lineColor: '#166534',
+    lineWidth: 2,
+    lineOpacity: 0.95,
+    fillColor: '#166534',
+    fillOpacity: 0.12,
+    fitBounds: false,
+  },
+};
+
 interface IRenderedMarker {
   marker: IMapMarker;
   mlMarker: maplibregl.Marker;
@@ -152,9 +170,17 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   private locationMarker: maplibregl.Marker | null = null;
   private selected: { marker?: IMapMarker } = {};
 
-  /** Registry of geojson overlays, re-applied whenever the base style reloads */
+  /** Registry of geojson overlays, all rendered in the single map style */
   private geoJsonConfigs = new Map<string, { geojson: GeoJsonData; options: IGeoJsonLayerOptions }>();
-  private currentStyleKind: 'offline' | 'online' | null = null;
+  /** Whether the online vector base is currently displayed (offline raster otherwise) */
+  private vectorBaseActive = false;
+  /** Cached online vector style JSON, fetched once on first crossing into vector zoom */
+  private vectorStyleJson: any = null;
+  private vectorLoading = false;
+  /** Whether the cached vector style's sources/layers have been added to the map */
+  private vectorLayersAdded = false;
+  /** Layer ids added from the online vector style (toggled as a group) */
+  private vectorLayerIds: string[] = [];
   private resizeObserver: ResizeObserver | null = null;
   private wheelListener?: (e: WheelEvent) => void;
 
@@ -182,7 +208,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       });
     });
 
-    // Reactively swap base styles based on connection status from NetworkService
+    // Reactively toggle the base layer based on connection status from NetworkService
     effect(() => {
       if (this.mapReady()) {
         this.updateBaseStyle();
@@ -278,7 +304,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Add (or update) a GeoJSON boundary overlay, e.g. country or district polygons.
-   * Overlays survive base style swaps and are re-applied automatically.
+   * Overlays live in the single map style and are never removed except here,
+   * so base layer visibility toggles cannot wipe them.
    * NOTE GeoJSON coordinates use [lng, lat] order
    */
   public addGeoJsonLayer(id: string, geojson: GeoJsonData, options: IGeoJsonLayerOptions = {}) {
@@ -379,7 +406,6 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         };
       }
 
-      this.currentStyleKind = 'offline';
       this.ngZone.run(() => {
         this.map.set(map);
       });
@@ -416,11 +442,6 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.updateBaseStyle();
         });
-      });
-      // Custom sources and layers are cleared on every style swap, so re-apply
-      map.on('styledata', () => {
-        if (!this.map()) return;
-        this.reapplyGeoJsonLayers();
       });
     });
   }
@@ -496,27 +517,123 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Swap between packaged offline raster tiles and online vector tiles.
-   * Vector tiles are only fetched when online AND zoomed past ONLINE_MIN_ZOOM,
-   * preserving the pre-migration bandwidth profile (raster is bundled on-device,
-   * vector is metered). Markers are plain HTML elements managed by maplibre so
-   * stay in lockstep with the base map in both modes
+   * Show the online vector base at or above ONLINE_MIN_ZOOM when connected,
+   * else the packaged offline raster. Both base layers live in the single map
+   * style and are toggled via visibility - the style itself is never replaced,
+   * so custom overlays are never wiped (and no re-apply machinery is needed).
+   * Invisible layers fetch no tiles, preserving the offline-first bandwidth profile.
    */
   private updateBaseStyle() {
     const map = this.map();
     const isOnline = this.networkService.isOnline();
-    if (!map || isOnline === undefined) {
+    if (!map || isOnline === undefined || !map.isStyleLoaded()) return;
+    const wantVector = isOnline && map.getZoom() >= ONLINE_MIN_ZOOM;
+    if (wantVector && !this.vectorLayersAdded) {
+      // First crossing (or a previous attempt failed): fetch once, then apply.
+      this.setupVectorBase();
       return;
     }
-    const useOnline = isOnline && map.getZoom() >= ONLINE_MIN_ZOOM;
-    if (useOnline && this.currentStyleKind !== 'online') {
-      this.currentStyleKind = 'online';
-      map.setStyle(ONLINE_STYLE_URL);
+    if (wantVector !== this.vectorBaseActive) {
+      this.setBaseVisibility(wantVector);
     }
-    if (!useOnline && this.currentStyleKind !== 'offline') {
-      this.currentStyleKind = 'offline';
-      map.setStyle(this.buildOfflineStyle());
+  }
+
+  /**
+   * Lazily fetch the online vector style and add its sources/layers into the
+   * live style (hidden until shown). The JSON is cached; failures leave the
+   * offline raster in place and retry on the next crossing.
+   */
+  private setupVectorBase() {
+    const map = this.map();
+    if (!map || this.vectorLoading || this.vectorLayersAdded) return;
+    if (this.vectorStyleJson) {
+      this.addVectorBaseLayers(map, this.vectorStyleJson);
+      this.updateBaseStyle();
+      return;
     }
+    this.vectorLoading = true;
+    fetch(ONLINE_STYLE_URL)
+      .then((res) => res.json())
+      .then((json) => {
+        const layers = Array.isArray(json?.layers) ? json.layers : [];
+        this.vectorStyleJson = layers.length > 0 ? json : null;
+      })
+      .catch(() => {
+        this.vectorStyleJson = null;
+      })
+      .finally(() => {
+        this.vectorLoading = false;
+        const currentMap = this.map();
+        if (currentMap && this.vectorStyleJson && !this.vectorLayersAdded) {
+          this.addVectorBaseLayers(currentMap, this.vectorStyleJson);
+        }
+        // Reveal only if setup actually completed. A failed fetch stays on
+        // raster and retries on the next crossing - never from here, or
+        // failures would re-fetch in a tight loop.
+        if (this.vectorLayersAdded) {
+          this.updateBaseStyle();
+        }
+      });
+  }
+
+  /**
+   * Add the cached online vector style's sources and layers into the live style,
+   * inserted below any existing custom overlays so selections stay on top.
+   * Sprite/glyphs only affect vector labels; geometry renders without them, so
+   * each is applied independently and failures fall back gracefully.
+   */
+  private addVectorBaseLayers(map: maplibregl.Map, styleJson: any) {
+    const sources = styleJson.sources ?? {};
+    for (const [id, source] of Object.entries(sources)) {
+      if (!map.getSource(id)) {
+        map.addSource(id, source as maplibregl.SourceSpecification);
+      }
+    }
+    try {
+      if (styleJson.sprite) map.setSprite(styleJson.sprite);
+    } catch {
+      // Labels may lack icons; geometry unaffected.
+    }
+    try {
+      if (styleJson.glyphs) map.setGlyphs(styleJson.glyphs);
+    } catch {
+      // Labels may be missing; geometry unaffected.
+    }
+    const insertBefore = [...this.geoJsonConfigs.keys()]
+      .map((id) => `${id}-fill`)
+      .find((fillId) => map.getLayer(fillId));
+    const layers = Array.isArray(styleJson.layers) ? styleJson.layers : [];
+    for (const layer of layers) {
+      const layerDef = { ...(layer as Record<string, unknown>) };
+      delete layerDef.slot;
+      const id = layerDef.id;
+      if (typeof id !== 'string' || !id || map.getLayer(id)) continue;
+      map.addLayer(
+        { ...layerDef, layout: { ...((layerDef.layout as object) ?? {}), visibility: 'none' } } as never,
+        insertBefore,
+      );
+      this.vectorLayerIds.push(id);
+    }
+    this.vectorLayersAdded = this.vectorLayerIds.length > 0;
+  }
+
+  /**
+   * Toggle between the packaged offline raster and the online vector base.
+   * Only visibility changes: no sources or layers are added or removed, so
+   * custom overlays and the camera are never disturbed.
+   */
+  private setBaseVisibility(showVector: boolean) {
+    const map = this.map();
+    if (!map) return;
+    for (const id of this.vectorLayerIds) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', showVector ? 'visible' : 'none');
+      }
+    }
+    if (map.getLayer(LOCAL_LAYER_ID)) {
+      map.setLayoutProperty(LOCAL_LAYER_ID, 'visibility', showVector ? 'none' : 'visible');
+    }
+    this.vectorBaseActive = showVector;
   }
 
   /** Offline raster style using packaged WebP tiles, auto-overscaled above native zoom */
@@ -547,16 +664,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private reapplyGeoJsonLayers() {
-    for (const id of this.geoJsonConfigs.keys()) {
-      this.applyGeoJsonLayer(id);
-    }
-  }
-
   private applyGeoJsonLayer(id: string) {
     const map = this.map();
     const config = this.geoJsonConfigs.get(id);
-    if (!map || !config || !map.isStyleLoaded()) return;
+    if (!map || !config) return;
     const { geojson, options } = config;
     try {
       const source = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
