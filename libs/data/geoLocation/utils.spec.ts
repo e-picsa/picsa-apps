@@ -149,7 +149,7 @@ describe('getLocationTopoFeature', () => {
     expect(String(districtFeature?.properties?.admin_level)).toBe('6');
   });
 
-  it('falls back to parent layer topoAdminLevel when deepest layer has no boundary geometries', async () => {
+  it('falls back to parent layer when deepest layer has no boundary geometries', async () => {
     clearGeoJsonFeatureCache();
     const mwData = getGeoLocationData('mw');
     const mockData: IGeolocationData = {

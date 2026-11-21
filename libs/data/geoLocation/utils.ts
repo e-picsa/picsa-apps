@@ -74,7 +74,7 @@ export function getDownscaledLocation(country_code: ICountryCode, location_id: s
 
 /**
  * Check all required hierarchy segments are selected for the country's layer structure.
- * Assumes 1 or 2 layers stored at tuple indexes 4 and 5 (MW EPAs remain 2-layer);
+ * Assumes 1 or 2 layers stored at tuple indexes 4 and 5;
  * extending to 3+ layers in the future will require checking additional tuple indexes.
  */
 export function isLocationComplete(country_code: ICountryCode, location: (string | undefined)[] | undefined): boolean {
@@ -122,8 +122,8 @@ export function normalizeLocationName(name?: string | null): string {
 /**
  * Retrieve the matching GeoJSON feature from a country's TopoJSON for a location.
  * Defaults to the deepest ('downscaled') layer; pass 'parent' for the top layer (e.g. province).
- * If the target layer has no boundary geometries (`topoAdminLevel === undefined`), automatically
- * falls back up the parent chain using `parentId`.
+ * Layers without boundary geometries (`topoAdminLevel === undefined`) automatically
+ * fall back up the parent chain using `parentId`.
  */
 export async function getLocationTopoFeature(
   country_code: ICountryCode,

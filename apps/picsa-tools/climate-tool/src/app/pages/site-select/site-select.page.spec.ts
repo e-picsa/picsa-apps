@@ -271,7 +271,13 @@ describe('SiteSelectPage', () => {
       expect(map.addGeoJsonLayer).toHaveBeenCalledWith(
         'selected-district-boundary',
         expect.anything(),
-        expect.objectContaining({ lineWidth: 2, lineOpacity: 0.6 }),
+        expect.objectContaining({
+          lineColor: '#166534',
+          lineWidth: 2,
+          lineOpacity: 0.95,
+          fillColor: '#166534',
+          fillOpacity: 0.12,
+        }),
       );
       expect(map.fitBounds).toHaveBeenCalled();
     }
@@ -361,5 +367,94 @@ describe('SiteSelectPage', () => {
       ([, options]) => (options as { maxZoom?: number })?.maxZoom === 7,
     );
     expect(fallbackCalls).toHaveLength(0);
+  });
+
+  describe('location boundary rendering per deployment', () => {
+    const selectLocation = async (country_code: string, location: (string | undefined)[]) => {
+      jest.clearAllMocks();
+      userSettingsSignal.set({ country_code, location } as unknown as IUserSettings);
+      component.mapReady.set(true);
+      component.handleLocationChanged(location);
+      fixture.detectChanges();
+      const map = component.picsaMap();
+      for (
+        let i = 0;
+        i < 40 &&
+        (map?.addGeoJsonLayer as jest.Mock).mock.calls.filter(([id]: string[]) => id === 'selected-district-boundary')
+          .length === 0;
+        i++
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      fixture.detectChanges();
+    };
+
+    const expectBoundaryRendered = (
+      feature: object,
+      style = { lineWidth: 2, lineOpacity: 0.95, fillColor: '#166534', fillOpacity: 0.12 },
+    ) => {
+      const map = component.picsaMap();
+      expect(map?.addGeoJsonLayer).toHaveBeenCalledWith(
+        'selected-district-boundary',
+        expect.objectContaining({ properties: expect.objectContaining(feature) }),
+        expect.objectContaining({ lineColor: '#166534', ...style }),
+      );
+    };
+
+    it('zm full selection renders the district boundary', async () => {
+      await selectLocation('zm', [undefined, undefined, 'zm', undefined, 'southern', 'choma']);
+      expectBoundaryRendered({ admin_level: '5' });
+    });
+
+    it('mw district selection renders the district boundary', async () => {
+      await selectLocation('mw', [undefined, undefined, 'mw', undefined, 'balaka', undefined]);
+      expectBoundaryRendered({ admin_level: '4', name: 'Balaka' });
+    });
+
+    it('zw full selection renders the district boundary', async () => {
+      await selectLocation('zw', [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge']);
+      expectBoundaryRendered({ admin_level: '6' });
+    });
+
+    it('renders the district boundary on reload without further interaction', async () => {
+      // True reload: saved complete location is already in settings before the
+      // component (and map) initialise, and no location change follows.
+      jest.clearAllMocks();
+      userSettingsSignal.set({
+        country_code: 'mw',
+        location: [undefined, undefined, 'mw', undefined, 'balaka', undefined],
+      } as unknown as IUserSettings);
+      const reloadFixture = TestBed.createComponent(SiteSelectPage);
+      const reloadComponent = reloadFixture.componentInstance;
+      reloadFixture.detectChanges();
+      const reloadMap = () => reloadComponent.picsaMap();
+      expect(reloadMap()).toBeTruthy();
+
+      // Map finishes loading after the saved location is already selected
+      reloadComponent.mapReady.set(true);
+      reloadFixture.detectChanges();
+      const reloadCalls = (reloadMap()?.addGeoJsonLayer as unknown as jest.Mock).mock.calls as [
+        string,
+        unknown,
+        unknown,
+      ][];
+      for (let i = 0; i < 80 && !reloadCalls.some(([id]) => id === 'selected-district-boundary'); i++) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      reloadFixture.detectChanges();
+
+      expect(reloadMap()?.addGeoJsonLayer).toHaveBeenCalledWith(
+        'selected-district-boundary',
+        expect.objectContaining({ properties: expect.objectContaining({ admin_level: '4', name: 'Balaka' }) }),
+        expect.objectContaining({
+          lineColor: '#166534',
+          lineWidth: 2,
+          lineOpacity: 0.95,
+          fillColor: '#166534',
+          fillOpacity: 0.12,
+        }),
+      );
+      reloadFixture.destroy();
+    });
   });
 });

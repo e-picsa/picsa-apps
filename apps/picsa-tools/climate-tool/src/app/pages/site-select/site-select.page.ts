@@ -14,7 +14,7 @@ import { FormLocationSelectComponent } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 import type { IStationMeta } from '@picsa/models';
 import { formatHeaderDefault, IDataTableOptions } from '@picsa/shared/features/data-table/data-table.component';
-import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { IMapMarker, MAP_BOUNDARY_STYLES, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { isEqual } from '@picsa/utils/object.utils';
 
 import { ClimateDataService } from '../../services/climate-data.service';
@@ -352,12 +352,7 @@ export class SiteSelectPage {
       lastRenderedForMapLocationId = locationEntry.id;
 
       if (result.feature) {
-        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-          lineColor: '#16a34a',
-          lineWidth: 3,
-          lineOpacity: 0.9,
-          fitBounds: false,
-        });
+        picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, MAP_BOUNDARY_STYLES.green);
       }
 
       const fitted = this.fitToLocationAndStationBounds();
@@ -399,12 +394,7 @@ export class SiteSelectPage {
           if (!result?.feature) return;
           if (this.selectedLocationEntry()) return;
 
-          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, {
-            lineColor: '#16a34a',
-            lineWidth: 2,
-            lineOpacity: 0.6,
-            fitBounds: false,
-          });
+          picsaMap.addGeoJsonLayer('selected-district-boundary', result.feature, MAP_BOUNDARY_STYLES.green);
 
           const bbox = computeFeatureBbox(result.feature);
           if (bbox) {
