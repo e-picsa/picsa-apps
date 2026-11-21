@@ -15,6 +15,7 @@
     <div [style.display]="selectedEntry()?.location_id ? 'none' : 'contents'">
       <picsa-form-location-select
         [countryCode]="countryCode"
+        [tool]="'cropProbability'"
         (valueChanged)="handleFormLocationChange($event)"
       ></picsa-form-location-select>
       <mat-dialog-actions align="start">
@@ -38,7 +39,7 @@
         />
       </mat-form-field>
       <mat-dialog-actions align="start">
-        <button matButton (click)="handleFormLocationChange([])">Cancel</button>
+        <button matButton (click)="handleFormLocationChange({})">Cancel</button>
         @if (!waterInput.value && selectedEntry()?.water_requirement) {
           <button matButton color="warn" mat-dialog-close (click)="remove()">
             <mat-icon>delete</mat-icon>

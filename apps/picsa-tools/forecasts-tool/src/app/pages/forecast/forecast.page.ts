@@ -25,7 +25,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
-import { getLocationLabel, isLocationComplete } from '@picsa/data/geoLocation';
+import { getSelectionLabel, ILocationSelection, isSelectionComplete } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/i18n';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -34,7 +34,6 @@ import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-
 import type { IResourceLink } from '@picsa/resources/schemas';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
-import { isEqual } from '@picsa/utils/object.utils';
 import { RxDocument } from 'rxdb';
 
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
@@ -108,7 +107,7 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public viewerOpen = signal(false);
 
   public countryCode = computed(() => this.configurationService.userSettings().country_code);
-  public locationSelected = computed(() => this.configurationService.userSettings().location, { equal: isEqual });
+  public locationSelected = this.configurationService.activeLocationSelection;
 
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
   public weeklyForecasts = computed(() => this.generateForecastSummary(this.service.weeklyForecastDocs()));
@@ -118,13 +117,13 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
   public locationReady = computed(() => {
     const country = this.countryCode();
     if (!country) return false;
-    return isLocationComplete(country as ICountryCode, this.locationSelected());
+    return isSelectionComplete(country as ICountryCode, this.locationSelected(), 'forecast');
   });
 
   public selectedLocationLabel = computed(() => {
     const country = this.countryCode();
     if (!country) return undefined;
-    return getLocationLabel(country as ICountryCode, this.locationSelected());
+    return getSelectionLabel(country as ICountryCode, this.locationSelected());
   });
 
   public locationOverlayOpen = signal(false);
@@ -183,8 +182,7 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      const { location } = this.configurationService.userSettings();
-      this.service.setForecastLocation(location);
+      this.service.setForecastLocation(this.countryCode(), this.locationSelected());
     });
 
     // Auto-open location overlay if location is not set when entering tool
@@ -240,9 +238,9 @@ export class ForecastComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  public handleLocationConfirmed(location: (string | undefined)[]): void {
+  public handleLocationConfirmed(location: ILocationSelection): void {
     this.hasRefreshedSuccessfully.set(false);
-    this.configurationService.updateUserSettings({ location });
+    this.configurationService.setLocationSelection(location);
     this.locationOverlayOpen.set(false);
   }
 

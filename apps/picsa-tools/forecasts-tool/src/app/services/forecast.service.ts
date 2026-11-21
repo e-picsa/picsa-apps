@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB, type IForecastBundleRow } from '@picsa/data/climate/forecasts';
+import { ILocationSelection, resolveLocationForTool } from '@picsa/data/geoLocation';
 import { ENVIRONMENT } from '@picsa/environments';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -166,13 +166,11 @@ export class ForecastService extends PicsaAsyncService {
     });
   }
 
-  public setForecastLocation(location?: IUserSettings['location']) {
-    if (location) {
-      const country_code = location[2] as ICountryCode;
-      // Deduplicate so cross-layer ID collisions (e.g. ZW masvingo province + district) run a single query
-      const locations = [...new Set(location.slice(4).filter((v): v is string => Boolean(v)))];
+  public setForecastLocation(country_code?: ICountryCode, selection?: ILocationSelection) {
+    if (country_code) {
+      const { locations } = resolveLocationForTool(country_code, selection, 'forecast');
       this.countryLocation.set(country_code);
-      this.downscaledLocation.set({ country_code, locations });
+      this.downscaledLocation.set({ country_code, locations: locations.map((l) => l.id) });
     } else {
       this.countryLocation.set(undefined);
       this.downscaledLocation.set({});

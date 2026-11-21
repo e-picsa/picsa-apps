@@ -1,7 +1,10 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILocaleCode } from '@picsa/data/deployments';
+import { isEqual } from '@picsa/utils/object.utils';
 import { debounceTime } from 'rxjs';
+
+export type IUserLocationSelection = Record<string, string>;
 
 export interface IUserSettings {
   /** ID of selected deployment configuration */
@@ -12,12 +15,8 @@ export interface IUserSettings {
   language_code: ILocaleCode;
   /** Specify if using farmer or extension app user_type */
   user_type: 'farmer' | 'extension';
-  /**
-   * User location, stored as an array to allow for hierarchy by osm admin level,
-   * https://wiki.openstreetmap.org/wiki/Key:admin_level
-   * @example [null,null,'malawi','northern','karonga']
-   */
-  location: (string | undefined)[];
+  /** Per-country location selections keyed by geo layer (e.g. `{ zm: { province: 'southern', district: 'mazabuka' } }`) */
+  locationsByCountry?: Partial<Record<ICountryCode, IUserLocationSelection>>;
   /** Selected station for the climate tool */
   climate_tool?: {
     station_id: string;
@@ -29,7 +28,7 @@ const USER_CONFIGURATION_DEFAULT: IUserSettings = {
   deployment_id: null as any,
   language_code: null as any,
   user_type: null as any,
-  location: [],
+  locationsByCountry: {},
   climate_tool: { station_id: '' },
 };
 
@@ -37,6 +36,15 @@ const USER_CONFIGURATION_DEFAULT: IUserSettings = {
 export class ConfigurationService {
   /** User-specific configuration */
   public userSettings = signal<IUserSettings>(USER_CONFIGURATION_DEFAULT);
+
+  /** Active country's saved location selection (preserved across country switches) */
+  public activeLocationSelection = computed<IUserLocationSelection>(
+    () => {
+      const { country_code, locationsByCountry } = this.userSettings();
+      return (country_code ? locationsByCountry?.[country_code] : undefined) ?? {};
+    },
+    { equal: isEqual },
+  );
 
   /** Deployment-specific configuration */
   public deploymentSettings = computed(() => {
@@ -61,13 +69,6 @@ export class ConfigurationService {
         document.body.dataset['theme'] = 'picsa-default';
       }
     });
-
-    effect(() => {
-      // ensure sublocation kept in sync with country selected
-      const { country_code, location } = this.userSettings();
-      if (location[2] === country_code) return;
-      this.userSettings.update((v) => ({ ...v, location: [undefined, undefined, country_code] }));
-    });
   }
 
   public resetUserSettings() {
@@ -76,6 +77,20 @@ export class ConfigurationService {
 
   public updateUserSettings(update: Partial<IUserSettings>) {
     this.userSettings.set({ ...this.userSettings(), ...update });
+  }
+
+  /** Save a country's location selection while preserving selections for other countries */
+  public setLocationSelection(selection: IUserLocationSelection, countryCode?: ICountryCode) {
+    const current = this.userSettings();
+    const targetCountry = countryCode ?? current.country_code;
+    if (!targetCountry) return;
+    this.userSettings.set({
+      ...current,
+      locationsByCountry: {
+        ...(current.locationsByCountry ?? {}),
+        [targetCountry]: { ...selection },
+      },
+    });
   }
 
   /**
@@ -92,12 +107,9 @@ export class ConfigurationService {
 
   private loadUserSettings() {
     const storedSettings = localStorage.getItem('picsa_user_settings');
-    // merge with defaults
     if (storedSettings) {
       const parsed = JSON.parse(storedSettings) as IUserSettings;
       const merged = { ...USER_CONFIGURATION_DEFAULT };
-      // TODO - consider safeguards/migrations to ensure compatible
-      // TODO - consider using rxdb with user profile db entries instead of settings
       for (const [key, value] of Object.entries(parsed)) {
         merged[key] = value;
       }

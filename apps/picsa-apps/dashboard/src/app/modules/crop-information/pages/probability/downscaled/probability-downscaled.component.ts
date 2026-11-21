@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { getDownscaledLocation } from '@picsa/data/geoLocation';
+import { findLocationForTool, formatLocationIdAsLabel } from '@picsa/data/geoLocation';
 import { map } from 'rxjs';
 
 import { AuthRoleRequiredDirective } from '../../../../auth/directives/authRoleRequired.directive';
@@ -134,7 +134,14 @@ export class ProbabilityDownscaledComponent {
   private getLocationData(downscaledData?: ICropDataDownscaled['Row']) {
     const countryCode = this.countryCode();
     if (downscaledData && countryCode) {
-      return getDownscaledLocation(countryCode, downscaledData.location_id);
+      const match = findLocationForTool(countryCode, 'cropProbability', downscaledData.location_id);
+      if (match) return match;
+      return {
+        id: downscaledData.location_id,
+        label: formatLocationIdAsLabel(downscaledData.location_id),
+        parentId: '',
+        parentLabel: '',
+      };
     }
     return { id: '', label: '', parentId: '', parentLabel: '' };
   }

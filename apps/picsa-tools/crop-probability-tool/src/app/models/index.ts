@@ -6,6 +6,8 @@ export type IProbabilityTable = IProbabilityTableMeta & {
 
 export interface IProbabilityTableMeta {
   id: string;
+  /** Canonical geo location id at the country's cropProbability layer (defaults to derived leaf id) */
+  locationId?: string;
   /** Location label to use in heading */
   label: string;
   /** Station name used in disclaimer for source of data */

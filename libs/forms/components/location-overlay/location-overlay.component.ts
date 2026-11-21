@@ -1,20 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  model,
+  output,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ICountryCode } from '@picsa/data';
-import { IGeolocationData, isLocationComplete } from '@picsa/data/geoLocation';
+import { GeoToolKey, IGeolocationData, ILocationSelection, isSelectionComplete } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { FormLocationSelectComponent } from '../location-select/location-select.component';
 
-export type ILocationArray = (string | undefined)[];
-
 /**
  * Modal overlay wrapper around the location select dropdowns.
- * Holds a temporary location whilst the user edits and only emits on confirm,
- * so hosts never observe partial selections.
+ * Seeds an initial selection on open and only emits on confirm so hosts never observe partial selections.
  */
 @Component({
   selector: 'picsa-form-location-overlay',
@@ -24,47 +32,45 @@ export type ILocationArray = (string | undefined)[];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormLocationOverlayComponent {
-  /** Country to list locations for */
   public countryCode = input.required<string>();
-
-  /** Currently saved location, used to seed the temporary selection when opened */
-  public value = input<ILocationArray>([]);
-
-  /** Optional method to filter locations before rendering (e.g. only stations with data) */
+  public value = input<ILocationSelection>({});
+  public tool = input<GeoToolKey | undefined>(undefined);
   public locationModifier = input<(data: IGeolocationData, countryCode: string) => IGeolocationData>((data) => data);
 
-  /** Translation keys for overlay copy */
   public title = input<string>(translateMarker('Select Location'));
   public subtitle = input<string>(translateMarker('Please select a location to view local forecasts'));
-
-  /** Show a cancel action (hide when selection is enforced, e.g. no location saved yet) */
   public allowCancel = input<boolean>(false);
 
   public open = model<boolean>(false);
 
-  public confirmed = output<ILocationArray>();
+  public confirmed = output<ILocationSelection>();
   public cancelled = output<void>();
 
-  public tempLocation = signal<ILocationArray | undefined>(undefined);
+  private readonly locationSelect = viewChild(FormLocationSelectComponent);
+
+  /** Snapshot passed to the child selector on open (never fed back on local edits) */
+  public initialSelection = signal<ILocationSelection>({});
+  public tempSelection = signal<ILocationSelection>({});
 
   public isTempLocationReady = computed(() => {
-    const temp = this.tempLocation();
+    const select = this.locationSelect();
+    if (select) return select.isValid();
     const country = this.countryCode();
-    if (!country || !temp) return false;
-    return isLocationComplete(country as ICountryCode, temp);
+    return country ? isSelectionComplete(country as ICountryCode, this.tempSelection(), this.tool()) : false;
   });
 
   constructor() {
-    // Seed temporary selection from saved value whenever opened
     effect(() => {
       if (this.open()) {
-        this.tempLocation.set(this.value());
+        const seed = { ...(untracked(() => this.value()) ?? {}) };
+        this.initialSelection.set(seed);
+        this.tempSelection.set(seed);
       }
     });
   }
 
-  public handleTempLocationUpdate(location: ILocationArray) {
-    this.tempLocation.set(location);
+  public handleTempLocationUpdate(selection: ILocationSelection) {
+    this.tempSelection.set(selection);
   }
 
   public handleCancel() {
@@ -72,9 +78,8 @@ export class FormLocationOverlayComponent {
   }
 
   public handleConfirm() {
-    const temp = this.tempLocation();
-    if (temp && this.isTempLocationReady()) {
-      this.confirmed.emit(temp);
+    if (this.isTempLocationReady()) {
+      this.confirmed.emit(this.tempSelection());
     }
   }
 }
