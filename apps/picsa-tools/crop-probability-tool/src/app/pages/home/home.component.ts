@@ -113,14 +113,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   constructor() {
-    effect(async () => {
+    effect((onCleanup) => {
       const meta = this.tableStationMeta();
-      if (meta) {
-        const data = await meta.data();
-        this.tableStationData.set(data);
-      } else {
+      if (!meta) {
         this.tableStationData.set(undefined);
+        return;
       }
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      meta.data().then((data) => {
+        if (!cancelled) {
+          this.tableStationData.set(data);
+        }
+      });
     });
 
     // Auto-open location overlay only if no location has been selected yet
