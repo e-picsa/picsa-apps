@@ -2,74 +2,36 @@ import { IGeolocationData } from '@picsa/data/geoLocation';
 
 import { IProbabilityTableMeta } from '../models';
 
-type ITableRef = Pick<IProbabilityTableMeta, 'id' | 'label'>;
+type ITableRef = Pick<IProbabilityTableMeta, 'id' | 'label' | 'locationId'>;
+
+/** Resolve the canonical geo location id for a crop probability table entry */
+export function getTableLocationId(table: Pick<IProbabilityTableMeta, 'id' | 'locationId'>): string {
+  if (table.locationId) return table.locationId;
+  const leaf = table.id.split('/').pop() ?? table.id;
+  return leaf.split('--')[0];
+}
 
 /**
- * Filter geo location layers to only include locations with crop probability tables.
- *
- * Pure function - always returns a new object and never mutates the input.
- * This matters as geo location data is shared per-country (see `getGeoLocationData`),
- * and the filter re-runs every time the location overlay is opened. A previous
- * implementation mutated the shared object in place, so reopening the overlay in
- * single-layer countries (e.g. mw) wiped the synthesised sublocation layer and left
- * the second dropdown with no options.
+ * Filter geo location layers bottom-up to only include locations with crop probability tables.
+ * Pure function — never mutates the shared per-country geo data.
  */
 export function filterLocationsToProbabilityTables(data: IGeolocationData, tables: ITableRef[]): IGeolocationData {
   const { layers } = data;
-  // track table ids per level - ids use format parent[/child[--sublocation]]
-  const availableByLevel: string[][] = layers.map(() => []);
-  for (const entry of tables) {
-    entry.id.split('/').forEach((segment, i) => {
-      if (i < layers.length) availableByLevel[i].push(segment.split('--')[0]);
-    });
-  }
+  if (layers.length === 0) return data;
 
-  // copy each layer, keeping only locations with probability tables available
-  const filteredLayers = layers.map((layer, i) => ({
-    ...layer,
-    locations: layer.locations.filter((v) => availableByLevel[i].includes(v.id)),
-  }));
+  const availableLeafIds = new Set(tables.map(getTableLocationId));
+  const filteredLayers = layers.map((layer) => ({ ...layer, locations: [...layer.locations] }));
 
-  if (filteredLayers.length > 1) {
-    const deepIndex = filteredLayers.length - 1;
-    // HACK - data can have multiple tables in same sublocation, e.g.
-    // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
-    const sublocationEntries = tables
-      .map((entry) => {
-        const segments = entry.id.split('/');
-        const [, sublocation] = (segments[1] || '').split('--');
-        if (!sublocation) return undefined;
-        return { id: entry.id, label: entry.label, parentId: segments[0] };
-      })
-      .filter((v) => v !== undefined);
-    if (sublocationEntries.length > 0) {
-      const deepLayer = filteredLayers[deepIndex];
-      filteredLayers[deepIndex] = {
-        ...deepLayer,
-        locations: [...deepLayer.locations, ...sublocationEntries],
-      };
-    }
-  } else {
-    // Single-layer geo data: only synthesise a sublocation layer when a district
-    // has multiple tables (e.g. legacy `district/station` ids). With max one
-    // table per district the district dropdown alone determines the table.
-    const tablesByParent = new Map<string, ITableRef[]>();
-    for (const entry of tables) {
-      const [parent] = entry.id.split('/');
-      const group = tablesByParent.get(parent) ?? [];
-      group.push(entry);
-      tablesByParent.set(parent, group);
-    }
-    const hasMultipleTables = [...tablesByParent.values()].some((group) => group.length > 1);
-    if (hasMultipleTables) {
-      // HACK - single-layer geo data but crop probability tables include multiple per
-      // location so create entries to use in filter
-      const additionalLocations = tables.map(({ id, label }) => {
-        const [parent, child] = id.split('/');
-        return { id: child ?? parent, parentId: parent, label };
-      });
-      filteredLayers.push({ key: 'location', label: 'Location', locations: additionalLocations });
-    }
+  // Filter cropProbability target layer to locations with tables, then prune empty parent layers
+  const targetIndex = filteredLayers.findIndex((layer) => layer.key === data.toolLayers.cropProbability);
+  if (targetIndex < 0) return data;
+  filteredLayers[targetIndex].locations = filteredLayers[targetIndex].locations.filter((loc) =>
+    availableLeafIds.has(loc.id),
+  );
+
+  for (let i = targetIndex - 1; i >= 0; i--) {
+    const validParentIds = new Set(filteredLayers[i + 1].locations.map((c) => c.parentId).filter(Boolean));
+    filteredLayers[i].locations = filteredLayers[i].locations.filter((loc) => validParentIds.has(loc.id));
   }
 
   return { ...data, layers: filteredLayers };

@@ -12,7 +12,8 @@
       <picsa-form-location-select
         class="block w-full [&_.flex]:flex-col [&_.flex]:gap-2 [&_.mat-mdc-form-field]:w-full"
         [countryCode]="countryCode()"
-        [value]="tempLocation() || value()"
+        [tool]="tool()"
+        [value]="initialSelection()"
         [locationModifier]="locationModifier()"
         (valueChanged)="handleTempLocationUpdate($event)"
       ></picsa-form-location-select>

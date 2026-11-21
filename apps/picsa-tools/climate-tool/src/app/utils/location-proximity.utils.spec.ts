@@ -1,5 +1,5 @@
 import type { ICountryCode } from '@picsa/data';
-import { getDownscaledLocations } from '@picsa/data/geoLocation';
+import { getLocationsForTool } from '@picsa/data/geoLocation';
 import type { IStationMeta } from '@picsa/models';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 
@@ -140,7 +140,7 @@ describe('Location Proximity Utils', () => {
 
     for (const country of activeCountries) {
       it(`resolves center and boundary feature for every district in "${country}" (including topoName aliases)`, async () => {
-        const deepest = getDownscaledLocations(country);
+        const deepest = getLocationsForTool(country, 'climate');
 
         expect(deepest.length).toBeGreaterThan(0);
 
@@ -275,7 +275,7 @@ describe('Location Proximity Utils', () => {
 
     for (const country of activeCountries) {
       it(`validates all stations in "${country}" map to a recognized district`, () => {
-        const deepest = getDownscaledLocations(country);
+        const deepest = getLocationsForTool(country, 'climate');
         const stations = CLIMATE_STATIONS_META[country as CountryCodeLegacy];
 
         expect(stations.length).toBeGreaterThan(0);

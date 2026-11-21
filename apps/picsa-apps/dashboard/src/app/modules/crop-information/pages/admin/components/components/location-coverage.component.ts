@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDownscaledLocations, getGeoLocationData } from '@picsa/data/geoLocation';
+import { getLocationsForTool, getToolLayers } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
@@ -81,9 +81,9 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public rows = computed<ICoverageRow[]>(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    const layers = countryCode ? getGeoLocationData(countryCode).layers : [];
+    const layers = countryCode ? getToolLayers(countryCode, 'cropProbability') : [];
     const geoLocations = countryCode
-      ? getDownscaledLocations(countryCode).map(({ id, label, parentLabel }) => ({
+      ? getLocationsForTool(countryCode, 'cropProbability').map(({ id, label, parentLabel }) => ({
           id,
           label,
           parent: parentLabel,
@@ -136,7 +136,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public tableOptions = computed<IDataTableOptions>(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    const layers = countryCode ? getGeoLocationData(countryCode).layers : [];
+    const layers = countryCode ? getToolLayers(countryCode, 'cropProbability') : [];
     const parentLayer = layers.length > 1 ? layers.at(-2) : undefined;
     const deepestLayer = layers.at(-1);
     const displayColumns = parentLayer

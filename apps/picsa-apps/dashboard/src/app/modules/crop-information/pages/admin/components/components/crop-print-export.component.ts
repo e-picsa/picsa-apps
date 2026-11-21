@@ -8,7 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CROPS_DATA_HASHMAP, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
-import { getDownscaledLocations } from '@picsa/data/geoLocation';
+import { getLocationsForTool } from '@picsa/data/geoLocation';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
@@ -55,7 +55,7 @@ export class CropPrintExportComponent {
   public locations = computed(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
     if (!countryCode) return [];
-    return getDownscaledLocations(countryCode).sort((a, b) => a.label.localeCompare(b.label));
+    return getLocationsForTool(countryCode, 'cropProbability').sort((a, b) => a.label.localeCompare(b.label));
   });
 
   /** Locations with no exportable data (no station, requirements or probabilities) */

@@ -24,7 +24,7 @@ import type {
   IProbabilityTableMeta,
   IStationCropData,
 } from '@picsa/crop-probability/src/app/models';
-import { getDownscaledLocations } from '@picsa/data/geoLocation';
+import { getLocationsForTool } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -507,7 +507,7 @@ export class CropAppDiffComponent {
     const countryCode = this.deploymentService.activeDeploymentCountry();
     const labels: Record<string, string> = {};
     if (!countryCode) return labels;
-    for (const location of getDownscaledLocations(countryCode)) labels[location.id] = location.label;
+    for (const location of getLocationsForTool(countryCode, 'cropProbability')) labels[location.id] = location.label;
     return labels;
   });
 

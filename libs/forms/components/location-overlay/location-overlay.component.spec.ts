@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import type { ILocationSelection } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { FormLocationOverlayComponent } from './location-overlay.component';
@@ -17,20 +18,15 @@ describe('FormLocationOverlayComponent', () => {
     fixture.componentRef.setInput('countryCode', 'zm');
   });
 
-  it('should create', () => {
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
-  });
-
   it('renders nothing when closed', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.fixed')).toBeNull();
   });
 
-  it('seeds temp selection from value and emits on confirm when ready', () => {
-    const confirmed: (string | undefined)[][] = [];
+  it('seeds selection on open and emits on confirm when ready', () => {
+    const confirmed: ILocationSelection[] = [];
     component.confirmed.subscribe((v) => confirmed.push(v));
-    fixture.componentRef.setInput('value', [undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']);
+    fixture.componentRef.setInput('value', { province: 'southern', district: 'mazabuka' });
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
 
@@ -40,19 +36,20 @@ describe('FormLocationOverlayComponent', () => {
     ) as HTMLButtonElement;
     expect(confirmBtn.disabled).toBe(false);
     confirmBtn.click();
-    expect(confirmed).toEqual([[undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']]);
+    expect(confirmed).toEqual([{ province: 'southern', district: 'mazabuka' }]);
   });
 
-  // zw defines a 2-layer province + district hierarchy - both segments still required
   it('requires both segments for multi-layer countries (zw)', () => {
     fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.componentRef.setInput('value', { province: 'masvingo' });
     fixture.componentRef.setInput('open', true);
-
-    fixture.componentRef.setInput('value', [undefined, undefined, 'zw', undefined, 'masvingo', undefined]);
     fixture.detectChanges();
     expect(component.isTempLocationReady()).toBe(false);
 
-    fixture.componentRef.setInput('value', [undefined, undefined, 'zw', undefined, 'masvingo', 'bikita']);
+    component.handleTempLocationUpdate({ province: 'masvingo', district: 'bikita' });
+    fixture.componentRef.setInput('open', false);
+    fixture.componentRef.setInput('value', { province: 'masvingo', district: 'bikita' });
+    fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
     expect(component.isTempLocationReady()).toBe(true);
   });

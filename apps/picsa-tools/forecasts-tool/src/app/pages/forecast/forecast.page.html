@@ -59,6 +59,7 @@
   <picsa-form-location-overlay
     [(open)]="locationOverlayOpen"
     [countryCode]="countryCode()"
+    [tool]="'forecast'"
     [value]="locationSelected()"
     [allowCancel]="locationReady()"
     (confirmed)="handleLocationConfirmed($event)"

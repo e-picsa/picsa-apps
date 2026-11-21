@@ -1,31 +1,14 @@
 <div class="flex gap-4">
-  <!-- Parent Tier Location Select (e.g. Province in multi-tier, District in single-tier) -->
-  @if (parentLocation(); as data) {
+  @for (row of layerRows(); track row.layer.key) {
     <mat-form-field>
-      <mat-label>{{ data.label }}</mat-label>
+      <mat-label>{{ row.layer.label }}</mat-label>
       <mat-select
-        #parentSelect
-        (selectionChange)="onParentSelectionChange(parentSelect.value)"
-        [value]="parentSelected()"
+        #layerSelect
+        [disabled]="row.disabled"
+        (selectionChange)="onLayerSelectionChange(row.index, layerSelect.value)"
+        [value]="row.selectedId"
       >
-        @for (option of data.locations; track option.id) {
-          <mat-option [value]="option.id">{{ option.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-
-  <!-- Deepest Sub-location Tier Select (e.g. District in ZM or ZW) -->
-  @if (sublocation(); as data) {
-    <mat-form-field>
-      <mat-label>{{ data.label }}</mat-label>
-      <mat-select
-        [disabled]="!parentSelected()"
-        #sublocationSelect
-        (selectionChange)="sublocationSelected.set(sublocationSelect.value)"
-        [value]="sublocationSelected()"
-      >
-        @for (option of sublocationOptions(); track option.id) {
+        @for (option of row.options; track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
         }
       </mat-select>

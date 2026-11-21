@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICountryCode } from '@picsa/data';
-import { getDownscaledLocation, getGeoLocationData } from '@picsa/data/geoLocation';
+import { findLocationForTool, formatLocationIdAsLabel, getToolLayers } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import {
@@ -104,7 +104,7 @@ export class CropProbabilityComponent {
   /** Merge crop location id with geolocation lookup data **/
   private mergeDetailedLocationData(country_code: string, data: ICropDataDownscaledTableData[]) {
     const code = country_code as ICountryCode;
-    const { layers } = getGeoLocationData(code);
+    const layers = getToolLayers(code, 'cropProbability');
     const hasParent = layers.length > 1;
     const parentLabelHeader = layers[0]?.label ?? '';
 
@@ -118,11 +118,11 @@ export class CropProbabilityComponent {
     }));
 
     return data.map((entry) => {
-      const resolved = getDownscaledLocation(code, entry.location_id);
+      const resolved = findLocationForTool(code, 'cropProbability', entry.location_id);
       return {
         ...entry,
-        ...(hasParent ? { parent_location: resolved.parentLabel } : {}),
-        location: resolved.label,
+        ...(hasParent ? { parent_location: resolved?.parentLabel ?? '' } : {}),
+        location: resolved?.label ?? formatLocationIdAsLabel(entry.location_id),
       };
     });
   }

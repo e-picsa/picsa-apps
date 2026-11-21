@@ -49,6 +49,7 @@
   <picsa-form-location-overlay
     [(open)]="locationOverlayOpen"
     [countryCode]="countryCode()"
+    [tool]="'cropProbability'"
     [value]="locationSelected()"
     [locationModifier]="locationModifier"
     [subtitle]="STRINGS.SelectStation"
@@ -56,6 +57,20 @@
     (confirmed)="handleLocationConfirmed($event)"
     (cancelled)="locationOverlayOpen.set(false)"
   ></picsa-form-location-overlay>
+
+  <!-- Multi-sheet switcher (e.g. districts with multiple station tables such as Mazabuka) -->
+  @if (matchingTables().length > 1) {
+    <div class="flex flex-wrap gap-2 px-4 pt-3 no-print">
+      @for (table of matchingTables(); track table.id) {
+        <button
+          [matButton]="tableStationMeta()?.id === table.id ? 'filled' : 'outlined'"
+          (click)="selectedTableId.set(table.id)"
+        >
+          {{ table.label }}
+        </button>
+      }
+    </div>
+  }
 
   <!-- Table -->
   @if (tableStationMeta(); as tableMeta) {

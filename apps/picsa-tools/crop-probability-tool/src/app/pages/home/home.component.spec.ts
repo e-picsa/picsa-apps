@@ -59,23 +59,23 @@ describe('HomeComponent', () => {
   it('should resolve tableStationMeta when location is set with parent and sublocation', () => {
     configService.updateUserSettings({
       country_code: 'zw',
-      location: [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge'],
+      locationsByCountry: { zw: { province: 'manicaland', district: 'chipinge' } },
     });
     expect(component.tableStationMeta()?.id).toBe('manicaland/chipinge');
   });
 
-  it('should resolve tableStationMeta when location has only parent selected', () => {
+  it('should not silently fall back to a sibling table when only parent is selected', () => {
     configService.updateUserSettings({
       country_code: 'zw',
-      location: [undefined, undefined, 'zw', undefined, 'manicaland', undefined],
+      locationsByCountry: { zw: { province: 'manicaland' } },
     });
-    expect(component.tableStationMeta()?.id).toBe('manicaland/chipinge');
+    expect(component.tableStationMeta()).toBeUndefined();
   });
 
   it('should resolve tableStationMeta for Zambia multi-tier district', () => {
     configService.updateUserSettings({
       country_code: 'zm',
-      location: [undefined, undefined, 'zm', undefined, 'central', 'chibombo'],
+      locationsByCountry: { zm: { province: 'central', district: 'chibombo' } },
     });
     expect(component.tableStationMeta()?.id).toBe('central/chibombo');
   });
@@ -83,7 +83,7 @@ describe('HomeComponent', () => {
   it('should not auto-open overlay when component initializes with existing location', () => {
     configService.updateUserSettings({
       country_code: 'zw',
-      location: [undefined, undefined, 'zw', undefined, 'manicaland', 'chipinge'],
+      locationsByCountry: { zw: { province: 'manicaland', district: 'chipinge' } },
     });
     const preseededFixture = TestBed.createComponent(HomeComponent);
     preseededFixture.detectChanges();

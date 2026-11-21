@@ -24,9 +24,9 @@ import { type SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { getDownscaledLocations } from '../../../../libs/data/geoLocation';
+import { getLocationsForTool } from '../../../../libs/data/geoLocation';
 import type { ICountryCode } from '../../../../libs/data/deployments/countries';
-import type { IDeepestLocation } from '../../../../libs/data/geoLocation/types';
+import type { IGeoLocationNode } from '../../../../libs/data/geoLocation/types';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   computeExpectedProbabilityTable,
@@ -167,7 +167,7 @@ interface ISyncRowContext {
   stationDataHashmap: Map<string, IStationDataRow>;
   cropDataHashmap: Record<string, ICropData['Row']>;
   stationNameHashmap: Map<string, string>;
-  locations: IDeepestLocation[];
+  locations: IGeoLocationNode[];
   countryDir: string;
   auditOnly: boolean;
 }
@@ -227,7 +227,7 @@ async function fetchSyncContext(supabase: SupabaseClient, country: string, optio
     if (row.id) stationNameHashmap.set(row.id, row.station_name ?? row.id);
   }
 
-  const locations = getDownscaledLocations(country as ICountryCode);
+  const locations = getLocationsForTool(country as ICountryCode, 'cropProbability');
 
   const countryDir = getCountryDir(country);
   if (!options.auditOnly && !fs.existsSync(countryDir)) {

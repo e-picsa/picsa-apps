@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { getDownscaledLocations } from '@picsa/data/geoLocation';
+import { getLocationsForTool } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -121,9 +121,9 @@ export class DashboardCropAdminComponent {
     this.parsedRows.set(rows);
   }
 
-  public downloadTemplate(selectedLocation: (string | undefined)[]) {
+  public downloadTemplate(location_id: string | undefined) {
+    if (!location_id) return;
     const cropData = this.service.cropData();
-    const location_id = selectedLocation.filter((v) => v !== undefined).pop() as string;
     const dummyRows = cropData.map(({ crop, variety }) => ({
       location_id,
       crop,
@@ -178,7 +178,7 @@ export class DashboardCropAdminComponent {
       const exportEntries: any[] = [];
       let skippedEmpty = 0;
 
-      const locations = getDownscaledLocations(countryCode);
+      const locations = getLocationsForTool(countryCode, 'cropProbability');
 
       for (const row of downscaledRows || []) {
         if (!row.station_id || !row.water_requirements) continue;
@@ -343,7 +343,7 @@ export class DashboardCropAdminComponent {
 
   private getLocationList() {
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    return countryCode ? getDownscaledLocations(countryCode) : [];
+    return countryCode ? getLocationsForTool(countryCode, 'cropProbability') : [];
   }
 
   private qualityControlData(data: ICropDataImport[] = []) {

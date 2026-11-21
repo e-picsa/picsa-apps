@@ -9,7 +9,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { getDownscaledLocation, getGeoLocationData } from '@picsa/data/geoLocation';
+import {
+  findLocationForTool,
+  formatLocationIdAsLabel,
+  getToolLayers,
+  ILocationSelection,
+  resolveLocationForTool,
+} from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -110,8 +116,11 @@ export class DashboardCropWaterRequirementsComponent {
     this.dialog.open(template);
   }
 
-  public handleFormLocationChange(location: (string | undefined)[]) {
-    const location_id = location.pop();
+  public handleFormLocationChange(selection: ILocationSelection) {
+    const { locations } = this.countryCode
+      ? resolveLocationForTool(this.countryCode, selection, 'cropProbability')
+      : { locations: [] };
+    const location_id = locations.length === 1 ? locations[0].id : undefined;
     if (location_id) {
       const existingEntry = this.tableData().find((v) => v.location_id === location_id);
       if (existingEntry) {
@@ -131,26 +140,29 @@ export class DashboardCropWaterRequirementsComponent {
     const { downscaled } = data;
     const country_code = this.deploymentService.activeDeployment()?.country_code;
     if (!country_code) return [];
-    const { layers } = getGeoLocationData(country_code);
+    const layers = getToolLayers(country_code, 'cropProbability');
     const parentLayer = layers.length > 1 ? layers[0] : undefined;
-    const deepestLayer = layers.at(-1);
+    const deepestLayer = layers[layers.length - 1];
     const hasParent = Boolean(parentLayer);
     const parentColLabel = parentLayer?.label ?? '';
     const deepestColLabel = deepestLayer?.label ?? 'Location';
 
     return downscaled.map(({ location_id, water_requirement }) => {
-      const loc = getDownscaledLocation(country_code, location_id);
+      const loc = findLocationForTool(country_code, 'cropProbability', location_id);
+      const label = loc?.label ?? formatLocationIdAsLabel(location_id);
+      const parentId = loc?.parentId ?? '';
+      const parentLabel = loc?.parentLabel ?? '';
       if (hasParent) {
         return {
-          [parentColLabel]: loc.parentLabel,
-          [deepestColLabel]: loc.label,
+          [parentColLabel]: parentLabel,
+          [deepestColLabel]: label,
           location_id,
           water_requirement,
-          location_hash: `${country_code}/${loc.parentId}/${location_id}`,
+          location_hash: `${country_code}/${parentId}/${location_id}`,
         };
       }
       return {
-        [deepestColLabel]: loc.label,
+        [deepestColLabel]: label,
         location_id,
         water_requirement,
         location_hash: `${country_code}/${location_id}`,
