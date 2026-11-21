@@ -63,6 +63,7 @@ export class DashboardCropWaterRequirementsComponent {
 
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
 
+  /** Create or update the water requirement for the selected location (removal goes via remove()) */
   public async save(waterRequirementInput: string) {
     const ctx = this.resolveContext();
     if (!ctx) return;
@@ -90,6 +91,7 @@ export class DashboardCropWaterRequirementsComponent {
     }
   }
 
+  /** Delete the water requirement for the selected location, pruning any empty crop group */
   public async remove() {
     const ctx = this.resolveContext();
     if (!ctx) return;
@@ -104,6 +106,7 @@ export class DashboardCropWaterRequirementsComponent {
     await this.persistWaterRequirements(record.id, water_requirements, 'Water Requirement Removed');
   }
 
+  /** Shared editor and location guard for save/remove, returns undefined when action should be ignored */
   private resolveContext() {
     if (!this.authService.hasRole('crop.editor')) return undefined;
     const location_id = this.selectedEntry()?.location_id;
@@ -112,6 +115,7 @@ export class DashboardCropWaterRequirementsComponent {
     return { crop, variety, location_id };
   }
 
+  /** Load the downscaled row for a location (ids are namespaced as country_code/location_id) */
   private async fetchDownscaledRecord(location_id: string) {
     const parentId = `${this.countryCode}/${location_id}`;
     const { data, error } = await this.service.cropDataDownscaledTable
@@ -122,6 +126,7 @@ export class DashboardCropWaterRequirementsComponent {
     return data;
   }
 
+  /** Write updated requirements, notify the user and refresh merged crop data */
   private async persistWaterRequirements(
     id: string,
     water_requirements: ICropDataDownscaledWaterRequirements,
