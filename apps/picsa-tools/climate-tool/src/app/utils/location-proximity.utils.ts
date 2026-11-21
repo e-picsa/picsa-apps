@@ -4,6 +4,7 @@ import {
   clearGeoJsonFeatureCache,
   getGeoLocationData,
   getLocationTopoFeature,
+  getToolLayers,
   normalizeLocationName,
   topoJsonToGeoJson,
 } from '@picsa/data/geoLocation';
@@ -162,13 +163,14 @@ export async function getLocationCenterAndBoundary(
   locationId: string,
   role: 'downscaled' | 'parent' = 'downscaled',
 ): Promise<ILocationCenterResult | undefined> {
-  const { layers } = getGeoLocationData(countryCode);
-  const targetLayer = role === 'parent' ? layers[0] : layers[layers.length - 1];
-  const explicitCoords = targetLayer?.locations.find((l) => l.id === locationId)?.coordinates;
+  const climateLayers = getToolLayers(countryCode, 'climate');
+  const targetLayer = role === 'parent' ? climateLayers[0] : climateLayers[climateLayers.length - 1];
+  if (!targetLayer) return undefined;
+  const explicitCoords = targetLayer.locations.find((l) => l.id === locationId)?.coordinates;
 
   let feature: IProximityFeature | undefined;
   try {
-    feature = (await getLocationTopoFeature(countryCode, locationId, role)) as IProximityFeature | undefined;
+    feature = (await getLocationTopoFeature(countryCode, locationId, targetLayer.key)) as IProximityFeature | undefined;
   } catch (err) {
     console.warn(`[LocationProximity] Could not compute location center from TopoJSON for ${locationId}:`, err);
   }

@@ -1,10 +1,9 @@
 import * as topojson from 'topojson-client';
 
 import type { ICountryCode } from '../deployments';
-import { getGeoLocationData } from './data';
+import { getGeoLocationData } from './index';
 import {
   GeoToolKey,
-  IBoundaryData,
   IGeoJsonData,
   IGeoJsonFeature,
   IGeoLayer,
@@ -66,14 +65,13 @@ function validateSelectionChain(layers: IGeoLayer[], selection?: ILocationSelect
   return chain;
 }
 
-/** Return ordered layers visible for a tool (capped at `toolLayers[tool]`, or all layers when omitted) */
+/** Return ordered layers visible for a tool (capped strictly at `toolLayers[tool]`, or all layers when omitted) */
 export function getToolLayers(country_code: ICountryCode, tool?: GeoToolKey): IGeoLayer[] {
   const { layers, toolLayers } = getGeoLocationData(country_code);
   if (!tool) return layers;
-  const targetKey = toolLayers?.[tool];
-  if (!targetKey) return layers;
+  const targetKey = toolLayers[tool];
   const idx = layers.findIndex((l) => l.key === targetKey);
-  return idx >= 0 ? layers.slice(0, idx + 1) : layers;
+  return idx >= 0 ? layers.slice(0, idx + 1) : [];
 }
 
 /** Return all normalized locations at the target layer configured for a tool */
@@ -175,25 +173,17 @@ export function normalizeLocationName(name?: string | null): string {
 }
 
 /**
- * Retrieve the matching GeoJSON feature from a country's TopoJSON for a location.
- * Defaults to the deepest layer; pass 'parent' for the top layer or an explicit `layerKey`.
+ * Retrieve the matching GeoJSON feature from a country's TopoJSON for a location at `layerKey`.
  * Layers without boundary geometries (`topoAdminLevel === undefined`) walk up `parentId`.
  */
 export async function getLocationTopoFeature(
   country_code: ICountryCode,
   location_id: string,
-  roleOrLayerKey: 'downscaled' | 'parent' | string = 'downscaled',
+  layerKey: string,
 ): Promise<IGeoJsonFeature<ITopoJsonFeatureProperties> | undefined> {
   const geoData = getGeoLocationData(country_code);
   const { layers } = geoData;
-  if (layers.length === 0) return undefined;
-
-  let layerIndex =
-    roleOrLayerKey === 'parent'
-      ? 0
-      : roleOrLayerKey === 'downscaled'
-        ? layers.length - 1
-        : layers.findIndex((l) => l.key === roleOrLayerKey);
+  let layerIndex = layers.findIndex((l) => l.key === layerKey);
   if (layerIndex < 0) return undefined;
 
   const initialItem = layers[layerIndex]?.locations.find((l) => l.id === location_id);
@@ -251,80 +241,4 @@ export function topoJsonToGeoJson<T = any>(t: ITopoJson, adminLevel?: string | n
   }
 
   return topojson.feature(t, topologyObject as any) as unknown as IGeoJsonData<T>;
-}
-
-/**
- * Take input geoJson feature collection data and extract coordinates into a simple
- * coordinate lookup table.
- */
-export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: keyof T, precision = 2) {
-  const boundaries: IBoundaryData = {};
-
-  for (const feature of data.features) {
-    const key = feature.properties[propertyKeyField] as string;
-    if (!key) {
-      const allKeys = Object.keys(feature.properties as any).join(',');
-      throw new Error(`[${propertyKeyField as any}] not found\nAvailable keys: [${allKeys}]`);
-    }
-    if (boundaries[key]) {
-      throw new Error(`duplicate key found for: ${key}`);
-    }
-
-    const coordinates: [number, number][] = [];
-    let x1 = -1;
-    let y1 = -1;
-    const allCoordinates = flattenCoordinates(feature.geometry.coordinates);
-    for (const [x, y] of allCoordinates) {
-      const sf = 10 ** precision;
-      const xRounded = Math.round(x * sf) / sf;
-      const yRounded = Math.round(y * sf) / sf;
-      if (x1 !== xRounded && y1 !== yRounded) {
-        coordinates.push([xRounded, yRounded]);
-        x1 = xRounded;
-        y1 = yRounded;
-      }
-    }
-
-    boundaries[key as any] = coordinates;
-  }
-  return sortObjectByKey(boundaries);
-}
-
-/** Take summary boundary data and convert back to GeoJson */
-export function boundariesToGeoJson(data: IBoundaryData, propertyKeyField: string) {
-  const geoJson: IGeoJsonData = {
-    type: 'FeatureCollection',
-    crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } },
-    features: [],
-  };
-  for (const [key, coordinates] of Object.entries(data)) {
-    geoJson.features.push({
-      type: 'Feature',
-      properties: { [propertyKeyField]: key },
-      geometry: { type: 'MultiPolygon', coordinates: [[coordinates as any]] },
-    });
-  }
-  return geoJson;
-}
-
-function sortObjectByKey(object: Record<string, any>) {
-  const sorted: Record<string, any> = {};
-  for (const key of Object.keys(object).sort((a, b) => a.localeCompare(b))) {
-    sorted[key] = object[key];
-  }
-  return sorted;
-}
-
-function flattenCoordinates(data: any[] = []): number[][] {
-  if (Array.isArray(data)) {
-    const [el] = data;
-    if (Array.isArray(el)) {
-      const [inner] = el;
-      if (Array.isArray(inner)) {
-        const flattened = [].concat(...(data as any));
-        return flattenCoordinates(flattened);
-      }
-    }
-  }
-  return data;
 }

@@ -10,7 +10,6 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { ConfigurationService } from '@picsa/configuration';
 import type { ICountryCode } from '@picsa/data';
 import {
-  getGeoLocationData,
   getLocationsForTool,
   getToolLayers,
   ILocationSelection,
@@ -243,8 +242,8 @@ export class SiteSelectPage {
   /** Table configuration for the "All stations" dialog */
   public readonly tableOptions = computed(() => {
     const country_code = this.userCountryCode();
-    const { layers } = getGeoLocationData(country_code);
-    const deepestLabel = layers.at(-1)?.label ?? layers[0]?.label ?? '';
+    const layers = getToolLayers(country_code, 'climate');
+    const deepestLabel = layers[layers.length - 1]?.label ?? layers[0]?.label ?? '';
     return {
       displayColumns: ['map', 'name', 'district'],
       formatHeader: (v) => {

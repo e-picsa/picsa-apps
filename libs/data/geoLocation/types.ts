@@ -31,11 +31,8 @@ export interface IGeolocationData {
   topoJson: () => Promise<ITopoJson>;
   /** Ordered hierarchy layers from top-level (e.g. province) to deepest (e.g. district or epa). */
   layers: IGeoLayer[];
-  /**
-   * Optional per-tool target layer key. Omitted tools default to the country's deepest layer.
-   * Only needed when tools operate at different tiers (e.g. MW forecasts at `district` while crop targets `epa`).
-   */
-  toolLayers?: Partial<Record<GeoToolKey, string>>;
+  /** Explicit target layer key for every tool so adding deeper layers never silently alters existing tools. */
+  toolLayers: Record<GeoToolKey, string>;
 }
 
 /** Normalized location entry with resolved parent tier references */
@@ -68,8 +65,6 @@ export interface IGeoJsonData<T = Record<string, string>> {
 }
 
 export type IGeoJsonFeature<T = ITopoJsonFeatureProperties> = IGeoJsonData<T>['features'][number];
-
-export type IBoundaryData = Record<string, number[][]>;
 
 export type ITopoJson = {
   type: string;

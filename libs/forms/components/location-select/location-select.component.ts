@@ -63,10 +63,9 @@ export class FormLocationSelectComponent {
     const data = this.locationData();
     const tool = this.tool();
     if (!tool) return data.layers;
-    const targetKey = data.toolLayers?.[tool];
-    if (!targetKey) return data.layers;
+    const targetKey = data.toolLayers[tool];
     const idx = data.layers.findIndex((l) => l.key === targetKey);
-    return idx >= 0 ? data.layers.slice(0, idx + 1) : data.layers;
+    return idx >= 0 ? data.layers.slice(0, idx + 1) : [];
   });
 
   public layerRows = computed<ILayerRow[]>(() => {

@@ -4,10 +4,14 @@ import { filterLocationsToProbabilityTables, getTableLocationId } from './locati
 
 const TABLE = (id: string, label = id, locationId?: string) => ({ id, label, locationId });
 
-const baseData = (layers: IGeolocationData['layers']): IGeolocationData => ({
-  topoJson: async () => ({}) as never,
-  layers,
-});
+const baseData = (layers: IGeolocationData['layers']): IGeolocationData => {
+  const leafKey = layers[layers.length - 1]?.key ?? '';
+  return {
+    topoJson: async () => ({}) as never,
+    layers,
+    toolLayers: { cropProbability: leafKey, forecast: leafKey, climate: leafKey },
+  };
+};
 
 describe('filterLocationsToProbabilityTables', () => {
   it('filters single-layer geo data (e.g. mw) without mutating input', () => {

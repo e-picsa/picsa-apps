@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import type { IGeolocationData, ILocationSelection } from '@picsa/data/geoLocation';
-import * as geoDataModule from '@picsa/data/geoLocation/data';
+import * as geoDataModule from '@picsa/data/geoLocation';
 
 import { FormLocationSelectComponent } from './location-select.component';
 
@@ -63,7 +63,7 @@ describe('FormLocationSelectComponent', () => {
           ],
         },
       ],
-      toolLayers: { forecast: 'district' },
+      toolLayers: { forecast: 'district', cropProbability: 'epa', climate: 'epa' },
     };
     const spy = jest.spyOn(geoDataModule, 'getGeoLocationData').mockReturnValue(mwTwoLayer);
     try {
@@ -104,6 +104,7 @@ describe('FormLocationSelectComponent', () => {
           ],
         },
       ],
+      toolLayers: { cropProbability: 'ward', forecast: 'province', climate: 'ward' },
     };
     const spy = jest.spyOn(geoDataModule, 'getGeoLocationData').mockReturnValue(threeLayerData);
     try {

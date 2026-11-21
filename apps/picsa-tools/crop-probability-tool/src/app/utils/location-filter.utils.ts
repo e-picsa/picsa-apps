@@ -22,13 +22,14 @@ export function filterLocationsToProbabilityTables(data: IGeolocationData, table
   const availableLeafIds = new Set(tables.map(getTableLocationId));
   const filteredLayers = layers.map((layer) => ({ ...layer, locations: [...layer.locations] }));
 
-  // Filter leaf layer to locations with tables, then prune parent layers with no remaining children
-  const lastIndex = filteredLayers.length - 1;
-  filteredLayers[lastIndex].locations = filteredLayers[lastIndex].locations.filter((loc) =>
+  // Filter cropProbability target layer to locations with tables, then prune empty parent layers
+  const targetIndex = filteredLayers.findIndex((layer) => layer.key === data.toolLayers.cropProbability);
+  if (targetIndex < 0) return data;
+  filteredLayers[targetIndex].locations = filteredLayers[targetIndex].locations.filter((loc) =>
     availableLeafIds.has(loc.id),
   );
 
-  for (let i = lastIndex - 1; i >= 0; i--) {
+  for (let i = targetIndex - 1; i >= 0; i--) {
     const validParentIds = new Set(filteredLayers[i + 1].locations.map((c) => c.parentId).filter(Boolean));
     filteredLayers[i].locations = filteredLayers[i].locations.filter((loc) => validParentIds.has(loc.id));
   }

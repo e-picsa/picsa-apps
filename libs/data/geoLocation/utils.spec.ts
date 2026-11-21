@@ -1,6 +1,6 @@
 import type { ICountryCode } from '../deployments';
-import * as dataModule from './data';
-import { getGeoLocationData } from './data';
+import * as geoLocationModule from './index';
+import { getGeoLocationData } from './index';
 import MW_EPAS from './mw/epas';
 import type { GeoToolKey, IGeolocationData } from './types';
 import {
@@ -37,7 +37,9 @@ describe('manifest integrity across configured countries', () => {
         }
       }
 
+      const layerKeys = new Set(data.layers.map((l) => l.key));
       for (const tool of tools) {
+        expect(layerKeys.has(data.toolLayers[tool])).toBe(true);
         expect(getLocationsForTool(country, tool).length).toBeGreaterThan(0);
       }
     });
@@ -131,9 +133,9 @@ describe('resolveLocationForTool', () => {
           })),
         },
       ],
-      toolLayers: { forecast: 'district' },
+      toolLayers: { forecast: 'district', cropProbability: 'epa', climate: 'epa' },
     };
-    const spy = jest.spyOn(dataModule, 'getGeoLocationData').mockReturnValue(mwWithEpas);
+    const spy = jest.spyOn(geoLocationModule, 'getGeoLocationData').mockReturnValue(mwWithEpas);
     try {
       expect(getToolLayers('mw', 'forecast').map((l) => l.key)).toEqual(['district']);
       expect(getToolLayers('mw', 'cropProbability').map((l) => l.key)).toEqual(['district', 'epa']);
@@ -172,9 +174,9 @@ describe('resolveLocationForTool', () => {
           ],
         },
       ],
-      toolLayers: { forecast: 'province' },
+      toolLayers: { forecast: 'province', cropProbability: 'ward', climate: 'ward' },
     };
-    const spy = jest.spyOn(dataModule, 'getGeoLocationData').mockReturnValue(threeLayerData);
+    const spy = jest.spyOn(geoLocationModule, 'getGeoLocationData').mockReturnValue(threeLayerData);
     try {
       const sel = { region: 'north', province: 'prov_a', ward: 'ward_2' };
       expect(isSelectionComplete('zm', sel)).toBe(true);
@@ -207,14 +209,14 @@ describe('getLocationTopoFeature', () => {
   for (const country of ['mw', 'zm', 'zw'] as ICountryCode[]) {
     it(`resolves every deepest location in "${country}" to a valid TopoJSON feature`, async () => {
       for (const loc of getLocationsForTool(country, 'forecast')) {
-        expect(await getLocationTopoFeature(country, loc.id)).toBeDefined();
+        expect(await getLocationTopoFeature(country, loc.id, loc.layerKey)).toBeDefined();
       }
     });
   }
 
-  it('distinguishes parent vs downscaled role when ids collide across layers', async () => {
-    const provinceFeature = await getLocationTopoFeature('zw', 'masvingo', 'parent');
-    const districtFeature = await getLocationTopoFeature('zw', 'masvingo', 'downscaled');
+  it('distinguishes province vs district layer when ids collide across layers', async () => {
+    const provinceFeature = await getLocationTopoFeature('zw', 'masvingo', 'province');
+    const districtFeature = await getLocationTopoFeature('zw', 'masvingo', 'district');
     expect(String(provinceFeature?.properties?.admin_level)).toBe('4');
     expect(String(districtFeature?.properties?.admin_level)).toBe('6');
   });
