@@ -3,6 +3,7 @@ export interface IGeoLocationBase {
   label: string;
   /** Optional OSM boundary name when it differs from the display label (e.g. Mangwe -> Bulilimamangwe) */
   topoName?: string;
+  /** Location of point or center/centroid of polygon for distance calculation and label positioning */
   coordinates?: { latitude: number; longitude: number };
 }
 
