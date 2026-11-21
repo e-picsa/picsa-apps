@@ -49,18 +49,42 @@ const migration: IMigration = {
     const configurationService = injector.get(ConfigurationService);
     const settings = configurationService.userSettings() as ILegacyUserSettings;
     const { country_code, location } = settings;
-    if (!location) return;
-
-    const locationsByCountry = { ...(settings.locationsByCountry ?? {}) };
-    if (country_code && !locationsByCountry[country_code]) {
-      const migrated = convertLegacyLocationTuple(country_code, location);
-      if (migrated) {
-        locationsByCountry[country_code] = migrated;
-      }
+    if (!location) {
+      return { status: 'skipped', reason: 'no legacy location field' };
     }
 
-    const { location: _removed, ...rest } = settings;
-    configurationService.userSettings.set({ ...rest, locationsByCountry });
+    const targetCountry = (country_code || location[2]) as ICountryCode | undefined;
+    const locationsByCountry = { ...(settings.locationsByCountry ?? {}) };
+    const { location: legacyLocation, ...rest } = settings;
+    const nextSettings: IUserSettings = {
+      ...rest,
+      locationsByCountry,
+    };
+
+    if (!targetCountry) {
+      configurationService.userSettings.set(nextSettings);
+      return { status: 'cleared', reason: 'no country_code available', from: legacyLocation };
+    }
+
+    if (locationsByCountry[targetCountry] && Object.keys(locationsByCountry[targetCountry]).length > 0) {
+      configurationService.userSettings.set(nextSettings);
+      return {
+        status: 'skipped',
+        reason: 'locationsByCountry already populated',
+        country: targetCountry,
+        kept: locationsByCountry[targetCountry],
+      };
+    }
+
+    const migrated = convertLegacyLocationTuple(targetCountry, legacyLocation);
+    if (migrated) {
+      locationsByCountry[targetCountry] = migrated;
+      configurationService.userSettings.set(nextSettings);
+      return { status: 'migrated', country: targetCountry, from: legacyLocation, to: migrated };
+    }
+
+    configurationService.userSettings.set(nextSettings);
+    return { status: 'cleared', country: targetCountry, from: legacyLocation, reason: 'no valid location segments' };
   },
   app_version: '5.24.0',
 };

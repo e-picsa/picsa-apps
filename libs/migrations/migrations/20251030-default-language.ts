@@ -1,7 +1,8 @@
 import { Injector } from '@angular/core';
-import { IMigration } from '../types';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ILocaleCode } from '@picsa/data';
+
+import { IMigration } from '../types';
 
 /**
  * Previously users would assign a single `global_en` locale code when using the English language option.
@@ -15,8 +16,11 @@ const migration: IMigration = {
     const configurationService = injector.get(ConfigurationService);
     const { country_code, language_code } = configurationService.userSettings();
     if (country_code && language_code === 'global_en') {
-      configurationService.updateUserSettings({ language_code: `${country_code}_en` as ILocaleCode });
+      const nextLocale = `${country_code}_en` as ILocaleCode;
+      configurationService.updateUserSettings({ language_code: nextLocale });
+      return `migrated global_en -> ${nextLocale}`;
     }
+    return 'skipped: no global_en locale';
   },
   app_version: '4.9.0',
 };

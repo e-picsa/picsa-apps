@@ -28,21 +28,27 @@ describe('ConfigurationService per-country locations & one-time migration', () =
     expect(service.activeLocationSelection()).toEqual({ district: 'lilongwe' });
   });
 
-  it('migrates legacy location tuple once and strips the legacy field', async () => {
+  it('migrates legacy location tuple once, strips legacy field, and returns diagnostic result', async () => {
     localStorage.setItem(
       'picsa_user_settings',
       JSON.stringify({
-        country_code: 'zw',
-        location: [null, null, 'zw', null, 'masvingo', 'bikita'],
+        country_code: 'mw',
+        location: [null, null, 'mw', null, 'lilongwe'],
       }),
     );
 
     const injector = TestBed.inject(Injector);
     const service = TestBed.inject(ConfigurationService);
-    await locationMigration.up(injector);
+    const result = await locationMigration.up(injector);
 
-    expect(service.activeLocationSelection()).toEqual({ province: 'masvingo', district: 'bikita' });
+    expect(service.activeLocationSelection()).toEqual({ district: 'lilongwe' });
     expect('location' in service.userSettings()).toBe(false);
+    expect(result).toEqual({
+      status: 'migrated',
+      country: 'mw',
+      from: [null, null, 'mw', null, 'lilongwe'],
+      to: { district: 'lilongwe' },
+    });
   });
 
   it('drops mismatched countries and unknown/stale ids in legacy tuple conversion', () => {
