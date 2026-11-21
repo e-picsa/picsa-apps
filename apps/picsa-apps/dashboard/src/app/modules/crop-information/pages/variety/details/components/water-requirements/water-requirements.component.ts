@@ -18,7 +18,12 @@ import { DashboardMaterialModule } from '../../../../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../../../../auth/directives/authRoleRequired.directive';
 import { DashboardAuthService } from '../../../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled, ICropDataMerged } from '../../../../../services';
+import {
+  CropInformationService,
+  ICropDataDownscaled,
+  ICropDataDownscaledWaterRequirements,
+  ICropDataMerged,
+} from '../../../../../services';
 
 interface IWaterRequirementTableData {
   location_id: string;
@@ -59,47 +64,73 @@ export class DashboardCropWaterRequirementsComponent {
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
 
   public async save(waterRequirementInput: string) {
-    if (!this.authService.hasRole('crop.editor')) return;
-    const { crop, variety } = this.data();
-    const entry = this.selectedEntry();
-    if (entry) {
-      // merge updated crop water requirement with full downscaled data
-      const { location_id } = entry;
-      const parentId = `${this.countryCode}/${location_id}`;
-      const { data, error } = await this.service.cropDataDownscaledTable
-        .select<'*', ICropDataDownscaled['Row']>('*')
-        .eq('id', parentId)
-        .maybeSingle();
+    const ctx = this.resolveContext();
+    if (!ctx) return;
+    const value = Number(waterRequirementInput);
+    if (String(waterRequirementInput).trim() === '' || Number.isNaN(value)) return;
+    const { crop, variety, location_id } = ctx;
+    const record = await this.fetchDownscaledRecord(location_id);
+    if (record) {
+      const water_requirements = (record.water_requirements ?? {}) as ICropDataDownscaledWaterRequirements;
+      water_requirements[crop] ??= {};
+      water_requirements[crop][variety] = value;
+      await this.persistWaterRequirements(record.id, water_requirements, 'Water Requirement Updated');
+    } else {
+      const water_requirements = { [crop]: { [variety]: value } };
+      const country_code = this.countryCode;
+      if (!country_code) throw new Error('Country code is not available');
+      const { error } = await this.service.cropDataDownscaledTable.insert({
+        country_code,
+        location_id,
+        water_requirements,
+      });
       if (error) throw error;
-      if (data) {
-        let { water_requirements } = data;
-        water_requirements ??= {};
-        water_requirements[crop] ??= {};
-        water_requirements[crop][variety] = Number(waterRequirementInput);
-        const { error } = await this.service.cropDataDownscaledTable.update({ water_requirements }).eq('id', data.id);
-        if (error) {
-          throw error;
-        }
-      } else {
-        const water_requirements = {
-          [crop]: {
-            [variety]: Number(waterRequirementInput),
-          },
-        };
-        const country_code = this.countryCode;
-        if (!country_code) throw new Error('Country code is not available');
-        const { error } = await this.service.cropDataDownscaledTable.insert({
-          country_code,
-          location_id,
-          water_requirements,
-        });
-        if (error) {
-          throw error;
-        }
-      }
       this.notificationService.showSuccessNotification(`Water Requirement Updated`);
       await this.service['loadCropData']();
     }
+  }
+
+  public async remove() {
+    const ctx = this.resolveContext();
+    if (!ctx) return;
+    const { crop, variety, location_id } = ctx;
+    const record = await this.fetchDownscaledRecord(location_id);
+    const water_requirements = record?.water_requirements as ICropDataDownscaledWaterRequirements | undefined;
+    if (!record || !water_requirements?.[crop]?.[variety]) return;
+    delete water_requirements[crop][variety];
+    if (Object.keys(water_requirements[crop]).length === 0) {
+      delete water_requirements[crop];
+    }
+    await this.persistWaterRequirements(record.id, water_requirements, 'Water Requirement Removed');
+  }
+
+  private resolveContext() {
+    if (!this.authService.hasRole('crop.editor')) return undefined;
+    const location_id = this.selectedEntry()?.location_id;
+    if (!location_id) return undefined;
+    const { crop, variety } = this.data();
+    return { crop, variety, location_id };
+  }
+
+  private async fetchDownscaledRecord(location_id: string) {
+    const parentId = `${this.countryCode}/${location_id}`;
+    const { data, error } = await this.service.cropDataDownscaledTable
+      .select<'*', ICropDataDownscaled['Row']>('*')
+      .eq('id', parentId)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
+  private async persistWaterRequirements(
+    id: string,
+    water_requirements: ICropDataDownscaledWaterRequirements,
+    message: string,
+  ) {
+    const { error } = await this.service.cropDataDownscaledTable.update({ water_requirements }).eq('id', id);
+    if (error) throw error;
+    this.notificationService.showSuccessNotification(message);
+    await this.service['loadCropData']();
   }
 
   public editWaterRequirement(entry?: IWaterRequirementTableData) {
