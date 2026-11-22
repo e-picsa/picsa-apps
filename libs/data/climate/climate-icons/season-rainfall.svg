@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 64 64"><path fill="#f0f9ff" stroke="#334155" stroke-linejoin="round" stroke-width="2.5" d="M18 20v28a6 6 0 0 0 6 6h16a6 6 0 0 0 6-6V20"/><path fill="#0284c7" d="M19 36h26v12a5 5 0 0 1-5 5H24a5 5 0 0 1-5-5Z"/><path stroke="#334155" stroke-linecap="round" stroke-width="2.5" d="M40 28h6"/><path stroke="#fff" stroke-linecap="round" stroke-width="2.5" d="M40 42h6"/><path fill="#0284c7" d="M32 6s-6 6-6 9a6 6 0 0 0 12 0c0-3-6-9-6-9"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Straight-sided cylinder with rounded base -->
+  <path d="M18 20 V48 A6 6 0 0 0 24 54 H40 A6 6 0 0 0 46 48 V20" fill="#f0f9ff" stroke="#334155" stroke-width="2.5" stroke-linejoin="round" />
+  <!-- Water fill with level -->
+  <path d="M19 36 H45 V48 A5 5 0 0 1 40 53 H24 A5 5 0 0 1 19 48 Z" fill="#0284c7" />
+  <!-- Exactly 2 measurement tick marks on the right -->
+  <line x1="40" y1="28" x2="46" y2="28" stroke="#334155" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="40" y1="42" x2="46" y2="42" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Water droplet falling into container -->
+  <path d="M32 6 C32 6 26 12 26 15 A6 6 0 0 0 38 15 C38 12 32 6 32 6 Z" fill="#0284c7" />
+</svg>
