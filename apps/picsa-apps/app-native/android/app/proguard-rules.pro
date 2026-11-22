@@ -3,8 +3,10 @@
 # Capacitor loads plugins via reflection (annotations + Bridge), so everything
 # the Bridge touches at runtime must be kept explicitly.
 
-# Keep line numbers for Crashlytics deobfuscation (mapping upload enabled in build.gradle).
--keepattributes SourceFile,LineNumberTable
+# Keep line numbers for Crashlytics deobfuscation (mapping upload enabled by default
+# in crashlytics-gradle). Signature/InnerClasses/EnclosingMethod required for R8 full mode
+# (generics/reflection used by Capacitor, Kotlin-based and Firebase plugins).
+-keepattributes SourceFile,LineNumberTable,*Annotation*,Signature,InnerClasses,EnclosingMethod
 -renamesourcefileattribute SourceFile
 
 # --- OkHttp optional Conscrypt dependency (loaded reflectively only when present) ---
@@ -29,15 +31,17 @@
 -keep class com.getcapacitor.PluginCall { *; }
 
 # --- Cordova compatibility layer (file, file-opener2, socialsharing) ---
+# Cordova plugins are instantiated via Class.forName() from res/xml/config.xml,
+# invisible to R8 — keep the base package, every subclass, and the two
+# out-of-tree plugin packages explicitly.
 -keep class org.apache.cordova.** { *; }
--keep class org.apache.cordova.CordovaPlugin { *; }
+-keep class * extends org.apache.cordova.CordovaPlugin { *; }
+-keep class io.github.pwlin.cordova.plugins.fileopener2.** { *; }
+-keep class nl.xservices.plugins.** { *; }
 
 # --- Firebase (Crashlytics + Analytics kept live; Performance removed) ---
 -keep class com.google.firebase.crashlytics.** { *; }
 -keep class com.google.firebase.analytics.** { *; }
--dontwarn com.google.firebase.**
-# Crashlytics custom keys / log calls are reflectively resolved in some paths.
--keepattributes *Annotation*
 
 # --- Capacitor plugins with native code ---
 -keep class com.capacitorjs.plugins.** { *; }
@@ -62,7 +66,6 @@
 
 # --- Push notifications (FCM) ---
 -keep class com.google.firebase.messaging.** { *; }
--dontwarn com.google.firebase.messaging.**
 
 # --- FileProvider / sharing / opening (reflective manifest lookups) ---
 -keep class androidx.core.content.FileProvider { *; }
@@ -94,7 +97,3 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
-
-# --- Sentry (live; consolidation is a separate decision) ---
--keep class io.sentry.** { *; }
--dontwarn io.sentry.**
