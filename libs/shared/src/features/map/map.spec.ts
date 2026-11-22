@@ -359,7 +359,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
   it('keeps offline PMTiles active within country offline maxzoom even when online', () => {
     fixture.componentRef.setInput('countryCode', 'mw');
     fixture.detectChanges();
-    setZoom(11);
+    setZoom(9);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).not.toHaveBeenCalled();
@@ -376,7 +376,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         const map = mockMap();
         component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
 
-        setZoom(12);
+        setZoom(10);
         map.emit('zoomend');
         await waitForVectorLayers();
 
@@ -456,7 +456,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         // Real MapLibre returns isStyleLoaded() === false as soon as addSource/setSprite start async loads
         jest.spyOn(map, 'isStyleLoaded').mockImplementation(() => !map.sources['test-vector']);
 
-        setZoom(12);
+        setZoom(10);
         map.emit('zoomend');
         await waitForVectorLayers();
 
@@ -482,7 +482,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         emitLoad();
         const map = mockMap();
 
-        setZoom(12);
+        setZoom(10);
         map.emit('zoomend');
         expect(fetchMock).toHaveBeenCalledTimes(1);
 
@@ -498,7 +498,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         expect(map.setSprite).not.toHaveBeenCalled();
 
         // Zooming back in later attaches the cached style without re-fetching
-        setZoom(12);
+        setZoom(10);
         map.emit('zoomend');
         fixture.detectChanges();
         expect(fetchMock).toHaveBeenCalledTimes(1);

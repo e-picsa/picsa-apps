@@ -9,9 +9,9 @@ export const PMTILES_GLYPHS_URL = 'assets/mapTiles/fonts/{fontstack}/{range}.pbf
 /** Countries with bundled offline PMTiles detail extracts (`z7+`) */
 export const PMTILES_GLOBAL_MAX_ZOOM = 6;
 export const PMTILES_COUNTRY_MAX_ZOOM: Record<string, number> = {
-  mw: 11,
+  mw: 9,
   zm: 9,
-  zw: 10,
+  zw: 9,
 };
 export const PMTILES_SUPPORTED_COUNTRIES = new Set(Object.keys(PMTILES_COUNTRY_MAX_ZOOM));
 

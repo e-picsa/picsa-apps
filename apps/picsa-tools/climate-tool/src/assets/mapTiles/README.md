@@ -5,7 +5,7 @@ This directory contains the offline vector basemap archives (`.pmtiles`) and Map
 ## Contents
 
 - `global-base.pmtiles` — World basemap (`z0–3`) plus shared Southern Africa (`z4–6`) coverage (`mobile` preset).
-- `<country>.pmtiles` (`mw`, `zm`, `zw`) — Polygon-masked country detail extracts (`z7–9/10/11`, `mobile` preset), overscaled offline and optionally falling back to online tiles above each archive's `maxzoom`.
+- `<country>.pmtiles` (`mw`, `zm`, `zw`) — Polygon-masked country detail extracts (`z7–9`, `mobile` preset), overscaled offline and optionally falling back to online tiles above each archive's `maxzoom`.
 - `fonts/Noto Sans Regular/<range>.pbf` — Pre-rendered Signed Distance Field (SDF) glyph blocks required by MapLibre GL JS to render map labels on the WebGL canvas.
 
 > **Why `.pbf` glyphs exist alongside `libs/theme/src/fonts/noto-sans.woff2`**
