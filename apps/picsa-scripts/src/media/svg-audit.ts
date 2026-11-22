@@ -1,23 +1,28 @@
 /**
  * SVG Usage Audit
  *
- * For every SVG that lands in the app bundle via apps/picsa-apps/app/project.json
- * asset globs, determine which tools/routes consume it:
- *  - static literal references (`assets/.../*.svg` in .ts/.html)
- *  - runtime asset-path lookups (budget-cards/${id}, crop_activity/${id}, etc.)
- *  - mat-icon registries (DataIconRegistry, budget/option/manual material modules)
+ * For every SVG that lands in ANY app bundle (primary: apps/picsa-apps/app/project.json,
+ * plus dashboard + standalone tool bundles for blast-radius), determine consumers:
+ *  - static literal references (`assets/.../*.svg` in .ts/.html/.scss/.css)
+ *  - runtime asset-path lookups (budget-cards/${id} incl. ENTERPRISE_GROUP ids,
+ *    crop_activity/${id}, etc.)
+ *  - mat-icon registries (DataIconRegistry, budget/option/manual/dashboard/
+ *    resources material modules, extension_app, climate_station)
  *  - deployment seed-data image IDs (countries/locales flag_path)
  *  - forecast/resource cover references
  *
  * Reports:
- *  - dead/unreferenced files (no static or ID-derived consumer)
+ *  - dead/unreferenced files (no static or ID-derived consumer in ANY app)
  *  - byte-identical duplicates (double-shipped via two sources or two outputs)
  *  - ambiguous dynamic-ID cases flagged for human decision (never auto-deleted)
  *
- * Usage:
- *   yarn scripts media/svg-audit [--json] [--markdown]
+ * Policy: deletions are ONLY safe when zero consumers exist in ALL apps.
+ * A file dead in the main app may still be live in dashboard/standalone tools.
  *
- * Outputs (always written):
+ * Usage:
+ *   yarn scripts media/svg-audit
+ *
+ * Outputs (always written, gitignored - regenerate locally):
  *   apps/picsa-scripts/src/media/svg-audit-report.json
  *   apps/picsa-scripts/src/media/svg-audit-report.md
  */
@@ -45,6 +50,7 @@ interface SvgRecord {
   consumers: string[];
   status: 'live' | 'dead' | 'ambiguous';
   duplicateGroup?: string;
+  otherBundles: string[];
 }
 
 function listSvgFiles(dir: string): string[] {
@@ -74,11 +80,25 @@ function loadAssetEntries(): AssetEntry[] {
 }
 
 function expandAssetOutputs(): Map<string, string[]> {
-  // source-relative-path -> bundle output paths
+  // source-relative-path -> bundle output paths (main app bundle)
   const map = new Map<string, string[]>();
   const entries = loadAssetEntries();
   for (const entry of entries) {
-    if (typeof entry === 'string') continue;
+    if (typeof entry === 'string') {
+      // String asset: directory copied wholesale (e.g. apps/picsa-apps/app/src/assets).
+      // List SVGs directly to avoid missing app-owned logos.
+      const inputDir = path.join(ROOT_DIR, entry);
+      if (!fs.existsSync(inputDir) || !fs.statSync(inputDir).isDirectory()) continue;
+      for (const file of listSvgFiles(inputDir)) {
+        const rel = path.relative(ROOT_DIR, file);
+        const relFromInput = path.relative(inputDir, file);
+        const outputPath = path.posix.join('assets', ...relFromInput.split(path.sep));
+        const list = map.get(rel) ?? [];
+        list.push(outputPath);
+        map.set(rel, list);
+      }
+      continue;
+    }
     if (!entry.input || !entry.glob) continue;
     const inputDir = path.join(ROOT_DIR, entry.input);
     if (!fs.existsSync(inputDir)) continue;
@@ -99,8 +119,48 @@ function expandAssetOutputs(): Map<string, string[]> {
   return map;
 }
 
+/** Which OTHER bundles (dashboard, standalone tools) also ship a source file? */
+function findOtherBundles(sourceRel: string): string[] {
+  const owners: string[] = [];
+  const projectFiles = [
+    'apps/picsa-apps/dashboard/project.json',
+    'apps/picsa-tools/budget-tool/project.json',
+    'apps/picsa-tools/climate-tool/project.json',
+    'apps/picsa-tools/option-tool/project.json',
+    'apps/picsa-tools/resources-tool/project.json',
+    'apps/picsa-tools/forecasts-tool/project.json',
+    'apps/picsa-tools/manual-tool/project.json',
+    'apps/picsa-tools/extension-content/project.json',
+    'apps/picsa-tools/farmer-content/project.json',
+    'apps/picsa-tools/seasonal-calendar-tool/project.json',
+  ];
+  for (const pf of projectFiles) {
+    const full = path.join(ROOT_DIR, pf);
+    if (!fs.existsSync(full)) continue;
+    try {
+      const proj = JSON.parse(fs.readFileSync(full, 'utf8'));
+      const assets = proj.targets?.build?.options?.assets ?? [];
+      for (const a of assets as (string | AssetEntry)[]) {
+        const input = typeof a === 'string' ? a : a.input;
+        if (!input) continue;
+        // Normalise: {workspaceRoot}/ prefix, trailing slash
+        const norm = input.replace('{workspaceRoot}/', '');
+        if (sourceRel === norm || sourceRel.startsWith(norm.replace(/\/?$/, '/')) || sourceRel.startsWith(norm)) {
+          owners.push(`${pf} (input ${norm})`);
+          break;
+        }
+      }
+    } catch {
+      // ignore unparseable
+    }
+  }
+  return owners;
+}
+
 function collectLiteralRefs(): Set<string> {
-  // Scan for literal `assets/...svg` strings in code
+  // Scan for literal `assets/...svg` strings in code (all apps, all relevant file types).
+  // Includes .scss/.css (background-image url()) and relative paths
+  // (e.g. ../../../assets/... still contains the `assets/...` substring).
   const refs = new Set<string>();
   const roots = ['apps', 'libs'];
   const pattern = /assets\/[A-Za-z0-9_\-./]+\.svg/g;
@@ -111,7 +171,9 @@ function collectLiteralRefs(): Set<string> {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(full);
-      } else if (/\.(ts|html)$/.test(entry.name) && !entry.name.endsWith('.spec.ts')) {
+      } else if (/\.(ts|html|scss|css)$/.test(entry.name) && !entry.name.endsWith('.spec.ts')) {
+        // Skip self-references from this audit script's own mapping strings
+        if (full.endsWith('svg-audit.ts')) continue;
         const content = fs.readFileSync(full, 'utf8');
         for (const m of content.match(pattern) ?? []) {
           refs.add(m);
@@ -161,6 +223,15 @@ function buildIdToBundleMap(): Map<string, string[]> {
   );
   for (const id of enterpriseIds) {
     add(`assets/budget-cards/${id}.svg`, 'budget-tool ENTERPRISE_CARDS (via crops dual-glob or budget-cards)');
+  }
+  // 2b. Enterprise GROUP cards (budget-card.service getEnterpriseGroupCards):
+  // Object.keys(ENTERPRISE_GROUPS) => crop, livestock, livelihood, fruits.
+  // Each group card has {id: group, imgType: 'svg'} and renders via
+  // budget-card-image as assets/budget-cards/${group}.svg on the enterprise
+  // select screen (budget-create.page -> enterpriseGroups). MISSED in v1 audit
+  // (caused false-dead for fruits.svg) - now mapped explicitly.
+  for (const group of ['crop', 'livestock', 'livelihood', 'fruits']) {
+    add(`assets/budget-cards/${group}.svg`, 'budget-tool ENTERPRISE_GROUP card (enterprise select screen)');
   }
 
   // 3. BUDGET_CARDS static ids (svg only meaningful, but map all for ambiguity flagging)
@@ -404,7 +475,11 @@ async function main() {
     // Any consumer containing AMBIGUOUS forces ambiguous status for human review
     if ([...consumers].some((c) => c.startsWith('AMBIGUOUS'))) status = 'ambiguous';
 
-    records.push({ source: rel, size, hash, bundleOutputs, consumers: [...consumers].sort(), status });
+    // Blast radius: a file dead in the main app may still ship in dashboard/standalone bundles.
+    // Deletion is only safe when otherBundles is empty AND status is dead.
+    const otherBundles = findOtherBundles(rel);
+
+    records.push({ source: rel, size, hash, bundleOutputs, consumers: [...consumers].sort(), status, otherBundles });
   }
 
   // Attach duplicate group ids
@@ -465,10 +540,14 @@ async function main() {
     for (const f of g.files.sort()) md += `- \`${f}\`\n`;
     md += `\n`;
   }
-  md += `## Dead files (no static or ID-derived consumer found)\n\n`;
+  md += `## Dead files (no static or ID-derived consumer found in main app)\n\n`;
+  md += `> Policy: deletion is ONLY safe when otherBundles is also empty.\n`;
+  md += `> A file dead in the main app may still ship in dashboard/standalone tool bundles.\n`;
   md += `> Do not delete without human review of the "ambiguous" dynamic-ID cases below.\n\n`;
   for (const r of dead.sort((a, b) => b.size - a.size)) {
-    md += `- \`${r.source}\` (${fmt(r.size)}) -> ${r.bundleOutputs.map((o) => `\`${o}\``).join(', ')}${r.duplicateGroup ? ` [${r.duplicateGroup}]` : ''}\n`;
+    md += `- \`${r.source}\` (${fmt(r.size)}) -> ${r.bundleOutputs.map((o) => `\`${o}\``).join(', ')}${r.duplicateGroup ? ` [${r.duplicateGroup}]` : ''}`;
+    md += r.otherBundles.length > 0 ? ` (also ships in: ${r.otherBundles.join('; ')})` : ` (main-app only)`;
+    md += `\n`;
   }
   md += `\n## Ambiguous dynamic-ID cases (human decision required)\n\n`;
   for (const r of ambiguous.sort((a, b) => b.size - a.size)) {
