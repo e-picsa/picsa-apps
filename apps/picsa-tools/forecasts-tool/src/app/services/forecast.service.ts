@@ -6,7 +6,8 @@ import { ENVIRONMENT } from '@picsa/environments';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
-import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
+import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase/components/storage-download/supabase-storage-download.component';
+import { SupabaseService } from '@picsa/shared/services/core/supabase/supabase.service';
 import { isEqual } from '@picsa/utils/object.utils';
 import { MangoQuerySelector, RxCollection, RxDocument } from 'rxdb';
 

@@ -33,7 +33,7 @@ import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IResourceLink } from '@picsa/resources/schemas';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
+import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase/components/storage-download/supabase-storage-download.component';
 import { RxDocument } from 'rxdb';
 
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
