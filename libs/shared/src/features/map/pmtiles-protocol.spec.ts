@@ -97,4 +97,30 @@ describe('AssetPmtilesSource', () => {
     expect(new Uint8Array(first.data)).toEqual(new Uint8Array([101, 102]));
     expect(new Uint8Array(second.data)).toEqual(new Uint8Array([103, 104, 105]));
   });
+
+  it('clears fullArchivePromise if an HTTP 200 read fails or aborts so subsequent reads recover', async () => {
+    const fullArchive = bytesFrom([7, 8, 9, 10]);
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce({
+        status: 200,
+        headers: new Headers(),
+        arrayBuffer: async () => {
+          throw new DOMException('Aborted', 'AbortError');
+        },
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        headers: new Headers(),
+        arrayBuffer: async () => fullArchive,
+      });
+    (globalThis as { fetch: unknown }).fetch = fetchMock;
+
+    const source = new AssetPmtilesSource('assets/mapTiles/zw.pmtiles');
+    await expect(source.getBytes(0, 2)).rejects.toThrow('Aborted');
+
+    const recovered = await source.getBytes(1, 2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(new Uint8Array(recovered.data)).toEqual(new Uint8Array([8, 9]));
+  });
 });

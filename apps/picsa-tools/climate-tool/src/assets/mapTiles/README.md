@@ -26,4 +26,4 @@ If missing ranges are reported (or if MapLibre logs a 404 on a `.pbf` glyph bloc
 FETCH=true yarn scripts map/verify-map-glyphs
 ```
 
-_Note: `project.json` excludes `\*\*/_.md`from`assets/mapTiles`so this`README.md` is not bundled into app or dashboard builds.\*
+_Note: `project.json` excludes `**/*.md` from `assets/mapTiles` so this `README.md` is not bundled into app or dashboard builds._

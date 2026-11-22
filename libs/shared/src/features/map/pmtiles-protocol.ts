@@ -78,7 +78,12 @@ export class AssetPmtilesSource implements Source {
     // Server ignored Range header (HTTP 200); cache the full buffer once and slice locally.
     if (!this.fullArchivePromise) {
       this.fullArchiveVerified = true;
-      this.fullArchivePromise = response.arrayBuffer();
+      // Clear cached promise on rejection/abort so a single interrupted tile read cannot poison the source.
+      this.fullArchivePromise = response.arrayBuffer().catch((err) => {
+        this.fullArchivePromise = null;
+        this.fullArchiveVerified = false;
+        throw err;
+      });
     } else {
       await response.body?.cancel();
     }

@@ -601,7 +601,7 @@ export function buildOfflineVectorStyle(countryCode?: string): maplibregl.StyleS
 
   const layers: maplibregl.LayerSpecification[] = [
     {
-      id: 'background',
+      id: 'offline-background',
       type: 'background',
       paint: { 'background-color': '#f8f4f0' },
     },

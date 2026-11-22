@@ -197,6 +197,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   /** Cached online vector style JSON, fetched once on first crossing into vector zoom */
   private vectorStyleJson: any = null;
   private vectorLoading = false;
+  private styleFetchController: AbortController | null = null;
   /** Whether the cached vector style's sources/layers have been added to the map */
   private vectorLayersAdded = false;
   /** Layer ids added from the online vector style (toggled as a group) */
@@ -250,6 +251,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.styleFetchController?.abort();
+    this.styleFetchController = null;
     this.resizeObserver?.disconnect();
     const container = this.mapContainer()?.nativeElement;
     if (this.wheelListener && container) {
@@ -555,6 +558,14 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     container.addEventListener('wheel', this.wheelListener, { passive: false });
   }
 
+  private isOnlineFallbackWanted(map: maplibregl.Map): boolean {
+    const isOnline = this.networkService.isOnline();
+    if (isOnline === undefined) return false;
+    const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
+    const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());
+    return allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
+  }
+
   /**
    * Show the online vector base at or above the country's offline maxzoom when
    * connected and `enableOnlineFallback` is enabled, else the packaged offline
@@ -564,12 +575,9 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
    */
   private updateBaseStyle() {
     const map = this.map();
-    const isOnline = this.networkService.isOnline();
-    if (!map || isOnline === undefined || !this.mapReady()) return;
+    if (!map || this.networkService.isOnline() === undefined || !this.mapReady()) return;
 
-    const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
-    const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());
-    const wantVector = allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
+    const wantVector = this.isOnlineFallbackWanted(map);
 
     if (wantVector && !this.vectorLayersAdded) {
       // First crossing (or a previous attempt failed): fetch once, then apply.
@@ -590,12 +598,16 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     const map = this.map();
     if (!map || this.vectorLoading || this.vectorLayersAdded) return;
     if (this.vectorStyleJson) {
-      this.addVectorBaseLayers(map, this.vectorStyleJson);
-      this.updateBaseStyle();
+      if (this.isOnlineFallbackWanted(map)) {
+        this.addVectorBaseLayers(map, this.vectorStyleJson);
+        this.updateBaseStyle();
+      }
       return;
     }
     this.vectorLoading = true;
-    fetch(ONLINE_STYLE_URL)
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    this.styleFetchController = controller;
+    fetch(ONLINE_STYLE_URL, controller ? { signal: controller.signal } : undefined)
       .then((res) => res.json())
       .then((json) => {
         const layers = Array.isArray(json?.layers) ? json.layers : [];
@@ -605,9 +617,20 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.vectorStyleJson = null;
       })
       .finally(() => {
+        if (this.styleFetchController === controller) {
+          this.styleFetchController = null;
+        }
         this.vectorLoading = false;
         const currentMap = this.map();
-        if (currentMap && this.vectorStyleJson && !this.vectorLayersAdded) {
+        // Only attach online sources/sprites if fallback is still wanted (avoids triggering
+        // TileJSON/sprite fetches if the user zoomed back below threshold or went offline mid-flight).
+        if (
+          currentMap &&
+          this.mapReady() &&
+          this.vectorStyleJson &&
+          !this.vectorLayersAdded &&
+          this.isOnlineFallbackWanted(currentMap)
+        ) {
           this.addVectorBaseLayers(currentMap, this.vectorStyleJson);
         }
         // Reveal only if setup actually completed. A failed fetch stays on

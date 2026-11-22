@@ -171,7 +171,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     sprite: 'https://example.com/sprite',
     glyphs: 'https://example.com/fonts/{fontstack}/{range}.pbf',
     layers: [
-      { id: 'test-background', type: 'background', paint: { 'background-color': '#fff' } },
+      { id: 'background', type: 'background', paint: { 'background-color': '#fff' } },
       {
         id: 'test-water',
         type: 'fill',
@@ -363,7 +363,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).not.toHaveBeenCalled();
-    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('background', 'visibility', expect.anything());
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('offline-background', 'visibility', expect.anything());
   });
 
   describe('online vector base layer', () => {
@@ -381,7 +381,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         await waitForVectorLayers();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty', expect.anything());
         expect(map.setStyle).not.toHaveBeenCalled();
         // vector layers are inserted below existing custom overlays
         expect(map.addLayer).toHaveBeenCalledWith(
@@ -390,9 +390,10 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         );
         // overlay layers survive the crossing untouched
         expect(map.layers['location-boundary-line']).toBeTruthy();
-        // offline PMTiles layers hidden, online vector visible, glyphs switched
-        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
+        // offline PMTiles layers hidden (including offline-background), Liberty background + vector layers visible
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'none');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'visible');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
         expect(map.setGlyphs).toHaveBeenCalledWith('https://example.com/fonts/{fontstack}/{range}.pbf');
       } finally {
@@ -418,8 +419,9 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(map.setStyle).not.toHaveBeenCalled();
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'none');
-        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'visible');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'visible');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'visible');
         expect(map.setGlyphs).toHaveBeenLastCalledWith('assets/mapTiles/fonts/{fontstack}/{range}.pbf');
       } finally {
@@ -438,7 +440,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         fixture.detectChanges();
 
         expect((component as any).vectorLayersAdded).toBe(false);
-        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('background', 'visibility', 'none');
+        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('offline-background', 'visibility', 'none');
       } finally {
         clearFetch();
       }
@@ -459,7 +461,48 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         await waitForVectorLayers();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('does not attach online sources or sprites if user zooms back below threshold while style fetch is in flight', async () => {
+      let resolveStyle!: (val: any) => void;
+      const fetchMock = jest.fn().mockReturnValue(
+        new Promise((resolve) => {
+          resolveStyle = resolve;
+        }),
+      );
+      (globalThis as any).fetch = fetchMock;
+      try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+
+        setZoom(12);
+        map.emit('zoomend');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+
+        // User zooms back into offline range before style JSON finishes downloading
+        setZoom(9);
+        map.emit('zoomend');
+        resolveStyle({ json: () => Promise.resolve(TEST_VECTOR_STYLE) });
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        fixture.detectChanges();
+
+        expect((component as any).vectorLayersAdded).toBe(false);
+        expect(map.sources['test-vector']).toBeUndefined();
+        expect(map.setSprite).not.toHaveBeenCalled();
+
+        // Zooming back in later attaches the cached style without re-fetching
+        setZoom(12);
+        map.emit('zoomend');
+        fixture.detectChanges();
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect((component as any).vectorLayersAdded).toBe(true);
         expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
       } finally {
         clearFetch();
