@@ -96,6 +96,11 @@ apps/picsa-server/scripts/db-seed/cache
 apps/picsa-scripts/.cache
 *.sync-cache.json
 
+# Generated SVG audit/optimize reports (regenerated via yarn scripts media/svg-audit, media/svg-optimize)
+apps/picsa-scripts/src/media/svg-audit-report.json
+apps/picsa-scripts/src/media/svg-audit-report.md
+apps/picsa-scripts/src/media/svg-optimize-report.json
+
 # Agent local cache & triage state
 .agents/*.cache.json
 .agents/pr-triage-cache.json
