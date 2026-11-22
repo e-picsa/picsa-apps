@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pin Cordova's plugin registry so shrinkResources never strips it.
+     Capacitor instantiates Cordova plugins via Class.forName() lookups
+     against res/xml/config.xml, which resource shrinking cannot trace. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@xml/config" />
