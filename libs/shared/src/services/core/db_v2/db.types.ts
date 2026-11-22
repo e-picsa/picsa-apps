@@ -12,6 +12,7 @@ const DB_COLLECTION_NAMES = [
   'resources_tool_collections',
   'resources_tool_files',
   'resources_tool_links',
+  'seasonal_calendar_cards',
   'seasonal_calendar_tool',
   'sync_delete',
   'video_player',

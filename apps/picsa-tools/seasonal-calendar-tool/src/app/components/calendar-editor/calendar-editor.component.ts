@@ -1,11 +1,39 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnInit,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FieldTree, form, FormField, max, min, required } from '@angular/forms/signals'; // Angular 21 Signal Forms
-import { MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
+import { MatDialog } from '@angular/material/dialog';
+import { ICropData, MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { markAllAsTouched, PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/i18n';
 
 import { CalendarDataEntry } from '../../schema';
+import { ICalendarCard } from '../../schema/cards';
+import { SeasonalCalendarCardService } from '../../services/calendar-card.service';
+import { SeasonalCalendarCardNewDialogComponent } from '../card-new-dialog/card-new-dialog.component';
 import { SeasonalCalendarMaterialModule } from '../material.module';
+
+/** Adapt a drawn custom card to the shape the shared crop-select component renders */
+function toCropOption(card: ICalendarCard): ICropData {
+  return {
+    id: card.id,
+    name: card.id,
+    label: card.label,
+    icon: '',
+    assetIconPath: card.customMeta?.imgData ?? '',
+    svgIcon: '',
+  } as ICropData;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,6 +44,12 @@ import { SeasonalCalendarMaterialModule } from '../material.module';
 })
 export class CalendarEditorComponent implements OnInit {
   public readonly form = input.required<FieldTree<CalendarDataEntry, string | number>>();
+
+  private dialog = inject(MatDialog);
+  private cardService = inject(SeasonalCalendarCardService);
+  private destroyRef = inject(DestroyRef);
+
+  public readonly customCrops = signal<ICropData[]>([]);
 
   public readonly monthOptions = MONTH_DATA;
 
@@ -79,6 +113,26 @@ export class CalendarEditorComponent implements OnInit {
           parentForm.weather().value.set(newWeather);
           parentForm.activities().value.set(newActivities);
         });
+      }
+    });
+
+    this.cardService.ready().then(() => {
+      this.cardService.dbCollection
+        .find({ selector: { type: 'crop' } })
+        .$.pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((docs) => {
+          this.customCrops.set(docs.map((doc) => toCropOption(doc._data)));
+        });
+    });
+  }
+
+  public addCustomCrop() {
+    const dialogRef = this.dialog.open(SeasonalCalendarCardNewDialogComponent, { data: { type: 'crop' } });
+    dialogRef.afterClosed().subscribe(async (card?: ICalendarCard) => {
+      if (card) {
+        await this.cardService.saveCustomCard(card);
+        const enterprisesField = this.form().meta.enterprises().value;
+        enterprisesField.set([...enterprisesField(), card.id]);
       }
     });
   }

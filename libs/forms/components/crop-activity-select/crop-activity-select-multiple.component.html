@@ -37,5 +37,11 @@
         }
       </div>
     }
+    @if (addCustomOption(); as addCustom) {
+      <div class="option-container" (click)="addCustomClicked.emit()">
+        <div class="option-label">{{ addCustom.text | translate }}</div>
+        <mat-icon class="option-icon">{{ addCustom.matIcon }}</mat-icon>
+      </div>
+    }
   </div>
 </ng-template>
