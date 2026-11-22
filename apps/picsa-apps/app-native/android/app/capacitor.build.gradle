@@ -19,6 +19,7 @@ dependencies {
     implementation project(':capacitor-video-player')
     implementation project(':capacitor-community-firebase-analytics')
     implementation project(':capacitor-firebase-crashlytics')
+    implementation project(':capacitor-haptics')
     implementation project(':capacitor-screen-orientation')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-share')

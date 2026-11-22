@@ -28,6 +28,7 @@ const config: CapacitorConfig = {
     'capacitor-video-player',
     '@capacitor-community/firebase-analytics',
     '@capacitor-firebase/crashlytics',
+    '@capacitor/haptics',
     '@capacitor/screen-orientation',
     '@capacitor/camera',
     '@capacitor/share',
