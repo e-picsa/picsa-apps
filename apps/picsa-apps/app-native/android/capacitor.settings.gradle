@@ -17,6 +17,9 @@ project(':capacitor-device').projectDir = new File('../../../../node_modules/@ca
 include ':capacitor-filesystem'
 project(':capacitor-filesystem').projectDir = new File('../../../../node_modules/@capacitor/filesystem/android')
 
+include ':capacitor-haptics'
+project(':capacitor-haptics').projectDir = new File('../../../../node_modules/@capacitor/haptics/android')
+
 include ':capacitor-network'
 project(':capacitor-network').projectDir = new File('../../../../node_modules/@capacitor/network/android')
 
@@ -31,9 +34,6 @@ project(':capacitor-community-firebase-analytics').projectDir = new File('../../
 
 include ':capacitor-firebase-crashlytics'
 project(':capacitor-firebase-crashlytics').projectDir = new File('../../../../node_modules/@capacitor-firebase/crashlytics/android')
-
-include ':capacitor-firebase-performance'
-project(':capacitor-firebase-performance').projectDir = new File('../../../../node_modules/@capacitor-firebase/performance/android')
 
 include ':capacitor-screen-orientation'
 project(':capacitor-screen-orientation').projectDir = new File('../../../../node_modules/@capacitor/screen-orientation/android')

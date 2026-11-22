@@ -1124,18 +1124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/network@npm:^6.14.0":
-  version: 6.16.0
-  resolution: "@awesome-cordova-plugins/network@npm:6.16.0"
-  dependencies:
-    "@types/cordova": "npm:latest"
-  peerDependencies:
-    "@awesome-cordova-plugins/core": ^6.0.1
-    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
-  checksum: 10c0/05d953d0db72267d4f7a0e778eaaaa46b10d213534377d13e7c76b9f3a13a4c36b9ec4d4de1b1ba7e0c3817872392b4265586ecfe13649594ea666e7cf374f10
-  languageName: node
-  linkType: hard
-
 "@awesome-cordova-plugins/social-sharing@npm:^6.14.0":
   version: 6.16.0
   resolution: "@awesome-cordova-plugins/social-sharing@npm:6.16.0"
@@ -2788,19 +2776,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-firebase/performance@npm:^8.0.0":
-  version: 8.2.0
-  resolution: "@capacitor-firebase/performance@npm:8.2.0"
-  peerDependencies:
-    "@capacitor/core": ">=8.0.0"
-    firebase: ^12.6.0
-  peerDependenciesMeta:
-    firebase:
-      optional: true
-  checksum: 10c0/ff437a2e0ec121d042ad9c82e10761f8932ffa1f8a14d3ce982db3e8fc699af248b756ff13dcc961b3b46a6277361c09e19443bbcf46fd8390f6f8b24261f527
-  languageName: node
-  linkType: hard
-
 "@capacitor/android@npm:^8.0.0":
   version: 8.3.4
   resolution: "@capacitor/android@npm:8.3.4"
@@ -2891,17 +2866,6 @@ __metadata:
   peerDependencies:
     "@capacitor/core": ">=8.0.0"
   checksum: 10c0/09e21108f9ef7d106719a4e927bab0657b004aeb7f2c894113339026c620bbe023ac48233fdfb9fd0cde07c30c84e0634e438a06466c3f19b16700682a7c3c3c
-  languageName: node
-  linkType: hard
-
-"@capacitor/geolocation@npm:^8.0.0":
-  version: 8.2.0
-  resolution: "@capacitor/geolocation@npm:8.2.0"
-  dependencies:
-    "@capacitor/synapse": "npm:^1.0.4"
-  peerDependencies:
-    "@capacitor/core": ">=8.0.0"
-  checksum: 10c0/3d715008cb89d763fa59dee632c71213e178c016820f9febe0b537ebb57eeb140b9148e8fc2362c609430735321936e7ec0a95788957c4cc03ace9442bd0a12d
   languageName: node
   linkType: hard
 
@@ -29041,12 +29005,10 @@ __metadata:
     "@awesome-cordova-plugins/core": "npm:^6.14.0"
     "@awesome-cordova-plugins/file": "npm:^6.14.0"
     "@awesome-cordova-plugins/file-opener": "npm:^6.14.0"
-    "@awesome-cordova-plugins/network": "npm:^6.14.0"
     "@awesome-cordova-plugins/social-sharing": "npm:^6.14.0"
     "@biesbjerg/ngx-translate-extract-marker": "npm:^1.0.0"
     "@capacitor-community/firebase-analytics": "npm:^8.0.0"
     "@capacitor-firebase/crashlytics": "npm:^8.0.0"
-    "@capacitor-firebase/performance": "npm:^8.0.0"
     "@capacitor/android": "npm:^8.0.0"
     "@capacitor/app": "npm:^8.0.0"
     "@capacitor/browser": "npm:^8.0.0"
@@ -29055,7 +29017,6 @@ __metadata:
     "@capacitor/core": "npm:^8.0.0"
     "@capacitor/device": "npm:^8.0.0"
     "@capacitor/filesystem": "npm:^8.0.0"
-    "@capacitor/geolocation": "npm:^8.0.0"
     "@capacitor/haptics": "npm:^8.0.0"
     "@capacitor/network": "npm:^8.0.0"
     "@capacitor/push-notifications": "npm:^8.0.0"

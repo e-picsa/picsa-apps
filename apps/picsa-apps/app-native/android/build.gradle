@@ -15,7 +15,6 @@ buildscript {
 
         // CC Note - firebase seems to require for some modules, as proposed by android studio firebase integration)
        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
-       classpath 'com.google.firebase:perf-plugin:1.4.2'
     }
 }
 

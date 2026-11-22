@@ -10,6 +10,9 @@ android {
         versionCode 5023001
         versionName "5.23.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Strip unused locale resources pulled in by Capacitor/Firebase libs.
+        // App ships: en + ny/bem/toi/loz/lun/lue/kqn (zm) + tum (mw) + sn/nd (zw) + tg (tj).
+        resConfigs "en", "ny", "bem", "toi", "loz", "lun", "lue", "kqn", "tum", "sn", "nd", "tg"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -18,8 +21,11 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // R8 full-mode shrinking (issue #916). Dex was ~47MB uncompressed
+            // across 8 dex files with minify disabled.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -54,7 +60,6 @@ try {
     if (servicesJSON.text) {
         apply plugin: 'com.google.gms.google-services'
         apply plugin: 'com.google.firebase.crashlytics'
-        apply plugin: 'com.google.firebase.firebase-perf' // Firebase Performance Monitoring plugin
     }
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
