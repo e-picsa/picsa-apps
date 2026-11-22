@@ -68,7 +68,9 @@ jobs:
           yarn sentry-cli sourcemaps upload dist/apps/picsa-apps/app
 
       - name: Strip sourcemaps before deployment
-        run: find dist/apps/picsa-apps/app -name "*.map" -type f -delete
+        run: |
+          find dist/apps/picsa-apps/app -name "*.map" -type f -delete
+          rm -f dist/apps/picsa-apps/app/3rdpartylicenses.txt
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

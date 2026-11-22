@@ -5,7 +5,11 @@ import { LOCALES_DATA } from '@picsa/data';
 import { getLocationsForTool } from '@picsa/data/geoLocation';
 import type { DBToFormBuilderType } from '@picsa/forms';
 import type { CountryCodeLegacy } from '@picsa/server-types';
-import { FileDropFile, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import {
+  FileDropFile,
+  SupabaseUploadComponent,
+} from '@picsa/shared/services/core/supabase/components/upload/supabase-upload.component';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { ForecastType, IForecastInsert } from '../../../types';

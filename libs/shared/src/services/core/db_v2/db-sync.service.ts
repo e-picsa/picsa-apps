@@ -3,7 +3,7 @@ import { Network } from '@capacitor/network';
 import { _wait } from '@picsa/utils';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
 
-import { SupabaseService } from '../supabase';
+import { SupabaseService } from '../supabase/supabase.service';
 import { handleCollectionModifiers } from './db.utils';
 import { ISyncDeleteEntry, SYNC_DELETE_COLLECTION } from './schemas/sync_delete';
 
