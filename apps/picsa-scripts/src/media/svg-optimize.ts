@@ -17,8 +17,8 @@
  *   libs/data, libs/shared-assets, apps picsa-tools tool assets
  * Extension-content is excluded (not in app bundle).
  */
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { optimize } from 'svgo';
 
 import { formatBytes } from './image-optimizer';
@@ -55,7 +55,7 @@ function listSvgFiles(): string[] {
     }
   };
   for (const rel of SVG_ROOTS) walk(path.join(ROOT_DIR, rel));
-  return out.sort();
+  return out.sort((a, b) => a.localeCompare(b));
 }
 
 function groupOf(file: string): string {
@@ -114,12 +114,15 @@ async function main() {
     const after = Buffer.byteLength(result);
     const viewBoxAfter = /viewBox\s*=/.test(result);
 
-    // Verification: viewBox preserved, non-empty, valid svg
-    if (viewBoxBefore && !viewBoxAfter) {
-      failures.push(`${path.relative(ROOT_DIR, file)}: viewBox removed (config violation)`);
-    }
+    // Verification: non-empty, valid svg, viewBox preserved.
+    // Invalid outputs are never written to disk (counted as unchanged).
     if (after === 0 || !result.includes('<svg')) {
       failures.push(`${path.relative(ROOT_DIR, file)}: empty/broken output (${before} -> ${after})`);
+      totalAfter += before;
+      continue;
+    }
+    if (viewBoxBefore && !viewBoxAfter) {
+      failures.push(`${path.relative(ROOT_DIR, file)}: viewBox removed (config violation)`);
       totalAfter += before;
       continue;
     }
@@ -139,7 +142,7 @@ async function main() {
   }
 
   console.log('\nPer-group before/after:');
-  for (const [g, v] of [...perGroup.entries()].sort()) {
+  for (const [g, v] of [...perGroup.entries()].sort(([a], [b]) => a.localeCompare(b))) {
     const saved = v.before - v.after;
     const pct = v.before ? ((saved / v.before) * 100).toFixed(1) : '0.0';
     console.log(

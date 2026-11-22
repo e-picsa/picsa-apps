@@ -26,9 +26,9 @@
  *   apps/picsa-scripts/src/media/svg-audit-report.json
  *   apps/picsa-scripts/src/media/svg-audit-report.md
  */
-import { createHash } from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createHash } from 'node:crypto';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 const ROOT_DIR = path.resolve(__dirname, '../../../../');
 const APP_PROJECT_JSON = path.join(ROOT_DIR, 'apps/picsa-apps/app/project.json');
@@ -108,8 +108,19 @@ function expandAssetOutputs(): Map<string, string[]> {
       // Simplified glob handling: **/*, *.svg, *, {..} patterns all match .svg here
       // since we already filtered to .svg files under input.
       const relFromInput = path.relative(inputDir, file);
-      // Respect ignore patterns (only favicon-style substring ignores needed)
-      if (entry.ignore?.some((ig) => rel.includes(ig.replace(/\*/g, '')))) continue;
+      // Respect ignore patterns (e.g. `favicon/**/*` should exclude
+      // `libs/shared-assets/favicon/*`). Stars are stripped and repeated
+      // slashes collapsed so `favicon/**/*` matches single-slash paths.
+      if (
+        entry.ignore?.some((ig) => {
+          const needle = ig
+            .replace(/\*/g, '')
+            .replace(/\/+/g, '/')
+            .replace(/^\/|\/$/g, '');
+          return needle ? rel.includes(needle) : false;
+        })
+      )
+        continue;
       const outputPath = path.posix.join(entry.output ?? '', ...relFromInput.split(path.sep));
       const list = map.get(rel) ?? [];
       list.push(outputPath);
@@ -423,7 +434,10 @@ async function main() {
   }
   const literals = collectLiteralRefs();
   const idMap = buildIdToBundleMap();
-  // Source-imported SVGs (not via bundle asset path) still count as live usage
+  // Source-imported SVGs (not via bundle asset path) still count as live usage.
+  // Imports are resolved relative to the importing file to avoid basename
+  // false positives (e.g. `./bars.svg` resolving to an unrelated shared-assets
+  // file with the same basename).
   const importedSvgs = new Set<string>();
   {
     const walk = (dir: string) => {
@@ -432,9 +446,16 @@ async function main() {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) walk(full);
         else if (/\.(ts|html)$/.test(entry.name) && !entry.name.endsWith('.spec.ts')) {
+          if (full.endsWith('svg-audit.ts')) continue;
           const content = fs.readFileSync(full, 'utf8');
           for (const m of content.matchAll(/from\s+['"]([^'"]+\.svg)['"]/g)) {
-            importedSvgs.add(m[1]);
+            const raw = m[1];
+            // Only relative imports can be resolved to repo files; bare package
+            // imports (e.g. `@picsa/...`) are skipped.
+            if (!raw.startsWith('.')) continue;
+            const resolved = path.resolve(path.dirname(full), raw);
+            if (!resolved.startsWith(ROOT_DIR)) continue;
+            importedSvgs.add(path.relative(ROOT_DIR, resolved).split(path.sep).join('/'));
           }
         }
       }
@@ -446,7 +467,7 @@ async function main() {
   const records: SvgRecord[] = [];
   const hashGroups = new Map<string, string[]>();
 
-  for (const [rel, bundleOutputs] of [...outputs.entries()].sort()) {
+  for (const [rel, bundleOutputs] of [...outputs.entries()].sort(([a], [b]) => a.localeCompare(b))) {
     const full = path.join(ROOT_DIR, rel);
     const size = fs.statSync(full).size;
     const hash = sha256(full);
@@ -465,7 +486,7 @@ async function main() {
       consumers.add('app index.html root favicon (live, second assets/ copy is dead double-emit)');
     }
     for (const imp of importedSvgs) {
-      if (rel.endsWith(path.basename(imp)) || imp.includes(path.basename(rel))) {
+      if (rel === imp) {
         consumers.add(`source-imported \`${imp}\` (live via bundler, not asset path)`);
       }
     }
@@ -479,7 +500,15 @@ async function main() {
     // Deletion is only safe when otherBundles is empty AND status is dead.
     const otherBundles = findOtherBundles(rel);
 
-    records.push({ source: rel, size, hash, bundleOutputs, consumers: [...consumers].sort(), status, otherBundles });
+    records.push({
+      source: rel,
+      size,
+      hash,
+      bundleOutputs,
+      consumers: [...consumers].sort((a, b) => a.localeCompare(b)),
+      status,
+      otherBundles,
+    });
   }
 
   // Attach duplicate group ids
@@ -537,7 +566,7 @@ async function main() {
   for (const g of report.duplicateGroups as { hash: string; files: string[] }[]) {
     const size = fs.statSync(path.join(ROOT_DIR, g.files[0])).size;
     md += `### ${g.hash.slice(0, 8)} (${fmt(size)} x${g.files.length})\n`;
-    for (const f of g.files.sort()) md += `- \`${f}\`\n`;
+    for (const f of g.files.sort((a, b) => a.localeCompare(b))) md += `- \`${f}\`\n`;
     md += `\n`;
   }
   md += `## Dead files (no static or ID-derived consumer found in main app)\n\n`;
