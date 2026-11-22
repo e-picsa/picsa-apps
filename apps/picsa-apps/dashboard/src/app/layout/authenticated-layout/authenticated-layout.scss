@@ -4,6 +4,8 @@
 
 mat-sidenav-content {
   @apply flex flex-col;
+  min-height: 0;
+  overflow-y: auto;
   transition: margin-left 0.2s ease-in-out;
 }
 
