@@ -345,14 +345,18 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   public removeGeoJsonLayer(id: string) {
     this.geoJsonConfigs.delete(id);
     const map = this.map();
-    if (!map || !map.isStyleLoaded()) return;
-    for (const layerId of [`${id}-fill`, `${id}-line`]) {
-      if (map.getLayer(layerId)) {
-        map.removeLayer(layerId);
+    if (!map) return;
+    try {
+      for (const layerId of [`${id}-fill`, `${id}-line`]) {
+        if (map.getLayer(layerId)) {
+          map.removeLayer(layerId);
+        }
       }
-    }
-    if (map.getSource(id)) {
-      map.removeSource(id);
+      if (map.getSource(id)) {
+        map.removeSource(id);
+      }
+    } catch (err) {
+      console.warn(`[PicsaMap] Could not remove GeoJSON layer ${id}:`, err);
     }
   }
 
@@ -561,7 +565,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   private updateBaseStyle() {
     const map = this.map();
     const isOnline = this.networkService.isOnline();
-    if (!map || isOnline === undefined || !map.isStyleLoaded()) return;
+    if (!map || isOnline === undefined || !this.mapReady()) return;
 
     const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
     const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());

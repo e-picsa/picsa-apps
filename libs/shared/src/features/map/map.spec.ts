@@ -443,6 +443,28 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         clearFetch();
       }
     });
+
+    it('switches visibility immediately after adding online sources even while isStyleLoaded is false', async () => {
+      const fetchMock = mockFetch();
+      try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+        // Real MapLibre returns isStyleLoaded() === false as soon as addSource/setSprite start async loads
+        jest.spyOn(map, 'isStyleLoaded').mockImplementation(() => !map.sources['test-vector']);
+
+        setZoom(12);
+        map.emit('zoomend');
+        await waitForVectorLayers();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+      } finally {
+        clearFetch();
+      }
+    });
   });
 
   it('stays on offline PMTiles when offline or when enableOnlineFallback is false', () => {
@@ -518,6 +540,18 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.layers['district-boundary-line']).toBeTruthy();
     // fitBounds called once for markers? none here, so boundary fit applies
     expect(map.fitBounds).toHaveBeenCalled();
+
+    component.removeGeoJsonLayer('district-boundary');
+    expect(map.layers['district-boundary-fill']).toBeUndefined();
+    expect(map.layers['district-boundary-line']).toBeUndefined();
+    expect(map.sources['district-boundary']).toBeUndefined();
+  });
+
+  it('removes geojson boundary layers even while tiles or sprites are loading (isStyleLoaded false)', () => {
+    emitLoad();
+    const map = mockMapInstances()[0];
+    component.addGeoJsonLayer('district-boundary', TEST_GEOJSON, { lineColor: 'green' });
+    jest.spyOn(map, 'isStyleLoaded').mockReturnValue(false);
 
     component.removeGeoJsonLayer('district-boundary');
     expect(map.layers['district-boundary-fill']).toBeUndefined();
