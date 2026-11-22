@@ -3,12 +3,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
+import { SupabaseStoragePickerDirective } from '@picsa/shared/services/core/supabase/components/storage-file-picker/storage-file-picker.component';
 import {
   IUploadResult,
-  StoragePathPipe,
-  SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
-} from '@picsa/shared/services/core/supabase';
+} from '@picsa/shared/services/core/supabase/components/upload/supabase-upload.component';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardStorageLinkComponent } from '../storage-link/storage-link.component';

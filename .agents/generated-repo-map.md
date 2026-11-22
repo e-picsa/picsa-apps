@@ -4,38 +4,38 @@
 
 ## TypeScript Path Aliases (`@picsa/*`)
 
-| Alias                        | Target Path                                 |
-| :--------------------------- | :------------------------------------------ |
-| `@picsa/*`                   | `libs/*`                                    |
-| `@picsa/budget/*`            | `apps/picsa-tools/budget-tool/*`            |
-| `@picsa/climate/*`           | `apps/picsa-tools/climate-tool/*`           |
-| `@picsa/components`          | `libs/components/src/index.ts`              |
-| `@picsa/components/*`        | `libs/components/src/components/*`          |
-| `@picsa/configuration`       | `libs/configuration/src/index.ts`           |
-| `@picsa/crop-probability/*`  | `apps/picsa-tools/crop-probability-tool/*`  |
-| `@picsa/dashboard/*`         | `apps/sites/dashboard/*`                    |
-| `@picsa/data`                | `libs/data/index.ts`                        |
-| `@picsa/environments`        | `libs/environments/src/index.ts`            |
-| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*`      |
-| `@picsa/farmer-content/*`    | `apps/picsa-tools/farmer-content/*`         |
-| `@picsa/forecasts/*`         | `apps/picsa-tools/forecasts-tool/src/app/*` |
-| `@picsa/forms`               | `libs/forms`                                |
-| `@picsa/i18n`                | `libs/i18n/src/index.ts`                    |
-| `@picsa/i18n/*`              | `libs/i18n/src/*`                           |
-| `@picsa/manual/*`            | `apps/picsa-tools/manual-tool/*`            |
-| `@picsa/migrations`          | `libs/migrations/index.ts`                  |
-| `@picsa/models`              | `libs/models/index.ts`                      |
-| `@picsa/option/*`            | `apps/picsa-tools/option-tool/*`            |
-| `@picsa/resources/*`         | `apps/picsa-tools/resources-tool/src/app/*` |
+| Alias | Target Path |
+| :--- | :--- |
+| `@picsa/*` | `libs/*` |
+| `@picsa/budget/*` | `apps/picsa-tools/budget-tool/*` |
+| `@picsa/climate/*` | `apps/picsa-tools/climate-tool/*` |
+| `@picsa/components` | `libs/components/src/index.ts` |
+| `@picsa/components/*` | `libs/components/src/components/*` |
+| `@picsa/configuration` | `libs/configuration/src/index.ts` |
+| `@picsa/crop-probability/*` | `apps/picsa-tools/crop-probability-tool/*` |
+| `@picsa/dashboard/*` | `apps/sites/dashboard/*` |
+| `@picsa/data` | `libs/data/index.ts` |
+| `@picsa/environments` | `libs/environments/src/index.ts` |
+| `@picsa/extension-content/*` | `apps/picsa-tools/extension-content/*` |
+| `@picsa/farmer-content/*` | `apps/picsa-tools/farmer-content/*` |
+| `@picsa/forecasts/*` | `apps/picsa-tools/forecasts-tool/src/app/*` |
+| `@picsa/forms` | `libs/forms` |
+| `@picsa/i18n` | `libs/i18n/src/index.ts` |
+| `@picsa/i18n/*` | `libs/i18n/src/*` |
+| `@picsa/manual/*` | `apps/picsa-tools/manual-tool/*` |
+| `@picsa/migrations` | `libs/migrations/index.ts` |
+| `@picsa/models` | `libs/models/index.ts` |
+| `@picsa/option/*` | `apps/picsa-tools/option-tool/*` |
+| `@picsa/resources/*` | `apps/picsa-tools/resources-tool/src/app/*` |
 | `@picsa/seasonal-calendar/*` | `apps/picsa-tools/seasonal-calendar-tool/*` |
-| `@picsa/server-types`        | `apps/picsa-server/supabase/types/index.ts` |
-| `@picsa/server-utils`        | `apps/picsa-server/supabase/utils/index.ts` |
-| `@picsa/shared/*`            | `libs/shared/src/*`                         |
-| `@picsa/theme`               | `libs/theme/src/index.ts`                   |
-| `@picsa/utils`               | `libs/utils/index.ts`                       |
-| `@picsa/utils/*`             | `libs/utils/*`                              |
+| `@picsa/server-types` | `apps/picsa-server/supabase/types/index.ts` |
+| `@picsa/server-utils` | `apps/picsa-server/supabase/utils/index.ts` |
+| `@picsa/shared/*` | `libs/shared/src/*` |
+| `@picsa/theme` | `libs/theme/src/index.ts` |
+| `@picsa/utils` | `libs/utils/index.ts` |
+| `@picsa/utils/*` | `libs/utils/*` |
 
-## Codebase Symbol Index (560 files scanned)
+## Codebase Symbol Index (564 files scanned)
 
 ### `apps/picsa-apps`
 
@@ -207,7 +207,7 @@
   - `Function` **calcProbabilityChangePct**
   - `Function` **buildCombinedDiffTable**
 - **[crop-print-export.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-print-export.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-print-export.component.ts`)
-  - `Component` **CropPrintExportComponent** (methods: [toggleAllLocations, languageLabel, export])
+  - `Component` **CropPrintExportComponent** (methods: [hasExportableRows, cropCountLabel, isCropSelected, toggleCrop, toggleAllCrops])
 - **[crop-qc.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/crop-qc.component.ts`)
   - `Component` **CropQcComponent** (methods: [openVarietyDialog, statusChipClass])
 - **[duplicate-crops.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/duplicate-crops.component.ts`)
@@ -227,7 +227,7 @@
   - `Type` **StationProbabilitiesAvailability**
   - `Function` **buildLocationCoverageRows**
 - **[missing-station-info.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/missing-station-info.component.ts`)
-  - `Component` **CropMissingStationInfoComponent**
+  - `Component` **CropMissingStationInfoComponent** (methods: [openBoundsDialog])
   - `Type` **StationBoundsFilter**
   - `Type` **StationBoundsStatus**
 - **[set-station-dialog.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/admin/components/components/set-station-dialog.component.ts`)
@@ -252,7 +252,7 @@
 - **[variety-form.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/variety-form/variety-form.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/variety-form/variety-form.component.ts`)
   - `Component` **DashboardCropVarietyFormComponent**
 - **[water-requirements.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/water-requirements/water-requirements.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/components/water-requirements/water-requirements.component.ts`)
-  - `Component` **DashboardCropWaterRequirementsComponent** (methods: [save, editWaterRequirement, handleFormLocationChange])
+  - `Component` **DashboardCropWaterRequirementsComponent** (methods: [save, remove, editWaterRequirement, handleFormLocationChange])
 - **[variety-details.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/variety-details.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/details/variety-details.component.ts`)
   - `Component` **CropVarietyDetailsComponent** (methods: [submitForm, handleDelete])
 - **[variety.component.ts](../apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/variety.component.ts)** (`apps/picsa-apps/dashboard/src/app/modules/crop-information/pages/variety/variety.component.ts`)
@@ -818,10 +818,10 @@
   - `Type` **IDistrictCenterResult**
   - `Function` **clearGeoJsonCache**
   - `Function` **calculateHaversineDistanceKm**
-  - `Function` **normalizeLocationName**
   - `Function` **computeFeatureBbox**
   - `Function` **computeFeatureBboxCenter**
   - `Function` **getCombinedLocationAndStationBounds**
+  - `Function` **getLocationCenterAndBoundary**
 - **[statistics.utils.ts](../apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts)** (`apps/picsa-tools/climate-tool/src/app/utils/statistics.utils.ts`)
   - `Interface` **ITrendlineFit**
   - `Interface` **ISignificanceResult**
@@ -847,6 +847,7 @@
 - **[home.component.ts](../apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/pages/home/home.component.ts`)
   - `Component` **HomeComponent** (methods: [ngOnInit, ngAfterViewInit, ngOnDestroy, shareTable, handleLocationConfirmed])
 - **[location-filter.utils.ts](../apps/picsa-tools/crop-probability-tool/src/app/utils/location-filter.utils.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/utils/location-filter.utils.ts`)
+  - `Function` **getTableLocationId**
   - `Function` **filterLocationsToProbabilityTables**
 - **[probability-table.utils.ts](../apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts)** (`apps/picsa-tools/crop-probability-tool/src/app/utils/probability-table.utils.ts`)
   - `Function` **getDaysBounds**
@@ -1086,8 +1087,9 @@
 - **[configuration-summary.ts](../libs/configuration/src/components/configuration-summary/configuration-summary.ts)** (`libs/configuration/src/components/configuration-summary/configuration-summary.ts`)
   - `Component` **PicsaConfigurationSummaryComponent**
 - **[provider.ts](../libs/configuration/src/provider.ts)** (`libs/configuration/src/provider.ts`)
-  - `Service` **ConfigurationService** (methods: [resetUserSettings, updateUserSettings])
+  - `Service` **ConfigurationService** (methods: [resetUserSettings, updateUserSettings, setLocationSelection])
   - `Interface` **IUserSettings**
+  - `Type` **IUserLocationSelection**
 
 ### `libs/data`
 
@@ -1142,27 +1144,37 @@
   - `Interface` **StepTool**
   - `Interface` **IFarmerContent**
   - `Type` **IFarmerContentStep**
+- **[index.ts](../libs/data/geoLocation/index.ts)** (`libs/data/geoLocation/index.ts`)
+  - `Function` **getGeoLocationData**
+- **[districts.ts](../libs/data/geoLocation/mw/districts.ts)** (`libs/data/geoLocation/mw/districts.ts`)
+  - `Interface` **IMwEpa**
+  - `Type` **MwDistrictId**
 - **[types.ts](../libs/data/geoLocation/types.ts)** (`libs/data/geoLocation/types.ts`)
-  - `Interface` **IGeolocationAdmin5Location**
-  - `Interface` **IGeolocationAdmin6Location**
-  - `Interface` **IDeepestLocation**
+  - `Interface` **IGeoLocationBase**
+  - `Interface` **IGeoLocationItem**
+  - `Interface` **IGeoLayer**
   - `Interface` **IGeolocationData**
+  - `Interface` **IGeoLocationNode**
+  - `Interface` **IResolvedToolLocations**
   - `Interface` **IGeoJsonData**
   - `Interface` **ITopoJsonFeatureProperties**
   - `Interface` **ITopoJsonObject**
-  - `Type` **IBoundaryData**
-  - `Type` **ITopoJson**
+  - `Type` **GeoToolKey**
 - **[utils.ts](../libs/data/geoLocation/utils.ts)** (`libs/data/geoLocation/utils.ts`)
-  - `Type` **GeoLocationSlot**
-  - `Function` **getLocationSlots**
-  - `Function` **getDeepestLocations**
-  - `Function` **getDeepestAdminLevel**
-  - `Function` **findLocationById**
-  - `Function` **isLocationComplete**
-  - `Function` **getLocationLabel**
+  - `Function` **clearGeoJsonFeatureCache**
+  - `Function` **getToolLayers**
+  - `Function` **getLocationsForTool**
+  - `Function` **findLocationForTool**
+  - `Function` **resolveLocationForTool**
+  - `Function` **isSelectionComplete**
+  - `Function` **getSelectionLabel**
+  - `Function` **normalizeLocationName**
+  - `Function` **getLocationTopoFeature**
   - `Function` **formatLocationIdAsLabel**
-  - `Function` **topoJsonToGeoJson**
-  - `Function` **geoJsonToBoundaries**
+- **[provinces.ts](../libs/data/geoLocation/zm/provinces.ts)** (`libs/data/geoLocation/zm/provinces.ts`)
+  - `Type` **ZmProvinceId**
+- **[provinces.ts](../libs/data/geoLocation/zw/provinces.ts)** (`libs/data/geoLocation/zw/provinces.ts`)
+  - `Type` **ZwProvinceId**
 - **[iconRegistry.ts](../libs/data/iconRegistry.ts)** (`libs/data/iconRegistry.ts`)
   - `Service` **DataIconRegistry** (methods: [registerMatIcons])
   - `Type` **IconPackName**
@@ -1197,9 +1209,8 @@
   - `Component` **FormCropSelectSingleComponent**
 - **[location-overlay.component.ts](../libs/forms/components/location-overlay/location-overlay.component.ts)** (`libs/forms/components/location-overlay/location-overlay.component.ts`)
   - `Component` **FormLocationOverlayComponent** (methods: [handleTempLocationUpdate, handleCancel, handleConfirm])
-  - `Type` **ILocationArray**
 - **[location-select.component.ts](../libs/forms/components/location-select/location-select.component.ts)** (`libs/forms/components/location-select/location-select.component.ts`)
-  - `Component` **FormLocationSelectComponent** (methods: [onParentSelectionChange])
+  - `Component` **FormLocationSelectComponent** (methods: [onLayerSelectionChange])
 - **[weather-select-multiple.component.ts](../libs/forms/components/weather-select/weather-select-multiple.component.ts)** (`libs/forms/components/weather-select/weather-select-multiple.component.ts`)
   - `Component` **FormWeatherSelectMultipleComponent**
 - **[weather-select.component.ts](../libs/forms/components/weather-select/weather-select.component.ts)** (`libs/forms/components/weather-select/weather-select.component.ts`)
@@ -1225,8 +1236,8 @@
 - **[translate-debug.service.ts](../libs/i18n/src/translate-debug.service.ts)** (`libs/i18n/src/translate-debug.service.ts`)
   - `Service` **PicsaTranslateDebugService** (methods: [setEnabled])
 - **[translate.module.ts](../libs/i18n/src/translate.module.ts)** (`libs/i18n/src/translate.module.ts`)
-  - `Class` **\_PicsaTranslateRootModule**
-  - `Class` **\_PicsaTranslateChildModule**
+  - `Class` **_PicsaTranslateRootModule**
+  - `Class` **_PicsaTranslateChildModule**
   - `Class` **PicsaTranslateModule** (methods: [forRoot, forChild])
   - `Function` **HttpLoaderFactory**
 - **[translate.service.ts](../libs/i18n/src/translate.service.ts)** (`libs/i18n/src/translate.service.ts`)
@@ -1239,11 +1250,14 @@
 
 ### `libs/migrations`
 
+- **[20261121-location-selection.ts](../libs/migrations/migrations/20261121-location-selection.ts)** (`libs/migrations/migrations/20261121-location-selection.ts`)
+  - `Function` **convertLegacyLocationTuple**
 - **[migrations.service.ts](../libs/migrations/migrations.service.ts)** (`libs/migrations/migrations.service.ts`)
   - `Service` **PicsaMigrationService** (methods: [runMigrations])
 - **[types.ts](../libs/migrations/types.ts)** (`libs/migrations/types.ts`)
   - `Interface` **IMigration**
   - `Interface` **IMigrationStatus**
+  - `Type` **MigrationResult**
 
 ### `libs/models`
 
@@ -1335,6 +1349,7 @@
   - `Interface` **IGeoJsonLayerOptions**
   - `Type` **GeoJsonData**
   - `Type` **IGeoJsonData**
+  - `Type` **MapBoundaryColor**
 - **[pdf-viewer.component.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.component.ts`)
   - `Component` **PdfViewerComponent** (methods: [ngAfterViewInit, restartApp])
 - **[pdf-viewer.service.ts](../libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts)** (`libs/shared/src/features/pdf-viewer/pdf-viewer.service.ts`)
@@ -1401,9 +1416,9 @@
   - `Service` **AppUserService** (methods: [setFcmToken, toggleInternalTester, setInternalTester])
 - **[crashlytics.service.ts](../libs/shared/src/services/core/crashlytics.service.ts)** (`libs/shared/src/services/core/crashlytics.service.ts`)
   - `Service` **CrashlyticsService** (methods: [init])
-- **[\_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
+- **[_cache.db.ts](../libs/shared/src/services/core/db/_cache.db.ts)** (`libs/shared/src/services/core/db/_cache.db.ts`)
   - `Service` **DBCacheService** (methods: [getCollection, getDoc, getDocs, setDoc, setDocs])
-- **[\_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
+- **[_server.db.ts](../libs/shared/src/services/core/db/_server.db.ts)** (`libs/shared/src/services/core/db/_server.db.ts`)
   - `Service` **DBServerService** (methods: [getCollection, getDoc, setDoc, setDocs, deleteDocs])
   - `Interface` **IServerWriteBatchEntry**
 - **[abstract.db.ts](../libs/shared/src/services/core/db/abstract.db.ts)** (`libs/shared/src/services/core/db/abstract.db.ts`)
@@ -1470,8 +1485,6 @@
 - **[notification.service.ts](../libs/shared/src/services/core/notification.service.ts)** (`libs/shared/src/services/core/notification.service.ts`)
   - `Service` **PicsaNotificationService** (methods: [showErrorNotification, showSuccessNotification, showUserNotification])
   - `Component` **SnackBarWithIconComponent**
-- **[performance.service.ts](../libs/shared/src/services/core/performance.service.ts)** (`libs/shared/src/services/core/performance.service.ts`)
-  - `Service` **PerformanceService**
 - **[push-notifications.service.ts](../libs/shared/src/services/core/push-notifications.service.ts)** (`libs/shared/src/services/core/push-notifications.service.ts`)
   - `Service` **PicsaPushNotificationService** (methods: [initializePushNotifications, requestNotificationPermissions])
 - **[sentry.service.ts](../libs/shared/src/services/core/sentry.service.ts)** (`libs/shared/src/services/core/sentry.service.ts`)
@@ -1550,7 +1563,7 @@
 - **[async.utils.ts](../libs/utils/async.utils.ts)** (`libs/utils/async.utils.ts`)
   - `Function` **allSettledInBatches**
 - **[browser.utils.ts](../libs/utils/browser.utils.ts)** (`libs/utils/browser.utils.ts`)
-  - `Function` **\_wait**
+  - `Function` **_wait**
 - **[climate-qc.utils.ts](../libs/utils/climate-qc.utils.ts)** (`libs/utils/climate-qc.utils.ts`)
   - `Interface` **IClimateQcGates**
   - `Interface` **ISeasonDiscrepancyRecord**
@@ -1706,3 +1719,4 @@
   - `SQLFunctions` **1 function(s)** ([public.storage_country_can_write])
 - **[20261117000000_demo_placeholder_language.sql](../apps/picsa-server/supabase/migrations/20261117000000_demo_placeholder_language.sql)** (`apps/picsa-server/supabase/migrations/20261117000000_demo_placeholder_language.sql`)
   - `Migration` **20261117000000_demo_placeholder_language.sql**
+

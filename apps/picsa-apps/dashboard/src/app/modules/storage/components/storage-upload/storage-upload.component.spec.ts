@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { SupabaseUploadComponent } from '@picsa/shared/services/core/supabase/components/upload/supabase-upload.component';
 
 import { DashboardStorageService } from '../../services/storage.service';
 import { DashboardStorageUploadComponent } from './storage-upload.component';

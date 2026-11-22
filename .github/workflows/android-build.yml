@@ -86,6 +86,11 @@ jobs:
         if: inputs.is-e2e
         run: cp -r apps/picsa-apps/app-native-e2e/src/fixtures/assets/* dist/apps/picsa-apps/app/assets/
 
+      - name: Strip sourcemaps and licenses before sync
+        run: |
+          find dist/apps/picsa-apps/app -name "*.map" -type f -delete
+          rm -f dist/apps/picsa-apps/app/3rdpartylicenses.txt
+
       - name: Sync Capacitor
         run: npx cap sync
         working-directory: apps/picsa-apps/app-native

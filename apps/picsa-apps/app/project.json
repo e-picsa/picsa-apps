@@ -165,6 +165,7 @@
           ],
           "outputHashing": "all",
           "namedChunks": true,
+          "extractLicenses": false,
           "sourceMap": {
             "scripts": true,
             "styles": false,
