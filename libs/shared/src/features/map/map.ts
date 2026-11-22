@@ -19,6 +19,16 @@ import type { IStationMeta } from '@picsa/models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
 import * as maplibregl from 'maplibre-gl';
 
+import { ensurePmtilesProtocol } from './pmtiles-protocol';
+import {
+  buildOfflineVectorStyle,
+  COUNTRY_DETAIL_SOURCE_ID,
+  getCountryPmtilesUrl,
+  getOnlineFallbackMinZoom,
+  normalizePmtilesCountryCode,
+  PMTILES_GLOBAL_URL,
+} from './pmtiles-style';
+
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
@@ -27,16 +37,17 @@ const MAP_DEFAULTS: Required<Pick<IMapOptions, 'center' | 'zoom'>> = {
   zoom: 2,
 };
 
-/** Packaged offline raster tiles (native zoom 0-8, overscaled by the renderer above) */
-const LOCAL_TILE_URL = 'assets/mapTiles/raw/{z}/{x}/{y}.webp';
-const LOCAL_MAX_NATIVE_ZOOM = 8;
-const LOCAL_SOURCE_ID = 'picsa-local-tiles';
-const LOCAL_LAYER_ID = 'picsa-local-layer';
+/**
+ * Default zoom behavior: vector PMTiles render sharply at fractional zooms, so
+ * smooth zooming is enabled by default. Flip `DEFAULT_DISCRETE_ZOOM` to `true`
+ * to revert to integer zoom snapping (e.g. for touch-screen usability testing).
+ */
+export const DEFAULT_DISCRETE_ZOOM = false;
+export const DEFAULT_ZOOM_SNAP = DEFAULT_DISCRETE_ZOOM ? 1 : 0;
+export const DEFAULT_ENABLE_ONLINE_FALLBACK = true;
 
-/** Online vector tiles rendered when connectivity is available */
+/** Online vector tiles rendered when connectivity is available past offline maxzoom */
 const ONLINE_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
-/** Vector tiles are only fetched at or above this zoom (raster covers lower zooms) */
-const ONLINE_MIN_ZOOM = 9;
 
 const GEOJSON_DEFAULT_COLOR = '#3388ff';
 const MARKER_FOCUS_ZOOM = 8;
@@ -61,12 +72,14 @@ export interface IMapOptions {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
-  /** Interval to snap zoom levels to (default: 1 for crisp integer rendering) */
+  /** Interval to snap zoom levels to (default: 0 for smooth vector zoom; 1 when discrete) */
   zoomSnap?: number;
-  /** Whether to use discrete wheel zooming anchored to mouse cursor (default: true) */
+  /** Whether to use discrete wheel zooming anchored to mouse cursor (default: false) */
   discreteZoom?: boolean;
   /** Whether to allow drag-rotation (default: false for crisp 2D maps) */
   dragRotate?: boolean;
+  /** Whether to switch to online vector tiles past offline archive maxzoom when online (default: true) */
+  enableOnlineFallback?: boolean;
 }
 export interface IGeoJsonLayerOptions {
   lineColor?: string;
@@ -140,6 +153,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   mapOptions = input<IMapOptions>({});
   markers = input<IMapMarker[]>([]);
   fitBoundsOnMarkerUpdate = input<boolean>(true);
+  /** Optional active country code (e.g. 'mw', 'zm', 'zw') for offline country-detail PMTiles */
+  countryCode = input<string | undefined>(undefined);
 
   public mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -155,6 +170,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   /** Registry of geojson overlays, re-applied whenever the base style reloads */
   private geoJsonConfigs = new Map<string, { geojson: GeoJsonData; options: IGeoJsonLayerOptions }>();
   private currentStyleKind: 'offline' | 'online' | null = null;
+  private activeCountryCode: string | undefined = undefined;
   private resizeObserver: ResizeObserver | null = null;
   private wheelListener?: (e: WheelEvent) => void;
 
@@ -186,6 +202,14 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     effect(() => {
       if (this.mapReady()) {
         this.updateBaseStyle();
+      }
+    });
+
+    // Reactively update the country-detail PMTiles source when countryCode changes
+    effect(() => {
+      const nextCode = this.countryCode();
+      if (this.mapReady()) {
+        this.setCountrySource(nextCode);
       }
     });
   }
@@ -318,14 +342,18 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         zoom,
         minZoom,
         maxZoom,
-        zoomSnap = 1,
-        discreteZoom = true,
+        zoomSnap = DEFAULT_ZOOM_SNAP,
+        discreteZoom = DEFAULT_DISCRETE_ZOOM,
         dragRotate = false,
       } = { ...MAP_DEFAULTS, ...this.mapOptions() };
 
+      const initialCountryCode = normalizePmtilesCountryCode(this.countryCode());
+      this.activeCountryCode = initialCountryCode;
+      this.registerOfflineArchives(initialCountryCode);
+
       const map = new maplibregl.Map({
         container,
-        style: this.buildOfflineStyle(),
+        style: this.buildOfflineStyle(initialCountryCode),
         center: toLngLat(center),
         zoom,
         minZoom,
@@ -496,11 +524,11 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Swap between packaged offline raster tiles and online vector tiles.
-   * Vector tiles are only fetched when online AND zoomed past ONLINE_MIN_ZOOM,
-   * preserving the pre-migration bandwidth profile (raster is bundled on-device,
-   * vector is metered). Markers are plain HTML elements managed by maplibre so
-   * stay in lockstep with the base map in both modes
+   * Swap between packaged offline vector tiles and online vector tiles.
+   * Online fallback activates past the active offline archive's native maxzoom
+   * when connectivity is available (or stays offline for pure overscaling when
+   * `enableOnlineFallback: false`). Markers are plain HTML elements managed by
+   * maplibre so they stay in lockstep in both modes.
    */
   private updateBaseStyle() {
     const map = this.map();
@@ -508,43 +536,67 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     if (!map || isOnline === undefined) {
       return;
     }
-    const useOnline = isOnline && map.getZoom() >= ONLINE_MIN_ZOOM;
+    const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
+    const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());
+    const useOnline = allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
     if (useOnline && this.currentStyleKind !== 'online') {
       this.currentStyleKind = 'online';
       map.setStyle(ONLINE_STYLE_URL);
     }
     if (!useOnline && this.currentStyleKind !== 'offline') {
       this.currentStyleKind = 'offline';
-      map.setStyle(this.buildOfflineStyle());
+      const countryCode = normalizePmtilesCountryCode(this.countryCode());
+      this.activeCountryCode = countryCode;
+      this.registerOfflineArchives(countryCode);
+      map.setStyle(this.buildOfflineStyle(countryCode));
     }
   }
 
-  /** Offline raster style using packaged WebP tiles, auto-overscaled above native zoom */
-  private buildOfflineStyle(): maplibregl.StyleSpecification {
-    return {
-      version: 8,
-      name: 'picsa-offline',
-      sources: {
-        [LOCAL_SOURCE_ID]: {
-          type: 'raster',
-          tiles: [LOCAL_TILE_URL],
-          tileSize: 256,
-          minzoom: 0,
-          maxzoom: LOCAL_MAX_NATIVE_ZOOM,
-          attribution: '© OpenStreetMap',
-        },
-      },
-      layers: [
-        {
-          id: LOCAL_LAYER_ID,
-          type: 'raster',
-          source: LOCAL_SOURCE_ID,
-          paint: {
-            'raster-fade-duration': 0,
-          },
-        },
-      ],
-    };
+  /**
+   * Dynamically switch the active country PMTiles detail archive without recreating
+   * style layers when transitioning between supported countries.
+   */
+  public setCountrySource(countryCode?: string) {
+    const nextCode = normalizePmtilesCountryCode(countryCode);
+    if (nextCode === this.activeCountryCode) {
+      return;
+    }
+    this.activeCountryCode = nextCode;
+    this.registerOfflineArchives(nextCode);
+
+    const map = this.map();
+    if (!map) {
+      return;
+    }
+
+    if (this.currentStyleKind === 'offline') {
+      const existingSource = map.getSource(COUNTRY_DETAIL_SOURCE_ID) as maplibregl.VectorTileSource | undefined;
+      if (existingSource && nextCode && typeof existingSource.setUrl === 'function') {
+        this.ngZone.runOutsideAngular(() => {
+          existingSource.setUrl(getCountryPmtilesUrl(nextCode));
+        });
+      } else {
+        // Adding or removing the country-detail source requires updating the style definition
+        this.ngZone.runOutsideAngular(() => {
+          map.setStyle(this.buildOfflineStyle(nextCode));
+        });
+      }
+    }
+
+    this.updateBaseStyle();
+  }
+
+  private registerOfflineArchives(countryCode?: string) {
+    const urls = [PMTILES_GLOBAL_URL];
+    if (countryCode) {
+      urls.push(getCountryPmtilesUrl(countryCode));
+    }
+    ensurePmtilesProtocol(urls);
+  }
+
+  /** Offline vector style backed by `global-base.pmtiles` and optional `{country}.pmtiles` */
+  private buildOfflineStyle(countryCode = this.activeCountryCode): maplibregl.StyleSpecification {
+    return buildOfflineVectorStyle(countryCode);
   }
 
   private reapplyGeoJsonLayers() {

@@ -116,6 +116,7 @@
     <picsa-map
       #picsaMap
       class="w-full h-full block"
+      [countryCode]="deploymentService.activeDeploymentCountry()"
       [markers]="mapMarkers()"
       (onMarkerClick)="onMarkerClicked($event)"
     ></picsa-map>

@@ -120,6 +120,7 @@
     "papaparse": "^5.7.0",
     "parse": "3.4.2",
     "perfect-freehand": "^1.2.2",
+    "pmtiles": "^4.5.0",
     "rxdb": "patch:rxdb@npm%3A16.6.1#~/.yarn/patches/rxdb-npm-16.6.1-c881d164ee.patch",
     "rxdb-14": "npm:rxdb@^14.17.1",
     "rxjs": "~7.8.1",

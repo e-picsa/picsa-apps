@@ -9,6 +9,10 @@ import { GeoJsonData, IMapMarker, PicsaMapComponent } from './map';
 jest.mock('maplibre-gl', () => {
   const mapInstances: any[] = [];
   const markerInstances: any[] = [];
+  const protocols: Record<string, any> = {};
+  const addProtocol = jest.fn((scheme: string, handler: any) => {
+    protocols[scheme] = handler;
+  });
   class LngLatBounds {
     public coordinates: any[] = [];
     constructor(sw?: any, ne?: any) {
@@ -99,7 +103,15 @@ jest.mock('maplibre-gl', () => {
       }
     }
   }
-  return { Map, Marker, LngLatBounds, __mapInstances: mapInstances, __markerInstances: markerInstances };
+  return {
+    Map,
+    Marker,
+    LngLatBounds,
+    addProtocol,
+    __protocols: protocols,
+    __mapInstances: mapInstances,
+    __markerInstances: markerInstances,
+  };
 });
 
 const mockMapInstances = () => (maplibregl as any).__mapInstances as any[];
@@ -163,19 +175,55 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     fixture.detectChanges();
   });
 
-  it('creates the component with an offline raster base style and snappy rendering options', () => {
+  it('creates the component with an offline PMTiles vector base style and registers the pmtiles protocol', () => {
     expect(component).toBeTruthy();
     expect(mockMapInstances().length).toBe(1);
     expect(component.map()).toBe(mockMapInstances()[0]);
     expect(component.mapReady()).toBe(false);
+    expect((maplibregl as any).addProtocol).toHaveBeenCalledWith('pmtiles', expect.any(Function));
+
     const map = mockMapInstances()[0];
-    expect(map.options.zoomSnap).toBe(1);
+    expect(map.options.zoomSnap).toBe(0);
     expect(map.options.fadeDuration).toBe(0);
+    expect(map.scrollZoom.disable).not.toHaveBeenCalled();
+
     const style = map.options.style;
-    expect(style.sources['picsa-local-tiles'].tiles).toEqual(['assets/mapTiles/raw/{z}/{x}/{y}.webp']);
-    // raster-fade-duration is set to 0 to prevent lingering stretched tiles on zoom transitions
-    const rasterLayer = style.layers.find((l: any) => l.id === 'picsa-local-layer');
-    expect(rasterLayer?.paint?.['raster-fade-duration']).toBe(0);
+    expect(style.sources['global-base']).toEqual(
+      expect.objectContaining({
+        type: 'vector',
+        url: 'pmtiles://assets/mapTiles/global-base.pmtiles',
+      }),
+    );
+    expect(style.sources['country-detail']).toBeUndefined();
+    expect(style.glyphs).toBe('assets/mapTiles/fonts/{fontstack}/{range}.pbf');
+
+    const cityLayer = style.layers.find((l: any) => l.id === 'global-place-city');
+    expect(cityLayer?.layout?.['text-field']).toEqual(['coalesce', ['get', 'name:latin'], ['get', 'name']]);
+  });
+
+  it('includes country-detail source when countryCode is supported and swaps urls without rewriting layers', () => {
+    fixture.componentRef.setInput('countryCode', 'mw');
+    fixture.detectChanges();
+    emitLoad();
+
+    const map = mockMap();
+    const countrySourceMock = { type: 'vector', url: 'pmtiles://assets/mapTiles/mw.pmtiles', setUrl: jest.fn() };
+    map.sources['country-detail'] = countrySourceMock;
+
+    // Switching to another supported country updates the source URL in-place
+    fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.detectChanges();
+    expect(countrySourceMock.setUrl).toHaveBeenCalledWith('pmtiles://assets/mapTiles/zw.pmtiles');
+
+    // Switching to an unsupported/global country removes country-detail via setStyle
+    fixture.componentRef.setInput('countryCode', 'global');
+    fixture.detectChanges();
+    expect(map.setStyle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'picsa-offline',
+        sources: expect.not.objectContaining({ 'country-detail': expect.anything() }),
+      }),
+    );
   });
 
   it('marks the map ready and emits onMapReady on load', () => {
@@ -186,14 +234,19 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(onReady).toHaveBeenCalledTimes(1);
   });
 
-  it('disables default scrollZoom and uses discrete wheel zoom anchored to mouse position', () => {
-    const map = mockMap();
+  it('supports reverting to discrete wheel zoom anchored to mouse position via mapOptions', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
+    expect(map.options.zoomSnap).toBe(1);
     expect(map.scrollZoom.disable).toHaveBeenCalled();
 
-    const container = component.mapContainer()?.nativeElement;
+    const container = discreteFixture.componentInstance.mapContainer()?.nativeElement;
     expect(container).toBeDefined();
     if (!container) return;
-    setZoom(3);
+    map.zoom = 3;
 
     // Wheel forward (zoom in)
     const zoomInEvent = new WheelEvent('wheel', {
@@ -215,13 +268,17 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('disables touch rotation when dragRotate is false and snaps fractional touch zoom on moveend', () => {
-    const map = mockMap();
+  it('disables touch rotation when dragRotate is false and snaps fractional touch zoom when discreteZoom is true', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
     expect(map.touchZoomRotate.disableRotation).toHaveBeenCalled();
 
     // Simulate map settling on a fractional zoom after mobile pinch zoom
-    setZoom(3.4);
-    map.handlers['moveend']?.forEach((fn) => fn());
+    map.zoom = 3.4;
+    map.handlers['moveend']?.forEach((fn: () => void) => fn());
 
     expect(map.easeTo).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -231,12 +288,16 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('steps zoom down discretely on wheel backward', () => {
-    const map = mockMap();
-    const container = component.mapContainer()?.nativeElement;
+  it('steps zoom down discretely on wheel backward when discreteZoom is true', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
+    const container = discreteFixture.componentInstance.mapContainer()?.nativeElement;
     expect(container).toBeDefined();
     if (!container) return;
-    setZoom(5);
+    map.zoom = 5;
 
     const zoomOutEvent = new WheelEvent('wheel', {
       deltaY: 100,
@@ -255,41 +316,51 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('keeps the offline raster below zoom 9 when online (no metered fetches)', () => {
+  it('keeps offline PMTiles active within country offline maxzoom even when online', () => {
+    fixture.componentRef.setInput('countryCode', 'mw');
+    fixture.detectChanges();
+    setZoom(11);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
   });
 
-  it('switches to online vector style at zoom >= 9 when online', () => {
-    setZoom(10);
+  it('switches to online vector style past offline archive maxzoom when online', () => {
+    fixture.componentRef.setInput('countryCode', 'mw');
+    fixture.detectChanges();
+    setZoom(12);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-    // no local raster underlay is attached (it would be hidden and waste fetches)
-    map.emit('styledata');
-    expect(map.sources['picsa-local-tiles']).toBeUndefined();
   });
 
-  it('swaps back to offline raster when zooming out below 9', () => {
+  it('swaps back to offline vector style when zooming back within country offline maxzoom', () => {
+    fixture.componentRef.setInput('countryCode', 'zm');
+    fixture.detectChanges();
     setZoom(10);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
 
-    setZoom(5);
+    setZoom(9);
     map.emit('zoomend');
     expect(map.setStyle).toHaveBeenCalledWith(expect.objectContaining({ name: 'picsa-offline' }));
   });
 
-  it('stays on offline raster when offline, even at high zoom', () => {
-    isOnline.set(false);
-    setZoom(12);
+  it('stays on offline vector style when offline or when enableOnlineFallback is false', () => {
+    fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: false });
+    fixture.detectChanges();
+    setZoom(14);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-    // raster source caps at native zoom 8 so no missing-zoom tiles are fetched (overscaled instead)
-    expect(map.options.style.sources['picsa-local-tiles'].maxzoom).toBe(8);
+
+    isOnline.set(false);
+    fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: true });
+    fixture.detectChanges();
+    map.emit('zoomend');
+    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+    expect(map.options.style.sources['global-base'].url).toBe('pmtiles://assets/mapTiles/global-base.pmtiles');
   });
 
   it('renders markers with [lng, lat] conversion and emits clicks', () => {

@@ -93,6 +93,7 @@
           {
             "glob": "**/*",
             "input": "apps/picsa-tools/climate-tool/src/assets",
+            "ignore": ["**/*.md"],
             "output": "assets"
           },
           {

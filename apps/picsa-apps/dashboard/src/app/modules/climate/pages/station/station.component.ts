@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import { ApiRequest } from '../../climate-api.mapping';
 import { ApiStatusComponent } from '../../components/api-status/api-status.component';
@@ -20,6 +21,7 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 })
 export class ClimateStationPageComponent {
   service = inject(ClimateService);
+  public deploymentService = inject(DeploymentDashboardService, { optional: true });
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
