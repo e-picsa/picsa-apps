@@ -58,6 +58,9 @@ jest.mock('maplibre-gl', () => {
     public getMaxZoom = jest.fn(() => 22);
     public setStyle = jest.fn();
     public setPaintProperty = jest.fn();
+    public setLayoutProperty = jest.fn();
+    public setSprite = jest.fn();
+    public setGlyphs = jest.fn();
     public fitBounds = jest.fn();
     public flyTo = jest.fn();
     public resize = jest.fn();
@@ -65,6 +68,11 @@ jest.mock('maplibre-gl', () => {
     public getZoom = jest.fn(() => this.zoom);
     constructor(options: any) {
       this.options = options;
+      // Model the live style's initial layers so presence checks behave
+      const initialLayers = options?.style?.layers;
+      if (Array.isArray(initialLayers)) {
+        for (const l of initialLayers) this.layers[l.id] = { ...l };
+      }
       mapInstances.push(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -155,6 +163,40 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     mockMap().zoom = zoom;
   };
 
+  const TEST_VECTOR_STYLE = {
+    version: 8,
+    sources: {
+      'test-vector': { type: 'vector', tiles: ['https://example.com/{z}/{x}/{y}.pbf'] },
+    },
+    sprite: 'https://example.com/sprite',
+    glyphs: 'https://example.com/fonts/{fontstack}/{range}.pbf',
+    layers: [
+      { id: 'test-background', type: 'background', paint: { 'background-color': '#fff' } },
+      {
+        id: 'test-water',
+        type: 'fill',
+        source: 'test-vector',
+        'source-layer': 'water',
+        paint: { 'fill-color': '#00f' },
+      },
+    ],
+  };
+
+  const mockFetch = () => {
+    const fetchMock = jest.fn().mockResolvedValue({ json: () => Promise.resolve(TEST_VECTOR_STYLE) });
+    (globalThis as any).fetch = fetchMock;
+    return fetchMock;
+  };
+  const clearFetch = () => {
+    delete (globalThis as any).fetch;
+  };
+  const waitForVectorLayers = async () => {
+    for (let i = 0; i < 40 && !(component as any).vectorLayersAdded; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    fixture.detectChanges();
+  };
+
   // Maplibre fires callbacks outside angular change detection in production,
   // so emit the mocked event outside the zone to avoid recursive testbed ticks
   const emitLoad = () => {
@@ -201,7 +243,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(cityLayer?.layout?.['text-field']).toEqual(['coalesce', ['get', 'name:latin'], ['get', 'name']]);
   });
 
-  it('includes country-detail source when countryCode is supported and swaps urls without rewriting layers', () => {
+  it('includes country-detail source when countryCode is supported and swaps urls without replacing style', () => {
     fixture.componentRef.setInput('countryCode', 'mw');
     fixture.detectChanges();
     emitLoad();
@@ -214,16 +256,14 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     fixture.componentRef.setInput('countryCode', 'zw');
     fixture.detectChanges();
     expect(countrySourceMock.setUrl).toHaveBeenCalledWith('pmtiles://assets/mapTiles/zw.pmtiles');
+    expect(map.setStyle).not.toHaveBeenCalled();
 
-    // Switching to an unsupported/global country removes country-detail via setStyle
+    // Switching to an unsupported/global country removes country-detail source/layers without setStyle
     fixture.componentRef.setInput('countryCode', 'global');
     fixture.detectChanges();
-    expect(map.setStyle).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'picsa-offline',
-        sources: expect.not.objectContaining({ 'country-detail': expect.anything() }),
-      }),
-    );
+    expect(map.setStyle).not.toHaveBeenCalled();
+    expect(map.removeSource).toHaveBeenCalledWith('country-detail');
+    expect(map.sources['country-detail']).toBeUndefined();
   });
 
   it('marks the map ready and emits onMapReady on load', () => {
@@ -322,45 +362,111 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     setZoom(11);
     emitLoad();
     const map = mockMap();
-    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+    expect(map.setStyle).not.toHaveBeenCalled();
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('background', 'visibility', expect.anything());
   });
 
-  it('switches to online vector style past offline archive maxzoom when online', () => {
-    fixture.componentRef.setInput('countryCode', 'mw');
-    fixture.detectChanges();
-    setZoom(12);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+  describe('online vector base layer', () => {
+    it('shows the online vector base past country offline maxzoom without replacing the style', async () => {
+      const fetchMock = mockFetch();
+      try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+        component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
+
+        setZoom(12);
+        map.emit('zoomend');
+        await waitForVectorLayers();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+        expect(map.setStyle).not.toHaveBeenCalled();
+        // vector layers are inserted below existing custom overlays
+        expect(map.addLayer).toHaveBeenCalledWith(
+          expect.objectContaining({ id: 'test-water' }),
+          'location-boundary-fill',
+        );
+        // overlay layers survive the crossing untouched
+        expect(map.layers['location-boundary-line']).toBeTruthy();
+        // offline PMTiles layers hidden, online vector visible, glyphs switched
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+        expect(map.setGlyphs).toHaveBeenCalledWith('https://example.com/fonts/{fontstack}/{range}.pbf');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('switches back to offline PMTiles and restores offline glyphs when zooming back below threshold', async () => {
+      const fetchMock = mockFetch();
+      try {
+        fixture.componentRef.setInput('countryCode', 'zm');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+        setZoom(10);
+        map.emit('zoomend');
+        await waitForVectorLayers();
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+
+        setZoom(9);
+        map.emit('zoomend');
+        fixture.detectChanges();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(map.setStyle).not.toHaveBeenCalled();
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'visible');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'visible');
+        expect(map.setGlyphs).toHaveBeenLastCalledWith('assets/mapTiles/fonts/{fontstack}/{range}.pbf');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('stays on offline PMTiles when the vector style cannot be fetched', async () => {
+      (globalThis as any).fetch = jest.fn().mockRejectedValue(new Error('offline'));
+      try {
+        emitLoad();
+        const map = mockMap();
+        setZoom(10);
+        map.emit('zoomend');
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        fixture.detectChanges();
+
+        expect((component as any).vectorLayersAdded).toBe(false);
+        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('background', 'visibility', 'none');
+      } finally {
+        clearFetch();
+      }
+    });
   });
 
-  it('swaps back to offline vector style when zooming back within country offline maxzoom', () => {
-    fixture.componentRef.setInput('countryCode', 'zm');
-    fixture.detectChanges();
-    setZoom(10);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+  it('stays on offline PMTiles when offline or when enableOnlineFallback is false', () => {
+    const fetchMock = mockFetch();
+    try {
+      fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: false });
+      fixture.detectChanges();
+      setZoom(14);
+      emitLoad();
+      const map = mockMap();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
 
-    setZoom(9);
-    map.emit('zoomend');
-    expect(map.setStyle).toHaveBeenCalledWith(expect.objectContaining({ name: 'picsa-offline' }));
-  });
-
-  it('stays on offline vector style when offline or when enableOnlineFallback is false', () => {
-    fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: false });
-    fixture.detectChanges();
-    setZoom(14);
-    emitLoad();
-    const map = mockMap();
-    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-
-    isOnline.set(false);
-    fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: true });
-    fixture.detectChanges();
-    map.emit('zoomend');
-    expect(map.setStyle).not.toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
-    expect(map.options.style.sources['global-base'].url).toBe('pmtiles://assets/mapTiles/global-base.pmtiles');
+      isOnline.set(false);
+      fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: true });
+      fixture.detectChanges();
+      map.emit('zoomend');
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(map.options.style.sources['global-base'].url).toBe('pmtiles://assets/mapTiles/global-base.pmtiles');
+    } finally {
+      clearFetch();
+    }
   });
 
   it('renders markers with [lng, lat] conversion and emits clicks', () => {
@@ -417,5 +523,38 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.layers['district-boundary-fill']).toBeUndefined();
     expect(map.layers['district-boundary-line']).toBeUndefined();
     expect(map.sources['district-boundary']).toBeUndefined();
+  });
+
+  it('keeps overlays in place across zoom crossings in both directions', async () => {
+    const fetchMock = mockFetch();
+    try {
+      emitLoad();
+      const map = mockMap();
+      component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
+
+      // Zoom in past the vector threshold: style is never replaced, so the
+      // overlay layers are never touched
+      setZoom(10);
+      map.emit('zoomend');
+      for (let i = 0; i < 40 && !(component as any).vectorLayersAdded; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(map.layers['location-boundary-line']).toBeTruthy();
+      expect(map.layers['location-boundary-fill']).toBeTruthy();
+
+      // Zoom back out: overlay layers still present, no rebuild involved
+      setZoom(5);
+      map.emit('zoomend');
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(map.layers['location-boundary-line']).toBeTruthy();
+      expect(map.layers['location-boundary-fill']).toBeTruthy();
+      expect(map.sources['location-boundary']).toBeTruthy();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    } finally {
+      clearFetch();
+    }
   });
 });

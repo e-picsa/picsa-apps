@@ -111,11 +111,17 @@ describe('SiteSelectPage', () => {
     configService = TestBed.inject(ConfigurationService);
     userSettingsSignal = signal<IUserSettings>({
       country_code: 'zm',
-      location: [undefined, undefined, 'zm', undefined, 'southern', 'choma'],
+      locationsByCountry: { zm: { province: 'southern', district: 'choma' } },
     } as unknown as IUserSettings);
     (configService as unknown as { userSettings: WritableSignal<IUserSettings> }).userSettings = userSettingsSignal;
     jest.spyOn(configService, 'updateUserSettings').mockImplementation((update) => {
       userSettingsSignal.update((curr) => ({ ...curr, ...update }));
+    });
+    jest.spyOn(configService, 'setLocationSelection').mockImplementation((selection, countryCode) => {
+      userSettingsSignal.update((curr) => {
+        const target = countryCode ?? curr.country_code;
+        return { ...curr, locationsByCountry: { ...(curr.locationsByCountry ?? {}), [target]: selection } };
+      });
     });
 
     fixture = TestBed.createComponent(SiteSelectPage);
@@ -134,27 +140,27 @@ describe('SiteSelectPage', () => {
   });
 
   it('should clear selectedDistrict when location is incomplete (only province selected)', () => {
-    component.selectedLocation.set([undefined, undefined, 'zm', undefined, 'southern', undefined]);
+    component.selectedLocation.set({ province: 'southern' });
     expect(component.selectedDistrict()).toBeUndefined();
   });
 
   it('should update location and settings when handleLocationChanged is called with complete location', () => {
-    const newLocation = [undefined, undefined, 'zm', undefined, 'southern', 'monze'];
+    const newLocation = { province: 'southern', district: 'monze' };
 
     component.handleLocationChanged(newLocation);
 
     expect(component.selectedLocation()).toEqual(newLocation);
-    expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: newLocation });
+    expect(configService.setLocationSelection).toHaveBeenCalledWith(newLocation);
   });
 
   it('should persist incomplete location to user settings when sublocation not present', () => {
-    const partialLocation = [undefined, undefined, 'zm', undefined, 'southern', undefined];
+    const partialLocation = { province: 'southern' };
     jest.clearAllMocks();
 
     component.handleLocationChanged(partialLocation);
 
     expect(component.selectedLocation()).toEqual(partialLocation);
-    expect(configService.updateUserSettings).toHaveBeenCalledWith({ location: partialLocation });
+    expect(configService.setLocationSelection).toHaveBeenCalledWith(partialLocation);
   });
 
   it('should set preferred station and navigate when confirmAndNavigate is called', () => {
@@ -259,7 +265,7 @@ describe('SiteSelectPage', () => {
 
   it('should zoom map to parent location bounds and outline feature when parent location is selected ahead of sublocation', async () => {
     component.mapReady.set(true);
-    const partialLocation = [undefined, undefined, 'zm', undefined, 'central', undefined];
+    const partialLocation = { province: 'central' };
     component.handleLocationChanged(partialLocation);
     fixture.detectChanges();
 
@@ -272,7 +278,13 @@ describe('SiteSelectPage', () => {
       expect(map.addGeoJsonLayer).toHaveBeenCalledWith(
         'selected-district-boundary',
         expect.anything(),
-        expect.objectContaining({ lineWidth: 2, lineOpacity: 0.6 }),
+        expect.objectContaining({
+          lineColor: '#166534',
+          lineWidth: 2,
+          lineOpacity: 0.95,
+          fillColor: '#166534',
+          fillOpacity: 0.12,
+        }),
       );
       expect(map.fitBounds).toHaveBeenCalled();
     }
@@ -281,7 +293,7 @@ describe('SiteSelectPage', () => {
   it('should zoom map to country bounds once when country known but no province/district selected', async () => {
     jest.clearAllMocks();
     component.mapReady.set(true);
-    component.handleLocationChanged([undefined, undefined, 'zm', undefined, undefined, undefined]);
+    component.handleLocationChanged({});
     fixture.detectChanges();
 
     // Allow async getCountryBounds (topojson parse) to resolve and effect to execute
@@ -362,5 +374,97 @@ describe('SiteSelectPage', () => {
       ([, options]) => (options as { maxZoom?: number })?.maxZoom === 7,
     );
     expect(fallbackCalls).toHaveLength(0);
+  });
+
+  describe('location boundary rendering per deployment', () => {
+    const selectLocation = async (country_code: string, location: Record<string, string>) => {
+      jest.clearAllMocks();
+      userSettingsSignal.set({
+        country_code,
+        locationsByCountry: { [country_code]: location },
+      } as unknown as IUserSettings);
+      component.mapReady.set(true);
+      component.handleLocationChanged(location);
+      fixture.detectChanges();
+      const map = component.picsaMap();
+      for (
+        let i = 0;
+        i < 40 &&
+        (map?.addGeoJsonLayer as jest.Mock).mock.calls.filter(([id]: string[]) => id === 'selected-district-boundary')
+          .length === 0;
+        i++
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      fixture.detectChanges();
+    };
+
+    const expectBoundaryRendered = (
+      feature: object,
+      style = { lineWidth: 2, lineOpacity: 0.95, fillColor: '#166534', fillOpacity: 0.12 },
+    ) => {
+      const map = component.picsaMap();
+      expect(map?.addGeoJsonLayer).toHaveBeenCalledWith(
+        'selected-district-boundary',
+        expect.objectContaining({ properties: expect.objectContaining(feature) }),
+        expect.objectContaining({ lineColor: '#166534', ...style }),
+      );
+    };
+
+    it('zm full selection renders the district boundary', async () => {
+      await selectLocation('zm', { province: 'southern', district: 'choma' });
+      expectBoundaryRendered({ admin_level: '5' });
+    });
+
+    it('mw district selection renders the district boundary', async () => {
+      await selectLocation('mw', { district: 'balaka' });
+      expectBoundaryRendered({ admin_level: '4', name: 'Balaka' });
+    });
+
+    it('zw full selection renders the district boundary', async () => {
+      await selectLocation('zw', { province: 'manicaland', district: 'chipinge' });
+      expectBoundaryRendered({ admin_level: '6' });
+    });
+
+    it('renders the district boundary on reload without further interaction', async () => {
+      // True reload: saved complete location is already in settings before the
+      // component (and map) initialise, and no location change follows.
+      jest.clearAllMocks();
+      userSettingsSignal.set({
+        country_code: 'mw',
+        locationsByCountry: { mw: { district: 'balaka' } },
+      } as unknown as IUserSettings);
+      const reloadFixture = TestBed.createComponent(SiteSelectPage);
+      const reloadComponent = reloadFixture.componentInstance;
+      reloadFixture.detectChanges();
+      const reloadMap = () => reloadComponent.picsaMap();
+      expect(reloadMap()).toBeTruthy();
+
+      // Map finishes loading after the saved location is already selected
+      reloadComponent.mapReady.set(true);
+      reloadFixture.detectChanges();
+      const reloadCalls = (reloadMap()?.addGeoJsonLayer as unknown as jest.Mock).mock.calls as [
+        string,
+        unknown,
+        unknown,
+      ][];
+      for (let i = 0; i < 80 && !reloadCalls.some(([id]) => id === 'selected-district-boundary'); i++) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      reloadFixture.detectChanges();
+
+      expect(reloadMap()?.addGeoJsonLayer).toHaveBeenCalledWith(
+        'selected-district-boundary',
+        expect.objectContaining({ properties: expect.objectContaining({ admin_level: '4', name: 'Balaka' }) }),
+        expect.objectContaining({
+          lineColor: '#166534',
+          lineWidth: 2,
+          lineOpacity: 0.95,
+          fillColor: '#166534',
+          fillOpacity: 0.12,
+        }),
+      );
+      reloadFixture.destroy();
+    });
   });
 });

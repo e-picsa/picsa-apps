@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getLocationTopoFeature } from '@picsa/data/geoLocation';
+import { getLocationTopoFeature, getToolLayers } from '@picsa/data/geoLocation';
 import type { CountryCodeLegacy } from '@picsa/server-types';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -186,7 +186,9 @@ export class CropLinkedStationSelectComponent {
 
   /** Retrieve TopoJSON, convert to GeoJSON and match the current location's geometry */
   private async fetchMapData(countryCode: CountryCodeLegacy, locationId: string): Promise<any> {
-    return getLocationTopoFeature(countryCode, locationId);
+    const layers = getToolLayers(countryCode, 'cropProbability');
+    const targetLayerKey = layers[layers.length - 1]?.key;
+    return targetLayerKey ? getLocationTopoFeature(countryCode, locationId, targetLayerKey) : undefined;
   }
 
   public handleStationSelectOpen() {

@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { getDownscaledLocations, getGeoLocationData } from '@picsa/data/geoLocation';
+import { getLocationsForTool, getToolLayers } from '@picsa/data/geoLocation';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
@@ -81,13 +81,21 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public rows = computed<ICoverageRow[]>(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
+    const layers = countryCode ? getToolLayers(countryCode, 'cropProbability') : [];
     const geoLocations = countryCode
-      ? getDownscaledLocations(countryCode).map(({ id, label, parentLabel }) => ({
+      ? getLocationsForTool(countryCode, 'cropProbability').map(({ id, label, parentLabel }) => ({
           id,
           label,
           parent: parentLabel,
         }))
       : [];
+    // Db records can be stored at a non-deepest tier (e.g. MW district records
+    // ahead of the EPA rollout). Resolve those against parent layers so they
+    // render with real labels instead of falling through as unknown orphans.
+    const parentLocations =
+      layers.length > 1
+        ? layers.slice(0, -1).flatMap((layer) => layer.locations.map(({ id, label }) => ({ id, label })))
+        : [];
     const stationDataHashmap = arrayToHashmap(this.service.stationData(), 'station_id');
     const stationsHashmap = arrayToHashmap(this.service.stations(), 'id');
 
@@ -108,7 +116,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
         water_requirements: (row.water_requirements as ICropDataDownscaledWaterRequirements) ?? {},
       };
     });
-    return buildLocationCoverageRows({ geoLocations, dbRows });
+    return buildLocationCoverageRows({ geoLocations, dbRows, parentLocations });
   });
 
   public stats = computed(() => {
@@ -128,7 +136,7 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
   public tableOptions = computed<IDataTableOptions>(() => {
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    const layers = countryCode ? getGeoLocationData(countryCode).layers : [];
+    const layers = countryCode ? getToolLayers(countryCode, 'cropProbability') : [];
     const parentLayer = layers.length > 1 ? layers.at(-2) : undefined;
     const deepestLayer = layers.at(-1);
     const displayColumns = parentLayer
@@ -137,9 +145,10 @@ export class CropLocationCoverageComponent implements AfterViewInit {
 
     return {
       displayColumns,
+      filterColumns: parentLayer ? ['parent_location'] : [],
       paginatorSizes: [50, 100],
       search: true,
-      sort: { id: 'location_label', start: 'asc' },
+      sort: { id: parentLayer ? 'parent_location' : 'location_label', start: 'asc' },
       formatHeader: (v) => {
         const headerMap: Record<string, string> = {
           location_label: deepestLayer?.label ?? 'Location',

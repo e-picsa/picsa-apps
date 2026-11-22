@@ -2,9 +2,10 @@ import * as maplibregl from 'maplibre-gl';
 import { PMTiles, Protocol, RangeResponse, Source } from 'pmtiles';
 
 /**
- * Fetch-backed PMTiles Source that falls back to buffering the full archive
- * when the host (e.g. Capacitor WebViewAssetLoader or simple static servers)
- * returns HTTP 200 instead of 206 Partial Content for Range requests.
+ * Fetch-backed PMTiles Source that handles Capacitor WebViewAssetLoader quirks:
+ * - Returns 206 Partial Content but with body from `offset` to EOF (ignores requested end byte)
+ * - Or returns 200 OK with full buffer when Range is ignored
+ * Both cases are sliced locally to the exact requested byte range.
  */
 export class AssetPmtilesSource implements Source {
   private fullArchivePromise: Promise<ArrayBuffer> | null = null;
@@ -34,8 +35,12 @@ export class AssetPmtilesSource implements Source {
     const expires = response.headers.get('Expires') ?? undefined;
 
     if (response.status === 206) {
+      const raw = await response.arrayBuffer();
+      // Capacitor's WebViewAssetLoader returns 206 with bytes from offset to EOF,
+      // ignoring the requested end byte. Slice to the exact requested length.
+      const data = raw.byteLength === length ? raw : raw.slice(0, length);
       return {
-        data: await response.arrayBuffer(),
+        data,
         etag: responseEtag ?? etag,
         cacheControl,
         expires,

@@ -9,7 +9,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { getDownscaledLocation, getGeoLocationData } from '@picsa/data/geoLocation';
+import {
+  findLocationForTool,
+  formatLocationIdAsLabel,
+  getToolLayers,
+  ILocationSelection,
+  resolveLocationForTool,
+} from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -18,7 +24,12 @@ import { DashboardMaterialModule } from '../../../../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../../../../auth/directives/authRoleRequired.directive';
 import { DashboardAuthService } from '../../../../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled, ICropDataMerged } from '../../../../../services';
+import {
+  CropInformationService,
+  ICropDataDownscaled,
+  ICropDataDownscaledWaterRequirements,
+  ICropDataMerged,
+} from '../../../../../services';
 
 interface IWaterRequirementTableData {
   location_id: string;
@@ -58,48 +69,79 @@ export class DashboardCropWaterRequirementsComponent {
 
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
 
+  /** Create or update the water requirement for the selected location (removal goes via remove()) */
   public async save(waterRequirementInput: string) {
-    if (!this.authService.hasRole('crop.editor')) return;
-    const { crop, variety } = this.data();
-    const entry = this.selectedEntry();
-    if (entry) {
-      // merge updated crop water requirement with full downscaled data
-      const { location_id } = entry;
-      const parentId = `${this.countryCode}/${location_id}`;
-      const { data, error } = await this.service.cropDataDownscaledTable
-        .select<'*', ICropDataDownscaled['Row']>('*')
-        .eq('id', parentId)
-        .maybeSingle();
+    const ctx = this.resolveContext();
+    if (!ctx) return;
+    const value = Number(waterRequirementInput);
+    if (String(waterRequirementInput).trim() === '' || Number.isNaN(value)) return;
+    const { crop, variety, location_id } = ctx;
+    const record = await this.fetchDownscaledRecord(location_id);
+    if (record) {
+      const water_requirements = (record.water_requirements ?? {}) as ICropDataDownscaledWaterRequirements;
+      water_requirements[crop] ??= {};
+      water_requirements[crop][variety] = value;
+      await this.persistWaterRequirements(record.id, water_requirements, 'Water Requirement Updated');
+    } else {
+      const water_requirements = { [crop]: { [variety]: value } };
+      const country_code = this.countryCode;
+      if (!country_code) throw new Error('Country code is not available');
+      const { error } = await this.service.cropDataDownscaledTable.insert({
+        country_code,
+        location_id,
+        water_requirements,
+      });
       if (error) throw error;
-      if (data) {
-        let { water_requirements } = data;
-        water_requirements ??= {};
-        water_requirements[crop] ??= {};
-        water_requirements[crop][variety] = Number(waterRequirementInput);
-        const { error } = await this.service.cropDataDownscaledTable.update({ water_requirements }).eq('id', data.id);
-        if (error) {
-          throw error;
-        }
-      } else {
-        const water_requirements = {
-          [crop]: {
-            [variety]: Number(waterRequirementInput),
-          },
-        };
-        const country_code = this.countryCode;
-        if (!country_code) throw new Error('Country code is not available');
-        const { error } = await this.service.cropDataDownscaledTable.insert({
-          country_code,
-          location_id,
-          water_requirements,
-        });
-        if (error) {
-          throw error;
-        }
-      }
       this.notificationService.showSuccessNotification(`Water Requirement Updated`);
       await this.service['loadCropData']();
     }
+  }
+
+  /** Delete the water requirement for the selected location, pruning any empty crop group */
+  public async remove() {
+    const ctx = this.resolveContext();
+    if (!ctx) return;
+    const { crop, variety, location_id } = ctx;
+    const record = await this.fetchDownscaledRecord(location_id);
+    const water_requirements = record?.water_requirements as ICropDataDownscaledWaterRequirements | undefined;
+    if (!record || !water_requirements?.[crop]?.[variety]) return;
+    delete water_requirements[crop][variety];
+    if (Object.keys(water_requirements[crop]).length === 0) {
+      delete water_requirements[crop];
+    }
+    await this.persistWaterRequirements(record.id, water_requirements, 'Water Requirement Removed');
+  }
+
+  /** Shared editor and location guard for save/remove, returns undefined when action should be ignored */
+  private resolveContext() {
+    if (!this.authService.hasRole('crop.editor')) return undefined;
+    const location_id = this.selectedEntry()?.location_id;
+    if (!location_id) return undefined;
+    const { crop, variety } = this.data();
+    return { crop, variety, location_id };
+  }
+
+  /** Load the downscaled row for a location (ids are namespaced as country_code/location_id) */
+  private async fetchDownscaledRecord(location_id: string) {
+    const parentId = `${this.countryCode}/${location_id}`;
+    const { data, error } = await this.service.cropDataDownscaledTable
+      .select<'*', ICropDataDownscaled['Row']>('*')
+      .eq('id', parentId)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
+  /** Write updated requirements, notify the user and refresh merged crop data */
+  private async persistWaterRequirements(
+    id: string,
+    water_requirements: ICropDataDownscaledWaterRequirements,
+    message: string,
+  ) {
+    const { error } = await this.service.cropDataDownscaledTable.update({ water_requirements }).eq('id', id);
+    if (error) throw error;
+    this.notificationService.showSuccessNotification(message);
+    await this.service['loadCropData']();
   }
 
   public editWaterRequirement(entry?: IWaterRequirementTableData) {
@@ -110,8 +152,11 @@ export class DashboardCropWaterRequirementsComponent {
     this.dialog.open(template);
   }
 
-  public handleFormLocationChange(location: (string | undefined)[]) {
-    const location_id = location.pop();
+  public handleFormLocationChange(selection: ILocationSelection) {
+    const { locations } = this.countryCode
+      ? resolveLocationForTool(this.countryCode, selection, 'cropProbability')
+      : { locations: [] };
+    const location_id = locations.length === 1 ? locations[0].id : undefined;
     if (location_id) {
       const existingEntry = this.tableData().find((v) => v.location_id === location_id);
       if (existingEntry) {
@@ -131,26 +176,29 @@ export class DashboardCropWaterRequirementsComponent {
     const { downscaled } = data;
     const country_code = this.deploymentService.activeDeployment()?.country_code;
     if (!country_code) return [];
-    const { layers } = getGeoLocationData(country_code);
+    const layers = getToolLayers(country_code, 'cropProbability');
     const parentLayer = layers.length > 1 ? layers[0] : undefined;
-    const deepestLayer = layers.at(-1);
+    const deepestLayer = layers[layers.length - 1];
     const hasParent = Boolean(parentLayer);
     const parentColLabel = parentLayer?.label ?? '';
     const deepestColLabel = deepestLayer?.label ?? 'Location';
 
     return downscaled.map(({ location_id, water_requirement }) => {
-      const loc = getDownscaledLocation(country_code, location_id);
+      const loc = findLocationForTool(country_code, 'cropProbability', location_id);
+      const label = loc?.label ?? formatLocationIdAsLabel(location_id);
+      const parentId = loc?.parentId ?? '';
+      const parentLabel = loc?.parentLabel ?? '';
       if (hasParent) {
         return {
-          [parentColLabel]: loc.parentLabel,
-          [deepestColLabel]: loc.label,
+          [parentColLabel]: parentLabel,
+          [deepestColLabel]: label,
           location_id,
           water_requirement,
-          location_hash: `${country_code}/${loc.parentId}/${location_id}`,
+          location_hash: `${country_code}/${parentId}/${location_id}`,
         };
       }
       return {
-        [deepestColLabel]: loc.label,
+        [deepestColLabel]: label,
         location_id,
         water_requirement,
         location_hash: `${country_code}/${location_id}`,

@@ -413,8 +413,8 @@ describe('ForecastService downscaled location loading', () => {
     await service.ready();
   });
 
-  it('queries single location with eq for single-layer countries (mw)', async () => {
-    service.setForecastLocation([undefined, undefined, 'mw', undefined, 'lilongwe']);
+  it('queries single resolved district with eq for mw, zm, and zw', async () => {
+    service.setForecastLocation('mw', { district: 'lilongwe' });
     await flushEffectsAndPromises();
 
     expect(mockCollection.find).toHaveBeenCalledWith({
@@ -425,23 +425,19 @@ describe('ForecastService downscaled location loading', () => {
     expect(queryBuilders[0].in).not.toHaveBeenCalled();
   });
 
-  it('queries all selected segments with $in / in for multi-layer countries (zm)', async () => {
-    service.setForecastLocation([undefined, undefined, 'zm', undefined, 'southern', 'mazabuka']);
+  it('queries only the resolved district for multi-layer countries (zm)', async () => {
+    service.setForecastLocation('zm', { province: 'southern', district: 'mazabuka' });
     await flushEffectsAndPromises();
 
     expect(mockCollection.find).toHaveBeenCalledWith({
-      selector: {
-        forecast_type: 'downscaled',
-        country_code: 'zm',
-        downscaled_location: { $in: ['southern', 'mazabuka'] },
-      },
+      selector: { forecast_type: 'downscaled', country_code: 'zm', downscaled_location: 'mazabuka' },
       sort: [{ id: 'desc' }],
     });
-    expect(queryBuilders[0].in).toHaveBeenCalledWith('downscaled_location', ['southern', 'mazabuka']);
+    expect(queryBuilders[0].eq).toHaveBeenCalledWith('downscaled_location', 'mazabuka');
   });
 
-  it('deduplicates colliding parent/child ids (zw masvingo/masvingo)', async () => {
-    service.setForecastLocation([undefined, undefined, 'zw', undefined, 'masvingo', 'masvingo']);
+  it('handles colliding parent/child ids cleanly (zw masvingo/masvingo)', async () => {
+    service.setForecastLocation('zw', { province: 'masvingo', district: 'masvingo' });
     await flushEffectsAndPromises();
 
     expect(mockCollection.find).toHaveBeenCalledWith({
@@ -453,7 +449,7 @@ describe('ForecastService downscaled location loading', () => {
   });
 
   it('clears downscaled docs when location is cleared', async () => {
-    service.setForecastLocation([undefined, undefined, 'mw', undefined, 'lilongwe']);
+    service.setForecastLocation('mw', { district: 'lilongwe' });
     await flushEffectsAndPromises();
     expect(service.downscaledForecastDocs().length).toBe(1);
 

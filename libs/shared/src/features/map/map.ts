@@ -21,12 +21,14 @@ import * as maplibregl from 'maplibre-gl';
 
 import { ensurePmtilesProtocol } from './pmtiles-protocol';
 import {
+  buildCountryDetailLayers,
   buildOfflineVectorStyle,
   COUNTRY_DETAIL_SOURCE_ID,
   getCountryPmtilesUrl,
   getOnlineFallbackMinZoom,
   normalizePmtilesCountryCode,
   PMTILES_GLOBAL_URL,
+  PMTILES_GLYPHS_URL,
 } from './pmtiles-style';
 
 /***********************************************************************
@@ -93,6 +95,24 @@ export interface IGeoJsonLayerOptions {
 
 export type GeoJsonData = GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry | Record<string, any>;
 export type IGeoJsonData = GeoJsonData;
+
+/** Available colours for shared map boundary styles */
+export type MapBoundaryColor = 'green';
+
+/**
+ * Shared boundary overlay styles, keyed by colour.
+ * Presentation lives here (not in geo data) so map consumers share one definition.
+ */
+export const MAP_BOUNDARY_STYLES: Record<MapBoundaryColor, IGeoJsonLayerOptions> = {
+  green: {
+    lineColor: '#166534',
+    lineWidth: 2,
+    lineOpacity: 0.95,
+    fillColor: '#166534',
+    fillOpacity: 0.12,
+    fitBounds: false,
+  },
+};
 
 interface IRenderedMarker {
   marker: IMapMarker;
@@ -167,10 +187,21 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   private locationMarker: maplibregl.Marker | null = null;
   private selected: { marker?: IMapMarker } = {};
 
-  /** Registry of geojson overlays, re-applied whenever the base style reloads */
+  /** Registry of geojson overlays, all rendered in the single map style */
   private geoJsonConfigs = new Map<string, { geojson: GeoJsonData; options: IGeoJsonLayerOptions }>();
-  private currentStyleKind: 'offline' | 'online' | null = null;
   private activeCountryCode: string | undefined = undefined;
+  /** Layer ids belonging to the offline PMTiles base style (toggled as a group) */
+  private offlineLayerIds: string[] = [];
+  /** Whether the online vector base is currently displayed (offline PMTiles otherwise) */
+  private vectorBaseActive = false;
+  /** Cached online vector style JSON, fetched once on first crossing into vector zoom */
+  private vectorStyleJson: any = null;
+  private vectorLoading = false;
+  /** Whether the cached vector style's sources/layers have been added to the map */
+  private vectorLayersAdded = false;
+  /** Layer ids added from the online vector style (toggled as a group) */
+  private vectorLayerIds: string[] = [];
+  private onlineGlyphsUrl: string | undefined = undefined;
   private resizeObserver: ResizeObserver | null = null;
   private wheelListener?: (e: WheelEvent) => void;
 
@@ -198,7 +229,7 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       });
     });
 
-    // Reactively swap base styles based on connection status from NetworkService
+    // Reactively toggle the base layer based on connection status from NetworkService
     effect(() => {
       if (this.mapReady()) {
         this.updateBaseStyle();
@@ -302,7 +333,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Add (or update) a GeoJSON boundary overlay, e.g. country or district polygons.
-   * Overlays survive base style swaps and are re-applied automatically.
+   * Overlays live in the single map style and are never removed except here,
+   * so base layer visibility toggles cannot wipe them.
    * NOTE GeoJSON coordinates use [lng, lat] order
    */
   public addGeoJsonLayer(id: string, geojson: GeoJsonData, options: IGeoJsonLayerOptions = {}) {
@@ -350,10 +382,12 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       const initialCountryCode = normalizePmtilesCountryCode(this.countryCode());
       this.activeCountryCode = initialCountryCode;
       this.registerOfflineArchives(initialCountryCode);
+      const initialStyle = this.buildOfflineStyle(initialCountryCode);
+      this.offlineLayerIds = initialStyle.layers.map((layer) => layer.id);
 
       const map = new maplibregl.Map({
         container,
-        style: this.buildOfflineStyle(initialCountryCode),
+        style: initialStyle,
         center: toLngLat(center),
         zoom,
         minZoom,
@@ -407,7 +441,6 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         };
       }
 
-      this.currentStyleKind = 'offline';
       this.ngZone.run(() => {
         this.map.set(map);
       });
@@ -444,11 +477,6 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.updateBaseStyle();
         });
-      });
-      // Custom sources and layers are cleared on every style swap, so re-apply
-      map.on('styledata', () => {
-        if (!this.map()) return;
-        this.reapplyGeoJsonLayers();
       });
     });
   }
@@ -524,37 +552,137 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Swap between packaged offline vector tiles and online vector tiles.
-   * Online fallback activates past the active offline archive's native maxzoom
-   * when connectivity is available (or stays offline for pure overscaling when
-   * `enableOnlineFallback: false`). Markers are plain HTML elements managed by
-   * maplibre so they stay in lockstep in both modes.
+   * Show the online vector base at or above the country's offline maxzoom when
+   * connected and `enableOnlineFallback` is enabled, else the packaged offline
+   * PMTiles vector base. Both bases live in the single map style and are toggled
+   * via visibility — the style itself is never replaced, so custom overlays are
+   * never wiped. Invisible layers fetch no tiles, preserving offline-first bandwidth.
    */
   private updateBaseStyle() {
     const map = this.map();
     const isOnline = this.networkService.isOnline();
-    if (!map || isOnline === undefined) {
-      return;
-    }
+    if (!map || isOnline === undefined || !map.isStyleLoaded()) return;
+
     const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
     const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());
-    const useOnline = allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
-    if (useOnline && this.currentStyleKind !== 'online') {
-      this.currentStyleKind = 'online';
-      map.setStyle(ONLINE_STYLE_URL);
+    const wantVector = allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
+
+    if (wantVector && !this.vectorLayersAdded) {
+      // First crossing (or a previous attempt failed): fetch once, then apply.
+      this.setupVectorBase();
+      return;
     }
-    if (!useOnline && this.currentStyleKind !== 'offline') {
-      this.currentStyleKind = 'offline';
-      const countryCode = normalizePmtilesCountryCode(this.countryCode());
-      this.activeCountryCode = countryCode;
-      this.registerOfflineArchives(countryCode);
-      map.setStyle(this.buildOfflineStyle(countryCode));
+    if (wantVector !== this.vectorBaseActive) {
+      this.setBaseVisibility(wantVector);
     }
   }
 
   /**
-   * Dynamically switch the active country PMTiles detail archive without recreating
-   * style layers when transitioning between supported countries.
+   * Lazily fetch the online vector style and add its sources/layers into the
+   * live style (hidden until shown). The JSON is cached; failures leave the
+   * offline PMTiles base in place and retry on the next crossing.
+   */
+  private setupVectorBase() {
+    const map = this.map();
+    if (!map || this.vectorLoading || this.vectorLayersAdded) return;
+    if (this.vectorStyleJson) {
+      this.addVectorBaseLayers(map, this.vectorStyleJson);
+      this.updateBaseStyle();
+      return;
+    }
+    this.vectorLoading = true;
+    fetch(ONLINE_STYLE_URL)
+      .then((res) => res.json())
+      .then((json) => {
+        const layers = Array.isArray(json?.layers) ? json.layers : [];
+        this.vectorStyleJson = layers.length > 0 ? json : null;
+      })
+      .catch(() => {
+        this.vectorStyleJson = null;
+      })
+      .finally(() => {
+        this.vectorLoading = false;
+        const currentMap = this.map();
+        if (currentMap && this.vectorStyleJson && !this.vectorLayersAdded) {
+          this.addVectorBaseLayers(currentMap, this.vectorStyleJson);
+        }
+        // Reveal only if setup actually completed. A failed fetch stays on
+        // offline PMTiles and retries on the next crossing - never from here,
+        // or failures would re-fetch in a tight loop.
+        if (this.vectorLayersAdded) {
+          this.updateBaseStyle();
+        }
+      });
+  }
+
+  /**
+   * Add the cached online vector style's sources and layers into the live style,
+   * inserted below any existing custom overlays so selections stay on top.
+   * Sprite/glyphs only affect vector labels; geometry renders without them, so
+   * each is applied independently and failures fall back gracefully.
+   */
+  private addVectorBaseLayers(map: maplibregl.Map, styleJson: any) {
+    const sources = styleJson.sources ?? {};
+    for (const [id, source] of Object.entries(sources)) {
+      if (!map.getSource(id)) {
+        map.addSource(id, source as maplibregl.SourceSpecification);
+      }
+    }
+    try {
+      if (styleJson.sprite) map.setSprite(styleJson.sprite);
+    } catch {
+      // Labels may lack icons; geometry unaffected.
+    }
+    this.onlineGlyphsUrl = typeof styleJson.glyphs === 'string' ? styleJson.glyphs : undefined;
+    const insertBefore = this.getOverlayInsertBeforeId(map);
+    const layers = Array.isArray(styleJson.layers) ? styleJson.layers : [];
+    for (const layer of layers) {
+      const layerDef = { ...(layer as Record<string, unknown>) };
+      delete layerDef.slot;
+      const id = layerDef.id;
+      if (typeof id !== 'string' || !id || map.getLayer(id)) continue;
+      map.addLayer(
+        { ...layerDef, layout: { ...((layerDef.layout as object) ?? {}), visibility: 'none' } } as never,
+        insertBefore,
+      );
+      this.vectorLayerIds.push(id);
+    }
+    this.vectorLayersAdded = this.vectorLayerIds.length > 0;
+  }
+
+  /**
+   * Toggle between the packaged offline PMTiles vector layers and the online
+   * vector base. Only visibility (and glyphs URL when switching) changes: no
+   * sources or layers are removed, so custom overlays and camera stay intact.
+   */
+  private setBaseVisibility(showVector: boolean) {
+    const map = this.map();
+    if (!map) return;
+    for (const id of this.vectorLayerIds) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', showVector ? 'visible' : 'none');
+      }
+    }
+    for (const id of this.offlineLayerIds) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', showVector ? 'none' : 'visible');
+      }
+    }
+    try {
+      map.setGlyphs(showVector && this.onlineGlyphsUrl ? this.onlineGlyphsUrl : PMTILES_GLYPHS_URL);
+    } catch {
+      // Keep existing glyph URL if style is unavailable.
+    }
+    this.vectorBaseActive = showVector;
+  }
+
+  private getOverlayInsertBeforeId(map: maplibregl.Map): string | undefined {
+    return [...this.geoJsonConfigs.keys()].map((id) => `${id}-fill`).find((fillId) => map.getLayer(fillId));
+  }
+
+  /**
+   * Dynamically switch the active country PMTiles detail archive in the single
+   * live style without disturbing online base layers or custom GeoJSON overlays.
    */
   public setCountrySource(countryCode?: string) {
     const nextCode = normalizePmtilesCountryCode(countryCode);
@@ -569,19 +697,41 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.currentStyleKind === 'offline') {
+    this.ngZone.runOutsideAngular(() => {
       const existingSource = map.getSource(COUNTRY_DETAIL_SOURCE_ID) as maplibregl.VectorTileSource | undefined;
       if (existingSource && nextCode && typeof existingSource.setUrl === 'function') {
-        this.ngZone.runOutsideAngular(() => {
-          existingSource.setUrl(getCountryPmtilesUrl(nextCode));
-        });
+        existingSource.setUrl(getCountryPmtilesUrl(nextCode));
+      } else if (nextCode) {
+        const countryLayers = buildCountryDetailLayers();
+        if (!existingSource) {
+          map.addSource(COUNTRY_DETAIL_SOURCE_ID, {
+            type: 'vector',
+            url: getCountryPmtilesUrl(nextCode),
+          });
+        }
+        const insertBefore = this.vectorLayerIds.find((id) => map.getLayer(id)) ?? this.getOverlayInsertBeforeId(map);
+        const visibility = this.vectorBaseActive ? 'none' : 'visible';
+        for (const layer of countryLayers) {
+          if (map.getLayer(layer.id)) continue;
+          map.addLayer(
+            { ...layer, layout: { ...((layer.layout as object) ?? {}), visibility } } as never,
+            insertBefore,
+          );
+          this.offlineLayerIds.push(layer.id);
+        }
       } else {
-        // Adding or removing the country-detail source requires updating the style definition
-        this.ngZone.runOutsideAngular(() => {
-          map.setStyle(this.buildOfflineStyle(nextCode));
-        });
+        const countryLayerIds = new Set(buildCountryDetailLayers().map((l) => l.id));
+        for (const id of countryLayerIds) {
+          if (map.getLayer(id)) {
+            map.removeLayer(id);
+          }
+        }
+        this.offlineLayerIds = this.offlineLayerIds.filter((id) => !countryLayerIds.has(id));
+        if (existingSource) {
+          map.removeSource(COUNTRY_DETAIL_SOURCE_ID);
+        }
       }
-    }
+    });
 
     this.updateBaseStyle();
   }
@@ -599,16 +749,10 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     return buildOfflineVectorStyle(countryCode);
   }
 
-  private reapplyGeoJsonLayers() {
-    for (const id of this.geoJsonConfigs.keys()) {
-      this.applyGeoJsonLayer(id);
-    }
-  }
-
   private applyGeoJsonLayer(id: string) {
     const map = this.map();
     const config = this.geoJsonConfigs.get(id);
-    if (!map || !config || !map.isStyleLoaded()) return;
+    if (!map || !config) return;
     const { geojson, options } = config;
     try {
       const source = map.getSource(id) as maplibregl.GeoJSONSource | undefined;

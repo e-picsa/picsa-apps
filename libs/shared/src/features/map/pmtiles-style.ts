@@ -226,7 +226,7 @@ function buildGlobalLayers(): maplibregl.LayerSpecification[] {
   ];
 }
 
-function buildCountryDetailLayers(): maplibregl.LayerSpecification[] {
+export function buildCountryDetailLayers(): maplibregl.LayerSpecification[] {
   return [
     {
       id: 'country-landcover-wood',

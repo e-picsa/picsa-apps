@@ -1,8 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
-import { MIGRATIONS } from './migrations';
-import { IMigrationStatus } from './types';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/src/version';
+
+import { MIGRATIONS } from './migrations';
+import { IMigrationStatus } from './types';
 
 interface IMigrationMeta {
   first_install_version: number;
@@ -37,15 +38,19 @@ export class PicsaMigrationService {
       for (const { id, label, up } of pending) {
         console.log(`Exec ${id} - ${label}`);
         try {
-          const result = await up(injector);
+          const result = (await up(injector)) ?? 'completed';
           this.meta.history[id] = { timestamp, result };
+          console.log(`✓ ${id} - ${label}:`, result);
         } catch (error) {
-          console.error('Failed', id, error);
-          this.meta.history[id] = { timestamp, error: (error as any)?.message };
+          const message = (error as Error)?.message ?? String(error);
+          console.error(`✗ ${id} - ${label}:`, error);
+          this.meta.history[id] = { timestamp, error: message };
         }
       }
+    } else {
+      console.log('No pending migrations');
     }
-    console.log('Complete', this.meta.history);
+    console.log('History', this.meta.history);
     console.groupEnd();
 
     this.saveMigrationHistory();
@@ -83,6 +88,6 @@ export class PicsaMigrationService {
   }
 }
 function parseSemverVersion(v: string) {
-  const [major, minor, patch] = v.split('.').map((n) => parseInt(n));
+  const [major, minor, patch] = v.split('.').map((n) => parseInt(n, 10));
   return major * 1000000 + minor * 1000 + patch;
 }
