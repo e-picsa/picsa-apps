@@ -47,8 +47,10 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
 
-    // Required for capacitor-video-player
-    implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
+    // NOTE - play-services-cast-framework intentionally omitted.
+    // Chromecast is disabled via capacitorVideoPlayerCast=false in gradle.properties
+    // (fork 8.1.0 makes its cast dep compileOnly + reflection-guarded); the native
+    // player passes chromecast:false so no cast code path is reachable.
 
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
 }

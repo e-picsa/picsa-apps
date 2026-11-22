@@ -166,6 +166,9 @@
           "outputHashing": "all",
           "namedChunks": true,
           "extractLicenses": false,
+          // hls.js is lazy-loaded by @picsa/capacitor-video-player only for .m3u8 URLs.
+          // App content is MP4-only with no direct hls.js imports — externalize for zero bytes.
+          "externalDependencies": ["hls.js"],
           "sourceMap": {
             "scripts": true,
             "styles": false,
