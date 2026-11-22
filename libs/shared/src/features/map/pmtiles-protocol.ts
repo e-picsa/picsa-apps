@@ -1,14 +1,23 @@
 import * as maplibregl from 'maplibre-gl';
 import { PMTiles, Protocol, RangeResponse, Source } from 'pmtiles';
 
+const MAX_CACHED_ARCHIVE_BYTES = 10 * 1024 * 1024;
+
+function parseContentRangeTotal(header: string | null): number | null {
+  if (!header) return null;
+  const match = /^bytes\s+\d+-\d+\/(\d+)$/i.exec(header.trim());
+  return match ? Number(match[1]) : null;
+}
+
 /**
  * Fetch-backed PMTiles Source that handles Capacitor WebViewAssetLoader quirks:
- * - Returns 206 Partial Content but with body from `offset` to EOF (ignores requested end byte)
+ * - Returns 206 Partial Content with body from `offset` to EOF (ignores requested end byte)
  * - Or returns 200 OK with full buffer when Range is ignored
- * Both cases are sliced locally to the exact requested byte range.
+ * - Guards against truncated 206 responses across varying Android WebView/proxy implementations
  */
 export class AssetPmtilesSource implements Source {
   private fullArchivePromise: Promise<ArrayBuffer> | null = null;
+  private fullArchiveVerified = false;
 
   constructor(private readonly url: string) {}
 
@@ -19,7 +28,14 @@ export class AssetPmtilesSource implements Source {
   async getBytes(offset: number, length: number, signal?: AbortSignal, etag?: string): Promise<RangeResponse> {
     if (this.fullArchivePromise) {
       const buffer = await this.fullArchivePromise;
-      return { data: buffer.slice(offset, offset + length) };
+      if (offset + length <= buffer.byteLength || (offset === 0 && this.fullArchiveVerified)) {
+        return { data: buffer.slice(offset, offset + length) };
+      }
+      if (this.fullArchiveVerified) {
+        throw new Error(`PMTiles range out of bounds (${offset}+${length} > ${buffer.byteLength}) for ${this.url}`);
+      }
+      // An unverified oversized 206 did not reach this offset (e.g. chunked proxy); drop cache and fetch.
+      this.fullArchivePromise = null;
     }
 
     const headers = new Headers();
@@ -36,9 +52,21 @@ export class AssetPmtilesSource implements Source {
 
     if (response.status === 206) {
       const raw = await response.arrayBuffer();
-      // Capacitor's WebViewAssetLoader returns 206 with bytes from offset to EOF,
-      // ignoring the requested end byte. Slice to the exact requested length.
-      const data = raw.byteLength === length ? raw : raw.slice(0, length);
+      const contentRangeTotal = parseContentRangeTotal(response.headers.get('Content-Range'));
+      // Reject unexpected short 206 chunks (offset === 0 may legitimately read past EOF on tiny archives).
+      if (
+        raw.byteLength < length &&
+        (offset > 0 || (contentRangeTotal !== null && raw.byteLength < contentRangeTotal))
+      ) {
+        throw new Error(`PMTiles truncated 206 response (${raw.byteLength} < ${length}) for ${this.url}`);
+      }
+      // WebViewAssetLoader ignores the Range end byte and returns [offset..EOF]. When the initial
+      // offset-0 read already loaded the whole archive, reuse it (up to 10 MiB) to avoid re-reading EOF.
+      if (offset === 0 && raw.byteLength > length && raw.byteLength <= MAX_CACHED_ARCHIVE_BYTES) {
+        this.fullArchivePromise = Promise.resolve(raw);
+        this.fullArchiveVerified = contentRangeTotal !== null && raw.byteLength === contentRangeTotal;
+      }
+      const data = raw.byteLength <= length ? raw : raw.slice(0, length);
       return {
         data,
         etag: responseEtag ?? etag,
@@ -49,6 +77,7 @@ export class AssetPmtilesSource implements Source {
 
     // Server ignored Range header (HTTP 200); cache the full buffer once and slice locally.
     if (!this.fullArchivePromise) {
+      this.fullArchiveVerified = true;
       this.fullArchivePromise = response.arrayBuffer();
     } else {
       await response.body?.cancel();
