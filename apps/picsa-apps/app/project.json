@@ -43,7 +43,8 @@
           {
             "glob": "**/*",
             "input": "libs/shared-assets/",
-            "output": "assets"
+            "output": "assets",
+            "ignore": ["favicon/**/*"]
           },
           {
             "glob": "*.json",
