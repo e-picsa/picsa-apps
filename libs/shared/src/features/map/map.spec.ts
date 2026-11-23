@@ -274,6 +274,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.layers['country-boundary-province']).toBeTruthy();
     expect(map.layers['country-boundary-district']).toBeTruthy();
     expect(map.layers['country-waterway-label']?.minzoom).toBe(8);
+    expect(map.layers['country-water-name-line']).toBeTruthy();
     expect(map.layers['country-road-label']?.minzoom).toBe(8);
   });
 

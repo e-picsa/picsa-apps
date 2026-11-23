@@ -288,6 +288,7 @@ export function buildCountryDetailLayers(): maplibregl.LayerSpecification[] {
       source: COUNTRY_DETAIL_SOURCE_ID,
       'source-layer': 'park',
       minzoom: 7,
+      filter: ['match', ['geometry-type'], ['Polygon', 'MultiPolygon'], true, false],
       paint: { 'fill-antialias': false, 'fill-color': '#d5e8c8', 'fill-opacity': 0.45 },
     },
     {
@@ -493,6 +494,23 @@ export function buildCountryDetailLayers(): maplibregl.LayerSpecification[] {
       minzoom: 7,
       filter: ['match', ['geometry-type'], ['Point', 'MultiPoint'], true, false],
       layout: {
+        'text-field': NAME_EXPRESSION,
+        'text-font': ['Noto Sans Regular'],
+        'text-max-width': 6,
+        'text-size': ['interpolate', ['linear'], ['zoom'], 7, 12, 12, 14],
+      },
+      paint: { 'text-color': '#3f5b96', 'text-halo-color': 'rgba(255,255,255,0.85)', 'text-halo-width': 1.5 },
+    },
+    {
+      id: 'country-water-name-line',
+      type: 'symbol',
+      source: COUNTRY_DETAIL_SOURCE_ID,
+      'source-layer': 'water_name',
+      minzoom: 7,
+      filter: ['match', ['geometry-type'], ['LineString', 'MultiLineString'], true, false],
+      layout: {
+        'symbol-placement': 'line',
+        'symbol-spacing': 350,
         'text-field': NAME_EXPRESSION,
         'text-font': ['Noto Sans Regular'],
         'text-max-width': 6,
