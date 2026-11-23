@@ -7,8 +7,8 @@ android {
         applicationId "io.picsa.extension"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5024000
-        versionName "5.24.0"
+        versionCode 5025000
+        versionName "5.25.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // Strip unused locale resources pulled in by Capacitor/Firebase libs.
         // App ships: en + ny/bem/toi/loz/lun/lue/kqn (zm) + tum (mw) + sn/nd (zw) + tg (tj).
