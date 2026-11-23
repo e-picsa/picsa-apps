@@ -89,6 +89,7 @@
     <picsa-map
       (onMarkerClick)="handleMarkerClick($event)"
       [markers]="mapMarkers()"
+      [countryCode]="userCountryCode()"
       [fitBoundsOnMarkerUpdate]="shouldFitMarkers()"
       (onMapReady)="mapReady.set(true)"
       #picsaMap

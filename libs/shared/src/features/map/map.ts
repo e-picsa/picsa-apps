@@ -19,6 +19,18 @@ import type { IStationMeta } from '@picsa/models';
 import { NetworkService } from '@picsa/shared/services/core/network.service';
 import * as maplibregl from 'maplibre-gl';
 
+import { ensurePmtilesProtocol } from './pmtiles-protocol';
+import {
+  buildCountryDetailLayers,
+  buildOfflineVectorStyle,
+  COUNTRY_DETAIL_SOURCE_ID,
+  getCountryPmtilesUrl,
+  getOnlineFallbackMinZoom,
+  normalizePmtilesCountryCode,
+  PMTILES_GLOBAL_URL,
+  PMTILES_GLYPHS_URL,
+} from './pmtiles-style';
+
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
@@ -27,16 +39,17 @@ const MAP_DEFAULTS: Required<Pick<IMapOptions, 'center' | 'zoom'>> = {
   zoom: 2,
 };
 
-/** Packaged offline raster tiles (native zoom 0-8, overscaled by the renderer above) */
-const LOCAL_TILE_URL = 'assets/mapTiles/raw/{z}/{x}/{y}.webp';
-const LOCAL_MAX_NATIVE_ZOOM = 8;
-const LOCAL_SOURCE_ID = 'picsa-local-tiles';
-const LOCAL_LAYER_ID = 'picsa-local-layer';
+/**
+ * Default zoom behavior: vector PMTiles render sharply at fractional zooms, so
+ * smooth zooming is enabled by default. Flip `DEFAULT_DISCRETE_ZOOM` to `true`
+ * to revert to integer zoom snapping (e.g. for touch-screen usability testing).
+ */
+export const DEFAULT_DISCRETE_ZOOM = false;
+export const DEFAULT_ZOOM_SNAP = DEFAULT_DISCRETE_ZOOM ? 1 : 0;
+export const DEFAULT_ENABLE_ONLINE_FALLBACK = true;
 
-/** Online vector tiles rendered when connectivity is available */
+/** Online vector tiles rendered when connectivity is available past offline maxzoom */
 const ONLINE_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
-/** Vector tiles are only fetched at or above this zoom (raster covers lower zooms) */
-const ONLINE_MIN_ZOOM = 9;
 
 const GEOJSON_DEFAULT_COLOR = '#3388ff';
 const MARKER_FOCUS_ZOOM = 8;
@@ -61,12 +74,14 @@ export interface IMapOptions {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
-  /** Interval to snap zoom levels to (default: 1 for crisp integer rendering) */
+  /** Interval to snap zoom levels to (default: 0 for smooth vector zoom; 1 when discrete) */
   zoomSnap?: number;
-  /** Whether to use discrete wheel zooming anchored to mouse cursor (default: true) */
+  /** Whether to use discrete wheel zooming anchored to mouse cursor (default: false) */
   discreteZoom?: boolean;
   /** Whether to allow drag-rotation (default: false for crisp 2D maps) */
   dragRotate?: boolean;
+  /** Whether to switch to online vector tiles past offline archive maxzoom when online (default: true) */
+  enableOnlineFallback?: boolean;
 }
 export interface IGeoJsonLayerOptions {
   lineColor?: string;
@@ -158,6 +173,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   mapOptions = input<IMapOptions>({});
   markers = input<IMapMarker[]>([]);
   fitBoundsOnMarkerUpdate = input<boolean>(true);
+  /** Optional active country code (e.g. 'mw', 'zm', 'zw') for offline country-detail PMTiles */
+  countryCode = input<string | undefined>(undefined);
 
   public mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -172,15 +189,20 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
 
   /** Registry of geojson overlays, all rendered in the single map style */
   private geoJsonConfigs = new Map<string, { geojson: GeoJsonData; options: IGeoJsonLayerOptions }>();
-  /** Whether the online vector base is currently displayed (offline raster otherwise) */
+  private activeCountryCode: string | undefined = undefined;
+  /** Layer ids belonging to the offline PMTiles base style (toggled as a group) */
+  private offlineLayerIds: string[] = [];
+  /** Whether the online vector base is currently displayed (offline PMTiles otherwise) */
   private vectorBaseActive = false;
   /** Cached online vector style JSON, fetched once on first crossing into vector zoom */
   private vectorStyleJson: any = null;
   private vectorLoading = false;
+  private styleFetchController: AbortController | null = null;
   /** Whether the cached vector style's sources/layers have been added to the map */
   private vectorLayersAdded = false;
   /** Layer ids added from the online vector style (toggled as a group) */
   private vectorLayerIds: string[] = [];
+  private onlineGlyphsUrl: string | undefined = undefined;
   private resizeObserver: ResizeObserver | null = null;
   private wheelListener?: (e: WheelEvent) => void;
 
@@ -214,6 +236,14 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.updateBaseStyle();
       }
     });
+
+    // Reactively update the country-detail PMTiles source when countryCode changes
+    effect(() => {
+      const nextCode = this.countryCode();
+      if (this.mapReady()) {
+        this.setCountrySource(nextCode);
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -221,6 +251,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.styleFetchController?.abort();
+    this.styleFetchController = null;
     this.resizeObserver?.disconnect();
     const container = this.mapContainer()?.nativeElement;
     if (this.wheelListener && container) {
@@ -316,14 +348,18 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   public removeGeoJsonLayer(id: string) {
     this.geoJsonConfigs.delete(id);
     const map = this.map();
-    if (!map || !map.isStyleLoaded()) return;
-    for (const layerId of [`${id}-fill`, `${id}-line`]) {
-      if (map.getLayer(layerId)) {
-        map.removeLayer(layerId);
+    if (!map) return;
+    try {
+      for (const layerId of [`${id}-fill`, `${id}-line`]) {
+        if (map.getLayer(layerId)) {
+          map.removeLayer(layerId);
+        }
       }
-    }
-    if (map.getSource(id)) {
-      map.removeSource(id);
+      if (map.getSource(id)) {
+        map.removeSource(id);
+      }
+    } catch (err) {
+      console.warn(`[PicsaMap] Could not remove GeoJSON layer ${id}:`, err);
     }
   }
 
@@ -345,14 +381,20 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         zoom,
         minZoom,
         maxZoom,
-        zoomSnap = 1,
-        discreteZoom = true,
+        zoomSnap = DEFAULT_ZOOM_SNAP,
+        discreteZoom = DEFAULT_DISCRETE_ZOOM,
         dragRotate = false,
       } = { ...MAP_DEFAULTS, ...this.mapOptions() };
 
+      const initialCountryCode = normalizePmtilesCountryCode(this.countryCode());
+      this.activeCountryCode = initialCountryCode;
+      this.registerOfflineArchives(initialCountryCode);
+      const initialStyle = this.buildOfflineStyle(initialCountryCode);
+      this.offlineLayerIds = initialStyle.layers.map((layer) => layer.id);
+
       const map = new maplibregl.Map({
         container,
-        style: this.buildOfflineStyle(),
+        style: initialStyle,
         center: toLngLat(center),
         zoom,
         minZoom,
@@ -516,18 +558,27 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     container.addEventListener('wheel', this.wheelListener, { passive: false });
   }
 
+  private isOnlineFallbackWanted(map: maplibregl.Map): boolean {
+    const isOnline = this.networkService.isOnline();
+    if (isOnline === undefined) return false;
+    const allowOnline = this.mapOptions().enableOnlineFallback ?? DEFAULT_ENABLE_ONLINE_FALLBACK;
+    const minOnlineZoom = getOnlineFallbackMinZoom(this.countryCode());
+    return allowOnline && isOnline && map.getZoom() >= minOnlineZoom;
+  }
+
   /**
-   * Show the online vector base at or above ONLINE_MIN_ZOOM when connected,
-   * else the packaged offline raster. Both base layers live in the single map
-   * style and are toggled via visibility - the style itself is never replaced,
-   * so custom overlays are never wiped (and no re-apply machinery is needed).
-   * Invisible layers fetch no tiles, preserving the offline-first bandwidth profile.
+   * Show the online vector base at or above the country's offline maxzoom when
+   * connected and `enableOnlineFallback` is enabled, else the packaged offline
+   * PMTiles vector base. Both bases live in the single map style and are toggled
+   * via visibility — the style itself is never replaced, so custom overlays are
+   * never wiped. Invisible layers fetch no tiles, preserving offline-first bandwidth.
    */
   private updateBaseStyle() {
     const map = this.map();
-    const isOnline = this.networkService.isOnline();
-    if (!map || isOnline === undefined || !map.isStyleLoaded()) return;
-    const wantVector = isOnline && map.getZoom() >= ONLINE_MIN_ZOOM;
+    if (!map || this.networkService.isOnline() === undefined || !this.mapReady()) return;
+
+    const wantVector = this.isOnlineFallbackWanted(map);
+
     if (wantVector && !this.vectorLayersAdded) {
       // First crossing (or a previous attempt failed): fetch once, then apply.
       this.setupVectorBase();
@@ -541,18 +592,22 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   /**
    * Lazily fetch the online vector style and add its sources/layers into the
    * live style (hidden until shown). The JSON is cached; failures leave the
-   * offline raster in place and retry on the next crossing.
+   * offline PMTiles base in place and retry on the next crossing.
    */
   private setupVectorBase() {
     const map = this.map();
     if (!map || this.vectorLoading || this.vectorLayersAdded) return;
     if (this.vectorStyleJson) {
-      this.addVectorBaseLayers(map, this.vectorStyleJson);
-      this.updateBaseStyle();
+      if (this.isOnlineFallbackWanted(map)) {
+        this.addVectorBaseLayers(map, this.vectorStyleJson);
+        this.updateBaseStyle();
+      }
       return;
     }
     this.vectorLoading = true;
-    fetch(ONLINE_STYLE_URL)
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    this.styleFetchController = controller;
+    fetch(ONLINE_STYLE_URL, controller ? { signal: controller.signal } : undefined)
       .then((res) => res.json())
       .then((json) => {
         const layers = Array.isArray(json?.layers) ? json.layers : [];
@@ -562,14 +617,25 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         this.vectorStyleJson = null;
       })
       .finally(() => {
+        if (this.styleFetchController === controller) {
+          this.styleFetchController = null;
+        }
         this.vectorLoading = false;
         const currentMap = this.map();
-        if (currentMap && this.vectorStyleJson && !this.vectorLayersAdded) {
+        // Only attach online sources/sprites if fallback is still wanted (avoids triggering
+        // TileJSON/sprite fetches if the user zoomed back below threshold or went offline mid-flight).
+        if (
+          currentMap &&
+          this.mapReady() &&
+          this.vectorStyleJson &&
+          !this.vectorLayersAdded &&
+          this.isOnlineFallbackWanted(currentMap)
+        ) {
           this.addVectorBaseLayers(currentMap, this.vectorStyleJson);
         }
         // Reveal only if setup actually completed. A failed fetch stays on
-        // raster and retries on the next crossing - never from here, or
-        // failures would re-fetch in a tight loop.
+        // offline PMTiles and retries on the next crossing - never from here,
+        // or failures would re-fetch in a tight loop.
         if (this.vectorLayersAdded) {
           this.updateBaseStyle();
         }
@@ -594,14 +660,8 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
     } catch {
       // Labels may lack icons; geometry unaffected.
     }
-    try {
-      if (styleJson.glyphs) map.setGlyphs(styleJson.glyphs);
-    } catch {
-      // Labels may be missing; geometry unaffected.
-    }
-    const insertBefore = [...this.geoJsonConfigs.keys()]
-      .map((id) => `${id}-fill`)
-      .find((fillId) => map.getLayer(fillId));
+    this.onlineGlyphsUrl = typeof styleJson.glyphs === 'string' ? styleJson.glyphs : undefined;
+    const insertBefore = this.getOverlayInsertBeforeId(map);
     const layers = Array.isArray(styleJson.layers) ? styleJson.layers : [];
     for (const layer of layers) {
       const layerDef = { ...(layer as Record<string, unknown>) };
@@ -618,9 +678,9 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Toggle between the packaged offline raster and the online vector base.
-   * Only visibility changes: no sources or layers are added or removed, so
-   * custom overlays and the camera are never disturbed.
+   * Toggle between the packaged offline PMTiles vector layers and the online
+   * vector base. Only visibility (and glyphs URL when switching) changes: no
+   * sources or layers are removed, so custom overlays and camera stay intact.
    */
   private setBaseVisibility(showVector: boolean) {
     const map = this.map();
@@ -630,38 +690,90 @@ export class PicsaMapComponent implements AfterViewInit, OnDestroy {
         map.setLayoutProperty(id, 'visibility', showVector ? 'visible' : 'none');
       }
     }
-    if (map.getLayer(LOCAL_LAYER_ID)) {
-      map.setLayoutProperty(LOCAL_LAYER_ID, 'visibility', showVector ? 'none' : 'visible');
+    for (const id of this.offlineLayerIds) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', showVector ? 'none' : 'visible');
+      }
+    }
+    try {
+      map.setGlyphs(showVector && this.onlineGlyphsUrl ? this.onlineGlyphsUrl : PMTILES_GLYPHS_URL);
+    } catch {
+      // Keep existing glyph URL if style is unavailable.
     }
     this.vectorBaseActive = showVector;
   }
 
-  /** Offline raster style using packaged WebP tiles, auto-overscaled above native zoom */
-  private buildOfflineStyle(): maplibregl.StyleSpecification {
-    return {
-      version: 8,
-      name: 'picsa-offline',
-      sources: {
-        [LOCAL_SOURCE_ID]: {
-          type: 'raster',
-          tiles: [LOCAL_TILE_URL],
-          tileSize: 256,
-          minzoom: 0,
-          maxzoom: LOCAL_MAX_NATIVE_ZOOM,
-          attribution: '© OpenStreetMap',
-        },
-      },
-      layers: [
-        {
-          id: LOCAL_LAYER_ID,
-          type: 'raster',
-          source: LOCAL_SOURCE_ID,
-          paint: {
-            'raster-fade-duration': 0,
-          },
-        },
-      ],
-    };
+  private getOverlayInsertBeforeId(map: maplibregl.Map): string | undefined {
+    return [...this.geoJsonConfigs.keys()].map((id) => `${id}-fill`).find((fillId) => map.getLayer(fillId));
+  }
+
+  /**
+   * Dynamically switch the active country PMTiles detail archive in the single
+   * live style without disturbing online base layers or custom GeoJSON overlays.
+   */
+  public setCountrySource(countryCode?: string) {
+    const nextCode = normalizePmtilesCountryCode(countryCode);
+    if (nextCode === this.activeCountryCode) {
+      return;
+    }
+    this.activeCountryCode = nextCode;
+    this.registerOfflineArchives(nextCode);
+
+    const map = this.map();
+    if (!map) {
+      return;
+    }
+
+    this.ngZone.runOutsideAngular(() => {
+      const existingSource = map.getSource(COUNTRY_DETAIL_SOURCE_ID) as maplibregl.VectorTileSource | undefined;
+      if (existingSource && nextCode && typeof existingSource.setUrl === 'function') {
+        existingSource.setUrl(getCountryPmtilesUrl(nextCode));
+      } else if (nextCode) {
+        const countryLayers = buildCountryDetailLayers();
+        if (!existingSource) {
+          map.addSource(COUNTRY_DETAIL_SOURCE_ID, {
+            type: 'vector',
+            url: getCountryPmtilesUrl(nextCode),
+          });
+        }
+        const insertBefore = this.vectorLayerIds.find((id) => map.getLayer(id)) ?? this.getOverlayInsertBeforeId(map);
+        const visibility = this.vectorBaseActive ? 'none' : 'visible';
+        for (const layer of countryLayers) {
+          if (map.getLayer(layer.id)) continue;
+          map.addLayer(
+            { ...layer, layout: { ...((layer.layout as object) ?? {}), visibility } } as never,
+            insertBefore,
+          );
+          this.offlineLayerIds.push(layer.id);
+        }
+      } else {
+        const countryLayerIds = new Set(buildCountryDetailLayers().map((l) => l.id));
+        for (const id of countryLayerIds) {
+          if (map.getLayer(id)) {
+            map.removeLayer(id);
+          }
+        }
+        this.offlineLayerIds = this.offlineLayerIds.filter((id) => !countryLayerIds.has(id));
+        if (existingSource) {
+          map.removeSource(COUNTRY_DETAIL_SOURCE_ID);
+        }
+      }
+    });
+
+    this.updateBaseStyle();
+  }
+
+  private registerOfflineArchives(countryCode?: string) {
+    const urls = [PMTILES_GLOBAL_URL];
+    if (countryCode) {
+      urls.push(getCountryPmtilesUrl(countryCode));
+    }
+    ensurePmtilesProtocol(urls);
+  }
+
+  /** Offline vector style backed by `global-base.pmtiles` and optional `{country}.pmtiles` */
+  private buildOfflineStyle(countryCode = this.activeCountryCode): maplibregl.StyleSpecification {
+    return buildOfflineVectorStyle(countryCode);
   }
 
   private applyGeoJsonLayer(id: string) {

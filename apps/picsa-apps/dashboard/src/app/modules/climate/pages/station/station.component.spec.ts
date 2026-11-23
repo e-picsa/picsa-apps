@@ -15,6 +15,7 @@ import { ClimateStationPageComponent } from './station.component';
 })
 class MockMapComponent {
   @Input() markers: unknown;
+  @Input() countryCode?: string;
 }
 
 describe('ClimateStationPageComponent', () => {

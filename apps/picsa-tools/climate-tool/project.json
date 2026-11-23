@@ -33,7 +33,12 @@
             "input": "libs/shared-assets/images",
             "output": "assets/images"
           },
-          "apps/picsa-tools/climate-tool/src/assets"
+          {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/climate-tool/src/assets",
+            "ignore": ["**/*.md"],
+            "output": "assets"
+          }
         ],
         "styles": [
           "apps/picsa-tools/climate-tool/src/styles.scss",

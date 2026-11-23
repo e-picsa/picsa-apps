@@ -21,7 +21,7 @@ const BOUNDARY_LAYER_ID = 'admin-boundaries';
 })
 export class MapHomeComponent implements OnInit {
   public mapService = inject(DashboardMapService);
-  private deploymentService = inject(DeploymentDashboardService);
+  public deploymentService = inject(DeploymentDashboardService);
 
   public picsaMap = viewChild(PicsaMapComponent);
 

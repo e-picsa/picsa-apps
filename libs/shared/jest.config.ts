@@ -17,7 +17,7 @@ const config: Config = {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!.*\\.mjs$|rxdb|@capawesome|html2canvas|@capacitor|@supabase|@ngx-translate|ng2-charts|ngx-color|ngx-file-drop|jspdf|papaparse|downloadjs|simpleheat|ky|@uppy|nanoid|p-queue|eventemitter3|p-timeout|@awesome-cordova-plugins|tslib)',
+    'node_modules/(?!.*\\.mjs$|pmtiles|fflate|rxdb|@capawesome|html2canvas|@capacitor|@supabase|@ngx-translate|ng2-charts|ngx-color|ngx-file-drop|jspdf|papaparse|downloadjs|simpleheat|ky|@uppy|nanoid|p-queue|eventemitter3|p-timeout|@awesome-cordova-plugins|tslib)',
   ],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',

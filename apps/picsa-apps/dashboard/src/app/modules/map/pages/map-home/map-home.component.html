@@ -104,7 +104,11 @@
   }
 
   <div class="relative flex-grow rounded-lg overflow-hidden border border-gray-300 min-h-[500px]">
-    <picsa-map #picsaMap class="absolute inset-0 z-0 block h-full w-full min-h-[500px]"></picsa-map>
+    <picsa-map
+      #picsaMap
+      [countryCode]="deploymentService.activeDeploymentCountry()"
+      class="absolute inset-0 z-0 block h-full w-full min-h-[500px]"
+    ></picsa-map>
 
     @if (!hasFeatures() && getBoundaryForLevel(activeAdminLevel())) {
       <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">

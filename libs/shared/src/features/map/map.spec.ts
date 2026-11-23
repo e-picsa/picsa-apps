@@ -9,6 +9,10 @@ import { GeoJsonData, IMapMarker, PicsaMapComponent } from './map';
 jest.mock('maplibre-gl', () => {
   const mapInstances: any[] = [];
   const markerInstances: any[] = [];
+  const protocols: Record<string, any> = {};
+  const addProtocol = jest.fn((scheme: string, handler: any) => {
+    protocols[scheme] = handler;
+  });
   class LngLatBounds {
     public coordinates: any[] = [];
     constructor(sw?: any, ne?: any) {
@@ -107,7 +111,15 @@ jest.mock('maplibre-gl', () => {
       }
     }
   }
-  return { Map, Marker, LngLatBounds, __mapInstances: mapInstances, __markerInstances: markerInstances };
+  return {
+    Map,
+    Marker,
+    LngLatBounds,
+    addProtocol,
+    __protocols: protocols,
+    __mapInstances: mapInstances,
+    __markerInstances: markerInstances,
+  };
 });
 
 const mockMapInstances = () => (maplibregl as any).__mapInstances as any[];
@@ -159,7 +171,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     sprite: 'https://example.com/sprite',
     glyphs: 'https://example.com/fonts/{fontstack}/{range}.pbf',
     layers: [
-      { id: 'test-background', type: 'background', paint: { 'background-color': '#fff' } },
+      { id: 'background', type: 'background', paint: { 'background-color': '#fff' } },
       {
         id: 'test-water',
         type: 'fill',
@@ -205,19 +217,65 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     fixture.detectChanges();
   });
 
-  it('creates the component with an offline raster base style and snappy rendering options', () => {
+  it('creates the component with an offline PMTiles vector base style and registers the pmtiles protocol', () => {
     expect(component).toBeTruthy();
     expect(mockMapInstances().length).toBe(1);
     expect(component.map()).toBe(mockMapInstances()[0]);
     expect(component.mapReady()).toBe(false);
+    expect((maplibregl as any).addProtocol).toHaveBeenCalledWith('pmtiles', expect.any(Function));
+
     const map = mockMapInstances()[0];
-    expect(map.options.zoomSnap).toBe(1);
+    expect(map.options.zoomSnap).toBe(0);
     expect(map.options.fadeDuration).toBe(0);
+    expect(map.scrollZoom.disable).not.toHaveBeenCalled();
+
     const style = map.options.style;
-    expect(style.sources['picsa-local-tiles'].tiles).toEqual(['assets/mapTiles/raw/{z}/{x}/{y}.webp']);
-    // raster-fade-duration is set to 0 to prevent lingering stretched tiles on zoom transitions
-    const rasterLayer = style.layers.find((l: any) => l.id === 'picsa-local-layer');
-    expect(rasterLayer?.paint?.['raster-fade-duration']).toBe(0);
+    expect(style.sources['global-base']).toEqual(
+      expect.objectContaining({
+        type: 'vector',
+        url: 'pmtiles://assets/mapTiles/global-base.pmtiles',
+      }),
+    );
+    expect(style.sources['country-detail']).toBeUndefined();
+    expect(style.glyphs).toBe('assets/mapTiles/fonts/{fontstack}/{range}.pbf');
+
+    const cityLayer = style.layers.find((l: any) => l.id === 'global-place-city');
+    expect(cityLayer?.layout?.['text-field']).toEqual(['coalesce', ['get', 'name:latin'], ['get', 'name']]);
+  });
+
+  it('includes country-detail source when countryCode is supported and swaps urls without replacing style', () => {
+    fixture.componentRef.setInput('countryCode', 'mw');
+    fixture.detectChanges();
+    emitLoad();
+
+    const map = mockMap();
+    const countrySourceMock = { type: 'vector', url: 'pmtiles://assets/mapTiles/mw.pmtiles', setUrl: jest.fn() };
+    map.sources['country-detail'] = countrySourceMock;
+
+    // Switching to another supported country updates the source URL in-place
+    fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.detectChanges();
+    expect(countrySourceMock.setUrl).toHaveBeenCalledWith('pmtiles://assets/mapTiles/zw.pmtiles');
+    expect(map.setStyle).not.toHaveBeenCalled();
+
+    // Switching to an unsupported/global country removes country-detail source/layers without setStyle
+    fixture.componentRef.setInput('countryCode', 'global');
+    fixture.detectChanges();
+    expect(map.setStyle).not.toHaveBeenCalled();
+    expect(map.removeSource).toHaveBeenCalledWith('country-detail');
+    expect(map.sources['country-detail']).toBeUndefined();
+
+    // Verify country style includes farmland, rock, park, split admin boundaries, and z8+ river/road labels
+    fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.detectChanges();
+    expect(map.layers['country-landcover-farmland']).toBeTruthy();
+    expect(map.layers['country-landcover-rock']).toBeTruthy();
+    expect(map.layers['country-park']).toBeTruthy();
+    expect(map.layers['country-boundary-province']).toBeTruthy();
+    expect(map.layers['country-boundary-district']).toBeTruthy();
+    expect(map.layers['country-waterway-label']?.minzoom).toBe(8);
+    expect(map.layers['country-water-name-line']).toBeTruthy();
+    expect(map.layers['country-road-label']?.minzoom).toBe(8);
   });
 
   it('marks the map ready and emits onMapReady on load', () => {
@@ -228,14 +286,19 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(onReady).toHaveBeenCalledTimes(1);
   });
 
-  it('disables default scrollZoom and uses discrete wheel zoom anchored to mouse position', () => {
-    const map = mockMap();
+  it('supports reverting to discrete wheel zoom anchored to mouse position via mapOptions', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
+    expect(map.options.zoomSnap).toBe(1);
     expect(map.scrollZoom.disable).toHaveBeenCalled();
 
-    const container = component.mapContainer()?.nativeElement;
+    const container = discreteFixture.componentInstance.mapContainer()?.nativeElement;
     expect(container).toBeDefined();
     if (!container) return;
-    setZoom(3);
+    map.zoom = 3;
 
     // Wheel forward (zoom in)
     const zoomInEvent = new WheelEvent('wheel', {
@@ -257,13 +320,17 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('disables touch rotation when dragRotate is false and snaps fractional touch zoom on moveend', () => {
-    const map = mockMap();
+  it('disables touch rotation when dragRotate is false and snaps fractional touch zoom when discreteZoom is true', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
     expect(map.touchZoomRotate.disableRotation).toHaveBeenCalled();
 
     // Simulate map settling on a fractional zoom after mobile pinch zoom
-    setZoom(3.4);
-    map.handlers['moveend']?.forEach((fn) => fn());
+    map.zoom = 3.4;
+    map.handlers['moveend']?.forEach((fn: () => void) => fn());
 
     expect(map.easeTo).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -273,12 +340,16 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('steps zoom down discretely on wheel backward', () => {
-    const map = mockMap();
-    const container = component.mapContainer()?.nativeElement;
+  it('steps zoom down discretely on wheel backward when discreteZoom is true', () => {
+    const discreteFixture = TestBed.createComponent(PicsaMapComponent);
+    discreteFixture.componentRef.setInput('mapOptions', { discreteZoom: true, zoomSnap: 1 });
+    discreteFixture.detectChanges();
+
+    const map = mockMapInstances()[1];
+    const container = discreteFixture.componentInstance.mapContainer()?.nativeElement;
     expect(container).toBeDefined();
     if (!container) return;
-    setZoom(5);
+    map.zoom = 5;
 
     const zoomOutEvent = new WheelEvent('wheel', {
       deltaY: 100,
@@ -297,17 +368,22 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     );
   });
 
-  it('keeps the offline raster below zoom 9 when online (no metered fetches)', () => {
+  it('keeps offline PMTiles active within country offline maxzoom even when online', () => {
+    fixture.componentRef.setInput('countryCode', 'mw');
+    fixture.detectChanges();
+    setZoom(9);
     emitLoad();
     const map = mockMap();
     expect(map.setStyle).not.toHaveBeenCalled();
-    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('picsa-local-layer', 'visibility', expect.anything());
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith('offline-background', 'visibility', expect.anything());
   });
 
   describe('online vector base layer', () => {
-    it('shows the online vector base at zoom >= 9 without replacing the style', async () => {
+    it('shows the online vector base past country offline maxzoom without replacing the style', async () => {
       const fetchMock = mockFetch();
       try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
         emitLoad();
         const map = mockMap();
         component.addGeoJsonLayer('location-boundary', TEST_GEOJSON, { lineColor: 'green' });
@@ -317,7 +393,7 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         await waitForVectorLayers();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty');
+        expect(fetchMock).toHaveBeenCalledWith('https://tiles.openfreemap.org/styles/liberty', expect.anything());
         expect(map.setStyle).not.toHaveBeenCalled();
         // vector layers are inserted below existing custom overlays
         expect(map.addLayer).toHaveBeenCalledWith(
@@ -326,17 +402,22 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         );
         // overlay layers survive the crossing untouched
         expect(map.layers['location-boundary-line']).toBeTruthy();
-        // raster hidden, vector visible
-        expect(map.setLayoutProperty).toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'none');
+        // offline PMTiles layers hidden (including offline-background), Liberty background + vector layers visible
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'visible');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+        expect(map.setGlyphs).toHaveBeenCalledWith('https://example.com/fonts/{fontstack}/{range}.pbf');
       } finally {
         clearFetch();
       }
     });
 
-    it('switches back to offline raster when zooming out below 9', async () => {
+    it('switches back to offline PMTiles and restores offline glyphs when zooming back below threshold', async () => {
       const fetchMock = mockFetch();
       try {
+        fixture.componentRef.setInput('countryCode', 'zm');
+        fixture.detectChanges();
         emitLoad();
         const map = mockMap();
         setZoom(10);
@@ -344,20 +425,23 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         await waitForVectorLayers();
         expect(fetchMock).toHaveBeenCalledTimes(1);
 
-        setZoom(5);
+        setZoom(9);
         map.emit('zoomend');
         fixture.detectChanges();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(map.setStyle).not.toHaveBeenCalled();
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('background', 'visibility', 'none');
         expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'none');
-        expect(map.setLayoutProperty).toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'visible');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'visible');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('global-water', 'visibility', 'visible');
+        expect(map.setGlyphs).toHaveBeenLastCalledWith('assets/mapTiles/fonts/{fontstack}/{range}.pbf');
       } finally {
         clearFetch();
       }
     });
 
-    it('stays on offline raster when the vector style cannot be fetched', async () => {
+    it('stays on offline PMTiles when the vector style cannot be fetched', async () => {
       (globalThis as any).fetch = jest.fn().mockRejectedValue(new Error('offline'));
       try {
         emitLoad();
@@ -368,25 +452,95 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
         fixture.detectChanges();
 
         expect((component as any).vectorLayersAdded).toBe(false);
-        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('picsa-local-layer', 'visibility', 'none');
+        expect(map.setLayoutProperty).not.toHaveBeenCalledWith('offline-background', 'visibility', 'none');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('switches visibility immediately after adding online sources even while isStyleLoaded is false', async () => {
+      const fetchMock = mockFetch();
+      try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+        // Real MapLibre returns isStyleLoaded() === false as soon as addSource/setSprite start async loads
+        jest.spyOn(map, 'isStyleLoaded').mockImplementation(() => !map.sources['test-vector']);
+
+        setZoom(10);
+        map.emit('zoomend');
+        await waitForVectorLayers();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('offline-background', 'visibility', 'none');
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
+      } finally {
+        clearFetch();
+      }
+    });
+
+    it('does not attach online sources or sprites if user zooms back below threshold while style fetch is in flight', async () => {
+      let resolveStyle!: (val: any) => void;
+      const fetchMock = jest.fn().mockReturnValue(
+        new Promise((resolve) => {
+          resolveStyle = resolve;
+        }),
+      );
+      (globalThis as any).fetch = fetchMock;
+      try {
+        fixture.componentRef.setInput('countryCode', 'mw');
+        fixture.detectChanges();
+        emitLoad();
+        const map = mockMap();
+
+        setZoom(10);
+        map.emit('zoomend');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+
+        // User zooms back into offline range before style JSON finishes downloading
+        setZoom(9);
+        map.emit('zoomend');
+        resolveStyle({ json: () => Promise.resolve(TEST_VECTOR_STYLE) });
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        fixture.detectChanges();
+
+        expect((component as any).vectorLayersAdded).toBe(false);
+        expect(map.sources['test-vector']).toBeUndefined();
+        expect(map.setSprite).not.toHaveBeenCalled();
+
+        // Zooming back in later attaches the cached style without re-fetching
+        setZoom(10);
+        map.emit('zoomend');
+        fixture.detectChanges();
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect((component as any).vectorLayersAdded).toBe(true);
+        expect(map.setLayoutProperty).toHaveBeenCalledWith('test-water', 'visibility', 'visible');
       } finally {
         clearFetch();
       }
     });
   });
 
-  it('stays on offline raster when offline, even at high zoom', () => {
+  it('stays on offline PMTiles when offline or when enableOnlineFallback is false', () => {
     const fetchMock = mockFetch();
     try {
-      isOnline.set(false);
-      setZoom(12);
-      emitLoad();
+      fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: false });
       fixture.detectChanges();
+      setZoom(14);
+      emitLoad();
       const map = mockMap();
       expect(map.setStyle).not.toHaveBeenCalled();
       expect(fetchMock).not.toHaveBeenCalled();
-      // raster source caps at native zoom 8 so no missing-zoom tiles are fetched (overscaled instead)
-      expect(map.options.style.sources['picsa-local-tiles'].maxzoom).toBe(8);
+
+      isOnline.set(false);
+      fixture.componentRef.setInput('mapOptions', { enableOnlineFallback: true });
+      fixture.detectChanges();
+      map.emit('zoomend');
+      fixture.detectChanges();
+      expect(map.setStyle).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(map.options.style.sources['global-base'].url).toBe('pmtiles://assets/mapTiles/global-base.pmtiles');
     } finally {
       clearFetch();
     }
@@ -441,6 +595,18 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.layers['district-boundary-line']).toBeTruthy();
     // fitBounds called once for markers? none here, so boundary fit applies
     expect(map.fitBounds).toHaveBeenCalled();
+
+    component.removeGeoJsonLayer('district-boundary');
+    expect(map.layers['district-boundary-fill']).toBeUndefined();
+    expect(map.layers['district-boundary-line']).toBeUndefined();
+    expect(map.sources['district-boundary']).toBeUndefined();
+  });
+
+  it('removes geojson boundary layers even while tiles or sprites are loading (isStyleLoaded false)', () => {
+    emitLoad();
+    const map = mockMapInstances()[0];
+    component.addGeoJsonLayer('district-boundary', TEST_GEOJSON, { lineColor: 'green' });
+    jest.spyOn(map, 'isStyleLoaded').mockReturnValue(false);
 
     component.removeGeoJsonLayer('district-boundary');
     expect(map.layers['district-boundary-fill']).toBeUndefined();

@@ -32,7 +32,7 @@ import { ICropDataDownscaled } from '../../../../../services';
 })
 export class CropLinkedStationSelectComponent {
   private supabaseService = inject(SupabaseService);
-  private deploymentService = inject(DeploymentDashboardService);
+  public deploymentService = inject(DeploymentDashboardService);
 
   public allStations = signal<IStationRow[]>([]);
   public stationProbabilitiesMap = signal<Map<string, number>>(new Map());

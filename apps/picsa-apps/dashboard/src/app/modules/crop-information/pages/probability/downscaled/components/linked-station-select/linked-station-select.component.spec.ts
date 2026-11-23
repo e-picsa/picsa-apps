@@ -16,6 +16,7 @@ import { CropLinkedStationSelectComponent } from './linked-station-select.compon
 })
 class MockPicsaMapComponent {
   public markers = input<unknown[]>([]);
+  public countryCode = input<string | undefined>(undefined);
   public onMarkerClick = output<unknown>();
   public mapReady = signal<boolean>(true);
   public addGeoJsonLayer = jest.fn();
