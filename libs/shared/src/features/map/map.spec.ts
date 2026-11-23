@@ -264,6 +264,17 @@ describe('PicsaMapComponent (pure MapLibre)', () => {
     expect(map.setStyle).not.toHaveBeenCalled();
     expect(map.removeSource).toHaveBeenCalledWith('country-detail');
     expect(map.sources['country-detail']).toBeUndefined();
+
+    // Verify country style includes farmland, rock, park, split admin boundaries, and z8+ river/road labels
+    fixture.componentRef.setInput('countryCode', 'zw');
+    fixture.detectChanges();
+    expect(map.layers['country-landcover-farmland']).toBeTruthy();
+    expect(map.layers['country-landcover-rock']).toBeTruthy();
+    expect(map.layers['country-park']).toBeTruthy();
+    expect(map.layers['country-boundary-province']).toBeTruthy();
+    expect(map.layers['country-boundary-district']).toBeTruthy();
+    expect(map.layers['country-waterway-label']?.minzoom).toBe(8);
+    expect(map.layers['country-road-label']?.minzoom).toBe(8);
   });
 
   it('marks the map ready and emits onMapReady on load', () => {
