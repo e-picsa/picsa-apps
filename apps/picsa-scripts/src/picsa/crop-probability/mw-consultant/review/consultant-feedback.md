@@ -92,15 +92,35 @@ What we did with the 28 sheets (164 EPA blocks): 161 blocks imported as
    were dropped. Should banana be added as an app crop, or dropped
    permanently?
 6. **Same variety, different maturity/days across blocks** — we kept the modal
-   value and logged the rest (see `review/varieties.md` flagged table). The
-   closest splits need a ruling (one value each, please):
+   value and logged the rest (see `review/varieties.md` flagged table, and
+   `review/inconsistencies.md` for the full analysis). The closest splits need
+   a ruling (one value each, please):
    - Cotton MAKOKA-2000: Late (x10) vs Early (x6); RASAM-17: Late (x10) vs Medium (x6)
    - Soya TIKOLORE / MAKWACHA / SC-SIGNAL / OCEPARA-4: Early vs Medium nearly 50/50
    - Maize PAN-4M-19: 110 days (x161) vs 140 days (x140); MH-33: 140 vs 120 days
+   - Maize MH-26–38: GAP says 120–130d, workbook says 140d; PAN 6777: GAP
+     130–140d, workbook 110d; PAN 7M-89/8M-93: GAP 130–140d, workbook 120d;
+     SC-301: GAP 90–110d, workbook 80d (x95) / 90d (x48); DKC 8053: GAP
+     110–120d, workbook 140d
+   - Sorghum PILIRA-1: 90d (x37) vs 115d (x27) vs 120d (x32); PILIRA-2: 90d
+     (x20) vs 120d (x59) vs 100d (x17)
    - Groundnuts MSINJIRO: Medium vs Late 140-day rows (plus a "Midium" typo)
    - Is it ever correct for one variety to have two maturities/day ranges (e.g.
      two plantings), or should each variety have exactly one?
-7. **Duplicate EPA coverage** (30 EPAs fed by 2+ blocks, e.g. Nachisaka station
+7. **Water must be recalculated for the canonical days.** Workbook water
+   scales with days (~2.75 mm/day), so the days disagreements above are also
+   water disagreements: e.g. MAKWACHA sheets at 95d carry ~25–30% less water
+   than sheets at 130d. We stored the modal-days water for each location, but
+   a 95-day water number paired with a 130-day maturity **inflates that
+   location's computed success probability**. Once you confirm the canonical
+   days per variety (aligned with GAP), please confirm whether the water
+   values on the off-days sheets need to be recalculated for those days —
+   especially soya MAKWACHA/TIKOLORE/SC-SIGNAL/OCEPARA-4, sorghum
+   PILIRA-1/PILIRA-2, cotton MAKOKA-2000/RASAM-17, and the
+   PAN-4M-19/MH-33/MH-34/CHIMBAMBA duplicate-template rows. Every affected
+   stored value is listed with its dropped samples in `review/water.md`
+   (modal-days table).
+8. **Duplicate EPA coverage** (30 EPAs fed by 2+ blocks, e.g. Nachisaka station
    - Dowa Boma both → Nachisaka EPA): where the two sources disagreed by >20%
      we kept the block nearest the EPA centroid and logged it (`review/water.md`).
      Flag any EPA where you consider the other station more representative.
