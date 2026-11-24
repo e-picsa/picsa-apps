@@ -231,7 +231,7 @@ const MW_EPAS = [
     district: 'dedza',
     coordinates: { latitude: -14.22642, longitude: 34.55759 },
   },
-  // Dowa - 9
+  // Dowa - 10
   {
     id: 'bowe_epa',
     label: 'Bowe EPA',
@@ -267,6 +267,14 @@ const MW_EPAS = [
     label: 'Mponela EPA',
     district: 'dowa',
     coordinates: { latitude: -13.568, longitude: 33.78813 },
+  },
+  // Post-2013 EPA (absent from the 2013 MASDAP polygons): center is the
+  // consultant block station point until DAES supplies the boundary.
+  {
+    id: 'nambuma_epa',
+    label: 'Nambuma EPA',
+    district: 'dowa',
+    coordinates: { latitude: -13.7, longitude: 33.61667 },
   },
   {
     id: 'mvera_epa',

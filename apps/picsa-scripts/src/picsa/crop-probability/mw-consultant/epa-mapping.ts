@@ -158,7 +158,7 @@ const EPA_MAPPING: Record<string, EpaMappingValue> = {
   '13. Zomba District::malosa-agri': 'malosa_epa', // Domasi — no canonical counterpart
   // Dowa
   '14. Dowa District::nachisaka': 'nachisaka_epa',
-  '14. Dowa District::nambuma': 'mng_wangwa_epa', // Nambuma — no canonical counterpart
+  '14. Dowa District::nambuma': 'nambuma_epa', // Nambuma EPA confirmed (post-2013): own location
   '14. Dowa District::chisepo': 'chisepo_epa',
   '14. Dowa District::mndolera': 'mndolera_epa',
   '14. Dowa District::mvera': 'mvera_epa',

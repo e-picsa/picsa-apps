@@ -47,6 +47,7 @@ export function normalizeStationName(raw: string | null | undefined): string {
     .replace(/\bagriculture\b/g, ' ')
     .replace(/\bresearch\b/g, ' ')
     .replace(/\bboma\b/g, ' ')
+    .replace(/\baerodrome\b/g, ' ')
     .replace(/\bairport\b/g, ' ')
     .replace(/\bmission\b/g, ' ')
     .replace(/\brtc\b/g, ' ')
@@ -74,7 +75,9 @@ export const DOCX_MET_TO_EXCEL: Record<string, string[]> = {
   Mzimba: ['Mzimba Boma', 'Emsizini', 'Mbawa', 'Euthini', 'Jenda', 'Kazuni', 'Vibangalala'],
   Nkhotakota: ['Nkhotakota Boma', 'Linga', 'Mwansambo'],
   Kasungu: ['Chipala', 'Lisasadzi', 'Chulu', 'Kaluluma', 'Santhe', 'chamama', 'Malomo', 'Mpalonthesa'],
-  Mponela: ['Mponela RTC', 'Chisepo', 'Madise', 'Mndolera', 'Nambuwa', 'Bowe', 'Chibvala'],
+  // 'Nambuwa' is the docx spelling; 'Nambuma' added — every other name in this
+  // list is a Dowa-sheet block, so the docx entry is almost certainly that typo.
+  Mponela: ['Mponela RTC', 'Chisepo', 'Madise', 'Mndolera', 'Nambuwa', 'Nambuma', 'Bowe', 'Chibvala'],
   'Dowa Agriculture': ['Dowa Boma', 'Nachisaka', 'Nalunga', 'Malambo', 'Ntchisi rain Forest'],
   Nalunga: ['Nalunga'],
   Kamuona: ['Kamuona'],
@@ -130,6 +133,11 @@ const EXCEL_TO_MET = (() => {
 export function getDocxMetHint(excelStation: string | null | undefined): string[] {
   const key = normalizeStationName(excelStation);
   if (!key) return [];
+  // Exact lookup only. Fuzzy matching is deliberately NOT attempted here:
+  // Malawi place names collide within edit distance 2 across hundreds of
+  // kilometres (Chifunga/Neno vs Chisenga/Chitipa, 672 km; Chiwembu/Mwanza vs
+  // Chiwamba/Lilongwe, 218 km). Unmatched stations fall through to the
+  // audited coordinate tiebreaker in resolveStationId instead.
   return EXCEL_TO_MET[key] ?? [];
 }
 
@@ -145,49 +153,80 @@ export function normalizeStationNameLight(raw: string | null | undefined): strin
     .replace(/\s+/g, ' ');
 }
 
-function findStationByName(
+/** Generic station words ignored when comparing concatenated names. */
+const GENERIC_STATION_WORDS = new Set([
+  'met',
+  'station',
+  'agric',
+  'research',
+  'agriculture',
+  'boma',
+  'aerodrome',
+  'airport',
+  'mission',
+  'rtc',
+  'irrigation',
+  'scheme',
+  'district',
+]);
+
+export function findStationByName(
   raw: string,
   stations: IClimateStationRef[],
   dataStationIds?: Set<string>,
 ): IClimateStationRef | null {
   const key = normalizeStationName(raw);
   if (!key) return null;
-  // Gather scored candidates: exact slug (2) > exact name (1.5) > token overlap (0..1)
+  // Gather scored candidates: exact slug (2) > exact/nospace name (1.5) > token overlap (0..1)
   const scored: { s: IClimateStationRef; score: number }[] = [];
   const slugKey = key.replace(/[\s-]+/g, '_');
+  const flatKey = key.replace(/[\s_-]+/g, '');
+  const queryLight = new Set(normalizeStationNameLight(raw).split(' ').filter(Boolean));
   for (const s of stations) {
     if (s.station_id.toLowerCase() === slugKey) {
       scored.push({ s, score: 2 });
       continue;
     }
+    const candNorm = normalizeStationName(s.station_name);
     // Exact normalized-name match, but only when the candidate adds no new
     // significant words (stop-word stripping equates 'Chileka' with
-    // 'CHILEKA AIRPORT' — the subset check rejects that: {chileka,airport} ⊄ {chileka})
-    if (normalizeStationName(s.station_name) === key) {
+    // 'CHILEKA AIRPORT' — the subset check rejects that: {chileka,airport} ⊄ {chileka}).
+    // The nospace form additionally equates multi-word queries with concatenated
+    // station names ('Nkhata Bay' with 'NKHATABAY MET'). Single-token queries
+    // never take the nospace path (that would re-admit the Chileka case).
+    const candFlat = candNorm.replace(/[\s_-]+/g, '');
+    if (candNorm === key || (candFlat !== '' && candFlat === flatKey)) {
       const candLight = new Set(normalizeStationNameLight(s.station_name).split(' ').filter(Boolean));
-      const queryLight = new Set(normalizeStationNameLight(raw).split(' ').filter(Boolean));
       const subset = [...candLight].every((t) => queryLight.has(t));
       if (subset) {
         scored.push({ s, score: 1.5 });
         continue;
       }
+      // Concatenated station name (e.g. NKHATABAY MET -> {nkhatabay, met}):
+      // compare significant light tokens joined without spaces. Both sides drop
+      // generic words first so 'nkhatabay' can meet 'nkhata bay'.
+      if (candFlat === flatKey && queryLight.size > 1) {
+        const flatSig = (lights: Set<string>): string =>
+          [...lights].filter((t) => !GENERIC_STATION_WORDS.has(t)).join('');
+        if (flatSig(candLight) !== '' && flatSig(candLight) === flatSig(queryLight)) {
+          scored.push({ s, score: 1.5 });
+          continue;
+        }
+      }
     }
     const tokens = new Set(key.split(' ').filter(Boolean));
-    const candTokens = new Set(normalizeStationName(s.station_name).split(' ').filter(Boolean));
+    const candTokens = new Set(candNorm.split(' ').filter(Boolean));
     if (tokens.size === 0 || candTokens.size === 0) continue;
     let overlap = 0;
     for (const t of tokens) if (candTokens.has(t)) overlap++;
     const score = overlap / Math.max(tokens.size, candTokens.size);
-    // Both normalizations must agree: stop-word stripping alone equates
-    // 'Chileka' with 'CHILEKA AIRPORT' (single identical stripped token), while
-    // light tokens alone equate 'Dowa Boma' with 'CHIKWAWA BOMA' ('boma').
-    // A single shared generic token (e.g. 'bay') never suffices either.
-    const lightTokens = new Set(normalizeStationNameLight(raw).split(' ').filter(Boolean));
+    // Accept when strip-tokens strongly agree, OR the light-token names nest
+    // (e.g. query {kia} ⊆ candidate {kamuzu, airport, kia}; or candidate
+    // {dedza} ⊆ query {dedza, boma, met, station}). A single shared generic
+    // token with no nesting (e.g. 'bay' in 'nkhata bay'/'monkey bay') matches neither.
     const lightCand = new Set(normalizeStationNameLight(s.station_name).split(' ').filter(Boolean));
-    let lightOverlap = 0;
-    for (const t of lightTokens) if (lightCand.has(t)) lightOverlap++;
-    const lightScore = lightOverlap / Math.max(lightTokens.size, lightCand.size);
-    if (lightScore >= 0.5 && (overlap >= 2 || score > 0.5)) scored.push({ s, score });
+    const nest = [...queryLight].every((t) => lightCand.has(t)) || [...lightCand].every((t) => queryLight.has(t));
+    if (overlap >= 2 || score > 0.5 || (overlap >= 1 && nest)) scored.push({ s, score });
   }
   if (scored.length === 0) return null;
   // Prefer stations with climate data (tables can actually generate). The base-name
@@ -209,6 +248,19 @@ export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: numb
 }
 
 /**
+ * Verified station homonyms: the consultant station name collides with a
+ * same-named climate station hundreds of kilometres away, so name stages are
+ * skipped and the audited coordinate tiebreaker decides.
+ * - `9. Lilongwe District::chileka`: consultant "Chileka Met Station" serves
+ *   Chileka EPA, Lilongwe (-14.02, 33.38). The only "Chileka" in
+ *   climate_stations is Chileka Airport, Blantyre (~250 km south) — a
+ *   different place sharing the name.
+ */
+export const STATION_NAME_OVERRIDES: Record<string, 'coordinates'> = {
+  '9. Lilongwe District::chileka': 'coordinates',
+};
+
+/**
  * Resolve an EPA block's excel station to a `climate_stations.id`.
  * Pure function over a caller-supplied station list (fetched from Supabase).
  */
@@ -218,9 +270,13 @@ export function resolveStationId(
   longitude: number | null,
   stations: IClimateStationRef[],
   dataStationIds?: Set<string>,
+  district?: string | null,
+  blockKey?: string | null,
 ): IStationResolution {
   const label = (excelStation ?? '').trim() || '(blank)';
   const hasData = (id: string): boolean => (dataStationIds ? dataStationIds.has(id) : true);
+  const sameDistrict = (s: IClimateStationRef): boolean =>
+    !!district && (s.district ?? '').toLowerCase() === district.toLowerCase();
   const hasCoords =
     typeof latitude === 'number' &&
     typeof longitude === 'number' &&
@@ -231,8 +287,10 @@ export function resolveStationId(
     if (!hasCoords || typeof s.latitude !== 'number' || typeof s.longitude !== 'number') return '';
     return `, ${haversineKm(latitude as number, longitude as number, s.latitude, s.longitude).toFixed(1)} km block-to-station`;
   };
-  // 1. Direct match (a dataless match falls through: it can never generate a table)
-  const direct = findStationByName(excelStation ?? '', stations, dataStationIds);
+  // 1. Direct match (a dataless match falls through: it can never generate a table).
+  // Verified homonyms (STATION_NAME_OVERRIDES) skip name stages entirely.
+  const skipNames = !!blockKey && STATION_NAME_OVERRIDES[blockKey] === 'coordinates';
+  const direct = skipNames ? null : findStationByName(excelStation ?? '', stations, dataStationIds);
   if (direct && hasData(direct.id)) {
     return {
       station_id: direct.id,
@@ -240,16 +298,24 @@ export function resolveStationId(
       detail: `${label} -> ${direct.id} (name match${distNote(direct)})`,
     };
   }
-  // 2. Docx hint -> climate_stations
-  for (const met of getDocxMetHint(excelStation)) {
-    const hinted = findStationByName(met, stations, dataStationIds);
-    if (hinted && hasData(hinted.id)) {
-      return {
-        station_id: hinted.id,
-        method: 'docx-hint',
-        detail: `${label} -> docx MET ${met} -> ${hinted.id}${distNote(hinted)}`,
-      };
+  // 2. Docx hint -> climate_stations. When an excel name is listed under several
+  // MET stations (e.g. Nsanama under Mangochi and Ntaja), prefer the hint whose
+  // station sits in the block's own district.
+  const hinted: { met: string; s: IClimateStationRef }[] = [];
+  if (!skipNames) {
+    for (const met of getDocxMetHint(excelStation)) {
+      const hit = findStationByName(met, stations, dataStationIds);
+      if (hit && hasData(hit.id) && !hinted.some((h) => h.s.id === hit.id)) hinted.push({ met, s: hit });
     }
+  }
+  if (hinted.length > 0) {
+    const best = [...hinted].sort((a, b) => Number(sameDistrict(b.s)) - Number(sameDistrict(a.s)))[0];
+    const via = hinted.length > 1 ? ` (of ${hinted.map((h) => `${h.met}->${h.s.id}`).join('; ')})` : '';
+    return {
+      station_id: best.s.id,
+      method: 'docx-hint',
+      detail: `${label} -> docx MET ${best.met} -> ${best.s.id}${via}${distNote(best.s)}`,
+    };
   }
   // 3. Coordinates tiebreaker: nearest station with data (district-agnostic —
   // proximity already encodes agro-ecological similarity; district logged for review)

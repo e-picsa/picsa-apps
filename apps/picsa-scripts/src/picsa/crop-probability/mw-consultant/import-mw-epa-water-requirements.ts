@@ -23,21 +23,18 @@ import { ensureDir, writeFile, writeJson } from 'fs-extra';
 import { existsSync } from 'node:fs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import MW_EPAS from '../../../../../../libs/data/geoLocation/mw/epas';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  computeExpectedProbabilityTable,
-  // eslint-disable-next-line @nx/enforce-module-boundaries
-} from '../../../../../../apps/picsa-apps/dashboard/src/app/modules/crop-information/utils/probability.utils';
 import type { ICropName } from '@picsa/data';
 
 import { parseDaysRange, parseVarietyString, roundToNearest } from '../extract-varieties/parser';
 import { sanitizeCropVarietyMapping } from '../extract-varieties/cleaning-rules';
 import { canonicaliseCropName } from './crop-name-mapping';
+import { accumulateOccurrences, buildVarietyDefs, detectFillDown, mergeDownscaledWater, runQcPrecheck } from './merge';
+import { normaliseMwVarietyToken, preCleanMwVarietyCell, resolveRowCrop } from './variety-overrides';
 import { getEpaMapping, SHEET_TO_DISTRICT, stableBlockKey } from './epa-mapping';
 import { getUnmappedVerdict } from './unmapped-verdicts';
 import { haversineKm, resolveStationId, type IClimateStationRef } from './station-mapping';
 import { getSyncSupabaseClient } from '../../../climate/sync-climate-data';
-import type { IEpaBlock } from './block-types';
+import type { ICleanedOccurrence, IEpaBlock } from './block-types';
 
 const INPUT_XLSX = resolve(__dirname, 'input', 'mw-probabilities.xlsx');
 const INPUT_PATH = INPUT_XLSX;
@@ -182,8 +179,6 @@ async function parseWorkbook(): Promise<{
 // ---------------------------------------------------------------------------
 // Cleaning
 // ---------------------------------------------------------------------------
-const DESCRIPTIVE_VARIETY_PREFIX = /^(hybrid varieties|opv varieties|local varieties)\s*[:;]?\s*/i;
-
 /**
  * Normalise maturity labels (trim + title case) so case variants ('Medium' vs
  * 'medium') don't read as inconsistencies; genuine typos ('Midium') stay
@@ -194,25 +189,6 @@ function normaliseMaturity(raw: string | null): string | null {
   return t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : null;
 }
 
-function cleanVarietyCell(raw: string | null): string {
-  if (!raw) return '';
-  return raw.replace(DESCRIPTIVE_VARIETY_PREFIX, '').trim();
-}
-
-interface ICleanedOccurrence {
-  blockKey: string;
-  locationId: string;
-  crop: ICropName;
-  variety: string;
-  localName?: string;
-  daysLower: number;
-  daysUpper: number;
-  daysRaw: string;
-  maturity: string | null;
-  water: number;
-  stationRaw: string | null;
-}
-
 interface ICleanResult {
   occurrences: ICleanedOccurrence[];
   stats: {
@@ -220,9 +196,16 @@ interface ICleanResult {
     waterZeroOrBlankSkipped: number;
     unmappedCropSkipped: number;
     emptyVarietySkipped: number;
+    emptyDaysSkipped: number;
+    fillDownSkipped: number;
+    bananaMislabelledSkipped: number;
+    decimalDaysSkipped: number;
   };
   unmappedCrops: Record<string, number>;
   zeroWaterByCrop: Record<string, number>;
+  cropCorrections: { blockKey: string; rowNumber: number | null; from: string; to: string; reason: string }[];
+  fillRows: { blockKey: string; rowNumber: number; crop: string; water: number }[];
+  decimalDaysRows: { blockKey: string; rowNumber: number | null; daysRaw: string }[];
 }
 
 function cleanBlocks(blocks: { block: IEpaBlock; locationIds: string[] }[]): ICleanResult {
@@ -232,9 +215,20 @@ function cleanBlocks(blocks: { block: IEpaBlock; locationIds: string[] }[]): ICl
     waterZeroOrBlankSkipped: 0,
     unmappedCropSkipped: 0,
     emptyVarietySkipped: 0,
+    emptyDaysSkipped: 0,
+    fillDownSkipped: 0,
+    bananaMislabelledSkipped: 0,
+    decimalDaysSkipped: 0,
   };
   const unmappedCrops: Record<string, number> = {};
   const zeroWaterByCrop: Record<string, number> = {};
+  const cropCorrections: ICleanResult['cropCorrections'] = [];
+  const fillRows: ICleanResult['fillRows'] = [];
+  const decimalDaysRows: { blockKey: string; rowNumber: number | null; daysRaw: string }[] = [];
+  // Spreadsheet fill-down artifacts are detected per block in merge.ts
+  // (one water value copied across most rows spanning several crops).
+  const fillMarkers = detectFillDown(blocks.map((b) => b.block));
+
   for (const { block, locationIds } of blocks) {
     let carryCrop: string | null = null;
     for (const row of block.rows) {
@@ -259,14 +253,33 @@ function cleanBlocks(blocks: { block: IEpaBlock; locationIds: string[] }[]): ICl
         zeroWaterByCrop[crop] = (zeroWaterByCrop[crop] ?? 0) + 1;
         continue;
       }
+      // Spreadsheet fill-down artifacts (e.g. one 420 copied across a block):
+      // fabricated, never imported — flagged for the consultants instead.
+      if (fillMarkers.has(`${block.key}::${row.waterRaw}`)) {
+        stats.fillDownSkipped++;
+        fillRows.push({
+          blockKey: block.key,
+          rowNumber: row.rowNumber,
+          crop: row.cropRaw ?? '',
+          water: row.waterRaw as number,
+        });
+        continue;
+      }
       // Match the dashboard prod convention (admin import rounds water to nearest
       // 5mm): consultant cells carry spreadsheet float artifacts (e.g. 240.7999…)
       const water = roundToNearest(row.waterRaw, 5);
       const maturity = normaliseMaturity(row.maturityRaw);
-      const varietyCell = cleanVarietyCell(row.varietyRaw);
+      let varietyCell = preCleanMwVarietyCell(row.varietyRaw);
+      // Blank-variety sesame rows are unnamed local varieties (matches
+      // Chitipa/Karonga 'Local' sesame rows).
+      if (!varietyCell && crop === 'sesame') varietyCell = 'Local';
       if (!varietyCell || /^(none|n\/a|-+)$/i.test(varietyCell)) {
         if (/^local$/i.test(varietyCell)) {
           const days = parseDaysRange(row.daysRaw ?? '');
+          if (!days.days_lower && !days.days_upper) {
+            stats.emptyDaysSkipped++;
+            continue;
+          }
           for (const locationId of locationIds) {
             occurrences.push({
               blockKey: block.key,
@@ -287,16 +300,68 @@ function cleanBlocks(blocks: { block: IEpaBlock; locationIds: string[] }[]): ICl
         continue;
       }
       const days = parseDaysRange(row.daysRaw ?? '');
+      // Rows without any days value cannot produce a variety definition: skip.
+      if (!days.days_lower && !days.days_upper) {
+        stats.emptyDaysSkipped++;
+        continue;
+      }
+      // Decimal days (e.g. 118.8, 134.634...) are spreadsheet formula errors,
+      // not real maturity periods: skip and flag for the consultants instead
+      // of truncating to a misleading integer.
+      if (/\d+\.\d+/.test(row.daysRaw ?? '')) {
+        stats.decimalDaysSkipped++;
+        decimalDaysRows.push({ blockKey: block.key, rowNumber: row.rowNumber, daysRaw: row.daysRaw ?? '' });
+        continue;
+      }
       const parsed = parseVarietyString(varietyCell);
-      const tokens = parsed.length > 0 ? parsed : [{ variety: varietyCell, raw_token: varietyCell }];
+      const rawTokens = parsed.length > 0 ? parsed : [{ variety: varietyCell, raw_token: varietyCell }];
+      // Drop crop-name noise tokens and normalise variety ids (LOCAL variants,
+      // trailing crop words like MH-34-MAIZE).
+      const tokens: { variety: string; local_name?: string; raw_token: string }[] = [];
+      for (const token of rawTokens) {
+        const name = 'variety' in token ? token.variety : varietyCell;
+        const normal = normaliseMwVarietyToken(name);
+        if (!normal) continue;
+        tokens.push({ ...token, variety: normal } as { variety: string; local_name?: string; raw_token: string });
+      }
+      if (tokens.length === 0) {
+        stats.emptyVarietySkipped++;
+        continue;
+      }
+      // Row-level crop correction from unambiguous variety markers (mislabelled
+      // consultant crop column). Banana rows are skipped: no Banana ICropName.
+      // Native-variety check for crops the shared extractor doesn't know:
+      // a token counts as native when the sanitizer keeps it under this crop.
+      const rowDecision = resolveRowCrop(
+        row.cropRaw,
+        tokens.map((t) => t.variety),
+        crop,
+        (v) => sanitizeCropVarietyMapping(crop, v).normalizedCrop === crop,
+      );
+      if (rowDecision.reason === 'banana-mislabel') {
+        stats.bananaMislabelledSkipped++;
+        unmappedCrops['Banana (mislabeled row)'] = (unmappedCrops['Banana (mislabeled row)'] ?? 0) + 1;
+        continue;
+      }
+      let rowCrop = crop;
+      if (rowDecision.corrected) {
+        rowCrop = rowDecision.crop;
+        cropCorrections.push({
+          blockKey: block.key,
+          rowNumber: row.rowNumber,
+          from: row.cropRaw ?? '',
+          to: rowDecision.crop,
+          reason: rowDecision.reason,
+        });
+      }
       for (const token of tokens) {
-        const sanitized = sanitizeCropVarietyMapping(crop, 'variety' in token ? token.variety : varietyCell);
+        const sanitized = sanitizeCropVarietyMapping(rowCrop, 'variety' in token ? token.variety : varietyCell);
         if (!sanitized.valid) continue;
-        const finalCrop = (canonicaliseCropName(sanitized.normalizedCrop) ?? crop) as ICropName;
+        const finalCrop = (canonicaliseCropName(sanitized.normalizedCrop) ?? rowCrop) as ICropName;
         const localName =
           'local_name' in token && token.local_name
             ? token.local_name
-            : [row.localRaw, sanitized.normalizedCrop !== crop ? sanitized.normalizedCrop : null]
+            : [row.localRaw, sanitized.normalizedCrop !== rowCrop ? sanitized.normalizedCrop : null]
                 .filter(Boolean)
                 .join(' ') || undefined;
         for (const locationId of locationIds) {
@@ -317,7 +382,7 @@ function cleanBlocks(blocks: { block: IEpaBlock; locationIds: string[] }[]): ICl
       }
     }
   }
-  return { occurrences, stats, unmappedCrops, zeroWaterByCrop };
+  return { occurrences, stats, unmappedCrops, zeroWaterByCrop, cropCorrections, fillRows, decimalDaysRows };
 }
 
 // ---------------------------------------------------------------------------
@@ -488,10 +553,18 @@ async function main() {
     `  climate_stations: ${stations.length}, station_data rows: ${stationDataById.size} (${dataStationIds.size} with data)`,
   );
 
-  // Station resolution per block
+  // Station resolution per block (sheet district breaks multi-hint ties, e.g. Nsanama)
   const stationByBlock = new Map<string, { station_id: string | null; method: string; detail: string }>();
   for (const { block } of mapped) {
-    const res = resolveStationId(block.stationRaw, block.latitude, block.longitude, stations, dataStationIds);
+    const res = resolveStationId(
+      block.stationRaw,
+      block.latitude,
+      block.longitude,
+      stations,
+      dataStationIds,
+      SHEET_TO_DISTRICT[block.sheet],
+      block.key,
+    );
     stationByBlock.set(block.key, res);
   }
   const unresolvedStations = [...stationByBlock.entries()].filter(([, r]) => !r.station_id);
@@ -506,218 +579,30 @@ async function main() {
   await writeJson(resolve(INTERMEDIATES_DIR, 'variety-ledger.json'), cleaned.occurrences, { spaces: 2 });
 
   // Merge to per-location water requirements + variety definitions (modal days)
-  interface IVarietyAcc {
-    crop: ICropName;
-    variety: string;
-    waters: number[];
-    dayPairs: Map<string, { lower: number; upper: number; count: number }>;
-    maturities: Map<string, number>;
-    localNames: Set<string>;
-    blocks: Set<string>;
-  }
-  const varietyAcc = new Map<string, IVarietyAcc>();
-  interface IWaterSample {
-    water: number;
-    blockKey: string;
-    stationId: string | null;
-    daysLower: number;
-    daysUpper: number;
-  }
-  const waterByLocation = new Map<string, Map<string, Map<string, IWaterSample[]>>>();
-  const stationVotes = new Map<string, Map<string, number>>();
-  for (const o of cleaned.occurrences) {
-    const key = `${o.crop}/${o.variety}`;
-    let acc = varietyAcc.get(key);
-    if (!acc) {
-      acc = {
-        crop: o.crop,
-        variety: o.variety,
-        waters: [],
-        dayPairs: new Map(),
-        maturities: new Map(),
-        localNames: new Set(),
-        blocks: new Set(),
-      };
-      varietyAcc.set(key, acc);
-    }
-    acc.waters.push(o.water);
-    const dpKey = `${o.daysLower}-${o.daysUpper}`;
-    const dp = acc.dayPairs.get(dpKey) ?? { lower: o.daysLower, upper: o.daysUpper, count: 0 };
-    dp.count++;
-    acc.dayPairs.set(dpKey, dp);
-    if (o.maturity) acc.maturities.set(o.maturity, (acc.maturities.get(o.maturity) ?? 0) + 1);
-    if (o.localName) acc.localNames.add(o.localName);
-    acc.blocks.add(o.blockKey);
-    let loc = waterByLocation.get(o.locationId);
-    if (!loc) {
-      loc = new Map();
-      waterByLocation.set(o.locationId, loc);
-    }
-    let cropMap = loc.get(o.crop);
-    if (!cropMap) {
-      cropMap = new Map();
-      loc.set(o.crop, cropMap);
-    }
-    const arr = cropMap.get(o.variety) ?? [];
-    arr.push({
-      water: o.water,
-      blockKey: o.blockKey,
-      stationId: stationByBlock.get(o.blockKey)?.station_id ?? null,
-      daysLower: o.daysLower,
-      daysUpper: o.daysUpper,
-    });
-    cropMap.set(o.variety, arr);
-    const res = stationByBlock.get(o.blockKey);
-    if (res?.station_id) {
-      let votes = stationVotes.get(o.locationId);
-      if (!votes) {
-        votes = new Map();
-        stationVotes.set(o.locationId, votes);
-      }
-      votes.set(res.station_id, (votes.get(res.station_id) ?? 0) + 1);
-    }
-  }
-  // Variety definitions use modal days_lower/upper across occurrences
-  const varietyDefs = [...varietyAcc.values()].map((acc) => {
-    const modal = [...acc.dayPairs.values()].sort((a, b) => b.count - a.count)[0];
-    const maturity = [...acc.maturities.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]?.trim() || null;
-    return {
-      country_code: COUNTRY_CODE,
-      crop: acc.crop,
-      variety: acc.variety,
-      maturity_period: maturity,
-      days_lower: modal.lower,
-      days_upper: modal.upper,
-      additional_info: null as string | null,
-      additional_data: {
-        ...(acc.localNames.size > 0 ? { local_name: [...acc.localNames].join(', ') } : {}),
-        source: 'mw-consultant-epa-import',
-        blocks: [...acc.blocks],
-      },
-    };
+  const { varietyAcc, waterByLocation } = accumulateOccurrences(cleaned.occurrences, stationByBlock);
+  // Variety definitions use modal days_lower/upper across occurrences.
+  // NOTE: no comparison against existing DB rows here — the local DB already
+  // holds upserts from earlier runs, so it cannot serve as an independent
+  // baseline. Inconsistency oversight lives in the review outputs instead:
+  // review/water.md lists every conflict-driven water choice (modal-days
+  // alignments and nearest-EPA tiebreaks) and review/varieties.md flags every
+  // variety whose blocks disagree on days or maturity. Prod impact (which
+  // existing prod rows change days) must be assessed at apply time against prod.
+  const { varietyDefs, defDaysByVariety } = buildVarietyDefs(varietyAcc, COUNTRY_CODE);
+  // Per-location water requirements + per-location station (extracted to
+  // merge.ts so the modal-days grouping, conflict tiebreak and nearest-EPA
+  // station choice are unit-testable).
+  const { downscaled, waterConflicts } = mergeDownscaledWater({
+    waterByLocation,
+    defDaysByVariety,
+    epaCoords,
+    stationByBlock,
+    stations,
+    countryCode: COUNTRY_CODE,
   });
-  // Overlap report: new defs vs existing MW crop_data (global ids — overwrites
-  // also affect other countries sharing the same crop/variety id on re-sync)
-  const existingByVariety = new Map(
-    ((cropDataRaw ?? []) as { crop: string; variety: string; days_lower: number; days_upper: number }[]).map((r) => [
-      `${r.crop}/${r.variety}`,
-      r,
-    ]),
-  );
-  const varietyOverlap = varietyDefs
-    .filter((d) => existingByVariety.has(`${d.crop}/${d.variety}`))
-    .map((d) => {
-      const e = existingByVariety.get(`${d.crop}/${d.variety}`) as { days_lower: number; days_upper: number };
-      return {
-        crop: d.crop,
-        variety: d.variety,
-        existing_days: `${e.days_lower}-${e.days_upper}`,
-        new_days: `${d.days_lower}-${d.days_upper}`,
-        changed: e.days_lower !== d.days_lower || e.days_upper !== d.days_upper,
-      };
-    });
-  const defDaysByVariety = new Map(
-    varietyDefs.map((d) => [`${d.crop}/${d.variety}`, `${d.days_lower}-${d.days_upper}`]),
-  );
-  // Per-location water requirements. The same variety can appear in several rows
-  // (different maturity/day rows, or duplicate EPA blocks). Group samples by days
-  // range first and keep the modal group (matching the variety definition); within
-  // it use the mean unless samples conflict by >20% (probable consultant typo),
-  // in which case the value from the block nearest the EPA wins and the conflict
-  // is logged for review (e.g. Dowa 135-day maize 378 vs 3715mm).
-  const stationCoordsById = new Map(stations.map((s) => [s.id, s]));
-  const meanRound = (xs: number[]): number => roundToNearest(xs.reduce((a, b) => a + b, 0) / xs.length, 5);
-  const waterConflicts: {
-    location_id: string;
-    crop: string;
-    variety: string;
-    samples: { water: number; blockKey: string; stationId: string | null }[];
-    chosen: number;
-    strategy: 'mean' | 'nearest-epa' | 'modal-days';
-  }[] = [];
-  const downscaled = [...waterByLocation.entries()].map(([locationId, crops]) => {
-    const water_requirements: Record<string, Record<string, number>> = {};
-    const epa = epaCoords.get(locationId);
-    for (const [crop, vars] of crops) {
-      water_requirements[crop] = {};
-      for (const [variety, samples] of vars) {
-        // Prefer samples matching the variety definition's (global modal) days range
-        // so stored water aligns with the defined maturity period.
-        const defKey = defDaysByVariety.get(`${crop}/${variety}`);
-        let group = samples;
-        const matchingDef = defKey ? samples.filter((s) => `${s.daysLower}-${s.daysUpper}` === defKey) : [];
-        if (matchingDef.length > 0) {
-          if (matchingDef.length < samples.length) {
-            waterConflicts.push({
-              location_id: locationId,
-              crop,
-              variety,
-              samples,
-              chosen: -1,
-              strategy: 'modal-days',
-            });
-          }
-          group = matchingDef;
-        } else {
-          // No sample matches the definition days: fall back to the modal group here
-          const byDays = new Map<string, typeof samples>();
-          for (const s of samples) {
-            const k = `${s.daysLower}-${s.daysUpper}`;
-            byDays.set(k, [...(byDays.get(k) ?? []), s]);
-          }
-          if (byDays.size > 1) {
-            const modal = [...byDays.entries()].sort((a, b) => b[1].length - a[1].length)[0];
-            group = modal[1];
-            waterConflicts.push({
-              location_id: locationId,
-              crop,
-              variety,
-              samples,
-              chosen: -1,
-              strategy: 'modal-days',
-            });
-          }
-        }
-        if (group.length === 1) {
-          water_requirements[crop][variety] = group[0].water;
-          const conflict = waterConflicts.find(
-            (c) => c.location_id === locationId && c.crop === crop && c.variety === variety && c.chosen === -1,
-          );
-          if (conflict) conflict.chosen = group[0].water;
-          continue;
-        }
-        const waters = group.map((s) => s.water);
-        const min = Math.min(...waters);
-        const max = Math.max(...waters);
-        if (min > 0 && (max - min) / min <= 0.2) {
-          water_requirements[crop][variety] = meanRound(waters);
-          continue;
-        }
-        // Extreme conflict: prefer the block whose station is nearest the EPA
-        const ranked = samples.map((s) => {
-          const st = (s.stationId && stationCoordsById.get(s.stationId)) || null;
-          const d =
-            epa && st && typeof st.latitude === 'number' && typeof st.longitude === 'number'
-              ? Math.hypot(
-                  epa.coordinates.latitude - (st.latitude as number),
-                  epa.coordinates.longitude - (st.longitude as number),
-                )
-              : Number.POSITIVE_INFINITY;
-          return { s, d };
-        });
-        ranked.sort((a, b) => a.d - b.d);
-        const chosen = ranked[0].s.water;
-        water_requirements[crop][variety] = chosen;
-        waterConflicts.push({ location_id: locationId, crop, variety, samples, chosen, strategy: 'nearest-epa' });
-      }
-    }
-    const votes = stationVotes.get(locationId);
-    const station_id = votes ? [...votes.entries()].sort((a, b) => b[1] - a[1])[0][0] : null;
-    return { country_code: COUNTRY_CODE, location_id: locationId, water_requirements, station_id };
-  });
-  console.log(`  water conflicts (>20% duplicate spread, nearest-EPA wins): ${waterConflicts.length}`);
+  console.log(`  water conflicts: ${waterConflicts.length} logged (see review/water.md)`);
 
-  // QC pre-check per location (ENFORCE_LOOKUP_BOUNDS; locationId/stationId attributed)
+  // QC pre-check per location (extracted to merge.ts; attribution preserved).
   const cropDataHashmap: Record<string, { days_lower: number; days_upper: number }> = {};
   for (const row of (cropDataRaw ?? []) as {
     crop: string;
@@ -728,57 +613,12 @@ async function main() {
     cropDataHashmap[`${row.crop}/${row.variety}`] = row;
   }
   for (const def of varietyDefs) cropDataHashmap[`${def.crop}/${def.variety}`] = def;
-  const qcSummaries: unknown[] = [];
-  let qcIncluded = 0;
-  let qcExcluded = 0;
-  let qcSkipped = 0;
-  for (const row of downscaled) {
-    const stationData = row.station_id ? stationDataById.get(row.station_id) : undefined;
-    if (!stationData) {
-      qcSkipped++;
-      qcSummaries.push({
-        location_id: row.location_id,
-        station_id: row.station_id,
-        status: 'SKIPPED',
-        reason: 'no station data',
-      });
-      continue;
-    }
-    const expected = computeExpectedProbabilityTable({
-      cropDataHashmap: cropDataHashmap as never,
-      waterRequirements: row.water_requirements as never,
-      rainfallData: (stationData.annual_rainfall_data ?? []) as never,
-      cropProbabilityData: (stationData.crop_probability_data ?? []) as never,
-      locationId: row.location_id,
-      stationId: row.station_id,
-    });
-    if (!expected) {
-      qcSkipped++;
-      qcSummaries.push({
-        location_id: row.location_id,
-        station_id: row.station_id,
-        status: 'SKIPPED',
-        reason: 'insufficient station data',
-      });
-      continue;
-    }
-    const excluded = expected.qc.results.filter((r) => !r.included);
-    qcIncluded += expected.qc.includedCount;
-    qcExcluded += expected.qc.excludedCount;
-    qcSummaries.push({
-      location_id: row.location_id,
-      station_id: row.station_id,
-      status: excluded.length > 0 ? 'QC_EXCLUSIONS' : 'OK',
-      included: expected.qc.includedCount,
-      excluded: expected.qc.excludedCount,
-      exclusions: excluded.map((r) => ({
-        crop: r.crop,
-        variety: r.variety,
-        water: r.waterRequirement,
-        failures: r.failures,
-      })),
-    });
-  }
+  const {
+    qcSummaries,
+    included: qcIncluded,
+    excluded: qcExcluded,
+    skipped: qcSkipped,
+  } = runQcPrecheck({ downscaled, cropDataHashmap, stationDataById });
   console.log(`  QC: included=${qcIncluded} excluded=${qcExcluded} locations-skipped=${qcSkipped}`);
 
   // Per-crop reporting summary: water ranges, maturity/days discrepancies
@@ -979,7 +819,6 @@ async function main() {
     zeroWaterByCrop: cleaned.zeroWaterByCrop,
     locations: downscaled.length,
     varietyDefs: varietyDefs.length,
-    varietyOverlap,
     waterConflicts,
     cropSummary,
     orphanEpas,
@@ -1044,7 +883,7 @@ async function writeProdSql(
     `-- 20260808091500_allow_null_maturity_period (maturity_period may be NULL).`,
     `BEGIN;`,
     ``,
-    `-- 1. Variety definitions (crop_data; id is crop/variety, shared globally)`,
+    `-- 1. Variety definitions (crop_data; id is country_code/crop/variety per migration 20260805140000, so MW-only)`,
   ];
   for (const d of varietyDefs) {
     lines.push(
@@ -1093,14 +932,14 @@ async function writeReview(audit: any): Promise<void> {
     ``,
     `1. \`consultant-feedback.md\` — what we dropped, corrected, and need confirmed. **Send this to the consultants.**`,
     `2. \`summary.md\` — counts, decisions (this file).`,
-    `1. \`coverage.md\` — unmapped blocks with EPA-by-coordinates evidence and verdicts; mapped EPA ids mirror the workbook col N.`,
-    `2. \`varieties.md\` — flagged MULTI_DAYS / MULTI_MATURITY varieties, then the full per-variety ledger.`,
-    `3. \`outliers.md\` — raw water values outside Q1−3·IQR / Q3+3·IQR per crop, with source blocks.`,
-    `4. \`water.md\` — duplicate-block disagreements and changed variety days.`,
-    `5. \`stations.md\` — far (>50 km) block↔station links; all should be explained.`,
-    `6. \`qc.md\` — exclusion reasons; spot-check locations in the dashboard crop-qc admin views (acceptance gate).`,
-    `7. \`crops.md\` — per-crop water ranges and maturity/day spreads.`,
-    `8. \`../sql/mw-epa-prod-upsert.sql\` — the prod artifact (idempotent upserts).`,
+    `3. \`coverage.md\` — unmapped blocks with EPA-by-coordinates evidence and verdicts; mapped EPA ids mirror the workbook col N.`,
+    `4. \`varieties.md\` — flagged MULTI_DAYS / MULTI_MATURITY varieties, then the full per-variety ledger.`,
+    `5. \`outliers.md\` — raw water values outside Q1−3·IQR / Q3+3·IQR per crop, with source blocks.`,
+    `6. \`water.md\` — duplicate-block disagreements and changed variety days.`,
+    `7. \`stations.md\` — far (>50 km) block↔station links; all should be explained.`,
+    `8. \`qc.md\` — exclusion reasons; spot-check locations in the dashboard crop-qc admin views (acceptance gate).`,
+    `9. \`crops.md\` — per-crop water ranges and maturity/day spreads.`,
+    `10. \`../sql/mw-epa-prod-upsert.sql\` — the prod artifact (idempotent upserts).`,
     ``,
     `## Pipeline decisions (encoded, not configurable)`,
     ``,
@@ -1109,6 +948,9 @@ async function writeReview(audit: any): Promise<void> {
     `- Blank crops forward-filled within block; variety lists split with the shared extractor.`,
     `- Duplicate blocks: modal days win; >20% water spreads keep the nearest-EPA-station value (logged).`,
     `- Stations prefer climate-data-bearing siblings (e.g. \`dedza_met\` over \`dedza\`); coordinates break ties ≤100 km.`,
+    `- Station names match exactly (no fuzzy lookup); verified homonyms resolve by coordinates (see STATION_NAME_OVERRIDES in station-mapping.ts).`,
+    `- Mislabelled crop columns are reassigned from unambiguous variety markers (MW-scoped overrides); ambiguous single-variety rows stay as written and are flagged.`,
+    `- Fill-down artifacts (one water value across most rows of a block), decimal-days formula errors, and banana rows carry no data and are skipped with consultant-facing logs.`,
     `- Slugs never invented: ${audit.unmappedBlocks.length} blocks and ${audit.orphanEpas.length} canonical EPAs have no data by design.`,
     ``,
     `Regenerate everything: \`yarn scripts picsa/crop-probability/mw-consultant/import-mw-epa-water-requirements\``,
@@ -1184,13 +1026,16 @@ async function writeReview(audit: any): Promise<void> {
 
   const nearestEpa = (audit.waterConflicts ?? []).filter((c: { strategy: string }) => c.strategy === 'nearest-epa');
   const modalDays = (audit.waterConflicts ?? []).filter((c: { strategy: string }) => c.strategy === 'modal-days');
-  const changed = (audit.varietyOverlap ?? []).filter((v: { changed: boolean }) => v.changed);
   await write('water.md', [
-    `# Duplicate-block disagreements and definition changes`,
+    `# Conflict-driven water choices (modal rule oversight)`,
     ``,
-    `## Water conflicts (${nearestEpa.length} kept nearest-EPA value; ${modalDays.length} aligned to modal days)`,
+    `Every stored value below was picked by the modal rule, not taken as-is:`,
+    `duplicate-block samples first align to the variety definition's modal`,
+    `days range, then means are used unless samples spread >20% (probable`,
+    `consultant typo), in which case the block nearest the EPA wins.`,
+    `Tighter spreads use the mean and are not listed.`,
     ``,
-    `Only >20% spreads across duplicate blocks are listed — tighter spreads use the mean.`,
+    `## Nearest-EPA tiebreaks (${nearestEpa.length})`,
     ``,
     `| Location | Crop | Variety | Samples (mm @ block) | Kept |`,
     `|----------|------|---------|---------------------|------|`,
@@ -1205,16 +1050,27 @@ async function writeReview(audit: any): Promise<void> {
         `| ${c.location_id} | ${c.crop} | ${c.variety} | ${c.samples.map((s) => `${s.water}@${s.blockKey}`).join(', ')} | ${c.chosen} |`,
     ),
     ``,
-    `## Variety definitions overwriting shared ids (${changed.length} with changed days)`,
+    `## Modal-days alignments (${modalDays.length})`,
     ``,
-    `IDs are global (\`crop/variety\`); changed days also affect other countries sharing the id on re-sync.`,
+    `Samples outside the definition's modal days were dropped; the kept value`,
+    `is the mean (or single sample) of the modal-days group.`,
     ``,
-    `| Crop | Variety | Existing days | New days |`,
-    `|------|---------|---------------|----------|`,
-    ...changed.map(
-      (v: { crop: string; variety: string; existing_days: string; new_days: string }) =>
-        `| ${v.crop} | ${v.variety} | ${v.existing_days} | ${v.new_days} |`,
+    `| Location | Crop | Variety | Dropped samples (mm @ block) | Kept |`,
+    `|----------|------|---------|-------------------------------|------|`,
+    ...modalDays.map(
+      (c: {
+        location_id: string;
+        crop: string;
+        variety: string;
+        dropped?: { water: number; blockKey: string; daysLower: number; daysUpper: number }[];
+        chosen: number;
+      }) =>
+        `| ${c.location_id} | ${c.crop} | ${c.variety} | ${(c.dropped ?? []).map((s) => `${s.water}@${s.blockKey} [${s.daysLower}-${s.daysUpper}]`).join(', ')} | ${c.chosen} |`,
     ),
+    ``,
+    `Variety-day changes from these alignments are flagged per variety in`,
+    `\`varieties.md\`. IDs are country-scoped (\`country_code/crop/variety\`);`,
+    `assess which existing prod rows change days at apply time against prod.`,
   ]);
 
   const byMethod: Record<string, number> = {};
@@ -1348,9 +1204,12 @@ async function writeReview(audit: any): Promise<void> {
     `## Block↔station links over 50 km (${far.length} — all explained)`,
     ``,
     `Long links are either docx-directed cross-district mappings or source coordinate`,
-    `typos in the xlsx (Kabwazi/Mtubwi latitudes missing minus signs; Madise -11.25).`,
-    `Name matches were verified against false positives (e.g. CHILEKA AIRPORT for a`,
-    `Chileka block) and rerouted to the nearest station with data.`,
+    `typos in the xlsx (Kabwazi/Mtubwi latitudes missing minus signs; Madise -11.25;`,
+    `Mlonyeni/Bowe/Utale/Bulala/Nsanama/Santhe/Luwalazi/Mombezi misplaced points).`,
+    `Name matching is exact-only: fuzzy docx lookup is disabled (Chifunga/Chisenga and`,
+    `Chiwembu/Chiwamba collide across hundreds of km), and the Chileka homonym`,
+    `(Lilongwe block vs Blantyre airport) resolves by coordinates to`,
+    `mw/chileka_agric_lilongwe (0.5 km; see STATION_NAME_OVERRIDES).`,
     ``,
     `| Block | Link |`,
     `|-------|------|`,

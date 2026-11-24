@@ -96,8 +96,8 @@ const UNMAPPED_VERDICTS: IUnmappedVerdict[] = [
     blockKey: '14. Dowa District::nambuma',
     consultantEpa: '(Nambuma)',
     verdict: 'MAP',
-    mappedEpa: 'mng_wangwa_epa',
-    note: 'Geo: INSIDE mng_wangwa_epa (NOT Mndolera — centroid misled).',
+    mappedEpa: 'nambuma_epa',
+    note: 'Nambuma EPA confirmed by online references (post-2013 split, absent from 2013 MASDAP polygons): own location. Block point falls inside the old mng_wangwa_epa polygon — expected for a split child.',
   },
   {
     blockKey: '16. Salima::salima',
