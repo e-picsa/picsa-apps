@@ -276,18 +276,17 @@ export function mergeDownscaledWater(params: {
           if (conflict) conflict.chosen = mean;
           continue;
         }
-        // Extreme conflict: prefer the block whose station is nearest the EPA.
-        // NOTE: ranks the modal-days `group`, never the unfiltered `samples`
-        // (out-of-range day rows must not win over definition-matching rows).
+        // Extreme conflict: prefer the block whose station is nearest the EPA
+        // (great-circle distance — degree-hypotenuse understates E-W separation
+        // off the equator). NOTE: ranks the modal-days `group`, never the
+        // unfiltered `samples` (out-of-range day rows must not win over
+        // definition-matching rows).
         const ranked = group.map((s) => {
           const st = (s.stationId && stationsById.get(s.stationId)) || null;
           const epa = epaCoords.get(locationId);
           const d =
             epa && st && typeof st.latitude === 'number' && typeof st.longitude === 'number'
-              ? Math.hypot(
-                  epa.coordinates.latitude - (st.latitude as number),
-                  epa.coordinates.longitude - (st.longitude as number),
-                )
+              ? haversineKm(epa.coordinates.latitude, epa.coordinates.longitude, st.latitude, st.longitude)
               : Number.POSITIVE_INFINITY;
           return { s, d };
         });
