@@ -11,9 +11,9 @@ Use this skill when the author asks for funder/progress update notes. The author
 
 Before pulling GitHub data:
 
-1. Inspect `reports/_meta.json` (gitignored) and list existing reports in:
-   - `reports/mw_zm/` — combined Zambia & Malawi history (`<YYYY-MM>.md`)
-   - `reports/zw/` — Zimbabwe history (`<YYYY-MM>.md`)
+1. Inspect `.agents/skills/report-updates/reports/_meta.json` (gitignored) and list existing reports in:
+   - `.agents/skills/report-updates/reports/mw_zm/` — combined Zambia & Malawi history (`<YYYY-MM>.md`)
+   - `.agents/skills/report-updates/reports/zw/` — Zimbabwe history (`<YYYY-MM>.md`)
 2. Read the **most recent previous report** in each folder to determine:
    - Each funder's **own** `from_release` tag and date (do NOT assume both funders share the same starting tag).
    - Tone, tool-name headings, and what was **already reported** (to prevent duplicates).
@@ -21,7 +21,7 @@ Before pulling GitHub data:
 3. Confirm with the author:
    - `from_release` per funder (e.g. `mw_zm: v5.14.0`, `zw: v5.6.1`). If missing, ask — never guess.
    - `to_release` (defaults to latest `e-picsa/picsa-apps` release).
-   - Whether both outputs (`reports/mw_zm/<YYYY-MM>.md` and `reports/zw/<YYYY-MM>.md`) are required.
+   - Whether both outputs (`.agents/skills/report-updates/reports/mw_zm/<YYYY-MM>.md` and `.agents/skills/report-updates/reports/zw/<YYYY-MM>.md`, plus `-short.md`) are required.
 
 ## 1. Repos To Pull (discover dynamically, never silently skip)
 
@@ -32,13 +32,13 @@ Before pulling GitHub data:
    - `e-picsa/user-guide` — check releases + merged PRs.
    - `e-picsa/docs` — check merged PRs.
    - Plugin / companion repos (`capacitor-video-player`, `capacitor-resumable-download`, `capacitor-offline-transfer`, `enketo-webform`, and any new active repos).
-3. Record every reviewed repo and its status (active vs `stable – no changes this period`) in `reports/_meta.json`. Do **not** print developer repo lists in the funder-facing report body.
+3. Record every reviewed repo and its status (active vs `stable – no changes this period`) in `.agents/skills/report-updates/reports/_meta.json`. Do **not** print developer repo lists in the funder-facing report body.
 
 Tip: split collection across parallel subagents (1. `picsa-apps` releases/commits per range, 2. external `e-picsa` repos, 3. country-specific data diffs via `git diff --name-status` on `summaries/`, `crop-probability-tool`, and `geoLocation/`).
 
 ## 2. Triage Board Cross-Reference (gitignored URL)
 
-- Read `triage_sheet_url` from `reports/_meta.json` (gitignored). **Never commit the spreadsheet URL to `SKILL.md` or any tracked file.**
+- Read `triage_sheet_url` from `.agents/skills/report-updates/reports/_meta.json` (gitignored). **Never commit the spreadsheet URL to `.agents/skills/report-updates/SKILL.md` or any tracked file.**
 - If `triage_sheet_url` is set and publicly readable, fetch its CSV export (`.../export?format=csv&gid=0`) and cross-reference:
   1. **Verify completeness**: check `Done` items tagged within the reporting range to ensure no partner-facing milestone was missed.
   2. **Board hygiene**: flag to the author (in chat, not inside the funder report) any open/unprioritised board rows that appear completed, duplicates, or major shipped features worth adding to the board as `Done`.
@@ -53,8 +53,8 @@ Tip: split collection across parallel subagents (1. `picsa-apps` releases/commit
 
 ## 4. Two Isolated Reports (strictly no cross-reference)
 
-- `reports/mw_zm/<YYYY-MM>.md` must **never** mention Zimbabwe, ZW, Shona, Ndebele, Masvingo, or ZW-specific names.
-- `reports/zw/<YYYY-MM>.md` must **never** mention Zambia, Malawi, ZM, MW, or where placeholder content came from (say *"starter videos included as placeholders until local videos are recorded"*).
+- `.agents/skills/report-updates/reports/mw_zm/<YYYY-MM>.md` (and `-short.md`) must **never** mention Zimbabwe, ZW, Shona, Ndebele, Masvingo, or ZW-specific names.
+- `.agents/skills/report-updates/reports/zw/<YYYY-MM>.md` (and `-short.md`) must **never** mention Zambia, Malawi, ZM, MW, or where placeholder content came from (say *"starter videos included as placeholders until local videos are recorded"*).
 - Split user-guide updates: ZM/MW guide updates go only in `mw_zm`; Zimbabwe guide updates go only in `zw`.
 - **Contract / timesheet attribution**: If the author provides timesheet notes or contract splits (e.g. GIZ vs Zimbabwe), attribute shared platform/dashboard/sustainability work to the funder whose contract funded it so overlapping work is not double-reported across both reports.
 
@@ -95,23 +95,25 @@ User-guide updates are a partner deliverable. Include them in the `Additional` r
 
 ## 8. Output, Tracking & Verification
 
-- Write outputs only to gitignored country folders:
-  - `reports/mw_zm/<YYYY-MM>.md` and `reports/mw_zm/<YYYY-MM>-short.md`
-  - `reports/zw/<YYYY-MM>.md` and `reports/zw/<YYYY-MM>-short.md`
-  - Each `*-short.md` is a concise narrative summary matching the tone and length of prior short reports (`reports/zw/2026-07-short.md`, `reports/mw_zm/2026-11-short.md`): title, reporting period/version header, short intro, concise bulleted list of main work completed, availability summary, and brief next-steps paragraph.
+All paths below are relative to the **repository root** and are gitignored via `.agents/skills/report-updates/.gitignore`:
+
+- Write outputs only to the gitignored country folders inside this skill:
+  - `.agents/skills/report-updates/reports/mw_zm/<YYYY-MM>.md` and `.agents/skills/report-updates/reports/mw_zm/<YYYY-MM>-short.md`
+  - `.agents/skills/report-updates/reports/zw/<YYYY-MM>.md` and `.agents/skills/report-updates/reports/zw/<YYYY-MM>-short.md`
+  - Each `*-short.md` is a concise narrative summary matching the tone and length of prior short reports (`.agents/skills/report-updates/reports/zw/2026-07-short.md`, `.agents/skills/report-updates/reports/mw_zm/2026-11-short.md`): title, reporting period/version header, short intro, concise bulleted list of main work completed, availability summary, and brief next-steps paragraph.
 - Never overwrite previous reports.
-- Update `reports/_meta.json` (gitignored) with per-funder `from_release` / `to_release`, `triage_sheet_url`, `generated_at`, `repos_reviewed[]`, and `triage_board_last_checked`.
-- Optionally store raw `gh` JSON dumps under `cache/` (gitignored). Never commit `reports/` or `cache/`.
+- Update `.agents/skills/report-updates/reports/_meta.json` (gitignored) with per-funder `from_release` / `to_release`, `triage_sheet_url`, `generated_at`, `repos_reviewed[]`, and `triage_board_last_checked`.
+- Optionally store raw `gh` JSON dumps under `.agents/skills/report-updates/cache/` (gitignored). Never write `reports/` or `cache/` at the repository root, and never commit `reports/` or `cache/`.
 
 ### Pre-finish checklist
 
-- [ ] Both files exist under `reports/mw_zm/` and `reports/zw/` with accurate version ranges in headers (matching each funder's own previous report).
+- [ ] Both report sets exist under `.agents/skills/report-updates/reports/mw_zm/` and `.agents/skills/report-updates/reports/zw/` with accurate version ranges in headers (matching each funder's own previous report).
 - [ ] Every station/district/release count is verified directly from git diffs or data files (and arithmetic `new + updated = total` checks out).
 - [ ] No items already reported in that funder's previous draft are repeated as new.
 - [ ] 4-column markdown tables parse cleanly; `Screenshots` column is non-empty.
 - [ ] No PR numbers, commit SHAs, file paths, repo lists, or banned buzzwords in funder-facing text.
 - [ ] No cross-funder leaks (`mw_zm` vs `zw`).
-- [ ] Triage sheet URL is present in `reports/_meta.json` and report links, and **absent** from `SKILL.md` and all git-tracked files.
+- [ ] Triage sheet URL is present in `.agents/skills/report-updates/reports/_meta.json` and report links, and **absent** from `.agents/skills/report-updates/SKILL.md` and all git-tracked files.
 
 ```markdown
 <!-- Example Updates cell (<br><br> paragraphs, tool-name bold leads, no PR numbers) -->
