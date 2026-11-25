@@ -1,0 +1,6 @@
+# gitignored outputs for report-updates skill – local only, do not commit.
+# Reports and raw release caches stay on the author's machine.
+reports/*
+!reports/.gitkeep
+cache/*
+!cache/README.md
