@@ -1,0 +1,3 @@
+# Regenerable intermediates — do not commit. Rebuild with:
+# yarn scripts picsa/crop-probability/mw-consultant/import-mw-epa-water-requirements
+intermediates/
