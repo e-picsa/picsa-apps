@@ -21,6 +21,18 @@ yarn ai:triage --doctor
 - If Crashlytics / BigQuery credentials are missing, the doctor explains how to enable the BigQuery integration in the Firebase Console.
 - The CLI is completely non-blocking: if one provider is unconfigured, it continues diagnosing the other provider.
 
+### Crashlytics Data Sources: BigQuery Lag vs. Live Firebase MCP
+
+`yarn ai:triage list` queries the Crashlytics BigQuery export (`picsa-apps.firebase_crashlytics.io_picsa_extension_ANDROID`), which is a **delayed batch export** (recent crashes can lag by 24–48+ hours). If a Crashlytics issue URL or recent crash returns zero rows in BigQuery, **do not assume the issue does not exist** — use the live Firebase Crashlytics MCP route via the Firebase CLI instead:
+
+- **Command**: `firebase mcp --only crashlytics` (stdio JSON-RPC server using your authenticated `firebase` CLI session)
+- **Android App ID** (`picsa-apps` / `io.picsa.extension`): `1:78373580660:android:39621f1ea61aed44204621`
+- **Available tools**:
+  - `crashlytics_get_issue` (`{ appId, issueId }`): live issue metadata, errorType, state, versions, sampleEvent
+  - `crashlytics_list_events` (`{ appId, filter: { issueId }, pageSize }`): deobfuscated stack traces, breadcrumbs, device/OS, `version`, `installationUuid`
+  - `crashlytics_batch_get_events` (`{ appId, names }`): fetch specific events (e.g. from `sessionEventKey` in a console URL)
+  - `crashlytics_update_issue` (`{ appId, issueId, state }`): open/close/mute an issue
+
 ---
 
 ## 2. Priority Hierarchy & Triage Workflow
@@ -32,9 +44,12 @@ yarn ai:triage list
 # Filter by platform or release if scoping to a recent update
 yarn ai:triage list --platform android --release 5.18.1
 
-# 2. Inspect the source-mapped stack trace, breadcrumbs, and tags
+# 2. Inspect the source-mapped stack trace, breadcrumbs, and tags (Sentry)
 yarn ai:triage inspect <issue-id>
 ```
+
+> [!NOTE]
+> `yarn ai:triage inspect` only queries Sentry. To inspect a specific Crashlytics issue ID (especially recent events not yet in BigQuery), call `crashlytics_get_issue` and `crashlytics_list_events` via `firebase mcp --only crashlytics`.
 
 ### Priority Matrix
 
@@ -56,7 +71,7 @@ In PICSA, both Sentry and Crashlytics record the exact same anonymous device ide
 - `sentry.service.ts`: `Sentry.setUser({ id: identifier })` from `Device.getId()`.
 - `crashlytics.service.ts`: `setUserId({ userId: uuid })` from `Device.getId()`.
 
-When investigating a native crash from Crashlytics where a `user_id` or device UUID is known, query Sentry to view the user's Angular route navigation, UI clicks, and console breadcrumbs immediately preceding the native crash:
+When investigating a native crash from Crashlytics where a `user.id` (from `CrashlyticsService.setUserId`) is known, query Sentry to view the user's Angular route navigation, UI clicks, and console breadcrumbs immediately preceding the native crash. Note that `installationUuid` in Crashlytics events is the Firebase Installations ID (not `Device.getId()`), so only `user.id` correlates with Sentry's `user.id`:
 
 ```bash
 yarn ai:triage user <device-uuid>
