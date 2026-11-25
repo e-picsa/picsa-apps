@@ -210,7 +210,7 @@ function buildBigQuerySql({ table, whereClause, limit }) {
       issue_id,
       issue_title,
       COUNT(*) AS event_count,
-      COUNT(DISTINCT user_id) AS user_count,
+      COUNT(DISTINCT COALESCE(NULLIF(user.id, ''), installation_uuid)) AS user_count,
       MIN(event_timestamp) AS first_seen,
       MAX(event_timestamp) AS last_seen,
       is_fatal
@@ -338,7 +338,10 @@ async function runDoctor() {
 
   safeLog(`  gcloud CLI      : ${hasGcloud ? '✅ Found' : '⚠️ Not installed'}`);
   safeLog(`  bq CLI          : ${hasBq ? '✅ Found' : '⚠️ Not installed'}`);
-  safeLog(`  firebase CLI    : ${hasFirebase ? '⚠️ Not installed' : '✅ Found'}`);
+  safeLog(`  firebase CLI    : ${hasFirebase ? '✅ Found' : '⚠️ Not installed'}`);
+  if (hasFirebase) {
+    safeLog(`  Crashlytics MCP : ℹ️ Available via 'firebase mcp --only crashlytics' (live data, no BigQuery lag)`);
+  }
 
   if (hasBq) {
     const bqResult = await queryCrashlyticsBigQuery({ limit: 1 });
@@ -351,7 +354,9 @@ async function runDoctor() {
       safeLog(`     2. Under 'BigQuery', click Link/Manage and toggle 'Crashlytics' ON (free tier).`);
       safeLog(`     3. Run locally: 'gcloud auth application-default login'`);
     } else {
-      safeLog(`  BigQuery Stream : ✅ Connected! Found Crashlytics dataset table.`);
+      safeLog(
+        `  BigQuery Stream : ✅ Connected! Found Crashlytics dataset table (note: batch export lags behind live Crashlytics).`,
+      );
     }
   } else {
     safeLog(`\n  ℹ️ Note on Crashlytics:`);
@@ -412,6 +417,14 @@ async function fetchSentryIssues(options) {
   }
 }
 
+function formatBigQueryDate(val) {
+  const raw = typeof val === 'object' && val !== null ? val.value : val;
+  if (!raw) return 'N/A';
+  const iso = typeof raw === 'string' && !raw.includes('T') ? `${raw.replace(' ', 'T')}Z` : raw;
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : parsed.toLocaleDateString();
+}
+
 function mapCrashlyticsIssue(row) {
   return {
     id: row.issue_id,
@@ -421,9 +434,9 @@ function mapCrashlyticsIssue(row) {
     culprit: '',
     eventCount: Number(row.event_count || 0),
     userCount: Number(row.user_count || 0),
-    firstSeen: row.first_seen?.value ? new Date(row.first_seen.value).toLocaleDateString() : 'N/A',
-    lastSeen: row.last_seen?.value ? new Date(row.last_seen.value).toLocaleDateString() : 'N/A',
-    isFatal: Boolean(row.is_fatal),
+    firstSeen: formatBigQueryDate(row.first_seen),
+    lastSeen: formatBigQueryDate(row.last_seen),
+    isFatal: row.is_fatal === true || row.is_fatal === 'true',
     permalink: `https://console.firebase.google.com/project/${FIREBASE_PROJECT_ID}/crashlytics/app/android:${DEFAULT_PACKAGE_NAME}/issues/${row.issue_id}`,
   };
 }
@@ -476,7 +489,7 @@ async function runList(options) {
 
   if (source === 'all' || source === 'crashlytics') {
     const crashRes = await fetchCrashlyticsIssues(limit);
-    if (crashRes.error && source === 'crashlytics') {
+    if (crashRes.error) {
       errors.push({ source: 'Crashlytics', message: crashRes.error });
     }
     items.push(...crashRes.items);
