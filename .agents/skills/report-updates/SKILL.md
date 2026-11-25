@@ -46,16 +46,17 @@ Tip: split collection across parallel subagents (1. `picsa-apps` releases/commit
 
 ## 3. What To Include, Deduplicate, and Omit
 
-- **Include only partner-facing items**: visible app/dashboard features, new data coverage, new languages, admin workflows, print/export outputs, user-visible reliability fixes, headline app/map sizes, and user-guide deliverables.
+- **Include only shipped, live partner-facing items**: visible app/dashboard features, new data coverage, new languages, admin workflows, print/export outputs, user-visible reliability fixes, headline app/map sizes, and user-guide deliverables.
+- **Omit unintegrated or standalone components**: do not report new plugins, backend scripts, or infrastructure work (even if merged in a companion repo) until they are actually integrated and live in the app, dashboard, or scheduled CI.
 - **Deduplicate against the previous report (mandatory)**: compare every candidate item against that funder's previous report. Omit anything already announced unless highlighting a clear new delta (e.g. *"Added PDF export alongside Word export"*).
 - **Omit purely technical items**: CI/workflow bumps, PR-agent template syncs, worktree tooling, agent config changes, internal refactors, seed script internals, minor CSS tweaks. When in doubt, omit and keep rows concise.
-- **Be accurate about integration state**: if a companion plugin/repo was built but not yet integrated into `picsa-apps`, state that clearly (e.g. *"built and tested, ready for app integration"*).
 
 ## 4. Two Isolated Reports (strictly no cross-reference)
 
 - `reports/mw_zm/<YYYY-MM>.md` must **never** mention Zimbabwe, ZW, Shona, Ndebele, Masvingo, or ZW-specific names.
 - `reports/zw/<YYYY-MM>.md` must **never** mention Zambia, Malawi, ZM, MW, or where placeholder content came from (say *"starter videos included as placeholders until local videos are recorded"*).
 - Split user-guide updates: ZM/MW guide updates go only in `mw_zm`; Zimbabwe guide updates go only in `zw`.
+- **Contract / timesheet attribution**: If the author provides timesheet notes or contract splits (e.g. GIZ vs Zimbabwe), attribute shared platform/dashboard/sustainability work to the funder whose contract funded it so overlapping work is not double-reported across both reports.
 
 ## 5. Table Format & Cell Structure
 
