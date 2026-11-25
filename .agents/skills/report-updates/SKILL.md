@@ -96,9 +96,9 @@ User-guide updates are a partner deliverable. Include them in the `Additional` r
 ## 8. Output, Tracking & Verification
 
 - Write outputs only to gitignored country folders:
-  - `reports/mw_zm/<YYYY-MM>.md`
-  - `reports/zw/<YYYY-MM>.md`
-  - `reports/zw/<YYYY-MM>-short.md` — concise narrative summary for Zimbabwe (match tone and length of the latest `reports/zw/*-short.md`: title, reporting period/version header, short intro, concise bulleted list of main work completed, availability summary, and brief next-steps paragraph).
+  - `reports/mw_zm/<YYYY-MM>.md` and `reports/mw_zm/<YYYY-MM>-short.md`
+  - `reports/zw/<YYYY-MM>.md` and `reports/zw/<YYYY-MM>-short.md`
+  - Each `*-short.md` is a concise narrative summary matching the tone and length of prior short reports (`reports/zw/2026-07-short.md`, `reports/mw_zm/2026-11-short.md`): title, reporting period/version header, short intro, concise bulleted list of main work completed, availability summary, and brief next-steps paragraph.
 - Never overwrite previous reports.
 - Update `reports/_meta.json` (gitignored) with per-funder `from_release` / `to_release`, `triage_sheet_url`, `generated_at`, `repos_reviewed[]`, and `triage_board_last_checked`.
 - Optionally store raw `gh` JSON dumps under `cache/` (gitignored). Never commit `reports/` or `cache/`.
